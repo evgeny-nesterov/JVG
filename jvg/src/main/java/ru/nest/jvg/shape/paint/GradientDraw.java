@@ -4,8 +4,8 @@ import java.awt.Color;
 
 import javax.swing.gradient.MultipleGradientPaint;
 
+import ru.nest.jvg.CommonUtil;
 import ru.nest.jvg.resource.Resource;
-import ru.nest.util.CommonUtil;
 
 public abstract class GradientDraw extends AbstractDraw {
 	public GradientDraw(float[] fractions, Resource<Color>[] colors, MultipleGradientPaint.CycleMethodEnum cycleMethod) {

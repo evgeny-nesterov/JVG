@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import ru.nest.jvg.JVGDefaultFactory;
 import ru.nest.jvg.JVGEditorKit;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;

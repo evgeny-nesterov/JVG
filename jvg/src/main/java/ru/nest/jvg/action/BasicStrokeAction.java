@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.event.UndoableEditEvent;
 
+import ru.nest.jvg.CommonUtil;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGScriptSupport;
@@ -24,7 +25,6 @@ import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
 import ru.nest.jvg.undoredo.PropertyUndoRedo;
-import ru.nest.util.CommonUtil;
 
 public class BasicStrokeAction extends JVGAction {
 	public final static int TYPE_NONE = 0;

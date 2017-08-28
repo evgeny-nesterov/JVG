@@ -23,7 +23,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import ru.nest.util.CommonUtil;
+import ru.nest.jvg.CommonUtil;
 
 public class ExplorerPanel extends JPanel {
 	private FilenameFilter filter = new FilenameFilter() {

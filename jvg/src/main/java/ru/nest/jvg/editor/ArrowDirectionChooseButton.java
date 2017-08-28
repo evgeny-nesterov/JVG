@@ -21,7 +21,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListDataListener;
 
-import satis.toi.objects.TOIArrowPathElement;
+import ru.nest.toi.objects.TOIArrowPathElement;
 
 public class ArrowDirectionChooseButton extends JComboBox<Integer> {
 	private static final long serialVersionUID = -8672550510126317566L;

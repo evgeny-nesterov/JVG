@@ -28,7 +28,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.menu.WMenuItem;
 
-import ru.nest.jvg.JVGDefaultFactory;
 import ru.nest.jvg.JVGEditorKit;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;

@@ -45,7 +45,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.FontComboBox;
 import javax.swing.Icon;
 import javax.swing.IconButton;
 import javax.swing.IconToggleButton;
@@ -86,8 +85,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.toolbar.WToolBar;
 
-import ru.nest.awt.strokes.ArrowStroke;
-import ru.nest.awt.strokes.TextStroke;
+import ru.nest.fonts.FontComboBox;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGEditorKit;
@@ -157,6 +155,8 @@ import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.ShadowPainter;
 import ru.nest.jvg.shape.text.JVGStyleConstants;
+import ru.nest.strokes.ArrowStroke;
+import ru.nest.strokes.TextStroke;
 
 public class JVGEditorActions implements ActionListener, ChangeListener, ItemListener {
 	private String configFileName = "jvgeditor.properties";

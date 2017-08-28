@@ -8,7 +8,6 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import ru.nest.awt.strokes.TextStroke;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.macros.JVGMacrosCode;
@@ -17,6 +16,7 @@ import ru.nest.jvg.shape.JVGPath;
 import ru.nest.jvg.shape.JVGStyledText;
 import ru.nest.jvg.shape.JVGTextField;
 import ru.nest.jvg.undoredo.PropertyUndoRedo;
+import ru.nest.strokes.TextStroke;
 
 public class FontSizeAction extends JVGAction {
 	public FontSizeAction(String nm, int size) {

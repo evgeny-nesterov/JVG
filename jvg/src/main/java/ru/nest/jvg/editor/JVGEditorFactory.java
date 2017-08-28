@@ -11,7 +11,6 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.event.UndoableEditEvent;
 
-import ru.nest.awt.strokes.TextStroke;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
@@ -55,6 +54,7 @@ import ru.nest.jvg.shape.JVGSubPath;
 import ru.nest.jvg.shape.JVGTextField;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.undoredo.PropertyUndoRedo;
+import ru.nest.strokes.TextStroke;
 
 public class JVGEditorFactory extends JVGFactory {
 	protected final static Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(JVGEditorFactory.class.getResource("/ru/nest/jvg/actionarea/cursors/cursor_move.png")).getImage(), new Point(15, 15), "move");

@@ -10,7 +10,6 @@ import javax.swing.Icon;
 
 import org.jdom2.Element;
 
-import ru.nest.awt.strokes.ArrowStroke;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
@@ -29,15 +28,16 @@ import ru.nest.jvg.shape.JVGTextField;
 import ru.nest.jvg.shape.paint.ColorDraw;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
-import satis.toi.TOIBuilder;
-import satis.toi.TOIObject;
-import satis.toi.factory.TOIDefaultFactory;
-import satis.toi.objects.TOIArrowPathElement;
-import satis.toi.objects.TOIGroup;
-import satis.toi.objects.TOIImage;
-import satis.toi.objects.TOIMultiArrowPath;
-import satis.toi.objects.TOIText;
-import satis.toi.objects.TOITextPath;
+import ru.nest.strokes.ArrowStroke;
+import ru.nest.toi.TOIBuilder;
+import ru.nest.toi.TOIObject;
+import ru.nest.toi.factory.TOIDefaultFactory;
+import ru.nest.toi.objects.TOIArrowPathElement;
+import ru.nest.toi.objects.TOIGroup;
+import ru.nest.toi.objects.TOIImage;
+import ru.nest.toi.objects.TOIMultiArrowPath;
+import ru.nest.toi.objects.TOIText;
+import ru.nest.toi.objects.TOITextPath;
 
 public class TOIParser implements JVGParserInterface {
 	private JVGFactory factory;

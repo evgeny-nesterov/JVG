@@ -82,7 +82,6 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.layout.VerticalBagLayout;
 import javax.swing.menu.WMenuItem;
 
 import org.jdom2.Element;
@@ -113,6 +112,7 @@ import ru.nest.jvg.resource.JVGResources;
 import ru.nest.jvg.shape.JVGComplexShape;
 import ru.nest.jvg.shape.JVGShape;
 import ru.nest.jvg.shape.paint.Draw;
+import ru.nest.layout.VerticalBagLayout;
 
 public class JVGEditor extends JFrame {
 	private static final long serialVersionUID = 6614457751885122625L;

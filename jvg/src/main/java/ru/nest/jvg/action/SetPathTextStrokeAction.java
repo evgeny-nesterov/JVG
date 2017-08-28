@@ -2,13 +2,13 @@ package ru.nest.jvg.action;
 
 import java.awt.Font;
 
-import ru.nest.awt.strokes.TextStroke;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.resource.FontResource;
 import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
+import ru.nest.strokes.TextStroke;
 
 public class SetPathTextStrokeAction extends SetPathStrokeAction<TextStroke> {
 	public final static int TYPE_TEXT = 1;

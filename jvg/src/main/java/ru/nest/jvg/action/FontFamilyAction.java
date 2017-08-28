@@ -8,7 +8,6 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import ru.nest.awt.strokes.TextStroke;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
@@ -18,6 +17,7 @@ import ru.nest.jvg.shape.JVGPath;
 import ru.nest.jvg.shape.JVGStyledText;
 import ru.nest.jvg.shape.JVGTextField;
 import ru.nest.jvg.undoredo.PropertyUndoRedo;
+import ru.nest.strokes.TextStroke;
 
 public class FontFamilyAction extends JVGAction {
 	public FontFamilyAction(String nm, String family) {

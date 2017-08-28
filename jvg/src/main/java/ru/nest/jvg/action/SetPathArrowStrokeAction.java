@@ -1,10 +1,10 @@
 package ru.nest.jvg.action;
 
-import ru.nest.awt.strokes.ArrowStroke;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
+import ru.nest.strokes.ArrowStroke;
 
 public class SetPathArrowStrokeAction extends SetPathStrokeAction<ArrowStroke> {
 	public final static int TYPE_DIRECTION = 1;

@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import ru.nest.awt.strokes.ArrowStroke;
 import ru.nest.jvg.Filter;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.actionarea.JVGActionArea;
@@ -31,6 +30,7 @@ import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.PainterFilter;
+import ru.nest.strokes.ArrowStroke;
 
 public class JVGGroupPath extends JVGPath {
 	public final static int EDIT_MODE__NONE = 0;

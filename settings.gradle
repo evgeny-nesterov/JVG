@@ -1,2 +1,2 @@
 rootProject.name = 'jvg'
-include ':jvg', ':hiscript', ':toi', ':satisui', ':satisutils'
+include ':jvg', ':hiscript', ':toi', ':satisui'

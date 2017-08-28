@@ -36,7 +36,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
-import javax.swing.plaf.metal.MetalSliderUI;
+
+import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
 
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.editor.Images;
@@ -53,8 +54,6 @@ import ru.nest.jvg.undoredo.AddUndoRedo;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
 import ru.nest.jvg.undoredo.RemoveUndoRedo;
 import ru.nest.jvg.undoredo.ShapeChangedUndoRedo;
-
-import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
 
 public class MarkerEditorAction extends EditorAction {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

@@ -32,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.event.UndoableEditEvent;
 
+import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
+
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.SelectionRotater;
 import ru.nest.jvg.editor.Images;
@@ -47,8 +49,6 @@ import ru.nest.jvg.undoredo.AddUndoRedo;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
 import ru.nest.jvg.undoredo.RemoveUndoRedo;
 import ru.nest.jvg.undoredo.ShapeChangedUndoRedo;
-
-import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
 
 public class LassoEditorAction extends EditorAction {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

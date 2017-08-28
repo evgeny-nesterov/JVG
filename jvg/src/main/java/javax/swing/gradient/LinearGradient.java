@@ -2,8 +2,8 @@ package javax.swing.gradient;
 
 import java.awt.Color;
 
+import ru.nest.jvg.CommonUtil;
 import ru.nest.jvg.resource.Resource;
-import ru.nest.util.CommonUtil;
 
 public class LinearGradient extends Gradient {
 	public LinearGradient(float[] fractions, Resource<Color>[] colors, MultipleGradientPaint.CycleMethodEnum cycleMethod, float x1, float y1, float x2, float y2) {

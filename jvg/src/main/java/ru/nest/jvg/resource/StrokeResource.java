@@ -4,7 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Stroke;
 
-import ru.nest.awt.strokes.TextStroke;
+import ru.nest.strokes.TextStroke;
 
 public class StrokeResource<V extends Stroke> extends Resource<V> {
 	public final static StrokeResource DEFAULT = new StrokeResource(1);

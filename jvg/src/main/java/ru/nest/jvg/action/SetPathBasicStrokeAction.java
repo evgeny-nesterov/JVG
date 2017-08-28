@@ -2,11 +2,11 @@ package ru.nest.jvg.action;
 
 import java.awt.BasicStroke;
 
+import ru.nest.jvg.CommonUtil;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
-import ru.nest.util.CommonUtil;
 
 public class SetPathBasicStrokeAction extends SetPathStrokeAction<BasicStroke> {
 	public final static int TYPE_LINE_WIDTH = 1;

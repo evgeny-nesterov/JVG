@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.BorderFactory;
-import javax.swing.FontComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,6 +24,7 @@ import javax.swing.WComboBox;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import ru.nest.fonts.FontComboBox;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.resource.FontResource;
 import ru.nest.jvg.resource.JVGResources;

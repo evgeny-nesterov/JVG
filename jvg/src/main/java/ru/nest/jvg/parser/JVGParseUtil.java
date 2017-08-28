@@ -17,13 +17,13 @@ import javax.swing.border.LineBorder;
 
 import org.jdom2.Element;
 
-import ru.nest.awt.strokes.ArrowStroke;
-import ru.nest.awt.strokes.TextStroke;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.geom.MutableGeneralPath;
 import ru.nest.jvg.resource.ColorResource;
 import ru.nest.jvg.resource.FontResource;
 import ru.nest.jvg.resource.Resource;
+import ru.nest.strokes.ArrowStroke;
+import ru.nest.strokes.TextStroke;
 
 public class JVGParseUtil {
 	public final static String ID_PREFIX = "$";

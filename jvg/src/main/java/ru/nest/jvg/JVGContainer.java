@@ -16,8 +16,6 @@ import ru.nest.jvg.event.JVGEventMulticaster;
 import ru.nest.jvg.event.JVGMouseEvent;
 import ru.nest.jvg.event.JVGPeerEvent;
 import ru.nest.jvg.resource.Script;
-import ru.nest.jvg.shape.JVGGroup;
-import ru.nest.jvg.shape.JVGPath;
 
 public class JVGContainer extends JVGComponent {
 	public JVGContainer() {
