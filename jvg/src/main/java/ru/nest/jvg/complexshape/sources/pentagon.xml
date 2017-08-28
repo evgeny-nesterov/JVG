@@ -1,0 +1,81 @@
+<shape>
+	<info>
+		<name>Пятиугольник</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x" value="40" argument="yes" />
+		<var id="y" value="40" argument="yes" />
+		<var id="a" value="50" argument="yes" />
+
+		<var id="angle">
+			<get>72 * PI / 180.0</get>
+		</var>
+		<var id="phase">
+			<get>angle / 2.0</get>
+		</var>
+
+		<var id="x1">
+			<get>x</get>
+		</var>
+		<var id="x2">
+			<get>x + a * sin(angle)</get>
+		</var>
+		<var id="x3">
+			<get>x + a * sin(2 * angle)</get>
+		</var>
+		<var id="x4">
+			<get>x - a * sin(2 * angle)</get>
+		</var>
+		<var id="x5">
+			<get>x - a * sin(angle)</get>
+		</var>
+		<var id="cx">
+			<get>x</get>
+			<set param="x">x</set>
+		</var>
+
+		<var id="y1">
+			<get>y - a</get>
+			<set param="a">y - $</set>
+		</var>
+		<var id="y2">
+			<get>y - a * cos(angle)</get>
+		</var>
+		<var id="y3">
+			<get>y - a * cos(2 * angle)</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x4" y="y3" />
+		<lineto x="x5" y="y2" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y3" />
+		<point x="x5" y="y2" />
+	</bounds>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x3" y="y3" type="server" />
+		<connection x="x4" y="y3" type="server" />
+		<connection x="x5" y="y2" type="server" />
+		<connection x="x" y="y" type="server" />
+	</connections>
+
+	<manage>
+		<point x="cx" y="y1" />
+	</manage>
+
+	<point-on-add x="x" y="y" />
+</shape>

@@ -1,0 +1,76 @@
+<shape>
+	<info>
+		<name>Прямой параллелепипед</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="110" argument="yes" />
+		<var id="y2" value="90" argument="yes" />
+		<var id="w" value="10" argument="yes" />
+		<var id="h" value="10" argument="yes" />
+
+		<var id="_x1">
+			<get>x1 + ((w >= 0) ? w : 0)</get>
+		</var>
+		<var id="_y1">
+			<get>y1 - ((h >= 0) ? h : 0)</get>
+		</var>
+		<var id="_x2">
+			<get>x2 + ((w >= 0) ? w : 0)</get>
+			<set param="w">$ - x2</set>
+		</var>
+		<var id="_y2">
+			<get>y2 - ((h >= 0) ? h : 0)</get>
+			<set param="h">y2 - $</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x1" y="y2" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x1" y="y1" />
+
+		<moveto x="x1" y="y1" />
+		<lineto x="_x1" y="_y1" />
+		<lineto x="_x2" y="_y1" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x1" y="y1" />
+
+		<moveto x="x2" y="y2" />
+		<lineto x="_x2" y="_y2" />
+		<lineto x="_x2" y="_y1" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x2" y="y2" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y2" />
+		<point x="x2" y="y2" />
+		<point x="x2" y="y1" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y2" />
+		<point x="x2" y="y2" />
+		<point x="x2" y="y1" />
+		<point x="_x2" y="_y2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x1" y="y2" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="(y1+y2)/2" type="server" />
+		<connection x="x1" y="(y1+y2)/2" type="server" />
+		<connection x="x2" y="(y1+y2)/2" type="server" />
+		<connection x="(x1+x2)/2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="y2" type="server" />
+	</connections>
+</shape>

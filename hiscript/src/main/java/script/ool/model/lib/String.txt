@@ -1,0 +1,45 @@
+class String {
+  static {
+    System.loadLib("StringImpl.class");
+  }
+
+  private final char[] chars;
+
+  public String() {
+    chars = new char[0];
+  }
+
+  public String(char[] c) {
+    chars = c;
+  }
+
+  public String(String str) {
+    chars = str.chars;
+  }
+
+  public char[] getChars() {
+    return chars;
+  }
+
+  public char charAt(int pos) {
+    return chars[pos];
+  }
+
+  public native int length();
+
+  public native int indexOf(String s, int fromIndex);
+
+  public native int lastIndexOf(String s, int fromIndex);
+
+  public native String substring(int beginIndex, int endIndex);
+
+  public native String toLowerCase();
+
+  public native String toUpperCase();
+
+  public native String replace(char c1, char c2);
+
+  public native String trim();
+
+  public native boolean equals(Object o);
+}

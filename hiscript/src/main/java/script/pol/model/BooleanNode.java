@@ -1,0 +1,23 @@
+package script.pol.model;
+
+public class BooleanNode extends Node {
+	public BooleanNode(boolean value) {
+		super("boolean");
+		this.value = value;
+	}
+
+	private boolean value;
+
+	public boolean getBoolean() {
+		return value;
+	}
+
+	public void compile() throws ExecuteException {
+	}
+
+	public void execute(RuntimeContext ctx) throws ExecuteException {
+		ctx.value.type = Types.BOOLEAN;
+		ctx.value.dimension = 0;
+		ctx.value.bool = value;
+	}
+}

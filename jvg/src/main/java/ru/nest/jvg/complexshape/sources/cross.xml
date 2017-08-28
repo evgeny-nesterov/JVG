@@ -1,0 +1,83 @@
+<shape>
+	<info>
+		<name>Крест</name>
+		<descr>Настраивается ширина и размер.</descr>
+	</info>
+	<variables>
+		<var id="x" value="40" argument="yes" />
+		<var id="y" value="40" argument="yes" />
+		<var id="width" value="40" argument="yes" />
+		<var id="size" value="10" argument="yes" />
+
+		<var id="x1">
+			<get>x - width</get>
+		</var>
+		<var id="x2">
+			<get>x - size</get>
+		</var>
+		<var id="x3">
+			<get>x + size</get>
+		</var>
+		<var id="x4">
+			<get>x + width</get>
+			<set param="width">$ - x</set>
+		</var>
+
+		<var id="y1">
+			<get>y - width</get>
+		</var>
+		<var id="y2">
+			<get>y - size</get>
+		</var>
+		<var id="y3">
+			<get>y + size</get>
+			<set param="size">$ - y</set>
+		</var>
+		<var id="y4">
+			<get>y + width</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x2" y="y1" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x1" y="y2" />
+		<lineto x="x1" y="y3" />
+		<lineto x="x2" y="y3" />
+		<lineto x="x2" y="y4" />
+		<lineto x="x3" y="y4" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x4" y="y3" />
+		<lineto x="x4" y="y2" />
+		<lineto x="x3" y="y2" />
+		<lineto x="x3" y="y1" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x2" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x1" y="y2" />
+		<point x="x1" y="y3" />
+		<point x="x2" y="y3" />
+		<point x="x2" y="y4" />
+		<point x="x3" y="y4" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y3" />
+		<point x="x4" y="y2" />
+		<point x="x3" y="y2" />
+		<point x="x3" y="y1" />
+	</bounds>
+
+	<manage>
+		<point x="x4" y="y3" />
+	</manage>
+
+	<connections>
+		<connection x="x" y="y" type="server" />
+		<connection x="x1" y="y" type="server" />
+		<connection x="x4" y="y" type="server" />
+		<connection x="x" y="y1" type="server" />
+		<connection x="x" y="y4" type="server" />
+	</connections>
+</shape>

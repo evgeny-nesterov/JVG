@@ -1,0 +1,146 @@
+<shape>
+	<info>
+		<name>Стрелка</name>
+		<descr>Стрелка, настраиваемая по двум точкам. Настраивается ширина и наконечник.</descr>
+	</info>
+	<variables>
+		<var id="startX" value="0" argument="yes" />
+		<var id="startY" value="0" argument="yes" />
+		<var id="endX" value="1" argument="yes" />
+		<var id="endY" value="1" argument="yes" />
+		<var id="width" value="5" argument="yes" />
+		<var id="needleLength" value="15" argument="yes" />
+		<var id="needleWidth" value="10" argument="yes" />
+
+		<var id="radius">
+			<get>veclen(startX, startY, endX, endY)</get>
+		</var>
+		<var id="cos">
+			<get>(radius != 0) ? (endX - startX) / radius : 0</get>
+		</var>
+		<var id="sin">
+			<get>(radius != 0) ? (endY - startY) / radius : 1</get>
+		</var>
+		<var id="needle_ort_dx">
+			<get>needleWidth * sin</get>
+		</var>
+		<var id="needle_ort_dy">
+			<get>needleWidth * cos</get>
+		</var>
+		<var id="ort_dx">
+			<get>max(min(width * sin, abs(needle_ort_dx)), -abs(needle_ort_dx))</get>
+		</var>
+		<var id="ort_dy">
+			<get>max(min(width * cos, abs(needle_ort_dy)), -abs(needle_ort_dy))</get>
+		</var>
+		<var id="pointer_len">
+			<get>radius - ((needleLength > 5) ? needleLength : 5)</get>
+		</var>
+		<var id="koef">
+			<get>(radius != 0) ? pointer_len / radius : 0</get>
+		</var>
+		<var id="pointer_endX">
+			<get>startX + koef * (endX - startX)</get>
+		</var>
+		<var id="pointer_endY">
+			<get>startY + koef * (endY - startY)</get>
+		</var>
+		<var id="centerX">
+			<get>(startX + pointer_endX) / 2</get>
+		</var>
+		<var id="centerY">
+			<get>(startY + pointer_endY) / 2</get>
+		</var>
+
+		<var id="x1">
+			<get>startX - ort_dx</get>
+		</var>
+		<var id="y1">
+			<get>startY + ort_dy</get>
+		</var>
+		<var id="x2">
+			<get>pointer_endX - ort_dx</get>
+		</var>
+		<var id="y2">
+			<get>pointer_endY + ort_dy</get>
+		</var>
+
+		<!-- Manage point: needle length and width -->
+		<var id="tmp" />
+		<var id="x3">
+			<get>pointer_endX - needle_ort_dx</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y3">
+			<get>pointer_endY + needle_ort_dy</get>
+			<set param="needleWidth">orth(endX, endY, startX, startY, tmp, $)</set>
+			<set param="needleLength">ortl(endX, endY, startX, startY, tmp, $)</set>
+		</var>
+
+		<!-- Next point is (endx, endY) -->
+
+		<var id="x4">
+			<get>pointer_endX + needle_ort_dx</get>
+		</var>
+		<var id="y4">
+			<get>pointer_endY - needle_ort_dy</get>
+		</var>
+		<var id="x5">
+			<get>pointer_endX + ort_dx</get>
+		</var>
+		<var id="y5">
+			<get>pointer_endY - ort_dy</get>
+		</var>
+		<var id="x6">
+			<get>startX + ort_dx</get>
+		</var>
+		<var id="y6">
+			<get>startY - ort_dy</get>
+		</var>
+
+		<!-- Manage point: pointer width -->
+		<var id="widthX">
+			<get>centerX - ort_dx</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="widthY">
+			<get>centerY + ort_dy</get>
+			<set param="width">orth(endX, endY, startX, startY, tmp, $)</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x3" y="y3" />
+		<lineto x="endX" y="endY" />
+		<lineto x="x4" y="y4" />
+		<lineto x="x5" y="y5" />
+		<lineto x="x6" y="y6" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="endX" y="endY" />
+		<point x="x4" y="y4" />
+		<point x="x5" y="y5" />
+		<point x="x6" y="y6" />
+	</bounds>
+
+	<manage>
+		<point x="widthX" y="widthY" />
+		<point x="x3" y="y3" />
+		<point x="startX" y="startY" />
+		<point x="endX" y="endY" />
+	</manage>
+
+	<connections>
+		<connection x="startX" y="startY" type="client" />
+		<connection x="endX" y="endY" type="client" />
+	</connections>
+
+	<point-on-add x="endX" y="endY" />
+</shape>

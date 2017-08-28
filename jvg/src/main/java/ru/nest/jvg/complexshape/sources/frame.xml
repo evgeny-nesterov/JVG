@@ -1,0 +1,92 @@
+<shape>
+	<info>
+		<name>Рамка</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x4" value="80" argument="yes" />
+		<var id="y4" value="80" argument="yes" />
+		<var id="delta" value="20" argument="yes" />
+
+		<var id="minx">
+			<get>min(x1, x4)</get>
+		</var>
+		<var id="maxx">
+			<get>max(x1, x4)</get>
+		</var>
+		<var id="miny">
+			<get>min(y1, y4)</get>
+		</var>
+		<var id="maxy">
+			<get>max(y1, y4)</get>
+		</var>
+
+		<var id="d">
+			<get>max(0, min(delta, min(abs(x1 - x4) / 2, abs(y1 - y4) / 2)))</get>
+		</var>
+
+		<var id="cy">
+			<get>(y1 + y4) / 2</get>
+		</var>
+
+		<var id="x2">
+			<get>minx + d</get>
+		</var>
+		<var id="x3">
+			<get>maxx - d</get>
+			<set param="delta">maxx - $</set>
+		</var>
+
+		<var id="y2">
+			<get>miny + d</get>
+		</var>
+		<var id="y3">
+			<get>maxy - d</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="minx" y="miny" />
+		<lineto x="minx" y="maxy" />
+		<lineto x="maxx" y="maxy" />
+		<lineto x="maxx" y="miny" />
+		<lineto x="minx" y="miny" />
+
+		<moveto x="x2" y="y2" />
+		<lineto x="x3" y="y2" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x2" y="y3" />
+		<lineto x="x2" y="y2" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+		<point x="x3" y="cy" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x1" y="y4" type="server" />
+		<connection x="x4" y="y1" type="server" />
+		<connection x="x4" y="y4" type="server" />
+
+		<connection x="x1" y="(y1+y4)/2" type="server" />
+		<connection x="(x1+x4)/2" y="y1" type="server" />
+		<connection x="(x1+x4)/2" y="y4" type="server" />
+		<connection x="x4" y="(y1+y4)/2" type="server" />
+	</connections>
+
+	<point-on-add x="50" y="10" />
+</shape>

@@ -1,0 +1,1397 @@
+// TODO: russian symbols
+
+// TODO: invalid access
+{
+	class A {
+		private String b = "i'm private";
+	}
+	A a = new A();
+	System.println("a.b=" + a.b);
+}
+
+// check local class name
+{
+	{
+		class A{}
+		System.println("A ¹1: " + new A().getClass().getFullName());
+	}
+	{
+		class A{}
+		System.println("A ¹2: " + new A().getClass().getFullName());
+	}
+}
+
+// Test Class.forName
+{
+	class NewClass {
+		static class A {
+		}     
+	}
+	
+	NewClass.A a = new NewClass.A();
+	Class c1 = Class.forName("@root$0NewClass$A");
+	Class c2 = a.getClass();
+	System.println("NewClass.A class full name: " + c1.getFullName() + ", classes equals = " + (c1 == c2));
+}
+
+//==========================================================================================
+//==========================================================================================
+//==========================================================================================
+long startTime = System.time();
+System.println("Start time: " + System.formatDate(startTime, "dd-MM-yyyy HH:mm:ss") + "\n");
+
+class Util {
+  static int counter = 1;
+  public static void header(String header) {
+    if(counter > 1) {
+      System.println("\n");
+    }
+    System.println("************************************************");
+    System.println("* [" + counter + "] " + header);
+    System.println("************************************************");
+    counter++;
+  }
+
+  public static void assert(String descr, String result, String actualResult) {
+     boolean equals = false;
+     if(result == null || actualResult == null) {
+       equals = result == actualResult;
+     } else {
+       equals = result.equals(actualResult);
+     }
+
+     System.print("\t" + descr + ": ");
+     if(!equals) {
+       System.println("[ERROR]");
+       System.println("\t" + result);
+       System.println("\t" + actualResult);
+     } else {
+       System.println("[OK]");
+     }
+  }
+}
+
+/////////////////////
+// Test null argument
+/////////////////////
+Util.header("CHECK NULL ARGUMENT");
+{
+	class NullArg {
+  		String a(String arg) {
+    		return "" + (arg);
+  		}
+	}
+	NullArg na = new NullArg();
+	Util.assert("result", na.a(null), "null");
+}
+
+/////////////////
+// Test toString
+/////////////////
+Util.header("CHECK Object.toString()");
+{
+	int[] intArray = {1,2,3};
+	System.println("intArray: " + intArray + ", intArray.toString(): " + intArray.toString());
+
+	class ChangeToString {
+		public String toString() {
+    		return "enter in toString method";
+  		}
+	}
+	System.println("new ChangeToString(): " + new ChangeToString());
+	System.println("new ChangeToString().toString(): " + new ChangeToString().toString());
+}
+
+/////////////////
+// Test comments
+/////////////////
+Util.header("COMMENTS");
+{
+	/*
+		check
+		comments
+	*/
+	//
+	//  Check comments
+	//
+}
+
+/////////////////
+// Thread
+/////////////////
+Util.header("THREADS");
+{
+	final Object lock = new Object();
+	new Thread() {
+  		public void run() {
+	    	sleep(100);
+    		System.println("\tIn thread after sleeping: " + System.time());
+  		}
+	};//.start();
+	System.println("\tSleeping 200 ms: " + System.time());
+	Thread.currentThread().sleep(200);
+	System.println("\tWake up: " + System.time());
+}
+
+////////////////////
+// Overriden method
+////////////////////
+Util.header("OVERRIDEN METHOD");
+{
+	final String finalString = "'final string'";
+	class A {
+  		void a() {
+    		System.println("\tinitial method: " + finalString);
+  		}
+	}
+	class AA extends A {
+  		void a() {
+    		System.println("\toverriden method: " + finalString);
+  		}
+	}
+	A a = new AA();
+	a.a();
+}
+
+//////////////////////
+// Test inner classes
+//////////////////////
+Util.header("INNER CLASSES");
+{
+	class AAA {
+  		public int get() {
+    		final int j = 10;
+    		class BBB {
+      			public int get() {
+        			final int i = 1;
+        			{
+          				// in method block
+          				class CCC {
+            				int get() {
+              					return i - j;
+            				}
+          				}
+          				CCC ccc = new CCC();
+          				System.println("\tfirst CCC return: " + ccc.get());
+        			}
+
+					// in method
+        			class CCC {
+          				int get() {
+            				return i + j;
+          				}
+        			}
+
+        			CCC ccc = new CCC();
+        			return ccc.get();
+      			}
+    		}
+
+    		BBB bbb = new BBB();
+    		return bbb.get();
+  		}
+  
+  		public Object getUnknownClass() {
+  			class Unknown {
+  	  			public String toString() {
+  	    			return "this is unknown class";
+  	  			}
+  			}
+  			return new Unknown();
+  		}
+	}
+	AAA aa = new AAA();
+	System.println("\tsecond CCC return: " + aa.get());
+	System.println("\ttest unknown class: " + aa.getUnknownClass());
+
+	final int topX = 100;
+	final class A1 {
+  		int ax = 123;
+  		class B1 {
+    		int bx = 456;
+    		class C1 {
+      			int cx = 789;
+      			void print() {
+        			System.println("\tHi from A1.B1.C1.print()");
+        			System.println("\ttopX=" + topX);
+        			System.println("\tax=" + ax);
+        			System.println("\tbx=" + bx);
+        			System.println("\tcx=" + cx);
+      			}
+    		}
+    		C1 c = new C1();
+  		}
+  		B1 b = new B1();
+	}
+	A1 a = new A1();
+	System.println("\t" + a + ", " + a.b + ", " + a.b.c);
+	a.b.c.print();
+
+	//--- next test ---
+	class T1 {
+  		int x1 = 1;
+  		T1(int x) {
+    		x1 = x;
+    		System.println("T1: x1 = " + x1);
+  		}
+  
+  		class T2 {
+    		int x2 = 2;
+    		T2(int x) {
+      			x2 = x;
+      			System.println("T2: x1 = " + x1);
+      			System.println("T2: x2 = " + x2);
+      			System.println("-----");
+    		}
+  		}
+	}
+	T1.T2 t21 = new T1(1).new T2(11);
+
+	T1 t1 = new T1(2);
+	T1.T2 t22 = t1.new T2(22);
+
+	t1 = new T1(3);
+	T1.T2[] t23 = t1.new T2[1];
+	t23[0] = t1.new T2(33);
+}
+
+//////////////////////////
+// Test anonymous classes
+//////////////////////////
+Util.header("ANONYMOUS CLASSES");
+{
+	class Anonym {
+  		public int getAnonym() {
+    		return 1;
+  		}
+	}
+	
+	System.println("\tnew Anonym().getAnonym(): " + new Anonym().getAnonym());
+	System.println("\tnew Anonym().getAnonym(){...}: " + new Anonym() {
+  		public int getAnonym() {
+    		return 2;
+  		}
+	}.getAnonym());
+}
+
+//////////////////
+// Test ArrayList
+//////////////////
+Util.header("ArrayList");
+{
+	ArrayList a = new ArrayList();
+	a.add("test1");
+	a.add("to remove");
+	a.add(new Object());
+	a.add("test3");
+	a.remove(1);
+	Object[] ass = a.toArray();
+	String ass0 = (String)ass[0];
+	System.println("\t" + ass.toString() + ": " + ass0 + ", " + ass[1]);
+	System.print("\t");
+	for(int i = 0; i < a.size(); i++) {
+  		System.print("" + a.get(i));
+		if(i != a.size() - 1) {
+    		System.print(", ");
+  		}
+	}
+	System.println("\n\t" + a.toArray()[0]);
+}
+
+///////////////////////
+// Test primitive cast
+///////////////////////
+Util.header("CAST: PRIMITIVES");
+{
+	int i1 = (int)1.5, i11 = 1 + (int)4.1 / 2, i111 = i1 + i11;
+	System.println("\tint i1 = (int)1.5, i11 = 1 + (int)4.1 / 2, i111 = i1 + i11: " + i1 + ", " + i11 + ", " + i111);
+	int i2 = -(int)2.5;
+	System.println("\tint i2=(int)1.6f: " + i2);
+	int i3 = (int)1000L;
+	System.println("\tint i3=(int)1000L: " + i3);
+
+	byte b1 = (byte)130;
+	System.println("\tbyte b1 = (byte)130: " + b1);
+	char c1 = (char)80;
+	System.println("\tchar c1 = (char)80: " + c1);
+}
+
+//////////////
+// Array cast
+//////////////
+Util.header("CAST: ARRAYS");
+{
+	interface IX {}
+	class A4 extends String implements IX {}
+	String[] s = new A4[10];
+	System.println("\t(IX[])s: " + (IX[])s);
+}
+
+////////////////////////////////////////////////////////
+// Differ cast from expression block with only variable
+////////////////////////////////////////////////////////
+Util.header("CAST: DIFFER VAR FROM CAST");
+{
+	System.println("\t2 = " + (1 + (int)1.1));
+	System.println("\t2 = " + (1 + (int)2.1 / 2));
+	System.println("\t0.0 = " + ((int)1.9f + (int)1 - (float)2));
+	System.println("\t2.5 = " + ((int)1.9f + (float)(int)3 / (float)2));
+	int x = 5;
+	System.println("0 = " + (- - + -x + - (int) + (float) - + + + + +(double)x));
+}
+
+////////////////////
+// Test calculation
+////////////////////
+Util.header("CALCULATION");
+{
+	System.println("\t(2 * 6 / 3 + 4 * 5 / (20 - 9 * 2) / 2 = 9: " + (2 * 6 / 3 + 4 * 5 / (20 - 9 * 2) / 2));
+	System.println("\tTrigger: 1 >= 0 ? 1 + 2 : 2 + 3 = 3: " + (1 >= 0 ? 1 + 2 : 2 + 3));
+}
+
+/////////////
+// Test math
+/////////////
+Util.header("MATH");
+{
+	System.println("\tcos(45')=" + Math.cos(Math.toRadians(45)));
+	System.println("\tmax(5, 7)=" + Math.max(5, 7));
+	System.println("\tPI=" + Math.PI);
+	System.println("\tE=" + Math.E);
+}
+
+///////////////////////
+// Test object methods
+///////////////////////
+Util.header("OBJECT METHODS");
+{
+	class CC{}
+	class C {
+  		int i = 1;
+  		String s  = "string";
+  		CC o = new CC();
+	}
+	C c = new C();
+	System.println("\ttoString: " + c.toString() + ", hashCode: " + c.hashCode());
+	C cloneC = (C)c.clone();
+	// TODO: error on print c.o (CC.toString)
+	//System.println("\tsrc: i=" + c.i + ", s=" + c.s + ", o=" + c.o + ", equals: " + cloneC.o.equals(c.o));
+	c.i = 2;
+	c.s = "empty";
+	c.o = new CC();
+	System.println("\tsrc: i=" + c.i + ", s=" + c.s + ", o=" + c.o + ", equals: " + cloneC.o.equals(c.o));
+	System.println("\tclone: i=" + cloneC.i + ", s=" + cloneC.s + ", o=" + cloneC.o);
+
+	class C1 extends C {
+  		int i = 123;
+	}
+	C1 c1 = new C1();
+	System.println("\textended: i=" + c1.i + ", s=" + c1.s + ", o=" + c1.o);
+}
+
+///////////////////////////////////////////////////////
+// Test class extention, methods and fields overwrition
+///////////////////////////////////////////////////////
+Util.header("EXTENDS, OWERWRITE METHODS AND FIELDS");
+{
+	class OverwritedClass {
+  		int a = 1;
+  		int c = 111;
+
+  		int getA() {
+    		return 11;
+  		}
+
+  		String get() {
+    		return "class A";
+  		}
+	}
+
+	class OverwriteClass extends OverwritedClass {
+  		int b = 2;
+  		int c = 222;
+  		
+  		int getB() {
+    		return 22;
+  		}
+  
+  		String get() {
+    		return "class B";
+  		}
+	}
+	OverwritedClass a = new OverwritedClass();
+	OverwriteClass b = new OverwriteClass();
+	System.println("\tOverwritedClass: a=" + a.a + ", getA()=" + a.getA() + "; get()=" + a.get() + ", c=" + a.c);
+	System.println("\tOverwriteClass : a=" + b.a + ", getA()=" + b.getA() + "; get()=" + b.get() + ", c=" + b.c + "; b=" + b.b + ", getB()=" + b.getB());
+}
+
+//////////////
+// Test array
+//////////////
+Util.header("ARRAY");
+{
+	int[] arr[] = new int[][]{{1, 2}, {3, 4, 5}};
+	System.println(arr[0][0] + ", " + arr[0][1] + ", " + arr[1][0] + ", " + arr[1][1] + ", " + new int[][]{{1, 2}, {3, 4, 5}}[1][2]);
+
+	int[] array = new int[10];
+	System.println("\tint[] array = new int[10]: " + array);
+	array[5] = 8;
+	System.println("\tarray[5] = 8: " + array[5]);
+	int a;
+	array[5] %= 3;
+	System.println("\tarray[5] %= 3: " + array[5]);
+	a = array[5];
+	System.println("\ta = array[5]: " + a);
+	int len = array.length;
+	System.println("\tint len = array.length: " + len);
+
+	String[][] as = new String[2][];
+	as[0] = new String[10];
+	as[1] = new String[20];
+	as[0][9] = "0-9";
+	as[1][19] = "1-19";
+	System.println("\tas[0][9]='" + as[0][9] + "'");
+	System.println("\tas[1][19]='" + as[1][19] + "'");
+}
+
+///////////////////
+// Test array copy
+///////////////////
+Util.header("ARRAY COPY");
+{
+	int[] x1 = new int[8];
+	x1[5] = 123;
+	x1[6] = 321;
+
+	for(int i = 0; i < x1.length; i++) {
+  		System.println("\tx1[" + i + "]=" + x1[i]);
+	}
+
+	int[] x2 = new int[2];
+	System.arraycopy(x1, 5, x2, 0, 2);
+
+	System.println("\tSystem.arraycopy(x1, 5, x2, 0, 2)");
+	for(int i = 0; i < x2.length; i++) {
+  		System.println("\tx2[" + i + "]=" + x2[i]);
+	}
+}
+
+///////////////
+// Test switch
+///////////////
+Util.header("SWITCH");
+{
+	int value = 3;
+	System.println("\tint value = 3: ");
+	switch(value) {
+  		case 0:
+    		System.println("\tcase 0");
+  		case 1:
+	    	System.println("\tcase 1");
+
+  		case 2:
+    		System.println("\tcase 3");
+	    	break;
+
+  		case 3:
+    		System.println("\tcase 3");
+
+  		case 4:
+    		System.println("\tcase 4");
+    		break;
+
+  		default:
+    	System.println("\tdefault");
+	}
+}
+
+///////////
+// Test if
+///////////
+Util.header("IF");
+{
+	if(1 > 2)
+    	System.println("if(1 > 2)");
+	else if(1 >= 1)
+    	System.println("\telse if(1 >= 1)");
+	else
+    	System.println("\telse");
+}
+
+//////////////
+// Test while
+//////////////
+{
+	Util.header("WHILE");
+	int x = 0;
+	while(x < 3) {
+  	System.println("\twhile(x < 3): x=" + x);
+  	x = x + 1;
+	}
+}
+
+////////////////////////////
+// Test for, post increment
+////////////////////////////
+Util.header("FOR: post increment");
+{
+	for(int i = 0, j = 5; i < 5 && j >= 0; i++, j--) {
+  		System.println("\tfor(int i = 0, j = 5; i < 5, j >= 0; i++, j--): i=" + i + ", j=" + j);
+	}
+}
+
+////////////////////////////////////////
+// Test class: declaration, new object, constructor initialization, constructor arguments,
+// method invocation, method arguments, return from method
+////////////////////////////////////////
+Util.header("CLASS DECLARATION");
+{
+	class TestXL {
+  		int field = 4;
+
+  		TestXL(int a, boolean is) {
+    		if(is)
+      			field = a;
+    		else
+      			field = a - 2 * a;
+    		System.println("\t\tTest> constructor: a=" + a);
+  		}
+
+  		int calc() {
+    		return 1 + 2 * 3 / (2 - 3);
+  		}
+
+  		int get() {
+    		System.println("\t\tTest> method: get");
+    		class Inner {
+      			Inner() {
+      			}
+
+      			int get() {
+        			return 0 - 1;
+      			}
+    		}
+    		return field - calc() * new Inner().get();
+  		}
+	}
+
+	TestXL xc = new TestXL(5, false);
+	System.println("\tTest xc = new Test(5, false): " + xc);
+	int valueXC = xc.get();
+	System.println("\tint value = xc.get(): " + valueXC);
+}
+
+//////////////
+// Test label
+//////////////
+Util.header("LABEL");
+{
+	LABEL: {
+  		while(true) break LABEL;
+  		System.println("\tERROR !!!");
+  		System.exit();
+	}
+}
+
+/////////////////////
+// Check performance
+/////////////////////
+Util.header("FOR: check performance");
+{
+	System.print("\t");
+	long time = System.time();
+	for(int i = 0; i < 100000; i++) 
+		if(i % 1000 == 999)
+			System.print("*");
+	System.println("\n\t[DONE] " + (System.time() - time) / 1000.0 + " sec");
+}
+
+////////////
+// Test try
+////////////
+Util.header("TRY CATCH FINALLY");
+{
+	class Try extends String {
+  		public void hope1(int i) {
+    		hope2(i);
+  		}
+  
+  		public void hope2(int i) {
+    		if(i < 2) {
+      			hope1(i + 1);
+      			return;
+    		}
+
+    		try {
+      			System.println("\tint x = 1 / 0");
+      			int x = 1 / 0;
+      			System.println("\tafter 'int x = 1 / 0'");
+    		} catch(Exception exc) {
+      			System.println("\t[error: " + exc.getMessage() + "]");
+      			exc.printStackTrace();
+    		} finally {
+      			System.println("\t[finally]");
+    		}
+  		}
+	}
+	new Try().hope1(0);
+
+	try {
+  		throw new Exception("<Exception message>");
+	} catch(Exception exc) {
+  		System.println();
+  		exc.printStackTrace();
+	}
+}
+
+//////////////
+// Test throw
+//////////////
+Util.header("THROW");
+{
+	try{
+  		throw new Exception("<ERROR>");
+	} catch(Exception e) {
+  		e.printStackTrace();
+	}
+}
+
+///////////////////////////
+// Test default constructor
+///////////////////////////
+Util.header("DEFAULT CONSTRUCTOR");
+{
+	class Test { }
+	Test defTest = new Test();
+	System.println("\tdefTest=" + defTest);
+}
+
+///////////////////////////////////
+// Test object field, invoke field
+///////////////////////////////////
+Util.header("OBJECT FIELD");
+{
+	class XX {
+  		int attr1;
+  		int attr2 = 1;
+	}
+
+	XX x = new XX();
+	System.println("\tXX x = new XX(): x.attr1=" + x.attr1 + "x.attr2=" + x.attr2);
+	x.attr1 = 10;
+	System.println("\tx.attr1 = 10: " + x.attr1);
+	x.attr2 += x.attr1;
+	System.println("\tx.attr2 += x.attr1: " + x.attr2);
+}
+
+///////////////
+// Test String
+///////////////
+Util.header("STRING");
+{
+	String str = new String();
+	str.chars = new char[10];
+	for(int i = 0; i < 10; i++)
+  		str.chars[i] = 'A';
+	String copyString = new String(str);
+
+	System.println("\tstr=" + str);
+	System.println("\tnew String(str)=" + copyString);
+	int str_len = copyString.length();
+	System.println("\tcopyString.length()=" + str_len);
+
+	str = "123";
+	System.print("\tstr=" + str);
+	System.println();
+
+	str = new String("12345\n\t    67890");
+	System.println("\tstr=" + str);
+	String str2 = new String(str);
+	str2.chars = str.chars;
+	str2.chars[1] = 'X';
+	System.println("\tstr2=" + str2);
+
+	int LLL = "length".length();
+
+	char c1 = '#';
+	str = c1 + "_" + 1 + 2 + ']';
+	System.println("\tstr=" + str);
+
+	System.println("\t\"abc\".indexOf(\"b\", 0) = " + "abc".indexOf("b", 0));
+	System.println("\t\"abc\".lastIndexOf(\"c\", 2) = " + "abc".lastIndexOf("c", 2));
+	System.println("\t\"abc\".length() = " + "abc".length());
+	System.println("\t\"abc\".substring(1, 2) = " + "abc".substring(1, 2));
+	System.println("\t\"ABC\".toLowerCase() = " + "ABC".toLowerCase());
+	System.println("\t\"abc\".toUpperCase() = " + "abc".toUpperCase());
+	System.println("\t\"abc\".replace('a', '1') = " + "abc".replace('a', '1'));
+	System.println("\t\"abc\".charAt(2) = " + "abc".charAt(2));
+	System.println("\t\" abc \".trim() = " + " abc ".trim());
+}
+
+/////////////
+// Test null
+/////////////
+Util.header("NULL");
+{
+	Object a = new Object();
+	System.println("\ta=" + a + ", isNull=" + (a == null));
+	a = null;
+	System.println("\ta=" + a + ", isNull=" + (a == null));
+	try {
+  		System.println("\tint x = null; // generate exception");
+  		int x = null;
+	} catch(Exception exc) {
+  		exc.printStackTrace();
+	}
+}
+
+///////////////
+// Test script
+///////////////
+Util.header("SCRIPT");
+{
+	String topLevelVar = "HELLO FROM THE TOP!";
+	String script = "System.println(\"\t\ttest: topLevelVar=\" + topLevelVar); //throw new Exception(\"<script>\");";
+	System.println("\t" + script);
+	System.exec(script, false, false);
+	script = "for(int i = 0; i < 30; i++) {System.sleep(80); System.print(\"@\");};";
+	System.println("\t" + script);
+	System.exec(script, false, true);
+
+	int dimension = 20;
+	script = "int scriptVar";
+	for(int i = 0; i < dimension; i++) script = script + "[]";
+	script = script + " = new int";
+	for(int i = 0; i < dimension; i++) script = script + "[2]";
+	script = script + ";";
+	System.println("\texec: " + script);
+	System.exec(script, false, false);
+	System.println("\tscriptVar=" + scriptVar + ", length=" + scriptVar[0][1][0][1].length);
+}
+
+//////////////
+// Test sleep
+//////////////
+Util.header("SLEEP");
+{
+	for(int i = 0; i < 25; i++) {
+  		System.sleep(40);
+  		System.print(".");
+	}
+	System.println(" [OK]");
+}
+
+//////////////////////////////////////
+// Test static field and object field
+//////////////////////////////////////
+Util.header("STATIC FIELDS");
+{
+	class SX {
+  		static int sx = 5;
+  		int ix = 55;
+
+  		static {
+    		sx = 6;
+  		}
+
+  		{
+    		ix = 66;
+  		}
+	}
+
+	System.println("\tSX.sx=" + SX.sx);
+	SX sx = new SX();
+	System.println("\tSX sx = new SX(): sx.ix=" + sx.ix);
+
+	class A3 {
+ 		static int staticField = 1;
+ 		static class AA3 {
+   			void m() {
+     			System.println("\tstaticField=" + staticField);
+   			}
+ 		}
+	}
+	new A3.AA3().m();
+}
+
+////////////////////////////////////////////////
+// Test synchronization, wait and nortification
+////////////////////////////////////////////////
+Util.header("SYNCHRONIZATION, WAIT, NOTIFICATION");
+{
+	final Object lock = new Object();
+	class T extends Thread {
+  		String info; 
+  		T(String i) {
+    		info = i;
+  		}
+  
+  		public void run() {
+    		for(int i = 0; i < 10; i++) {
+       			sleep(10);
+       			System.print(info);
+    		}
+    		
+    		synchronized(lock) {
+      			for(int i = 0; i < 10; i++) {
+         			sleep(100);
+         			System.print("[" + info + "]");
+      			}
+      			lock.notifyAll();
+    		}
+  		}
+	};
+
+	new T("1").start();
+	new T("2").start();
+	for(int i = 0; i < 2; i++) {
+  		synchronized(lock) {
+    		System.println("start wait: ");
+    		lock.wait(10000);
+    		System.println("end wait: ");
+  		}
+	}
+}
+
+/////////////////////////////////////////
+// Test static fields and classes access
+/////////////////////////////////////////
+Util.header("Test static fields and classes access");
+{
+	class A {
+  		static B b = new B();
+  		
+  		static class B {
+    		static C c = new C();
+    		
+    		static class C {
+      			public static void p(int step) {
+        			System.print(step + " | ");
+      			}
+    		}
+  		}
+	}
+	
+	A a = new A();
+	a.b.c.p(1);
+	A.b.c.p(2);
+	A.B.c.p(3);
+	A.B.C.p(4);
+	System.println("" + a.b.c);
+}
+
+/////////////////////////////////////////////
+// Test not static fields and classes access
+/////////////////////////////////////////////
+Util.header("Test not static fields and classes access");
+{
+	class A {
+  		class B {
+    		class C {
+      			public void access() {
+        			System.println("\ta.b.c is accessed");
+      			}
+    		}
+    		C c = new C();
+  		}
+  		B b = new B();
+	}
+	
+	new A().new B().new C().access();
+	A a = new A();
+	System.println("\t" + a.b.c);
+}
+
+/////////////////////////////
+// Test operator 'instanceof'
+/////////////////////////////
+Util.header("Test operator 'instanceof'");
+{
+	class A { }
+	class B extends A{}
+	A a = new A();
+	B b = new B();
+	System.println("a instanceof Object: " + (a instanceof Object));
+	System.println("b instanceof Object: " + (b instanceof Object));
+	System.println("b instanceof A: " + (b instanceof A));
+	System.println("a instanceof B: " + (a instanceof B));
+}
+
+////////////////////////////////////////
+// Initialization order, this and super
+////////////////////////////////////////
+Util.header("Initialization order, this and super");
+{
+	class S {
+  		{
+    		System.println("S<init>");
+  		}
+  		
+  		S(String s) {
+    		System.println("S(String s): " + s);
+  		}
+	}
+	
+	class A extends S {
+  		{
+    		System.println("A6<init>");
+  		}
+  		
+  		A(int x) {
+    		this("[" + x + "]", x);
+    		System.println("A(int x): " + x);
+  		}  
+  		
+  		A(String v, int x) {
+    		super(v);
+    		System.println("A6(String v, int x): " + v + ", " + x);
+  		}
+	}
+	new A(1);
+
+	class B {
+  		int x;
+  		B(int x) {
+    		System.println("B(int x): " + x + ", " + this.x);
+    		this.x = x;
+    		System.println("B(int x): " + x + ", " + this.x + " (after this.x = x)");
+  		}
+		
+		public void print() {
+    		System.println("this.x=" + x + " (before local x)");
+    		int x = 321; 
+    		System.println("local x=" + x);
+    		System.println("this.x=" + this.x + " (after local x)");
+  		}
+	}
+	new B(123).print();
+}
+
+////////////////////////////////////
+// Test super class outbound object
+////////////////////////////////////
+Util.header("Test super class outbound object");
+{
+	class A {
+  		int t = 45;
+  		class B {
+       		int b1 = 67;
+  		}
+  		
+  		class D {
+       		int b2 = 67;
+  		}
+  		
+  		void m() {
+    		final int z = 65;
+    		class D {
+       			int b2 = 90;
+    		}
+    		
+    		Object o = new Object() {
+      			void m() {
+        			Object o2 = new Object() {
+          				void m() {
+            				class C1 extends B {
+            				}
+            				System.println("b1 = " + new C1().b1);
+            				class C2 extends D {
+            				}
+            				System.println("b2 = " + new C2().b2);
+            				System.println("z = " + z);
+            				System.println("t = " + t);
+          				}
+        			};
+        			o2.m();
+      			}
+    		};
+    		o.m();
+  		}
+	}
+	A a = new A();
+	a.m();
+}
+
+///////////////////////////////////////////////////////////////
+// Check logical AND and OR, not all conditions are calculated
+///////////////////////////////////////////////////////////////
+Util.header("Check logical AND and OR, not all conditions are calculated");
+{
+	class A {
+		int b(int i) {
+			System.println("in method " + i);
+			return i + 1;
+		}
+	}
+	A a = new A();
+	System.println("RESULT: " + (a == null && a.b(1) == 10 || 1 > 0 && a.b(2) == 3));
+}
+
+//*************** ALGORITHMS ************
+
+
+/////////////
+// 1. Braces
+/////////////
+Util.header("ALGIRITHM: Braces");
+public class Braces {
+	public final static int VALUE = 0;
+
+	public final static int BRACE_LEFT = 1;
+
+	public final static int BRACE_RIGHT = 2;
+
+	public final static int VALUE_LEFT = 1;
+
+	public final static int VALUE_RIGHT = 2;
+
+	public final static int MULTIPLE = 3;
+
+	private int bracesCount;
+
+	private int blocksCount;
+
+	private int[] braces;
+
+	private int[] values;
+
+	private int[] blockStart;
+
+	private int[] blockEnd;
+
+	private int[] blockIds;
+
+	private int currentId;
+
+	private int count;
+
+	public Braces() {
+	}
+
+	public void findByBlockCount(int blocksCount) {
+		long time = System.time();
+
+		this.blocksCount = blocksCount;
+		bracesCount = 2 * blocksCount;
+		count = 0;
+
+		braces = new int[bracesCount];
+		values = new int[bracesCount];
+		blockIds = new int[bracesCount];
+		blockStart = new int[bracesCount];
+		blockEnd = new int[bracesCount];
+
+		System.println("bloks: " + blocksCount);
+
+		recuse(0, 0, 0);
+
+		System.println("count: " + count + ", time: " + (System.time() - time) + " ms");
+		System.println("==============================================");
+	}
+
+	private void recuse(int index, int leftCount, int leftUnclosedCount) {
+		for(int i = leftCount; i < blocksCount; i++) {
+			braces[index++] = BRACE_LEFT;
+			leftCount++;
+			leftUnclosedCount++;
+
+			for(int j = leftUnclosedCount - 1; j >= 0; j--) {
+				braces[index++] = BRACE_RIGHT;
+
+				if(index == bracesCount) {
+					processBraces();
+				} else {
+					recuse(index, leftCount, j);
+				}
+			}
+			index -= leftUnclosedCount;
+		}
+	}
+
+	private void processBraces() {
+		printBraces();
+		numerateBraces();
+		variateValues(0);
+		count++;
+	}
+
+	private void numerateBraces() {
+		currentId = 0;
+		numerateBraces(0);
+	}
+
+	private int numerateBraces(int index) {
+		while(index != bracesCount) {
+			if(braces[index] != BRACE_LEFT) break;
+			int id = currentId++;
+			blockIds[index] = id;
+			blockStart[id] = index;
+
+			index = numerateBraces(index + 1);
+			
+			blockIds[index] = id;
+			blockEnd[id] = index;
+			index++;
+		}
+
+		return index;
+	}
+
+	private void variateValues(int id) {
+		if(id == blocksCount) {
+			printBlockValues();
+			return;
+		}
+	
+		int i1 = blockStart[id];
+		int i2 = blockEnd[id];
+
+		boolean single = (i1 == 0 && i2 == bracesCount - 1);
+		if(!single) {
+			single = i1 > 0 && i2 < bracesCount - 1;
+			if(single) {
+				single = braces[i1 - 1] == BRACE_LEFT && braces[i2 + 1] == BRACE_RIGHT;
+			}
+		}
+		if(single) {
+			values[id] = VALUE_LEFT;
+			variateValues(id + 1);
+
+			values[id] = VALUE_RIGHT;
+			variateValues(id + 1);
+		} else {
+			values[id] = MULTIPLE;
+			variateValues(id + 1);
+		}
+	}
+
+	private void printBraces() {
+		for(int i = 0; i < bracesCount; i++) {
+			if(braces[i] == BRACE_LEFT) {
+				System.print("(");
+			} else if(braces[i] == BRACE_RIGHT) {
+				System.print(")");
+			}
+		}
+		System.println();
+	}
+
+	private void printBlockValues() {
+		System.print("   ");
+		for(int i = 0; i < bracesCount; i++) {
+			int id = blockIds[i];
+			int valueType = values[id];
+			if(braces[i] == BRACE_LEFT) {
+				if(valueType == VALUE_LEFT) {
+					System.print("x");
+				}
+				System.print("(");
+			} else if(braces[i] == BRACE_RIGHT) {
+				if(braces[i - 1] == BRACE_LEFT) {
+					System.print("xx");
+				}
+				System.print(")");
+				if(valueType == VALUE_RIGHT) {
+					System.print("x");
+				}
+			}
+		}
+		System.print(": " + getValuesCount());
+		System.println();
+	}
+
+	private int getValuesCount() {
+		int count = 0;
+		for(int i = 0; i < bracesCount; i++) {
+			int id = blockIds[i];
+			int valueType = values[id];
+			if(braces[i] == BRACE_LEFT) {
+				if(valueType == VALUE_LEFT) {
+					count++;
+				}
+			} else if(braces[i] == BRACE_RIGHT) {
+				if(braces[i - 1] == BRACE_LEFT) {
+					count += 2;
+				}
+				if(valueType == VALUE_RIGHT) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	private int valuesCount;
+
+	public void findByValuesCount(int valuesCount) {
+		long time = System.time();
+		this.valuesCount = valuesCount;
+
+		count = 0;
+
+		values = new int[valuesCount];
+
+		System.println("values: " + valuesCount);
+
+		recurseValues(0, valuesCount, false);
+
+		System.println("count: " + count + ", time: " + (System.time() - time) + " ms");
+		System.println("==============================================");
+	}
+
+	private void recurseValues(int start, int end, boolean isNext) {
+		int remained = end - start;
+		if(remained == 2 && values[start] != 0) {
+			start = -1;
+			for(int i = 1; i < valuesCount - 1; i++) {
+				if(values[i] == 0) {
+					start = i;
+					break;
+				}
+			}
+
+			end = valuesCount;
+			for(int i = start + 1; i < valuesCount; i++) {
+				if(values[i] != 0) {
+					end = i + 1;
+					break;
+				}
+			}
+
+			if(start != -1) {
+				recurseValues(start, end, true);
+			} else {
+				count++;
+				printValues();
+			}
+			return;
+		}
+
+		if(!isNext && remained >= 3) {
+			// left value
+			values[start + 1]++;
+			values[end - 1]--;
+			recurseValues(start + 1, end, false);
+			values[start + 1]--;
+			values[end - 1]++;
+
+			// right value
+			values[start]++;
+			values[end - 2]--;
+			recurseValues(start, end - 1, false);
+			values[start]--;
+			values[end - 2]++;
+		}
+
+		// multiple blocks
+		if((!isNext && remained >= 4) || (isNext && remained >= 2)) {
+			values[start]++;
+
+			for(int i = start + 1; i < end - 2; i++) {
+				values[i]--;
+				recurseValues(start, i + 1, false);
+				values[i]++;
+			}
+
+			if(isNext) {
+				values[end - 1]--;
+				recurseValues(start, end, false);
+				values[end - 1]++;
+			}
+
+			values[start]--;
+		}
+	}
+
+	private void printValues() {
+		for(int i = 0; i < valuesCount; i++) {
+			if(values[i] > 0) {
+				int braces = values[i];
+				for(int j = 0; j < braces; j++) {
+					System.print("(");
+				}
+			}
+
+			System.print("x");
+
+			if(values[i] < 0) {
+				int braces = -values[i];
+				for(int j = 0; j < braces; j++) {
+					System.print(")");
+				}
+			}
+		}
+		System.println();
+	}
+}
+Braces b = new Braces();
+b.findByBlockCount(2);
+b.findByValuesCount(4);
+
+
+/////////////////////
+// 2. Sum of numbers
+/////////////////////
+Util.header("ALGIRITHM: Sum of numbers");
+public class SumOfNumbers {
+	private int count;
+	private int[] stack;
+	private int stackSize;
+
+	public SumOfNumbers() {
+	}
+
+	public void start(int n) {
+		long time = System.time();
+		count = 0;
+		stackSize = 0;
+		if(stack == null) {
+			stack = new int[n];
+		} else if(stack.length < n) {
+			stack = new int[n];
+		} 
+
+		recurse(1, n);
+
+		System.println("count: " + count + ", time: " + (System.time() - time) + " ms");
+	}
+
+	private void recurse(int startNumber, int n) {
+		if(n == 0) {
+			if(stackSize > 1) {
+				count++;
+				for(int i = 0; i < stackSize; i++) {
+					System.print(stack[i] + " ");
+				}
+				System.println();
+			}
+			return;
+		}
+
+		for(int i = startNumber; i <= n; i++) {
+			stack[stackSize++] = i;
+			recurse(i, n - i);
+			stackSize--;
+		}
+	}
+
+	public static void main(String[] args) {
+		SumOfNumbers s = new SumOfNumbers();
+		s.start(16);
+	}
+}
+SumOfNumbers.main(null);
+
+
+//*************** END *******************
+long endTime = System.time();
+System.println("Time: " + (endTime - startTime) / 1000.0 + " sec");
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Exit
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+System.println("EXIT");
+System.exit();
+

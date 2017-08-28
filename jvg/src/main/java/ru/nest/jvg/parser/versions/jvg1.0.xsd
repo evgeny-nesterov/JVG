@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.nestsoft.ru/jvg1/" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:jvg="http://www.nestsoft.ru/jvg1/">
+	<element name="components" type="jvg:JVGComponents"></element>
+
+	<complexType name="JVGComponents">
+		<sequence>
+			<element name="component" type="jvg:JVGComponent" minOccurs="0"
+				maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="JVGResources">
+		<sequence>
+			<element name="resource" type="jvg:JVGResource" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<element name="resources" type="jvg:JVGResources"></element>
+
+	<complexType name="JVGResource">
+		<sequence></sequence>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="type" type="string"></attribute>
+		<attribute name="value" type="string"></attribute>
+	</complexType>
+
+	<complexType name="JVGComponent">
+		<sequence>
+			<element name="paints" type="jvg:JVGPaints" minOccurs="1"></element>
+			<element name="form" type="jvg:JVGForm" minOccurs="1"></element>
+			<element name="transform" type="jvg:JVGTransform"></element>
+			<element name="components" type="jvg:JVGComponents"></element>
+		</sequence>
+		<attribute name="id">
+			<simpleType>
+				<restriction base="int">
+					<minExclusive value="0"></minExclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="type">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="path"></enumeration>
+					<enumeration value="container"></enumeration>
+					<enumeration value="text"></enumeration>
+					<enumeration value="image"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="JVGPaints">
+		<sequence>
+			<element name="paint" type="jvg:JVGPaint"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="JVGPaint">
+		<sequence>
+			<element name="draw" type="jvg:JVGDraw" minOccurs="1"
+				maxOccurs="unbounded">
+			</element>
+		</sequence>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="fill"></enumeration>
+					<enumeration value="outline"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+
+		<attribute name="stroke" type="jvg:JVGStroke"></attribute>
+	</complexType>
+
+	<complexType name="JVGDraw">
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="color"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="color" type="jvg:JVGColor"></attribute>
+    </complexType>
+
+	<simpleType name="JVGColor">
+		<restriction base="string"></restriction>
+	</simpleType>
+
+	<simpleType name="JVGStroke">
+		<restriction base="string"></restriction>
+	</simpleType>
+
+	<complexType name="JVGForm">
+		<sequence>
+			<element name="paragraph" type="jvg:JVGTextParagraph"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+
+			<element name="arg" type="jvg:JVGArg" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+		<attribute name="path" type="string"></attribute>
+		<attribute name="wrap" type="double"></attribute>
+		<attribute name="source" type="string"></attribute>
+	</complexType>
+
+	<complexType name="JVGTransform">
+    	<attribute name="type" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+    <complexType name="JVGTextParagraph">
+    	<sequence>
+    		<element name="elem" type="jvg:JVGTextElement" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="JVGTextElement"></complexType>
+
+    <complexType name="JVGArg">
+    	<attribute name="id" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+</schema>

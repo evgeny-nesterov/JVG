@@ -1,0 +1,34 @@
+<shape>
+	<info>
+		<name>Линия</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="1" argument="yes" />
+		<var id="y2" value="1" argument="yes" />
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x2" y="y2" type="client" />
+	</connections>
+
+	<point-on-add x="x2" y="y2" />
+</shape>

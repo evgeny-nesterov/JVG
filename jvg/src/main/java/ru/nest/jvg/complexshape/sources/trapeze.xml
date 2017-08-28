@@ -1,0 +1,55 @@
+<shape>
+	<info>
+		<name>Трапеция</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x" value="50" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="y2" value="60" argument="yes" />
+		<var id="a1" value="30" argument="yes" />
+		<var id="a2" value="50" argument="yes" />
+
+		<var id="x1">
+			<get>x - a1</get>
+		</var>
+		<var id="x2">
+			<get>x + a1</get>
+			<set param="a1">$ - x</set>
+		</var>
+		<var id="x3">
+			<get>x - a2</get>
+		</var>
+		<var id="x4">
+			<get>x + a2</get>
+			<set param="a2">$ - x</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x4" y="y2" />
+		<lineto x="x3" y="y2" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y1" />
+		<point x="x4" y="y2" />
+		<point x="x3" y="y2" />
+	</bounds>
+
+	<manage>
+		<point x="x2" y="y1" />
+		<point x="x4" y="y2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x2" y="y1" type="server" />
+		<connection x="x3" y="y2" type="server" />
+		<connection x="x4" y="y2" type="server" />
+	</connections>
+</shape>

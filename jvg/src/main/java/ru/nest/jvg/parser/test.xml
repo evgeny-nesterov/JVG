@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<jvg>
+	<!-- Test XML -->
+	<resources>
+		<resource type="color" id="red" value="55FF0000" />
+		<resource type="color" id="green" value="00FF00" />
+		<resource type="color" id="blue" value="0000FF" />
+		<resource type="stroke" id="solid-thick" value="10" />
+		<resource type="stroke" id="dash-thickdfg" value="3;6,2" />
+    <![CDATA[< dfgdfd>]]>
+	</resources>
+
+	<components>
+		<component type="container" id="0" name="Group" visible="yes">
+			<transform type="translate" value="200;200" />
+
+			<components>
+				<component id="0" type="line" name="My line" visible="yes">
+					<transform type="translate" value="100;100" />
+					<form x="10;200" y="10;100" />
+				</component>
+
+				<component id="1" type="rectangle" name="My rectangle"
+					visible="yes">
+					<form x="50" y="20" w="100" h="30" />
+					<transform type="scale" value="0.75;1.25" />
+				</component>
+
+				<component id="1" type="rectangle" name="My rectangle"
+					visible="yes">
+					<paint type="outline" value="000077;4;4,4" />
+					<transform type="rotate" value="-0.1" />
+					<form x="50" y="20" w="100" h="30" />
+				</component>
+
+				<component id="1" type="roundrectangle" name="My rectangle"
+					visible="yes">
+					<paint type="outline" value="000000;2;3.5,2" />
+					<form x="150" y="120" w="100" h="50" arcw="23.5" arch="12" />
+				</component>
+
+				<component id="2" type="ellipse" name="My ellipse"
+					visible="yes">
+					<paints>
+						<paint type="fill" value="solid;$green" />
+						<paint type="outline" value="$red;$solid-thick" />
+					</paints>
+					<form x="100" y="200" w="100" h="100" />
+				</component>
+
+				<component id="3" type="polygon" name="My polygon"
+					visible="yes">
+					<form x="10;100;50" y="10;10;100" />
+				</component>
+
+				<component id="4" type="quad" name="My quad" visible="yes">
+					<paint type="outline" value="FF0000;6" />
+					<form x="10;100;50" y="10;10;100" />
+				</component>
+
+				<component id="5" type="cubic" name="My cubic" visible="yes">
+					<paint type="outline" value="6600FF00;10" />
+					<form x="10;100;50;100" y="10;10;100;100" />
+				</component>
+			</components>
+		</component>
+
+		<component id="6" type="image" name="My image" visible="yes">
+			<form source="$image" x="150" y="150" />
+		</component>
+
+		<component id="5" type="text" name="My text" visible="true">
+			<paint type="outline" value="rr0000" />
+			<transforms>
+				<transform type="shear" value="-0.5;0" />
+				<transform type="translate" value="100;100" />
+			</transforms>
+			<form foreground="$green" font="SanSerif;bold,italic;50">
+        <![CDATA[My text
+new line]]>
+			</form>
+		</component>
+
+		<component id="6" type="path" name="My path" visible="yes"
+			outline="000000;2;3.5,2" fill="solid;aaaaaa">
+			<paints>
+				<paint type="fill" value="solid;$red" />
+				<paint type="outline" value="$blue;$solid-thick" />
+			</paints>
+			<form curves="mlcx" coordinates="20;20;20;100;50;150;100;100;150;150" />
+		</component>
+	</components>
+</jvg>

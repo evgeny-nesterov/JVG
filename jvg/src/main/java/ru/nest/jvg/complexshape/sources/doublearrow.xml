@@ -1,0 +1,179 @@
+<shape>
+	<info>
+		<name>Двойная стрелка</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="startX" value="0" argument="yes" />
+		<var id="startY" value="0" argument="yes" />
+		<var id="endX" value="1" argument="yes" />
+		<var id="endY" value="1" argument="yes" />
+		<var id="width" value="5" argument="yes" />
+		<var id="needleLength" value="15" argument="yes" />
+		<var id="needleWidth" value="10" argument="yes" />
+
+		<var id="radius">
+			<get>veclen(startX, startY, endX, endY)</get>
+		</var>
+		<var id="correctNeedleLength">
+			<get>max(5, min(radius / 2, needleLength))</get>
+		</var>
+
+		<var id="cos">
+			<get>(radius != 0) ? (endX - startX) / radius : 0</get>
+		</var>
+		<var id="sin">
+			<get>(radius != 0) ? (endY - startY) / radius : 1</get>
+		</var>
+		<var id="needle_ort_dx">
+			<get>needleWidth * sin</get>
+		</var>
+		<var id="needle_ort_dy">
+			<get>needleWidth * cos</get>
+		</var>
+		<var id="ort_dx">
+			<get>max(min(width * sin, abs(needle_ort_dx)), -abs(needle_ort_dx))</get>
+		</var>
+		<var id="ort_dy">
+			<get>max(min(width * cos, abs(needle_ort_dy)), -abs(needle_ort_dy))</get>
+		</var>
+		<var id="pointer_len">
+			<get>radius - correctNeedleLength</get>
+		</var>
+
+		<var id="pointer_startX">
+			<get>startX + ((radius != 0) ? correctNeedleLength / radius * (endX -
+				startX) : 0)</get>
+		</var>
+		<var id="pointer_startY">
+			<get>startY + ((radius != 0) ? correctNeedleLength / radius * (endY -
+				startY) : 0)</get>
+		</var>
+
+		<var id="pointer_endX">
+			<get>startX + ((radius != 0) ? pointer_len / radius * (endX - startX)
+				: 0)</get>
+		</var>
+		<var id="pointer_endY">
+			<get>startY + ((radius != 0) ? pointer_len / radius * (endY - startY)
+				: 0)</get>
+		</var>
+
+		<var id="centerX">
+			<get>(startX + endX) / 2</get>
+		</var>
+		<var id="centerY">
+			<get>(startY + endY) / 2</get>
+		</var>
+
+		<!-- First point is (startX, startY)-->
+		<var id="x1">
+			<get>pointer_startX - needle_ort_dx</get>
+		</var>
+		<var id="y1">
+			<get>pointer_startY + needle_ort_dy</get>
+		</var>
+		<var id="x2">
+			<get>pointer_startX - ort_dx</get>
+		</var>
+		<var id="y2">
+			<get>pointer_startY + ort_dy</get>
+		</var>
+		<var id="x3">
+			<get>pointer_endX - ort_dx</get>
+		</var>
+		<var id="y3">
+			<get>pointer_endY + ort_dy</get>
+		</var>
+
+		<!-- Manage point: needle length and width -->
+		<var id="tmp" />
+		<var id="x4">
+			<get>pointer_endX - needle_ort_dx</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y4">
+			<get>pointer_endY + needle_ort_dy</get>
+			<set param="needleWidth">orth(endX, endY, startX, startY, tmp, $)</set>
+			<set param="needleLength">ortl(endX, endY, startX, startY, tmp, $)</set>
+		</var>
+
+		<!-- Next point is (endx, endY) -->
+
+		<var id="x5">
+			<get>pointer_endX + needle_ort_dx</get>
+		</var>
+		<var id="y5">
+			<get>pointer_endY - needle_ort_dy</get>
+		</var>
+		<var id="x6">
+			<get>pointer_endX + ort_dx</get>
+		</var>
+		<var id="y6">
+			<get>pointer_endY - ort_dy</get>
+		</var>
+		<var id="x7">
+			<get>pointer_startX + ort_dx</get>
+		</var>
+		<var id="y7">
+			<get>pointer_startY - ort_dy</get>
+		</var>
+		<var id="x8">
+			<get>pointer_startX + needle_ort_dx</get>
+		</var>
+		<var id="y8">
+			<get>pointer_startY - needle_ort_dy</get>
+		</var>
+
+		<!-- Manage point: pointer width -->
+		<var id="widthX">
+			<get>centerX - ort_dx</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="widthY">
+			<get>centerY + ort_dy</get>
+			<set param="width">orth(endX, endY, startX, startY, tmp, $)</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="startX" y="startY" />
+		<lineto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x4" y="y4" />
+		<lineto x="endX" y="endY" />
+		<lineto x="x5" y="y5" />
+		<lineto x="x6" y="y6" />
+		<lineto x="x7" y="y7" />
+		<lineto x="x8" y="y8" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="startX" y="startY" />
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+		<point x="endX" y="endY" />
+		<point x="x5" y="y5" />
+		<point x="x6" y="y6" />
+		<point x="x7" y="y7" />
+		<point x="x8" y="y8" />
+	</bounds>
+
+	<manage>
+		<point x="widthX" y="widthY" />
+		<point x="x4" y="y4" />
+		<point x="startX" y="startY" />
+		<point x="endX" y="endY" />
+	</manage>
+
+	<connections>
+		<connection x="startX" y="startY" type="client" />
+		<connection x="endX" y="endY" type="client" />
+	</connections>
+
+	<point-on-add x="endX" y="endY" />
+</shape>

@@ -1,0 +1,78 @@
+<shape>
+	<info>
+		<name>Стрелка с прямым углом</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="startX" value="0" argument="yes" />
+		<var id="startY" value="0" argument="yes" />
+		<var id="endX" value="80" argument="yes" />
+		<var id="endY" value="80" argument="yes" />
+		<var id="width" value="5" argument="yes" />
+		<var id="needleLength" value="10" argument="yes" />
+		<var id="needleWidth" value="10" argument="yes" />
+
+		<var id="needleX">
+			<get><![CDATA[(endX - needleLength * (startX < endX))]]></get>
+			<set param="needleLength">abs(endX-$)</set>
+		</var>
+		<var id="needleY">
+			<get>endY+needleWidth</get>
+			<set param="needleWidth">$ - endY</set>
+		</var>
+
+		<var id="widthX">
+			<get>(startX + endX) / 2</get>
+		</var>
+		<var id="widthY">
+			<get>endY+width</get>
+			<set param="width">$ - endY</set>
+		</var>
+
+		<var id="leftX">
+			<get><![CDATA[startX - width * (startX < endX) * (startY < endY)]]></get>
+		</var>
+		<var id="rightX">
+			<get><![CDATA[startX + width * (startX < endX) * (startY < endY)]]></get>
+		</var>
+		<var id="widthTopY">
+			<get>endY - width</get>
+		</var>
+		<var id="needleTopY">
+			<get>endY - needleWidth</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="leftX" y="startY" />
+		<lineto x="leftX" y="widthY" />
+		<lineto x="needleX" y="widthY" />
+		<lineto x="needleX" y="needleY" />
+		<lineto x="endX" y="endY" />
+		<lineto x="needleX" y="needleTopY" />
+		<lineto x="needleX" y="widthTopY" />
+		<lineto x="rightX" y="widthTopY" />
+		<lineto x="rightX" y="startY" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="startX" y="startY" />
+		<point x="endX" y="endY" />
+	</bounds>
+
+	<manage>
+		<point x="needleX" y="needleY" />
+		<point x="widthX" y="widthY" />
+		<point x="startX" y="startY" />
+		<point x="endX" y="endY" />
+	</manage>
+
+	<connections>
+		<connection x="startX" y="startY" type="client" />
+		<connection x="endX" y="endY" type="client" />
+		<connection x="startX" y="endY" type="server" />
+	</connections>
+
+	<point-on-add x="startX" y="endY" />
+</shape>

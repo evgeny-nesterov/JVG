@@ -1,0 +1,683 @@
+title=Редактор Схем
+
+#============= Menu Bar ======================
+menubar.file=Файл
+menubar.edit=Правка
+menubar.document=Документ
+menubar.view=Настройки
+menubar.insert=Вставка
+menubar.transforms=Трансформация
+menubar.help=Помощь
+
+#============= Toolbar =======================
+toolbar.editor=Редактор
+toolbar.insert=Вставка
+toolbar.outline=Контур
+toolbar.text=Текст
+toolbar.paragraph=Параграф
+toolbar.align=Выравнивание
+toolbar.same=Одинаковый размер
+toolbar.transform=Трансформация
+toolbar.path.operations=Операции с путями
+toolbar.id=Имя
+toolbar.display=Экран
+toolbar.action-area=Элементы воздействия
+toolbar.arrows=Стрелки
+
+toolbar.id.name=Имя:
+toolbar.display.opacity=Прозрачность:
+
+#============= Buttons / Menus ===============
+### File
+button.new=Новый документ
+button.save=Сохранить
+button.saveas=Сохранить как...
+button.save-selection=Сохранить выделенное
+button.saveall=Сохранить всё
+button.close=Закрыть документ
+button.open=Открыть
+button.exit=Выйти
+button.export=Экспорт...
+button.recent-files=Недавно открытые файлы
+button.save-editor-config=Сохранить настройки редактора
+
+### Edit
+button.undo=Отменить действие
+button.redo=Повторить действие
+button.cut=Вырезать
+button.copy=Копировать
+button.paste=Вставить
+button.delete=Удалить
+button.selectall=Выделить всё
+button.bounds.initial=Выделять в исходной системе координат
+
+button.selectiontype=Тип выделения
+button.selectiontype.none=Нет
+button.selectiontype.area=Прямоугольник
+button.selectiontype.lasso=Произвольная область
+
+### Action Area
+button.action.areas=Элементы воздействия
+button.action.area.scale=Масштабирование
+button.action.area.shear=Сдвиг
+button.action.area.vector=Вектор
+button.action.area.no=Нет
+
+# Path
+button.path=Путь
+button.path.operations=Операции над путем
+button.path.close=Закрыть путь
+button.path.topath=Преобразовать в путь
+button.path.smooth=Сгладить путь
+button.path.edit=Править путь
+button.path.union=Объединение
+button.path.intersection=Пересечение
+button.path.subtraction=Вычитание
+button.path.xor=Исключающее или
+button.path.eraser=Ластик
+button.path.stroke-path=Путь -> Внешний контур
+button.path.flat-path=Разбить путь на отрезки
+button.path.remove-transform=Удалить трансформацию
+
+button.pencil=Карандаш
+button.pencil.adjusted=Выровненный по сетке карандаш
+button.marker=Маркер
+
+button.antialias=Сглаживание
+
+# Text Path
+button.text-path=Текстовый путь
+
+# Text
+button.text=Текст
+button.text.wrap=Перенос по словам
+button.text.bold=Жирный
+button.text.italic=Наклонный
+button.text.underline=Подчёркнутый
+button.text.strike=Зачёркнутый
+button.text.superscript=Верхний индекс
+button.text.subscript=Нижний индекс
+button.text.align.left=Налево
+button.text.align.center=Центрировать
+button.text.align.right=Направо
+button.text.line.spacing.increase=Увеличить расстояние между линиями
+button.text.line.spacing.decrease=Уменьшить расстояние между линиями
+button.text.bullets=Bullets
+button.text.paragraph.spacing.increase=Увеличить расстояние между параграфами
+button.text.paragraph.spacing.decrease=Уменьшить расстояние между параграфами
+button.text.paragraph.indent.left.increase=Увеличить левый отступ параграфа
+button.text.paragraph.indent.left.decrease=Уменьшить левый отступ параграфа
+button.text.bullets.numeric=Нумерованный список
+button.text.bullets.shift.left=Сдвиг налево
+button.text.bullets.shift.right=Сдвиг направо
+
+# Shadow
+button.shadow.no=Нет тени
+
+# Scripts
+button.scripts=Скрипты
+button.scripts.mouse.pressed=Кнопка мыши нажата
+button.scripts.mouse.released=Кнопка мыши отжата
+button.scripts.mouse.entered=Курсор мыши вошёл
+button.scripts.mouse.exited=Курсор мыши вышёл
+button.scripts.mouse.moved=Мышь двигается
+button.scripts.mouse.dragged=Мышь перетаскивается
+button.scripts.key.pressed=Клавиша нажата
+button.scripts.key.released=Клавиша отжата
+button.scripts.start=Старт
+button.scripts.validation=Валидация
+button.add-custom-action-area=Добавить область управления
+button.scripts.mouse.clicked=Клик мышью
+button.scripts.mouse.wheel=Прокручивание колеса мыши
+button.scripts.key.typed=Клавиша введена
+button.scripts.component-shown=Компонент показан
+button.scripts.component-hidden=Компонент стал невидимым
+button.scripts.component-geometry-changed=Изменение геометрии
+button.scripts.component-transformed=Трансформация
+button.scripts.component-added=Компонент добавлен
+button.scripts.component-removed=Компонент удалён
+button.scripts.component-order-changed=Изменён порядок следования компонента
+button.scripts.component-connected-to-peer=Компонент добавлен на панель
+button.scripts.component-disconnected-from-peer=Компонент удален с панели
+button.scripts.focus-lost=Потеря фокуса
+button.scripts.focus-gained=Получение фокуса
+button.scripts.property-changed=Изменение свойства
+button.scripts.paint=Рисование
+
+### Document
+button.resize-document=Изменить размер
+button.document-color=Цвет документа
+button.preview=Просмотр
+button.source=Источник
+button.dom=Дерево DOM
+
+### View
+button.toolbars=Панели инструментов
+button.show.toolbar.editor=Редактор
+button.show.toolbar.insert=Вставка
+button.show.toolbar.outline=Контур
+button.show.toolbar.text=Текст
+button.show.toolbar.paragraph=Параграф
+button.show.toolbar.align=Выравнивание
+button.show.toolbar.same=Одинаковый размер
+button.show.toolbar.transform=Трансформация
+button.show.toolbar.path.operations=Операции над путями
+button.show.toolbar.all.show=Показать всё
+button.show.toolbar.all.hide=Закрыть всё
+button.show.toolbar.action.areas=Элементы воздействия
+button.show.toolbar.arrows=Стрелки
+
+button.show.panel.shapes=Панель фигур
+button.show.panel.switcher=Панель переключения окон
+button.show.rules=Координатные линейки
+button.show.grid=Решетка
+button.show.grid.align=Выравнивание по решетке
+button.show.grid.above=Решетка сверху
+button.show.connections.enable=Связи
+button.show.connections.define=Обновить связи
+button.show.panel.clipboard=Буффер
+button.show.panel.resources=Ресурсы
+button.show.panel.zoom-preview=Панель масштабирования
+button.show.full-screen=На весь экран
+button.show.toolbar.ID=Имя
+button.show.toolbar.display=Экран
+
+### Insert
+button.mouse=Указатель
+button.line=Линия
+button.rectangle=Прямоугольник
+button.ellipse=Эллипс
+button.text=Текст
+button.image=Изображение
+button.multi-arrow-path=Стрелка
+button.multi-arrow-path.add-sub-arrow=Добавить подстрелку
+button.multi-arrow-path.move-sub-arrow=Редактировать подстрелку
+button.multi-arrow-path.arrow-width.tooltip=Ширина стрелки
+button.multi-arrow-path.arrow-end-cap-width.tooltip=Ширина наконечника стрелки
+button.multi-arrow-path.arrow-end-cap-length.tooltip=Длина наконечника стрелки
+button.textfield=Текстовое поле
+
+### Transformations
+button.align.relative.focus=Выравнивание относительно фокуса
+button.align.relative.focus.top=Вверх
+button.align.relative.focus.left=Налево
+button.align.relative.focus.bottom=Вниз
+button.align.relative.focus.right=Направо
+button.align.relative.focus.center=Центрировать
+button.align.relative.focus.center.x=Центрировать по оси X
+button.align.relative.focus.center.y=Центрировать по оси Y
+
+button.align.relative.pane=Выравнивание относительно листа
+button.align.relative.pane.top=Вверх
+button.align.relative.pane.left=Налево
+button.align.relative.pane.bottom=Вниз
+button.align.relative.pane.right=Направо
+button.align.relative.pane.center=Центрировать
+button.align.relative.pane.center.x=Центрировать по оси X
+button.align.relative.pane.center.y=Центрировать по оси Y
+
+button.order=Порядок
+button.order.to.front=На передний план
+button.order.to.up=Вперед
+button.order.to.down=Назан
+button.order.to.back=На задний план
+
+button.same=Одинаковый размер
+button.same.width=Ширина
+button.same.height=Высота
+button.same.size=Размер
+
+button.same.spaces=Одинаковое расстояние между объектами
+button.same.spaces.hor=По горизонтали
+button.same.spaces.ver=По вертикали
+
+button.flip=Отражение
+button.flip.hor=По горизонтали
+button.flip.ver=По вертикали
+
+button.translate.up=Вверх
+button.translate.left=Налево
+button.translate.down=Вниз
+button.translate.right=Направо
+
+button.rotate=Повернуть
+button.rotate.180=180
+button.rotate.90=90
+button.rotate.-90=-90
+
+button.group=Группировать
+
+### Help
+button.about=О программе
+
+### Action Area
+button.action.area.rotate=Вращение
+button.action.area.coordinate=Перемещение узлов объекта
+button.action.area.connection=Соединение
+button.action.area.move=Перемещение объекта
+
+button.find=Найти
+button.path.eraser-lasso=Вырезание
+button.text.align.justify=Выравнять
+
+#============= Create new document dialog ==========
+create.title=Создать новый документ...
+create.width=Ширина:
+create.height=Высота:
+
+#============= Path ================================
+path.moveto=Переместить курсор
+path.lineto=Линия
+path.quadto=Парабола
+path.curveto=Кубическая кривая
+path.close=Закрыть путь
+
+#============= Selection ===========================
+selection.type.none=Нет
+selection.type.area=Прямоугольник
+selection.type.lasso=Произвольная область
+
+#============= Zoom ================================
+zoom.10%=10%
+zoom.25%=25%
+zoom.50%=50%
+zoom.75%=75%
+zoom.100%=100%
+zoom.125%=125%
+zoom.150%=150%
+zoom.175%=175%
+zoom.200%=200%
+zoom.225%=225%
+zoom.250%=250%
+zoom.500%=500%
+zoom.1000%=1000%
+zoom.other=Другой
+zoom.dialog.title=Введите значение (%)
+
+#============= Pane frame ==========================
+pane.default.name=Без названия*
+pane.info.pointer.x=X=
+pane.info.pointer.y=Y=
+pane.info.selection.x=X=
+pane.info.selection.y=Y=
+pane.info.selection.width=Ш=
+pane.info.selection.height=В=
+pane.message.cant.save=Сохранение невозможно
+
+#============= Shapes frame ========================
+shapes.title=Компоненты
+shapes.common-shapes=Стандартные фигуры
+
+#============= Preview frame =======================
+preview.title=Просмотр
+
+#============= About frame =========================
+about.title=О программе
+about.author=Автор
+about.author.name=Нестеров Евгений
+about.button.close=Закрыть
+
+#============= Source editor frame =================
+source.editor.title=Редактор источника
+source.editor.error=Ошибка
+source.editor.error.line=линия
+source.editor.button.ok=ДА
+source.editor.button.apply=Применить
+source.editor.button.close=Закрыть
+source.editor.message.cant.apply=Сохранение невозможно
+
+#============= Script editor frame =================
+script.title=Скрипт
+
+#============= Eraser frame ========================
+eraser.title=Ластик
+eraser.scale=Масштаб
+eraser.rotate=Поворот
+
+#============= Choosers ============================
+### Color
+chooser.color.more=Больше...
+chooser.color.more.choose=Выбор цвета
+
+### Fill
+chooser.fill.no=Нет заполнения
+chooser.fill.solid=Однородный
+chooser.fill.linear.left-right=Линейный градиент (слева направо)
+chooser.fill.linear.right-left=Линейный градиент (справа налево)
+chooser.fill.radial.out=Радиальный градиент (из центра)
+chooser.fill.radial.in=Радиальный градиент (в центр)
+chooser.fill.gradient.linear=Линейный градиент
+chooser.fill.gradient.radial=Радиальный градиент
+chooser.fill.texture=Текстура
+
+### Shadow
+
+### Fill Transparency
+chooser.fill.transparency.tooltip=Прозрачность заполнения
+chooser.fill.transparency.no=Не прозрачный
+
+### Outline pattern
+chooser.outline.pattern.noline=Нет контура
+chooser.outline.pattern.tooltip=Тип контура
+chooser.outline.pattern.other=Другой
+chooser.outline.pattern.message-enter-dash-array=Конфигурация контура
+
+### Outline width
+chooser.outline.width.tooltip=Ширина контура
+chooser.outline.width.other=Другая
+chooser.outline.width.other.title=Введите значение толщины
+
+### Outline cap
+chooser.outline.endcap.tooltip=Оформление конца линии
+chooser.outline.endcap.butt=Закругленный конец линии
+chooser.outline.endcap.square=Квадратный конец линии
+chooser.outline.endcap.round=Оформление отстутствует
+
+### Outline join
+chooser.outline.linejoin.tooltip=Способ сопряжения линий
+chooser.outline.linejoin.round=Линии сопрягаются дугой окружности
+chooser.outline.linejoin.bevel=Линии сопрягаются отрезком прямой, перпендикулярным биссектрисе угла между линиями
+chooser.outline.linejoin.miter=Линии стыкуются
+
+#============= Text editor =========================
+editor.text.button.cut=Вырезать
+editor.text.button.copy=Копировать
+editor.text.button.paste=Вставить
+editor.text.button.find=Найти
+editor.text.button.replace=Заменить
+editor.text.button.goto=Перейти на линию
+editor.text.button.undo=Отменить операцию
+editor.text.button.redo=Повторить операцию
+
+editor.text.find.text=Искать текст:
+editor.text.find.replace=Заменить на:
+editor.text.find.button.find=Найти
+editor.text.find.error.message=Поиск невозможен, если строка пустаю
+editor.text.find.error=Ошибка поиска
+editor.text.find.button.replace=Заменить
+editor.text.find.button.cancel=Отменить
+editor.text.find.title=Поиск текста
+
+editor.text.find.next.string=Строка
+editor.text.find.next.not.found=не найдена
+editor.text.find.next.message.search.failed=Search Failed
+
+editor.text.replace.button.yes=Да
+editor.text.replace.button.no=Нет
+editor.text.replace.button.all=Все
+editor.text.replace.button.done=Готово
+editor.text.replace.message.replace.occurence=Заменить это совпадение
+editor.text.replace.message.confirm=Подтвердите замену
+
+editor.text.goto.line.number=Номер линии:
+editor.text.goto.title=Перейти на линию
+
+editor.message.check.unsaved.schema=Схема '{!name}' не сохранена.\nСохранить данную схему?\nДля отмены закрытия нажмите 'Отмена'.
+
+editor.textfield.entertext=Введите текст
+
+
+#============= Switcher frame ========================
+switcher.title=Окна
+
+
+#============= Options =========================
+option.ok=Да
+option.yes=Да
+option.no=Нет
+option.cancel=Отмена
+
+attention=Внимание
+
+UndoableEdit.undoText=Отменить действие
+UndoableEdit.redoText=Повторить действие
+
+#============= Clipboard frame ========================
+clipboard.title=Буффер
+clipboard.insert=Вставить
+clipboard.delete=Удалить
+clipboard.preview=Просмотр
+
+#============= Resources frame ========================
+resources.title=Ресурсы
+resources.tab.color=Цвет
+resources.tab.gradiant.linear=Лин. градиент
+resources.tab.gradiant.radial=Рад. градиент
+resources.tab.stroke=Вид линии
+resources.tab.image=Изобр.
+resources.tab.font=Фонт
+resources.tab.transform=Трансформ.
+resources.tab.script=Скрипт
+
+#============= Zoom frame ========================
+zoom-preview.title=Просмотр
+
+#============= Chooser ========================
+chooser.name=Имя:
+chooser.resources=Ресурсы:
+chooser.button.ok=Да
+chooser.button.cancel=Отмена
+
+#============= Chooser Font ========================
+chooser.font.title=Фонты
+chooser.font.bold=Толстый
+chooser.font.italic=Наклонный
+chooser.font.antialias=Сглаженный
+chooser.font.fractional-metrix=Фрактальная метрика
+chooser.font.family=Название:
+chooser.font.size=Размер:
+chooser.font.transform=Трансформация:
+chooser.font.preview=Предпросмотр
+
+#============= Chooser Stroke ========================
+chooser.stroke.title=Вид линии
+chooser.stroke.cap.butt=Отсутствует
+chooser.stroke.cap.round=Закруглённый
+chooser.stroke.cap.square=Квадратный
+chooser.stroke.join.miter=Стыкование линий
+chooser.stroke.join.round=Закруглённое соединение
+chooser.stroke.join.bevel=Отсечённое соединение
+chooser.stroke.antialias=Сграженный
+chooser.stroke.line-width=Толщина линии:
+chooser.stroke.end-cap=Окончание:
+chooser.stroke.line-join=Соединение линий:
+chooser.stroke.miter-limit=Miter limit:
+chooser.stroke.dash-array=Массив пунктира:
+chooser.stroke.dash-phase=Фаза пунктира:
+
+#============= Chooser Gradient ========================
+chooser.gradient.colors=Цвета
+chooser.gradient.properties=Свойства
+chooser.gradient.cycle-method.no=Не цикличный
+chooser.gradient.cycle-method.repeat=Повторяющийся
+chooser.gradient.cycle-method.reflect=Отражающийся
+chooser.gradient.offset=Позиция:
+chooser.gradient.percent=%
+chooser.gradient.color=Цвет:
+chooser.gradient.opacity=Прозрачность:
+chooser.gradient.cycle-method=Тип цикличности:
+chooser.gradient.button.ok=Да
+chooser.gradient.button.cancel=Отмена
+
+#============= Chooser Transform ========================
+chooser.transform.title=Трансформация
+chooser.transform.to-identity=Сбросить
+chooser.transform.scale=Масштаб
+chooser.transform.shear=Сдвиг
+chooser.transform.rotate=Поворот
+chooser.transform.transform=Трансформация:
+chooser.transform.preview=Предпросмотр
+
+#============= Chooser Image ========================
+chooser.image.title=Изображение
+
+#============= Chooser Endings ========================
+chooser.endings.pattern.tooltip=Тип окончания
+
+#============= Marker =================================
+marker.title = Маркер
+marker.size=Размер
+marker.angle=Угол
+
+#============= Undo Redo =================================
+undo.move=Перемещение
+undo.add=Добавление
+undo.remove-selected=Удаление
+
+undo.rotate=Вращение
+undo.rotate-90=Поворот на 90 градусов по часовой стрелке
+undo.rotate-minus-90=Поворот на 90 градусов против часовой стрелке
+undo.rotate-180=Поворот на 180 градусов
+
+undo.scale-right=Масштабирование
+undo.scale-left=Масштабирование
+undo.scale-top-left=Масштабирование
+undo.scale-top=Масштабирование
+undo.scale-top-right=Масштабирование
+undo.scale-bottom-right=Масштабирование
+undo.scale-bottom=Масштабирование
+undo.scale-bottom-left=Масштабирование
+
+undo.solid-filler=Заполнение цветом
+undo.linear-gradient-filler=Заполнение линейным градиентом
+undo.radial-gradient-filler=Заполнение радиальным градиентом
+undo.texture-filler=Заполнение текстурой
+undo.no-fill=Удаление заполнения
+undo.outline=Изменение контура
+
+undo.filler-transparency=Прозрачность
+undo.shadow=Тень
+undo.no-shadow=Удаление тени
+
+undo.path-geom=Изменение геометрии
+undo.path-union=Объединение фигур
+undo.path-subtraction=Вычитание фигур
+undo.path-intersection=Пересечение фигур
+undo.path-xor=Операция исключающая или над фигурами
+undo.path-add-curve=Добавление элемента пути
+undo.path-delete-curve=Удаление элемента пути
+undo.path-delete-curve-point=Удаление точки
+
+undo.paste=Вставка
+undo.to-path=Преобразование в путь
+undo.smooth-path=Сглаживание пути
+undo.stroke-shape=Преобразование пути во внешний контур
+undo.flat-path=Разбиение пути на отрезки
+undo.group=Группировака
+undo.ungroup=Разгруппировка
+undo.Marker=Маркер
+undo.antialias=Сглаживание
+undo.Eraser=Стирание ластиком
+undo.remove-transform=Удаление трансформации
+undo.endings=Установка окончания контура
+undo.alfa-layer=Альфа фильтр
+undo.pencil=Карандаш
+
+undo.translate-right=Перемещение направо
+undo.translate-up=Перемещение вверх
+undo.translate-down=Перемещение вниз
+undo.translate-left=Перемещение налево
+
+undo.to-up=Позиция слоя - наверх на единицу
+undo.to-down=Позиция слоя - вниз на единицу
+undo.to-front=Позиция слоя - наверх
+undo.to-back=Позиция слоя - вниз
+
+undo.lasso-subtract=Ножницы - отрезание
+undo.lasso-union=Ножницы - объединение
+undo.lasso-intersect=Ножницы - пересечение
+undo.lasso-separate=Ножницы - разделение
+
+undo.outline-none=Удаление внешнего контура
+undo.outline-dash-array=Установка внешнего контура
+undo.outline-width=Ширина линии
+undo.outline-line-join-miter=Оформление соединения линий (стыкование)
+undo.outline-line-join-bevel=Оформление соединения линий (отсечённый)
+undo.outline-line-join-round=Оформление соединения линий (закруглённый)
+undo.outline-end-cap-butt=Оформление окончания линии (отсутствует)
+undo.outline-end-cap-square=Оформление окончания линии (квадратный)
+undo.outline-end-cap-round=Оформление окончания линии (закругленный)
+
+undo.left-alignment=Выравнивание по левому краю
+undo.center-hor-alignment=Выравнивание по центру по горизонтали
+undo.right-alignment=Выравнивание по правому краю
+undo.top-alignment=Выравнивание по верхнему краю
+undo.center-ver-alignment=Выравнивание по центру по вертикали
+undo.bottom-alignment=Выравнивание по нижнему краю
+
+undo.flip-horizontal=Отражение по горизонтали
+undo.flip-vertical=Отражение по вертикали
+
+undo.same-width=Одинаковая ширина
+undo.same-height=Одинаковая высота
+undo.same-spaces-horizontal=Одинаковые расстояния по горизонтали
+undo.same-spaces-vertical=Одинаковые расстояния по вертикали
+
+undo.vector-right=Трансформация (вращение + масштабирование)
+undo.vector-top=Трансформация (вращение + масштабирование)
+
+undo.shear-top=Сдвиг
+undo.shear-right=Сдвиг
+undo.shear-bottom=Сдвиг
+undo.shear-left=Сдвиг
+
+undo.right-group-alignment=Выравнивание справа
+undo.left-group-alignment=Выравнивание слева
+undo.top-group-alignment=Выравнивание сверху
+undo.bottom-group-alignment=Выравнивание снизу
+
+undo.text-wrap=Перенос слов на новую строку
+undo.text-wrap-size=Ширина текста
+
+undo.pathstroke-text-stroke-text=Текст на пути
+undo.pathstroke-text-stroke-pathstroke-text-stroke-font-family=Шрифт на пути
+undo.pathstroke-text-stroke-font-size=Размер шрифта на пути
+undo.pathstroke-text-stroke-font-bold=Стиль шрифта на пути
+undo.pathstroke-text-stroke-font-italic=Стиль шрифта
+undo.pathstroke-text-stroke-stretch=Растягивание текста на путь
+undo.pathstroke-text-stroke-repeat=Цикличное повторение текста на пути
+
+undo.pathstroke-arrow-direction=Направление стрелки
+undo.pathstroke-arrow-width=Ширина стрелки
+undo.pathstroke-arrow-end-cap-width=Размер наконечника стрелки
+undo.pathstroke-arrow-end-cap-length=Длина наконечника стрелки
+undo.pathstroke-arrow=Размер стрелки
+
+undo.move-sub-path=Перемещение подстрелки
+
+#============= Path Geom Action =================================
+path-geom-action.remove-point=Удалить точку
+path-geom-action.remove-curve=Удалить кривую
+
+path-geom-action.replace-element=Заменить на
+path-geom-action.replace-element-tomove=Перенос
+path-geom-action.replace-element-toline=Линию
+path-geom-action.replace-element-toquad=Квадратичную кривую
+path-geom-action.replace-element-tocurve=Кубическую кривую
+
+path-geom-action.insert-element=Вставить
+path-geom-action.insert-element-move=Перенос
+path-geom-action.insert-element-line=Линию
+path-geom-action.insert-element-quad=Квадратичную кривую
+path-geom-action.insert-element-curve=Кубическую кривую
+
+#============= Control Action Area =================================
+control-action-area.menu.edit=Редактировать
+control-action-area.button.ok=Применить и закрыть
+control-action-area.button.apply=Применить
+control-action-area.button.cancel=Отменить
+control-action-area.title=Настройка области управления
+
+#============= Search =================================
+search.title=Поиск по имени
+search.checkbox.regexp=Регулярное выражение
+search.checkbox.match-case=Учитывать регистр
+search.checkbox.whole-word=Слово целиком
+search.label.text-to-find=Найти: 
+search.panel.options=Опции
+search.checkbox.current-document=Текущий документ
+
+menu.group.paint-order=Порядок отрисовки
+menu.group.action-order.components=По компонентам
+menu.group.action-order.first-outline=Сначала контуры
+menu.group.action-order.first-fill=Сначала заполнение

@@ -1,0 +1,80 @@
+<shape>
+	<info>
+		<name>Параллельные линии</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="0" argument="yes" />
+		<var id="y2" value="0" argument="yes" />
+		<var id="h" value="10" argument="yes" />
+
+		<var id="tmp" />
+		<var id="radius">
+			<get>veclen(x1, y1, x2, y2)</get>
+		</var>
+		<var id="cos">
+			<get>(radius != 0) ? (x2 - x1) / radius : 0</get>
+		</var>
+		<var id="sin">
+			<get>(radius != 0) ? (y2 - y1) / radius : 1</get>
+		</var>
+		<var id="ort_dx">
+			<get>h * sin</get>
+		</var>
+		<var id="ort_dy">
+			<get>h * cos</get>
+		</var>
+
+		<var id="x3">
+			<get>x1 + ort_dx</get>
+		</var>
+		<var id="y3">
+			<get>y1 - ort_dy</get>
+		</var>
+
+		<var id="x4">
+			<get>x2 + ort_dx</get>
+		</var>
+		<var id="y4">
+			<get>y2 - ort_dy</get>
+		</var>
+
+		<var id="mx">
+			<get>(x3 + x4) / 2</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="my">
+			<get>(y3 + y4) / 2</get>
+			<set param="h">orth(x1, y1, x2, y2, tmp, $)</set>
+		</var>
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+		<moveto x="x3" y="y3" />
+		<lineto x="x4" y="y4" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="mx" y="my" />
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x2" y="y2" type="client" />
+	</connections>
+
+	<point-on-add x="x2" y="y2" />
+</shape>

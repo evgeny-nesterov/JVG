@@ -1,0 +1,50 @@
+<shape>
+	<info>
+		<name>Разветвление с прямыми углами</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="40" argument="yes" />
+		<var id="x2" value="40" argument="yes" />
+		<var id="x3" value="80" argument="yes" />
+		<var id="y3" value="0" argument="yes" />
+		<var id="x4" value="80" argument="yes" />
+		<var id="y4" value="80" argument="yes" />
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x2" y="y3" />
+		<lineto x="x3" y="y3" />
+		<moveto x="x2" y="y1" />
+		<lineto x="x2" y="y4" />
+		<lineto x="x4" y="y4" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y1" />
+		<point x="x2" y="y3" />
+		<point x="x3" y="y3" />
+		<point x="x2" y="y1" />
+		<point x="x2" y="y4" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y1" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x3" y="y3" type="client" />
+		<connection x="x4" y="y4" type="client" />
+	</connections>
+
+	<point-on-add x="x2 - 10" y="y1" />
+</shape>

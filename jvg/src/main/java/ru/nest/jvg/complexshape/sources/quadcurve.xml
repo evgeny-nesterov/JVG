@@ -1,0 +1,81 @@
+<shape>
+	<info>
+		<name>Кривая второго порядка</name>
+		<descr>Парабола</descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x3" value="1" argument="yes" />
+		<var id="y3" value="1" argument="yes" />
+		<var id="koef" value="0.5" argument="yes" />
+		<var id="h" value="0" argument="yes" />
+
+		<var id="radius">
+			<get>veclen(x1, y1, x3, y3)</get>
+		</var>
+		<var id="cos">
+			<get>(radius != 0) ? (x3 - x1) / radius : 0</get>
+		</var>
+		<var id="sin">
+			<get>(radius != 0) ? (y3 - y1) / radius : 1</get>
+		</var>
+		<var id="ort_dx">
+			<get>h * sin</get>
+		</var>
+		<var id="ort_dy">
+			<get>h * cos</get>
+		</var>
+
+		<var id="x">
+			<get>x1 + koef * (x3 - x1)</get>
+		</var>
+		<var id="y">
+			<get>y1 + koef * (y3 - y1)</get>
+		</var>
+
+		<var id="tmp" />
+		<var id="qx">
+			<get>x + ort_dx</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="qy">
+			<get>y - ort_dy</get>
+			<set param="h">orth(x1, y1, x3, y3, tmp, $)</set>
+			<set param="koef">(radius != 0) ? ortl(x1, y1, x3, y3, tmp, $) / radius
+				: koef</set>
+		</var>
+
+		<var id="x2">
+			<get>(4 * qx - x1 - x3) / 2</get>
+		</var>
+		<var id="y2">
+			<get>(4 * qy - y1 - y3) / 2</get>
+		</var>
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<quadto x1="x2" y1="y2" x2="x3" y2="y3" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="qx" y="qy" />
+		<point x="x3" y="y3" />
+	</bounds>
+
+	<manage>
+		<point x="qx" y="qy" />
+		<point x="x1" y="y1" />
+		<point x="x3" y="y3" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x3" y="y3" type="client" />
+		<connection x="qx" y="qy" type="client" />
+	</connections>
+
+	<point-on-add x="x3" y="y3" />
+</shape>

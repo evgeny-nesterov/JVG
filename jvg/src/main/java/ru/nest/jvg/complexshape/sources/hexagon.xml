@@ -1,0 +1,68 @@
+<shape>
+	<info>
+		<name>Шестиугольник</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x" value="40" argument="yes" />
+		<var id="y" value="40" argument="yes" />
+		<var id="a" value="40" argument="yes" />
+
+		<var id="x1">
+			<get>x - a</get>
+		</var>
+		<var id="x2">
+			<get>x - a / 2</get>
+		</var>
+		<var id="x3">
+			<get>x + a / 2</get>
+		</var>
+		<var id="x4">
+			<get>x + a</get>
+			<set param="a">$ - x</set>
+		</var>
+
+		<var id="y1">
+			<get>y - a * sqrt(0.75)</get>
+		</var>
+		<var id="cy">
+			<get>y</get>
+			<set param="y">y</set>
+		</var>
+		<var id="y2">
+			<get>y + a * sqrt(0.75)</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x2" y="y1" />
+		<lineto x="x1" y="y" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x3" y="y2" />
+		<lineto x="x4" y="y" />
+		<lineto x="x3" y="y1" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x2" y="y1" />
+		<point x="x1" y="y" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y2" />
+		<point x="x4" y="y" />
+		<point x="x3" y="y1" />
+	</bounds>
+
+	<connections>
+		<connection x="x2" y="y1" type="server" />
+		<connection x="x1" y="y" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x3" y="y2" type="server" />
+		<connection x="x4" y="y" type="server" />
+		<connection x="x3" y="y1" type="server" />
+	</connections>
+
+	<manage>
+		<point x="x4" y="cy" />
+	</manage>
+</shape>

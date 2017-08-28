@@ -1,0 +1,89 @@
+<shape>
+	<info>
+		<name>Цилиндр</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="cv">
+			<get>0.5522847498307933</get>
+		</var>
+
+		<var id="x1" value="0" argument="yes" />
+		<var id="y3" value="10" argument="yes" />
+		<var id="x4" value="60" argument="yes" />
+		<var id="y6" value="60" argument="yes" />
+		<var id="h" value="10" argument="yes" />
+
+		<var id="cx">
+			<get>(x1 + x4) / 2</get>
+		</var>
+		<var id="w">
+			<get>(x4 - x1) / 2</get>
+		</var>
+
+		<var id="x2">
+			<get>cx - cv * w</get>
+		</var>
+		<var id="x3">
+			<get>cx + cv * w</get>
+		</var>
+
+		<var id="y1">
+			<get>y3 - h</get>
+			<set param="h">y3 - $</set>
+		</var>
+		<var id="y2">
+			<get>y3 - cv * h</get>
+		</var>
+		<var id="y4">
+			<get>y3 + cv * h</get>
+		</var>
+		<var id="y5">
+			<get>y3 + h</get>
+		</var>
+		<var id="y7">
+			<get>y6 + cv * h</get>
+		</var>
+		<var id="y8">
+			<get>y6 + h</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y3" />
+		<lineto x="x1" y="y6" />
+
+		<curveto x1="x1" y1="y7" x2="x2" y2="y8" x3="cx" y3="y8" />
+		<curveto x1="x3" y1="y8" x2="x4" y2="y7" x3="x4" y3="y6" />
+
+		<lineto x="x4" y="y3" />
+
+		<curveto x1="x4" y1="y2" x2="x3" y2="y1" x3="cx" y3="y1" />
+		<curveto x1="x2" y1="y1" x2="x1" y2="y2" x3="x1" y3="y3" />
+
+		<curveto x1="x1" y1="y4" x2="x2" y2="y5" x3="cx" y3="y5" />
+		<curveto x1="x3" y1="y5" x2="x4" y2="y4" x3="x4" y3="y3" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y3" />
+		<point x="x1" y="y6" />
+		<point x="x4" y="y3" />
+		<point x="x4" y="y6" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y3" />
+		<point x="x1" y="y6" />
+		<point x="x4" y="y3" />
+		<point x="x4" y="y6" />
+		<point x="cx" y="y1" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y3" type="server" />
+		<connection x="x4" y="y3" type="server" />
+		<connection x="x1" y="y6" type="server" />
+		<connection x="x4" y="y6" type="server" />
+	</connections>
+</shape>

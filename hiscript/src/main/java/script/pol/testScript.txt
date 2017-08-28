@@ -1,0 +1,241 @@
+long time = time();
+
+println("check types");
+string s1 = "text", s2 = "\tabc \n\t123\n";
+char c1 = 'a', c2 = '\\';
+byte x1 = 1, y1 = x1 + 2, z1 = 3 + x1 / (2 - y1);
+short x2 = 1, y2 = x2 + 2, z2 = 3 + x2 / (2 - y2);
+int x3 = 1, y3 = x3 + 2, z3 = 3 + x3 / (2 - y3);
+float x4 = 1f, y4 = x4 + 2F, z4 = 3f + x4 / (2 - y4);
+long x5 = 1l, y5 = x5 + 2L, z5 = 3 + x5 / (2 - y5);
+double x6 = 1, y6 = x6 + 2, z6 = 3 + x6 / (2 - y6);
+println("\tz1=" + z1);
+println("\tz2=" + z2);
+println("\tz3=" + z3);
+println("\tz4=" + z4);
+println("\tz5=" + z5);
+println("\tz6=" + z6);
+
+
+println("check namespaces");
+int a.x = 1;
+string b.x = "test";
+double c.x = 123.456;
+
+println("\ta.x=" + a.x);
+println("\tb.x=" + b.x);
+println("\tc.x=" + c.x);
+
+
+println("check comments");
+        /*
+          check
+          comments
+        */
+        //
+        //  Check comments
+        //
+println("\t[OK]");
+
+
+println("check for");
+for (int i = 0, j = 20; i < 5 && j > 3; i++, j -= 5)
+{
+        println("\ti=" + i + ", j=" + j);
+}
+
+
+println("check while");
+int i = 0, j = 20;
+while (i < 5 && j > 3)
+{
+	println("\ti=" + i + ", j=" + j);
+	i++;
+        ++i;
+        i -= 1;
+
+	j -= 3;
+
+        j--;
+        --j;
+}
+
+
+println("check do while");
+i = 0;
+j = 20;
+do
+{
+	println("\ti=" + i + ", j=" + j);
+	i++;
+	j -= 5;
+} while (i < 5 && j > 30);
+
+
+println("check if");
+i = 0;
+j = 20;
+if (i < -5 && j > 30)
+{
+	println("\tif: i=" + i + ", j=" + j);
+}
+else if (i < -5 || j > 30)
+{
+	println("\telse if 1: i=" + i + ", j=" + j);
+}
+else if (i < 5 && j > 3)
+{
+	println("\telse if 2: i=" + i + ", j=" + j);
+}
+else
+{
+	println("\telse: i=" + i + ", j=" + j);
+}
+
+
+println("check switch");
+i = 0;
+switch(i)
+{
+	case -1:
+		println("\tcase -1: i=" + i);
+	case 0:
+		println("\tcase 0: i=" + i);
+	case 1:
+		println("\tcase 1: i=" + i);
+		break;
+	case 2:
+		println("\tcase 2: i=" + i);
+	default:
+		println("\tdefault: i=" + i);
+}
+
+
+println("check try-catch-finally");
+try
+{
+	println("\ttry: 1 / 0");
+	int xx = 1 / 0;
+}
+catch(string error)
+{
+	println("\tcatch: " + error);
+}
+finally
+{
+	println("\tfinally");
+}
+
+
+// check break
+println("check break and continue");
+long startTime = time();
+while (true)
+{
+      if (time() - startTime < 250)
+      {
+        println("\tcontinue: dT=" + (time() - startTime) / 1000.0 + " sec");
+        sleep(50);
+        continue;
+      }
+
+      println("\tdT=" + (time() - startTime) / 1000.0 + " sec");
+      if (time() - startTime > 750) //  750 milliseconds
+      {
+            println("\tbreak: dT=" + (time() - startTime) / 1000.0 + " sec");
+            break;
+      }
+      sleep(150);
+}
+
+
+println("check arrays");
+string[][] as = string[2][];
+as[0] = string[10];
+as[1] = string[20];
+as[0][9] = "0-9";
+as[1][19] = "1-19";
+println("\tas[0][9]=" + as[0][9]);
+println("\tas[1][19]=" + as[1][19]);
+
+
+println("check method");
+void puts(string msg, boolean newLine)
+{
+        print(msg + (newLine ? '\n' : ""));
+}
+puts("\tprint ", false);
+puts("message: ", false);
+puts("Hello!!!", true);
+
+float calc(byte b, long l, double d)
+{
+        return b * d + l / 2L;
+}
+println("\tcalc: " + calc(127, 423L, 534.5f)); // 127 * 534.5 + 423/2=68092.5
+
+
+/* Check execution */
+println("Check execution");
+int arraySize = 20;
+string script = "\tsleep(3000);\n\tlong t = time();\n\tint massive";
+for (int k = 0; k < arraySize; k++)
+{
+        script += "[]";
+}
+script += " = int";
+for (int k = 0; k < arraySize; k++)
+{
+        script += "[2]";
+}
+script += ";\n";
+script += "\tprintln(\"\tMassive is initialized: \" + (time() - t) / 1000.0 + \" sec.\");";
+println(script);
+println("-------------------------------------------");
+execute(script, true);
+
+
+println("check globals");
+println("\tPI=" + math.PI);
+
+
+println("check return");
+void check(boolean condition)
+{
+        println("\tBefore return");
+        if(condition)
+        {
+          return;
+        }
+        println("\tAfter return");
+        println("\t------------");
+}
+check(false);
+check(true);
+char get(char c)
+{
+      try {return c + 1;} // b
+      catch(string err) {println("\tcan't return: " + err);}
+      finally {}
+
+      return (char)(c + 2); // c
+}
+println("\tget next char: get('a')+1=" + get('a'));
+
+
+println("check mark");
+int index = 3;
+WHILE:
+while(true) {
+      if(index == 0) {
+            println("\tbreak");
+            break WHILE;
+      }
+      println("\ti=" + index);
+      index--;
+}
+println("\texited");
+
+
+println("########## dT = " + (time() - time) + " ms ##########\n");
+return "OK";

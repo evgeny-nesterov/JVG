@@ -1,0 +1,129 @@
+<shape>
+	<info>
+		<name>Звезда</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x" value="40" argument="yes" />
+		<var id="y" value="40" argument="yes" />
+		<var id="a1" value="60" argument="yes" />
+		<var id="a2" value="22.91796" argument="yes" />
+
+		<var id="angle">
+			<get>72 * PI / 180.0</get>
+		</var>
+		<var id="phase">
+			<get>angle / 2.0</get>
+		</var>
+
+		<var id="x1">
+			<get>x</get>
+		</var>
+		<var id="x2">
+			<get>x + a1 * sin(angle)</get>
+		</var>
+		<var id="x3">
+			<get>x + a1 * sin(2 * angle)</get>
+		</var>
+		<var id="x4">
+			<get>x - a1 * sin(2 * angle)</get>
+		</var>
+		<var id="x5">
+			<get>x - a1 * sin(angle)</get>
+		</var>
+		<var id="cx">
+			<get>x</get>
+			<set param="x">x</set>
+		</var>
+
+		<var id="y1">
+			<get>y - a1</get>
+			<set param="a1">y - $</set>
+		</var>
+		<var id="y2">
+			<get>y - a1 * cos(angle)</get>
+		</var>
+		<var id="y3">
+			<get>y - a1 * cos(2 * angle)</get>
+		</var>
+
+		<var id="x1_">
+			<get>x</get>
+		</var>
+		<var id="x2_">
+			<get>x + a2 * sin(angle)</get>
+		</var>
+		<var id="x3_">
+			<get>x + a2 * sin(2 * angle)</get>
+		</var>
+		<var id="x4_">
+			<get>x - a2 * sin(2 * angle)</get>
+		</var>
+		<var id="x5_">
+			<get>x - a2 * sin(angle)</get>
+		</var>
+
+		<var id="y1_">
+			<get>y + a2</get>
+			<set param="a2">$ - y</set>
+		</var>
+		<var id="y2_">
+			<get>y + a2 * cos(angle)</get>
+		</var>
+		<var id="y3_">
+			<get>y + a2 * cos(2 * angle)</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x3_" y="y3_" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x2_" y="y2_" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x1_" y="y1_" />
+		<lineto x="x4" y="y3" />
+		<lineto x="x5_" y="y2_" />
+		<lineto x="x5" y="y2" />
+		<lineto x="x4_" y="y3_" />
+
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y3" />
+		<point x="x5" y="y2" />
+
+		<point x="x1_" y="y1_" />
+		<point x="x2_" y="y2_" />
+		<point x="x3_" y="y3_" />
+		<point x="x4_" y="y3_" />
+		<point x="x5_" y="y2_" />
+	</bounds>
+
+	<connections>
+		<connection x="x" y="y" type="server" />
+
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x3" y="y3" type="server" />
+		<connection x="x4" y="y3" type="server" />
+		<connection x="x5" y="y2" type="server" />
+
+		<connection x="x1_" y="y1_" type="server" />
+		<connection x="x2_" y="y2_" type="server" />
+		<connection x="x3_" y="y3_" type="server" />
+		<connection x="x4_" y="y3_" type="server" />
+		<connection x="x5_" y="y2_" type="server" />
+	</connections>
+
+	<manage>
+		<point x="cx" y="y1" />
+		<point x="cx" y="y1_" />
+	</manage>
+
+	<point-on-add x="x" y="y" />
+</shape>

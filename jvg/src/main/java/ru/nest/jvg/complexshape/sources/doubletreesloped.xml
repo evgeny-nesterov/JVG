@@ -1,0 +1,75 @@
+<shape>
+	<info>
+		<name>Разветвление с наклоном</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="angle1" value="PI / 6" argument="yes" />
+		<var id="angle2" value="PI / 6" argument="yes" />
+
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="40" argument="yes" />
+		<var id="x2" value="40" argument="yes" />
+		<var id="x3" value="80" argument="yes" />
+		<var id="y3" value="0" argument="yes" />
+		<var id="x4" value="80" argument="yes" />
+		<var id="y4" value="80" argument="yes" />
+
+		<var id="_x3">
+			<get>x2 + abs(y1 - y3) * tan(angle1)</get>
+			<set param="angle1">(y3 != y1) ? atan(abs(($ - x2) / (y3 - y1))) : (PI /
+				2)</set>
+		</var>
+		<var id="_y3">
+			<get>y3</get>
+			<set param="y3">y3</set>
+		</var>
+
+		<var id="_x4">
+			<get>x2 + abs(y1 - y4) * tan(angle2)</get>
+			<set param="angle2">(y4 != y1) ? atan(abs(($ - x2) / (y4 - y1))) : (PI /
+				2)</set>
+		</var>
+		<var id="_y4">
+			<get>y4</get>
+			<set param="y4">y4</set>
+		</var>
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y1" />
+		<lineto x="_x3" y="y3" />
+		<lineto x="x3" y="y3" />
+		<moveto x="x2" y="y1" />
+		<lineto x="_x4" y="y4" />
+		<lineto x="x4" y="y4" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y1" />
+		<point x="_x3" y="y3" />
+		<point x="x3" y="y3" />
+		<point x="x2" y="y1" />
+		<point x="_x4" y="y4" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="_x3" y="_y3" />
+		<point x="_x4" y="_y4" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+		<point x="x1" y="y1" />
+		<point x="x2" y="y1" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x3" y="y3" type="client" />
+		<connection x="x4" y="y4" type="client" />
+	</connections>
+
+	<point-on-add x="x2 - 10" y="y1" />
+</shape>

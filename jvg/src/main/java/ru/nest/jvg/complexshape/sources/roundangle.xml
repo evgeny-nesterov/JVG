@@ -1,0 +1,73 @@
+<shape>
+	<info>
+		<name>Округленная стрелка</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="100" argument="yes" />
+		<var id="y2" value="40" argument="yes" />
+		<var id="x3" value="0" argument="yes" />
+		<var id="y3" value="80" argument="yes" />
+		<var id="a1" value="30" argument="yes" />
+		<var id="a2" value="30" argument="yes" />
+
+		<var id="r1">
+			<get>veclen(x1, y1, x2, y2)</get>
+		</var>
+		<var id="r2">
+			<get>veclen(x3, y3, x2, y2)</get>
+		</var>
+
+		<var id="tmp" />
+
+		<var id="mx1">
+			<get>(r1 != 0) ? (x2 + a1 / r1 * (x1 - x2)) : x2</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="my1">
+			<get>(r1 != 0) ? (y2 + a1 / r1 * (y1 - y2)) : y2</get>
+			<set param="a1">ortl(x2, y2, x1, y1, tmp, $)</set>
+		</var>
+
+		<var id="mx2">
+			<get>(r2 != 0) ? (x2 + a2 / r2 * (x3 - x2)) : x2</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="my2">
+			<get>(r2 != 0) ? (y2 + a2 / r2 * (y3 - y2)) : y2</get>
+			<set param="a2">ortl(x2, y2, x3, y3, tmp, $)</set>
+		</var>
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<lineto x="mx1" y="my1" />
+		<quadto x1="x2" y1="y2" x2="mx2" y2="my2" />
+		<lineto x="x3" y="y3" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="mx1" y="my1" />
+		<point x="mx2" y="my2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x2" y="y2" type="client" />
+		<connection x="mx1" y="my1" type="server" />
+		<connection x="mx2" y="my2" type="server" />
+	</connections>
+
+	<point-on-add x="mx1" y="my1" />
+</shape>

@@ -1,0 +1,57 @@
+public class ArrayList {
+  static {
+    System.loadLib("ArrayListImpl.class");
+  }
+
+  public ArrayList() {
+    init(10);
+  }
+
+  public ArrayList(int initialCapacity) {
+    init(initialCapacity);
+  }
+
+  public ArrayList(ArrayList list) {
+    init(list);
+  }
+
+  private native void init(int initialCapacity);
+
+  private native void init(ArrayList list);
+
+  public native boolean add(Object element);
+
+  public native boolean addAll(ArrayList list);
+
+  public native boolean addAll(int index, ArrayList list);
+
+  public native Object get(int index);
+
+  public native Object set(int index, Object value);
+
+  public native Object remove(Object element);
+
+  public native void remove(int index);
+
+  public native boolean removeAll(ArrayList list);
+
+  public native boolean retainAll(ArrayList list);
+
+  public native int size();
+
+  public native int indexOf(Object element);
+
+  public native int lastIndexOf(Object o);
+
+  public native boolean contains(Object element);
+
+  public native boolean containsAll(ArrayList list);
+
+  public native Object[] toArray();
+
+  public native void ensureCapacity(int minCapacity);
+
+  public native void clear();
+
+  public native Object clone();
+}

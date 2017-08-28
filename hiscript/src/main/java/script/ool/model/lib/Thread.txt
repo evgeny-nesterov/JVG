@@ -1,0 +1,44 @@
+public class Thread {
+  static {
+    System.loadLib("ThreadImpl.class");
+  }
+
+  public Thread() {
+    init();
+  }
+
+  public void run() {
+  }
+
+  private native void init();
+
+  public native void start();
+
+  public native void interrupt();
+
+  public native void join();
+
+  public native void join(long timeMillis);
+
+  public native void sleep(long timeMillis);
+
+  public native boolean isInterrupted();
+
+  public static native boolean interrupted();
+
+  public native boolean isAlive();
+
+  public native void setDaemon(boolean on);
+
+  public native boolean isDaemon();
+
+  public static native Thread currentThread();
+
+  public static native void yield();
+
+  public static native boolean holdsLock(Object obj);
+
+  public static void dumpStack() {
+	new Exception("Stack trace").printStackTrace();
+  }
+}

@@ -1,0 +1,105 @@
+<shape>
+	<info>
+		<name>Овал</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x6" value="110" argument="yes" />
+		<var id="y6" value="90" argument="yes" />
+		<var id="r" value="20" argument="yes" />
+
+		<var id="cv" value="0.5522847498307933" /> <!-- Static -->
+
+		<var id="R">
+			<get>max(0, min(r, min(abs(x1 - x6) / 2, abs(y1 - y6) / 2)))</get>
+		</var>
+		<var id="minx">
+			<get>min(x1, x6)</get>
+		</var>
+		<var id="maxx">
+			<get>max(x1, x6)</get>
+		</var>
+		<var id="miny">
+			<get>min(y1, y6)</get>
+		</var>
+		<var id="maxy">
+			<get>max(y1, y6)</get>
+		</var>
+
+		<var id="x3">
+			<get>minx + R</get>
+			<set param="r">$ - minx</set>
+		</var>
+		<var id="my1">
+			<get>miny</get>
+		</var>
+		<var id="x2">
+			<get>x3 - cv * R</get>
+		</var>
+		<var id="x4">
+			<get>maxx - R</get>
+		</var>
+		<var id="x5">
+			<get>x4 + cv * R</get>
+		</var>
+
+		<var id="y3">
+			<get>miny + R</get>
+		</var>
+		<var id="y2">
+			<get>y3 - cv * R</get>
+		</var>
+		<var id="y4">
+			<get>maxy - R</get>
+		</var>
+		<var id="y5">
+			<get>y4 + cv * R</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x3" y="miny" />
+		<curveto x1="x2" y1="miny" x2="minx" y2="y2" x3="minx" y3="y3" />
+		<lineto x="minx" y="y4" />
+		<curveto x1="minx" y1="y5" x2="x2" y2="maxy" x3="x3" y3="maxy" />
+		<lineto x="x4" y="maxy" />
+		<curveto x1="x5" y1="maxy" x2="maxx" y2="y5" x3="maxx" y3="y4" />
+		<lineto x="maxx" y="y3" />
+		<curveto x1="maxx" y1="y2" x2="x5" y2="miny" x3="x4" y3="miny" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y6" />
+		<point x="x6" y="y1" />
+		<point x="x6" y="y6" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y6" />
+		<point x="x6" y="y1" />
+		<point x="x6" y="y6" />
+		<point x="x3" y="my1" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y3" type="server" />
+		<connection x="x1" y="y4" type="server" />
+		<connection x="x3" y="y1" type="server" />
+		<connection x="x3" y="y6" type="server" />
+		<connection x="x4" y="y1" type="server" />
+		<connection x="x4" y="y6" type="server" />
+		<connection x="x6" y="y3" type="server" />
+		<connection x="x6" y="y4" type="server" />
+
+		<connection x="x1" y="(y1+y6)/2" type="server" />
+		<connection x="(x1+x6)/2" y="y1" type="server" />
+		<connection x="(x1+x6)/2" y="(y1+y6)/2" type="server" />
+		<connection x="(x1+x6)/2" y="y6" type="server" />
+		<connection x="x6" y="(y1+y6)/2" type="server" />
+	</connections>
+</shape>

@@ -1,0 +1,628 @@
+title=Schema Editor
+
+#============= Menu Bar ======================
+menubar.file=File
+menubar.edit=Edit
+menubar.document=Document
+menubar.view=View
+menubar.insert=Insert
+menubar.transforms=Transforms
+menubar.help=Help
+
+#============= Toolbar =======================
+toolbar.editor=Editor
+toolbar.insert=Insert
+toolbar.outline=Outline
+toolbar.text=Text$
+toolbar.paragraph=Paragraph
+toolbar.align=Align
+toolbar.same=Same
+toolbar.transform=Transform
+toolbar.path.operations=Path operations
+toolbar.id=Name
+toolbar.display=Display
+toolbar.action-area=Action areas
+
+toolbar.id.name=Name:
+toolbar.display.opacity=Opacity:
+
+#============= Buttons / Menus ===============
+### File
+button.new=New
+button.save=Save
+button.saveas=Save As...
+button.save-selection=Save selection
+button.saveall=Save All
+button.open=Open
+button.close=Close document
+button.exit=Exit
+button.export=Export...
+button.recent-files=Open Recent File
+
+### Edit
+button.undo=Undo
+button.redo=Redo
+button.cut=Cut
+button.copy=Copy
+button.paste=Paste
+button.delete=Delete
+button.selectall=Select All
+button.bounds.initial=Initial bounds
+
+button.selectiontype=Selection Type
+button.selectiontype.none=None
+button.selectiontype.area=Area
+button.selectiontype.lasso=Lasso
+
+### Action Area
+button.action.areas=Action areas
+button.action.area.scale=Scale
+button.action.area.shear=Shear
+button.action.area.vector=Vector
+button.action.area.no=No
+
+# Path
+button.path=Path
+button.path.operations=Path Operations
+button.path.close=Close Path
+button.path.topath=To Path
+button.path.smooth=Smooth Path
+button.path.edit=Edit Path
+button.path.union=Union
+button.path.intersection=Intersection
+button.path.subtraction=Subtraction
+button.path.xor=Exclusive OR
+button.path.eraser=Eraser
+button.path.stroke-path=Stroke Path
+button.path.flat-path=Flat Path
+button.path.remove-transform=Remove Transform
+
+button.pencil=Pencil
+button.pencil.adjusted=Adjusted Pencil
+button.marker=Marker
+
+button.antialias=Antialias
+
+# Text
+button.text=Text
+button.text.wrap=Wrap
+button.text.bold=Bold
+button.text.italic=Italic
+button.text.underline=Underline
+button.text.strike=Strike Through
+button.text.superscript=Superscript
+button.text.subscript=Subscript
+button.text.align.left=Left
+button.text.align.center=Center
+button.text.align.right=Right
+button.text.line.spacing.increase=Increase Line Spacing
+button.text.line.spacing.decrease=Decrease Line Spacing
+button.text.bullets=Bullets
+button.text.paragraph.spacing.increase=Increase Paragraph Spacing
+button.text.paragraph.spacing.decrease=Decrease Paragraph Spacing
+button.text.paragraph.indent.left.increase=Increase Paragraph Left Indent
+button.text.paragraph.indent.left.decrease=Decrease Paragraph Left Indent
+button.text.bullets.numeric=Numeric list
+button.text.bullets.shift.left=Shift to left
+button.text.bullets.shift.right=Shift to right
+
+# Shadow
+button.shadow.no=No Shadow
+
+# Scripts
+button.scripts=Scripts
+button.scripts.start=Start
+button.scripts.mouse.pressed=Mouse pressed
+button.scripts.mouse.released=Mouse released
+button.scripts.mouse.entered=Mouse entered
+button.scripts.mouse.exited=Mouse exited
+button.scripts.mouse.moved=Mouse moved
+button.scripts.mouse.dragged=Mouse dragged
+button.scripts.key.pressed=Key pressed
+button.scripts.key.released=Key released
+button.scripts.validation=Validation
+button.add-custom-action-area=Add action area
+button.scripts.mouse.clicked=Mouse clicked
+button.scripts.mouse.wheel=Mouse wheel
+button.scripts.key.typed=Key typed
+button.scripts.component-shown=Component shown
+button.scripts.component-hidden=Component hidden
+button.scripts.component-geometry-changed=Component geometry changed
+button.scripts.component-transformed=Component transformed
+button.scripts.component-added=Component added
+button.scripts.component-removed=Component removed
+button.scripts.component-order-changed=Component order changed
+button.scripts.component-connected-to-peer=Component connected to peer
+button.scripts.component-disconnected-from-peer=Component disconnected from peer
+button.scripts.focus-lost=Focus lost
+button.scripts.focus-gained=Focus gained
+button.scripts.property-changed=Focus property changed
+button.scripts.paint=Paint
+
+### Document
+button.resize-document=Resize
+button.document-color=Color
+button.preview=Preview
+button.source=Source
+button.dom=DOM Tree
+
+### View
+button.toolbars=Toolbars
+button.show.toolbar.editor=Editor
+button.show.toolbar.insert=Insert
+button.show.toolbar.outline=Outline
+button.show.toolbar.text=Text
+button.show.toolbar.paragraph=Paragraph
+button.show.toolbar.align=Align
+button.show.toolbar.same=Same
+button.show.toolbar.transform=Transform
+button.show.toolbar.path.operations=Path operations
+button.show.toolbar.all.show=Show All
+button.show.toolbar.all.hide=Hide All
+button.show.toolbar.action.areas=Action areas
+
+button.show.panel.shapes=Shapes panel
+button.show.panel.switcher=Switcher panel
+button.show.rules=Rules
+button.show.grid=Grid
+button.show.grid.align=Align to Grid
+button.show.grid.above=Draw Grid Above
+button.show.connections.enable=Connections
+button.show.connections.define=Define connections
+button.show.panel.clipboard=Buffer
+button.show.panel.resources=Resources
+button.show.panel.zoom-preview=Zoom preview panel
+button.show.full-screen=Fullscreen
+button.show.toolbar.ID=Name
+button.show.toolbar.display=Display
+
+### Insert
+button.mouse=Mouse
+button.line=Line
+button.rectangle=Rectangle
+button.ellipse=Ellipse
+button.text=Text
+button.image=Image
+button.textfield=Text field
+
+### Transformations
+button.align.relative.focus=Align relative focus
+button.align.relative.focus.top=Top
+button.align.relative.focus.left=Left
+button.align.relative.focus.bottom=Bottom
+button.align.relative.focus.right=Right
+button.align.relative.focus.center=Center
+button.align.relative.focus.center.x=Center along the X axis
+button.align.relative.focus.center.y=Center along the Y axis
+
+button.align.relative.pane=Align relative pane
+button.align.relative.pane.top=Top
+button.align.relative.pane.left=Left
+button.align.relative.pane.bottom=Bottom
+button.align.relative.pane.right=Right
+button.align.relative.pane.center=Center
+button.align.relative.pane.center.x=Center along the X axis
+button.align.relative.pane.center.y=Center along the Y axis
+
+button.order=Order
+button.order.to.front=to Front
+button.order.to.up=to Up
+button.order.to.down=to Down
+button.order.to.back=to Back
+
+button.same=Set to the same
+button.same.width=Width
+button.same.height=Height
+button.same.size=Size
+button.same.spaces=Spacing
+button.same.spaces.hor=Horizontal
+button.same.spaces.ver=Vertical
+
+button.flip=Flip
+button.flip.hor=Horizontal
+button.flip.ver=Vertical
+
+button.translate.up=Up
+button.translate.left=Left
+button.translate.down=Down
+button.translate.right=Right
+
+button.rotate=Rotate
+button.rotate.180=180
+button.rotate.90=90
+button.rotate.-90=-90
+
+button.group=Group
+
+### Help
+button.about=About
+
+### Action Area
+button.action.area.rotate=Rotate Action Area
+button.action.area.coordinate=Coordinate Action Area
+button.action.area.connection=Connection Action Area
+button.action.area.move=Shape drag enabled
+
+button.find=Find
+button.path.eraser-lasso=Lasso eraser
+button.text.align.justify=Justify
+
+#============= Create new document dialog ==========
+create.title=Create new...
+create.width=Width:
+create.height=Height:
+
+#============= Path ================================
+path.moveto=Move
+path.lineto=Line
+path.quadto=Quad
+path.curveto=Cubic
+path.close=Close
+
+#============= Selection ===========================
+selection.type.none=No
+selection.type.area=Area
+selection.type.lasso=Lasso
+
+#============= Zoom ================================
+zoom.50%=50%
+zoom.75%=75%
+zoom.100%=100%
+zoom.125%=125%
+zoom.150%=150%
+zoom.175%=175%
+zoom.200%=200%
+zoom.225%=225%
+zoom.250%=250%
+zoom.500%=500%
+zoom.other=Other
+zoom.dialog.title=Enter zoom value (%)
+
+#============= Pane frame ==========================
+pane.default.name=Untitled*
+pane.info.pointer.x=x=
+pane.info.pointer.y=y=
+pane.info.selection.x=x=
+pane.info.selection.y=y=
+pane.info.selection.width=w=
+pane.info.selection.height=h=
+pane.message.cant.save=Can't Save
+
+#============= Shapes frame ========================
+shapes.title=Shapes
+
+#============= Preview frame =======================
+preview.title=Preview
+shapes.common-shapes=Standard
+shapes.it-components=IT components
+
+#============= About frame =========================
+about.title=About
+about.author=Author
+about.author.name=Nesterov Evgeny
+about.button.close=Close
+
+#============= Source editor frame =================
+source.editor.title=Edit Source
+source.editor.error=Error
+source.editor.error.line=line
+source.editor.button.ok=OK
+source.editor.button.apply=Apply
+source.editor.button.close=Close
+source.editor.message.cant.apply=Can't Apply
+
+#============= Script editor frame =================
+script.title=Script
+
+#============= Eraser frame ========================
+eraser.title=Eraser
+eraser.scale=Scale
+eraser.rotate=Rotate
+
+#============= Choosers ============================
+### Color
+chooser.color.more=More...
+chooser.color.more.choose=Choose Color
+
+### Fill
+chooser.fill.no=No fill
+chooser.fill.solid=Solid
+chooser.fill.linear.left-right=Linear LR
+chooser.fill.linear.right-left=Linear RL
+chooser.fill.radial.out=Radial Out
+chooser.fill.radial.in=Radial In
+chooser.fill.gradient.linear=Linear gradient
+chooser.fill.gradient.radial=Radial gradient
+chooser.fill.texture=Texture
+
+### Shadow
+
+### Fill Transparency
+chooser.fill.transparency.tooltip=Fill Transparency
+chooser.fill.transparency.no=No Transparency
+
+### Outline pattern
+chooser.outline.pattern.noline=No Line
+chooser.outline.pattern.tooltip=Outline Pattern
+
+### Outline width
+chooser.outline.width.tooltip=Outline Width
+chooser.outline.width.other=Other
+chooser.outline.width.other.title=Enter width
+
+#============= Text editor =========================
+editor.text.button.cut=Cut
+editor.text.button.copy=Copy
+editor.text.button.paste=Paste
+editor.text.button.find=Find
+editor.text.button.replace=Replace
+editor.text.button.goto=Go to Line
+editor.text.button.undo=Undo
+editor.text.button.redo=Redo
+
+editor.text.find.text=Text to find:
+editor.text.find.replace=Replace with:
+editor.text.find.button.find=Find
+editor.text.find.error.message=Can not search for a blank string
+editor.text.find.error=Search Error
+editor.text.find.button.replace=Replace
+editor.text.find.button.cancel=Cancel
+editor.text.find.title=Find Text
+
+editor.text.find.next.string=String
+editor.text.find.next.not.found=not found
+editor.text.find.next.message.search.failed=Search Failed
+
+editor.text.replace.button.yes=Yes
+editor.text.replace.button.no=No
+editor.text.replace.button.all=All
+editor.text.replace.button.done=Done
+editor.text.replace.message.replace.occurence=Replace this occurence of
+editor.text.replace.message.confirm=Confirm replace
+
+editor.text.goto.line.number=Line number:
+editor.text.goto.title=Go To Line Number
+
+editor.message.check.unsaved.schema=Schema '{!name}' is not saved.\nSave it?\nTo cancel closing window press 'Cancel'.
+
+editor.textfield.entertext=Enter text
+
+
+#============= Switcher frame ========================
+switcher.title=Windows
+
+
+#============= Options =========================
+option.ok=Ok
+option.yes=Yes
+option.no=No
+option.cancel=Cancel
+
+attention=Attention
+
+UndoableEdit.undoText=Undo
+UndoableEdit.redoText=Redo
+
+#============= Clipboard frame ========================
+clipboard.title=Buffer
+clipboard.insert=Insert
+clipboard.delete=delete
+clipboard.preview=Preview
+
+#============= Resources frame ========================
+resources.title=Resources
+resources.tab.color=Color
+resources.tab.gradiant.linear=Linear gradiant
+resources.tab.gradiant.radial=Radial gradient
+resources.tab.stroke=Stroke
+resources.tab.image=Image
+resources.tab.font=Font
+resources.tab.transform=Transformation
+resources.tab.script=Script
+
+#============= Zoom frame ========================
+zoom-preview.title=Zoom preview
+
+#============= Chooser ========================
+chooser.name=Name:
+chooser.resources=Resources:
+chooser.button.ok=OK
+chooser.button.cancel=Cancel
+
+#============= Chooser Font ========================
+chooser.font.title=Font chooser
+chooser.font.bold=Bold
+chooser.font.italic=Italic
+chooser.font.antialias=Antialias
+chooser.font.fractional-metrix=Fractional metrix
+chooser.font.family=Family:
+chooser.font.size=Size:
+chooser.font.transform=Transform:
+chooser.font.preview=Preview
+
+#============= Chooser Stroke ========================
+chooser.stroke.cap.butt=Butt
+chooser.stroke.cap.round=Round
+chooser.stroke.cap.square=Square
+chooser.stroke.join.miter=Miter
+chooser.stroke.join.round=Round
+chooser.stroke.join.bevel=Bevel
+chooser.stroke.antialias=Antialias
+chooser.stroke.line-width=Line width:
+chooser.stroke.end-cap=End cap:
+chooser.stroke.line-join=Line join:
+chooser.stroke.miter-limit=Miter limit:
+chooser.stroke.dash-array=Dash array:
+chooser.stroke.dash-phase=Dash phase:
+chooser.stroke.title=Stroke chooser
+
+#============= Chooser Gradient ========================
+chooser.gradient.colors=Colors
+chooser.gradient.properties=Properties
+chooser.gradient.cycle-method.no=No cycle
+chooser.gradient.cycle-method.repeat=Repead
+chooser.gradient.cycle-method.reflect=Reflect
+chooser.gradient.offset=Offset:
+chooser.gradient.percent=%
+chooser.gradient.color=Color:
+chooser.gradient.opacity=Opacity:
+chooser.gradient.cycle-method=Cycle method:
+chooser.gradient.button.ok=OK
+chooser.gradient.button.cancel=Cancel
+
+#============= Chooser Transform ========================
+chooser.transform.title=Transform chooser
+chooser.transform.to-identity=To identity
+chooser.transform.scale=Scale
+chooser.transform.shear=Shear
+chooser.transform.transform=Transform:
+chooser.transform.preview=Preview
+chooser.transform.rotate=Rotate
+
+#============= Chooser Image ========================
+chooser.image.title=Image chooser
+
+#============= Chooser Endings ========================
+chooser.endings.pattern.tooltip=Endings Pattern
+
+#============= Marker =================================
+marker.title = Marker
+marker.size=Size
+marker.angle=Angle
+
+#============= Undo Redo =================================
+undo.move=Move
+undo.add=Add
+undo.remove-selected=Delete
+
+undo.rotate=Rotate
+undo.rotate-90=Поворот на 90 градусов по часовой стрелке
+undo.rotate-minus-90=Поворот на 90 градусов против часовой стрелке
+undo.rotate-180=Поворот на 180 градусов
+
+undo.scale-right=Scale
+undo.scale-left=Scale
+undo.scale-top-left=Scale
+undo.scale-top=Scale
+undo.scale-top-right=Scale
+undo.scale-bottom-right=Scale
+undo.scale-bottom=Scale
+undo.scale-bottom-left=Scale
+
+undo.solid-filler=Заполнение цветом
+undo.linear-gradient-filler=Заполнение линейным градиентом
+undo.radial-gradient-filler=Заполнение радиальным градиентом
+undo.texture-filler=Заполнение текстурой
+undo.no-fill=Удаление заполнения
+
+undo.filler-transparency=Прозрачность
+undo.shadow=Тень
+undo.no-shadow=Удаление тени
+
+undo.path-geom=Изменение геометрии
+undo.path-union=Объединение фигур
+undo.path-subtraction=Вычитание фигур
+undo.path-intersection=Пересечение фигур
+undo.path-xor=Операция исключающая или над фигурами
+undo.path-add-curve=Добавление элемента пути
+undo.path-delete-curve=Удаление элемента пути
+undo.path-delete-curve-point=Удаление точки
+
+undo.paste=Вставка
+undo.to-path=Преобразование в путь
+undo.smooth-path=Сглаживание пути
+undo.stroke-shape=Преобразование пути во внешний контур
+undo.flat-path=Разбиение пути на отрезки
+undo.group=Группировака
+undo.ungroup=Разгруппировка
+undo.Marker=Маркер
+undo.antialias=Сглаживание
+undo.Eraser=Стирание ластиком
+undo.remove-transform=Удаление трансформации
+undo.endings=Установка окончания контура
+undo.alfa-layer=Альфа фильтр
+undo.pencil=Карандаш
+
+undo.translate-right=Перемещение направо
+undo.translate-up=Перемещение вверх
+undo.translate-down=Перемещение вниз
+undo.translate-left=Перемещение налево
+
+undo.to-up=Позиция слоя - наверх на единицу
+undo.to-down=Позиция слоя - вниз на единицу
+undo.to-front=Позиция слоя - наверх
+undo.to-back=Позиция слоя - вниз
+
+undo.lasso-subtract=Ножницы - отрезание
+undo.lasso-union=Ножницы - объединение
+undo.lasso-intersect=Ножницы - пересечение
+undo.lasso-separate=Ножницы - разделение
+
+undo.outline-none=Удаление внешнего контура
+undo.outline-dash-array=Установка внешнего контура
+undo.outline-width=Ширина линии
+
+undo.left-alignment=Выравнивание по левому краю
+undo.center-hor-alignment=Выравнивание по центру по горизонтали
+undo.right-alignment=Выравнивание по правому краю
+undo.top-alignment=Выравнивание по верхнему краю
+undo.center-ver-alignment=Выравнивание по центру по вертикали
+undo.bottom-alignment=Выравнивание по нижнему краю
+
+undo.flip-horizontal=Отражение по горизонтали
+undo.flip-vertical=Отражение по вертикали
+
+undo.same-width=Одинаковая ширина
+undo.same-height=Одинаковая высота
+undo.same-spaces-horizontal=Одинаковые расстояния по горизонтали
+undo.same-spaces-vertical=Одинаковые расстояния по вертикали
+
+undo.vector-right=Трансформация (вращение + масштабирование)
+undo.vector-top=Трансформация (вращение + масштабирование)
+
+undo.shear-top=Shear
+undo.shear-right=Shear
+undo.shear-bottom=Shear
+undo.shear-left=Shear
+
+undo.right-group-alignment=Align right
+undo.left-group-alignment=Align left
+undo.top-group-alignment=Align top
+undo.bottom-group-alignment=Align bottom
+
+#============= Path Geom Action =================================
+path-geom-action.remove-point=Remove point
+path-geom-action.remove-curve=Remove curve
+
+path-geom-action.replace-element=Replace
+path-geom-action.replace-element-tomove=Move
+path-geom-action.replace-element-toline=Line
+path-geom-action.replace-element-toquad=Quad
+path-geom-action.replace-element-tocurve=Curve
+
+path-geom-action.insert-element=Insert
+path-geom-action.insert-element-move=Move
+path-geom-action.insert-element-line=Line
+path-geom-action.insert-element-quad=Quad
+path-geom-action.insert-element-curve=Curve
+
+#============= Control Action Area =================================
+control-action-area.menu.edit=Edit
+control-action-area.button.ok=OK
+control-action-area.button.apply=Apply
+control-action-area.button.cancel=Cancel
+control-action-area.title=Control configuration
+
+#============= Search =================================
+search.title=Find objects by name
+search.checkbox.regexp=Regexp
+search.checkbox.match-case=Match case
+search.checkbox.whole-word=Whole word
+search.label.text-to-find=Text to find: 
+search.panel.options=Options
+search.checkbox.current-document=Current document
+
+menu.group.paint-order=Paint order
+menu.group.action-order.components=By components
+menu.group.action-order.first-outline=First outlines
+menu.group.action-order.first-fill=First fill

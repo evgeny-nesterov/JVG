@@ -1,0 +1,46 @@
+<shape>
+	<info>
+		<name>Прямоугольник</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="80" argument="yes" />
+		<var id="y2" value="40" argument="yes" />
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x1" y="y2" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x2" y="y1" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y2" />
+		<point x="x2" y="y2" />
+		<point x="x2" y="y1" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y2" />
+		<point x="x2" y="y2" />
+		<point x="x2" y="y1" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x1" y="y2" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="(y1+y2)/2" type="server" />
+		<connection x="x1" y="(y1+y2)/2" type="server" />
+		<connection x="x2" y="(y1+y2)/2" type="server" />
+		<connection x="(x1+x2)/2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="y2" type="server" />
+	</connections>
+</shape>

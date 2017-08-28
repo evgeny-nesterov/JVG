@@ -1,0 +1,73 @@
+<shape>
+	<info>
+		<name>Эллипс</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="cv">
+			<get>0.5522847498307933</get>
+		</var>
+
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x4" value="80" argument="yes" />
+		<var id="y4" value="40" argument="yes" />
+
+		<var id="cx">
+			<get>(x1 + x4) / 2</get>
+		</var>
+		<var id="cy">
+			<get>(y1 + y4) / 2</get>
+		</var>
+		<var id="w">
+			<get>(x4 - x1) / 2</get>
+		</var>
+		<var id="h">
+			<get>(y4 - y1) / 2</get>
+		</var>
+
+		<var id="x2">
+			<get>cx - cv * w</get>
+		</var>
+		<var id="x3">
+			<get>cx + cv * w</get>
+		</var>
+
+		<var id="y2">
+			<get>cy - cv * h</get>
+		</var>
+		<var id="y3">
+			<get>cy + cv * h</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="cx" y="y1" />
+		<curveto x1="x2" y1="y1" x2="x1" y2="y2" x3="x1" y3="cy" />
+		<curveto x1="x1" y1="y3" x2="x2" y2="y4" x3="cx" y3="y4" />
+		<curveto x1="x3" y1="y4" x2="x4" y2="y3" x3="x4" y3="cy" />
+		<curveto x1="x4" y1="y2" x2="x3" y2="y1" x3="cx" y3="y1" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="(y1+y4)/2" type="server" />
+		<connection x="(x1+x4)/2" y="y1" type="server" />
+		<connection x="(x1+x4)/2" y="y4" type="server" />
+		<connection x="x4" y="(y1+y4)/2" type="server" />
+		<connection x="(x1+x4)/2" y="(y1+y4)/2" type="server" />
+	</connections>
+</shape>

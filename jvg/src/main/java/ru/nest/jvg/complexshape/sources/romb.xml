@@ -1,0 +1,64 @@
+<shape>
+	<info>
+		<name>Ромб</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="cx" value="60" argument="yes" />
+		<var id="cy" value="40" argument="yes" />
+		<var id="a" value="60" argument="yes" />
+		<var id="b" value="40" argument="yes" />
+
+		<var id="x1">
+			<get>cx + a</get>
+			<set param="a">$ - cx</set>
+		</var>
+		<var id="x2">
+			<get>cx</get>
+			<set param="cx">cx</set>
+		</var>
+		<var id="x3">
+			<get>cx - a</get>
+		</var>
+
+		<var id="y1">
+			<get>cy + b</get>
+			<set param="b">$ - cy</set>
+		</var>
+		<var id="y2">
+			<get>cy</get>
+			<set param="cy">cy</set>
+		</var>
+		<var id="y3">
+			<get>cy - b</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y2" />
+		<lineto x="x2" y="y1" />
+		<lineto x="x3" y="y2" />
+		<lineto x="x2" y="y3" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y2" />
+		<point x="x2" y="y1" />
+		<point x="x3" y="y2" />
+		<point x="x2" y="y3" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y2" />
+		<point x="x2" y="y1" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y2" type="server" />
+		<connection x="x2" y="y1" type="server" />
+		<connection x="x3" y="y2" type="server" />
+		<connection x="x2" y="y3" type="server" />
+		<connection x="x2" y="y2" type="server" />
+	</connections>
+</shape>

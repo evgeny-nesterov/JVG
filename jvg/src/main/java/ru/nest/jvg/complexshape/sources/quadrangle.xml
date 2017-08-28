@@ -1,0 +1,48 @@
+<shape>
+	<info>
+		<name>Четырехугольник</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x2" value="0" argument="yes" />
+		<var id="y2" value="80" argument="yes" />
+		<var id="x3" value="80" argument="yes" />
+		<var id="y3" value="80" argument="yes" />
+		<var id="x4" value="80" argument="yes" />
+		<var id="y4" value="0" argument="yes" />
+	</variables>
+
+	<path>
+		<moveto x="x1" y="y1" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x3" y="y3" />
+		<lineto x="x4" y="y4" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+		<point x="x3" y="y3" />
+		<point x="x4" y="y4" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x3" y="y3" type="server" />
+		<connection x="x4" y="y4" type="server" />
+		<connection x="(x1+x2+x3+x4)/4" y="(y1+y2+y3+y4)/4" type="server" />
+	</connections>
+
+	<point-on-add x="(x1 + x3) / 2" y="(y1 + y3) / 2" />
+</shape>

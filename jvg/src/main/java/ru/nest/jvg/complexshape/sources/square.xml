@@ -1,0 +1,73 @@
+<shape>
+	<info>
+		<name>Квадрат</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="tmp" />
+		<var id="edge" value="80" argument="yes" />
+		<var id="x" value="0" argument="yes" />
+		<var id="y" value="0" argument="yes" />
+
+		<var id="cx">
+			<get>x + edge / 2</get>
+		</var>
+		<var id="cy">
+			<get>y + edge / 2</get>
+		</var>
+
+		<var id="delta" />
+		<var id="x1">
+			<get>x</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y1">
+			<get>y</get>
+			<set param="delta">(edge > 0) ? min(tmp - x, $ - y) : max(tmp - x, $ - y)</set>
+			<set param="x">x + delta</set>
+			<set param="y">y + delta</set>
+			<set param="edge">edge - delta</set>
+		</var>
+
+		<var id="x2">
+			<get>x + edge</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y2">
+			<get>y + edge</get>
+			<set param="edge">(edge > 0) ? max(tmp - x, $ - y) : min(tmp - x, $ - y)</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="x" y="y" />
+		<lineto x="x" y="y2" />
+		<lineto x="x2" y="y2" />
+		<lineto x="x2" y="y" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="x" y="y" />
+		<point x="x" y="y2" />
+		<point x="x2" y="y2" />
+		<point x="x2" y="y" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x2" y="y2" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="server" />
+		<connection x="x1" y="y2" type="server" />
+		<connection x="x2" y="y2" type="server" />
+		<connection x="x2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="(y1+y2)/2" type="server" />
+		<connection x="x1" y="(y1+y2)/2" type="server" />
+		<connection x="x2" y="(y1+y2)/2" type="server" />
+		<connection x="(x1+x2)/2" y="y1" type="server" />
+		<connection x="(x1+x2)/2" y="y2" type="server" />
+	</connections>
+</shape>

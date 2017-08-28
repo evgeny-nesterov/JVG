@@ -1,0 +1,126 @@
+<shape>
+	<info>
+		<name>Кольцо</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="cv">
+			<get>0.5522847498307933</get>
+		</var>
+
+		<var id="cx" value="40" argument="yes" />
+		<var id="cy" value="40" argument="yes" />
+		<var id="R" value="40" argument="yes" />
+		<var id="delta" value="10" argument="yes" />
+
+		<var id="r">
+			<get>R - delta</get>
+		</var>
+
+		<!-- Outer circle -->
+		<var id="tmp" />
+		<var id="x1">
+			<get>cx - R</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y1">
+			<get>cy - R</get>
+			<set param="R">max(cx - tmp, cy - $)</set>
+		</var>
+
+		<var id="x2">
+			<get>cx - cv * R</get>
+		</var>
+		<var id="x3">
+			<get>cx + cv * R</get>
+		</var>
+
+		<var id="y2">
+			<get>cy - cv * R</get>
+		</var>
+		<var id="y3">
+			<get>cy + cv * R</get>
+		</var>
+
+		<var id="x4">
+			<get>cx + R</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="y4">
+			<get>cy + R</get>
+			<set param="R">max(tmp - cx, $ - cy)</set>
+		</var>
+
+		<!-- Inner circle -->
+		<var id="ix1">
+			<get>cx - r</get>
+		</var>
+		<var id="iy1">
+			<get>cy - r</get>
+		</var>
+
+		<var id="ix2">
+			<get>cx - cv * r</get>
+		</var>
+		<var id="ix3">
+			<get>cx + cv * r</get>
+		</var>
+
+		<var id="iy2">
+			<get>cy - cv * r</get>
+		</var>
+		<var id="iy3">
+			<get>cy + cv * r</get>
+		</var>
+
+		<var id="ix4">
+			<get>cx + r</get>
+			<set param="delta">x4 - $</set>
+		</var>
+		<var id="iy4">
+			<get>cy + r</get>
+		</var>
+		<var id="_cy">
+			<get>cy</get>
+			<set param="cy">cy</set>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="cx" y="y1" />
+		<curveto x1="x2" y1="y1" x2="x1" y2="y2" x3="x1" y3="cy" />
+		<curveto x1="x1" y1="y3" x2="x2" y2="y4" x3="cx" y3="y4" />
+		<curveto x1="x3" y1="y4" x2="x4" y2="y3" x3="x4" y3="cy" />
+		<curveto x1="x4" y1="y2" x2="x3" y2="y1" x3="cx" y3="y1" />
+
+		<moveto x="cx" y="iy1" />
+		<curveto x1="ix3" y1="iy1" x2="ix4" y2="iy2" x3="ix4" y3="cy" />
+		<curveto x1="ix4" y1="iy3" x2="ix3" y2="iy4" x3="cx" y3="iy4" />
+		<curveto x1="ix2" y1="iy4" x2="ix1" y2="iy3" x3="ix1" y3="cy" />
+		<curveto x1="ix1" y1="iy2" x2="ix2" y2="iy1" x3="cx" y3="iy1" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="x1" y="y1" />
+		<point x="x1" y="y4" />
+		<point x="x4" y="y1" />
+		<point x="x4" y="y4" />
+		<point x="ix4" y="_cy" />
+	</manage>
+
+	<connections>
+		<connection x="cx-R" y="cy" type="server" />
+		<connection x="cx+R" y="cy" type="server" />
+		<connection x="cx" y="cy-R" type="server" />
+		<connection x="cx" y="cy+R" type="server" />
+	</connections>
+
+	<point-on-add x="cx + delta / 2" y="cy - R + delta / 2" />
+</shape>

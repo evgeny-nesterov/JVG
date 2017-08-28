@@ -1,0 +1,77 @@
+<shape>
+	<info>
+		<name>Прямой угол</name>
+		<descr></descr>
+	</info>
+	<variables>
+		<var id="startX" value="0" argument="yes" />
+		<var id="startY" value="0" argument="yes" />
+		<var id="endX" value="80" argument="yes" />
+		<var id="endY" value="80" argument="yes" />
+		<var id="width" value="5" argument="yes" />
+
+		<var id="widthX">
+			<get>(startX + endX) / 2</get>
+		</var>
+		<var id="widthY">
+			<get>endY + width</get>
+			<set param="width">$ - endY</set>
+		</var>
+
+		<var id="x1">
+			<get>startX - width</get>
+		</var>
+		<var id="x2">
+			<get>startX + width</get>
+		</var>
+		<var id="y1">
+			<get>endY - width</get>
+		</var>
+		<var id="y2">
+			<get>endY + width</get>
+		</var>
+
+		<var id="leftX">
+			<get><![CDATA[startX - width * (startX < endX) * (startY < endY)]]></get>
+		</var>
+		<var id="rightX">
+			<get><![CDATA[startX + width * (startX < endX) * (startY < endY)]]></get>
+		</var>
+		<var id="topY">
+			<get>endY - width</get>
+		</var>
+		<var id="bottomY">
+			<get>endY + width</get>
+		</var>
+	</variables>
+
+	<path>
+		<moveto x="leftX" y="startY" />
+		<lineto x="leftX" y="bottomY" />
+		<lineto x="endX" y="bottomY" />
+		<lineto x="endX" y="topY" />
+		<lineto x="rightX" y="topY" />
+		<lineto x="rightX" y="startY" />
+		<close />
+	</path>
+
+	<bounds>
+		<point x="startX" y="startY" />
+		<point x="startX" y="endY" />
+		<point x="endX" y="endY" />
+	</bounds>
+
+	<manage>
+		<point x="startX" y="startY" />
+		<point x="endX" y="endY" />
+		<point x="widthX" y="widthY" />
+	</manage>
+
+	<connections>
+		<connection x="startX" y="startY" type="client;server" />
+		<connection x="endX" y="endY" type="client;server" />
+		<connection x="startX" y="endY" type="server" />
+	</connections>
+
+	<point-on-add x="startX" y="endY" />
+</shape>

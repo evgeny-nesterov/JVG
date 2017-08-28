@@ -1,0 +1,116 @@
+<shape>
+	<info>
+		<name>Кривая третьего порядка</name>
+		<descr>Настраиваются 2 контрольные точки.</descr>
+	</info>
+	<variables>
+		<var id="x1" value="0" argument="yes" />
+		<var id="y1" value="0" argument="yes" />
+		<var id="x4" value="1" argument="yes" />
+		<var id="y4" value="1" argument="yes" />
+		<var id="koef1" value="1 / 3" argument="yes" />
+		<var id="h1" value="0" argument="yes" />
+		<var id="koef2" value="2 / 3" argument="yes" />
+		<var id="h2" value="0" argument="yes" />
+
+		<var id="radius">
+			<get>veclen(x1, y1, x4, y4)</get>
+		</var>
+		<var id="cos">
+			<get>(radius != 0) ? (x4 - x1) / radius : 0</get>
+		</var>
+		<var id="sin">
+			<get>(radius != 0) ? (y4 - y1) / radius : 1</get>
+		</var>
+		<var id="ort_dx1">
+			<get>h1 * sin</get>
+		</var>
+		<var id="ort_dy1">
+			<get>h1 * cos</get>
+		</var>
+		<var id="ort_dx2">
+			<get>h2 * sin</get>
+		</var>
+		<var id="ort_dy2">
+			<get>h2 * cos</get>
+		</var>
+
+		<var id="xc1">
+			<get>x1 + koef1 * (x4 - x1)</get>
+		</var>
+		<var id="yc1">
+			<get>y1 + koef1 * (y4 - y1)</get>
+		</var>
+		<var id="xc2">
+			<get>x1 + koef2 * (x4 - x1)</get>
+		</var>
+		<var id="yc2">
+			<get>y1 + koef2 * (y4 - y1)</get>
+		</var>
+
+		<var id="tmp" />
+		<var id="qx1">
+			<get>xc1 + ort_dx1</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="qy1">
+			<get>yc1 - ort_dy1</get>
+			<set param="h1">orth(x1, y1, x4, y4, tmp, $)</set>
+			<set param="koef1">(radius != 0) ? ortl(x1, y1, x4, y4, tmp, $) / radius
+				: koef1</set>
+		</var>
+
+		<var id="qx2">
+			<get>xc2 + ort_dx2</get>
+			<set param="tmp">$</set>
+		</var>
+		<var id="qy2">
+			<get>yc2 - ort_dy2</get>
+			<set param="h2">orth(x1, y1, x4, y4, tmp, $)</set>
+			<set param="koef2">(radius != 0) ? ortl(x1, y1, x4, y4, tmp, $) / radius
+				: koef2</set>
+		</var>
+
+		<var id="x2">
+			<get>(18 * qx1 - 9 * qx2 - 5 * x1 + 2 * x4) / 6</get>
+		</var>
+		<var id="y2">
+			<get>(18 * qy1 - 9 * qy2 - 5 * y1 + 2 * y4) / 6</get>
+		</var>
+
+		<var id="x3">
+			<get>(18 * qx2 - 9 * qx1 - 5 * x4 + 2 * x1) / 6</get>
+		</var>
+		<var id="y3">
+			<get>(18 * qy2 - 9 * qy1 - 5 * y4 + 2 * y1) / 6</get>
+		</var>
+	</variables>
+
+	<path fill="no">
+		<moveto x="x1" y="y1" />
+		<curveto x1="x2" y1="y2" x2="x3" y2="y3" x3="x4" y3="y4" />
+	</path>
+
+	<bounds>
+		<point x="x1" y="y1" />
+		<point x="qx1" y="qy1" />
+		<point x="qx2" y="qy2" />
+		<point x="x4" y="y4" />
+	</bounds>
+
+	<manage>
+		<point x="qx1" y="qy1" />
+		<point x="qx2" y="qy2" />
+		<point x="x1" y="y1" />
+		<point x="x4" y="y4" />
+	</manage>
+
+	<connections>
+		<connection x="x1" y="y1" type="client" />
+		<connection x="x4" y="y4" type="client" />
+		<connection x="qx1" y="qy1" type="server" />
+		<connection x="qx2" y="qy2" type="server" />
+	</connections>
+
+	<point-on-add x="x4" y="y4" />
+</shape>
