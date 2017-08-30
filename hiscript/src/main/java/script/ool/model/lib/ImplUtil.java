@@ -17,7 +17,7 @@ public class ImplUtil {
 
 	private static Clazz classClazz;
 
-	private static Constructor classConstructor;;
+	private static Constructor classConstructor;
 
 	public static Clazz getClassClass(RuntimeContext ctx) {
 		if (classClazz == null) {

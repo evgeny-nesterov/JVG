@@ -20,6 +20,8 @@ public class JVGRowHeader extends JLabel {
 
 	private NumberFormat f = new DecimalFormat("0.#");
 
+	private Integer markerPosition;
+
 	public JVGRowHeader(JVGEditPane pane) {
 		this.pane = pane;
 		setOpaque(true);
@@ -54,6 +56,11 @@ public class JVGRowHeader extends JLabel {
 		}
 
 		int w = getWidth() - 1, h = getHeight();
+		if (markerPosition != null) {
+			g.setColor(Color.blue);
+			g.drawLine(0, markerPosition, w, markerPosition);
+		}
+
 		g.setColor(Color.black);
 		g.drawLine(w, 0, w, h);
 
@@ -70,8 +77,14 @@ public class JVGRowHeader extends JLabel {
 		}
 
 		for (; y < h; y += ydelta, v += delta) {
-			g.drawLine(w - 3, (int) y, w, (int) y);
-			g.drawLine(w - 1, (int) (y + ydelta / 2), w, (int) (y + ydelta / 2));
+			g.drawLine(w - 1, (int) y, w, (int) y);
+
+			double d = ydelta / 4;
+			g.drawLine(w - 1, (int) (y + d), w, (int) (y + d));
+			d = ydelta / 2;
+			g.drawLine(w - 3, (int) (y + d), w, (int) (y + d));
+			d = 3 * ydelta / 4;
+			g.drawLine(w - 1, (int) (y + d), w, (int) (y + d));
 		}
 
 		g2d.rotate(-Math.PI / 2, getHeight() / 2.0, getHeight() / 2.0);
@@ -97,5 +110,13 @@ public class JVGRowHeader extends JLabel {
 			px = getHeight() - (projectionBounds.y + projectionBounds.height);
 			g.drawLine(px, 0, px, getWidth());
 		}
+	}
+
+	public Integer getMarkerPosition() {
+		return markerPosition;
+	}
+
+	public void setMarkerPosition(Integer markerPosition) {
+		this.markerPosition = markerPosition;
 	}
 }

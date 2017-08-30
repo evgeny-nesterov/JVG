@@ -37,7 +37,7 @@ public class FileTreeModel implements TreeModel {
 
 	private File[] getFiles(File parent) {
 		String path = parent != null ? parent.getAbsolutePath() : null;
-		SoftReference<File[]> ref = cache.get(path);;
+		SoftReference<File[]> ref = cache.get(path);
 		File[] files = null;
 		if (ref != null) {
 			files = ref.get();

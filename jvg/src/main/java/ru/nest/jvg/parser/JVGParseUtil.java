@@ -217,8 +217,19 @@ public class JVGParseUtil {
 						break;
 					} else if (i > 1) {
 						char c1 = Character.toLowerCase(c[i - 1]);
+						if (c1 == 'p' && c2 == 'x') {
+							s = s.substring(0, i - 1);
+							break;
+						}
+
 						if (c1 == 'i' && c2 == 'n') {
 							koef = pixPerInch;
+							s = s.substring(0, i - 1);
+							break;
+						}
+
+						if (c1 == 'e' && c2 == 'm') {
+							koef = 16f;
 							s = s.substring(0, i - 1);
 							break;
 						}
@@ -273,8 +284,19 @@ public class JVGParseUtil {
 							break;
 						} else if (i > 1) {
 							char c1 = Character.toLowerCase(c[i - 1]);
+							if (c1 == 'p' && c2 == 'x') {
+								s = s.substring(0, i - 1);
+								break;
+							}
+
 							if (c1 == 'i' && c2 == 'n') {
 								koef = pixPerInch;
+								s = s.substring(0, i - 1);
+								break;
+							}
+
+							if (c1 == 'e' && c2 == 'm') {
+								koef = 16f;
 								s = s.substring(0, i - 1);
 								break;
 							}

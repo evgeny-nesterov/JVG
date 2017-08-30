@@ -46,7 +46,8 @@ public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 			Rectangle2D r = ib instanceof Rectangle2D ? (Rectangle2D) ib : ib.getBounds2D();
 
 			// copy colors
-			Resource<Color>[] colorResources = resource.getResource().getColors();
+			LinearGradient gradient = resource.getResource();
+			Resource<Color>[] colorResources = gradient.getColors();
 			if (colorResources != null) {
 				double opacity = getOpacity();
 				Color[] colors = new Color[colorResources.length];
@@ -59,14 +60,14 @@ public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 					}
 				}
 
-				float startX = resource.getResource().getX1();
-				float startY = resource.getResource().getY1();
-				float endX = resource.getResource().getX2();
-				float endY = resource.getResource().getY2();
+				float startX = gradient.getX1();
+				float startY = gradient.getY1();
+				float endX = gradient.getX2();
+				float endY = gradient.getY2();
 
 				// update paint on change
 				float x1, y1, x2, y2;
-				if (resource.getResource().getUnits() == GradientUnitsType.BOUNDS) {
+				if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
 					x1 = (float) r.getX() + (float) r.getWidth() * startX;
 					y1 = (float) r.getY() + (float) r.getHeight() * startY;
 					x2 = (float) r.getX() + (float) r.getWidth() * endX;
@@ -79,11 +80,11 @@ public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 				}
 
 				if (x1 != x2 || y1 != y2) {
-					if (resource.getResource().getTransform() != null) {
+					if (gradient.getTransform() != null) {
 						transform = (AffineTransform) transform.clone();
-						transform.concatenate(resource.getResource().getTransform());
+						transform.concatenate(gradient.getTransform());
 					}
-					paint = new LinearGradientPaint(x1, y1, x2, y2, resource.getResource().getFractions(), colors, resource.getResource().getCycleMethod(), transform);
+					paint = new LinearGradientPaint(x1, y1, x2, y2, gradient.getFractions(), colors, gradient.getCycleMethod(), transform);
 				}
 			}
 		}

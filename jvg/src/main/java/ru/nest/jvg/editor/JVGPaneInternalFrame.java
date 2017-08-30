@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
@@ -76,6 +78,15 @@ public class JVGPaneInternalFrame extends JInternalFrame implements Comparable<J
 				v.invalidate();
 				revalidate();
 				repaint();
+			}
+		});
+		pane.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				columnHeader.setMarkerPosition(e.getX());
+				rowHeader.setMarkerPosition(e.getY());
+				columnHeader.repaint();
+				rowHeader.repaint();
 			}
 		});
 

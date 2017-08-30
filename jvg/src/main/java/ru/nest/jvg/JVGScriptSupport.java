@@ -453,7 +453,7 @@ public class JVGScriptSupport {
 					String parameter = (String) arguments[1];
 					HashMap<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
 					if (hash != null) {
-						ctx.value.bool = hash.containsKey(parameter);;
+						ctx.value.bool = hash.containsKey(parameter);
 						return;
 					}
 				}

@@ -42,13 +42,14 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 	@Override
 	public Paint getPaint(JVGShape component, Shape shape, AffineTransform transform) {
 		if (paint == null) {
-			Resource<Color>[] colorResources = resource.getResource().getColors();
+			RadialGradient gradient = resource.getResource();
+			Resource<Color>[] colorResources = gradient.getColors();
 			if (colorResources != null) {
 				// copy colors
 				double opacity = getOpacity();
 				Color[] colors = new Color[colorResources.length];
 				for (int i = 0; i < colorResources.length; i++) {
-					Color color = colorResources[i].getResource();;
+					Color color = colorResources[i].getResource();
 					if (color == null) {
 						color = Color.white;
 						System.err.println("Error in RadialGradientDraw: colorResources[" + i + "] is null!");
@@ -63,20 +64,20 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 				Rectangle2D r = ib instanceof Rectangle2D ? (Rectangle2D) ib : ib.getBounds2D();
 
 				float rad;
-				if (resource.getResource().getUnits() == GradientUnitsType.BOUNDS) {
-					rad = (float) (r.getWidth() * resource.getResource().getR());
+				if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
+					rad = (float) (r.getWidth() * gradient.getR());
 				} else {
-					rad = resource.getResource().getR();
+					rad = gradient.getR();
 				}
 
 				if (rad > 0) {
 					// update paint on change
 					float cx, cy, fx, fy;
-					if (resource.getResource().getUnits() == GradientUnitsType.BOUNDS) {
-						cx = (float) r.getX() + (float) r.getWidth() * resource.getResource().getCX();
-						cy = (float) r.getY() + (float) r.getHeight() * resource.getResource().getCY();
-						fx = (float) r.getX() + (float) r.getWidth() * resource.getResource().getFX();
-						fy = (float) r.getY() + (float) r.getHeight() * resource.getResource().getFY();
+					if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
+						cx = (float) r.getX() + (float) r.getWidth() * gradient.getCX();
+						cy = (float) r.getY() + (float) r.getHeight() * gradient.getCY();
+						fx = (float) r.getX() + (float) r.getWidth() * gradient.getFX();
+						fy = (float) r.getY() + (float) r.getHeight() * gradient.getFY();
 
 						double scale = (r.getHeight() != 0 ? r.getHeight() : 1) / (r.getWidth() != 0 ? r.getWidth() : 1);
 						AffineTransform scaleTransform = AffineTransform.getTranslateInstance(cx, cy);
@@ -86,17 +87,17 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 						transform = (AffineTransform) transform.clone();
 						transform.concatenate(scaleTransform);
 					} else {
-						cx = resource.getResource().getCX();
-						cy = resource.getResource().getCY();
-						fx = resource.getResource().getFX();
-						fy = resource.getResource().getFY();
+						cx = gradient.getCX();
+						cy = gradient.getCY();
+						fx = gradient.getFX();
+						fy = gradient.getFY();
 					}
 
-					if (resource.getResource().getTransform() != null) {
+					if (gradient.getTransform() != null) {
 						transform = (AffineTransform) transform.clone();
-						transform.concatenate(resource.getResource().getTransform());
+						transform.concatenate(gradient.getTransform());
 					}
-					paint = new RadialGradientPaint(cx, cy, rad, fx, fy, resource.getResource().getFractions(), colors, transform, resource.getResource().getCycleMethod());
+					paint = new RadialGradientPaint(cx, cy, rad, fx, fy, gradient.getFractions(), colors, transform, gradient.getCycleMethod());
 				}
 			}
 		}

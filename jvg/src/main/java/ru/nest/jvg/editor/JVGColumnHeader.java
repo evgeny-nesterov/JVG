@@ -19,6 +19,8 @@ public class JVGColumnHeader extends JLabel {
 
 	private JVGEditPane pane;
 
+	private Integer markerPosition;
+
 	public JVGColumnHeader(JVGEditPane pane) {
 		this.pane = pane;
 		setOpaque(true);
@@ -52,6 +54,11 @@ public class JVGColumnHeader extends JLabel {
 		}
 
 		int h = getHeight() - 1, w = getWidth();
+		if (markerPosition != null) {
+			g.setColor(Color.blue);
+			g.drawLine(markerPosition, 0, markerPosition, h);
+		}
+
 		g.setColor(Color.black);
 		g.drawLine(0, h, w, h);
 
@@ -73,7 +80,13 @@ public class JVGColumnHeader extends JLabel {
 			g.drawString(s, (int) (x - textWidth / 2), (int) y);
 
 			g.drawLine((int) x, h, (int) x, h - 3);
-			g.drawLine((int) (x + xdelta / 2), h, (int) (x + xdelta / 2), h - 1);
+
+			double d = xdelta / 4;
+			g.drawLine((int) (x + d), h, (int) (x + d), h - 1);
+			d = xdelta / 2;
+			g.drawLine((int) (x + d), h, (int) (x + d), h - 1);
+			d = 3 * xdelta / 4;
+			g.drawLine((int) (x + d), h, (int) (x + d), h - 1);
 		}
 
 		Rectangle projectionBounds = pane.getProjectionBounds();
@@ -89,5 +102,13 @@ public class JVGColumnHeader extends JLabel {
 			px = projectionBounds.x + projectionBounds.width;
 			g.drawLine(px, 0, px, getHeight());
 		}
+	}
+
+	public Integer getMarkerPosition() {
+		return markerPosition;
+	}
+
+	public void setMarkerPosition(Integer markerPosition) {
+		this.markerPosition = markerPosition;
 	}
 }

@@ -229,7 +229,7 @@ public class LinearGradientChooser extends GradientChooser<LinearGradient> {
 
 	@Override
 	protected Resource<LinearGradient> createResource() {
-		LinearGradient gradient = new LinearGradient(getFractions(), getColors(), getCycleMethod(), getX1(), getY1(), getX2(), getY2());;
+		LinearGradient gradient = new LinearGradient(getFractions(), getColors(), getCycleMethod(), getX1(), getY1(), getX2(), getY2());
 		return new LinearGradientResource(gradient);
 	}
 
