@@ -104,16 +104,15 @@ class AlfaPaintContext implements PaintContext {
 	static WeakReference<Raster> cached;
 
 	static synchronized Raster getCachedRaster(ColorModel cm, int w, int h) {
-		// TODO raster draw not right - it's appear lines
-		//		if (cm == cachedModel) {
-		//			if (cached != null) {
-		//				Raster ras = cached.get();
-		//				if (ras != null && ras.getWidth() >= w && ras.getHeight() >= h) {
-		//					cached = null;
-		//					return ras;
-		//				}
-		//			}
-		//		}
+		if (cm == cachedModel) {
+			if (cached != null) {
+				Raster ras = cached.get();
+				if (ras != null && ras.getWidth() >= w && ras.getHeight() >= h) {
+					cached = null;
+					return ras;
+				}
+			}
+		}
 		return cm.createCompatibleWritableRaster(w, h);
 	}
 
@@ -140,7 +139,7 @@ class AlfaPaintContext implements PaintContext {
 
 	Raster saved;
 
-	ColorModel model;
+	private ColorModel model;
 
 	private PaintContext paint1;
 
@@ -182,11 +181,9 @@ class AlfaPaintContext implements PaintContext {
 		if (paint1 != null && paint2 == null) {
 			return getRasterByPaintAndAlfa(paint1, alfa2, x, y, w, h);
 		}
-
 		if (paint2 != null && paint1 == null) {
 			return getRasterByPaintAndAlfa(paint2, alfa1, x, y, w, h);
 		}
-
 		return getRasterByPaintAndPaint(paint1, paint2, x, y, w, h);
 	}
 
@@ -195,8 +192,10 @@ class AlfaPaintContext implements PaintContext {
 		ColorModel cm = paint.getColorModel();
 		boolean hasAlfa = cm.hasAlpha();
 		int[] sourcePixels = raster.getDataStorage();
+		int sw = raster.getWidth();
+		int sh = raster.getWidth();
 
-		Raster rast = saved;
+		Raster rast = model.createCompatibleWritableRaster(w, h); // saved;
 		if (rast == null || rast.getWidth() < w || rast.getHeight() < h) {
 			rast = getCachedRaster(model, w, h);
 			saved = rast;
@@ -207,20 +206,47 @@ class AlfaPaintContext implements PaintContext {
 		int len = Math.min(sourcePixels.length, pixels.length);
 
 		if (hasAlfa) {
-			for (int i = 0; i < len; i++) {
-				int alfa = (int) (((sourcePixels[i] >> 24) & 0xFF) * color[0]);
-				int red = (int) (((sourcePixels[i] >> 16) & 0xFF) * color[1]);
-				int green = (int) (((sourcePixels[i] >> 8) & 0xFF) * color[2]);
-				int blue = (int) (((sourcePixels[i]) & 0xFF) * color[3]);
-				pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+			if (sw == w) {
+				for (int i = 0; i < len; i++) {
+					int alfa = (int) (((sourcePixels[i] >> 24) & 0xFF) * color[0]);
+					int red = (int) (((sourcePixels[i] >> 16) & 0xFF) * color[1]);
+					int green = (int) (((sourcePixels[i] >> 8) & 0xFF) * color[2]);
+					int blue = (int) (((sourcePixels[i]) & 0xFF) * color[3]);
+					pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+				}
+			} else {
+				for (int ix = 0; ix < w; ix++) {
+					for (int iy = 0; iy < h; iy++) {
+						int i = w * iy + ix;
+						int si = sw * iy + ix;
+						int alfa = (int) (((sourcePixels[si] >> 24) & 0xFF) * color[0]);
+						int red = (int) (((sourcePixels[si] >> 16) & 0xFF) * color[1]);
+						int green = (int) (((sourcePixels[si] >> 8) & 0xFF) * color[2]);
+						int blue = (int) (((sourcePixels[si]) & 0xFF) * color[3]);
+						pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+					}
+				}
 			}
 		} else {
 			int alfa = ((int) (255 * color[0]) & 0xFF) << 24;
-			for (int i = 0; i < len; i++) {
-				int red = (int) (((sourcePixels[i] >> 16) & 0xFF) * color[1]);
-				int green = (int) (((sourcePixels[i] >> 8) & 0xFF) * color[2]);
-				int blue = (int) (((sourcePixels[i]) & 0xFF) * color[3]);
-				pixels[i] = alfa + (red << 16) + (green << 8) + blue;
+			if (sw == w) {
+				for (int i = 0; i < len; i++) {
+					int red = (int) (((sourcePixels[i] >> 16) & 0xFF) * color[1]);
+					int green = (int) (((sourcePixels[i] >> 8) & 0xFF) * color[2]);
+					int blue = (int) (((sourcePixels[i]) & 0xFF) * color[3]);
+					pixels[i] = alfa + (red << 16) + (green << 8) + blue;
+				}
+			} else {
+				for (int ix = 0; ix < w; ix++) {
+					for (int iy = 0; iy < h; iy++) {
+						int i = w * iy + ix;
+						int si = sw * iy + ix;
+						int red = (int) (((sourcePixels[si] >> 16) & 0xFF) * color[1]);
+						int green = (int) (((sourcePixels[si] >> 8) & 0xFF) * color[2]);
+						int blue = (int) (((sourcePixels[si]) & 0xFF) * color[3]);
+						pixels[i] = alfa + (red << 16) + (green << 8) + blue;
+					}
+				}
 			}
 		}
 		return rast;
@@ -230,14 +256,18 @@ class AlfaPaintContext implements PaintContext {
 		IntegerInterleavedRaster raster1 = (IntegerInterleavedRaster) paint1.getRaster(x, y, w, h);
 		boolean hasAlfa1 = paint1.getColorModel().hasAlpha();
 		int[] pixels1 = raster1.getDataStorage();
+		int w1 = raster1.getWidth();
+		int h1 = raster1.getWidth();
 
 		IntegerInterleavedRaster raster2 = (IntegerInterleavedRaster) paint2.getRaster(x, y, w, h);
 		boolean hasAlfa2 = paint2.getColorModel().hasAlpha();
 		int[] pixels2 = raster2.getDataStorage();
+		int w2 = raster2.getWidth();
+		int h2 = raster2.getWidth();
 
 		int len = Math.min(pixels1.length, pixels2.length);
 
-		Raster rast = saved;
+		Raster rast = model.createCompatibleWritableRaster(w, h); // saved;
 		if (rast == null || rast.getWidth() < w || rast.getHeight() < h) {
 			rast = getCachedRaster(model, w, h);
 			saved = rast;
@@ -247,17 +277,32 @@ class AlfaPaintContext implements PaintContext {
 		int[] pixels = irast.getDataStorage();
 		len = Math.min(len, pixels.length);
 
-		for (int i = 0; i < len; i++) {
-			int alfa1 = hasAlfa1 ? (pixels1[i] >> 24) & 0xFF : 255;
-			int alfa2 = hasAlfa2 ? (pixels2[i] >> 24) & 0xFF : 255;
-
-			int alfa = (int) (alfa1 * alfa2 / 255.0);
-			int red = (int) (((pixels1[i] >> 16) & 0xFF) * ((pixels2[i] >> 16) & 0xFF) / 255.0);
-			int green = (int) (((pixels1[i] >> 8) & 0xFF) * ((pixels2[i] >> 8) & 0xFF) / 255.0);
-			int blue = (int) (((pixels1[i]) & 0xFF) * ((pixels2[i]) & 0xFF) / 255.0);
-			pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+		if (w1 == w && w2 == w) {
+			for (int i = 0; i < len; i++) {
+				int alfa1 = hasAlfa1 ? (pixels1[i] >> 24) & 0xFF : 255;
+				int alfa2 = hasAlfa2 ? (pixels2[i] >> 24) & 0xFF : 255;
+				int alfa = (int) (alfa1 * alfa2 / 255.0);
+				int red = (int) (((pixels1[i] >> 16) & 0xFF) * ((pixels2[i] >> 16) & 0xFF) / 255.0);
+				int green = (int) (((pixels1[i] >> 8) & 0xFF) * ((pixels2[i] >> 8) & 0xFF) / 255.0);
+				int blue = (int) (((pixels1[i]) & 0xFF) * ((pixels2[i]) & 0xFF) / 255.0);
+				pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+			}
+		} else {
+			for (int ix = 0; ix < w; ix++) {
+				for (int iy = 0; iy < h; iy++) {
+					int i = w * iy + ix;
+					int i1 = w1 * iy + ix;
+					int i2 = w2 * iy + ix;
+					int alfa1 = hasAlfa1 ? (pixels1[i1] >> 24) & 0xFF : 255;
+					int alfa2 = hasAlfa2 ? (pixels2[i2] >> 24) & 0xFF : 255;
+					int alfa = (int) (alfa1 * alfa2 / 255.0);
+					int red = (int) (((pixels1[i1] >> 16) & 0xFF) * ((pixels2[i2] >> 16) & 0xFF) / 255.0);
+					int green = (int) (((pixels1[i1] >> 8) & 0xFF) * ((pixels2[i2] >> 8) & 0xFF) / 255.0);
+					int blue = (int) (((pixels1[i1]) & 0xFF) * ((pixels2[i2]) & 0xFF) / 255.0);
+					pixels[i] = (alfa << 24) + (red << 16) + (green << 8) + blue;
+				}
+			}
 		}
-
 		return rast;
 	}
 }

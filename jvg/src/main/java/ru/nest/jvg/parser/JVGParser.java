@@ -35,6 +35,8 @@ public class JVGParser implements JVGParserInterface {
 
 	private JVGParserInterface parser;
 
+	private JVGPane pane;
+
 	public JVGParser() {
 		this(null);
 	}
@@ -209,8 +211,10 @@ public class JVGParser implements JVGParserInterface {
 				throw new JVGParseException("Format of version " + version + " is not supported.", e);
 			}
 		} else if ("svg".equals(format)) {
-			parser = new SVGParser(factory, resources);
-			parser.parse(rootElement, parent);
+			SVGParser svgParser = new SVGParser(factory, resources);
+			svgParser.setPane(pane);
+			svgParser.parse(rootElement, parent);
+			parser = svgParser;
 		} else if ("toi".equals(format)) {
 			parser = new TOIParser(factory, resources);
 			parser.parse(rootElement, parent);
@@ -231,5 +235,13 @@ public class JVGParser implements JVGParserInterface {
 		} catch (JVGParseException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public JVGPane getPane() {
+		return pane;
+	}
+
+	public void setPane(JVGPane pane) {
+		this.pane = pane;
 	}
 }

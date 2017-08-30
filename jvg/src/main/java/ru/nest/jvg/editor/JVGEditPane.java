@@ -717,6 +717,7 @@ public class JVGEditPane extends JVGPane {
 
 	public void load(File file) throws JVGParseException {
 		JVGParser parser = new JVGParser(getEditorKit().getFactory());
+		parser.setPane(this);
 
 		JVGRoot root = parser.parse(file);
 		editor.getResources().addResources(parser.getResources());

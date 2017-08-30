@@ -40,6 +40,7 @@ import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS3;
 
 import ru.nest.fonts.Fonts;
+import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
@@ -84,11 +85,11 @@ public class SVGParser implements JVGParserInterface {
 
 	private Map<String, Map<String, String>> css = new HashMap<>();
 
-	private Map<String, String> style;
-
 	private LinkedList<Map<String, String>> parents = new LinkedList<>();
 
 	private Rectangle2D lastTextBounds = null;
+
+	private JVGPane pane;
 
 	public SVGParser(JVGFactory factory, JVGResources resources) {
 		this.factory = factory;
@@ -122,14 +123,14 @@ public class SVGParser implements JVGParserInterface {
 		if (widthValue != null && heightValue != null) {
 			Float w;
 			if (widthValue.endsWith("%")) {
-				w = 800.0f;
+				w = pane != null ? (float) pane.getDocumentSize().getWidth() : 700f;
 			} else {
 				w = parseLength(widthValue, null);
 			}
 
 			Float h;
 			if (heightValue.endsWith("%")) {
-				h = 800.0f;
+				h = pane != null ? (float) pane.getDocumentSize().getHeight() : 500f;
 			} else {
 				h = parseLength(heightValue, null);
 			}
@@ -152,50 +153,53 @@ public class SVGParser implements JVGParserInterface {
 
 	private void parseChildren(Element parentElement, JVGContainer parent) throws JVGParseException {
 		for (Element e : (List<Element>) parentElement.getChildren()) {
-			Object c = parseComponent(e);
+			Object c = parseComponent(e, parent);
 			if (c instanceof JVGShape) {
 				parent.add((JVGShape) c);
 			}
 		}
 	}
 
-	private <C> C parseComponent(Element e) throws JVGParseException {
+	private <C> C parseComponent(Element e, JVGContainer parent) throws JVGParseException {
 		String type = e.getName();
-		style = parseStyle(e);
+
+		Map<String, String> style = parseStyle(e);
+		parents.addFirst(style);
+
 		Draw defaulFill = this.defaulFill;
-		Object c = null;
+		Object component = null;
 		if ("path".equals(type)) {
-			c = parsePath(e);
+			component = parsePath(e);
 		} else if ("g".equals(type)) {
-			c = parseGroup(e);
+			component = parseGroup(e);
 		} else if ("rect".equals(type)) {
-			c = parseRect(e);
+			component = parseRect(e, parent);
 		} else if ("polygon".equals(type)) {
-			c = parsePolygon(e);
+			component = parsePolygon(e);
 		} else if ("text".equals(type)) {
-			c = parseText(e);
+			component = parseText(e, parent);
 		} else if ("tspan".equals(type)) {
-			c = parseText(e);
+			component = parseText(e, parent);
 		} else if ("polyline".equals(type)) {
-			c = parsePolyline(e);
+			component = parsePolyline(e);
 		} else if ("line".equals(type)) {
-			c = parseLine(e);
+			component = parseLine(e, parent);
 		} else if ("circle".equals(type)) {
-			c = parseCircle(e);
+			component = parseCircle(e, parent);
 		} else if ("ellipse".equals(type)) {
-			c = parseEllipse(e);
+			component = parseEllipse(e, parent);
 		} else if ("image".equals(type)) {
-			c = parseImage(e);
+			component = parseImage(e, parent);
 		} else if ("defs".equals(type)) {
-			parseDefs(e);
+			parseDefs(e, parent);
 		} else if ("linearGradient".equals(type)) {
-			c = parseLinearGradient(e);
+			component = parseLinearGradient(e, parent);
 		} else if ("radialGradient".equals(type)) {
-			c = parseRadialGradient(e);
+			component = parseRadialGradient(e, parent);
 		} else if ("clipPath".equals(type)) {
-			c = parseClipPath(e);
+			component = parseClipPath(e, parent);
 		} else if ("use".equals(type)) {
-			c = getResource(e.getAttributeValue("href", xlink));
+			component = getResource(e.getAttributeValue("href", xlink));
 			defaulFill = null;
 		} else if ("style".equals(type)) {
 			parseCss(e.getText());
@@ -213,21 +217,21 @@ public class SVGParser implements JVGParserInterface {
 			System.out.println("svg type not supported: " + type);
 		}
 
-		if (c != null) {
+		if (component != null) {
 			String compId = e.getAttributeValue("id");
 			if (compId != null) {
-				allResources.put(compId, c);
+				allResources.put(compId, component);
 
-				if (c instanceof Resource) {
-					Resource resource = (Resource) c;
+				if (component instanceof Resource) {
+					Resource resource = (Resource) component;
 					resource.setName(compId);
 					resources.addResource(resource);
 				}
 			}
 		}
 
-		if (c instanceof JVGShape) {
-			JVGShape shape = (JVGShape) c;
+		if (component instanceof JVGShape) {
+			JVGShape shape = (JVGShape) component;
 			if ("none".equals(e.getAttributeValue("display"))) {
 				shape.setVisible(false);
 			}
@@ -253,7 +257,8 @@ public class SVGParser implements JVGParserInterface {
 
 			parseTransform(shape, e);
 		}
-		return (C) c;
+		parents.removeFirst();
+		return (C) component;
 	}
 
 	private void parsePainters(Element e, JVGShape shape, Draw defaulFill) throws JVGParseException {
@@ -382,6 +387,7 @@ public class SVGParser implements JVGParserInterface {
 	}
 
 	private String s(String name, String defaultValue) {
+		Map<String, String> style = parents.getLast();
 		String value = style.get(name);
 		if (value != null) {
 			return value;
@@ -398,9 +404,7 @@ public class SVGParser implements JVGParserInterface {
 
 	private JVGShape parseGroup(Element e) throws JVGParseException {
 		JVGGroup c = factory.createComponent(JVGGroup.class);
-		parents.addFirst(style);
 		parseChildren(e, c);
-		parents.removeFirst();
 		return c;
 	}
 
@@ -534,6 +538,32 @@ public class SVGParser implements JVGParserInterface {
 		return null;
 	}
 
+	private Float parseXLength(String value, Float defaultValue, JVGComponent component) {
+		if (value != null && value.endsWith("%")) {
+			if (component != null) {
+				Float percent = JVGParseUtil.getFloat(value, defaultValue);
+				if (percent != null) {
+					return (float) (percent * component.getRectangleBounds().getWidth());
+				}
+			}
+			return null;
+		}
+		return parseLength(value, defaultValue);
+	}
+
+	private Float parseYLength(String value, Float defaultValue, JVGComponent component) {
+		if (value != null && value.endsWith("%")) {
+			if (component != null) {
+				Float percent = JVGParseUtil.getFloat(value, defaultValue);
+				if (percent != null) {
+					return (float) (percent * component.getRectangleBounds().getHeight());
+				}
+			}
+			return null;
+		}
+		return parseLength(value, defaultValue);
+	}
+
 	private Float parseLength(String value, Float defaultValue) {
 		if (value != null) {
 			float koef = 1f;
@@ -543,7 +573,7 @@ public class SVGParser implements JVGParserInterface {
 				value = value.substring(0, value.length() - 2);
 				koef = 1.3281472327365f;
 			} else if (value.endsWith("%")) {
-				// TODO
+				return null;
 			}
 			return koef * JVGParseUtil.getFloat(value, defaultValue);
 		}
@@ -572,21 +602,12 @@ public class SVGParser implements JVGParserInterface {
 		}
 
 		if (draw != null) {
-			float width = parseLength(e.getAttributeValue("stroke-width"), parseLength(s("stroke-width"), 1f));
-			float miterlimit = parseLength(e.getAttributeValue("stroke-miterlimit"), parseLength(s("stroke-miterlimit"), 10f));
-			String linecap = e.getAttributeValue("stroke-linecap"); // butt
-			if (linecap == null) {
-				linecap = s("stroke-linecap");
-			}
-			String linejoin = e.getAttributeValue("stroke-linejoin");
-			if (linejoin == null) {
-				linejoin = s("stroke-linejoin");
-			}
-			float[] dasharray = JVGParseUtil.getFloatArray(e.getAttributeValue("stroke-dasharray"), ",");
-			if (dasharray == null || dasharray.length == 0) {
-				dasharray = JVGParseUtil.getFloatArray(s("stroke-dasharray"), ",");
-			}
-			float dashoffset = parseLength(e.getAttributeValue("stroke-dashoffset"), parseLength(s("stroke-dashoffset"), 0f));
+			float width = parseXLength(s("stroke-width", e, null), 1f, c);
+			float miterlimit = parseXLength(s("stroke-miterlimit", e, null), 10f, c);
+			String linecap = s("stroke-linecap", e, null);
+			String linejoin = s("stroke-linejoin", e, null);
+			float[] dasharray = JVGParseUtil.getFloatArray(s("stroke-dasharray", e, null), ",");
+			float dashoffset = parseXLength(s("stroke-dashoffset", e, null), 0f, c);
 
 			if (draw != null) {
 				int cap = BasicStroke.CAP_BUTT;
@@ -673,13 +694,13 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseRect(Element e) throws JVGParseException {
-		double x = parseLength(e.getAttributeValue("x"), 0f);
-		double y = parseLength(e.getAttributeValue("y"), 0f);
-		double w = parseLength(e.getAttributeValue("width"), 0f);
-		double h = parseLength(e.getAttributeValue("height"), 0f);
-		Float rx = parseLength(e.getAttributeValue("rx"), null);
-		Float ry = parseLength(e.getAttributeValue("ry"), null);
+	private JVGShape parseRect(Element e, JVGContainer parent) throws JVGParseException {
+		double x = parseXLength(e.getAttributeValue("x"), 0f, parent);
+		double y = parseYLength(e.getAttributeValue("y"), 0f, parent);
+		double w = parseXLength(e.getAttributeValue("width"), 0f, parent);
+		double h = parseYLength(e.getAttributeValue("height"), 0f, parent);
+		Float rx = parseXLength(e.getAttributeValue("rx"), null, parent);
+		Float ry = parseYLength(e.getAttributeValue("ry"), null, parent);
 
 		Shape shape;
 		if (rx != null || ry != null) {
@@ -698,11 +719,11 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseLine(Element e) throws JVGParseException {
-		double x1 = parseLength(e.getAttributeValue("x1"), 0f);
-		double y1 = parseLength(e.getAttributeValue("y1"), 0f);
-		double x2 = parseLength(e.getAttributeValue("x2"), 0f);
-		double y2 = parseLength(e.getAttributeValue("y2"), 0f);
+	private JVGShape parseLine(Element e, JVGContainer parent) throws JVGParseException {
+		double x1 = parseXLength(e.getAttributeValue("x1"), 0f, parent);
+		double y1 = parseYLength(e.getAttributeValue("y1"), 0f, parent);
+		double x2 = parseXLength(e.getAttributeValue("x2"), 0f, parent);
+		double y2 = parseYLength(e.getAttributeValue("y2"), 0f, parent);
 
 		MutableGeneralPath shape = new MutableGeneralPath();
 		shape.moveTo(x1, y1);
@@ -713,10 +734,10 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseCircle(Element e) throws JVGParseException {
-		double cx = parseLength(e.getAttributeValue("cx"), 0f);
-		double cy = parseLength(e.getAttributeValue("cy"), 0f);
-		double r = parseLength(e.getAttributeValue("r"), 1f);
+	private JVGShape parseCircle(Element e, JVGContainer parent) throws JVGParseException {
+		double cx = parseXLength(e.getAttributeValue("cx"), 0f, parent);
+		double cy = parseYLength(e.getAttributeValue("cy"), 0f, parent);
+		double r = parseXLength(e.getAttributeValue("r"), 1f, parent);
 
 		Ellipse2D shape = new Ellipse2D.Double(cx - r, cy - r, 2 * r, 2 * r);
 
@@ -725,11 +746,11 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseEllipse(Element e) throws JVGParseException {
-		double cx = parseLength(e.getAttributeValue("cx"), 0f);
-		double cy = parseLength(e.getAttributeValue("cy"), 0f);
-		double rx = parseLength(e.getAttributeValue("rx"), 1f);
-		double ry = parseLength(e.getAttributeValue("ry"), 1f);
+	private JVGShape parseEllipse(Element e, JVGContainer parent) throws JVGParseException {
+		double cx = parseXLength(e.getAttributeValue("cx"), 0f, parent);
+		double cy = parseYLength(e.getAttributeValue("cy"), 0f, parent);
+		double rx = parseXLength(e.getAttributeValue("rx"), 1f, parent);
+		double ry = parseYLength(e.getAttributeValue("ry"), 1f, parent);
 
 		Ellipse2D shape = new Ellipse2D.Double(cx - rx, cy - ry, 2 * rx, 2 * ry);
 
@@ -738,10 +759,10 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private Shape parseClipPath(Element e) throws JVGParseException {
+	private Shape parseClipPath(Element e, JVGContainer parent) throws JVGParseException {
 		Shape clip = null;
 		for (Element c : (List<Element>) e.getChildren()) {
-			Object child = parseComponent(c);
+			Object child = parseComponent(c, parent);
 			Shape shape = null;
 			if (child instanceof Shape) {
 				shape = (Shape) child;
@@ -772,9 +793,9 @@ public class SVGParser implements JVGParserInterface {
 		return clip;
 	}
 
-	private JVGShape parseImage(Element e) throws JVGParseException {
-		double w = parseLength(e.getAttributeValue("width"), 0f);
-		double h = parseLength(e.getAttributeValue("height"), 0f);
+	private JVGShape parseImage(Element e, JVGContainer parent) throws JVGParseException {
+		double w = parseXLength(e.getAttributeValue("width"), 0f, parent);
+		double h = parseYLength(e.getAttributeValue("height"), 0f, parent);
 		String href = e.getAttributeValue("href", xlink);
 		if (href != null) {
 			try {
@@ -793,7 +814,7 @@ public class SVGParser implements JVGParserInterface {
 		return null;
 	}
 
-	private JVGShape parseText(Element e) throws JVGParseException {
+	private JVGShape parseText(Element e, JVGContainer parent) throws JVGParseException {
 		if ("text".equals(e.getName())) {
 			List<Element> spans = e.getChildren();
 			if (spans.size() > 0) {
@@ -1238,7 +1259,7 @@ public class SVGParser implements JVGParserInterface {
 		path.append(arc, true);
 	}
 
-	private void parseDefs(Element defsElement) throws JVGParseException {
+	private void parseDefs(Element defsElement, JVGContainer parent) throws JVGParseException {
 		String id = defsElement.getAttributeValue("id");
 		for (int order = 0; order < 2; order++) {
 			for (Element e : (List<Element>) defsElement.getChildren()) {
@@ -1246,22 +1267,22 @@ public class SVGParser implements JVGParserInterface {
 				if ((order == 0 && href != null) || (order == 1 && href == null)) {
 					continue;
 				}
-				parseComponent(e);
+				parseComponent(e, parent);
 			}
 		}
 	}
 
-	private LinearGradientResource parseLinearGradient(Element e) {
+	private LinearGradientResource parseLinearGradient(Element e, JVGComponent component) {
 		Resource<Gradient> ref = getResource(e.getAttributeValue("href", xlink));
 		Gradient refSource = null;
 		if (ref != null) {
 			refSource = ref.getResource();
 		}
 
-		float x1 = parseLength(e.getAttributeValue("x1"), 0f);
-		float x2 = parseLength(e.getAttributeValue("x2"), 0f);
-		float y1 = parseLength(e.getAttributeValue("y1"), 0f);
-		float y2 = parseLength(e.getAttributeValue("y2"), 0f);
+		float x1 = parseXLength(e.getAttributeValue("x1"), 0f, component);
+		float x2 = parseXLength(e.getAttributeValue("x2"), 0f, component);
+		float y1 = parseYLength(e.getAttributeValue("y1"), 0f, component);
+		float y2 = parseYLength(e.getAttributeValue("y2"), 0f, component);
 		AffineTransform transform = parseTransform(e.getAttributeValue("gradientTransform"));
 		String spreadMethod = e.getAttributeValue("spreadMethod"); // pad, repeat, reflect
 		String units = e.getAttributeValue("gradientUnits"); // objectBoundingBox, userSpaceOnUse
@@ -1279,7 +1300,7 @@ public class SVGParser implements JVGParserInterface {
 				}
 				colorsList.add(new ColorResource(color));
 
-				float offset = parseLength(stopElement.getAttributeValue("offset"), 0f);
+				float offset = parseXLength(stopElement.getAttributeValue("offset"), 0f, component);
 				offsetsList.add(offset);
 			}
 		}
@@ -1314,18 +1335,18 @@ public class SVGParser implements JVGParserInterface {
 		return new LinearGradientResource(gradient);
 	}
 
-	private RadialGradientResource parseRadialGradient(Element e) {
+	private RadialGradientResource parseRadialGradient(Element e, JVGComponent component) {
 		Resource<Gradient> ref = getResource(e.getAttributeValue("href", xlink));
 		Gradient refSource = null;
 		if (ref != null) {
 			refSource = ref.getResource();
 		}
 
-		float cx = parseLength(e.getAttributeValue("cx"), 0f);
-		float cy = parseLength(e.getAttributeValue("cy"), 0f);
-		float fx = parseLength(e.getAttributeValue("fx"), 0f);
-		float fy = parseLength(e.getAttributeValue("fy"), 0f);
-		float r = parseLength(e.getAttributeValue("r"), 0f);
+		float cx = parseXLength(e.getAttributeValue("cx"), 0f, component);
+		float cy = parseYLength(e.getAttributeValue("cy"), 0f, component);
+		float fx = parseXLength(e.getAttributeValue("fx"), 0f, component);
+		float fy = parseYLength(e.getAttributeValue("fy"), 0f, component);
+		float r = parseXLength(e.getAttributeValue("r"), 0f, component);
 		AffineTransform transform = parseTransform(e.getAttributeValue("gradientTransform"));
 		String units = e.getAttributeValue("gradientUnits");
 		String spreadMethod = e.getAttributeValue("spreadMethod");
@@ -1413,5 +1434,13 @@ public class SVGParser implements JVGParserInterface {
 
 	@Override
 	public void init(JVGPane pane) {
+	}
+
+	public JVGPane getPane() {
+		return pane;
+	}
+
+	public void setPane(JVGPane pane) {
+		this.pane = pane;
 	}
 }
