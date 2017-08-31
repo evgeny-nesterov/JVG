@@ -11,12 +11,10 @@ bin/
 *.iml
 build/
 archive/
-classes/
 tmp/
 .recommenders/
-jvg-examples/
-svg-examples/
-*.jar
 *.zip
 hs_err_pid*
-tasks.txt
+/jvg/jvg-examples/
+/jvg/svg-examples/
+/jvg/tasks.txt

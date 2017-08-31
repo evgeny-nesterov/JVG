@@ -1,0 +1,46 @@
+-1. add signature
+void method(Object... array) {
+}
+method("arg1", "arg2", "arg3");
+
+-2. autoboxing/unboxing
+Integer a = 1;
+int b = a;
+
+3. add class loader
+
+4. add imports
+import <className>;
+
++5. implementation, 
+class A implements If1, If2 {
+   // compiler has to check implementation for non abstract class
+}
+Object a = new A();
+If1 b = (If1)a; // cast
+
+6. native HashMap
+
+-7. add construction
+for(V v : list) {
+}
+
+8. indicate code line number while throwing exceptions
+
+9. add enum construction
+enum E {
+  A('a'), B('B'), C('C')
+  E(char c) {
+    this.c = c;
+  }
+  char c;
+  public char getChar() {
+    return c;
+  }
+}
+
+10. add asserts
+
+11. add throws for methods??? (all exceptions are runtime)
+
+12. 
