@@ -720,13 +720,6 @@ public class JVGContainer extends JVGComponent {
 	// --- default implementations ---
 	@Override
 	public void paint(Graphics2D g) {
-		Shape oldClip = null;
-		Shape clip = getTransformedClip();
-		if (clip != null) {
-			oldClip = g.getClip();
-			g.setClip(clip);
-		}
-
 		// paint component
 		paintComponent(g);
 
@@ -735,10 +728,6 @@ public class JVGContainer extends JVGComponent {
 
 		// paint from script
 		executeScript(Script.PAINT);
-
-		if (oldClip != null) {
-			g.setClip(oldClip);
-		}
 
 		// paint selection
 		if (isSelected()) {
@@ -758,63 +747,44 @@ public class JVGContainer extends JVGComponent {
 	public void paintChildren(Graphics2D g) {
 		int childs_count = this.childrenCount;
 		if (childs_count > 0) {
-			Shape bounds = getBounds();
 			JVGComponent[] childs = this.children;
 			for (int i = 0; i < childs_count; i++) {
 				JVGComponent c = childs[i];
 				if (c.isVisible()) {
-					Shape oldClip = null;
-					Shape clip = getClip();
-					if (clip == null && c.isClipped()) {
-						oldClip = g.getClip();
-						g.setClip(bounds);
-					}
-
 					try {
-						c.paint(g);
+						paintChild(g, c);
 					} catch (Exception exc) {
 						// System.err.println("JVGContainer.paintChildren: " + exc.toString());
 						exc.printStackTrace();
-					}
-
-					if (c.isClipped()) {
-						g.setClip(oldClip);
 					}
 				}
 			}
 		}
 	}
 
+	public void paintChild(Graphics2D g, JVGComponent child) {
+		child.paint(g);
+	}
+
 	public void printChildren(Graphics2D g) {
 		int childs_count = this.childrenCount;
 		if (childs_count > 0) {
-			Shape bounds = getBounds();
 			JVGComponent[] childs = this.children;
 			for (int i = 0; i < childs_count; i++) {
 				JVGComponent c = childs[i];
 				if (c.isVisible() && !(c instanceof JVGActionArea)) {
-					Shape oldClip = null;
-					Shape clip = getClip();
-					if (clip != null) {
-						oldClip = g.getClip();
-						g.setClip(clip);
-					} else if (c.isClipped()) {
-						oldClip = g.getClip();
-						g.setClip(bounds);
-					}
-
 					try {
-						c.print(g);
+						printChild(g, c);
 					} catch (Exception exc) {
 						exc.printStackTrace();
-					}
-
-					if (c.isClipped()) {
-						g.setClip(oldClip);
 					}
 				}
 			}
 		}
+	}
+
+	public void printChild(Graphics2D g, JVGComponent child) {
+		child.print(g);
 	}
 
 	@Override

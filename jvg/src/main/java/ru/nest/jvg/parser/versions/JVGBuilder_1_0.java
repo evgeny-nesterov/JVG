@@ -166,6 +166,11 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 		if (component instanceof JVGShape) {
 			JVGShape shape = (JVGShape) component;
 
+			if (shape.isClip()) {
+				componentElement.setAttribute("isclip", "yes");
+				componentElement.setAttribute("visible", "no");
+			}
+
 			if (shape.isAntialias()) {
 				componentElement.setAttribute("antialias", "yes");
 			}

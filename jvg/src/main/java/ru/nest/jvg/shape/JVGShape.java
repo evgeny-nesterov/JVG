@@ -68,9 +68,15 @@ public abstract class JVGShape extends JVGContainer {
 	// has to be set to null after paintShape
 	private PainterFilter painterFilter = null;
 
-	protected StringBuffer shapeId = new StringBuffer("shape");
+	protected static StringBuffer shapeId = new StringBuffer("shape");
 
 	protected MutableGeneralPath transformedShape = null;
+
+	protected boolean clipComputed = false;
+
+	protected Shape clipShape = null;
+
+	private boolean isClip = false;
 
 	public JVGShape() {
 		setName("Shape");
@@ -595,11 +601,23 @@ public abstract class JVGShape extends JVGContainer {
 			int len = painters.size();
 			if (len > 0) {
 				g.transform(getTransform());
+
+				Shape oldClip = null;
+				Shape clip = getClipShape();
+				if (clip != null) {
+					oldClip = g.getClip();
+					g.setClip(clip);
+				}
+
 				for (int i = 0; i < len; i++) {
 					Painter painter = painters.get(i);
 					if (painterFilter == null || painterFilter.pass(this, painter)) {
 						painter.paint(g, this);
 					}
+				}
+
+				if (oldClip != null) {
+					g.setClip(oldClip);
 				}
 				g.transform(getInverseTransform());
 			}
@@ -696,11 +714,6 @@ public abstract class JVGShape extends JVGContainer {
 		transformChildren(transform, locked);
 	}
 
-	@Override
-	public Shape getTransformedClip() {
-		return getClip(); // TODO
-	}
-
 	private int lock_state = LOCK_NONE;
 
 	public int getLockState() {
@@ -755,6 +768,60 @@ public abstract class JVGShape extends JVGContainer {
 			if (transformedShape == null) {
 				transformedShape = new MutableGeneralPath(initialBounds);
 			}
+
+			if (!isClip && !clipComputed) {
+				clipShape = computeClip();
+				clipComputed = true;
+			}
+		}
+	}
+
+	protected Shape computeClip() {
+		Area area = null;
+		Shape firstShape = null;
+		int childs_count = this.childrenCount;
+		JVGComponent[] childs = this.children;
+		for (int i = 0; i < childs_count; i++) {
+			JVGComponent c = childs[i];
+			if (c instanceof JVGShape) {
+				JVGShape child = (JVGShape) c;
+				if (child.isClip()) {
+					if (firstShape == null) {
+						firstShape = child.getShape();
+					} else if (area == null) {
+						area = new Area(firstShape);
+						area.add(new Area(child.getShape()));
+						firstShape = null;
+					} else {
+						area.add(new Area(child.getShape()));
+					}
+				}
+			}
+		}
+		if (isClipped()) {
+			JVGShape parent = getParentShape();
+			if (parent != null) {
+				Shape parentBounds = parent.getBounds();
+				if (firstShape == null) {
+					return parentBounds;
+				} else if (area == null) {
+					area = new Area(firstShape);
+					area.subtract(new Area(parentBounds));
+					firstShape = null;
+				} else {
+					area.subtract(new Area(parentBounds));
+				}
+			}
+		}
+		return firstShape != null ? firstShape : area;
+	}
+
+	public JVGShape getParentShape() {
+		JVGContainer parent = getParent();
+		if (parent instanceof JVGShape) {
+			return (JVGShape) parent;
+		} else {
+			return null;
 		}
 	}
 
@@ -770,6 +837,8 @@ public abstract class JVGShape extends JVGContainer {
 			initialBounds = null;
 			originalBounds = null;
 			transformedShape = null;
+			clipComputed = false;
+			clipShape = null;
 		}
 	}
 
@@ -812,7 +881,7 @@ public abstract class JVGShape extends JVGContainer {
 	 */
 	public void copyTo(JVGShape dst) {
 		dst.setClipped(isClipped());
-		dst.setClip(getClip());
+		dst.setClip(isClip());
 		dst.setFocusable(isFocusable());
 		dst.setOriginalBounds(isOriginalBounds());
 		dst.setFill(isFill());
@@ -840,5 +909,22 @@ public abstract class JVGShape extends JVGContainer {
 
 	public void setPainterFilter(PainterFilter painterFilter) {
 		this.painterFilter = painterFilter;
+	}
+
+	public boolean isClip() {
+		return isClip;
+	}
+
+	public void setClip(boolean isClip) {
+		boolean oldValue = this.isClip;
+		this.isClip = isClip;
+		dispatchEvent(new JVGPropertyChangeEvent(this, "isclip", oldValue, isClip));
+	}
+
+	public Shape getClipShape() {
+		if (!clipComputed) {
+			validate();
+		}
+		return clipShape;
 	}
 }

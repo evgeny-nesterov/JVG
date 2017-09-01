@@ -218,6 +218,12 @@ public class JVGParser_1_0 implements JVGParserInterface {
 					if (child instanceof JVGShape) {
 						JVGShape shape = (JVGShape) child;
 
+						// isclip
+						String isClipValue = componentElement.getAttributeValue("isclip");
+						if (isClipValue != null) {
+							shape.setClip(JVGParseUtil.getBoolean(isClipValue));
+						}
+
 						// antialias
 						String antialiasValue = componentElement.getAttributeValue("antialias");
 						if (antialiasValue != null) {

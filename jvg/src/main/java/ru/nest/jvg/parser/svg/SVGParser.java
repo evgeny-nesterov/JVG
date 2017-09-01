@@ -8,7 +8,6 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -124,31 +123,60 @@ public class SVGParser implements JVGParserInterface {
 
 	@Override
 	public void parse(Element rootElement, JVGContainer parent) throws JVGParseException {
-		String widthValue = rootElement.getAttributeValue("width");
-		String heightValue = rootElement.getAttributeValue("height");
-		if (widthValue != null && heightValue != null) {
-			Float w = parseLength(widthValue, 700f);
-			if (widthValue.endsWith("%") && pane != null) {
-				w = pane != null ? w * (float) pane.getDocumentSize().getWidth() : 700f;
-			}
+		int width = 700;
+		int height = 500;
+		int viewX = 0;
+		int viewY = 0;
+		int viewWidth = width;
+		int viewHeight = height;
 
-			Float h = parseLength(heightValue, 500f);
-			if (heightValue.endsWith("%")) {
-				h = pane != null ? h * (float) pane.getDocumentSize().getHeight() : 500f;
+		String viewBox = rootElement.getAttributeValue("viewBox");
+		if (viewBox != null) {
+			int[] array = JVGParseUtil.getIntegerArray(viewBox, " ,");
+			if (array.length == 4) {
+				viewX = array[0];
+				viewY = array[1];
+				viewWidth = array[2];
+				viewHeight = array[3];
+				width = viewWidth;
+				height = viewHeight;
 			}
-
-			documentSize = new Dimension(w.intValue(), h.intValue());
 		}
 
-		if (documentSize == null) {
-			String viewBox = rootElement.getAttributeValue("viewBox");
-			if (viewBox != null) {
-				int[] array = JVGParseUtil.getIntegerArray(viewBox, " ,");
-				if (array.length == 4) {
-					documentSize = new Dimension(array[2], array[3]);
+		String widthValue = rootElement.getAttributeValue("width");
+		if (widthValue != null) {
+			Float w = parseLength(widthValue, null);
+			if (w != null) {
+				if (widthValue.endsWith("%")) {
+					width = pane != null ? (int) (w * pane.getDocumentSize().getWidth()) : 700;
+				} else {
+					width = w.intValue();
 				}
 			}
 		}
+
+		String heightValue = rootElement.getAttributeValue("height");
+		if (heightValue != null) {
+			Float h = parseLength(heightValue, null);
+			if (h != null) {
+				if (widthValue.endsWith("%")) {
+					height = pane != null ? (int) (h * pane.getDocumentSize().getHeight()) : 500;
+				} else {
+					height = h.intValue();
+				}
+			}
+		}
+
+		documentSize = new Dimension(width, height);
+
+		String preserveAspectRatio = rootElement.getAttributeValue("preserveAspectRatio");
+		// TODO
+
+		float scaleX = width / (float) viewWidth;
+		float scaleY = height / (float) viewHeight;
+		AffineTransform transform = AffineTransform.getTranslateInstance(viewX, viewY);
+		transform.scale(scaleX, scaleY);
+		pane.setTransform(transform);
 
 		parseChildren(rootElement, parent);
 	}
@@ -256,8 +284,10 @@ public class SVGParser implements JVGParserInterface {
 
 		String clipValue = e.getAttributeValue("clip-path");
 		Object clip = getResource(clipValue);
-		if (clip instanceof Shape) {
-			shape.setClip((Shape) clip);
+		if (clip instanceof List) {
+			for (Object o : (List) clip) {
+				shape.add((JVGShape) o);
+			}
 		}
 
 		parseTransform(shape, e, parent);
@@ -453,11 +483,11 @@ public class SVGParser implements JVGParserInterface {
 			hasTransform = true;
 		}
 
-//		transform = parseTransform(e.getAttributeValue("xtransform"));
-//		if (transform != null) {
-//			c.transform(transform);
-//			hasTransform = true;
-//		}
+		//		transform = parseTransform(e.getAttributeValue("xtransform"));
+		//		if (transform != null) {
+		//			c.transform(transform);
+		//			hasTransform = true;
+		//		}
 		return false;
 	}
 
@@ -766,38 +796,38 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private Shape parseClipPath(Element e, JVGContainer parent) throws JVGParseException {
-		Shape clip = null;
+	private List<JVGShape> parseClipPath(Element e, JVGContainer parent) throws JVGParseException {
+		List<JVGShape> clipShapes = new ArrayList<>();
 		for (Element c : (List<Element>) e.getChildren()) {
 			Object child = parseComponent(c, parent);
-			Shape shape = null;
-			if (child instanceof Shape) {
-				shape = (Shape) child;
-			} else if (child instanceof JVGShape) {
-				shape = ((JVGShape) child).getShape();
-			}
-			if (shape != null) {
-				if (clip == null) {
-					clip = shape;
-				} else if (clip instanceof Area) {
-					((Area) clip).add(new Area(shape));
-				} else {
-					Area area = new Area(clip);
-					area.add(new Area(shape));
-					clip = area;
-				}
+			if (child instanceof JVGShape) {
+				JVGShape shape = (JVGShape) child;
+				shape.setClip(true);
+				shape.setVisible(false);
+				clipShapes.add(shape);
 			}
 		}
 
-		if (clip == null) {
+		if (clipShapes.size() == 0) {
 			Object ref = getResource(e.getAttributeValue("href", xlink));
-			if (ref instanceof Shape) {
-				clip = (Shape) ref;
-			} else if (ref instanceof JVGShape) {
-				clip = ((JVGShape) ref).getShape();
+			if (ref instanceof JVGShape) {
+				JVGShape shape = (JVGShape) ref;
+				shape.setClip(true);
+				shape.setVisible(false);
+				// TODO clone shape if shape.isClip() == false
+				clipShapes.add(shape);
+			} else if (ref instanceof List) {
+				for (Object o : (List) ref) {
+					if (o instanceof JVGShape) {
+						JVGShape shape = (JVGShape) o;
+						shape.setClip(true);
+						shape.setVisible(false);
+						clipShapes.add(shape);
+					}
+				}
 			}
 		}
-		return clip;
+		return clipShapes;
 	}
 
 	private Object parseUse(Element e, JVGContainer parent) throws JVGParseException {

@@ -1022,22 +1022,11 @@ public abstract class JVGComponent {
 	}
 
 	public void paint(Graphics2D g) {
-		Shape oldClip = null;
-		Shape clip = getClip();
-		if (clip != null) {
-			oldClip = g.getClip();
-			g.setClip(clip);
-		}
-
 		// paint component
 		paintComponent(g);
 
 		// paint scripted
 		paintScript(g);
-
-		if (oldClip != null) {
-			g.setClip(oldClip);
-		}
 	}
 
 	public void print(Graphics2D g) {
@@ -1282,22 +1271,6 @@ public abstract class JVGComponent {
 
 	public TransferHandler getTransferHandler() {
 		return (TransferHandler) getClientProperty(TRANSFER_HANDLER_KEY);
-	}
-
-	private Shape clip = null;
-
-	public Shape getClip() {
-		return clip;
-	}
-
-	public Shape getTransformedClip() {
-		return clip;
-	}
-
-	public void setClip(Shape clip) {
-		Shape oldValue = this.clip;
-		this.clip = clip;
-		dispatchEvent(new JVGPropertyChangeEvent(this, "clip", oldValue, clip));
 	}
 
 	private boolean isClipped = false;

@@ -121,6 +121,20 @@ public class JVGGroup extends JVGShape {
 		// group is transparent
 	}
 
+	private PainterFilter paintFirstFilter = new PainterFilter() {
+		@Override
+		public boolean pass(JVGShape c, Painter painter) {
+			return painter.getType() == (paintOrderType == PAINT_ORDER_OUTLINE_FIRST ? Painter.OUTLINE : Painter.FILL);
+		}
+	};
+
+	private PainterFilter paintSecondFilter = new PainterFilter() {
+		@Override
+		public boolean pass(JVGShape c, Painter painter) {
+			return !paintFirstFilter.pass(c, painter);
+		}
+	};
+
 	@Override
 	public void paintChildren(Graphics2D g) {
 		switch (paintOrderType) {
@@ -129,13 +143,6 @@ public class JVGGroup extends JVGShape {
 				break;
 			case PAINT_ORDER_FILL_FIRST:
 			case PAINT_ORDER_OUTLINE_FIRST:
-				final PainterFilter f1 = new PainterFilter() {
-					@Override
-					public boolean pass(JVGShape c, Painter painter) {
-						return painter.getType() == (paintOrderType == PAINT_ORDER_OUTLINE_FIRST ? Painter.OUTLINE : Painter.FILL);
-					}
-				};
-
 				int childs_count = this.childrenCount;
 				if (childs_count > 0) {
 					JVGComponent[] childs = this.children;
@@ -145,10 +152,10 @@ public class JVGGroup extends JVGShape {
 							if (c instanceof JVGGroupPath) {
 								JVGGroupPath shape = (JVGGroupPath) c;
 								shape.setPaintOrderType(paintOrderType);
-								shape.setPainterFilter(f1);
+								shape.setPainterFilter(paintFirstFilter);
 							} else if (c instanceof JVGShape) {
 								JVGShape shape = (JVGShape) c;
-								shape.setPainterFilter(f1);
+								shape.setPainterFilter(paintFirstFilter);
 							}
 						}
 					}
@@ -157,24 +164,53 @@ public class JVGGroup extends JVGShape {
 				super.paintChildren(g);
 
 				if (childs_count > 0) {
-					PainterFilter f2 = new PainterFilter() {
-						@Override
-						public boolean pass(JVGShape c, Painter painter) {
-							return !f1.pass(c, painter);
-						}
-					};
-
 					JVGComponent[] childs = this.children;
 					for (int i = 0; i < childs_count; i++) {
 						JVGComponent c = childs[i];
 						if (c.isVisible() && c instanceof JVGShape) {
 							JVGShape shape = (JVGShape) c;
-							shape.setPainterFilter(f2);
+							shape.setPainterFilter(paintSecondFilter);
 						}
 					}
 				}
 				super.paintChildren(g);
 				break;
+		}
+	}
+
+	@Override
+	public void paintChild(Graphics2D g, JVGComponent c) {
+		Shape oldClip = null;
+		Shape clip = getClipShape();
+		if (clip != null) {
+			oldClip = g.getClip();
+			g.transform(getTransform());
+			g.setClip(clip);
+			g.transform(getInverseTransform());
+		}
+
+		super.paintChild(g, c);
+
+		if (oldClip != null) {
+			g.setClip(oldClip);
+		}
+	}
+	
+	@Override
+	public void printChild(Graphics2D g, JVGComponent c) {
+		Shape oldClip = null;
+		Shape clip = getClipShape();
+		if (clip != null) {
+			oldClip = g.getClip();
+			g.transform(getTransform());
+			g.setClip(clip);
+			g.transform(getInverseTransform());
+		}
+
+		super.printChild(g, c);
+
+		if (oldClip != null) {
+			g.setClip(oldClip);
 		}
 	}
 
