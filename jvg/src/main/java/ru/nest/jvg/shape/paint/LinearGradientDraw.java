@@ -67,7 +67,7 @@ public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 
 				// update paint on change
 				float x1, y1, x2, y2;
-				if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
+				if (gradient.getUnitsType() == GradientUnitsType.BOUNDS) {
 					x1 = (float) r.getX() + (float) r.getWidth() * startX;
 					y1 = (float) r.getY() + (float) r.getHeight() * startY;
 					x2 = (float) r.getX() + (float) r.getWidth() * endX;
@@ -80,7 +80,7 @@ public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 				}
 
 				if (x1 != x2 || y1 != y2) {
-					if (gradient.getTransform() != null) {
+					if (gradient.getTransform() != null && transform != null) {
 						transform = (AffineTransform) transform.clone();
 						transform.concatenate(gradient.getTransform());
 					}

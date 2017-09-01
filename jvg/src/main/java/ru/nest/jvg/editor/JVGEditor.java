@@ -1163,6 +1163,7 @@ public class JVGEditor extends JFrame {
 			JVGParser parser = new JVGParser(pane.getEditorKit().getFactory());
 			JVGRoot root = parser.parse(xml);
 			pane.setRoot(root);
+			pane.setDocumentFormat(parser.getFormat());
 			if (parser.getDocumentSize() != null) {
 				pane.setDocumentSize(parser.getDocumentSize());
 			}
@@ -1179,6 +1180,7 @@ public class JVGEditor extends JFrame {
 			JVGParser parser = new JVGParser(pane.getEditorKit().getFactory());
 			JVGRoot root = parser.parse(rootElement);
 			pane.setRoot(root);
+			pane.setDocumentFormat(parser.getFormat());
 
 			getResources().addResources(parser.getResources());
 

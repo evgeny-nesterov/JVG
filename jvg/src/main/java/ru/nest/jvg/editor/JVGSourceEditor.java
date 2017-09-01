@@ -21,6 +21,7 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.xmleditor.XMLEditor;
@@ -45,6 +46,8 @@ public class JVGSourceEditor extends JDialog {
 
 	private JPanel pnlManage = new JPanel();
 
+	private DocumentFormat documentFormat = DocumentFormat.jvg;
+
 	public JVGSourceEditor() {
 		this(null, null);
 	}
@@ -54,10 +57,11 @@ public class JVGSourceEditor extends JDialog {
 		try {
 			setTitle(lm.getValue("source.editor.title", "Edit Source"));
 			setIconImage(new ImageIcon(JVGSourceEditor.class.getResource("img/schemamap.gif")).getImage());
+			documentFormat = pane.getDocumentFormat();
 
 			String xml = "";
 			if (pane != null) {
-				JVGBuilder builder = JVGBuilder.create();
+				JVGBuilder builder = JVGBuilder.create(documentFormat);
 				xml = builder.build(pane.getRoot().getChildren(), "UTF8");
 			}
 

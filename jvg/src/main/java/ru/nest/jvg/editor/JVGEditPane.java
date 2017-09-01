@@ -59,6 +59,7 @@ import ru.nest.jvg.event.JVGContainerEvent;
 import ru.nest.jvg.event.JVGEvent;
 import ru.nest.jvg.event.JVGKeyEvent;
 import ru.nest.jvg.event.JVGMouseEvent;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
@@ -66,6 +67,8 @@ import ru.nest.jvg.shape.JVGShape;
 
 public class JVGEditPane extends JVGPane {
 	private JVGLocaleManager lm = JVGLocaleManager.getInstance();
+
+	private DocumentFormat documentFormat = DocumentFormat.jvg;
 
 	public JVGEditPane(JVGEditor editor) {
 		this(editor, 0, 0);
@@ -674,12 +677,7 @@ public class JVGEditPane extends JVGPane {
 			File file = chooser.getSelectedFile();
 			if (file != null) {
 				try {
-					if (!file.getName().toLowerCase().endsWith(".xml")) {
-						file = new File(file.getParent(), file.getName() + ".xml");
-					}
-
 					save(file, components);
-
 					fileName = file.getAbsolutePath();
 					return file;
 				} catch (IOException exc) {
@@ -697,9 +695,19 @@ public class JVGEditPane extends JVGPane {
 	}
 
 	public void save(File file, JVGComponent[] components) throws IOException, JVGParseException {
+		DocumentFormat documentFormat = this.documentFormat;
+		String ext = file.getName().toLowerCase();
+		if (ext.endsWith("." + DocumentFormat.svg)) {
+			documentFormat = DocumentFormat.svg;
+		} else if (ext.endsWith("." + DocumentFormat.jvg) || ext.endsWith(".xml")) {
+			documentFormat = DocumentFormat.jvg;
+		} else {
+			file = new File(file.getParent(), file.getName() + "." + DocumentFormat.jvg);
+		}
+
 		FileOutputStream os = new FileOutputStream(file);
 
-		JVGBuilder builder = JVGBuilder.create();
+		JVGBuilder builder = JVGBuilder.create(documentFormat);
 		builder.setDocument(this);
 		builder.build(components, os);
 		os.close();
@@ -707,10 +715,12 @@ public class JVGEditPane extends JVGPane {
 
 		getRoot().invalidate();
 		repaint();
+
+		setDocumentFormat(documentFormat);
 	}
 
 	public String getDocument() throws IOException, JVGParseException {
-		JVGBuilder builder = JVGBuilder.create();
+		JVGBuilder builder = JVGBuilder.create(documentFormat);
 		builder.setDocument(this);
 		return builder.build(getRoot().getChildren(), "utf-8");
 	}
@@ -724,6 +734,7 @@ public class JVGEditPane extends JVGPane {
 
 		parser.init(this);
 		setRoot(root);
+		setDocumentFormat(parser.getFormat());
 		root.invalidate();
 
 		updateDocumentSize();
@@ -741,6 +752,7 @@ public class JVGEditPane extends JVGPane {
 
 		parser.init(this);
 		setRoot(root);
+		setDocumentFormat(parser.getFormat());
 		root.invalidate();
 
 		updateDocumentSize();
@@ -850,6 +862,16 @@ public class JVGEditPane extends JVGPane {
 
 			}
 		}
+	}
+
+	public DocumentFormat getDocumentFormat() {
+		return documentFormat;
+	}
+
+	public void setDocumentFormat(DocumentFormat documentFormat) {
+		DocumentFormat oldValue = this.documentFormat;
+		this.documentFormat = documentFormat;
+		firePropertyChange("document-format", oldValue, documentFormat);
 	}
 
 	class JVGEditorPaneLayout implements LayoutManager {

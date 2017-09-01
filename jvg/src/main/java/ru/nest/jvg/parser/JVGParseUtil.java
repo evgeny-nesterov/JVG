@@ -460,7 +460,7 @@ public class JVGParseUtil {
 		String value = getString(Integer.toHexString(color.getRed()), 2, '0') + getString(Integer.toHexString(color.getGreen()), 2, '0') + getString(Integer.toHexString(color.getBlue()), 2, '0');
 		int alfa = color.getAlpha();
 		if (alfa != 0xFF) {
-			value = getString(Integer.toHexString(alfa), 2, '0') + value;
+			value = value + getString(Integer.toHexString(alfa), 2, '0');
 		}
 		return '#' + value;
 	}

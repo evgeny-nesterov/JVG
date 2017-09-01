@@ -40,7 +40,7 @@ final class RadialGradientPaintContext extends MultipleGradientPaintContext {
 	public RadialGradientPaintContext(ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds, AffineTransform t, RenderingHints hints, float cx, float cy, float r, float fx, float fy, float[] fractions, Color[] colors, MultipleGradientPaint.CycleMethodEnum cycleMethod, MultipleGradientPaint.ColorSpaceEnum colorSpace) throws NoninvertibleTransformException {
 		super(cm, deviceBounds, userBounds, t, hints, fractions, colors, cycleMethod, colorSpace);
 
-		// copy some parameters.
+		// copy some parameters
 		centerX = cx;
 		centerY = cy;
 		focusX = fx;

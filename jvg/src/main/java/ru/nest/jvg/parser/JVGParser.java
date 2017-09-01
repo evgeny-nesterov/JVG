@@ -37,6 +37,8 @@ public class JVGParser implements JVGParserInterface {
 
 	private JVGPane pane;
 
+	private DocumentFormat format = DocumentFormat.jvg;
+
 	public JVGParser() {
 		this(null);
 	}
@@ -197,7 +199,7 @@ public class JVGParser implements JVGParserInterface {
 	@Override
 	public void parse(Element rootElement, JVGContainer parent) throws JVGParseException {
 		String format = rootElement.getName().toLowerCase();
-		if ("jvg".equals(format)) {
+		if (DocumentFormat.jvg.name().equals(format)) {
 			String version = rootElement.getAttributeValue("version", JVGVersion.VERSION);
 			version = version.replace('.', '_');
 			try {
@@ -210,14 +212,17 @@ public class JVGParser implements JVGParserInterface {
 				e.printStackTrace();
 				throw new JVGParseException("Format of version " + version + " is not supported.", e);
 			}
-		} else if ("svg".equals(format)) {
+			this.format = DocumentFormat.jvg;
+		} else if (DocumentFormat.svg.name().equals(format)) {
 			SVGParser svgParser = new SVGParser(factory, resources);
 			svgParser.setPane(pane);
 			svgParser.parse(rootElement, parent);
 			parser = svgParser;
-		} else if ("toi".equals(format)) {
+			this.format = DocumentFormat.svg;
+		} else if (DocumentFormat.toi.name().equals(format)) {
 			parser = new TOIParser(factory, resources);
 			parser.parse(rootElement, parent);
+			this.format = DocumentFormat.toi;
 		} else {
 			throw new JVGParseException("Unsupported format " + format);
 		}
@@ -243,5 +248,9 @@ public class JVGParser implements JVGParserInterface {
 
 	public void setPane(JVGPane pane) {
 		this.pane = pane;
+	}
+
+	public DocumentFormat getFormat() {
+		return format;
 	}
 }

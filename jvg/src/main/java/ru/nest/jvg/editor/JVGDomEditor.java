@@ -54,7 +54,7 @@ public class JVGDomEditor extends JDialog {
 			setTitle(lm.getValue("dom.editor.title", "Edit DOM"));
 			setIconImage(new ImageIcon(JVGDomEditor.class.getResource("img/xml.png")).getImage());
 
-			JVGBuilder builder = JVGBuilder.create();
+			JVGBuilder builder = JVGBuilder.create(pane.getDocumentFormat());
 			Element rootElement = builder.build(pane.getRoot().getChildren());
 
 			domEditor = new DomEditor(rootElement);
@@ -171,7 +171,7 @@ public class JVGDomEditor extends JDialog {
 
 	public void update() {
 		try {
-			JVGBuilder builder = JVGBuilder.create();
+			JVGBuilder builder = JVGBuilder.create(pane.getDocumentFormat());
 			Element rootElement = builder.build(pane.getRoot().getChildren());
 
 			copy(rootElement, domEditor.getRootElement());

@@ -931,7 +931,6 @@ public class JVGStyledText extends JVGShape {
 		} catch (BadLocationException exc) {
 			exc.printStackTrace();
 		}
-
 		return path;
 	}
 

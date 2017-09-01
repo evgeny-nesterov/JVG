@@ -9,6 +9,7 @@ import java.net.URL;
 
 import javax.swing.plaf.UIResource;
 
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 
@@ -21,7 +22,7 @@ public class JVGTransferable implements Transferable, UIResource {
 		if (components != null && components.length > 0) {
 			components = JVGUtil.getRootsSaveOrder(components);
 
-			JVGBuilder build = JVGBuilder.create();
+			JVGBuilder build = JVGBuilder.create(DocumentFormat.jvg);
 			try {
 				xml = build.build(components, "UTF8");
 				Rectangle2D totalBounds = JVGUtil.getBounds(components);

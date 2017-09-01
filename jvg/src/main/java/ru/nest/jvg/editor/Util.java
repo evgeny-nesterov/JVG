@@ -64,6 +64,7 @@ import ru.nest.jvg.JVGEditorKit;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGRoot;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
@@ -214,7 +215,7 @@ public class Util {
 	}
 
 	public static SnapshotData getSnapshot(JVGComponent[] components, int width, int height, int insets) throws JVGParseException {
-		JVGBuilder build = JVGBuilder.create();
+		JVGBuilder build = JVGBuilder.create(DocumentFormat.jvg);
 		String data = build.build(components, "UTF8");
 		return getSnapshot(new ByteArrayInputStream(data.getBytes()), width, height, insets);
 	}

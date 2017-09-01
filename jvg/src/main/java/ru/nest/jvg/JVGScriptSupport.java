@@ -21,6 +21,7 @@ import ru.nest.jvg.event.JVGMouseWheelEvent;
 import ru.nest.jvg.event.JVGPeerEvent;
 import ru.nest.jvg.event.JVGPropertyChangeEvent;
 import ru.nest.jvg.geom.MutableGeneralPath;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.resource.Resource;
@@ -200,7 +201,7 @@ public class JVGScriptSupport {
 				super.invoke(ctx, node, arguments);
 				JVGComponent component = getComponent(arguments);
 				if (component != null) {
-					JVGBuilder build = JVGBuilder.create();
+					JVGBuilder build = JVGBuilder.create(DocumentFormat.jvg);
 					try {
 						ctx.value.string = build.build(new JVGComponent[] { component }, "UTF8");
 						return;
@@ -216,7 +217,7 @@ public class JVGScriptSupport {
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
 				JVGShape[] shapes = getShapes(arguments);
-				JVGBuilder build = JVGBuilder.create();
+				JVGBuilder build = JVGBuilder.create(DocumentFormat.jvg);
 				try {
 					ctx.value.string = build.build(shapes, "UTF8");
 					return;

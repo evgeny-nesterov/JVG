@@ -63,22 +63,26 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 				Shape ib = component.getInitialBounds();
 				Rectangle2D r = ib instanceof Rectangle2D ? (Rectangle2D) ib : ib.getBounds2D();
 
-				float rad;
-				if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
-					rad = (float) (r.getWidth() * gradient.getR());
-				} else {
-					rad = gradient.getR();
-				}
-
+				float rad = gradient.getR();
 				if (rad > 0) {
 					// update paint on change
-					float cx, cy, fx, fy;
-					if (gradient.getUnits() == GradientUnitsType.BOUNDS) {
-						cx = (float) r.getX() + (float) r.getWidth() * gradient.getCX();
-						cy = (float) r.getY() + (float) r.getHeight() * gradient.getCY();
-						fx = (float) r.getX() + (float) r.getWidth() * gradient.getFX();
-						fy = (float) r.getY() + (float) r.getHeight() * gradient.getFY();
+					if (gradient.getUnitsType() == GradientUnitsType.ABSOLUTE) {
+						float cx = (float) ((gradient.getCX() - r.getX()) / r.getWidth());
+						float cy = (float) ((gradient.getCY() - r.getY()) / r.getHeight());
+						float fx = (float) ((gradient.getFX() - r.getX()) / r.getWidth());
+						float fy = (float) ((gradient.getFY() - r.getY()) / r.getHeight());
+						rad = (float) (rad / r.getWidth());
+						gradient = new RadialGradient(gradient.getFractions(), gradient.getColors(), gradient.getCycleMethod(), cx, cy, fx, fy, rad);
+						resource.setResource(gradient);
+					}
 
+					float cx = (float) r.getX() + (float) r.getWidth() * gradient.getCX();
+					float cy = (float) r.getY() + (float) r.getHeight() * gradient.getCY();
+					float fx = (float) r.getX() + (float) r.getWidth() * gradient.getFX();
+					float fy = (float) r.getY() + (float) r.getHeight() * gradient.getFY();
+					rad = (float) (r.getWidth() * gradient.getR());
+
+					if (transform != null) {
 						double scale = (r.getHeight() != 0 ? r.getHeight() : 1) / (r.getWidth() != 0 ? r.getWidth() : 1);
 						AffineTransform scaleTransform = AffineTransform.getTranslateInstance(cx, cy);
 						scaleTransform.scale(1, scale);
@@ -86,14 +90,9 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 
 						transform = (AffineTransform) transform.clone();
 						transform.concatenate(scaleTransform);
-					} else {
-						cx = gradient.getCX();
-						cy = gradient.getCY();
-						fx = gradient.getFX();
-						fy = gradient.getFY();
 					}
 
-					if (gradient.getTransform() != null) {
+					if (gradient.getTransform() != null && transform != null) {
 						transform = (AffineTransform) transform.clone();
 						transform.concatenate(gradient.getTransform());
 					}

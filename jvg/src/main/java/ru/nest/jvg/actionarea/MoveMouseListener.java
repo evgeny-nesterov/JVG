@@ -19,6 +19,7 @@ import ru.nest.jvg.JVGUtil;
 import ru.nest.jvg.event.JVGMouseAdapter;
 import ru.nest.jvg.event.JVGMouseEvent;
 import ru.nest.jvg.macros.JVGMacros;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
@@ -176,7 +177,7 @@ public class MoveMouseListener extends JVGMouseAdapter {
 						Arrays.sort(components, new ComponentOrderComparator());
 						components = JVGUtil.getRootsSaveOrder(components);
 						try {
-							JVGBuilder build = JVGBuilder.create();
+							JVGBuilder build = JVGBuilder.create(DocumentFormat.jvg);
 							String xml = build.build(components, "UTF8");
 
 							JVGParser parser = new JVGParser(pane.getEditorKit().getFactory());

@@ -22,6 +22,7 @@ import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGRoot;
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
@@ -65,7 +66,7 @@ public class JVGPreviewFrame extends JFrame {
 		pane.setBackground(srcPane.getBackground());
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			JVGBuilder builder = JVGBuilder.create();
+			JVGBuilder builder = JVGBuilder.create(DocumentFormat.jvg);
 			builder.build(srcPane, os);
 			os.close();
 			os.flush();

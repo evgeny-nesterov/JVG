@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
+import javax.swing.gradient.Gradient.GradientUnitsType;
 import javax.swing.gradient.LinearGradient;
 import javax.swing.gradient.MultipleGradientPaint;
 import javax.swing.gradient.RadialGradient;
@@ -646,9 +647,9 @@ public class JVGParser_1_0 implements JVGParserInterface {
 						} else if ("script".equals(type)) {
 							resource = new ScriptResource(value);
 						} else if ("linear-gradient".equals(type)) {
-							resource = getLinearGradient(value);
+							resource = getLinearGradient(resourceElement, value);
 						} else if ("radial-gradient".equals(type)) {
-							resource = getRadialGradient(value);
+							resource = getRadialGradient(resourceElement, value);
 						} else if ("transform".equals(type)) {
 							// TODO
 							resource = null;
@@ -720,7 +721,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 		}
 	}
 
-	public Resource<LinearGradient> getLinearGradient(String value) {
+	public Resource<LinearGradient> getLinearGradient(Element resourceElement, String value) {
 		if (value != null && value.startsWith(JVGParseUtil.ID_PREFIX)) {
 			String id = value.substring(1, value.length());
 			Resource<LinearGradient> gradient = resources.getResource(LinearGradientResource.class, id);
@@ -750,11 +751,19 @@ public class JVGParser_1_0 implements JVGParserInterface {
 				colors[i] = getColor(points[2 * i]);
 				fractions[i] = JVGParseUtil.getFloat(points[2 * i + 1], null);
 			}
-			return new LinearGradientResource(new LinearGradient(fractions, colors, cycleMethod, startX, startY, endX, endY));
+
+			LinearGradient gradient = new LinearGradient(fractions, colors, cycleMethod, startX, startY, endX, endY);
+			if (resourceElement != null) {
+				String unitsType = resourceElement.getAttributeValue("unitstype");
+				if ("absolute".equals(unitsType)) {
+					gradient.setUnitsType(GradientUnitsType.ABSOLUTE);
+				}
+			}
+			return new LinearGradientResource(gradient);
 		}
 	}
 
-	public Resource<RadialGradient> getRadialGradient(String value) {
+	public Resource<RadialGradient> getRadialGradient(Element resourceElement, String value) {
 		if (value != null && value.startsWith(JVGParseUtil.ID_PREFIX)) {
 			String id = value.substring(1, value.length());
 			Resource<RadialGradient> gradient = resources.getResource(RadialGradientResource.class, id);
@@ -785,7 +794,15 @@ public class JVGParser_1_0 implements JVGParserInterface {
 				colors[i] = getColor(points[2 * i]);
 				fractions[i] = JVGParseUtil.getFloat(points[2 * i + 1], null);
 			}
-			return new RadialGradientResource(new RadialGradient(fractions, colors, cycleMethod, centerX, centerY, focusX, focusY, radius));
+
+			RadialGradient gradient = new RadialGradient(fractions, colors, cycleMethod, centerX, centerY, focusX, focusY, radius);
+			if (resourceElement != null) {
+				String unitsType = resourceElement.getAttributeValue("unitstype");
+				if ("absolute".equals(unitsType)) {
+					gradient.setUnitsType(GradientUnitsType.ABSOLUTE);
+				}
+			}
+			return new RadialGradientResource(gradient);
 		}
 	}
 
@@ -832,11 +849,11 @@ public class JVGParser_1_0 implements JVGParserInterface {
 				return new TextureDraw(texture);
 			} else if ("linear-gradient".equals(type)) {
 				String value = drawElement.getAttributeValue("value");
-				Resource<LinearGradient> gradient = getLinearGradient(value);
+				Resource<LinearGradient> gradient = getLinearGradient(drawElement, value);
 				return new LinearGradientDraw(gradient, opacity);
 			} else if ("radial-gradient".equals(type)) {
 				String value = drawElement.getAttributeValue("value");
-				Resource<RadialGradient> gradient = getRadialGradient(value);
+				Resource<RadialGradient> gradient = getRadialGradient(drawElement, value);
 				return new RadialGradientDraw(gradient, opacity);
 			}
 		}
@@ -946,10 +963,10 @@ public class JVGParser_1_0 implements JVGParserInterface {
 					return getColor(value.substring(4, value.length() - 1));
 				}
 				if (value.startsWith("lg(")) {
-					return getLinearGradient(value.substring(3, value.length() - 1));
+					return getLinearGradient(null, value.substring(3, value.length() - 1));
 				}
 				if (value.startsWith("rg(")) {
-					return getRadialGradient(value.substring(3, value.length() - 1));
+					return getRadialGradient(null, value.substring(3, value.length() - 1));
 				}
 			}
 		}

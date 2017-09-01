@@ -618,7 +618,6 @@ public class SVGParser implements JVGParserInterface {
 			String linejoin = s("stroke-linejoin", e, null);
 			float[] dasharray = JVGParseUtil.getFloatArray(s("stroke-dasharray", e, null), ",");
 			float dashoffset = parseXLength(s("stroke-dashoffset", e, null), 0f, c);
-
 			if (draw != null) {
 				int cap = BasicStroke.CAP_BUTT;
 				if ("round".equals(linecap)) {
@@ -628,9 +627,9 @@ public class SVGParser implements JVGParserInterface {
 				}
 
 				int join = BasicStroke.JOIN_MITER;
-				if ("bevel".equals(linecap)) {
+				if ("bevel".equals(linejoin)) {
 					join = BasicStroke.JOIN_BEVEL;
-				} else if ("round".equals(linecap)) {
+				} else if ("round".equals(linejoin)) {
 					join = BasicStroke.JOIN_ROUND;
 				}
 

@@ -18,7 +18,7 @@ public abstract class Gradient {
 
 	private GradientUnitsType unitsType = GradientUnitsType.BOUNDS;
 
-	public GradientUnitsType getUnits() {
+	public GradientUnitsType getUnitsType() {
 		return unitsType;
 	}
 
