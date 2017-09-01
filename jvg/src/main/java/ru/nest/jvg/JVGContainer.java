@@ -720,9 +720,10 @@ public class JVGContainer extends JVGComponent {
 	// --- default implementations ---
 	@Override
 	public void paint(Graphics2D g) {
-		Shape oldClip = g.getClip();
-		Shape clip = getClip();
+		Shape oldClip = null;
+		Shape clip = getTransformedClip();
 		if (clip != null) {
+			oldClip = g.getClip();
 			g.setClip(clip);
 		}
 
@@ -735,11 +736,14 @@ public class JVGContainer extends JVGComponent {
 		// paint from script
 		executeScript(Script.PAINT);
 
+		if (oldClip != null) {
+			g.setClip(oldClip);
+		}
+
 		// paint selection
 		if (isSelected()) {
 			paintSelection(g);
 		}
-		g.setClip(oldClip);
 	}
 
 	@Override
@@ -760,7 +764,8 @@ public class JVGContainer extends JVGComponent {
 				JVGComponent c = childs[i];
 				if (c.isVisible()) {
 					Shape oldClip = null;
-					if (c.isClipped()) {
+					Shape clip = getClip();
+					if (clip == null && c.isClipped()) {
 						oldClip = g.getClip();
 						g.setClip(bounds);
 					}
@@ -789,7 +794,11 @@ public class JVGContainer extends JVGComponent {
 				JVGComponent c = childs[i];
 				if (c.isVisible() && !(c instanceof JVGActionArea)) {
 					Shape oldClip = null;
-					if (c.isClipped()) {
+					Shape clip = getClip();
+					if (clip != null) {
+						oldClip = g.getClip();
+						g.setClip(clip);
+					} else if (c.isClipped()) {
 						oldClip = g.getClip();
 						g.setClip(bounds);
 					}

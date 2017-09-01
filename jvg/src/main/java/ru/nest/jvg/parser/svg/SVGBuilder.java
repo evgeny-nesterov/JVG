@@ -198,7 +198,11 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			componentElement.setAttribute("opacity", Integer.toString(opacity));
 		}
 
-		componentElement.setAttribute("id", shape.getId().toString());
+		String name = shape.getName();
+		if (name == null || name.length() == 0) {
+			name = shape.getId().toString();
+		}
+		componentElement.setAttribute("id", name);
 
 		//			if (component.getName() != null) {
 		//				componentElement.setAttribute("name", component.getName());

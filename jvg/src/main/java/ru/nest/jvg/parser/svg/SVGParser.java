@@ -220,6 +220,8 @@ public class SVGParser implements JVGParserInterface {
 					Resource resource = (Resource) component;
 					resource.setName(compId);
 					resources.addResource(resource);
+				} else if (component instanceof JVGShape) {
+					((JVGShape) component).setName(compId);
 				}
 			}
 		}
@@ -399,28 +401,22 @@ public class SVGParser implements JVGParserInterface {
 	}
 
 	private String s(String name, String defaultValue) {
-		Map<String, String> style = stylesStack.getLast();
-		String value = style.get(name);
-		if (value != null) {
-			return value;
-		}
-
 		if (!notInheritedProperties.contains(name)) {
 			for (Map<String, String> parentStyle : stylesStack) {
-				value = parentStyle.get(name);
+				String value = parentStyle.get(name);
 				if (value != null) {
 					return value;
 				}
 			}
 			for (Element parentElement : parentsStack) {
-				value = parentElement.getAttributeValue(name);
+				String value = parentElement.getAttributeValue(name);
 				if (value != null) {
 					return value;
 				}
 			}
 		} else if (stylesStack.size() > 0) {
 			Map<String, String> parentStyle = stylesStack.getFirst();
-			value = parentStyle.get(name);
+			String value = parentStyle.get(name);
 			if (value != null) {
 				return value;
 			}
@@ -456,6 +452,12 @@ public class SVGParser implements JVGParserInterface {
 			c.transform(transform);
 			hasTransform = true;
 		}
+
+//		transform = parseTransform(e.getAttributeValue("xtransform"));
+//		if (transform != null) {
+//			c.transform(transform);
+//			hasTransform = true;
+//		}
 		return false;
 	}
 
@@ -529,11 +531,7 @@ public class SVGParser implements JVGParserInterface {
 	private Draw defaulFill = new ColorDraw(ColorResource.black);
 
 	private FillPainter parseFill(JVGShape c, Element e, List<Painter> painters, Draw defaulFill) throws JVGParseException {
-		String fill = e.getAttributeValue("fill");
-		if (fill == null) {
-			fill = s("fill");
-		}
-
+		String fill = s("fill", e, null);
 		if ("none".equals(fill)) {
 			return transparentFill;
 		}

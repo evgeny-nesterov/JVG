@@ -696,6 +696,11 @@ public abstract class JVGShape extends JVGContainer {
 		transformChildren(transform, locked);
 	}
 
+	@Override
+	public Shape getTransformedClip() {
+		return getClip(); // TODO
+	}
+
 	private int lock_state = LOCK_NONE;
 
 	public int getLockState() {
@@ -807,6 +812,7 @@ public abstract class JVGShape extends JVGContainer {
 	 */
 	public void copyTo(JVGShape dst) {
 		dst.setClipped(isClipped());
+		dst.setClip(getClip());
 		dst.setFocusable(isFocusable());
 		dst.setOriginalBounds(isOriginalBounds());
 		dst.setFill(isFill());

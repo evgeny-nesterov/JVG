@@ -1022,11 +1022,22 @@ public abstract class JVGComponent {
 	}
 
 	public void paint(Graphics2D g) {
+		Shape oldClip = null;
+		Shape clip = getClip();
+		if (clip != null) {
+			oldClip = g.getClip();
+			g.setClip(clip);
+		}
+
 		// paint component
 		paintComponent(g);
 
 		// paint scripted
 		paintScript(g);
+
+		if (oldClip != null) {
+			g.setClip(oldClip);
+		}
 	}
 
 	public void print(Graphics2D g) {
@@ -1276,6 +1287,10 @@ public abstract class JVGComponent {
 	private Shape clip = null;
 
 	public Shape getClip() {
+		return clip;
+	}
+
+	public Shape getTransformedClip() {
 		return clip;
 	}
 
