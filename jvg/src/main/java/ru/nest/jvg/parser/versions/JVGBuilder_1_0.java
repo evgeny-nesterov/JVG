@@ -25,6 +25,7 @@ import org.jdom2.Element;
 
 import ru.nest.expression.NumberValue;
 import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.JVGComponentType;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;

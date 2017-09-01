@@ -44,6 +44,7 @@ import com.steadystate.css.parser.SACParserCSS3;
 
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.JVGComponentType;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
@@ -802,7 +803,7 @@ public class SVGParser implements JVGParserInterface {
 			Object child = parseComponent(c, parent);
 			if (child instanceof JVGShape) {
 				JVGShape shape = (JVGShape) child;
-				shape.setClip(true);
+				shape.setComponentType(JVGComponentType.clip);
 				shape.setVisible(false);
 				clipShapes.add(shape);
 			}
@@ -812,7 +813,7 @@ public class SVGParser implements JVGParserInterface {
 			Object ref = getResource(e.getAttributeValue("href", xlink));
 			if (ref instanceof JVGShape) {
 				JVGShape shape = (JVGShape) ref;
-				shape.setClip(true);
+				shape.setComponentType(JVGComponentType.clip);
 				shape.setVisible(false);
 				// TODO clone shape if shape.isClip() == false
 				clipShapes.add(shape);
@@ -820,7 +821,7 @@ public class SVGParser implements JVGParserInterface {
 				for (Object o : (List) ref) {
 					if (o instanceof JVGShape) {
 						JVGShape shape = (JVGShape) o;
-						shape.setClip(true);
+						shape.setComponentType(JVGComponentType.clip);
 						shape.setVisible(false);
 						clipShapes.add(shape);
 					}

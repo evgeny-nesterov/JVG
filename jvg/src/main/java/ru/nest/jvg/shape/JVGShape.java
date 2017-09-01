@@ -21,6 +21,7 @@ import javax.swing.AlfaPaint;
 
 import ru.nest.jvg.Filter;
 import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.JVGComponentType;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGUtil;
 import ru.nest.jvg.event.JVGComponentEvent;
@@ -28,7 +29,10 @@ import ru.nest.jvg.event.JVGPropertyChangeEvent;
 import ru.nest.jvg.geom.CoordinablePath;
 import ru.nest.jvg.geom.MutableGeneralPath;
 import ru.nest.jvg.geom.Pathable;
+import ru.nest.jvg.resource.ColorResource;
+import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.shape.paint.FillPainter;
+import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.PainterFilter;
 
@@ -75,8 +79,6 @@ public abstract class JVGShape extends JVGContainer {
 	protected boolean clipComputed = false;
 
 	protected Shape clipShape = null;
-
-	private boolean isClip = false;
 
 	public JVGShape() {
 		setName("Shape");
@@ -315,7 +317,11 @@ public abstract class JVGShape extends JVGContainer {
 		super.paintComponent(g);
 
 		// draw shape
-		paintShape(g);
+		if (componentType == JVGComponentType.clip) {
+			paintClip(g);
+		} else if (componentType == JVGComponentType.draw) {
+			paintShape(g);
+		}
 	}
 
 	@Override
@@ -323,7 +329,9 @@ public abstract class JVGShape extends JVGContainer {
 		super.printComponent(g);
 
 		// print shape
-		paintShape(g);
+		if (componentType == JVGComponentType.draw) {
+			paintShape(g);
+		}
 	}
 
 	private boolean antialias = false;
@@ -578,6 +586,21 @@ public abstract class JVGShape extends JVGContainer {
 		return defaultPainters;
 	}
 
+	private final static FillPainter clipFill = new FillPainter(new ColorResource(new Color(220, 220, 220, 80)));
+
+	private final static OutlinePainter clipOutline = new OutlinePainter(StrokeResource.DEFAULT, ColorResource.darkgray);
+
+	public void paintClip(Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.transform(getTransform());
+
+		clipFill.paint(g, this);
+		clipOutline.paint(g, this);
+
+		g.transform(getInverseTransform());
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+	}
+
 	public void paintShape(Graphics2D g) {
 		if (isAntialias()) {
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -769,7 +792,7 @@ public abstract class JVGShape extends JVGContainer {
 				transformedShape = new MutableGeneralPath(initialBounds);
 			}
 
-			if (!isClip && !clipComputed) {
+			if (componentType == JVGComponentType.draw && !clipComputed) {
 				clipShape = computeClip();
 				clipComputed = true;
 			}
@@ -881,7 +904,7 @@ public abstract class JVGShape extends JVGContainer {
 	 */
 	public void copyTo(JVGShape dst) {
 		dst.setClipped(isClipped());
-		dst.setClip(isClip());
+		dst.setComponentType(getComponentType());
 		dst.setFocusable(isFocusable());
 		dst.setOriginalBounds(isOriginalBounds());
 		dst.setFill(isFill());
@@ -909,16 +932,6 @@ public abstract class JVGShape extends JVGContainer {
 
 	public void setPainterFilter(PainterFilter painterFilter) {
 		this.painterFilter = painterFilter;
-	}
-
-	public boolean isClip() {
-		return isClip;
-	}
-
-	public void setClip(boolean isClip) {
-		boolean oldValue = this.isClip;
-		this.isClip = isClip;
-		dispatchEvent(new JVGPropertyChangeEvent(this, "isclip", oldValue, isClip));
 	}
 
 	public Shape getClipShape() {

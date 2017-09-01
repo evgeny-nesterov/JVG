@@ -22,8 +22,6 @@ import org.jdom2.Namespace;
 
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGContainer;
-import ru.nest.jvg.actionarea.JVGActionArea;
-import ru.nest.jvg.actionarea.JVGCustomActionArea;
 import ru.nest.jvg.geom.CoordinablePathIterator;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGBuilderInterface;
@@ -51,6 +49,8 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 
 	private long id = 0;
 
+	private Element defsElement;
+
 	@Override
 	public Element build(JVGComponent[] components) throws JVGParseException {
 		Element rootElement = new Element("svg", xmlns);
@@ -74,17 +74,10 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 		rootElement.setAttribute("version", "1.0");
 
-		List<Element> childrenElements = new ArrayList<>();
-		for (int i = 0; i < components.length; i++) {
-			if (!(components[i] instanceof JVGActionArea) || (components[i] instanceof JVGCustomActionArea)) {
-				Element componentElement = buildComponent(components[i]);
-				if (componentElement != null) {
-					childrenElements.add(componentElement);
-				}
-			}
-		}
+		defsElement = new Element("defs", xmlns);
+		List<Element> childrenElements = buildComponents(components);
+		buildDefs(resources);
 
-		Element defsElement = buildDefs(resources);
 		if (defsElement != null) {
 			rootElement.addContent(defsElement);
 		}
@@ -110,37 +103,66 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		return "url(#" + resource.getName() + ")";
 	}
 
-	private void build(JVGComponent[] components, Element componentsElement) throws JVGParseException {
+	private List<Element> buildComponents(JVGComponent[] components) throws JVGParseException {
+		List<Element> childrenElements = new ArrayList<>();
 		for (int i = 0; i < components.length; i++) {
-			if (!(components[i] instanceof JVGActionArea) || (components[i] instanceof JVGCustomActionArea)) {
-				Element componentElement = buildComponent(components[i]);
-				if (componentElement != null) {
-					componentsElement.addContent(componentElement);
+			if (components[i] instanceof JVGShape) {
+				JVGShape shape = (JVGShape) components[i];
+				if (!shape.isClip()) {
+					Element componentElement = buildComponent(shape);
+					if (componentElement != null) {
+						childrenElements.add(componentElement);
+					}
 				}
 			}
 		}
+		return childrenElements;
 	}
 
-	private Element buildComponent(JVGComponent component) throws JVGParseException {
-		if (!(component instanceof JVGShape)) {
-			return null;
+	private void buildClipPath(JVGShape shape, Element shapeElement) throws JVGParseException {
+		Element clipPathElement = new Element("clipPath", xmlns);
+		for (int i = 0; i < shape.getChildCount(); i++) {
+			JVGComponent child = shape.getChild(i);
+			if (child instanceof JVGShape) {
+				JVGShape childShape = (JVGShape) child;
+				if (childShape.isClip()) {
+					Element childElement = buildComponent(childShape);
+					if (childElement != null) {
+						clipPathElement.addContent(childElement);
+					}
+				}
+			}
 		}
+		if (clipPathElement.getChildren().size() > 0) {
+			String id = nextId();
+			clipPathElement.setAttribute("id", id);
+			shapeElement.setAttribute("clip-path", "url(#" + id + ")");
+			defsElement.addContent(clipPathElement);
+		}
+	}
 
+	private Element buildComponent(JVGShape shape) throws JVGParseException {
 		Element componentElement = null;
-		JVGShape shape = (JVGShape) component;
 		if (shape instanceof JVGGroup) {
+			if (shape.isClip()) {
+				return null;
+			}
 			componentElement = new Element("g", xmlns);
 			JVGGroup group = (JVGGroup) shape;
 			for (int i = 0; i < group.getChildCount(); i++) {
 				JVGComponent child = group.getChild(i);
-				if (!(child instanceof JVGActionArea) || (child instanceof JVGCustomActionArea)) {
-					Element childElement = buildComponent(child);
+				if (child instanceof JVGShape) {
+					JVGShape childShape = (JVGShape) child;
+					Element childElement = buildComponent(childShape);
 					if (childElement != null) {
 						componentElement.addContent(childElement);
 					}
 				}
 			}
 		} else if (shape instanceof JVGImage) {
+			if (shape.isClip()) {
+				return null;
+			}
 			componentElement = new Element("image", xmlns);
 			JVGImage image = (JVGImage) shape;
 			String source = getImage(image.getImage());
@@ -177,9 +199,6 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		//				componentElement.setAttribute("antialias", "yes");
 		//			}
 
-		// painters
-		setPainters(shape, componentElement);
-
 		// transform
 		AffineTransform transform;
 		JVGContainer parent = shape.getParent();
@@ -192,32 +211,37 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 		setTransform(transform, componentElement);
 
-		// opacity
-		int opacity = shape.getAlfa();
-		if (opacity != 255) {
-			componentElement.setAttribute("opacity", Integer.toString(opacity));
-		}
-
 		String name = shape.getName();
 		if (name == null || name.length() == 0) {
 			name = shape.getId().toString();
 		}
 		componentElement.setAttribute("id", name);
 
-		//			if (component.getName() != null) {
-		//				componentElement.setAttribute("name", component.getName());
-		//			}
+		if (!shape.isClip()) {
+			setPainters(shape, componentElement);
 
-		if (!shape.isVisible()) {
+			int opacity = shape.getAlfa();
+			if (opacity != 255) {
+				componentElement.setAttribute("opacity", Integer.toString(opacity));
+			}
+
+			if (!shape.isVisible()) {
+				componentElement.setAttribute("display", "none");
+			}
+
+			//			if (component.getName() != null) {
+			//				componentElement.setAttribute("name", component.getName());
+			//			}
+
+			//			if (component.isClipped()) {
+			//				componentElement.setAttribute("clip", "yes");
+			//			}
+
+			setProperties(shape, componentElement);
+			buildClipPath(shape, componentElement);
+		} else {
 			componentElement.setAttribute("display", "none");
 		}
-
-		//			if (component.isClipped()) {
-		//				componentElement.setAttribute("clip", "yes");
-		//			}
-
-		// properties
-		setProperties(shape, componentElement);
 		return componentElement;
 	}
 
@@ -482,8 +506,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 
 	// Supported resources:
 	// color, stroke, font, image, script, linear gradient, radial gradient, transform 
-	public Element buildDefs(JVGResources resources) {
-		Element defs = new Element("defs", xmlns);
+	public void buildDefs(JVGResources resources) {
 		for (Class resourceClass : resources.getClasses()) {
 			int count = resources.getResourcesCount(resourceClass);
 			for (int i = 0; i < count; i++) {
@@ -499,10 +522,9 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 
 				if (resourceElement != null && resource.getName() != null) {
 					resourceElement.setAttribute("id", resource.getName());
-					defs.addContent(resourceElement);
+					defsElement.addContent(resourceElement);
 				}
 			}
 		}
-		return defs;
 	}
 }

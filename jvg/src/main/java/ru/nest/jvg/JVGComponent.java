@@ -79,23 +79,25 @@ public abstract class JVGComponent {
 
 	private Long id;
 
+	protected JVGComponentType componentType = JVGComponentType.draw;
+
+	protected JVGContainer parent;
+
+	protected JVGPane pane;
+
+	private boolean isScriptingEnabled = false;
+
 	public Long getId() {
 		return id;
 	}
-
-	protected JVGContainer parent;
 
 	public JVGContainer getParent() {
 		return parent;
 	}
 
-	protected JVGPane pane;
-
 	public JVGPane getPane() {
 		return pane;
 	}
-
-	private boolean isScriptingEnabled = false;
 
 	public JVGComponent getRoot() {
 		JVGComponent c = this;
@@ -1360,5 +1362,19 @@ public abstract class JVGComponent {
 			}
 		}
 		return 1;
+	}
+
+	public JVGComponentType getComponentType() {
+		return componentType;
+	}
+
+	public boolean isClip() {
+		return componentType == JVGComponentType.clip;
+	}
+
+	public void setComponentType(JVGComponentType componentType) {
+		JVGComponentType oldValue = this.componentType;
+		this.componentType = componentType;
+		dispatchEvent(new JVGPropertyChangeEvent(this, "component-type", oldValue, componentType));
 	}
 }

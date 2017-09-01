@@ -32,6 +32,7 @@ import javax.swing.text.StyleConstants;
 import org.jdom2.Element;
 
 import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.JVGComponentType;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
@@ -220,8 +221,8 @@ public class JVGParser_1_0 implements JVGParserInterface {
 
 						// isclip
 						String isClipValue = componentElement.getAttributeValue("isclip");
-						if (isClipValue != null) {
-							shape.setClip(JVGParseUtil.getBoolean(isClipValue));
+						if (isClipValue != null && JVGParseUtil.getBoolean(isClipValue)) {
+							shape.setComponentType(JVGComponentType.clip);
 						}
 
 						// antialias
