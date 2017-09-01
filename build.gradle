@@ -46,8 +46,8 @@ project(':jvg') {
 		compile("org.jdom:jdom:2.0.2")
 		compile group: 'org.w3c.css', name: 'sac', version: '1.3'
 		compile group: 'net.sourceforge.cssparser', name: 'cssparser', version: '0.9.23'
-		compile files('../libs/jai_codec.jar')
-		compile files('../libs/jai_core.jar')
+		compile files('../libs/jai_codec-1.1.3.jar')
+		compile files('../libs/jai_core-1.1.3.jar')
 	}
 }
 
@@ -58,8 +58,8 @@ project(':toi') {
 	dependencies {
 		compile project(':satisui')
 		compile("org.jdom:jdom:2.0.2")
-		compile files('../libs/jai_codec.jar')
-		compile files('../libs/jai_core.jar')
+		compile files('../libs/jai_codec-1.1.3.jar')
+		compile files('../libs/jai_core-1.1.3.jar')
 	}
 }
 

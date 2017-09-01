@@ -41,63 +41,61 @@ public class RadialGradientDraw extends AbstractDraw<RadialGradient> {
 
 	@Override
 	public Paint getPaint(JVGShape component, Shape shape, AffineTransform transform) {
-		if (paint == null) {
-			RadialGradient gradient = resource.getResource();
-			Resource<Color>[] colorResources = gradient.getColors();
-			if (colorResources != null) {
-				// copy colors
-				double opacity = getOpacity();
-				Color[] colors = new Color[colorResources.length];
-				for (int i = 0; i < colorResources.length; i++) {
-					Color color = colorResources[i].getResource();
-					if (color == null) {
-						color = Color.white;
-						System.err.println("Error in RadialGradientDraw: colorResources[" + i + "] is null!");
-					}
-					if (opacity != 1) {
-						color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (opacity * color.getAlpha()));
-					}
-					colors[i] = color;
+		RadialGradient gradient = resource.getResource();
+		Resource<Color>[] colorResources = gradient.getColors();
+		if (colorResources != null) {
+			// copy colors
+			double opacity = getOpacity();
+			Color[] colors = new Color[colorResources.length];
+			for (int i = 0; i < colorResources.length; i++) {
+				Color color = colorResources[i].getResource();
+				if (color == null) {
+					color = Color.white;
+					System.err.println("Error in RadialGradientDraw: colorResources[" + i + "] is null!");
+				}
+				if (opacity != 1) {
+					color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (opacity * color.getAlpha()));
+				}
+				colors[i] = color;
+			}
+
+			Shape ib = component.getInitialBounds();
+			Rectangle2D r = ib instanceof Rectangle2D ? (Rectangle2D) ib : ib.getBounds2D();
+
+			float rad = gradient.getR();
+			if (rad > 0) {
+				// update paint on change
+				if (gradient.getUnitsType() == GradientUnitsType.ABSOLUTE) {
+					float cx = (float) ((gradient.getCX() - r.getX()) / r.getWidth());
+					float cy = (float) ((gradient.getCY() - r.getY()) / r.getHeight());
+					float fx = (float) ((gradient.getFX() - r.getX()) / r.getWidth());
+					float fy = (float) ((gradient.getFY() - r.getY()) / r.getHeight());
+					rad = (float) (rad / r.getWidth());
+					gradient = new RadialGradient(gradient.getFractions(), gradient.getColors(), gradient.getCycleMethod(), cx, cy, fx, fy, rad);
+					resource.setResource(gradient);
 				}
 
-				Shape ib = component.getInitialBounds();
-				Rectangle2D r = ib instanceof Rectangle2D ? (Rectangle2D) ib : ib.getBounds2D();
+				float cx = (float) r.getX() + (float) r.getWidth() * gradient.getCX();
+				float cy = (float) r.getY() + (float) r.getHeight() * gradient.getCY();
+				float fx = (float) r.getX() + (float) r.getWidth() * gradient.getFX();
+				float fy = (float) r.getY() + (float) r.getHeight() * gradient.getFY();
+				rad = (float) (r.getWidth() * gradient.getR());
 
-				float rad = gradient.getR();
-				if (rad > 0) {
-					// update paint on change
-					if (gradient.getUnitsType() == GradientUnitsType.ABSOLUTE) {
-						float cx = (float) ((gradient.getCX() - r.getX()) / r.getWidth());
-						float cy = (float) ((gradient.getCY() - r.getY()) / r.getHeight());
-						float fx = (float) ((gradient.getFX() - r.getX()) / r.getWidth());
-						float fy = (float) ((gradient.getFY() - r.getY()) / r.getHeight());
-						rad = (float) (rad / r.getWidth());
-						gradient = new RadialGradient(gradient.getFractions(), gradient.getColors(), gradient.getCycleMethod(), cx, cy, fx, fy, rad);
-						resource.setResource(gradient);
-					}
+				if (transform != null) {
+					double scale = (r.getHeight() != 0 ? r.getHeight() : 1) / (r.getWidth() != 0 ? r.getWidth() : 1);
+					AffineTransform scaleTransform = AffineTransform.getTranslateInstance(cx, cy);
+					scaleTransform.scale(1, scale);
+					scaleTransform.translate(-cx, -cy);
 
-					float cx = (float) r.getX() + (float) r.getWidth() * gradient.getCX();
-					float cy = (float) r.getY() + (float) r.getHeight() * gradient.getCY();
-					float fx = (float) r.getX() + (float) r.getWidth() * gradient.getFX();
-					float fy = (float) r.getY() + (float) r.getHeight() * gradient.getFY();
-					rad = (float) (r.getWidth() * gradient.getR());
-
-					if (transform != null) {
-						double scale = (r.getHeight() != 0 ? r.getHeight() : 1) / (r.getWidth() != 0 ? r.getWidth() : 1);
-						AffineTransform scaleTransform = AffineTransform.getTranslateInstance(cx, cy);
-						scaleTransform.scale(1, scale);
-						scaleTransform.translate(-cx, -cy);
-
-						transform = (AffineTransform) transform.clone();
-						transform.concatenate(scaleTransform);
-					}
-
-					if (gradient.getTransform() != null && transform != null) {
-						transform = (AffineTransform) transform.clone();
-						transform.concatenate(gradient.getTransform());
-					}
-					paint = new RadialGradientPaint(cx, cy, rad, fx, fy, gradient.getFractions(), colors, transform, gradient.getCycleMethod());
+					transform = (AffineTransform) transform.clone();
+					transform.concatenate(scaleTransform);
 				}
+
+				if (gradient.getTransform() != null && transform != null) {
+					transform = (AffineTransform) transform.clone();
+					transform.concatenate(gradient.getTransform());
+				}
+				paint = new RadialGradientPaint(cx, cy, rad, fx, fy, gradient.getFractions(), colors, transform, gradient.getCycleMethod());
 			}
 		}
 		return paint;

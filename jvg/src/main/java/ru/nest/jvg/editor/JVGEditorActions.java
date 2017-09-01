@@ -676,10 +676,12 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 					continue;
 				}
 
-				Resource resource = p.getPaint().getResource();
-				Class valueClass = resource != null ? resource.getResource().getClass() : null;
-				if (valueClass == clazz) {
-					return resource;
+				if (p.getPaint() != null) {
+					Resource resource = p.getPaint().getResource();
+					Class valueClass = resource != null ? resource.getResource().getClass() : null;
+					if (valueClass == clazz) {
+						return resource;
+					}
 				}
 			}
 		}

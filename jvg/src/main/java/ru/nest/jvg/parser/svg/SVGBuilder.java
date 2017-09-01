@@ -6,10 +6,13 @@ import java.awt.Font;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
+import javax.swing.gradient.Gradient;
 import javax.swing.gradient.LinearGradient;
 import javax.swing.gradient.MultipleGradientPaint;
 import javax.swing.gradient.RadialGradient;
@@ -46,15 +49,11 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 
 	private final static Namespace xmlns = Namespace.getNamespace("http://www.w3.org/2000/svg");
 
+	private long id = 0;
+
 	@Override
 	public Element build(JVGComponent[] components) throws JVGParseException {
 		Element rootElement = new Element("svg", xmlns);
-		// rootElement.addNamespaceDeclaration(xlink);
-
-		Element defsElement = buildDefs(resources);
-		if (defsElement != null) {
-			rootElement.addContent(defsElement);
-		}
 
 		if (pane != null) {
 			if (pane.isDocumentSizeSet()) {
@@ -75,8 +74,40 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 		rootElement.setAttribute("version", "1.0");
 
-		build(components, rootElement);
+		List<Element> childrenElements = new ArrayList<>();
+		for (int i = 0; i < components.length; i++) {
+			if (!(components[i] instanceof JVGActionArea) || (components[i] instanceof JVGCustomActionArea)) {
+				Element componentElement = buildComponent(components[i]);
+				if (componentElement != null) {
+					childrenElements.add(componentElement);
+				}
+			}
+		}
+
+		Element defsElement = buildDefs(resources);
+		if (defsElement != null) {
+			rootElement.addContent(defsElement);
+		}
+		for (Element e : childrenElements) {
+			rootElement.addContent(e);
+		}
 		return rootElement;
+	}
+
+	private String nextId() {
+		String name = "jvg" + id;
+		while (resources.getResource(Resource.class, name) != null) {
+			id++;
+			name = "jvg" + id;
+		}
+		return name;
+	}
+
+	private String getResourceUrl(Resource<?> resource) {
+		if (resource.getName() == null) {
+			resource.setName(nextId());
+		}
+		return "url(#" + resource.getName() + ")";
 	}
 
 	private void build(JVGComponent[] components, Element componentsElement) throws JVGParseException {
@@ -98,7 +129,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		Element componentElement = null;
 		JVGShape shape = (JVGShape) component;
 		if (shape instanceof JVGGroup) {
-			componentElement = new Element("g");
+			componentElement = new Element("g", xmlns);
 			JVGGroup group = (JVGGroup) shape;
 			for (int i = 0; i < group.getChildCount(); i++) {
 				JVGComponent child = group.getChild(i);
@@ -110,7 +141,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 				}
 			}
 		} else if (shape instanceof JVGImage) {
-			componentElement = new Element("image");
+			componentElement = new Element("image", xmlns);
 			JVGImage image = (JVGImage) shape;
 			String source = getImage(image.getImage());
 			if (source != null) {
@@ -122,7 +153,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 				componentElement.setAttribute("href", "base64," + base64data);
 			}
 		} else if (shape instanceof JVGTextField) {
-			componentElement = new Element("text");
+			componentElement = new Element("text", xmlns);
 			JVGTextField c = (JVGTextField) shape;
 			Font font = c.getFont() != null ? c.getFont().getResource() : null;
 			if (font != null) {
@@ -131,7 +162,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			}
 			componentElement.setText(c.getText());
 		} else {
-			componentElement = new Element("path");
+			componentElement = new Element("path", xmlns);
 			setPath(shape.getPath().getPathIterator(null), componentElement);
 
 			//			if (path.getPathStroke() != null) {
@@ -195,21 +226,23 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 	}
 
-	private void setTransform(AffineTransform transform, Element componentElement) {
-		int type = transform.getType();
-		if (!transform.isIdentity()) {
-			double[] matrix = new double[6];
-			transform.getMatrix(matrix);
-			if (type == AffineTransform.TYPE_TRANSLATION) {
-				componentElement.setAttribute("transform", "translate(" + JVGParseUtil.getValue(transform.getTranslateX()) + "," + JVGParseUtil.getValue(transform.getTranslateY()) + ")");
-			} else if (type == AffineTransform.TYPE_GENERAL_SCALE || type == AffineTransform.TYPE_UNIFORM_SCALE || type == AffineTransform.TYPE_FLIP || type == (AffineTransform.TYPE_GENERAL_SCALE | AffineTransform.TYPE_FLIP) || type == (AffineTransform.TYPE_UNIFORM_SCALE | AffineTransform.TYPE_FLIP)) {
-				componentElement.setAttribute("type", "scale(" + JVGParseUtil.getValue(transform.getScaleX()) + "," + JVGParseUtil.getValue(transform.getScaleY()) + ")");
-			} else if (type == AffineTransform.TYPE_GENERAL_ROTATION || type == AffineTransform.TYPE_QUADRANT_ROTATION) {
-				double cos = matrix[0];
-				double sin = matrix[1];
-				componentElement.setAttribute("type", "rotate(" + JVGParseUtil.getValue(Math.toDegrees((sin < 0 ? -1 : 1) * Math.acos(cos))) + ")");
-			} else {
-				componentElement.setAttribute("type", "matrix(" + JVGParseUtil.getValue(matrix[0]) + "," + JVGParseUtil.getValue(matrix[1]) + "," + JVGParseUtil.getValue(matrix[2]) + "," + JVGParseUtil.getValue(matrix[3]) + "," + JVGParseUtil.getValue(matrix[4]) + "," + JVGParseUtil.getValue(matrix[5]) + ")");
+	private void setTransform(AffineTransform transform, Element element) {
+		if (transform != null) {
+			int type = transform.getType();
+			if (!transform.isIdentity()) {
+				double[] matrix = new double[6];
+				transform.getMatrix(matrix);
+				if (type == AffineTransform.TYPE_TRANSLATION) {
+					element.setAttribute("transform", "translate(" + JVGParseUtil.getValue(transform.getTranslateX()) + "," + JVGParseUtil.getValue(transform.getTranslateY()) + ")");
+				} else if (type == AffineTransform.TYPE_GENERAL_SCALE || type == AffineTransform.TYPE_UNIFORM_SCALE || type == AffineTransform.TYPE_FLIP || type == (AffineTransform.TYPE_GENERAL_SCALE | AffineTransform.TYPE_FLIP) || type == (AffineTransform.TYPE_UNIFORM_SCALE | AffineTransform.TYPE_FLIP)) {
+					element.setAttribute("transform", "scale(" + JVGParseUtil.getValue(transform.getScaleX()) + "," + JVGParseUtil.getValue(transform.getScaleY()) + ")");
+				} else if (type == AffineTransform.TYPE_GENERAL_ROTATION || type == AffineTransform.TYPE_QUADRANT_ROTATION) {
+					double cos = matrix[0];
+					double sin = matrix[1];
+					element.setAttribute("transform", "rotate(" + JVGParseUtil.getValue(Math.toDegrees((sin < 0 ? -1 : 1) * Math.acos(cos))) + ")");
+				} else {
+					element.setAttribute("transform", "matrix(" + JVGParseUtil.getValue(matrix[0]) + "," + JVGParseUtil.getValue(matrix[1]) + "," + JVGParseUtil.getValue(matrix[2]) + "," + JVGParseUtil.getValue(matrix[3]) + "," + JVGParseUtil.getValue(matrix[4]) + "," + JVGParseUtil.getValue(matrix[5]) + ")");
+				}
 			}
 		}
 	}
@@ -261,7 +294,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			}
 		} else if (drawObject instanceof LinearGradient || drawObject instanceof RadialGradient) {
 			resources.addResource(drawResource);
-			componentElement.setAttribute("stroke", "url(#" + drawResource.getName() + ")");
+			componentElement.setAttribute("stroke", getResourceUrl(drawResource));
 		}
 
 		Stroke stroke = (Stroke) strokeResource.getResource();
@@ -326,7 +359,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			//			return true;
 		} else if (drawObject instanceof LinearGradient || drawObject instanceof RadialGradient) {
 			resources.addResource(drawResource);
-			componentElement.setAttribute("fill", "url(#" + drawResource.getName() + ")");
+			componentElement.setAttribute("fill", getResourceUrl(drawResource));
 		}
 
 		double opacity = draw.getOpacity();
@@ -354,54 +387,49 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 	//		return null;
 	//	}
 
-	public String getLinearGradient(Resource<LinearGradient> resource, boolean checkResource) {
-		String id = resource.getName();
-		if (checkResource && id != null) {
-			resources.addResource(resource);
-			return "url(#" + id + ")";
-		} else {
-			LinearGradient g = resource.getResource();
-			String value = g.getX1() + "," + g.getY1() + "," + g.getX2() + "," + g.getY2() + ";";
-			if (g.getCycleMethod() == MultipleGradientPaint.NO_CYCLE) {
-				value += "no;"; // default
-			} else if (g.getCycleMethod() == MultipleGradientPaint.REFLECT) {
-				value += "reflect;";
-			} else if (g.getCycleMethod() == MultipleGradientPaint.REPEAT) {
-				value += "repeat;";
-			}
-			for (int i = 0; i < g.getColors().length; i++) {
-				if (i > 0) {
-					value += " ";
+	public <G extends Gradient> void getGradient(Resource<G> resource, Element element) {
+		G g = resource.getResource();
+		if (g.getCycleMethod() == MultipleGradientPaint.REFLECT) {
+			element.setAttribute("spreadMethod", "reflect");
+		} else if (g.getCycleMethod() == MultipleGradientPaint.REPEAT) {
+			element.setAttribute("spreadMethod", "repeat");
+		}
+
+		setTransform(g.getTransform(), element);
+
+		for (int i = 0; i < g.getColors().length; i++) {
+			Element stop = new Element("stop", xmlns);
+			stop.setAttribute("offset", Float.toString(g.getFractions()[i]));
+			Color color = g.getColors()[i].getResource();
+			if (color != null) {
+				float opacity = color.getAlpha() / 255f;
+				if (opacity != 1f) {
+					stop.setAttribute("stop-opacity", Float.toString(opacity));
+					color = new Color(color.getRed(), color.getGreen(), color.getBlue());
 				}
-				value += getColor(g.getColors()[i]) + " " + g.getFractions()[i];
+				stop.setAttribute("stop-color", JVGParseUtil.getColor(color));
 			}
-			return value;
+			element.addContent(stop);
 		}
 	}
 
-	public String getRadialGradient(Resource<RadialGradient> resource, boolean checkResource) {
-		String id = resource.getName();
-		if (checkResource && id != null) {
-			resources.addResource(resource);
-			return JVGParseUtil.ID_PREFIX + id;
-		} else {
-			RadialGradient g = resource.getResource();
-			String value = g.getCX() + "," + g.getCY() + "," + g.getFX() + "," + g.getFY() + "," + g.getR() + ";";
-			if (g.getCycleMethod() == MultipleGradientPaint.NO_CYCLE) {
-				value += "no;"; // default
-			} else if (g.getCycleMethod() == MultipleGradientPaint.REFLECT) {
-				value += "reflect;";
-			} else if (g.getCycleMethod() == MultipleGradientPaint.REPEAT) {
-				value += "repeat;";
-			}
-			for (int i = 0; i < g.getColors().length; i++) {
-				if (i > 0) {
-					value += " ";
-				}
-				value += getColor(g.getColors()[i]) + " " + g.getFractions()[i];
-			}
-			return value;
-		}
+	public void getLinearGradient(Resource<LinearGradient> resource, Element element) {
+		LinearGradient g = resource.getResource();
+		element.setAttribute("x1", Float.toString(g.getX1()));
+		element.setAttribute("y1", Float.toString(g.getY1()));
+		element.setAttribute("x2", Float.toString(g.getX2()));
+		element.setAttribute("y2", Float.toString(g.getY2()));
+		getGradient(resource, element);
+	}
+
+	public void getRadialGradient(Resource<RadialGradient> resource, Element element) {
+		RadialGradient g = resource.getResource();
+		element.setAttribute("cx", Float.toString(g.getCX()));
+		element.setAttribute("cy", Float.toString(g.getCY()));
+		element.setAttribute("fx", Float.toString(g.getFX()));
+		element.setAttribute("fy", Float.toString(g.getFY()));
+		element.setAttribute("r", Float.toString(g.getR()));
+		getGradient(resource, element);
 	}
 
 	private String getFont(Resource<Font> font) {
@@ -451,31 +479,26 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 	// Supported resources:
 	// color, stroke, font, image, script, linear gradient, radial gradient, transform 
 	public Element buildDefs(JVGResources resources) {
-		Element resourcesElement = null;
+		Element defs = new Element("defs", xmlns);
 		for (Class resourceClass : resources.getClasses()) {
 			int count = resources.getResourcesCount(resourceClass);
 			for (int i = 0; i < count; i++) {
 				Resource resource = resources.getResource(resourceClass, i);
-				Element resourceElement = new Element("resource");
-				resourceElement.setAttribute("name", resource.getName());
-
-				if (resourcesElement == null) {
-					resourcesElement = new Element("resources");
-				}
-
+				Element resourceElement = null;
 				if (resource instanceof LinearGradientResource) {
-					resourceElement.setAttribute("type", "linear-gradient");
-					resourceElement.setAttribute("value", getLinearGradient(resource, false));
+					resourceElement = new Element("linearGradient", xmlns);
+					getLinearGradient(resource, resourceElement);
 				} else if (resource instanceof RadialGradientResource) {
-					resourceElement.setAttribute("type", "radial-gradient");
-					resourceElement.setAttribute("value", getRadialGradient(resource, false));
+					resourceElement = new Element("radialGradient", xmlns);
+					getRadialGradient(resource, resourceElement);
 				}
 
-				if (resourceElement.getAttribute("type") != null) {
-					resourcesElement.addContent(resourceElement);
+				if (resourceElement != null && resource.getName() != null) {
+					resourceElement.setAttribute("id", resource.getName());
+					defs.addContent(resourceElement);
 				}
 			}
 		}
-		return resourcesElement;
+		return defs;
 	}
 }
