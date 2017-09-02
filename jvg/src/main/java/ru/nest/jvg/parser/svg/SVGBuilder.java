@@ -239,8 +239,6 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 
 			setProperties(shape, componentElement);
 			buildClipPath(shape, componentElement);
-		} else {
-			componentElement.setAttribute("display", "none");
 		}
 		return componentElement;
 	}

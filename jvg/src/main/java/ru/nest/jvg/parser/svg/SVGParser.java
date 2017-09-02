@@ -87,11 +87,26 @@ public class SVGParser implements JVGParserInterface {
 
 	private Map<String, Object> allResources = new HashMap<>();
 
-	private Map<String, Map<String, String>> css = new HashMap<>();
+	private Map<String, Map<String, String>> cssClasses = new HashMap<>();
 
-	private LinkedList<Map<String, String>> stylesStack = new LinkedList<>();
+	private Map<String, Map<String, String>> cssTags = new HashMap<>();
 
-	private LinkedList<Element> parentsStack = new LinkedList<>();
+	private class StackElement {
+		Element e;
+
+		Map<String, String> style;
+
+		StackElement(Element e) {
+			this.e = e;
+			this.style = parseStyle(e);
+		}
+
+		public String toString() {
+			return e + ", style: " + style;
+		}
+	}
+
+	private LinkedList<StackElement> stack = new LinkedList<>();
 
 	private Rectangle2D lastTextBounds = null;
 
@@ -124,70 +139,79 @@ public class SVGParser implements JVGParserInterface {
 
 	@Override
 	public void parse(Element rootElement, JVGContainer parent) throws JVGParseException {
-		int width = 700;
-		int height = 500;
-		int viewX = 0;
-		int viewY = 0;
-		int viewWidth = width;
-		int viewHeight = height;
-
-		String viewBox = rootElement.getAttributeValue("viewBox");
-		if (viewBox != null) {
-			int[] array = JVGParseUtil.getIntegerArray(viewBox, " ,");
-			if (array.length == 4) {
-				viewX = array[0];
-				viewY = array[1];
-				viewWidth = array[2];
-				viewHeight = array[3];
-				width = viewWidth;
-				height = viewHeight;
-			}
-		}
-
 		String widthValue = rootElement.getAttributeValue("width");
+		Float width = null;
 		if (widthValue != null) {
 			Float w = parseLength(widthValue, null);
 			if (w != null) {
 				if (widthValue.endsWith("%")) {
-					width = pane != null ? (int) (w * pane.getDocumentSize().getWidth()) : 700;
+					width = pane != null ? (float) (w * pane.getDocumentSize().getWidth()) : 700f;
 				} else {
-					width = w.intValue();
+					width = w;
 				}
 			}
 		}
 
+		Float height = null;
 		String heightValue = rootElement.getAttributeValue("height");
 		if (heightValue != null) {
 			Float h = parseLength(heightValue, null);
 			if (h != null) {
 				if (widthValue.endsWith("%")) {
-					height = pane != null ? (int) (h * pane.getDocumentSize().getHeight()) : 500;
+					height = pane != null ? (float) (h * pane.getDocumentSize().getHeight()) : 500f;
 				} else {
-					height = h.intValue();
+					height = h;
 				}
 			}
 		}
 
-		documentSize = new Dimension(width, height);
+		float viewX = 0;
+		float viewY = 0;
+		Float viewWidth = null;
+		Float viewHeight = null;
+		String viewBox = rootElement.getAttributeValue("viewBox");
+		if (viewBox != null) {
+			float[] array = JVGParseUtil.getFloatArray(viewBox, " ,");
+			if (array.length == 4) {
+				viewX = array[0];
+				viewY = array[1];
+				viewWidth = array[2];
+				viewHeight = array[3];
+			}
+		}
+		width = defaultValue(700, width, viewWidth);
+		viewWidth = defaultValue(700, viewWidth, width);
+		height = defaultValue(500, height, viewHeight);
+		viewHeight = defaultValue(500, viewHeight, height);
 
-		String preserveAspectRatio = rootElement.getAttributeValue("preserveAspectRatio");
-		// TODO
+		documentSize = new Dimension(viewWidth.intValue(), viewHeight.intValue());
 
-		float scaleX = width / (float) viewWidth;
-		float scaleY = height / (float) viewHeight;
-		AffineTransform transform = AffineTransform.getTranslateInstance(viewX, viewY);
-		transform.scale(scaleX, scaleY);
-		pane.setTransform(transform);
+		//		String preserveAspectRatio = rootElement.getAttributeValue("preserveAspectRatio");
+		//		// TODO
+		//
+		//		float scaleX = width / (float) viewWidth;
+		//		float scaleY = height / (float) viewHeight;
+		//		AffineTransform transform = AffineTransform.getTranslateInstance(viewX, viewY);
+		//		transform.scale(scaleX, scaleY);
+		//		if (pane != null) {
+		//			pane.setTransform(transform);
+		//		}
 
 		parseChildren(rootElement, parent);
 	}
 
+	private float defaultValue(float defaultValue, Float... values) {
+		for (Float value : values) {
+			if (value != null) {
+				return value;
+			}
+		}
+		return defaultValue;
+	}
+
 	private <C> C parseComponent(Element e, JVGContainer parent) throws JVGParseException {
 		String type = e.getName();
-
-		Map<String, String> style = parseStyle(e);
-		stylesStack.addFirst(style);
-		parentsStack.addFirst(e);
+		stack.addFirst(new StackElement(e));
 
 		Object component = null;
 		if ("path".equals(type)) {
@@ -228,6 +252,8 @@ public class SVGParser implements JVGParserInterface {
 			// TODO marker-end for pathes
 		} else if ("font".equals(type)) {
 			// TODO
+		} else if ("filter".equals(type)) {
+			// TODO
 		} else if ("metadata".equals(type)) {
 			// TODO
 		} else if ("namedview".equals(type)) {
@@ -259,8 +285,7 @@ public class SVGParser implements JVGParserInterface {
 			parseShape(e, (JVGShape) component, parent);
 		}
 
-		stylesStack.removeFirst();
-		parentsStack.removeFirst();
+		stack.removeFirst();
 		return (C) component;
 	}
 
@@ -433,26 +458,25 @@ public class SVGParser implements JVGParserInterface {
 
 	private String s(String name, String defaultValue) {
 		if (!notInheritedProperties.contains(name)) {
-			for (Map<String, String> parentStyle : stylesStack) {
-				String value = parentStyle.get(name);
+			for (StackElement se : stack) {
+				String value = se.e.getAttributeValue(name);
+				if (value != null) {
+					return value;
+				}
+
+				value = se.style.get(name);
 				if (value != null) {
 					return value;
 				}
 			}
-			for (Element parentElement : parentsStack) {
-				String value = parentElement.getAttributeValue(name);
-				if (value != null) {
-					return value;
-				}
-			}
-		} else if (stylesStack.size() > 0) {
-			Map<String, String> parentStyle = stylesStack.getFirst();
+		} else if (stack.size() > 0) {
+			Map<String, String> parentStyle = stack.getFirst().style;
 			String value = parentStyle.get(name);
 			if (value != null) {
 				return value;
 			}
 
-			Element parentElement = parentsStack.getFirst();
+			Element parentElement = stack.getFirst().e;
 			value = parentElement.getAttributeValue(name);
 			if (value != null) {
 				return value;
@@ -498,9 +522,14 @@ public class SVGParser implements JVGParserInterface {
 
 		Map<String, String> map = new HashMap<>();
 		if (clazz != null) {
+			Map<String, String> cssStyle = cssTags.get(e.getName());
+			if (cssStyle != null) {
+				map.putAll(cssStyle);
+			}
+
 			String[] classes = clazz.split(" ");
 			for (String c : classes) {
-				Map<String, String> cssStyle = css.get(c);
+				cssStyle = cssClasses.get(c);
 				if (cssStyle != null) {
 					map.putAll(cssStyle);
 				}
@@ -645,7 +674,7 @@ public class SVGParser implements JVGParserInterface {
 			float miterlimit = parseXLength(s("stroke-miterlimit", e, null), 10f, c);
 			String linecap = s("stroke-linecap", e, null);
 			String linejoin = s("stroke-linejoin", e, null);
-			float[] dasharray = JVGParseUtil.getFloatArray(s("stroke-dasharray", e, null), ",");
+			float[] dasharray = JVGParseUtil.getFloatArray(s("stroke-dasharray", e, null), ", ");
 			float dashoffset = parseXLength(s("stroke-dashoffset", e, null), 0f, c);
 			if (draw != null) {
 				int cap = BasicStroke.CAP_BUTT;
@@ -675,6 +704,10 @@ public class SVGParser implements JVGParserInterface {
 
 	private JVGShape parsePath(Element e) throws JVGParseException {
 		String geom = e.getAttributeValue("d");
+		if (geom == null) {
+			return null;
+		}
+
 		MutableGeneralPath shape = new MutableGeneralPath();
 		boolean fill = getPath(geom, shape);
 
@@ -885,7 +918,15 @@ public class SVGParser implements JVGParserInterface {
 
 		String fontFamily = s("font-family", e, FontResource.DEFAULT_FAMILY);
 		int fontSize = parseLength(s("font-size", e, null), 12f).intValue();
-		Font font = Fonts.getFont(fontFamily, Font.PLAIN, fontSize);
+		String fontWeight = s("font-weight", e, null);
+		String fontStyle = s("font-style", e, null);
+		int fw = Font.PLAIN;
+		if ("bold".equals(fontWeight)) {
+			fw = Font.BOLD;
+		} else if ("italic".equals(fontStyle)) {
+			fw = Font.ITALIC;
+		}
+		Font font = Fonts.getFont(fontFamily, fw, fontSize);
 
 		JVGShape c;
 		if (isGroup) {
@@ -896,6 +937,9 @@ public class SVGParser implements JVGParserInterface {
 					child = parseComponent((Element) content, parent);
 				} else if (content instanceof Text) {
 					String text = ((Text) content).getText();
+					if (text.trim().length() == 0) {
+						continue;
+					}
 					JVGTextField t = factory.createComponent(JVGTextField.class, text, font);
 					setTextPos(t, null, null, false);
 					parseShape(e, t, g);
@@ -1014,6 +1058,9 @@ public class SVGParser implements JVGParserInterface {
 
 	public static boolean getPath(String value, MutableGeneralPath path) throws JVGParseException {
 		boolean fill = false;
+		if (value == null) {
+			return false;
+		}
 
 		value = value.trim();
 		String[] array = JVGParseUtil.getStringArray(value, "MmLlCcQqAaHhVvSsTtZz", true);
@@ -1540,10 +1587,6 @@ public class SVGParser implements JVGParserInterface {
 					if (rule instanceof CSSStyleRule) {
 						CSSStyleRule styleRule = (CSSStyleRule) rule;
 						String selectorName = styleRule.getSelectorText();
-						if (selectorName.startsWith(".")) {
-							selectorName = selectorName.substring(1);
-						}
-
 						Map<String, String> style = new HashMap<>();
 						CSSStyleDeclaration styleDeclaration = styleRule.getStyle();
 						for (int j = 0; j < styleDeclaration.getLength(); j++) {
@@ -1552,7 +1595,16 @@ public class SVGParser implements JVGParserInterface {
 							String priority = styleDeclaration.getPropertyPriority(property);
 							style.put(property, value);
 						}
-						css.put(selectorName, style);
+
+						String[] selectors = JVGParseUtil.getStringArray(selectorName, " ,");
+						for (String s : selectors) {
+							if (s.startsWith(".")) {
+								s = s.substring(1);
+								cssClasses.put(s, style);
+							} else {
+								cssTags.put(s, style);
+							}
+						}
 					}
 				}
 			} catch (Throwable t) {
