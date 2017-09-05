@@ -793,6 +793,7 @@ public class JVGEditor extends JFrame {
 		addShape("thickline");
 		addShape("rightangle");
 		addShape("angle");
+		addShape("thickangle");
 
 		addShape("doubletreesquare");
 		addShape("doubletreesloped");

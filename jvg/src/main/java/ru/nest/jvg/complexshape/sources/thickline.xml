@@ -10,14 +10,14 @@
 		<var id="endY" value="1" argument="yes" />
 		<var id="width" value="5" argument="yes" />
 
-		<var id="radius">
+		<var id="length">
 			<get>veclen(startX, startY, endX, endY)</get>
 		</var>
 		<var id="cos">
-			<get>(radius != 0) ? (endX - startX) / radius : 0</get>
+			<get>(length != 0) ? (endX - startX) / length : 0</get>
 		</var>
 		<var id="sin">
-			<get>(radius != 0) ? (endY - startY) / radius : 1</get>
+			<get>(length != 0) ? (endY - startY) / length : 1</get>
 		</var>
 		<var id="ort_dx">
 			<get>width * sin</get>

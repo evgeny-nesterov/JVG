@@ -184,8 +184,8 @@ public class ComplexShapeParser {
 					y = y1 + u * y21;
 				}
 
-				long encodedX = Double.doubleToLongBits(x);
-				long encodedY = Double.doubleToLongBits(y);
+				long encodedX = Float.floatToRawIntBits((float) x);
+				long encodedY = Float.floatToRawIntBits((float) y);
 				return (encodedX << 32) + encodedY;
 			}
 
