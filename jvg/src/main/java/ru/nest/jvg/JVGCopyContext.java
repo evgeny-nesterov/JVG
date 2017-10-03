@@ -1,5 +1,6 @@
 package ru.nest.jvg;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 
@@ -11,21 +12,32 @@ public class JVGCopyContext implements Serializable {
 		time = System.currentTimeMillis();
 	}
 
-	public JVGCopyContext(URL url) {
-		this.url = url;
+	public JVGCopyContext(File file) {
+		this.file = file;
+		time = System.currentTimeMillis();
+	}
+
+	public JVGCopyContext(URL complexUrl) {
+		this.complexUrl = complexUrl;
 		this.width = -1;
 		this.height = -1;
 		time = System.currentTimeMillis();
 	}
 
-	private URL url;
+	private File file;
+
+	private URL complexUrl;
 
 	private String xml;
 
 	private int width, height;
 
-	public URL getURL() {
-		return url;
+	public File getFile() {
+		return file;
+	}
+
+	public URL getComplexURL() {
+		return complexUrl;
 	}
 
 	public String getData() {

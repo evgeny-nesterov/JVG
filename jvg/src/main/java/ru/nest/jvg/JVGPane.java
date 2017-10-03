@@ -16,7 +16,10 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
@@ -864,11 +867,28 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 				}
 			}
 
-			JVGCopyContext ctx = (JVGCopyContext) dtde.getTransferable().getTransferData(JVGTransferable.JVGFLAVOR);
-			if (ctx != null) {
-				InsertEditorAction.insert(this, ctx, dtde.getLocation().x, dtde.getLocation().y);
-				requestFocus();
-			} else if (drop != null) {
+			dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+			Transferable transferable = dtde.getTransferable();
+
+			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+				if (files != null) {
+					InsertEditorAction.insert(this, files, dtde.getLocation().x, dtde.getLocation().y);
+					requestFocus();
+					return;
+				}
+			}
+
+			if (transferable.isDataFlavorSupported(JVGTransferable.JVGFLAVOR)) {
+				JVGCopyContext ctx = (JVGCopyContext) transferable.getTransferData(JVGTransferable.JVGFLAVOR);
+				if (ctx != null) {
+					InsertEditorAction.insert(this, ctx, dtde.getLocation().x, dtde.getLocation().y);
+					requestFocus();
+					return;
+				}
+			}
+
+			if (drop != null) {
 				drop.drop(dtde);
 			}
 		} catch (UnsupportedFlavorException e) {

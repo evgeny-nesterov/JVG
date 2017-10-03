@@ -110,8 +110,8 @@ public class JVGTransferHandler extends TransferHandler implements UIResource {
 			if (ctx.getData() != null) {
 				JVGRoot root = parser.parse(ctx.getData());
 				childs = root.getChildren();
-			} else if (ctx.getURL() != null) {
-				JVGComponent c = pane.getEditorKit().getFactory().createComponent(JVGComplexShape.class, ctx.getURL());
+			} else if (ctx.getComplexURL() != null) {
+				JVGComponent c = pane.getEditorKit().getFactory().createComponent(JVGComplexShape.class, ctx.getComplexURL());
 				childs = new JVGComponent[] { c };
 			}
 

@@ -8,6 +8,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.event.UndoableEditEvent;
@@ -19,7 +23,6 @@ import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGRoot;
 import ru.nest.jvg.JVGUtil;
 import ru.nest.jvg.editor.JVGEditPane;
-import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
 import ru.nest.jvg.shape.JVGComplexShape;
 import ru.nest.jvg.shape.JVGShape;
@@ -56,20 +59,39 @@ public class InsertEditorAction extends EditorAction {
 		editorPane.setEditor(null);
 	}
 
+	public static void insert(JVGPane pane, List<File> files, double x, double y) {
+		for (File file : files) {
+			try {
+				insert(pane, new JVGCopyContext(file), x, y);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public static void insert(JVGPane pane, JVGCopyContext ctx, double x, double y) {
 		try {
 			JVGComponent[] childs = null;
 			JVGComponent boundsComponent = null;
-			if (ctx.getData() != null) {
-				JVGEditorKit editorKit = pane.getEditorKit();
-				JVGParser parser = new JVGParser(editorKit.getFactory());
-				JVGRoot root = parser.parse(new ByteArrayInputStream(ctx.getData().getBytes()));
-				childs = root.getChildren();
-				boundsComponent = root;
-			} else if (ctx.getURL() != null) {
-				JVGComponent c = pane.getEditorKit().getFactory().createComponent(JVGComplexShape.class, ctx.getURL());
+			if (ctx.getComplexURL() != null) {
+				JVGComponent c = pane.getEditorKit().getFactory().createComponent(JVGComplexShape.class, ctx.getComplexURL());
 				childs = new JVGComponent[] { c };
 				boundsComponent = c;
+			} else {
+				InputStream is = null;
+				if (ctx.getData() != null) {
+					is = new ByteArrayInputStream(ctx.getData().getBytes());
+				} else if (ctx.getFile() != null) {
+					is = new FileInputStream(ctx.getFile());
+				}
+
+				if (is != null) {
+					JVGEditorKit editorKit = pane.getEditorKit();
+					JVGParser parser = new JVGParser(editorKit.getFactory());
+					JVGRoot root = parser.parse(is);
+					childs = root.getChildren();
+					boundsComponent = root;
+				}
 			}
 
 			if (childs != null) {
@@ -100,7 +122,7 @@ public class InsertEditorAction extends EditorAction {
 				pane.fireUndoableEditUpdate(new UndoableEditEvent(pane, edit));
 				pane.repaint();
 			}
-		} catch (JVGParseException exc) {
+		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
 	}
