@@ -1038,10 +1038,16 @@ public abstract class JVGComponent {
 
 	public void paintComponent(Graphics2D g) {
 		// Transparent and empty on default
+		if (!isValid()) {
+			validate();
+		}
 	}
 
 	public void printComponent(Graphics2D g) {
 		// Transparent and empty on default
+		if (!isValid()) {
+			validate();
+		}
 	}
 
 	private Color selectionColor = Color.darkGray;

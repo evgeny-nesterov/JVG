@@ -246,6 +246,13 @@ public class JVGGroupPath extends JVGPath {
 	}
 
 	@Override
+	public void invalidate() {
+		if (validateTree) {
+			super.invalidate();
+		}
+	}
+
+	@Override
 	public void validate() {
 		if (!isValid()) {
 			if (isSelectable()) {
@@ -282,7 +289,6 @@ public class JVGGroupPath extends JVGPath {
 
 			validateTree = false;
 			validateShape();
-			validateTree = true;
 
 			JVGComponent[] childs = getChilds(JVGSubPath.class);
 			if (childs != null) {
@@ -351,6 +357,7 @@ public class JVGGroupPath extends JVGPath {
 				leadSubPath.setShape(elementPath, false);
 				//				leadSubPath.validate();
 			}
+			validateTree = true;
 
 			// compute children shapes
 			valid = true;
@@ -374,6 +381,7 @@ public class JVGGroupPath extends JVGPath {
 			validateTree = false;
 			valid = false;
 			validateShape();
+			valid = true;
 			validateTree = true;
 
 			if (transformedPathShape == null) {
@@ -403,7 +411,7 @@ public class JVGGroupPath extends JVGPath {
 		}
 	}
 
-	private boolean validateTree;
+	private boolean validateTree = true;
 
 	protected void validateTree() {
 		if (validateTree) {

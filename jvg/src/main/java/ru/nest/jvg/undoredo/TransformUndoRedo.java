@@ -84,6 +84,9 @@ public class TransformUndoRedo extends JVGUndoRedo {
 	@Override
 	public void redo() throws CannotRedoException {
 		super.redo();
+		if (shapes == null) {
+			return;
+		}
 		if (shapes.length == 1 && shapes[0] instanceof JVGShape) {
 			((JVGShape) shapes[0]).transform(transform);
 		} else if (shapes.length > 1) {
