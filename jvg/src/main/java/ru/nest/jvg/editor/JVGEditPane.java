@@ -854,15 +854,16 @@ public class JVGEditPane extends JVGPane {
 		i.field.setCaretPosition(0);
 	}
 
-	public void paint(Graphics g) {
-		super.paint(g);
-		if (inputs.size() > 0) {
-			Graphics2D g2d = getGraphics2D(g);
-			for (InputComponent i : inputs) {
-
-			}
-		}
-	}
+	// TODO
+	//	public void paint(Graphics g) {
+	//		super.paint(g);
+	//		if (inputs.size() > 0) {
+	//			Graphics2D g2d = getGraphics2D(g);
+	//			for (InputComponent i : inputs) {
+	//
+	//			}
+	//		}
+	//	}
 
 	public DocumentFormat getDocumentFormat() {
 		return documentFormat;

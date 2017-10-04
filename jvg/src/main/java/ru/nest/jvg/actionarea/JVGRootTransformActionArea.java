@@ -1,5 +1,8 @@
 package ru.nest.jvg.actionarea;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGSelectionModel;
 import ru.nest.jvg.event.JVGFocusEvent;
@@ -24,6 +27,14 @@ public abstract class JVGRootTransformActionArea extends JVGTransformActionArea 
 			}
 		}
 		setActive(isActive);
+	}
+
+	@Override
+	public void paintAction(Graphics2D g, AffineTransform transform) {
+		// revalidate root action as root child may be changed and only this child will be revalidated
+		invalidate();
+		validate();
+		super.paintAction(g, transform);
 	}
 
 	@Override
