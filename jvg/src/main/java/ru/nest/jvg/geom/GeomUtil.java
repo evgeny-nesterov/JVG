@@ -503,15 +503,10 @@ public class GeomUtil {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setBounds(100, 100, 700, 700);
 		f.setContentPane(new JLabel() {
-
 			MutableGeneralPath path = new MutableGeneralPath();
-
 			GeneralPath pathAppr = new GeneralPath();
-
 			double mx;
-
 			double my;
-
 			int coordIndex = 0;
 
 			{

@@ -291,6 +291,8 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		FillPainter fillPaint = shape.getPainter(FillPainter.class);
 		if (fillPaint != null) {
 			getFill(fillPaint, componentElement);
+		} else if(outlinPainter != null) {
+			componentElement.setAttribute("fill-opacity", "0");
 		}
 
 		// ShadowPainter, EndingsPainter
@@ -327,7 +329,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		if (stroke instanceof BasicStroke) {
 			double opacity = draw.getOpacity();
 			if (opacity != 1) {
-				componentElement.setAttribute("fill-opacity", Double.toString(opacity));
+				componentElement.setAttribute("stroke-opacity", Double.toString(opacity));
 			}
 
 			BasicStroke s = (BasicStroke) stroke;
@@ -487,7 +489,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			int index = 0;
 			int coordCount = CoordinablePathIterator.curvesize[type];
 			for (int i = 0; i < coordCount; i++) {
-				if (index > 0 && coords[i] > 0) {
+				if (index > 0) {
 					value.append(" ");
 				}
 				value.append(JVGParseUtil.getValue(coords[i]));
