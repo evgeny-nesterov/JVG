@@ -1148,15 +1148,18 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 	}
 
 	public void cut() {
-		invokeAction(JVGEditorKit.CUT_ACTION, getEditorKit().getAction(JVGEditorKit.CUT_ACTION));
+		getEditorKit();
+		invokeAction(JVGEditorKit.CUT_ACTION, JVGEditorKit.getAction(JVGEditorKit.CUT_ACTION));
 	}
 
 	public void copy() {
-		invokeAction(JVGEditorKit.COPY_ACTION, getEditorKit().getAction(JVGEditorKit.COPY_ACTION));
+		getEditorKit();
+		invokeAction(JVGEditorKit.COPY_ACTION, JVGEditorKit.getAction(JVGEditorKit.COPY_ACTION));
 	}
 
 	public void paste() {
-		invokeAction(JVGEditorKit.PASTE_ACTION, getEditorKit().getAction(JVGEditorKit.PASTE_ACTION));
+		getEditorKit();
+		invokeAction(JVGEditorKit.PASTE_ACTION, JVGEditorKit.getAction(JVGEditorKit.PASTE_ACTION));
 	}
 
 	private void invokeAction(String name, Action action) {

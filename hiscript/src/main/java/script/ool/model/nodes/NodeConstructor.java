@@ -41,6 +41,7 @@ public class NodeConstructor extends Node {
 
 	public String name;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (clazz == null) {
 			// init by type
@@ -115,6 +116,7 @@ public class NodeConstructor extends Node {
 		constructor.newInstance(ctx, arguments, object, outboundObject);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 
@@ -144,6 +146,7 @@ public class NodeConstructor extends Node {
 				Node[] argValues = os.readArray(Node.class, os.readByte());
 				final NodeConstructor node = new NodeConstructor(argValues);
 				os.addClassLoadListener(new ClassLoadListener() {
+					@Override
 					public void classLoaded(Clazz clazz) {
 						node.clazz = clazz;
 					}

@@ -11,10 +11,12 @@ public class EmptyNode extends Node {
 		super("empty");
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		// do nothing
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		// do nothing
 	}

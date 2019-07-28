@@ -6,6 +6,7 @@ import script.ool.model.Node;
 import script.ool.model.nodes.EmptyNode;
 import script.ool.model.nodes.NodeClass;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -23,8 +24,9 @@ public class StatementParseRule extends ParseRule<Node> {
 	 * Available statements: class if while do-while for switch label return try declaration break continue block expression invocation,
 	 * assignment, new object throw
 	 */
+	@Override
 	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitSymbol(tokenizer, SymbolToken.SEMICOLON) != -1) {
+		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 			return EmptyNode.getInstance();
 		}
 
@@ -94,13 +96,13 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		if ((node = DeclarationParseRule.getInstance().visit(tokenizer, properties)) != null) {
-			expectSymbol(tokenizer, SymbolToken.SEMICOLON);
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 
-		if (visitSymbol(tokenizer, SymbolToken.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			node = BlockParseRule.getInstance().visit(tokenizer, properties);
-			expectSymbol(tokenizer, SymbolToken.BRACES_RIGHT);
+			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			if (node != null) {
 				return node;
 			} else {
@@ -110,7 +112,7 @@ public class StatementParseRule extends ParseRule<Node> {
 
 		// expression has to be parsed at the end
 		if ((node = ExpressionParseRule.getInstance().visit(tokenizer, properties)) != null) {
-			expectSymbol(tokenizer, SymbolToken.SEMICOLON);
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 

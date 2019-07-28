@@ -16,6 +16,7 @@ public class NodeWhile extends Node {
 
 	private Node body;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		condition.execute(ctx);
 		if (ctx.exitFromBlock()) {
@@ -51,6 +52,7 @@ public class NodeWhile extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.write(condition);

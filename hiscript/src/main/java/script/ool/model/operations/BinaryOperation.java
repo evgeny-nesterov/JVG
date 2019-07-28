@@ -11,6 +11,7 @@ public abstract class BinaryOperation extends Operation {
 		super(name, 2, operation);
 	}
 
+	@Override
 	public final void doOperation(RuntimeContext ctx, Value... values) {
 		Value v1 = values[0];
 		Value v2 = values[1];

@@ -17,6 +17,7 @@ public class OperationEquate extends BinaryOperation {
 		super("=", EQUATE);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v2.valueType == Value.VARIABLE) {
 			if (!v2.variable.initialized) {

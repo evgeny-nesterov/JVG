@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Words;
+
 public class BooleanNode extends Node {
 	public BooleanNode(boolean value) {
 		super("boolean");
@@ -12,11 +14,13 @@ public class BooleanNode extends Node {
 		return value;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		ctx.value.type = Types.BOOLEAN;
+		ctx.value.type = Words.BOOLEAN;
 		ctx.value.dimension = 0;
 		ctx.value.bool = value;
 	}

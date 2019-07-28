@@ -18,6 +18,7 @@ public class PrefixNode extends Node {
 		cast.setParent(this);
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		for (Object prefix : prefixes) {
 			if (prefix instanceof Node) {
@@ -27,6 +28,7 @@ public class PrefixNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		int size = prefixes.size();
 		for (int i = size - 1; i >= 0; i--) {

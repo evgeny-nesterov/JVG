@@ -5,6 +5,7 @@ import script.pol.model.ArgumentNode;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ArgumentParseRule extends ParseRule<ArgumentNode> {
 	private final static ArgumentParseRule instance = new ArgumentParseRule();
@@ -16,12 +17,13 @@ public class ArgumentParseRule extends ParseRule<ArgumentNode> {
 	private ArgumentParseRule() {
 	}
 
+	@Override
 	public ArgumentNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		int type = visitType(tokenizer);
 		if (type != -1) {
 			int commonDimension = visitDimension(tokenizer);
 
-			String name = visitWord(WordToken.NOT_SERVICE, tokenizer);
+			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
 				throw new ParseException("argument expected", tokenizer.currentToken());
 			}
@@ -33,12 +35,13 @@ public class ArgumentParseRule extends ParseRule<ArgumentNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		int type = visitType(tokenizer, handler);
 		if (type != -1) {
 			int commonDimension = visitDimension(tokenizer, handler);
 
-			String name = visitWord(WordToken.NOT_SERVICE, tokenizer, handler);
+			String name = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			if (name == null) {
 				errorOccured(tokenizer, handler, "argument expected");
 			}

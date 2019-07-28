@@ -2,6 +2,8 @@ package script.pol.model;
 
 import java.util.ArrayList;
 
+import script.tokenizer.OperationSymbols;
+
 public class ExpressionNode extends Node implements Value {
 	public ExpressionNode(PrefixNode prefix, Node value, ArrayIndexesNode index) {
 		super("expression");
@@ -52,6 +54,7 @@ public class ExpressionNode extends Node implements Value {
 		return indexes;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		int valuesCount = values.size();
 		int operationsCount = operations.size();
@@ -94,10 +97,10 @@ public class ExpressionNode extends Node implements Value {
 		int pos = 2;
 		for (int i = 1; i < operationsCount; i++) {
 			int o = operations.get(i);
-			int p = Operations.getPriority(o);
+			int p = OperationSymbols.getPriority(o);
 
 			int lo = buf[bufSize - 1];
-			int lp = Operations.getPriority(lo);
+			int lp = OperationSymbols.getPriority(lo);
 			while (lp >= p) {
 				list[pos++] = lo; // operation
 				bufSize--;
@@ -107,7 +110,7 @@ public class ExpressionNode extends Node implements Value {
 				}
 
 				lo = buf[bufSize - 1];
-				lp = Operations.getPriority(lo);
+				lp = OperationSymbols.getPriority(lo);
 			}
 
 			list[pos++] = 0; // value
@@ -123,6 +126,7 @@ public class ExpressionNode extends Node implements Value {
 
 	private ValueContainer[] buffer = null;
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		if (values.size() == 1) {
 			Node value = values.get(0);
@@ -168,7 +172,7 @@ public class ExpressionNode extends Node implements Value {
 					bufSize++;
 				} else // operation
 				{
-					if (Operations.isEquate(list[i])) {
+					if (OperationSymbols.isEquate(list[i])) {
 						processEquateOperation(list[i], valuePos - 2, buffer[bufSize - 2], buffer[bufSize - 1]);
 					} else {
 						Operations.doOperation(buffer[bufSize - 2], buffer[bufSize - 1], list[i]);
@@ -187,7 +191,7 @@ public class ExpressionNode extends Node implements Value {
 		Variable var = getVariable(valueIndex);
 		if (valueIndex != 0) {
 			while (--valueIndex >= 0) {
-				if (values.get(valueIndex) instanceof VariableNode && Operations.isEquate(operations.get(valueIndex))) {
+				if (values.get(valueIndex) instanceof VariableNode && OperationSymbols.isEquate(operations.get(valueIndex))) {
 					continue;
 				} else {
 					break;

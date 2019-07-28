@@ -15,6 +15,7 @@ public class NodeReturn extends Node {
 
 	private Node value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		try {
 			if (value != null) {
@@ -33,6 +34,7 @@ public class NodeReturn extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(value);

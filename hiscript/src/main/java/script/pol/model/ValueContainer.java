@@ -3,6 +3,7 @@ package script.pol.model;
 import java.lang.reflect.Array;
 
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.WordToken;
 import script.tokenizer.Words;
 
@@ -716,7 +717,7 @@ public class ValueContainer implements Words {
 				break;
 
 			case BYTE:
-				shortNumber = (short) byteNumber;
+				shortNumber = byteNumber;
 				break;
 
 			case INT:
@@ -747,15 +748,15 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required int");
 
 			case CHAR:
-				intNumber = (int) character;
+				intNumber = character;
 				break;
 
 			case BYTE:
-				intNumber = (int) byteNumber;
+				intNumber = byteNumber;
 				break;
 
 			case SHORT:
-				intNumber = (int) shortNumber;
+				intNumber = shortNumber;
 				break;
 
 			case FLOAT:
@@ -782,23 +783,23 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required float");
 
 			case CHAR:
-				floatNumber = (float) character;
+				floatNumber = character;
 				break;
 
 			case BYTE:
-				floatNumber = (float) byteNumber;
+				floatNumber = byteNumber;
 				break;
 
 			case SHORT:
-				floatNumber = (float) shortNumber;
+				floatNumber = shortNumber;
 				break;
 
 			case INT:
-				floatNumber = (float) intNumber;
+				floatNumber = intNumber;
 				break;
 
 			case LONG:
-				floatNumber = (float) longNumber;
+				floatNumber = longNumber;
 				break;
 
 			case DOUBLE:
@@ -817,19 +818,19 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required long");
 
 			case CHAR:
-				longNumber = (long) character;
+				longNumber = character;
 				break;
 
 			case BYTE:
-				longNumber = (long) byteNumber;
+				longNumber = byteNumber;
 				break;
 
 			case SHORT:
-				longNumber = (long) shortNumber;
+				longNumber = shortNumber;
 				break;
 
 			case INT:
-				longNumber = (long) intNumber;
+				longNumber = intNumber;
 				break;
 
 			case FLOAT:
@@ -852,27 +853,27 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required double");
 
 			case CHAR:
-				doubleNumber = (double) character;
+				doubleNumber = character;
 				break;
 
 			case BYTE:
-				doubleNumber = (double) byteNumber;
+				doubleNumber = byteNumber;
 				break;
 
 			case SHORT:
-				doubleNumber = (double) shortNumber;
+				doubleNumber = shortNumber;
 				break;
 
 			case INT:
-				doubleNumber = (double) intNumber;
+				doubleNumber = intNumber;
 				break;
 
 			case FLOAT:
-				doubleNumber = (double) floatNumber;
+				doubleNumber = floatNumber;
 				break;
 
 			case LONG:
-				doubleNumber = (double) longNumber;
+				doubleNumber = longNumber;
 				break;
 		}
 
@@ -1010,7 +1011,7 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + value.getTypeDescr());
 			}
 
-			if (equateType != Operations.EQUATE) {
+			if (equateType != Symbols.EQUATE) {
 				throw new ExecuteException("operator " + SymbolToken.getSymbol(equateType) + " can not be applyed to " + getTypeDescr() + ", " + value.getTypeDescr());
 			}
 

@@ -31,9 +31,11 @@ public class VariableNode extends Node implements Value {
 		return varName;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		Variable var = getVariable(fullname);
 		if (var != null) {

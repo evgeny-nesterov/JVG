@@ -100,6 +100,7 @@ public class SliderChooser extends IconButton {
 		this.value = value;
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		font = Fonts.getFont("CordiaUPC").deriveFont(14f);

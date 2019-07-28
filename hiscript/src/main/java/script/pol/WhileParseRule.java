@@ -4,9 +4,11 @@ import script.ParseException;
 import script.pol.model.Node;
 import script.pol.model.WhileNode;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class WhileParseRule extends ParseRule<WhileNode> {
 	private final static WhileParseRule instance = new WhileParseRule();
@@ -18,14 +20,15 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 	private WhileParseRule() {
 	}
 
+	@Override
 	public WhileNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.WHILE, tokenizer) != null) {
-			expectSymbol(SymbolToken.PARANTHESIS_LEFT, tokenizer);
+		if (visitWord(Words.WHILE, tokenizer) != null) {
+			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
 
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) // may be ';'
@@ -39,13 +42,14 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.WHILE, tokenizer, handler) != null) {
-			expectSymbol(SymbolToken.PARANTHESIS_LEFT, tokenizer, handler);
+		if (visitWord(Words.WHILE, tokenizer, handler) != null) {
+			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "Expression is expected");
 			}
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "Statement is expected");

@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Symbols;
+
 public class MethodNode extends Node {
 	public MethodNode(String name, int type, int dimension, ArgumentsNode arguments, BlockNode body) {
 		super("method");
@@ -55,6 +57,7 @@ public class MethodNode extends Node {
 		return method;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		int[] types;
 		int[] dimensions;
@@ -72,6 +75,7 @@ public class MethodNode extends Node {
 		}
 
 		method = new Method(null, name, types, dimensions, type, dimension) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... values) throws ExecuteException {
 				super.invoke(ctx, parent, values);
 
@@ -88,7 +92,7 @@ public class MethodNode extends Node {
 					ctx.value.setValue(values[i], type);
 
 					Variable var = getVariable(arguments.getNames()[i]);
-					Operations.doOperation(var.getValue(), ctx.value, Operations.EQUATE);
+					Operations.doOperation(var.getValue(), ctx.value, Symbols.EQUATE);
 				}
 
 				if (body != null) {
@@ -102,6 +106,7 @@ public class MethodNode extends Node {
 		};
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		Node parent = getParent();
 		if (parent != null) {

@@ -12,6 +12,7 @@ public class StringToken extends Token {
 		return string;
 	}
 
+	@Override
 	public String toString() {
 		return "String [" + string + ", " + super.toString() + "]";
 	}

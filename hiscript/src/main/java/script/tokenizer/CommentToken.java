@@ -5,6 +5,7 @@ public class CommentToken extends Token {
 		super(line, offset, length, lineOffset);
 	}
 
+	@Override
 	public String toString() {
 		return "Comment [" + super.toString() + "]";
 	}

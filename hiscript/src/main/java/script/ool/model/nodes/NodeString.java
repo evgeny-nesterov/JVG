@@ -21,6 +21,7 @@ public class NodeString extends Node {
 
 	private static Constructor constructor;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		createString(ctx, text);
 	}
@@ -40,6 +41,7 @@ public class NodeString extends Node {
 		return obj;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(new String(text));

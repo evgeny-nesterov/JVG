@@ -30,6 +30,7 @@ public class OperationInvocation extends BinaryOperation {
 		super(".", INVOCATION);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		switch (v2.valueType) {
 			case Value.NAME:

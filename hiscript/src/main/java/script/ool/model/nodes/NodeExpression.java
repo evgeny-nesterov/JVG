@@ -6,6 +6,7 @@ import script.ool.model.Node;
 import script.ool.model.Operation;
 import script.ool.model.Operations;
 import script.ool.model.OperationsGroup;
+import script.ool.model.OperationsIF;
 import script.ool.model.RuntimeContext;
 import script.ool.model.Value;
 
@@ -88,7 +89,7 @@ public class NodeExpression extends Node {
 			}
 
 			// append operation
-			if (og.getOperation() != null && og.getOperation().getOperation() == Operations.SKIP) {
+			if (og.getOperation() != null && og.getOperation().getOperation() == OperationsIF.SKIP) {
 				operations[pos++] = null; // operation
 			} else {
 				bufSize = og.append(buf, bufSize);
@@ -125,6 +126,7 @@ public class NodeExpression extends Node {
 
 	private Operation[] operations;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Value[] values = ctx.getValues(operands.length);
 		try {
@@ -140,7 +142,7 @@ public class NodeExpression extends Node {
 
 						// Check for a.new B()
 						boolean executeLater = false;
-						if (bufSize > 0 && i < operations.length - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == Operation.INVOCATION) {
+						if (bufSize > 0 && i < operations.length - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
 							if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {
 								executeLater = true;
 								// Previous operand may be not calculated yet
@@ -161,13 +163,13 @@ public class NodeExpression extends Node {
 					}
 				} else {
 					int skipToOperation = -1;
-					if (operations[i].getOperation() == Operations.LOGICAL_AND_CHECK) {
+					if (operations[i].getOperation() == OperationsIF.LOGICAL_AND_CHECK) {
 						if (!values[bufSize - 1].bool) {
-							skipToOperation = Operations.LOGICAL_AND;
+							skipToOperation = OperationsIF.LOGICAL_AND;
 						}
-					} else if (operations[i].getOperation() == Operations.LOGICAL_OR_CHECK) {
+					} else if (operations[i].getOperation() == OperationsIF.LOGICAL_OR_CHECK) {
 						if (values[bufSize - 1].bool) {
-							skipToOperation = Operations.LOGICAL_OR;
+							skipToOperation = OperationsIF.LOGICAL_OR;
 						}
 					}
 
@@ -178,7 +180,7 @@ public class NodeExpression extends Node {
 								bufSize++;
 								valuePos++;
 							} else {
-								if (operations[i].getOperation() != Operations.LOGICAL_AND_CHECK && operations[i].getOperation() != Operations.LOGICAL_OR_CHECK) {
+								if (operations[i].getOperation() != OperationsIF.LOGICAL_AND_CHECK && operations[i].getOperation() != OperationsIF.LOGICAL_OR_CHECK) {
 									bufSize = operations[i].skipOperation(ctx, bufSize);
 								}
 							}
@@ -212,6 +214,7 @@ public class NodeExpression extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeShort(operands.length);

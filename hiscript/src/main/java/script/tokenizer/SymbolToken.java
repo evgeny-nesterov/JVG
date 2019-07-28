@@ -163,6 +163,7 @@ public class SymbolToken extends Token implements Symbols {
 		return getSymbol(type);
 	}
 
+	@Override
 	public String toString() {
 		return "Symbol [" + getSymbol() + ", " + super.toString() + "]";
 	}

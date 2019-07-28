@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import script.tokenizer.Symbols;
+
 public class DeclarationsNode extends Node {
 	public DeclarationsNode(int type) {
 		super("declarations");
@@ -54,6 +56,7 @@ public class DeclarationsNode extends Node {
 
 	private Node statement;
 
+	@Override
 	public void compile() throws ExecuteException {
 		size = names.size();
 		vars = new Variable[size];
@@ -72,13 +75,14 @@ public class DeclarationsNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		for (int i = 0; i < size; i++) {
 			Variable var = statement.addVariable(vars[i]);
 			Node value = variables.get(var.getFullname());
 			if (value != null) {
 				value.execute(ctx);
-				Operations.doOperation(var.getValue(), ctx.value, Operations.EQUATE);
+				Operations.doOperation(var.getValue(), ctx.value, Symbols.EQUATE);
 				var.define();
 			}
 		}

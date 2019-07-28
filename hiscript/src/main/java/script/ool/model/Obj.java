@@ -155,6 +155,7 @@ public class Obj {
 		return clazz.name + "@" + Integer.toHexString(System.identityHashCode(this));
 	}
 
+	@Override
 	public String toString() {
 		Method method = clazz.searchMethod(ctx, "toString");
 		if (method.clazz.superClass == null) {
@@ -178,6 +179,7 @@ public class Obj {
 		return ImplUtil.getChars(ctx.value.object);
 	}
 
+	@Override
 	public int hashCode() {
 		Method method = clazz.searchMethod(ctx, "hashCode");
 		if (method.clazz.superClass == null) {

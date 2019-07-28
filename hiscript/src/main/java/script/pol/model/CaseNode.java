@@ -22,6 +22,7 @@ public class CaseNode extends Node {
 		return body;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		value.compile();
 
@@ -30,6 +31,7 @@ public class CaseNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		if (body != null) {
 			body.execute(ctx);

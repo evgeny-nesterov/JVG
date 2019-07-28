@@ -24,10 +24,12 @@ public class NodeClass extends Node {
 
 	private Clazz clazz;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.addClass(clazz);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeClass(clazz);
@@ -39,6 +41,7 @@ public class NodeClass extends Node {
 		} catch (NoClassException exc) {
 			final NodeClass node = new NodeClass();
 			os.addClassLoadListener(new ClassLoadListener() {
+				@Override
 				public void classLoaded(Clazz clazz) {
 					node.clazz = clazz;
 				}

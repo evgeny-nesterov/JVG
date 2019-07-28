@@ -16,6 +16,7 @@ public class TypeParseRule extends ParseRule<NodeType> {
 	private TypeParseRule() {
 	}
 
+	@Override
 	public NodeType visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		Type type = visitType(tokenizer, true);
 		if (type != null) {

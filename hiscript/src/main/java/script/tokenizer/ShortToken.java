@@ -12,6 +12,7 @@ public class ShortToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Short [" + number + ", " + super.toString() + "]";
 	}

@@ -11,6 +11,7 @@ public abstract class UnaryOperation extends Operation {
 		super(name, 1, operation);
 	}
 
+	@Override
 	public final void doOperation(RuntimeContext ctx, Value... values) {
 		Value v = values[0];
 

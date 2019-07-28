@@ -13,6 +13,7 @@ public abstract class AbstractDraw<V> implements Draw<V> {
 		}
 	}
 
+	@Override
 	public double getOpacity() {
 		return opacity;
 	}

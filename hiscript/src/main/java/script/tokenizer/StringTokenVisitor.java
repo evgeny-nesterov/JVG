@@ -1,6 +1,7 @@
 package script.tokenizer;
 
 public class StringTokenVisitor implements TokenVisitor {
+	@Override
 	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
 		if (tokenizer.getCurrent() == '"') {
 			tokenizer.next();

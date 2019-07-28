@@ -18,6 +18,7 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 	private BlockParseRule() {
 	}
 
+	@Override
 	public NodeBlock visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		properties.enter();
 

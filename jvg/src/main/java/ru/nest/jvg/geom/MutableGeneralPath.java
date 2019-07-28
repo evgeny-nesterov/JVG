@@ -127,10 +127,12 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		}
 	}
 
+	@Override
 	public boolean moveTo(Double x, Double y) {
 		return insertMoveTo(numTypes, x, y);
 	}
 
+	@Override
 	public synchronized boolean insertMoveTo(int index, Double x, Double y) {
 		if (numTypes > 0 && pointTypes[index - 1] == SEG_MOVETO) {
 			int prevCoordIndex = getCoordIndex(index - 1);
@@ -152,6 +154,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return true;
 	}
 
+	@Override
 	public synchronized boolean setMoveTo(int index, Double x, Double y) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_MOVETO;
@@ -175,6 +178,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return true;
 	}
 
+	@Override
 	public void lineTo(Double x, Double y) {
 		if (numTypes > 0) {
 			insertLineTo(numTypes, x, y);
@@ -183,6 +187,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		}
 	}
 
+	@Override
 	public synchronized void insertLineTo(int index, Double x, Double y) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 2, true);
@@ -196,6 +201,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		numCoords += 2;
 	}
 
+	@Override
 	public synchronized boolean setLineTo(int index, Double x, Double y) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_LINETO;
@@ -219,10 +225,12 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return true;
 	}
 
+	@Override
 	public void quadTo(Double x1, Double y1, Double x2, Double y2) {
 		insertQuadTo(numTypes, x1, y1, x2, y2);
 	}
 
+	@Override
 	public synchronized void insertQuadTo(int index, Double x1, Double y1, Double x2, Double y2) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 4, true);
@@ -238,6 +246,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		numCoords += 4;
 	}
 
+	@Override
 	public synchronized boolean setQuadTo(int index, Double x1, Double y1, Double x2, Double y2) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_QUADTO;
@@ -264,10 +273,12 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return true;
 	}
 
+	@Override
 	public synchronized void curveTo(Double x1, Double y1, Double x2, Double y2, Double x3, Double y3) {
 		insertCurveTo(numTypes, x1, y1, x2, y2, x3, y3);
 	}
 
+	@Override
 	public synchronized void insertCurveTo(int index, Double x1, Double y1, Double x2, Double y2, Double x3, Double y3) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 6, true);
@@ -285,6 +296,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		numCoords += 6;
 	}
 
+	@Override
 	public synchronized boolean setCurveTo(int index, Double x1, Double y1, Double x2, Double y2, Double x3, Double y3) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_CUBICTO;
@@ -314,6 +326,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return true;
 	}
 
+	@Override
 	public synchronized boolean closePath() {
 		if (numTypes == 0 || pointTypes[numTypes - 1] != SEG_CLOSE) {
 			needRoom(1, 0, true);
@@ -376,6 +389,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		windingRule = rule;
 	}
 
+	@Override
 	public synchronized Point2D getCurrentPoint() {
 		if (numTypes < 1 || numCoords < 2) {
 			return null;
@@ -676,10 +690,12 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		this.numCoords = numCoords;
 	}
 
+	@Override
 	public void deleteLast() {
 		delete(numTypes - 1);
 	}
 
+	@Override
 	public synchronized void delete(int index) {
 		// first moveto is not allowed to delete
 		if (index > 0 && index < numTypes) {
@@ -701,6 +717,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		}
 	}
 
+	@Override
 	public synchronized void deletePoint(int coordIndex) {
 		if (coordIndex >= 0 && coordIndex < numCoords) {
 			int index = getCurveIndex(coordIndex);
@@ -721,6 +738,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		}
 	}
 
+	@Override
 	public synchronized boolean insertPoint(int coordIndex, Double x, Double y) {
 		if (coordIndex >= 0 && coordIndex < numCoords) {
 			int index = getCurveIndex(coordIndex);
@@ -745,6 +763,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return false;
 	}
 
+	@Override
 	public int getCoordIndex(double x, double y, int start, double radius) {
 		int coord = 0;
 		for (int t = 0; t < numTypes; t++) {
@@ -765,6 +784,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return -1;
 	}
 
+	@Override
 	public Double[] getCurvePoints(int index) {
 		int type = pointTypes[index];
 		int curvesize = CoordinablePathIterator.curvesize[type];
@@ -800,6 +820,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		return pointCoords[coordIndex];
 	}
 
+	@Override
 	public int getCurveIndex(int coordIndex) {
 		int coord = 0;
 		for (int t = 0; t < numTypes; t++) {

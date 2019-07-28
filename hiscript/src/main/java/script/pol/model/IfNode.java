@@ -36,6 +36,7 @@ public class IfNode extends Node {
 		node.setParent(this);
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		if (condition != null) {
 			condition.compile();
@@ -50,6 +51,7 @@ public class IfNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		if (condition != null) {
 			condition.execute(ctx);

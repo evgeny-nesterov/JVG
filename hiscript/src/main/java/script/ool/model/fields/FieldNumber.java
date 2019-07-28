@@ -9,6 +9,7 @@ public abstract class FieldNumber<T> extends FieldPrimitive<T> {
 		super(Type.getPrimitiveType(typeName), name);
 	}
 
+	@Override
 	public final void get(RuntimeContext ctx, Value value) {
 		if (!value.type.isPrimitive()) {
 			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
@@ -29,6 +30,7 @@ public abstract class FieldNumber<T> extends FieldPrimitive<T> {
 
 	public abstract void get(RuntimeContext ctx, Value value, int valueType);
 
+	@Override
 	public final void set(RuntimeContext ctx, Value value) {
 		if (!value.type.isPrimitive()) {
 			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);

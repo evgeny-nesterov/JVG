@@ -21,6 +21,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	private DeclarationParseRule() {
 	}
 
+	@Override
 	public NodeDeclarations visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 

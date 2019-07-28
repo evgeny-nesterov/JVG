@@ -17,6 +17,7 @@ public class OperationPrefixPlus extends UnaryOperation {
 		super("+", PREFIX_PLUS);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		Clazz c = v.type;
 

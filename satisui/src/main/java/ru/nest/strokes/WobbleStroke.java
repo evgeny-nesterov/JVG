@@ -19,6 +19,7 @@ public class WobbleStroke implements Stroke {
 		this.amplitude = amplitude;
 	}
 
+	@Override
 	public Shape createStrokedShape(Shape shape) {
 		GeneralPath result = new GeneralPath();
 		shape = new BasicStroke(10).createStrokedShape(shape);

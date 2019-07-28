@@ -10,6 +10,7 @@ public class FieldInt extends FieldNumber<Integer> {
 
 	private int value;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case INT:
@@ -33,6 +34,7 @@ public class FieldInt extends FieldNumber<Integer> {
 		}
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case CHAR:
@@ -59,6 +61,7 @@ public class FieldInt extends FieldNumber<Integer> {
 		}
 	}
 
+	@Override
 	public Integer get() {
 		return value;
 	}

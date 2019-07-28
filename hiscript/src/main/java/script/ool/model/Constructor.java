@@ -217,6 +217,7 @@ public class Constructor implements Codable {
 		return object;
 	}
 
+	@Override
 	public String toString() {
 		return getConstructorDescr(clazz.fullName, arguments);
 	}
@@ -244,6 +245,7 @@ public class Constructor implements Codable {
 		buf.append(')');
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		modifiers.code(os);
 

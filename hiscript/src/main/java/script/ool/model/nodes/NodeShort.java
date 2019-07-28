@@ -19,12 +19,14 @@ public class NodeShort extends Node {
 
 	private short value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = type;
 		ctx.value.shortNumber = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeShort(value);

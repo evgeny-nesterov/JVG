@@ -1,6 +1,7 @@
 package script.tokenizer;
 
 public class NumberTokenVisitor implements TokenVisitor {
+	@Override
 	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
 		int offset = tokenizer.getOffset();
 		int line = tokenizer.getLine();

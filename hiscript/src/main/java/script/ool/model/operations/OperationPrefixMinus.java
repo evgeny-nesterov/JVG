@@ -17,6 +17,7 @@ public class OperationPrefixMinus extends UnaryOperation {
 		super("-", PREFIX_MINUS);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		Clazz c = v.type;
 

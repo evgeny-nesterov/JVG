@@ -485,155 +485,198 @@ public class JVGEditPane extends JVGPane {
 		ActionMap am = getActionMap();
 		InputMap im = getInputMap();
 
+		getEditorKit();
 		// select
-		am.put(JVGEditorKit.SELECT_ALL_ACTION, getEditorKit().getAction(JVGEditorKit.SELECT_ALL_ACTION));
+		am.put(JVGEditorKit.SELECT_ALL_ACTION, JVGEditorKit.getAction(JVGEditorKit.SELECT_ALL_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), JVGEditorKit.SELECT_ALL_ACTION);
 
-		am.put(JVGEditorKit.SELECT_FOCUSED_ACTION, getEditorKit().getAction(JVGEditorKit.SELECT_FOCUSED_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.SELECT_FOCUSED_ACTION, JVGEditorKit.getAction(JVGEditorKit.SELECT_FOCUSED_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), JVGEditorKit.SELECT_FOCUSED_ACTION);
 
+		getEditorKit();
 		// focus
-		am.put(JVGEditorKit.NEXT_ACTION, getEditorKit().getAction(JVGEditorKit.NEXT_ACTION));
+		am.put(JVGEditorKit.NEXT_ACTION, JVGEditorKit.getAction(JVGEditorKit.NEXT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK), JVGEditorKit.NEXT_ACTION);
 
-		am.put(JVGEditorKit.PREV_ACTION, getEditorKit().getAction(JVGEditorKit.PREV_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.PREV_ACTION, JVGEditorKit.getAction(JVGEditorKit.PREV_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK), JVGEditorKit.PREV_ACTION);
 
+		getEditorKit();
 		// order
-		am.put(JVGEditorKit.TO_FRONT_ACTION, getEditorKit().getAction(JVGEditorKit.TO_FRONT_ACTION));
+		am.put(JVGEditorKit.TO_FRONT_ACTION, JVGEditorKit.getAction(JVGEditorKit.TO_FRONT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Event.CTRL_MASK), JVGEditorKit.TO_FRONT_ACTION);
 
-		am.put(JVGEditorKit.TO_BACK_ACTION, getEditorKit().getAction(JVGEditorKit.TO_BACK_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TO_BACK_ACTION, JVGEditorKit.getAction(JVGEditorKit.TO_BACK_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Event.CTRL_MASK), JVGEditorKit.TO_BACK_ACTION);
 
-		am.put(JVGEditorKit.TO_UP_ACTION, getEditorKit().getAction(JVGEditorKit.TO_UP_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TO_UP_ACTION, JVGEditorKit.getAction(JVGEditorKit.TO_UP_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.CTRL_MASK), JVGEditorKit.TO_UP_ACTION);
 
-		am.put(JVGEditorKit.TO_DOWN_ACTION, getEditorKit().getAction(JVGEditorKit.TO_DOWN_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TO_DOWN_ACTION, JVGEditorKit.getAction(JVGEditorKit.TO_DOWN_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.CTRL_MASK), JVGEditorKit.TO_DOWN_ACTION);
 
+		getEditorKit();
 		// alignment
-		am.put(JVGEditorKit.BOTTOM_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.BOTTOM_ALIGNMENT_ACTION));
+		am.put(JVGEditorKit.BOTTOM_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.BOTTOM_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.SHIFT_MASK), JVGEditorKit.BOTTOM_ALIGNMENT_ACTION);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, Event.SHIFT_MASK), JVGEditorKit.BOTTOM_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.TOP_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.TOP_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TOP_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.TOP_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.SHIFT_MASK), JVGEditorKit.TOP_ALIGNMENT_ACTION);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, Event.SHIFT_MASK), JVGEditorKit.BOTTOM_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.LEFT_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.LEFT_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.LEFT_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.LEFT_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.SHIFT_MASK), JVGEditorKit.LEFT_ALIGNMENT_ACTION);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, Event.SHIFT_MASK), JVGEditorKit.BOTTOM_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.RIGHT_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.RIGHT_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.RIGHT_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.RIGHT_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.SHIFT_MASK), JVGEditorKit.RIGHT_ALIGNMENT_ACTION);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, Event.SHIFT_MASK), JVGEditorKit.BOTTOM_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.CENTER_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.CENTER_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.CENTER_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.CENTER_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.SHIFT_MASK), JVGEditorKit.CENTER_ALIGNMENT_ACTION);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD5, Event.SHIFT_MASK), JVGEditorKit.CENTER_ALIGNMENT_ACTION);
 
+		getEditorKit();
 		// remove
-		am.put(JVGEditorKit.REMOVE_ACTION, getEditorKit().getAction(JVGEditorKit.REMOVE_ACTION));
+		am.put(JVGEditorKit.REMOVE_ACTION, JVGEditorKit.getAction(JVGEditorKit.REMOVE_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), JVGEditorKit.REMOVE_ACTION);
 
+		getEditorKit();
 		// translate
-		am.put(JVGEditorKit.TRANSLATE_DOWN_ACTION, getEditorKit().getAction(JVGEditorKit.TRANSLATE_DOWN_ACTION));
+		am.put(JVGEditorKit.TRANSLATE_DOWN_ACTION, JVGEditorKit.getAction(JVGEditorKit.TRANSLATE_DOWN_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.ALT_MASK), JVGEditorKit.TRANSLATE_DOWN_ACTION);
 
-		am.put(JVGEditorKit.TRANSLATE_UP_ACTION, getEditorKit().getAction(JVGEditorKit.TRANSLATE_UP_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TRANSLATE_UP_ACTION, JVGEditorKit.getAction(JVGEditorKit.TRANSLATE_UP_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.ALT_MASK), JVGEditorKit.TRANSLATE_UP_ACTION);
 
-		am.put(JVGEditorKit.TRANSLATE_LEFT_ACTION, getEditorKit().getAction(JVGEditorKit.TRANSLATE_LEFT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TRANSLATE_LEFT_ACTION, JVGEditorKit.getAction(JVGEditorKit.TRANSLATE_LEFT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK), JVGEditorKit.TRANSLATE_LEFT_ACTION);
 
-		am.put(JVGEditorKit.TRANSLATE_RIGHT_ACTION, getEditorKit().getAction(JVGEditorKit.TRANSLATE_RIGHT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.TRANSLATE_RIGHT_ACTION, JVGEditorKit.getAction(JVGEditorKit.TRANSLATE_RIGHT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Event.ALT_MASK), JVGEditorKit.TRANSLATE_RIGHT_ACTION);
 
+		getEditorKit();
 		// rotate
-		am.put(JVGEditorKit.ROTATE_90_ACTION, getEditorKit().getAction(JVGEditorKit.ROTATE_90_ACTION));
+		am.put(JVGEditorKit.ROTATE_90_ACTION, JVGEditorKit.getAction(JVGEditorKit.ROTATE_90_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, Event.CTRL_MASK), JVGEditorKit.ROTATE_90_ACTION);
 
+		getEditorKit();
 		// flip
-		am.put(JVGEditorKit.FLIP_HORIZONTAL_ACTION, getEditorKit().getAction(JVGEditorKit.FLIP_HORIZONTAL_ACTION));
+		am.put(JVGEditorKit.FLIP_HORIZONTAL_ACTION, JVGEditorKit.getAction(JVGEditorKit.FLIP_HORIZONTAL_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK), JVGEditorKit.FLIP_HORIZONTAL_ACTION);
 
-		am.put(JVGEditorKit.FLIP_VERTICAL_ACTION, getEditorKit().getAction(JVGEditorKit.FLIP_VERTICAL_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.FLIP_VERTICAL_ACTION, JVGEditorKit.getAction(JVGEditorKit.FLIP_VERTICAL_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.SHIFT_MASK), JVGEditorKit.FLIP_VERTICAL_ACTION);
 
+		getEditorKit();
 		// border
-		am.put(JVGEditorKit.MOVE_DOWN__BOTTOM_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_DOWN__BOTTOM_BORDER_ACTION));
+		am.put(JVGEditorKit.MOVE_DOWN__BOTTOM_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_DOWN__BOTTOM_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, Event.SHIFT_MASK), JVGEditorKit.MOVE_DOWN__BOTTOM_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_UP__BOTTOM_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_UP__BOTTOM_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_UP__BOTTOM_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_UP__BOTTOM_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.SHIFT_MASK), JVGEditorKit.MOVE_UP__BOTTOM_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_DOWN__TOP_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_DOWN__TOP_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_DOWN__TOP_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_DOWN__TOP_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.SHIFT_MASK), JVGEditorKit.MOVE_DOWN__TOP_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_UP__TOP_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_UP__TOP_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_UP__TOP_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_UP__TOP_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.SHIFT_MASK), JVGEditorKit.MOVE_UP__TOP_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_LEFT__LEFT_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_LEFT__LEFT_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_LEFT__LEFT_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_LEFT__LEFT_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.ALT_MASK), JVGEditorKit.MOVE_LEFT__LEFT_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_RIGHT__LEFT_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_RIGHT__LEFT_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_RIGHT__LEFT_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_RIGHT__LEFT_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.ALT_MASK), JVGEditorKit.MOVE_RIGHT__LEFT_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_LEFT__RIGHT_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_LEFT__RIGHT_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_LEFT__RIGHT_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_LEFT__RIGHT_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, Event.ALT_MASK), JVGEditorKit.MOVE_LEFT__RIGHT_BORDER_ACTION);
 
-		am.put(JVGEditorKit.MOVE_RIGHT__RIGHT_BORDER_ACTION, getEditorKit().getAction(JVGEditorKit.MOVE_RIGHT__RIGHT_BORDER_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.MOVE_RIGHT__RIGHT_BORDER_ACTION, JVGEditorKit.getAction(JVGEditorKit.MOVE_RIGHT__RIGHT_BORDER_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, Event.ALT_MASK), JVGEditorKit.MOVE_RIGHT__RIGHT_BORDER_ACTION);
 
+		getEditorKit();
 		// same size
-		am.put(JVGEditorKit.SAME_WIDTH_ACTION, getEditorKit().getAction(JVGEditorKit.SAME_WIDTH_ACTION));
+		am.put(JVGEditorKit.SAME_WIDTH_ACTION, JVGEditorKit.getAction(JVGEditorKit.SAME_WIDTH_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.SHIFT_MASK | Event.CTRL_MASK), JVGEditorKit.SAME_WIDTH_ACTION);
 
-		am.put(JVGEditorKit.SAME_HEIGHT_ACTION, getEditorKit().getAction(JVGEditorKit.SAME_HEIGHT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.SAME_HEIGHT_ACTION, JVGEditorKit.getAction(JVGEditorKit.SAME_HEIGHT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_H, Event.SHIFT_MASK | Event.CTRL_MASK), JVGEditorKit.SAME_HEIGHT_ACTION);
 
+		getEditorKit();
 		// group
-		am.put(JVGEditorKit.GROUP_ACTION, getEditorKit().getAction(JVGEditorKit.GROUP_ACTION));
+		am.put(JVGEditorKit.GROUP_ACTION, JVGEditorKit.getAction(JVGEditorKit.GROUP_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_G, Event.CTRL_MASK), JVGEditorKit.GROUP_ACTION);
 
+		getEditorKit();
 		// group alignment
-		am.put(JVGEditorKit.TOP_GROUP_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.TOP_GROUP_ALIGNMENT_ACTION));
+		am.put(JVGEditorKit.TOP_GROUP_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.TOP_GROUP_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.TOP_GROUP_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.LEFT_GROUP_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.LEFT_GROUP_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.LEFT_GROUP_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.LEFT_GROUP_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_J, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.LEFT_GROUP_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.BOTTOM_GROUP_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.BOTTOM_GROUP_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.BOTTOM_GROUP_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.BOTTOM_GROUP_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_K, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.BOTTOM_GROUP_ALIGNMENT_ACTION);
 
-		am.put(JVGEditorKit.RIGHT_GROUP_ALIGNMENT_ACTION, getEditorKit().getAction(JVGEditorKit.RIGHT_GROUP_ALIGNMENT_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.RIGHT_GROUP_ALIGNMENT_ACTION, JVGEditorKit.getAction(JVGEditorKit.RIGHT_GROUP_ALIGNMENT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.RIGHT_GROUP_ALIGNMENT_ACTION);
 
+		getEditorKit();
 		// same spaces
-		am.put(JVGEditorKit.SAME_SPACES_HORIZONTAL_ACTION, getEditorKit().getAction(JVGEditorKit.SAME_SPACES_HORIZONTAL_ACTION));
+		am.put(JVGEditorKit.SAME_SPACES_HORIZONTAL_ACTION, JVGEditorKit.getAction(JVGEditorKit.SAME_SPACES_HORIZONTAL_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_H, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.SAME_SPACES_HORIZONTAL_ACTION);
 
-		am.put(JVGEditorKit.SAME_SPACES_VERTICAL_ACTION, getEditorKit().getAction(JVGEditorKit.SAME_SPACES_VERTICAL_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.SAME_SPACES_VERTICAL_ACTION, JVGEditorKit.getAction(JVGEditorKit.SAME_SPACES_VERTICAL_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Event.CTRL_MASK | Event.ALT_MASK), JVGEditorKit.SAME_SPACES_VERTICAL_ACTION);
 
+		getEditorKit();
 		// cut / copy / paste
-		am.put(JVGEditorKit.CUT_ACTION, getEditorKit().getAction(JVGEditorKit.CUT_ACTION));
+		am.put(JVGEditorKit.CUT_ACTION, JVGEditorKit.getAction(JVGEditorKit.CUT_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, Event.CTRL_MASK), JVGEditorKit.CUT_ACTION);
 
-		am.put(JVGEditorKit.COPY_ACTION, getEditorKit().getAction(JVGEditorKit.COPY_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.COPY_ACTION, JVGEditorKit.getAction(JVGEditorKit.COPY_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK), JVGEditorKit.COPY_ACTION);
 
-		am.put(JVGEditorKit.PASTE_ACTION, getEditorKit().getAction(JVGEditorKit.PASTE_ACTION));
+		getEditorKit();
+		am.put(JVGEditorKit.PASTE_ACTION, JVGEditorKit.getAction(JVGEditorKit.PASTE_ACTION));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Event.CTRL_MASK), JVGEditorKit.PASTE_ACTION);
 
+		getEditorKit();
 		// editor pane
-		am.put(JVGEditorKit.PANE_ZOOM_IN, getEditorKit().getAction(JVGEditorKit.PANE_ZOOM_IN));
+		am.put(JVGEditorKit.PANE_ZOOM_IN, JVGEditorKit.getAction(JVGEditorKit.PANE_ZOOM_IN));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, Event.CTRL_MASK), JVGEditorKit.PANE_ZOOM_IN); // NUMPAD +
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, Event.CTRL_MASK), JVGEditorKit.PANE_ZOOM_IN);
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, Event.CTRL_MASK), JVGEditorKit.PANE_ZOOM_IN);
 
-		am.put(JVGEditorKit.PANE_ZOOM_OUT, getEditorKit().getAction(JVGEditorKit.PANE_ZOOM_OUT));
+		getEditorKit();
+		am.put(JVGEditorKit.PANE_ZOOM_OUT, JVGEditorKit.getAction(JVGEditorKit.PANE_ZOOM_OUT));
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, Event.CTRL_MASK), JVGEditorKit.PANE_ZOOM_OUT); // NUMPAD -
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, Event.CTRL_MASK), JVGEditorKit.PANE_ZOOM_OUT);
 	}
@@ -766,6 +809,7 @@ public class JVGEditPane extends JVGPane {
 
 	private class InputComponent {
 		JTextField field = new JTextField() {
+			@Override
 			public void paintComponent(Graphics g) {
 				g.setColor(Color.lightGray);
 				for (int i = -getHeight(); i < getWidth(); i += 3) {
@@ -788,6 +832,7 @@ public class JVGEditPane extends JVGPane {
 			field.setOpaque(false);
 			field.setBorder(new EmptyBorder(4, 4, 4, 4));
 			field.addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						remove();

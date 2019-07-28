@@ -44,6 +44,7 @@ public class FontComboBox extends JComboBox<Font> {
 
 			private int index;
 
+			@Override
 			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 				this.index = index;
 				Font font = (Font) value;
@@ -57,6 +58,7 @@ public class FontComboBox extends JComboBox<Font> {
 				return lbl;
 			}
 
+			@Override
 			public void paint(Graphics g) {
 				super.paint(g);
 				if (lastFonts.size() > 0 && index == lastFonts.size() - 1) {
@@ -95,7 +97,7 @@ public class FontComboBox extends JComboBox<Font> {
 		Font font = null;
 		if (selectedFont != null) {
 			for (int i = 0; i < getModel().getSize(); i++) {
-				Font c = (Font) getModel().getElementAt(i);
+				Font c = getModel().getElementAt(i);
 				if (c.getName().equals(selectedFont.getName())) {
 					font = c;
 					break;

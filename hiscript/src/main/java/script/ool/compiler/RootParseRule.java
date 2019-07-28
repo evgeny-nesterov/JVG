@@ -4,6 +4,7 @@ import script.ParseException;
 import script.ool.model.Clazz;
 import script.ool.model.Method;
 import script.ool.model.Modifiers;
+import script.ool.model.ModifiersIF;
 import script.ool.model.Node;
 import script.ool.model.RuntimeContext;
 import script.ool.model.Type;
@@ -32,6 +33,7 @@ public class RootParseRule extends ParseRule<Node> {
 		this.wrapped = wrapped;
 	}
 
+	@Override
 	public Node visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.nextToken();
 
@@ -50,7 +52,7 @@ public class RootParseRule extends ParseRule<Node> {
 		if (createMainMethod) {
 			Clazz clazz = ctx.clazz;
 			clazz.methods = new Method[1];
-			clazz.methods[0] = new Method(clazz, new Modifiers(Modifiers.ACCESS_PUBLIC | Modifiers.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
+			clazz.methods[0] = new Method(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
 
 			node = new NodeMainWrapper(body);
 		} else {

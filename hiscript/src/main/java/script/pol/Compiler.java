@@ -95,6 +95,7 @@ public class Compiler {
 				StyleConstants.setBackground(errorAttr, new Color(255, 150, 150));
 			}
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				txtConsole.setText("");
 				String script = txtScript.getText();
@@ -107,6 +108,7 @@ public class Compiler {
 				Compiler p = getDefaultCompiler(script);
 				try {
 					p.compile(new CompileHandler() {
+						@Override
 						public void errorOccured(int line, int offset, int length, String msg) {
 							line++;
 

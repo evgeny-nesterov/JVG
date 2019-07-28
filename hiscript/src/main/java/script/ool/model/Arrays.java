@@ -40,35 +40,35 @@ public class Arrays implements PrimitiveTypes {
 				if (clazz.isPrimitive()) {
 					int typeIndex = FieldPrimitive.getType(clazz);
 					switch (typeIndex) {
-						case FieldPrimitive.BOOLEAN:
+						case PrimitiveTypes.BOOLEAN:
 							c = Class.forName(prefix + "Z");
 							break;
 
-						case FieldPrimitive.CHAR:
+						case PrimitiveTypes.CHAR:
 							c = Class.forName(prefix + "C");
 							break;
 
-						case FieldPrimitive.BYTE:
+						case PrimitiveTypes.BYTE:
 							c = Class.forName(prefix + "B");
 							break;
 
-						case FieldPrimitive.SHORT:
+						case PrimitiveTypes.SHORT:
 							c = Class.forName(prefix + "S");
 							break;
 
-						case FieldPrimitive.INT:
+						case PrimitiveTypes.INT:
 							c = Class.forName(prefix + "I");
 							break;
 
-						case FieldPrimitive.LONG:
+						case PrimitiveTypes.LONG:
 							c = Class.forName(prefix + "J");
 							break;
 
-						case FieldPrimitive.FLOAT:
+						case PrimitiveTypes.FLOAT:
 							c = Class.forName(prefix + "F");
 							break;
 
-						case FieldPrimitive.DOUBLE:
+						case PrimitiveTypes.DOUBLE:
 							c = Class.forName(prefix + "D");
 							break;
 					}
@@ -83,35 +83,35 @@ public class Arrays implements PrimitiveTypes {
 			if (clazz.isPrimitive()) {
 				int typeIndex = FieldPrimitive.getType(clazz);
 				switch (typeIndex) {
-					case FieldPrimitive.BOOLEAN:
+					case PrimitiveTypes.BOOLEAN:
 						c = boolean.class;
 						break;
 
-					case FieldPrimitive.CHAR:
+					case PrimitiveTypes.CHAR:
 						c = char.class;
 						break;
 
-					case FieldPrimitive.BYTE:
+					case PrimitiveTypes.BYTE:
 						c = byte.class;
 						break;
 
-					case FieldPrimitive.SHORT:
+					case PrimitiveTypes.SHORT:
 						c = short.class;
 						break;
 
-					case FieldPrimitive.INT:
+					case PrimitiveTypes.INT:
 						c = int.class;
 						break;
 
-					case FieldPrimitive.LONG:
+					case PrimitiveTypes.LONG:
 						c = long.class;
 						break;
 
-					case FieldPrimitive.FLOAT:
+					case PrimitiveTypes.FLOAT:
 						c = float.class;
 						break;
 
-					case FieldPrimitive.DOUBLE:
+					case PrimitiveTypes.DOUBLE:
 						c = double.class;
 						break;
 				}

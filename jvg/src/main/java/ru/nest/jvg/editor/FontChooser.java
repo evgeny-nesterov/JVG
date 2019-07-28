@@ -68,7 +68,7 @@ public class FontChooser extends AbstractChooserDialog<Font> implements ActionLi
 			Font font = resource.getResource();
 			if (font != null) {
 				for (int i = 0; i < cmbFamily.getItemCount(); i++) {
-					Font fontFromList = (Font) cmbFamily.getItemAt(i);
+					Font fontFromList = cmbFamily.getItemAt(i);
 					if (font.getFamily().equals(fontFromList.getFamily())) {
 						cmbFamily.setSelectedIndex(i);
 						break;
@@ -199,7 +199,7 @@ public class FontChooser extends AbstractChooserDialog<Font> implements ActionLi
 	public String getFontFamily() {
 		Font font = (Font) cmbFamily.getSelectedItem();
 		if (font == null) {
-			font = (Font) cmbFamily.getItemAt(0);
+			font = cmbFamily.getItemAt(0);
 		}
 		return font.getFamily();
 	}

@@ -30,12 +30,14 @@ public class TriggerNode extends Node {
 		return falseValue;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		condition.compile();
 		trueValue.compile();
 		falseValue.compile();
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		condition.execute(ctx);
 		if (ctx.value.getBoolean()) {

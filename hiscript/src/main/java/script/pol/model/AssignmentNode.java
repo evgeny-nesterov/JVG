@@ -3,6 +3,9 @@ package script.pol.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import script.tokenizer.OperationSymbols;
+import script.tokenizer.Symbols;
+
 public class AssignmentNode extends Node {
 	public AssignmentNode(String namespace, String varName, List<ExpressionNode> indexes, Node value, int equateType) {
 		super("assignment");
@@ -59,6 +62,7 @@ public class AssignmentNode extends Node {
 
 	private int[] dimensions;
 
+	@Override
 	public void compile() throws ExecuteException {
 		value.compile();
 		for (ExpressionNode index : indexes) {
@@ -70,14 +74,15 @@ public class AssignmentNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		Variable var = getVariable(fullname);
 		if (var != null) {
 			if (indexes.size() == 0) {
 				value.execute(ctx);
-				if (equateType == Operations.EQUATE) {
+				if (equateType == Symbols.EQUATE) {
 					var.define();
-				} else if (Operations.isEquate(equateType) && !var.isDefined()) {
+				} else if (OperationSymbols.isEquate(equateType) && !var.isDefined()) {
 					throw new ExecuteException("variable '" + var.getFullname() + "' is not initialized");
 				}
 				Operations.doOperation(var.getValue(), ctx.value, equateType);
@@ -89,9 +94,9 @@ public class AssignmentNode extends Node {
 				}
 
 				value.execute(ctx);
-				if (equateType == Operations.EQUATE) {
+				if (equateType == Symbols.EQUATE) {
 					var.define();
-				} else if (Operations.isEquate(equateType) && !var.isDefined()) {
+				} else if (OperationSymbols.isEquate(equateType) && !var.isDefined()) {
 					throw new ExecuteException("variable '" + var.getFullname() + "' is not initialized");
 				}
 

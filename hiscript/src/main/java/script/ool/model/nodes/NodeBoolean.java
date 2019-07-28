@@ -27,12 +27,14 @@ public class NodeBoolean extends Node {
 
 	private boolean value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = type;
 		ctx.value.bool = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeBoolean(value);

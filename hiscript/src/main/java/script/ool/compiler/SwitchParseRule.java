@@ -8,6 +8,7 @@ import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	private final static SwitchParseRule instance = new SwitchParseRule();
@@ -19,15 +20,16 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	private SwitchParseRule() {
 	}
 
+	@Override
 	public NodeSwitch visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.SWITCH, tokenizer) != null) {
+		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			NodeExpression value = expectCondition(tokenizer, properties);
 			NodeSwitch node = new NodeSwitch(value);
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
 			while (true) {
-				if (visitWord(WordToken.CASE, tokenizer) != null) {
+				if (visitWord(Words.CASE, tokenizer) != null) {
 					NodeExpression caseValue = expectExpression(tokenizer, properties);
 					expectSymbol(tokenizer, Symbols.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, properties);
@@ -36,7 +38,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 					continue;
 				}
 
-				if (visitWord(WordToken.DEFAULT, tokenizer) != null) {
+				if (visitWord(Words.DEFAULT, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, properties);
 

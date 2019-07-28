@@ -385,10 +385,12 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		return pos;
 	}
 
+	@Override
 	public MutablePath.Double getPath() {
 		return path;
 	}
 
+	@Override
 	public void setPath(MutablePath.Double path) {
 		this.path = path;
 
@@ -430,6 +432,7 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		return outlineStroke;
 	}
 
+	@Override
 	public double getWidth() {
 		if (parent != null) {
 			return parent.getWidth();
@@ -437,6 +440,7 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		return width;
 	}
 
+	@Override
 	public void setWidth(double width) {
 		this.width = width;
 		stroke = null;
@@ -444,6 +448,7 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		invalidate();
 	}
 
+	@Override
 	public double getArrowWidth() {
 		if (parent != null) {
 			return parent.getArrowWidth();
@@ -451,11 +456,13 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		return arrowWidth;
 	}
 
+	@Override
 	public void setArrowWidth(double arrowWidth) {
 		this.arrowWidth = arrowWidth;
 		invalidate();
 	}
 
+	@Override
 	public double getArrowLength() {
 		if (parent != null) {
 			return parent.getArrowLength();
@@ -463,11 +470,13 @@ public class TOIArrowPathElement extends TOIPath implements Arrow, Comparable<TO
 		return arrowLength;
 	}
 
+	@Override
 	public void setArrowLength(double arrowLength) {
 		this.arrowLength = arrowLength;
 		invalidate();
 	}
 
+	@Override
 	public void setScale(double scaleWidth, double scaleArrowWidth, double scaleArrowLength) {
 		width = 14 * scaleWidth;
 		arrowWidth = 12 * scaleArrowWidth;

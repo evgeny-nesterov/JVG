@@ -8,11 +8,14 @@ import script.pol.model.Node;
 import script.pol.model.Operations;
 import script.pol.model.PrefixNode;
 import script.pol.model.TriggerNode;
+import script.tokenizer.OperationSymbols;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Token;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 	private final static ExpressionParseRule instance = new ExpressionParseRule();
@@ -24,6 +27,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 	private ExpressionParseRule() {
 	}
 
+	@Override
 	public ExpressionNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		PrefixNode prefix = PrefixParseRule.getInstance().visit(tokenizer);
 		Node value = visitSimpleExpression(tokenizer);
@@ -47,13 +51,13 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			}
 
 			// visit trigger
-			if (visitSymbol(tokenizer, SymbolToken.QUESTION) != -1) {
+			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				Node trueValue = visit(tokenizer);
 				if (trueValue == null) {
 					throw new ParseException("expression is expected", tokenizer.currentToken());
 				}
 
-				expectSymbol(SymbolToken.COLON, tokenizer);
+				expectSymbol(Symbols.COLON, tokenizer);
 
 				Node falseValue = visit(tokenizer);
 				if (falseValue == null) {
@@ -70,6 +74,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		boolean prefix = PrefixParseRule.getInstance().visit(tokenizer, handler);
 		boolean value = visitSimpleExpression(tokenizer, handler);
@@ -90,13 +95,13 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			}
 
 			// visit trigger
-			if (visitSymbol(tokenizer, handler, SymbolToken.QUESTION) != -1) {
+			if (visitSymbol(tokenizer, handler, Symbols.QUESTION) != -1) {
 				boolean trueValue = visit(tokenizer, handler);
 				if (!trueValue) {
 					errorOccured(tokenizer, handler, "expression is expected");
 				}
 
-				expectSymbol(SymbolToken.COLON, tokenizer, handler);
+				expectSymbol(Symbols.COLON, tokenizer, handler);
 
 				boolean falseValue = visit(tokenizer, handler);
 				if (!falseValue) {
@@ -118,9 +123,9 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit boolean
-		int boolType = visitWords(tokenizer, WordToken.TRUE, WordToken.FALSE);
+		int boolType = visitWords(tokenizer, Words.TRUE, Words.FALSE);
 		if (boolType != -1) {
-			return new BooleanNode(boolType == WordToken.TRUE);
+			return new BooleanNode(boolType == Words.TRUE);
 		}
 
 		// visit method invocation
@@ -154,7 +159,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, SymbolToken.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
 			ExpressionNode enode = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (enode == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
@@ -166,7 +171,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				node = enode;
 			}
 
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
 			return node;
 		}
 
@@ -180,7 +185,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit boolean
-		int boolType = visitWords(tokenizer, handler, WordToken.TRUE, WordToken.FALSE);
+		int boolType = visitWords(tokenizer, handler, Words.TRUE, Words.FALSE);
 		if (boolType != -1) {
 			return true;
 		}
@@ -216,12 +221,12 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, handler, SymbolToken.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, handler, Symbols.PARANTHESIS_LEFT) != -1) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "expression is expected");
 			}
 
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 			return true;
 		}
 
@@ -234,7 +239,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			if (Operations.isOperation(symbolToken.getType())) {
+			if (OperationSymbols.isOperation(symbolToken.getType())) {
 				tokenizer.nextToken();
 				return symbolToken.getType();
 			}
@@ -250,7 +255,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;
-				if (Operations.isOperation(symbolToken.getType())) {
+				if (OperationSymbols.isOperation(symbolToken.getType())) {
 					tokenizer.nextToken();
 					return symbolToken.getType();
 				}

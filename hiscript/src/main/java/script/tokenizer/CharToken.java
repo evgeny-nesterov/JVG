@@ -12,6 +12,7 @@ public class CharToken extends Token {
 		return c;
 	}
 
+	@Override
 	public String toString() {
 		return "Char [" + c + ", " + super.toString() + "]";
 	}

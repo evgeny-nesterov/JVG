@@ -138,12 +138,14 @@ public abstract class Node implements Codable {
 
 	protected int type;
 
+	@Override
 	public String toString() {
 		return name;
 	}
 
 	public abstract void execute(RuntimeContext ctx);
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeByte(type);
 	}

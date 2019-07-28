@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Words;
+
 public class StringNode extends Node implements Value {
 	public StringNode(String value) {
 		super("string");
@@ -12,11 +14,13 @@ public class StringNode extends Node implements Value {
 		return value;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		ctx.value.type = Types.STRING;
+		ctx.value.type = Words.STRING;
 		ctx.value.dimension = 0;
 		ctx.value.string = value;
 	}

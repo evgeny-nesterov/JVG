@@ -29,6 +29,7 @@ public abstract class TOIPath extends TOIObject {
 		paintPath(g, gt, ctx);
 	}
 
+	@Override
 	public void paintSelection(Graphics2D g, Graphics2D gt, TOIPaintContext ctx) {
 		Shape transformedPath = ctx.getTransform().createTransformedShape(path);
 		Stroke oldStroke = g.getStroke();

@@ -91,6 +91,7 @@ public abstract class Field<T> extends Node implements NodeInitializer, Cloneabl
 
 	public Node initializer;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		declared = true;
 
@@ -126,6 +127,7 @@ public abstract class Field<T> extends Node implements NodeInitializer, Cloneabl
 		get(ctx, ctx.value);
 	}
 
+	@Override
 	public boolean isStatic() {
 		return modifiers.isStatic();
 	}
@@ -134,6 +136,7 @@ public abstract class Field<T> extends Node implements NodeInitializer, Cloneabl
 
 	public boolean initialized = false;
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
@@ -222,6 +225,7 @@ public abstract class Field<T> extends Node implements NodeInitializer, Cloneabl
 		return src.isInstanceof(dst);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);
@@ -236,6 +240,7 @@ public abstract class Field<T> extends Node implements NodeInitializer, Cloneabl
 		return field;
 	}
 
+	@Override
 	public String toString() {
 		return getClazz(null).fullName + " " + name + " = " + get();
 	}

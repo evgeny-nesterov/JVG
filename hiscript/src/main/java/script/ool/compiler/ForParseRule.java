@@ -10,6 +10,7 @@ import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ForParseRule extends ParseRule<NodeFor> {
 	private final static ForParseRule instance = new ForParseRule();
@@ -21,9 +22,10 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	private ForParseRule() {
 	}
 
+	@Override
 	public NodeFor visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.FOR, tokenizer) != null) {
-			expectSymbol(tokenizer, SymbolToken.PARANTHESIS_LEFT);
+		if (visitWord(Words.FOR, tokenizer) != null) {
+			expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
 
 			properties.enter();
 			Node initialization = DeclarationParseRule.getInstance().visit(tokenizer, properties);
@@ -31,15 +33,15 @@ public class ForParseRule extends ParseRule<NodeFor> {
 				initialization = visitExpressions(tokenizer, properties);
 			}
 
-			expectSymbol(tokenizer, SymbolToken.SEMICOLON);
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 			NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 
-			expectSymbol(tokenizer, SymbolToken.SEMICOLON);
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 			Node assignment = visitExpressions(tokenizer, properties);
 
-			expectSymbol(tokenizer, SymbolToken.PARANTHESIS_RIGHT);
+			expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
 
 			Node body = expectBody(tokenizer, properties);
 

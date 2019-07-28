@@ -506,6 +506,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public void deleteSegment(int segmentIndex) {
 			if (numTypes == 2) {
 				return;
@@ -544,6 +545,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public void addSegment(int segmentIndex, int type, double[] coords) {
 			if (segmentIndex == 0) {
 				segmentIndex++;
@@ -566,6 +568,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public double getCoord(int coordIndex) {
 			return floatCoords[coordIndex];
 		}
@@ -971,6 +974,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public void deleteSegment(int segmentIndex) {
 			if (numTypes == 2) {
 				return;
@@ -1009,6 +1013,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public void addSegment(int segmentIndex, int type, double[] coords) {
 			if (segmentIndex == 0) {
 				segmentIndex++;
@@ -1032,6 +1037,7 @@ public abstract class MutablePath implements Shape, Cloneable {
 			}
 		}
 
+		@Override
 		public double getCoord(int coordIndex) {
 			return doubleCoords[coordIndex];
 		}

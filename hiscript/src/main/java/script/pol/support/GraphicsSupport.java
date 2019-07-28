@@ -16,6 +16,7 @@ import script.pol.model.Method;
 import script.pol.model.Node;
 import script.pol.model.RuntimeContext;
 import script.pol.model.Types;
+import script.tokenizer.Words;
 
 public class GraphicsSupport {
 	public final static String NAMESPACE = "g";
@@ -38,14 +39,16 @@ public class GraphicsSupport {
 
 	private void init() {
 		// set
-		methods.add(new Method(NAMESPACE, "setColor", new int[] { Types.INT }, new int[] { 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setColor", new int[] { Words.INT }, new int[] { 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				int color = (Integer) arguments[0];
 				g.setColor(new Color(color, true));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "setColor", new int[] { Types.INT, Types.INT, Types.INT }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setColor", new int[] { Words.INT, Words.INT, Words.INT }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				int red = (Integer) arguments[0];
@@ -54,7 +57,8 @@ public class GraphicsSupport {
 				g.setColor(new Color(red, green, blue));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "clipRect", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "clipRect", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
@@ -63,12 +67,14 @@ public class GraphicsSupport {
 				g.clip(new Rectangle2D.Double(x, y, w, h));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "setPaintMode", new int[] {}, new int[] {}, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setPaintMode", new int[] {}, new int[] {}, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				g.setPaintMode();
 			}
 		});
-		methods.add(new Method(NAMESPACE, "setXORMode", new int[] { Types.INT, Types.INT, Types.INT }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setXORMode", new int[] { Words.INT, Words.INT, Words.INT }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				int red = (Integer) arguments[0];
@@ -77,7 +83,8 @@ public class GraphicsSupport {
 				g.setXORMode(new Color(red, green, blue));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "setFontSize", new int[] { Types.DOUBLE }, new int[] { 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setFontSize", new int[] { Words.DOUBLE }, new int[] { 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Font font = g.getFont();
@@ -87,7 +94,8 @@ public class GraphicsSupport {
 				}
 			}
 		});
-		methods.add(new Method(NAMESPACE, "setFont", new int[] { Types.STRING, Types.INT, Types.DOUBLE }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setFont", new int[] { Words.STRING, Words.INT, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String name = (String) arguments[0];
@@ -98,20 +106,23 @@ public class GraphicsSupport {
 		});
 
 		// transform
-		methods.add(new Method(NAMESPACE, "translate", new int[] { Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "translate", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
 				g.translate(x, y);
 			}
 		});
-		methods.add(new Method(NAMESPACE, "rotate", new int[] { Types.DOUBLE }, new int[] { 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "rotate", new int[] { Words.DOUBLE }, new int[] { 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double angle = (Double) arguments[0];
 				g.rotate(angle);
 			}
 		});
-		methods.add(new Method(NAMESPACE, "rotate", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "rotate", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double angle = (Double) arguments[0];
 				Double x = (Double) arguments[1];
@@ -119,21 +130,24 @@ public class GraphicsSupport {
 				g.rotate(angle, x, y);
 			}
 		});
-		methods.add(new Method(NAMESPACE, "scale", new int[] { Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "scale", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double sx = (Double) arguments[0];
 				Double sy = (Double) arguments[1];
 				g.scale(sx, sy);
 			}
 		});
-		methods.add(new Method(NAMESPACE, "shear", new int[] { Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "shear", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double sx = (Double) arguments[0];
 				Double sy = (Double) arguments[1];
 				g.shear(sx, sy);
 			}
 		});
-		methods.add(new Method(NAMESPACE, "transform", new int[] { Types.DOUBLE }, new int[] { 1 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "transform", new int[] { Words.DOUBLE }, new int[] { 1 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				double[] matrix = (double[]) arguments[0];
 				g.transform(new AffineTransform(matrix));
@@ -141,7 +155,8 @@ public class GraphicsSupport {
 		});
 
 		// draw
-		methods.add(new Method(NAMESPACE, "drawLine", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawLine", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Double x1 = (Double) arguments[0];
@@ -151,7 +166,8 @@ public class GraphicsSupport {
 				g.draw(new Line2D.Double(x1, y1, x2, y2));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "drawRect", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawRect", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
@@ -160,7 +176,8 @@ public class GraphicsSupport {
 				g.draw(new Rectangle2D.Double(x, y, w, h));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "fillRect", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "fillRect", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Double x = (Double) arguments[0];
@@ -170,7 +187,8 @@ public class GraphicsSupport {
 				g.fill(new Rectangle2D.Double(x, y, w, h));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "drawArc", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.INT }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawArc", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.INT }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Double x = (Double) arguments[0];
@@ -183,7 +201,8 @@ public class GraphicsSupport {
 				g.draw(new Arc2D.Double(x, y, w, h, start, extent, type));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "fillArc", new int[] { Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.DOUBLE, Types.INT }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "fillArc", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.INT }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Double x = (Double) arguments[0];
@@ -196,7 +215,8 @@ public class GraphicsSupport {
 				g.fill(new Arc2D.Double(x, y, w, h, start, extent, type));
 			}
 		});
-		methods.add(new Method(NAMESPACE, "drawPolygon", new int[] { Types.DOUBLE, Types.DOUBLE, Types.INT, Types.BOOLEAN }, new int[] { 1, 1, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawPolygon", new int[] { Words.DOUBLE, Words.DOUBLE, Words.INT, Words.BOOLEAN }, new int[] { 1, 1, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				double[] x = (double[]) arguments[0];
@@ -220,7 +240,8 @@ public class GraphicsSupport {
 				}
 			}
 		});
-		methods.add(new Method(NAMESPACE, "fillPolygon", new int[] { Types.DOUBLE, Types.DOUBLE, Types.INT }, new int[] { 1, 1, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "fillPolygon", new int[] { Words.DOUBLE, Words.DOUBLE, Words.INT }, new int[] { 1, 1, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				double[] x = (double[]) arguments[0];
@@ -241,7 +262,8 @@ public class GraphicsSupport {
 				}
 			}
 		});
-		methods.add(new Method(NAMESPACE, "drawPath", new int[] { Types.DOUBLE }, new int[] { 1 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawPath", new int[] { Words.DOUBLE }, new int[] { 1 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				GeneralPath path = getPath((double[]) arguments[0]);
@@ -250,7 +272,8 @@ public class GraphicsSupport {
 				}
 			}
 		});
-		methods.add(new Method(NAMESPACE, "fillPath", new int[] { Types.DOUBLE }, new int[] { 1 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "fillPath", new int[] { Words.DOUBLE }, new int[] { 1 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				GeneralPath path = getPath((double[]) arguments[0]);
@@ -259,7 +282,8 @@ public class GraphicsSupport {
 				}
 			}
 		});
-		methods.add(new Method(NAMESPACE, "drawString", new int[] { Types.STRING, Types.DOUBLE, Types.DOUBLE }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "drawString", new int[] { Words.STRING, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];

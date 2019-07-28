@@ -15,6 +15,7 @@ public class SkipOperation extends Operation {
 		super("->", 0, SKIP);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value... v) {
 	}
 }

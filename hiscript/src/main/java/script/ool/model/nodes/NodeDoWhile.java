@@ -16,6 +16,7 @@ public class NodeDoWhile extends Node {
 
 	private NodeExpression condition;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		boolean is;
 		do {
@@ -47,6 +48,7 @@ public class NodeDoWhile extends Node {
 		} while (is);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(body);

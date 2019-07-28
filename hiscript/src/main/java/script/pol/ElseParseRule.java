@@ -6,6 +6,7 @@ import script.pol.model.Node;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ElseParseRule extends ParseRule<IfNode> {
 	private final static ElseParseRule instance = new ElseParseRule();
@@ -17,8 +18,9 @@ public class ElseParseRule extends ParseRule<IfNode> {
 	private ElseParseRule() {
 	}
 
+	@Override
 	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.ELSE, tokenizer) != null) {
+		if (visitWord(Words.ELSE, tokenizer) != null) {
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) {
 				throw new ParseException("Statement is expected", tokenizer.currentToken());
@@ -30,8 +32,9 @@ public class ElseParseRule extends ParseRule<IfNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.ELSE, tokenizer, handler) != null) {
+		if (visitWord(Words.ELSE, tokenizer, handler) != null) {
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "Statement is expected");
 			}

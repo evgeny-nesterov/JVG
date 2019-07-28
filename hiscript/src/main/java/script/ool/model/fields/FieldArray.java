@@ -15,6 +15,7 @@ public class FieldArray extends Field<Object> {
 
 	public Clazz arrayType;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		// check value on array and on object
 		if (!value.type.isArray() && !(value.type.isObject() && value.type.superClass == null)) {
@@ -33,6 +34,7 @@ public class FieldArray extends Field<Object> {
 		value.array = array;
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		if (value.type == Clazz.getNullClass()) {
 			array = null;
@@ -53,6 +55,7 @@ public class FieldArray extends Field<Object> {
 		initialized = true;
 	}
 
+	@Override
 	public Object get() {
 		return array;
 	}

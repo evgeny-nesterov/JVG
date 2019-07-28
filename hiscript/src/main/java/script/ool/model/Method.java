@@ -93,6 +93,7 @@ public class Method implements Codable {
 		}
 	}
 
+	@Override
 	public String toString() {
 		if (descr == null) {
 			StringBuilder buf = new StringBuilder();
@@ -113,6 +114,7 @@ public class Method implements Codable {
 		return descr;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		// do not write class as when method will being read the class will not
 		// be yet created

@@ -61,7 +61,7 @@ public class JVGResources {
 			for (Class c : classes.keySet()) {
 				if (clazz.isAssignableFrom(c)) {
 					resources = (ClassResource<V>) classes.get(c);
-					V resource = (V) resources.getResource(name);
+					V resource = resources.getResource(name);
 					if (resource != null) {
 						return resource;
 					}

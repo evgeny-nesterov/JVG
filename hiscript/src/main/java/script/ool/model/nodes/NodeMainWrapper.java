@@ -5,6 +5,7 @@ import java.io.IOException;
 import script.ool.model.Clazz;
 import script.ool.model.Method;
 import script.ool.model.Modifiers;
+import script.ool.model.ModifiersIF;
 import script.ool.model.Node;
 import script.ool.model.RuntimeContext;
 import script.ool.model.Type;
@@ -17,10 +18,11 @@ public class NodeMainWrapper extends Node {
 
 	private NodeBlock body;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Clazz rootClass = new Clazz(null, null, "", Clazz.CLASS_TYPE_TOP);
 		rootClass.methods = new Method[1];
-		rootClass.methods[0] = new Method(rootClass, new Modifiers(Modifiers.ACCESS_PUBLIC | Modifiers.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
+		rootClass.methods[0] = new Method(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
 
 		ctx.enterMethod(rootClass.methods[0], null, -1);
 		try {
@@ -31,6 +33,7 @@ public class NodeMainWrapper extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		body.code(os);
 	}

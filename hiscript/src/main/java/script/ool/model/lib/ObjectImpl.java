@@ -3,6 +3,7 @@ package script.ool.model.lib;
 import script.ool.model.Clazz;
 import script.ool.model.Field;
 import script.ool.model.Obj;
+import script.ool.model.PrimitiveTypes;
 import script.ool.model.RuntimeContext;
 import script.ool.model.Value;
 import script.ool.model.classes.ClazzArray;
@@ -82,7 +83,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwException(e.toString());
 		}
-		ctx.value.valueType = Value.VOID;
+		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
 
 	public static void Object_void_wait_long(RuntimeContext ctx, long timeout) {
@@ -91,7 +92,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwException(e.toString());
 		}
-		ctx.value.valueType = Value.VOID;
+		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
 
 	public static void Object_void_notify(RuntimeContext ctx) {
@@ -100,7 +101,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwException(e.getMessage());
 		}
-		ctx.value.valueType = Value.VOID;
+		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
 
 	public static void Object_void_notifyAll(RuntimeContext ctx) {
@@ -109,7 +110,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwException(e.getMessage());
 		}
-		ctx.value.valueType = Value.VOID;
+		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
 
 	public static void Object_Class_getClass(RuntimeContext ctx) {

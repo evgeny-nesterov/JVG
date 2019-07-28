@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Words;
+
 public class LongNode extends Node implements Value {
 	public LongNode(long value) {
 		super("long");
@@ -12,11 +14,13 @@ public class LongNode extends Node implements Value {
 		return value;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		ctx.value.type = Types.LONG;
+		ctx.value.type = Words.LONG;
 		ctx.value.dimension = 0;
 		ctx.value.longNumber = value;
 	}

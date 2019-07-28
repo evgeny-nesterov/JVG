@@ -78,7 +78,7 @@ public class OperationsGroup {
 
 	public int getCount() {
 		int count = (prefix != null ? prefix.size() : 0) + (postfix != null ? postfix.size() : 0);
-		if (operation != null && operation.getOperation() != Operations.SKIP) {
+		if (operation != null && operation.getOperation() != OperationsIF.SKIP) {
 			count++;
 		}
 		return count;
@@ -179,6 +179,7 @@ public class OperationsGroup {
 		return priority;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		if (postfix != null) {

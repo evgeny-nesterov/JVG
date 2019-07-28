@@ -31,6 +31,7 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return name;
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

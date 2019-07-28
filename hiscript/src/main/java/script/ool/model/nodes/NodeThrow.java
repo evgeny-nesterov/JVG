@@ -13,11 +13,13 @@ public class NodeThrow extends Node {
 
 	private Node exception;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		exception.execute(ctx);
 		ctx.exception = ctx.value.getObject();
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		exception.code(os);

@@ -18,6 +18,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 		super("--", PREFIX_DECREMENT);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		Clazz c = v.type;
 

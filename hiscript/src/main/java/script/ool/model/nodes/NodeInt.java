@@ -19,12 +19,14 @@ public class NodeInt extends Node {
 
 	private int value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = type;
 		ctx.value.intNumber = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeInt(value);

@@ -20,13 +20,16 @@ import script.tokenizer.DoubleToken;
 import script.tokenizer.FloatToken;
 import script.tokenizer.IntToken;
 import script.tokenizer.LongToken;
+import script.tokenizer.OperationSymbols;
 import script.tokenizer.ShortToken;
 import script.tokenizer.StringToken;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Token;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public abstract class ParseRule<N extends Node> {
 	protected void skipComments(Tokenizer tokenizer) throws TokenizerException {
@@ -322,7 +325,7 @@ public abstract class ParseRule<N extends Node> {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			if (Operations.isEquate(symbolToken.getType())) {
+			if (OperationSymbols.isEquate(symbolToken.getType())) {
 				tokenizer.nextToken();
 				return symbolToken.getType();
 			}
@@ -338,7 +341,7 @@ public abstract class ParseRule<N extends Node> {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;
-				if (Operations.isEquate(symbolToken.getType())) {
+				if (OperationSymbols.isEquate(symbolToken.getType())) {
 					tokenizer.nextToken();
 					return symbolToken.getType();
 				}
@@ -352,7 +355,7 @@ public abstract class ParseRule<N extends Node> {
 
 	protected int visitDimension(Tokenizer tokenizer) throws TokenizerException {
 		int dimension = 0;
-		while (visitSymbol(tokenizer, SymbolToken.MASSIVE) != -1) {
+		while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
 			dimension++;
 		}
 		return dimension;
@@ -361,7 +364,7 @@ public abstract class ParseRule<N extends Node> {
 	protected int visitDimension(Tokenizer tokenizer, CompileHandler handler) {
 		int dimension = 0;
 		try {
-			while (visitSymbol(tokenizer, SymbolToken.MASSIVE) != -1) {
+			while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
 				dimension++;
 			}
 		} catch (TokenizerException exc) {
@@ -372,10 +375,10 @@ public abstract class ParseRule<N extends Node> {
 
 	protected VariableNode visitVariable(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		String namespace = null;
-		String variableName = visitWord(WordToken.NOT_SERVICE, tokenizer);
-		if (visitSymbol(tokenizer, SymbolToken.POINT) != -1) {
+		String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
 			namespace = variableName;
-			variableName = visitWord(WordToken.NOT_SERVICE, tokenizer);
+			variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 		}
 
 		if (variableName != null) {
@@ -387,10 +390,10 @@ public abstract class ParseRule<N extends Node> {
 	protected VariableNode visitVariable(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			String namespace = null;
-			String variableName = visitWord(WordToken.NOT_SERVICE, tokenizer);
-			if (visitSymbol(tokenizer, SymbolToken.POINT) != -1) {
+			String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+			if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
 				namespace = variableName;
-				variableName = visitWord(WordToken.NOT_SERVICE, tokenizer);
+				variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 			}
 
 			if (variableName != null) {

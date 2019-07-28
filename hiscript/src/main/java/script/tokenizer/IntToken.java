@@ -12,6 +12,7 @@ public class IntToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Int [" + number + ", " + super.toString() + "]";
 	}

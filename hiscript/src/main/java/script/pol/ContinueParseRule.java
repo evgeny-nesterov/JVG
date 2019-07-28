@@ -5,6 +5,7 @@ import script.pol.model.ContinueNode;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ContinueParseRule extends ParseRule<ContinueNode> {
 	private final static ContinueParseRule instance = new ContinueParseRule();
@@ -16,17 +17,19 @@ public class ContinueParseRule extends ParseRule<ContinueNode> {
 	private ContinueParseRule() {
 	}
 
+	@Override
 	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.CONTINUE, tokenizer) != null) {
-			String mark = visitWord(WordToken.NOT_SERVICE, tokenizer);
+		if (visitWord(Words.CONTINUE, tokenizer) != null) {
+			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new ContinueNode(mark);
 		}
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.CONTINUE, tokenizer, handler) != null) {
-			visitWord(WordToken.NOT_SERVICE, tokenizer, handler);
+		if (visitWord(Words.CONTINUE, tokenizer, handler) != null) {
+			visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			return true;
 		}
 

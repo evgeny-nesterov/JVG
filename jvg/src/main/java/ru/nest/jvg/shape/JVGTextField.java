@@ -66,6 +66,7 @@ public class JVGTextField extends JVGShape {
 		invalidate();
 	}
 
+	@Override
 	public void validate() {
 		if (!isValid()) {
 

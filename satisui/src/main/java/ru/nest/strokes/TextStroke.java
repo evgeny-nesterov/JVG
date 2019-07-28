@@ -51,6 +51,7 @@ public class TextStroke implements Stroke {
 		return repeat;
 	}
 
+	@Override
 	public Shape createStrokedShape(Shape shape) {
 		FontRenderContext frc = new FontRenderContext(null, true, true);
 		GlyphVector glyphVector = font.createGlyphVector(frc, text);

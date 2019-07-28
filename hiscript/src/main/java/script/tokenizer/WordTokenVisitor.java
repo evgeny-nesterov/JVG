@@ -1,6 +1,7 @@
 package script.tokenizer;
 
 public class WordTokenVisitor implements TokenVisitor {
+	@Override
 	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
 		if (tokenizer.hasNext() && Character.isLetter(tokenizer.getCurrent())) {
 			int offset = tokenizer.getOffset();

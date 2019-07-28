@@ -90,6 +90,7 @@ public class Modifiers implements ModifiersIF, Codable {
 		this.isAbstract = isAbstract;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		switch (access) {
@@ -182,6 +183,7 @@ public class Modifiers implements ModifiersIF, Codable {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeByte(getModifiers());
 	}

@@ -4,6 +4,7 @@ import script.ParseException;
 import script.pol.model.ArrayNode;
 import script.pol.model.ExpressionNode;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -20,22 +21,23 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 	/**
 	 * Patterns: 1. {a1, ..., an} 2. <type>[size]...[]
 	 */
+	@Override
 	public ArrayNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		int type = visitType(tokenizer);
 		if (type != -1) {
-			expectSymbol(SymbolToken.SQUARE_BRACES_LEFT, tokenizer);
+			expectSymbol(Symbols.SQUARE_BRACES_LEFT, tokenizer);
 			ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (index == null) {
 				throw new ParseException("array dimension missing", tokenizer.currentToken());
 			}
-			expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer);
+			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
 
 			ArrayNode node = new ArrayNode(type);
 			node.addIndex(index);
 
-			while (visitSymbol(tokenizer, SymbolToken.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				index = ExpressionParseRule.getInstance().visit(tokenizer);
-				expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer);
+				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
 
 				node.addIndex(index);
 				if (index == null) {
@@ -43,7 +45,7 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 				}
 			}
 
-			while (visitSymbol(tokenizer, SymbolToken.MASSIVE) != -1) {
+			while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
 				node.addIndex(null);
 			}
 
@@ -53,25 +55,26 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		int type = visitType(tokenizer, handler);
 		if (type != -1) {
-			expectSymbol(SymbolToken.SQUARE_BRACES_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.SQUARE_BRACES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "array dimension missing");
 			}
-			expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 
-			while (visitSymbol(tokenizer, handler, SymbolToken.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				boolean hasExpression = ExpressionParseRule.getInstance().visit(tokenizer, handler);
-				expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 
 				if (!hasExpression) {
 					break;
 				}
 			}
 
-			while (visitSymbol(tokenizer, handler, SymbolToken.MASSIVE) != -1) {
+			while (visitSymbol(tokenizer, handler, Symbols.MASSIVE) != -1) {
 			}
 
 			return true;

@@ -4,6 +4,7 @@ import script.ParseException;
 import script.pol.model.CastNode;
 import script.pol.model.PrefixNode;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -17,10 +18,11 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 	private PrefixParseRule() {
 	}
 
+	@Override
 	public PrefixNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		PrefixNode prefix = null;
 		while (true) {
-			int operation = visitSymbol(tokenizer, SymbolToken.PLUS, SymbolToken.MINUS, SymbolToken.EXCLAMATION);
+			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
 			if (operation != -1) {
 				if (prefix == null) {
 					prefix = new PrefixNode();
@@ -44,10 +46,11 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 		return prefix;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		boolean found = false;
 		while (true) {
-			int operation = visitSymbol(tokenizer, handler, SymbolToken.PLUS, SymbolToken.MINUS, SymbolToken.EXCLAMATION);
+			int operation = visitSymbol(tokenizer, handler, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
 			if (operation != -1) {
 				found = true;
 				continue;

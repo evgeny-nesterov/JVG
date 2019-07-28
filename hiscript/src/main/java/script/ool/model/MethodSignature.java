@@ -24,6 +24,7 @@ public class MethodSignature implements Cloneable {
 
 	public Clazz[] argClasses;
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof MethodSignature) {
 			MethodSignature m = (MethodSignature) o;
@@ -53,6 +54,7 @@ public class MethodSignature implements Cloneable {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		int code = name.hashCode();
 		for (int i = 0; i < argCount; i++) {
@@ -63,6 +65,7 @@ public class MethodSignature implements Cloneable {
 
 	private String descr;
 
+	@Override
 	public String toString() {
 		if (descr == null) {
 			StringBuilder buf = new StringBuilder();

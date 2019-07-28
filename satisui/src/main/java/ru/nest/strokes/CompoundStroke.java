@@ -23,6 +23,7 @@ public class CompoundStroke implements Stroke {
 		this.operation = operation;
 	}
 
+	@Override
 	public Shape createStrokedShape(Shape shape) {
 		Area area1 = new Area(stroke1.createStrokedShape(shape));
 		Area area2 = new Area(stroke2.createStrokedShape(shape));

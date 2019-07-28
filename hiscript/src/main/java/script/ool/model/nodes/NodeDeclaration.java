@@ -25,6 +25,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 
 	public Modifiers modifiers;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Field<?> field = Field.getField(type, name, initialization);
 		field.setModifiers(modifiers);
@@ -41,6 +42,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);
@@ -53,10 +55,12 @@ public class NodeDeclaration extends Node implements NodeVariable {
 		return new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(Node.class), Modifiers.decode(os));
 	}
 
+	@Override
 	public String getVariableName() {
 		return name;
 	}
 
+	@Override
 	public String getVariableType() {
 		return type.name;
 	}

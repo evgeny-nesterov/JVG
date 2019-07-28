@@ -16,6 +16,7 @@ public class OperationTriger extends Operation {
 		super("?:", 3, TRIGER);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value... v) {
 		if (v[0].valueType == Value.NAME) {
 			NodeIdentificator.resolve(ctx, v[0], true);

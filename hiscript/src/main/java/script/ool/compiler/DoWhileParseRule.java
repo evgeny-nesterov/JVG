@@ -8,6 +8,7 @@ import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 	private final static DoWhileParseRule instance = new DoWhileParseRule();
@@ -19,12 +20,13 @@ public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 	private DoWhileParseRule() {
 	}
 
+	@Override
 	public NodeDoWhile visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.DO, tokenizer) != null) {
+		if (visitWord(Words.DO, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 			NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-			expectWord(WordToken.DO, tokenizer);
+			expectWord(Words.DO, tokenizer);
 			NodeExpression condition = expectCondition(tokenizer, properties);
 
 			NodeDoWhile node = new NodeDoWhile(body, condition);

@@ -7,6 +7,7 @@ import script.ool.model.nodes.NodeWhile;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class WhileParseRule extends ParseRule<NodeWhile> {
 	private final static WhileParseRule instance = new WhileParseRule();
@@ -18,8 +19,9 @@ public class WhileParseRule extends ParseRule<NodeWhile> {
 	private WhileParseRule() {
 	}
 
+	@Override
 	public NodeWhile visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.WHILE, tokenizer) != null) {
+		if (visitWord(Words.WHILE, tokenizer) != null) {
 			NodeExpression condition = expectCondition(tokenizer, properties);
 			Node body = expectBody(tokenizer, properties);
 

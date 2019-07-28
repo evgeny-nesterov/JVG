@@ -19,6 +19,7 @@ public class NodeIf extends Node {
 
 	private NodeIf nextIf;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (condition != null) {
 			condition.execute(ctx);
@@ -49,6 +50,7 @@ public class NodeIf extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(condition);

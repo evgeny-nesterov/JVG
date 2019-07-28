@@ -10,6 +10,7 @@ public class FieldByte extends FieldNumber<Byte> {
 
 	private byte value;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case BYTE:
@@ -41,6 +42,7 @@ public class FieldByte extends FieldNumber<Byte> {
 		}
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		if (valueType != BYTE) {
 			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
@@ -50,6 +52,7 @@ public class FieldByte extends FieldNumber<Byte> {
 		this.value = value.byteNumber;
 	}
 
+	@Override
 	public Byte get() {
 		return value;
 	}

@@ -13,14 +13,17 @@ public class ClazzNull extends Clazz {
 		super((Clazz) null, null, "null", CLASS_TYPE_TOP);
 	}
 
+	@Override
 	public boolean isNull() {
 		return true;
 	}
 
+	@Override
 	public boolean isObject() {
 		return false;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
 		os.writeByte(Clazz.CLASS_NULL);

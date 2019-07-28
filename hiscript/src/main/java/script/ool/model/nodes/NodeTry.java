@@ -29,6 +29,7 @@ public class NodeTry extends Node {
 
 	private Node finallyBody;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (body != null) {
 			ctx.enter(RuntimeContext.TRY, line);
@@ -70,6 +71,7 @@ public class NodeTry extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(body);

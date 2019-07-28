@@ -7,6 +7,7 @@ import script.ool.model.nodes.NodeIf;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class IfParseRule extends ParseRule<NodeIf> {
 	private final static IfParseRule instance = new IfParseRule();
@@ -18,8 +19,9 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	private IfParseRule() {
 	}
 
+	@Override
 	public NodeIf visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.IF, tokenizer) != null) {
+		if (visitWord(Words.IF, tokenizer) != null) {
 			NodeExpression condition = expectCondition(tokenizer, properties);
 			Node body = expectBody(tokenizer, properties);
 			NodeIf elseIfNode = visitNext(tokenizer, properties);
@@ -31,8 +33,8 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	}
 
 	public NodeIf visitNext(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.ELSE, tokenizer) != null) {
-			if (visitWord(WordToken.IF, tokenizer) != null) {
+		if (visitWord(Words.ELSE, tokenizer) != null) {
+			if (visitWord(Words.IF, tokenizer) != null) {
 				NodeExpression condition = expectCondition(tokenizer, properties);
 				Node body = expectBody(tokenizer, properties);
 				NodeIf elseIfNode = visitNext(tokenizer, properties);

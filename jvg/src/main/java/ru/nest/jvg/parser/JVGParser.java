@@ -68,6 +68,7 @@ public class JVGParser implements JVGParserInterface {
 		return parser.getDocumentScripts();
 	}
 
+	@Override
 	public void init(JVGPane pane) {
 		Dimension documentSize = parser.getDocumentSize();
 		if (documentSize == null) {

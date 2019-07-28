@@ -565,6 +565,7 @@ public class RuntimeContext {
 			}
 		}
 
+		@Override
 		public String toString() {
 			return "[" + level + "] " + type + ", class=" + clazz + ", method=" + method + ", object=" + object;
 		}
@@ -745,6 +746,7 @@ public class RuntimeContext {
 		return array;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		buf.append(value);

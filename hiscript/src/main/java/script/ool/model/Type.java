@@ -123,6 +123,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return this == getNullType();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
@@ -295,6 +296,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return getType(clazz.fullName);
 	}
 
+	@Override
 	public int compareTo(Type type) {
 		if (dimension != type.dimension) {
 			return dimension - type.dimension;
@@ -303,10 +305,12 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return name.compareTo(type.name);
 	}
 
+	@Override
 	public String toString() {
 		return fullName;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		byte type = getType();
 		os.writeByte(type);

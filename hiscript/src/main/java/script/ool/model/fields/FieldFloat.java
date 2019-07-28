@@ -10,6 +10,7 @@ public class FieldFloat extends FieldNumber<Float> {
 
 	private float value;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case FLOAT:
@@ -25,6 +26,7 @@ public class FieldFloat extends FieldNumber<Float> {
 		}
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case CHAR:
@@ -57,6 +59,7 @@ public class FieldFloat extends FieldNumber<Float> {
 		}
 	}
 
+	@Override
 	public Float get() {
 		return value;
 	}

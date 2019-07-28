@@ -19,12 +19,14 @@ public class NodeDouble extends Node {
 
 	private double value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = type;
 		ctx.value.doubleNumber = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeDouble(value);

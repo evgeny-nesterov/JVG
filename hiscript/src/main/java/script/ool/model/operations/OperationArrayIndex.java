@@ -19,6 +19,7 @@ public class OperationArrayIndex extends BinaryOperation {
 		super("[]", ARRAY_INDEX);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.ARRAY_INDEX || (v1.valueType == Value.VALUE && v1.type.isArray())) {
 			// OK

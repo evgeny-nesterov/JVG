@@ -3,6 +3,8 @@ package script.pol.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import script.tokenizer.Words;
+
 public class InvocationNode extends Node implements Value {
 	public InvocationNode(String namespace, String methodName) {
 		super("invocation");
@@ -35,6 +37,7 @@ public class InvocationNode extends Node implements Value {
 
 	private Object[] values;
 
+	@Override
 	public void compile() throws ExecuteException {
 		int size = arguments.size();
 		types = new int[size];
@@ -47,6 +50,7 @@ public class InvocationNode extends Node implements Value {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		int size = arguments.size();
 		for (int i = 0; i < size; i++) {
@@ -60,7 +64,7 @@ public class InvocationNode extends Node implements Value {
 
 		Method method = getMethod(ctx, namespace, methodName, types, dimensions);
 		if (method == null) {
-			throw new ExecuteException("method " + Method.getMethodDescr(namespace, methodName, types, dimensions, Types.VOID) + " not found");
+			throw new ExecuteException("method " + Method.getMethodDescr(namespace, methodName, types, dimensions, Words.VOID) + " not found");
 		}
 
 		for (int i = 0; i < size; i++) {

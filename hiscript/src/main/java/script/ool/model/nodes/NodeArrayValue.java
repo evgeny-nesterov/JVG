@@ -25,6 +25,7 @@ public class NodeArrayValue extends Node {
 
 	private Node[] array;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Clazz cellClazz = type.getClazz(ctx);
 		Clazz currentCellClazz = dimensions > 1 ? Clazz.getArrayClass(cellClazz, dimensions - 1) : cellClazz;
@@ -43,6 +44,7 @@ public class NodeArrayValue extends Node {
 		ctx.value.array = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);

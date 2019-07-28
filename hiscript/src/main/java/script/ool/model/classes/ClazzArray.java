@@ -8,6 +8,7 @@ import script.ool.model.Constructor;
 import script.ool.model.Constructor.BodyConstructorType;
 import script.ool.model.Field;
 import script.ool.model.Modifiers;
+import script.ool.model.ModifiersIF;
 import script.ool.model.Type;
 import script.ool.model.nodes.CodeContext;
 import script.ool.model.nodes.DecodeContext;
@@ -40,19 +41,21 @@ public class ClazzArray extends Clazz {
 
 		constructors = new Constructor[1];
 		Modifiers constructorModifiers = new Modifiers();
-		constructorModifiers.setAccess(Modifiers.ACCESS_PUBLIC);
+		constructorModifiers.setAccess(ModifiersIF.ACCESS_PUBLIC);
 		constructors[0] = new Constructor(this, constructorModifiers, (NodeArgument[]) null, null, null, BodyConstructorType.NONE);
 
 		fields = new Field[1];
 		fields[0] = Field.getField(Type.getPrimitiveType("int"), "length");
-		fields[0].getModifiers().setAccess(Modifiers.ACCESS_PUBLIC);
+		fields[0].getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
 		fields[0].getModifiers().setFinal(true);
 	}
 
+	@Override
 	public boolean isArray() {
 		return dimension > 0;
 	}
 
+	@Override
 	public Clazz getArrayType() {
 		return cellClass;
 	}
@@ -80,6 +83,7 @@ public class ClazzArray extends Clazz {
 	// name for array generation from java
 	public String className;
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
 		os.writeByte(Clazz.CLASS_ARRAY);

@@ -27,10 +27,12 @@ public class DoWhileNode extends Node implements Breakable {
 
 	private boolean isBreaked = false;
 
+	@Override
 	public void Break() {
 		isBreaked = true;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		condition.compile();
 
@@ -39,6 +41,7 @@ public class DoWhileNode extends Node implements Breakable {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		isBreaked = false;
 		do {

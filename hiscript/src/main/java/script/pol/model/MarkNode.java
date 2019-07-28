@@ -22,12 +22,14 @@ public class MarkNode extends Node {
 		return body;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		if (body != null) {
 			body.compile();
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		if (body != null) {
 			body.execute(ctx);

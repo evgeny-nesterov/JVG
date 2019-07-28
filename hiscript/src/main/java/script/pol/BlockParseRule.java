@@ -17,6 +17,7 @@ public class BlockParseRule extends ParseRule<BlockNode> {
 	private BlockParseRule() {
 	}
 
+	@Override
 	public BlockNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		BlockNode block = null;
 		Node statement;
@@ -31,6 +32,7 @@ public class BlockParseRule extends ParseRule<BlockNode> {
 		return block;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		boolean found = false;
 		while (StatementParseRule.getInstance().visit(tokenizer, handler)) {

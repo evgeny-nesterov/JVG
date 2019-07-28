@@ -121,6 +121,7 @@ public class JVGGroupPath extends JVGPath {
 		setPathStroke(new StrokeResource<ArrowStroke>(new ArrowStroke(14, 14, 14, ArrowStroke.DIRECTION_DIRECT)));
 	}
 
+	@Override
 	protected void processMouseEvent(JVGMouseEvent e) {
 		if (e.getButton() == JVGMouseEvent.BUTTON1 && e.getClickCount() == 1) {
 			if (isSelectable() && editMode == EDIT_MODE__MOVE_SUBPATH) {
@@ -390,6 +391,7 @@ public class JVGGroupPath extends JVGPath {
 		}
 	}
 
+	@Override
 	protected Shape computeStrokedShape() {
 		Area a = null;
 		for (int i = 0; i < childrenCount; i++) {
@@ -413,6 +415,7 @@ public class JVGGroupPath extends JVGPath {
 
 	private boolean validateTree = true;
 
+	@Override
 	protected void validateTree() {
 		if (validateTree) {
 			super.validateTree();

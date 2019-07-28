@@ -5,9 +5,11 @@ import script.pol.model.BlockNode;
 import script.pol.model.CaseNode;
 import script.pol.model.Node;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class CaseParseRule extends ParseRule<CaseNode> {
 	private final static CaseParseRule instance = new CaseParseRule();
@@ -19,13 +21,14 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 	private CaseParseRule() {
 	}
 
+	@Override
 	public CaseNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.CASE, tokenizer) != null) {
+		if (visitWord(Words.CASE, tokenizer) != null) {
 			Node value;
 			if ((value = ExpressionParseRule.getInstance().visit(tokenizer)) == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(SymbolToken.COLON, tokenizer);
+			expectSymbol(Symbols.COLON, tokenizer);
 			BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
 			return new CaseNode(value, body);
 		}
@@ -33,12 +36,13 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.CASE, tokenizer, handler) != null) {
+		if (visitWord(Words.CASE, tokenizer, handler) != null) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "expression is expected");
 			}
-			expectSymbol(SymbolToken.COLON, tokenizer, handler);
+			expectSymbol(Symbols.COLON, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			return true;
 		}

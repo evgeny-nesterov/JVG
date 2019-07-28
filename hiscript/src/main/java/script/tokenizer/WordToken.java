@@ -102,6 +102,7 @@ public class WordToken extends Token implements Words {
 		}
 	}
 
+	@Override
 	public String toString() {
 		if (isService()) {
 			return "Service word [" + getWord() + ", " + super.toString() + "]";

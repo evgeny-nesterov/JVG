@@ -7,6 +7,7 @@ import script.ool.model.nodes.NodeArgument;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	private final static ArgumentParseRule instance = new ArgumentParseRule();
@@ -18,13 +19,14 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	private ArgumentParseRule() {
 	}
 
+	@Override
 	public NodeArgument visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
-			String name = visitWord(WordToken.NOT_SERVICE, tokenizer);
+			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
 				throw new ParseException("variable name is expected", tokenizer.currentToken());
 			}

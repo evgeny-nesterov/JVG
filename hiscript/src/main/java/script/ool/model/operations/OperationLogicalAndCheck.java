@@ -15,6 +15,7 @@ public class OperationLogicalAndCheck extends UnaryOperation {
 		super("?&&", LOGICAL_AND_CHECK);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 	}
 }

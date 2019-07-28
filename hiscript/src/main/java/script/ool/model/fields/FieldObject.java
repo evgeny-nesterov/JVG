@@ -14,6 +14,7 @@ public class FieldObject extends Field<Obj> {
 
 	private Obj object;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		Clazz clazz = getClazz(ctx);
 		if (!clazz.isNull() && (!value.type.isObject() || !clazz.isInstanceof(value.type))) {
@@ -26,6 +27,7 @@ public class FieldObject extends Field<Obj> {
 		value.object = object;
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		Clazz valueClazz = value.type;
 		if (valueClazz.isNull()) {
@@ -42,6 +44,7 @@ public class FieldObject extends Field<Obj> {
 		object = value.object;
 	}
 
+	@Override
 	public Obj get() {
 		return object;
 	}

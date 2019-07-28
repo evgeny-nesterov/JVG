@@ -91,10 +91,12 @@ public class JVGClipboardContext {
 		return height;
 	}
 
+	@Override
 	public int hashCode() {
 		return hashCode;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

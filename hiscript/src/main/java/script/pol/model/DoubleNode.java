@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Words;
+
 public class DoubleNode extends Node implements Value {
 	public DoubleNode(double value) {
 		super("double");
@@ -12,11 +14,13 @@ public class DoubleNode extends Node implements Value {
 		return value;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		ctx.value.type = Types.DOUBLE;
+		ctx.value.type = Words.DOUBLE;
 		ctx.value.dimension = 0;
 		ctx.value.doubleNumber = value;
 	}

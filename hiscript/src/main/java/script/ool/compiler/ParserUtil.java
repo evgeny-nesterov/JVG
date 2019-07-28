@@ -5,6 +5,7 @@ import java.util.List;
 
 import script.ParseException;
 import script.ool.model.Modifiers;
+import script.ool.model.ModifiersIF;
 import script.ool.model.Node;
 import script.ool.model.Type;
 import script.ool.model.nodes.NodeArgument;
@@ -246,7 +247,7 @@ public class ParserUtil implements Words {
 
 	protected int visitDimension(Tokenizer tokenizer) throws TokenizerException {
 		int dimension = 0;
-		while (visitSymbol(tokenizer, SymbolToken.MASSIVE) != -1) {
+		while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
 			dimension++;
 		}
 		return dimension;
@@ -255,12 +256,12 @@ public class ParserUtil implements Words {
 	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		expectSymbol(tokenizer, SymbolToken.PARANTHESIS_LEFT);
+		expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
 		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (condition == null) {
 			throw new ParseException("expression is expected", tokenizer.currentToken());
 		}
-		expectSymbol(tokenizer, SymbolToken.PARANTHESIS_RIGHT);
+		expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
 		return condition;
 	}
 
@@ -291,7 +292,7 @@ public class ParserUtil implements Words {
 		String word;
 		while (true) {
 			if ((word = visitWord(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != null) {
-				if (m != null && m.getAccess() != Modifiers.ACCESS_DEFAULT) {
+				if (m != null && m.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
 					throw new ParseException("repeated modifier", tokenizer.currentToken());
 				}
 

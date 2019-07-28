@@ -10,6 +10,7 @@ public class FieldDouble extends FieldNumber<Double> {
 
 	private double value;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		if (valueType != DOUBLE) {
 			// error
@@ -17,6 +18,7 @@ public class FieldDouble extends FieldNumber<Double> {
 		value.doubleNumber = this.value;
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case CHAR:
@@ -49,6 +51,7 @@ public class FieldDouble extends FieldNumber<Double> {
 		}
 	}
 
+	@Override
 	public Double get() {
 		return value;
 	}

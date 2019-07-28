@@ -19,9 +19,11 @@ public class CastNode extends Node implements Value {
 		return dimension;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		ctx.value.cast(type, dimension);
 	}

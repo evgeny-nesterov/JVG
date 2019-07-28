@@ -15,6 +15,7 @@ public class OperationLogicalOrCheck extends UnaryOperation {
 		super("?||", LOGICAL_OR_CHECK);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 	}
 }

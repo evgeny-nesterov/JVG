@@ -44,10 +44,12 @@ public class JVGPath extends JVGShape {
 		addPainter(new OutlinePainter(null, OutlinePainter.DEFAULT_COLOR));
 	}
 
+	@Override
 	public void setShape(Shape shape, boolean coordinable) {
 		super.setShape(shape, coordinable, shapeId, pathId);
 	}
 
+	@Override
 	public void validate() {
 		if (pathStroke != null && !pathStroke.isValid()) {
 			invalidate();
@@ -87,6 +89,7 @@ public class JVGPath extends JVGShape {
 		super.validate();
 	}
 
+	@Override
 	public void invalidate() {
 		if (isValid()) {
 			super.invalidate();
@@ -896,6 +899,7 @@ public class JVGPath extends JVGShape {
 		invalidate();
 	}
 
+	@Override
 	public MutableGeneralPath getPath() {
 		return getPath(pathId);
 	}

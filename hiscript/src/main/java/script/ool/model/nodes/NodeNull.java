@@ -14,6 +14,7 @@ public class NodeNull extends Node {
 		super("null", TYPE_NULL);
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = ClazzNull.NULL;
@@ -21,6 +22,7 @@ public class NodeNull extends Node {
 		ctx.value.array = null;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 	}

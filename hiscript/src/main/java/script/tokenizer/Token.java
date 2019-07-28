@@ -32,6 +32,7 @@ public class Token {
 		return lineOffset;
 	}
 
+	@Override
 	public String toString() {
 		return (line + 1) + " : " + (lineOffset + 1);
 	}

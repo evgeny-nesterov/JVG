@@ -34,12 +34,14 @@ public class NodeByte extends Node {
 
 	private byte value;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = type;
 		ctx.value.byteNumber = value;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeByte(value);

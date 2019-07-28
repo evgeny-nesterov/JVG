@@ -54,10 +54,12 @@ public class ForNode extends Node implements Breakable {
 
 	private boolean isBreaked = false;
 
+	@Override
 	public void Break() {
 		isBreaked = true;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		if (initialization != null) {
 			initialization.compile();
@@ -76,6 +78,7 @@ public class ForNode extends Node implements Breakable {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		isBreaked = false;
 

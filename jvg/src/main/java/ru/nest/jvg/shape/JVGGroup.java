@@ -195,7 +195,7 @@ public class JVGGroup extends JVGShape {
 			g.setClip(oldClip);
 		}
 	}
-	
+
 	@Override
 	public void printChild(Graphics2D g, JVGComponent c) {
 		Shape oldClip = null;

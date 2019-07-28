@@ -12,6 +12,7 @@ public class DoubleToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Double [" + number + ", " + super.toString() + "]";
 	}

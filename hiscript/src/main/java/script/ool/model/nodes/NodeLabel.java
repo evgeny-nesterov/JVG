@@ -16,6 +16,7 @@ public class NodeLabel extends Node {
 
 	private Node statement;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (statement != null) {
 			ctx.enterLabel(label, line);
@@ -27,6 +28,7 @@ public class NodeLabel extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullableUTF(label);

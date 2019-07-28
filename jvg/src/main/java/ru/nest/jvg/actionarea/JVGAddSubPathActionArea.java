@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Robot;
 import java.awt.Shape;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -44,8 +45,8 @@ public class JVGAddSubPathActionArea extends JVGActionArea {
 						path.validate();
 						try {
 							Robot robot = new Robot();
-							robot.mouseRelease(MouseEvent.BUTTON1_DOWN_MASK);
-							robot.mousePress(MouseEvent.BUTTON1_DOWN_MASK);
+							robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+							robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 						} catch (AWTException exc) {
 							exc.printStackTrace();
 						}
@@ -97,6 +98,7 @@ public class JVGAddSubPathActionArea extends JVGActionArea {
 		return path.getEditMode() == JVGGroupPath.EDIT_MODE__ADD_SUBPATH && path.getTransformedShape().contains(x, y);
 	}
 
+	@Override
 	public void paintAction(Graphics2D g, AffineTransform transform) {
 		if (point != null) {
 			JVGGroupPath path = (JVGGroupPath) getParent();
@@ -119,6 +121,7 @@ public class JVGAddSubPathActionArea extends JVGActionArea {
 		return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 	}
 
+	@Override
 	protected boolean isDrawAction() {
 		if (!super.isDrawAction()) {
 			return false;

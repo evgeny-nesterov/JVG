@@ -9,6 +9,7 @@ import script.pol.model.ExpressionNode;
 import script.pol.model.Node;
 import script.pol.model.VariableNode;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -22,18 +23,19 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 	private AssignmentParseRule() {
 	}
 
+	@Override
 	public AssignmentNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		VariableNode variable = visitVariable(tokenizer);
 		if (variable != null) {
 			List<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
-			while (visitSymbol(tokenizer, SymbolToken.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (index == null) {
 					throw new ParseException("array dimension missing", tokenizer.currentToken());
 				}
-				expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer);
+				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
 				indexes.add(index);
 			}
 
@@ -54,17 +56,18 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		tokenizer.start();
 
 		VariableNode variable = visitVariable(tokenizer, handler);
 		if (variable != null) {
 			List<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
-			while (visitSymbol(tokenizer, handler, SymbolToken.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 					errorOccured(tokenizer, handler, "array dimension missing");
 				}
-				expectSymbol(SymbolToken.SQUARE_BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 			}
 
 			int equateType = visitEquate(tokenizer, handler);

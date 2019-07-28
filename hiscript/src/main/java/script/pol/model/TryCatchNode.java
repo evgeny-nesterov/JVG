@@ -1,5 +1,7 @@
 package script.pol.model;
 
+import script.tokenizer.Words;
+
 public class TryCatchNode extends Node {
 	public TryCatchNode(Node tryBody, Node catchBody, Node finallyBody, String errorVariableName) {
 		super("try-catch");
@@ -48,6 +50,7 @@ public class TryCatchNode extends Node {
 
 	private Variable errorVariable;
 
+	@Override
 	public void compile() throws ExecuteException {
 		if (tryBody != null) {
 			tryBody.compile();
@@ -55,7 +58,7 @@ public class TryCatchNode extends Node {
 
 		if (catchBody != null) {
 			catchBody.compile();
-			errorVariable = new Variable(null, errorVariableName, Types.STRING, 0);
+			errorVariable = new Variable(null, errorVariableName, Words.STRING, 0);
 		}
 
 		if (finallyBody != null) {
@@ -63,6 +66,7 @@ public class TryCatchNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		try {
 			if (tryBody != null) {
@@ -71,7 +75,7 @@ public class TryCatchNode extends Node {
 		} catch (Throwable exc) {
 			if (catchBody != null) {
 				Variable error = catchBody.addVariable(errorVariable);
-				error.getValue().setValue(exc.getMessage(), Types.STRING);
+				error.getValue().setValue(exc.getMessage(), Words.STRING);
 				catchBody.execute(ctx);
 			}
 		} finally {

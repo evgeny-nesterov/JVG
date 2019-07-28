@@ -74,6 +74,7 @@ public class ArrowDirectionChooseButton extends JComboBox<Integer> {
 		setMinimumSize(new Dimension(50, 18));
 		setMaximumSize(new Dimension(50, 18));
 		addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					showPopup();
@@ -123,6 +124,7 @@ public class ArrowDirectionChooseButton extends JComboBox<Integer> {
 			this.direction = direction;
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			super.paint(g);
 
@@ -165,6 +167,7 @@ public class ArrowDirectionChooseButton extends JComboBox<Integer> {
 			g2d.draw(shape);
 		}
 
+		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(50, 18);
 		}

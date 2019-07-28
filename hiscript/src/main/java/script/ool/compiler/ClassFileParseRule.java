@@ -16,6 +16,7 @@ public class ClassFileParseRule extends ParseRule<Node> {
 	private ClassFileParseRule() {
 	}
 
+	@Override
 	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.nextToken();
 		while (true) {

@@ -22,6 +22,7 @@ public class NodeFor extends Node {
 
 	private Node body;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.enter(RuntimeContext.FOR, line);
 		try {
@@ -72,6 +73,7 @@ public class NodeFor extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(initialization);

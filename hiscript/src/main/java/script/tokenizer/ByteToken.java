@@ -12,6 +12,7 @@ public class ByteToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Byte [" + number + ", " + super.toString() + "]";
 	}

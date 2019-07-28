@@ -19,10 +19,12 @@ public class EmptyNode extends Node {
 		super("empty", TYPE_EMPTY);
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		// do nothing
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 	}

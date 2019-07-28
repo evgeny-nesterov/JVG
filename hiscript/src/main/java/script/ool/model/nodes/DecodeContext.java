@@ -265,7 +265,7 @@ public class DecodeContext {
 		for (int i = 0; i < size; i++) {
 			nodes[i] = read(type);
 		}
-		return (N[]) nodes;
+		return nodes;
 	}
 
 	public <N> N[] readNodeArray(Class<N> type, int size) throws IOException {
@@ -273,7 +273,7 @@ public class DecodeContext {
 		for (int i = 0; i < size; i++) {
 			nodes[i] = (N) read(Node.class);
 		}
-		return (N[]) nodes;
+		return nodes;
 	}
 
 	public <N> List<N> readNullableList(Class<N> type, int size) throws IOException {
@@ -289,7 +289,7 @@ public class DecodeContext {
 		for (int i = 0; i < size; i++) {
 			nodes[i] = readNullable(type);
 		}
-		return (N[]) nodes;
+		return nodes;
 	}
 
 	public <N> N[] readNullableNodeArray(Class<N> type, int size) throws IOException {
@@ -297,7 +297,7 @@ public class DecodeContext {
 		for (int i = 0; i < size; i++) {
 			nodes[i] = (N) readNullable(Node.class);
 		}
-		return (N[]) nodes;
+		return nodes;
 	}
 
 	public <N> N readNullable(Class<N> type) throws IOException {

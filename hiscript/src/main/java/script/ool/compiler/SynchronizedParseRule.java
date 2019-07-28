@@ -7,6 +7,7 @@ import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	private final static SynchronizedParseRule instance = new SynchronizedParseRule();
@@ -18,8 +19,9 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	private SynchronizedParseRule() {
 	}
 
+	@Override
 	public NodeSynchronized visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.SYNCHRONIZED, tokenizer) != null) {
+		if (visitWord(Words.SYNCHRONIZED, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
 			Node lock = expectExpression(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);

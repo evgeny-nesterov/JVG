@@ -4,6 +4,7 @@ import script.ParseException;
 import script.pol.model.AssignmentsNode;
 import script.pol.model.Node;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -17,13 +18,14 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 	private AssignmentsParseRule() {
 	}
 
+	@Override
 	public AssignmentsNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		Node assignment = visitStatement(tokenizer);
 		if (assignment != null) {
 			AssignmentsNode node = new AssignmentsNode();
 			node.addAssignment(assignment);
 
-			while (visitSymbol(tokenizer, SymbolToken.COMMA) != -1) {
+			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				assignment = visitStatement(tokenizer);
 				if (assignment == null) {
 					throw new ParseException("statement is expected", tokenizer.currentToken());
@@ -37,10 +39,11 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			if (visitStatement(tokenizer, handler)) {
-				while (visitSymbol(tokenizer, SymbolToken.COMMA) != -1) {
+				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					if (!visitStatement(tokenizer, handler)) {
 						errorOccured(tokenizer, handler, "statement is expected");
 					}

@@ -6,6 +6,7 @@ import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ContinueParseRule extends ParseRule<NodeContinue> {
 	private final static ContinueParseRule instance = new ContinueParseRule();
@@ -17,9 +18,10 @@ public class ContinueParseRule extends ParseRule<NodeContinue> {
 	private ContinueParseRule() {
 	}
 
+	@Override
 	public NodeContinue visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.CONTINUE, tokenizer) != null) {
-			String label = visitWord(WordToken.NOT_SERVICE, tokenizer);
+		if (visitWord(Words.CONTINUE, tokenizer) != null) {
+			String label = visitWord(Words.NOT_SERVICE, tokenizer);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 			NodeContinue node = new NodeContinue(label);

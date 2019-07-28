@@ -18,6 +18,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 	private TryCatchParseRule() {
 	}
 
+	@Override
 	public TryCatchNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
 			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
@@ -64,6 +65,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.TRY, tokenizer, handler) != null) {
 			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);

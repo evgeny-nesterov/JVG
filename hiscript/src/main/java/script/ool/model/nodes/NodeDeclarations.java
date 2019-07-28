@@ -22,6 +22,7 @@ public class NodeDeclarations extends Node {
 
 	private List<Node> declarations = new ArrayList<Node>();
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		int size = declarations.size();
 		for (int i = 0; i < size; i++) {
@@ -34,6 +35,7 @@ public class NodeDeclarations extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeShort(declarations.size());

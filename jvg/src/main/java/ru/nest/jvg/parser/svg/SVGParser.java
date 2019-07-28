@@ -101,6 +101,7 @@ public class SVGParser implements JVGParserInterface {
 			this.style = parseStyle(e);
 		}
 
+		@Override
 		public String toString() {
 			return e + ", style: " + style;
 		}
@@ -492,7 +493,7 @@ public class SVGParser implements JVGParserInterface {
 	}
 
 	private void parseChildren(Element parentElement, JVGContainer parent) throws JVGParseException {
-		for (Element e : (List<Element>) parentElement.getChildren()) {
+		for (Element e : parentElement.getChildren()) {
 			Object c = parseComponent(e, parent);
 			if (c instanceof JVGShape) {
 				parent.add((JVGShape) c);
@@ -832,7 +833,7 @@ public class SVGParser implements JVGParserInterface {
 
 	private List<JVGShape> parseClipPath(Element e, JVGContainer parent) throws JVGParseException {
 		List<JVGShape> clipShapes = new ArrayList<>();
-		for (Element c : (List<Element>) e.getChildren()) {
+		for (Element c : e.getChildren()) {
 			Object child = parseComponent(c, parent);
 			if (child instanceof JVGShape) {
 				JVGShape shape = (JVGShape) child;
@@ -1365,8 +1366,8 @@ public class SVGParser implements JVGParserInterface {
 		//
 		// Step 1 : Compute (x1, y1)
 		//
-		double x1 = (Math.cos(theta) * (double) dx2 + Math.sin(theta) * (double) dy2);
-		double y1 = (-Math.sin(theta) * (double) dx2 + Math.cos(theta) * (double) dy2);
+		double x1 = (Math.cos(theta) * dx2 + Math.sin(theta) * dy2);
+		double y1 = (-Math.sin(theta) * dx2 + Math.cos(theta) * dy2);
 		// Ensure radii are large enough
 		rx = Math.abs(rx);
 		ry = Math.abs(ry);
@@ -1376,8 +1377,8 @@ public class SVGParser implements JVGParserInterface {
 		double Py1 = y1 * y1;
 		double d = Px1 / Prx + Py1 / Pry;
 		if (d > 1) {
-			rx = Math.abs((Math.sqrt(d) * (double) rx));
-			ry = Math.abs((Math.sqrt(d) * (double) ry));
+			rx = Math.abs((Math.sqrt(d) * rx));
+			ry = Math.abs((Math.sqrt(d) * ry));
 			Prx = rx * rx;
 			Pry = ry * ry;
 		}
@@ -1399,8 +1400,8 @@ public class SVGParser implements JVGParserInterface {
 		//
 		double sx2 = (x0 + x) / 2.0f;
 		double sy2 = (y0 + y) / 2.0f;
-		double cx = sx2 + (Math.cos(theta) * (double) cx1 - Math.sin(theta) * (double) cy1);
-		double cy = sy2 + (Math.sin(theta) * (double) cx1 + Math.cos(theta) * (double) cy1);
+		double cx = sx2 + (Math.cos(theta) * cx1 - Math.sin(theta) * cy1);
+		double cy = sy2 + (Math.sin(theta) * cx1 + Math.cos(theta) * cy1);
 
 		//
 		// Step 4 : Compute the angleStart (theta1) and the angleExtent (dtheta)
@@ -1435,7 +1436,7 @@ public class SVGParser implements JVGParserInterface {
 	private void parseDefs(Element defsElement, JVGContainer parent) throws JVGParseException {
 		String id = defsElement.getAttributeValue("id");
 		for (int order = 0; order < 2; order++) {
-			for (Element e : (List<Element>) defsElement.getChildren()) {
+			for (Element e : defsElement.getChildren()) {
 				String href = e.getAttributeValue("href", xlink);
 				if ((order == 0 && href != null) || (order == 1 && href == null)) {
 					continue;
@@ -1464,7 +1465,7 @@ public class SVGParser implements JVGParserInterface {
 
 		List<Resource<Color>> colorsList = new ArrayList<>();
 		List<Float> offsetsList = new ArrayList<>();
-		for (Element stopElement : (List<Element>) e.getChildren()) {
+		for (Element stopElement : e.getChildren()) {
 			if (stopElement.getName().equals("stop")) {
 				String stopId = stopElement.getAttributeValue("id");
 				Map<String, String> style = parseStyle(stopElement); // stop-color, stop-opacity
@@ -1530,7 +1531,7 @@ public class SVGParser implements JVGParserInterface {
 
 		List<Resource<Color>> colorsList = new ArrayList<>();
 		List<Float> offsetsList = new ArrayList<>();
-		for (Element stopElement : (List<Element>) e.getChildren()) {
+		for (Element stopElement : e.getChildren()) {
 			if (stopElement.getName().equals("stop")) {
 				String stopId = stopElement.getAttributeValue("id");
 				Map<String, String> style = parseStyle(stopElement); // stop-color, stop-opacity

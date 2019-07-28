@@ -18,6 +18,7 @@ public class ArrayIndexesNode extends Node {
 
 	private ValueContainer buf2;
 
+	@Override
 	public void compile() throws ExecuteException {
 		buf1 = new ValueContainer();
 		buf2 = new ValueContainer();
@@ -26,6 +27,7 @@ public class ArrayIndexesNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		buf1.type = ctx.value.type;
 

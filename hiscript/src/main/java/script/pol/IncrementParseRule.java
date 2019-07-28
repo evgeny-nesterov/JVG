@@ -4,6 +4,7 @@ import script.ParseException;
 import script.pol.model.IncrementNode;
 import script.pol.model.VariableNode;
 import script.tokenizer.SymbolToken;
+import script.tokenizer.Symbols;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 
@@ -17,8 +18,9 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 	private IncrementParseRule() {
 	}
 
+	@Override
 	public IncrementNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		int operation = visitSymbol(tokenizer, SymbolToken.PLUS_PLUS, SymbolToken.MINUS_MINUS);
+		int operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 
 		tokenizer.start();
 		if (operation != -1) {
@@ -34,7 +36,7 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 		tokenizer.start();
 		VariableNode variable = visitVariable(tokenizer);
 		if (variable != null) {
-			operation = visitSymbol(tokenizer, SymbolToken.PLUS_PLUS, SymbolToken.MINUS_MINUS);
+			operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 			if (operation != -1) {
 				tokenizer.commit();
 				return new IncrementNode(variable, IncrementNode.INCREMENT_POSTFIX, operation);
@@ -45,8 +47,9 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		int operation = visitSymbol(tokenizer, handler, SymbolToken.PLUS_PLUS, SymbolToken.MINUS_MINUS);
+		int operation = visitSymbol(tokenizer, handler, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 		tokenizer.start();
 
 		if (operation != -1) {
@@ -60,7 +63,7 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 
 		VariableNode variable = visitVariable(tokenizer, handler);
 		if (variable != null) {
-			operation = visitSymbol(tokenizer, handler, SymbolToken.PLUS_PLUS, SymbolToken.MINUS_MINUS);
+			operation = visitSymbol(tokenizer, handler, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 			if (operation != -1) {
 				tokenizer.commit();
 				return true;

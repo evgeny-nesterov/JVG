@@ -47,14 +47,17 @@ public class ClazzPrimitive extends Clazz {
 		return primitiveClasses.get(name);
 	}
 
+	@Override
 	public boolean isPrimitive() {
 		return true;
 	}
 
+	@Override
 	public boolean isObject() {
 		return false;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
 		os.writeByte(Clazz.CLASS_PRIMITIVE);

@@ -652,6 +652,7 @@ public class Clazz implements Codable {
 		return ClazzArray.getArrayClass(cellClass, dimensions);
 	}
 
+	@Override
 	public String toString() {
 		return fullName;
 	}
@@ -699,6 +700,7 @@ public class Clazz implements Codable {
 		return getArrayClass(cellType, dimension);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
 		os.writeByte(CLASS_OBJECT);
@@ -780,6 +782,7 @@ public class Clazz implements Codable {
 			} catch (NoClassException exc) {
 				initClass = false;
 				os.addClassLoadListener(new ClassLoadListener() {
+					@Override
 					public void classLoaded(Clazz clazz) {
 						classAccess[0].init(clazz, classAccess[0].name, classAccess[0].type);
 					}
@@ -813,6 +816,7 @@ public class Clazz implements Codable {
 				clazz.classes[i] = os.readClass();
 			} catch (NoClassException exc) {
 				os.addClassLoadListener(new ClassLoadListener() {
+					@Override
 					public void classLoaded(Clazz clazz) {
 						classAccess[0].classes[index] = clazz;
 					}
@@ -830,10 +834,12 @@ public class Clazz implements Codable {
 		return clazz;
 	}
 
+	@Override
 	public int hashCode() {
 		return fullName.hashCode();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Clazz) {
 			Clazz c = (Clazz) o;

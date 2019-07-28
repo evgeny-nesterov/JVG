@@ -25,6 +25,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 
 	private boolean isStatic;
 
+	@Override
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -39,6 +40,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		this.enterType = enterType;
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (enterType != RuntimeContext.SAME) {
 			ctx.enter(enterType, line);
@@ -65,6 +67,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeBoolean(isStatic);

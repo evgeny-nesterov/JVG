@@ -17,6 +17,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 		super("~", PREFIX_BITWISE_REVERSE);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		Clazz c = v.type;
 

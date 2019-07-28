@@ -17,6 +17,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	private InvocationParseRule() {
 	}
 
+	@Override
 	public NodeInvocation visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 

@@ -53,10 +53,12 @@ public class TOIGroup extends TOIObject {
 		return objects;
 	}
 
+	@Override
 	public boolean contains(double x, double y) {
 		return getObject(x, y) != null;
 	}
 
+	@Override
 	public void transform(AffineTransform transform) {
 		super.transform(transform);
 		for (TOIObject o : objects) {
@@ -64,6 +66,7 @@ public class TOIGroup extends TOIObject {
 		}
 	}
 
+	@Override
 	public void invalidate() {
 		super.invalidate();
 		for (TOIObject o : objects) {
@@ -71,6 +74,7 @@ public class TOIGroup extends TOIObject {
 		}
 	}
 
+	@Override
 	public void validate() {
 		if (!isValid()) {
 			Area originalShape = null;
@@ -115,6 +119,7 @@ public class TOIGroup extends TOIObject {
 		return null;
 	}
 
+	@Override
 	public void setColorDeep(Color color) {
 		setColor(color);
 		for (TOIObject o : objects) {
@@ -122,6 +127,7 @@ public class TOIGroup extends TOIObject {
 		}
 	}
 
+	@Override
 	public void setFontDeep(Font font) {
 		setFont(font);
 		for (TOIObject o : objects) {

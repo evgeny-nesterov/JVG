@@ -16,6 +16,7 @@ public class NodeIdentificator extends Node {
 
 	private String name;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.NAME;
 		ctx.value.name = name;
@@ -68,6 +69,7 @@ public class NodeIdentificator extends Node {
 		return false;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);

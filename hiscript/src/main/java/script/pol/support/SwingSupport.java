@@ -27,6 +27,7 @@ import script.pol.model.ScriptUtil;
 import script.pol.model.Types;
 import script.pol.model.ValueContainer;
 import script.pol.model.Variable;
+import script.tokenizer.Words;
 
 //==================================================
 //	Methods:
@@ -101,14 +102,16 @@ public class SwingSupport {
 
 	private void init() {
 		// Structure
-		methods.add(new Method(NAMESPACE, "getRoot", new int[] {}, new int[] {}, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "getRoot", new int[] {}, new int[] {}, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				ctx.value.longNumber = rootID;
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "add", new int[] { Types.LONG, Types.LONG }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "add", new int[] { Words.LONG, Words.LONG }, new int[] { 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long parentID = (Long) arguments[0];
@@ -124,7 +127,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "remove", new int[] { Types.LONG, Types.LONG }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "remove", new int[] { Words.LONG, Words.LONG }, new int[] { 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long parentID = (Long) arguments[0];
@@ -140,7 +144,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getChildsCount", new int[] { Types.LONG }, new int[] { 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getChildsCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -149,7 +154,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getChild", new int[] { Types.LONG, Types.INT }, new int[] { 0, 0 }, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "getChild", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -166,7 +172,8 @@ public class SwingSupport {
 		});
 
 		// Bounds
-		methods.add(new Method(NAMESPACE, "setBounds", new int[] { Types.LONG, Types.INT, Types.INT, Types.INT, Types.INT }, new int[] { 0, 0, 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setBounds", new int[] { Words.LONG, Words.INT, Words.INT, Words.INT, Words.INT }, new int[] { 0, 0, 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -181,7 +188,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "setLocation", new int[] { Types.LONG, Types.INT, Types.INT }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setLocation", new int[] { Words.LONG, Words.INT, Words.INT }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -194,7 +202,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "setSize", new int[] { Types.LONG, Types.INT, Types.INT }, new int[] { 0, 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "setSize", new int[] { Words.LONG, Words.INT, Words.INT }, new int[] { 0, 0, 0 }, Words.VOID) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -207,7 +216,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getX", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getX", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -216,7 +226,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getY", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getY", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -225,7 +236,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getWidth", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getWidth", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -234,7 +246,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getHeight", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getHeight", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -243,7 +256,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getPreferredWidth", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getPreferredWidth", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -252,7 +266,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getPreferredHeight", new int[] { Types.LONG }, new int[] { 0, 0, 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getPreferredHeight", new int[] { Words.LONG }, new int[] { 0, 0, 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -262,7 +277,8 @@ public class SwingSupport {
 		});
 
 		// Create a new component
-		methods.add(new Method(NAMESPACE, "getType", new int[] { Types.LONG }, new int[] { 0 }, Types.INT) {
+		methods.add(new Method(NAMESPACE, "getType", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];
@@ -281,7 +297,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "createButton", new int[] { Types.STRING }, new int[] { 0 }, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "createButton", new int[] { Words.STRING }, new int[] { 0 }, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];
@@ -290,7 +307,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "createLabel", new int[] { Types.STRING }, new int[] { 0 }, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "createLabel", new int[] { Words.STRING }, new int[] { 0 }, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];
@@ -299,7 +317,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "createTextField", new int[] { Types.STRING }, new int[] { 0 }, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "createTextField", new int[] { Words.STRING }, new int[] { 0 }, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];
@@ -308,7 +327,8 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "createTextArea", new int[] { Types.STRING }, new int[] { 0 }, Types.LONG) {
+		methods.add(new Method(NAMESPACE, "createTextArea", new int[] { Words.STRING }, new int[] { 0 }, Words.LONG) {
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				String text = (String) arguments[0];
@@ -318,9 +338,10 @@ public class SwingSupport {
 		});
 
 		// Events
-		methods.add(new Method(NAMESPACE, "mousePressed", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mousePressed", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -332,9 +353,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "mouseReleased", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mouseReleased", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -346,9 +368,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "mouseEntered", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mouseEntered", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -360,9 +383,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "mouseExited", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mouseExited", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -374,9 +398,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "mouseDragged", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mouseDragged", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseMotionListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -388,9 +413,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "mouseMoved", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "mouseMoved", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			MouseMotionListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -402,9 +428,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "keyPressed", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "keyPressed", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			KeyListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -416,9 +443,10 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "keyReleased", new int[] { Types.LONG, Types.STRING }, new int[] { 0, 0 }, Types.VOID) {
+		methods.add(new Method(NAMESPACE, "keyReleased", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			KeyListener listener = null;
 
+			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
 				Long id = (Long) arguments[0];
@@ -437,24 +465,28 @@ public class SwingSupport {
 		}
 
 		listener = new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_PRESSED) {
 					execute(e);
 				}
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_RELEASED) {
 					execute(e);
 				}
 			}
 
+			@Override
 			public void mouseEntered(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_ENTERED) {
 					execute(e);
 				}
 			}
 
+			@Override
 			public void mouseExited(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_EXITED) {
 					execute(e);
@@ -484,12 +516,14 @@ public class SwingSupport {
 		}
 
 		listener = new MouseMotionAdapter() {
+			@Override
 			public void mouseDragged(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_DRAGGED) {
 					execute(e);
 				}
 			}
 
+			@Override
 			public void mouseMoved(MouseEvent e) {
 				if (type == MouseEvent.MOUSE_MOVED) {
 					execute(e);
@@ -517,12 +551,14 @@ public class SwingSupport {
 		}
 
 		listener = new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (type == KeyEvent.KEY_PRESSED) {
 					execute(e);
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (type == KeyEvent.KEY_RELEASED) {
 					execute(e);
@@ -547,32 +583,32 @@ public class SwingSupport {
 	}
 
 	private void setMouseEventVariables(Map<String, Variable> variables, MouseEvent e) throws ExecuteException {
-		addVariable(variables, NAMESPACE, "modifiers", Types.INT, e.getModifiers());
-		addVariable(variables, NAMESPACE, "x", Types.INT, e.getX());
-		addVariable(variables, NAMESPACE, "y", Types.INT, e.getY());
-		addVariable(variables, NAMESPACE, "clickCount", Types.INT, e.getClickCount());
-		addVariable(variables, NAMESPACE, "button", Types.INT, e.getButton());
-		addVariable(variables, NAMESPACE, "when", Types.LONG, e.getWhen());
-		addVariable(variables, NAMESPACE, "isAltDown", Types.BOOLEAN, e.isAltDown());
-		addVariable(variables, NAMESPACE, "isControlDown", Types.BOOLEAN, e.isControlDown());
-		addVariable(variables, NAMESPACE, "isShiftDown", Types.BOOLEAN, e.isShiftDown());
+		addVariable(variables, NAMESPACE, "modifiers", Words.INT, e.getModifiers());
+		addVariable(variables, NAMESPACE, "x", Words.INT, e.getX());
+		addVariable(variables, NAMESPACE, "y", Words.INT, e.getY());
+		addVariable(variables, NAMESPACE, "clickCount", Words.INT, e.getClickCount());
+		addVariable(variables, NAMESPACE, "button", Words.INT, e.getButton());
+		addVariable(variables, NAMESPACE, "when", Words.LONG, e.getWhen());
+		addVariable(variables, NAMESPACE, "isAltDown", Words.BOOLEAN, e.isAltDown());
+		addVariable(variables, NAMESPACE, "isControlDown", Words.BOOLEAN, e.isControlDown());
+		addVariable(variables, NAMESPACE, "isShiftDown", Words.BOOLEAN, e.isShiftDown());
 	}
 
 	public void setKeyEventVariables(Map<String, Variable> variables, KeyEvent e) throws ExecuteException {
-		addVariable(variables, NAMESPACE, "keyChar", Types.CHAR, e.getKeyChar());
-		addVariable(variables, NAMESPACE, "keyCode", Types.INT, e.getKeyCode());
-		addVariable(variables, NAMESPACE, "modifiers", Types.INT, e.getModifiers());
-		addVariable(variables, NAMESPACE, "when", Types.LONG, e.getWhen());
-		addVariable(variables, NAMESPACE, "isAltDown", Types.BOOLEAN, e.isAltDown());
-		addVariable(variables, NAMESPACE, "isControlDown", Types.BOOLEAN, e.isControlDown());
-		addVariable(variables, NAMESPACE, "isShiftDown", Types.BOOLEAN, e.isShiftDown());
+		addVariable(variables, NAMESPACE, "keyChar", Words.CHAR, e.getKeyChar());
+		addVariable(variables, NAMESPACE, "keyCode", Words.INT, e.getKeyCode());
+		addVariable(variables, NAMESPACE, "modifiers", Words.INT, e.getModifiers());
+		addVariable(variables, NAMESPACE, "when", Words.LONG, e.getWhen());
+		addVariable(variables, NAMESPACE, "isAltDown", Words.BOOLEAN, e.isAltDown());
+		addVariable(variables, NAMESPACE, "isControlDown", Words.BOOLEAN, e.isControlDown());
+		addVariable(variables, NAMESPACE, "isShiftDown", Words.BOOLEAN, e.isShiftDown());
 	}
 
 	public void exportConstants(Node node) throws ExecuteException {
-		node.addVariable(new Variable(NAMESPACE, "BUTTON", Types.INT, 0)).getValue().setValue(0, Types.INT);
-		node.addVariable(new Variable(NAMESPACE, "LABEL", Types.INT, 0)).getValue().setValue(1, Types.INT);
-		node.addVariable(new Variable(NAMESPACE, "TEXTFIELD", Types.INT, 0)).getValue().setValue(2, Types.INT);
-		node.addVariable(new Variable(NAMESPACE, "TEXTAREA", Types.INT, 0)).getValue().setValue(3, Types.INT);
+		node.addVariable(new Variable(NAMESPACE, "BUTTON", Words.INT, 0)).getValue().setValue(0, Words.INT);
+		node.addVariable(new Variable(NAMESPACE, "LABEL", Words.INT, 0)).getValue().setValue(1, Words.INT);
+		node.addVariable(new Variable(NAMESPACE, "TEXTFIELD", Words.INT, 0)).getValue().setValue(2, Words.INT);
+		node.addVariable(new Variable(NAMESPACE, "TEXTAREA", Words.INT, 0)).getValue().setValue(3, Words.INT);
 	}
 
 	private void addVariable(Map<String, Variable> variables, String namespace, String name, int type, Object value) throws ExecuteException {

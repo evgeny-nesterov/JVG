@@ -6,6 +6,7 @@ import script.ool.model.Node;
 import script.ool.model.Obj;
 import script.ool.model.Operation;
 import script.ool.model.Operations;
+import script.ool.model.OperationsIF;
 import script.ool.model.RuntimeContext;
 import script.ool.model.Value;
 
@@ -31,6 +32,7 @@ public class NodeInvocation extends Node {
 		this.innerInvocation = innerInvocation;
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (!innerInvocation) {
 			ctx.value.valueType = Value.METHOD;
@@ -59,7 +61,7 @@ public class NodeInvocation extends Node {
 				v.name = name;
 				v.arguments = arguments;
 
-				Operation o = Operations.getOperation(Operations.INVOCATION);
+				Operation o = Operations.getOperation(OperationsIF.INVOCATION);
 				o.doOperation(ctx, ctx.value, v);
 			} finally {
 				ctx.putValues(vs);
@@ -82,13 +84,14 @@ public class NodeInvocation extends Node {
 			v.name = methodName;
 			v.arguments = arguments;
 
-			Operation o = Operations.getOperation(Operations.INVOCATION);
+			Operation o = Operations.getOperation(OperationsIF.INVOCATION);
 			o.doOperation(ctx, ctx.value, v);
 		} finally {
 			ctx.putValues(vs);
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);

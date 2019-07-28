@@ -111,11 +111,13 @@ public class JVGStyledText extends JVGShape {
 				this.size = size;
 			}
 
+			@Override
 			public int hashCode() {
 				int fhash = (family != null) ? family.hashCode() : 0;
 				return fhash ^ style ^ size;
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				if (obj instanceof FontKey) {
 					FontKey font = (FontKey) obj;

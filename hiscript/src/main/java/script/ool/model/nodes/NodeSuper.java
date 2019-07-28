@@ -14,6 +14,7 @@ public class NodeSuper extends Node {
 		super("super", SUPER);
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Obj currentObject = ctx.getCurrentObject();
 		if (currentObject == null || currentObject.getSuperObject() == null) {
@@ -27,6 +28,7 @@ public class NodeSuper extends Node {
 		ctx.value.object = superObject;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 	}

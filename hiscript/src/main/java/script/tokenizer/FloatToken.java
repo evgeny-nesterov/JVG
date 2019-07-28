@@ -12,6 +12,7 @@ public class FloatToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Float [" + number + ", " + super.toString() + "]";
 	}

@@ -17,12 +17,15 @@ public class VerticalBagLayout implements LayoutManager {
 		this.vgap = vgap;
 	}
 
+	@Override
 	public void addLayoutComponent(String name, Component comp) {
 	}
 
+	@Override
 	public void removeLayoutComponent(Component comp) {
 	}
 
+	@Override
 	public Dimension minimumLayoutSize(Container target) {
 		Dimension dim = new Dimension();
 		int nmembers = target.countComponents();
@@ -42,6 +45,7 @@ public class VerticalBagLayout implements LayoutManager {
 		return dim;
 	}
 
+	@Override
 	public Dimension preferredLayoutSize(Container target) {
 		Dimension dim = new Dimension();
 		int nmembers = target.countComponents();
@@ -62,6 +66,7 @@ public class VerticalBagLayout implements LayoutManager {
 		return dim;
 	}
 
+	@Override
 	public void layoutContainer(Container target) {
 		Insets insets = target.insets();
 		int top = insets.top;

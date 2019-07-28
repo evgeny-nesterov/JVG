@@ -10,6 +10,7 @@ public class FieldChar extends FieldNumber<Character> {
 
 	private char value;
 
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case CHAR:
@@ -37,6 +38,7 @@ public class FieldChar extends FieldNumber<Character> {
 		}
 	}
 
+	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		if (valueType != CHAR) {
 			// error
@@ -44,6 +46,7 @@ public class FieldChar extends FieldNumber<Character> {
 		this.value = value.character;
 	}
 
+	@Override
 	public Character get() {
 		return value;
 	}

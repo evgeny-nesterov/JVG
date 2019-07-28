@@ -219,6 +219,7 @@ public class TOIMultiArrowPath extends TOIPath implements Arrow {
 		return elements;
 	}
 
+	@Override
 	public void setColorDeep(Color color) {
 		setColor(color);
 		for (TOIArrowPathElement e : elements) {
@@ -226,34 +227,41 @@ public class TOIMultiArrowPath extends TOIPath implements Arrow {
 		}
 	}
 
+	@Override
 	public double getWidth() {
 		return width;
 	}
 
+	@Override
 	public void setWidth(double width) {
 		this.width = width;
 		stroke = null;
 		invalidate();
 	}
 
+	@Override
 	public double getArrowWidth() {
 		return arrowWidth;
 	}
 
+	@Override
 	public void setArrowWidth(double arrowWidth) {
 		this.arrowWidth = arrowWidth;
 		invalidate();
 	}
 
+	@Override
 	public double getArrowLength() {
 		return arrowLength;
 	}
 
+	@Override
 	public void setArrowLength(double arrowLength) {
 		this.arrowLength = arrowLength;
 		invalidate();
 	}
 
+	@Override
 	public void setScale(double scaleWidth, double scaleArrowWidth, double scaleArrowLength) {
 		width = 14 * scaleWidth;
 		arrowWidth = 12 * scaleArrowWidth;

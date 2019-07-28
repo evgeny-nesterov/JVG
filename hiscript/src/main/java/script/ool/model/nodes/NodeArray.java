@@ -31,6 +31,7 @@ public class NodeArray extends Node {
 
 	private Node[] dimensions;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (dim == null) {
 			for (dimensionsCountActive = 0; dimensionsCountActive < dimensionsCount; dimensionsCountActive++) {
@@ -70,6 +71,7 @@ public class NodeArray extends Node {
 		ctx.value.array = Array.newInstance(c, dim);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);

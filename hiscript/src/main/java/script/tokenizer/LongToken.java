@@ -12,6 +12,7 @@ public class LongToken extends NumberToken {
 		return number;
 	}
 
+	@Override
 	public String toString() {
 		return "Long [" + number + ", " + super.toString() + "]";
 	}

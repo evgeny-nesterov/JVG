@@ -16,6 +16,7 @@ public class OperationPrefixExclamation extends UnaryOperation {
 		super("!", PREFIX_EXCLAMATION);
 	}
 
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		Clazz c = v.type;
 		if (c != TYPE_BOOLEAN) {

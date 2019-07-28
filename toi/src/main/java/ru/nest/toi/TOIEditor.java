@@ -1328,6 +1328,7 @@ public class TOIEditor extends JPanel {
 			});
 			setControlFilter(controlFilter);
 			setFactory(new TOIEditorFactory() {
+				@Override
 				public <O extends TOIObject> O create(Class<O> type) {
 					O o = super.create(type);
 					o.setColor(btnColor.getColor());
@@ -1348,7 +1349,7 @@ public class TOIEditor extends JPanel {
 
 						float size = font.getSize();
 						if (cmbFontSize.getSelectedItem() != null) {
-							size = (float) (Integer) cmbFontSize.getSelectedItem();
+							size = (Integer) cmbFontSize.getSelectedItem();
 						}
 
 						int style = (btnItalic.isSelected() ? Font.ITALIC : Font.PLAIN) | (btnBold.isSelected() ? Font.BOLD : Font.PLAIN);
@@ -1522,6 +1523,7 @@ public class TOIEditor extends JPanel {
 			}
 		}
 
+		@Override
 		public void processKeyEvent(KeyEvent e) {
 			super.processKeyEvent(e);
 			if (e.getID() == KeyEvent.KEY_PRESSED) {

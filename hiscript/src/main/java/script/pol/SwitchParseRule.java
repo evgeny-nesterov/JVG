@@ -23,20 +23,21 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	private SwitchParseRule() {
 	}
 
+	@Override
 	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.SWITCH, tokenizer) != null) {
-			expectSymbol(SymbolToken.PARANTHESIS_LEFT, tokenizer);
+		if (visitWord(Words.SWITCH, tokenizer) != null) {
+			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (value == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
 
 			SwitchNode node = new SwitchNode(value);
 
 			boolean defaultFound = false;
-			expectSymbol(SymbolToken.BRACES_LEFT, tokenizer);
+			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
 			while (true) {
 				CaseNode caseNode = CaseParseRule.getInstance().visit(tokenizer);
 				if (caseNode != null) {
@@ -59,7 +60,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 
 				break;
 			}
-			expectSymbol(SymbolToken.BRACES_RIGHT, tokenizer);
+			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
 
 			return node;
 		}
@@ -67,17 +68,18 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.SWITCH, tokenizer, handler) != null) {
-			expectSymbol(SymbolToken.PARANTHESIS_LEFT, tokenizer, handler);
+		if (visitWord(Words.SWITCH, tokenizer, handler) != null) {
+			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccured(tokenizer, handler, "expression is expected");
 			}
-			expectSymbol(SymbolToken.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
 			boolean defaultFound = false;
-			expectSymbol(SymbolToken.BRACES_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
 			while (true) {
 				if (CaseParseRule.getInstance().visit(tokenizer, handler)) {
 					continue;
@@ -97,7 +99,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 
 				break;
 			}
-			expectSymbol(SymbolToken.BRACES_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
 
 			return true;
 		}

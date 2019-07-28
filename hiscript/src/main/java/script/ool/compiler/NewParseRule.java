@@ -26,6 +26,7 @@ public class NewParseRule extends ParseRule<Node> {
 	private NewParseRule() {
 	}
 
+	@Override
 	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Type type = visitType(tokenizer, false);

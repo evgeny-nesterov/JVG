@@ -67,6 +67,7 @@ public abstract class Method {
 
 	private int hashCode;
 
+	@Override
 	public int hashCode() {
 		return hashCode;
 	}
@@ -76,6 +77,7 @@ public abstract class Method {
 		ctx.value.dimension = returnDimension;
 	}
 
+	@Override
 	public String toString() {
 		return getMethodDescr(namespace, name, argTypes, argDimensions, returnType, returnDimension);
 	}

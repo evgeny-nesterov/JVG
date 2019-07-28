@@ -30,11 +30,13 @@ public class ArgumentNode extends Node {
 
 	private Variable var;
 
+	@Override
 	public void compile() throws ExecuteException {
 		statement = getTopStatement();
 		var = new Variable(null, name, type, dimension);
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		statement.addVariable(var);
 	}

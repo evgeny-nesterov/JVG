@@ -44,6 +44,7 @@ public class NodeNative extends Node {
 
 	private String id;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Object[] args = new Object[1 + argCount];
 		args[0] = ctx;
@@ -54,6 +55,7 @@ public class NodeNative extends Node {
 		Native.invoke(ctx, id, args);
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeByte(argCount);

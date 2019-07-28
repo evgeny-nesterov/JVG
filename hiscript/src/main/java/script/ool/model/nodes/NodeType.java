@@ -19,11 +19,13 @@ public class NodeType extends Node {
 		return type;
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.TYPE;
 		ctx.value.variableType = type;
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);

@@ -6,6 +6,7 @@ import script.pol.model.ReturnNode;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class ReturnParseRule extends ParseRule<ReturnNode> {
 	private final static ReturnParseRule instance = new ReturnParseRule();
@@ -17,8 +18,9 @@ public class ReturnParseRule extends ParseRule<ReturnNode> {
 	private ReturnParseRule() {
 	}
 
+	@Override
 	public ReturnNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.RETURN, tokenizer) != null) {
+		if (visitWord(Words.RETURN, tokenizer) != null) {
 			Node returnValue = ExpressionParseRule.getInstance().visit(tokenizer);
 			return new ReturnNode(returnValue);
 		}
@@ -26,8 +28,9 @@ public class ReturnParseRule extends ParseRule<ReturnNode> {
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.RETURN, tokenizer, handler) != null) {
+		if (visitWord(Words.RETURN, tokenizer, handler) != null) {
 			ExpressionParseRule.getInstance().visit(tokenizer, handler);
 			return true;
 		}

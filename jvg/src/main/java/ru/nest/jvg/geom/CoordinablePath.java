@@ -132,10 +132,12 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		}
 	}
 
+	@Override
 	public boolean moveTo(Coordinable x, Coordinable y) {
 		return insertMoveTo(numTypes, x, y);
 	}
 
+	@Override
 	public synchronized boolean insertMoveTo(int index, Coordinable x, Coordinable y) {
 		if (numTypes > 0 && pointTypes[index - 1] == SEG_MOVETO) {
 			int prevCoordIndex = getCoordIndex(index - 1);
@@ -157,6 +159,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return true;
 	}
 
+	@Override
 	public synchronized boolean setMoveTo(int index, Coordinable x, Coordinable y) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_MOVETO;
@@ -180,10 +183,12 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return true;
 	}
 
+	@Override
 	public void lineTo(Coordinable x, Coordinable y) {
 		insertLineTo(numTypes, x, y);
 	}
 
+	@Override
 	public synchronized void insertLineTo(int index, Coordinable x, Coordinable y) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 2, true);
@@ -197,6 +202,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		numCoords += 2;
 	}
 
+	@Override
 	public synchronized boolean setLineTo(int index, Coordinable x, Coordinable y) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_LINETO;
@@ -220,10 +226,12 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return true;
 	}
 
+	@Override
 	public void quadTo(Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2) {
 		insertQuadTo(numTypes, x1, y1, x2, y2);
 	}
 
+	@Override
 	public synchronized void insertQuadTo(int index, Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 4, true);
@@ -239,6 +247,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		numCoords += 4;
 	}
 
+	@Override
 	public synchronized boolean setQuadTo(int index, Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_QUADTO;
@@ -265,10 +274,12 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return true;
 	}
 
+	@Override
 	public synchronized void curveTo(Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2, Coordinable x3, Coordinable y3) {
 		insertCurveTo(numTypes, x1, y1, x2, y2, x3, y3);
 	}
 
+	@Override
 	public synchronized void insertCurveTo(int index, Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2, Coordinable x3, Coordinable y3) {
 		int coordIndex = getCoordIndex(index);
 		needRoom(1, 6, true);
@@ -286,6 +297,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		numCoords += 6;
 	}
 
+	@Override
 	public synchronized boolean setCurveTo(int index, Coordinable x1, Coordinable y1, Coordinable x2, Coordinable y2, Coordinable x3, Coordinable y3) {
 		int type = pointTypes[index];
 		pointTypes[index] = SEG_CUBICTO;
@@ -349,6 +361,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		}
 	}
 
+	@Override
 	public synchronized boolean closePath() {
 		if (numTypes == 0 || pointTypes[numTypes - 1] != SEG_CLOSE) {
 			needRoom(1, 0, true);
@@ -399,10 +412,12 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		}
 	}
 
+	@Override
 	public void deleteLast() {
 		delete(numTypes - 1);
 	}
 
+	@Override
 	public synchronized void delete(int index) {
 		if (index >= 0 && index < numTypes) {
 			int type = pointTypes[index];
@@ -721,6 +736,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		this.numCoords = numCoords;
 	}
 
+	@Override
 	public int getCoordIndex(double x, double y, int start, double radius) {
 		int coord = 0;
 		for (int t = 0; t < numTypes; t++) {
@@ -774,6 +790,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		}
 	}
 
+	@Override
 	public synchronized void deletePoint(int coordIndex) {
 		if (coordIndex >= 0 && coordIndex < numCoords) {
 			int index = getCurveIndex(coordIndex);
@@ -794,6 +811,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		}
 	}
 
+	@Override
 	public synchronized boolean insertPoint(int coordIndex, Coordinable x, Coordinable y) {
 		if (coordIndex >= 0 && coordIndex < numCoords) {
 			int index = getCurveIndex(coordIndex);
@@ -838,6 +856,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return pointCoords[coordIndex].getCoord();
 	}
 
+	@Override
 	public Coordinable[] getCurvePoints(int index) {
 		int type = pointTypes[index];
 		int curvesize = CoordinablePathIterator.curvesize[type];
@@ -853,6 +872,7 @@ public class CoordinablePath implements Pathable<Coordinable> {
 		return c;
 	}
 
+	@Override
 	public int getCurveIndex(int coordIndex) {
 		int coord = 0;
 		for (int t = 0; t < numTypes; t++) {

@@ -31,6 +31,7 @@ public class NodeSwitch extends Node {
 
 	private List<Node> casesNodes;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		valueNode.execute(ctx);
 		if (ctx.exitFromBlock()) {
@@ -89,6 +90,7 @@ public class NodeSwitch extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.write(valueNode);

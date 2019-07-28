@@ -38,6 +38,7 @@ public class ArgumentsNode extends Node {
 		return names;
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		int size = arguments.size();
 		types = new int[size];
@@ -54,6 +55,7 @@ public class ArgumentsNode extends Node {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		int size = arguments.size();
 		for (int i = 0; i < size; i++) {

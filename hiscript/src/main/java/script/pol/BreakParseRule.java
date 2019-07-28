@@ -5,6 +5,7 @@ import script.pol.model.BreakNode;
 import script.tokenizer.Tokenizer;
 import script.tokenizer.TokenizerException;
 import script.tokenizer.WordToken;
+import script.tokenizer.Words;
 
 public class BreakParseRule extends ParseRule<BreakNode> {
 	private final static BreakParseRule instance = new BreakParseRule();
@@ -16,17 +17,19 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 	private BreakParseRule() {
 	}
 
+	@Override
 	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
-		if (visitWord(WordToken.BREAK, tokenizer) != null) {
-			String mark = visitWord(WordToken.NOT_SERVICE, tokenizer);
+		if (visitWord(Words.BREAK, tokenizer) != null) {
+			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new BreakNode(mark);
 		}
 		return null;
 	}
 
+	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(WordToken.BREAK, tokenizer, handler) != null) {
-			visitWord(WordToken.NOT_SERVICE, tokenizer, handler);
+		if (visitWord(Words.BREAK, tokenizer, handler) != null) {
+			visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			return true;
 		}
 

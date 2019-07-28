@@ -28,6 +28,7 @@ public class SwitchNode extends Node implements Breakable {
 
 	private boolean isBreaked = false;
 
+	@Override
 	public void Break() {
 		isBreaked = true;
 	}
@@ -43,6 +44,7 @@ public class SwitchNode extends Node implements Breakable {
 		defaultBody.setParent(this);
 	}
 
+	@Override
 	public void compile() throws ExecuteException {
 		if (value != null) {
 			value.compile();
@@ -57,6 +59,7 @@ public class SwitchNode extends Node implements Breakable {
 		}
 	}
 
+	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
 		isBreaked = false;
 

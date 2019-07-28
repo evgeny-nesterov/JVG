@@ -9,5 +9,6 @@ public interface NodeInitializer extends Codable {
 
 	public void execute(RuntimeContext ctx);
 
+	@Override
 	public void code(CodeContext os) throws IOException;
 }

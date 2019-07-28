@@ -17,6 +17,7 @@ public class NodeSynchronized extends Node {
 
 	private Node body;
 
+	@Override
 	public void execute(RuntimeContext ctx) {
 		lock.execute(ctx);
 		if (ctx.exitFromBlock()) {
@@ -56,6 +57,7 @@ public class NodeSynchronized extends Node {
 		}
 	}
 
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.write(lock);
