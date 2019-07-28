@@ -9,6 +9,7 @@ import ru.nest.jvg.complexshape.ComplexShapeParser;
 import ru.nest.jvg.geom.CoordinablePath;
 import ru.nest.jvg.geom.MutableGeneralPath;
 import ru.nest.jvg.geom.coord.Coordinable;
+import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 
@@ -53,9 +54,7 @@ public class JVGComplexShape extends JVGShape {
 		if (isFill()) {
 			addPainter(new FillPainter(FillPainter.DEFAULT_COLOR));
 		}
-		addPainter(new OutlinePainter(null, OutlinePainter.DEFAULT_COLOR));
-		// addPainter(new EndingsPainter(EndingsPainter.TYPE_BOTH_ENDING, false,
-		// EndingsPainter.FIGURE_ARROW, true, ColorResource.black));
+		addPainter(new OutlinePainter(StrokeResource.DEFAULT, OutlinePainter.DEFAULT_COLOR));
 	}
 
 	private URL url;
@@ -69,19 +68,6 @@ public class JVGComplexShape extends JVGShape {
 	public ComplexShapeParser getContext() {
 		return ctx;
 	}
-
-	// public void transformShape(AffineTransform transform, HashSet<JVGShape>
-	// locked)
-	// {
-	// if (coordinates != null)
-	// {
-	// path.transform(transform, coordinates, 0, coordinates.length / 2);
-	// }
-	// else
-	// {
-	// super.transformShape(transform, locked);
-	// }
-	// }
 
 	@Override
 	public void unlock() {

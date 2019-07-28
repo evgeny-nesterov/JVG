@@ -63,11 +63,11 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			}
 
 			if (pane.isBackgroundSet() && !Color.white.equals(pane.getBackground())) {
-				Element backgroundElement = new Element("rect");
+				Element backgroundElement = new Element("rect", xmlns);
 				backgroundElement.setAttribute("x", "0%");
 				backgroundElement.setAttribute("y", "0%");
-				backgroundElement.setAttribute("w", "100%");
-				backgroundElement.setAttribute("h", "100%");
+				backgroundElement.setAttribute("width", "100%");
+				backgroundElement.setAttribute("height", "100%");
 				backgroundElement.setAttribute("fill", JVGParseUtil.getColor(pane.getBackground()));
 				rootElement.addContent(backgroundElement);
 			}
@@ -291,7 +291,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		FillPainter fillPaint = shape.getPainter(FillPainter.class);
 		if (fillPaint != null) {
 			getFill(fillPaint, componentElement);
-		} else if(outlinPainter != null) {
+		} else if (outlinPainter != null) {
 			componentElement.setAttribute("fill-opacity", "0");
 		}
 

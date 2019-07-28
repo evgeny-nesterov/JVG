@@ -56,17 +56,17 @@ public class OutlinePainter extends Painter {
 			if (s != null) {
 				g.setStroke(s);
 			}
-		}
 
-		try {
-			g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-			g.draw(shape);
-		} catch (Throwable thr) {
-			System.err.println("Can't draw outline: " + thr.toString());
-		}
+			try {
+				g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+				g.draw(shape);
+			} catch (Throwable thr) {
+				System.err.println("Can't draw outline: " + thr.toString());
+			}
 
-		if (stroke != null) {
-			g.setStroke(oldStroke);
+			if (stroke != null) {
+				g.setStroke(oldStroke);
+			}
 		}
 	}
 
