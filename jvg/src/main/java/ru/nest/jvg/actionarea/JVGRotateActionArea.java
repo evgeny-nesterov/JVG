@@ -69,7 +69,21 @@ public class JVGRotateActionArea extends JVGTransformActionArea {
 
 			@Override
 			public void mouseMoved(JVGMouseEvent e) {
-				if (isCenter(e.getX(), e.getY())) {
+				updateCursor(e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseClicked(JVGMouseEvent e) {
+				if (e.getClickCount() == 2 && isCenter(e.getX(), e.getY())) {
+					weightX = 0.5;
+					weightY = 0.5;
+					updateCursor(e.getX(), e.getY());
+					updateCenterPoint();
+				}
+			}
+
+			private void updateCursor(double x, double y) {
+				if (isCenter(x, y)) {
 					setCursor(centerCursor);
 				} else {
 					setCursor(rotateCursor);
