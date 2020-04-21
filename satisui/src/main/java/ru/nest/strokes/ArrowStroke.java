@@ -29,6 +29,8 @@ public class ArrowStroke implements Stroke {
 
 	private Stroke stroke;
 
+	private boolean fitToPoint = false;
+
 	public ArrowStroke(double width, double arrowWidth, double arrowLength, int type) {
 		this.width = width;
 		this.arrowWidth = arrowWidth;
@@ -40,9 +42,9 @@ public class ArrowStroke implements Stroke {
 	@Override
 	public Shape createStrokedShape(Shape shape) {
 		Shape body = stroke.createStrokedShape(shape);
-		Area a = new Area(body);
+		Area area = new Area(body);
 		if (type == DIRECTION_NONE) {
-			return a;
+			return area;
 		}
 
 		double points[] = new double[6];
@@ -58,15 +60,12 @@ public class ArrowStroke implements Stroke {
 						double dx = x2 - x1;
 						double dy = y2 - y1;
 						double angle = Math.atan2(dx, dy);
-
-						AffineTransform transform = AffineTransform.getTranslateInstance(x2, y2);
-						transform.rotate(-angle);
-
-						Path2D arrowShape = new Path2D.Double();
-						arrowShape.moveTo(-getArrowWidth(), -1);
-						arrowShape.lineTo(0, getArrowLength());
-						arrowShape.lineTo(getArrowWidth(), -1);
-						a.add(new Area(transform.createTransformedShape(arrowShape)));
+						if (fitToPoint) {
+							area.subtract(getFitToPointArrowNegativeShape(x2, y2, angle));
+							area.add(getFitToPointArrowShape(x2, y2, angle));
+						} else {
+							area.add(getArrowShape(x2, y2, angle));
+						}
 						drawDirectArrow = false;
 					}
 
@@ -124,16 +123,12 @@ public class ArrowStroke implements Stroke {
 				double dx = sx1 - sx2;
 				double dy = sy1 - sy2;
 				double angle = Math.atan2(dx, dy);
-
-				AffineTransform transform = AffineTransform.getTranslateInstance(sx1, sy1);
-				transform.rotate(-angle);
-
-				Path2D arrowShape = new Path2D.Double();
-				arrowShape.moveTo(-getArrowWidth(), -1);
-				arrowShape.lineTo(0, getArrowLength());
-				arrowShape.lineTo(getArrowWidth(), -1);
-				a.add(new Area(transform.createTransformedShape(arrowShape)));
-
+				if (fitToPoint) {
+					area.subtract(getFitToPointArrowNegativeShape(sx1, sy1, angle));
+					area.add(getFitToPointArrowShape(sx1, sy1, angle));
+				} else {
+					area.add(getArrowShape(sx1, sy1, angle));
+				}
 				drawBackArrow = 0;
 			}
 			it.next();
@@ -143,18 +138,50 @@ public class ArrowStroke implements Stroke {
 			double dx = x2 - x1;
 			double dy = y2 - y1;
 			double angle = Math.atan2(dx, dy);
-
-			AffineTransform transform = AffineTransform.getTranslateInstance(x2, y2);
-			transform.rotate(-angle);
-
-			Path2D arrowShape = new Path2D.Double();
-			arrowShape.moveTo(-getArrowWidth(), -1);
-			arrowShape.lineTo(0, getArrowLength());
-			arrowShape.lineTo(getArrowWidth(), -1);
-			a.add(new Area(transform.createTransformedShape(arrowShape)));
+			if (fitToPoint) {
+				area.subtract(getFitToPointArrowNegativeShape(x2, y2, angle));
+				area.add(getFitToPointArrowShape(x2, y2, angle));
+			} else {
+				area.add(getArrowShape(x2, y2, angle));
+			}
 			drawDirectArrow = false;
 		}
-		return a;
+		return area;
+	}
+
+	private Area getArrowShape(double x, double y, double angle) {
+		AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
+		transform.rotate(-angle);
+
+		Path2D arrowShape = new Path2D.Double();
+		arrowShape.moveTo(-getArrowWidth(), -1);
+		arrowShape.lineTo(0, getArrowLength());
+		arrowShape.lineTo(getArrowWidth(), -1);
+		return new Area(transform.createTransformedShape(arrowShape));
+	}
+
+	private Area getFitToPointArrowShape(double x, double y, double angle) {
+		AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
+		transform.rotate(-angle);
+
+		Path2D arrowShape = new Path2D.Double();
+		arrowShape.moveTo(0, 0);
+		arrowShape.lineTo(-getArrowWidth(), -getArrowLength());
+		arrowShape.lineTo(getArrowWidth(), -getArrowLength());
+		return new Area(transform.createTransformedShape(arrowShape));
+	}
+
+	private Area getFitToPointArrowNegativeShape(double x, double y, double angle) {
+		AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
+		transform.rotate(-angle);
+
+		double cutHeight = getArrowLength() * (1 - (getArrowWidth() - width / 2.0) / width);
+		Path2D arrowShape = new Path2D.Double();
+		arrowShape.moveTo(-getArrowWidth(), 10);
+		arrowShape.lineTo(-getArrowWidth(), -cutHeight);
+		arrowShape.lineTo(getArrowWidth(), -cutHeight);
+		arrowShape.lineTo(getArrowWidth(), 10);
+		return new Area(transform.createTransformedShape(arrowShape));
 	}
 
 	public double getWidth() {
@@ -171,5 +198,13 @@ public class ArrowStroke implements Stroke {
 
 	public int getType() {
 		return type;
+	}
+
+	public boolean isFitToPoint() {
+		return fitToPoint;
+	}
+
+	public void setFitToPoint(boolean fitToPoint) {
+		this.fitToPoint = fitToPoint;
 	}
 }

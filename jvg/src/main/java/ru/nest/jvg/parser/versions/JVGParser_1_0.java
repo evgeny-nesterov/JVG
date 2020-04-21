@@ -378,15 +378,17 @@ public class JVGParser_1_0 implements JVGParserInterface {
 				URL url = getURL(urlValue);
 				if (url != null) {
 					JVGComplexShape shape = factory.createComponent(JVGComplexShape.class, new Object[] { url });
-					Iterator<Element> argIter = formElement.getChildren("arg").iterator();
-					while (argIter.hasNext()) {
-						Element argElement = argIter.next();
-						String id = argElement.getAttributeValue("id");
-						String value = argElement.getAttributeValue("value");
-						if (id != null && value != null) {
-							try {
-								shape.getContext().setArgumentValue(id, Double.parseDouble(value));
-							} catch (NumberFormatException exc) {
+					if (shape != null) {
+						Iterator<Element> argIter = formElement.getChildren("arg").iterator();
+						while (argIter.hasNext()) {
+							Element argElement = argIter.next();
+							String id = argElement.getAttributeValue("id");
+							String value = argElement.getAttributeValue("value");
+							if (id != null && value != null) {
+								try {
+									shape.getContext().setArgumentValue(id, Double.parseDouble(value));
+								} catch (NumberFormatException exc) {
+								}
 							}
 						}
 					}

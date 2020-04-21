@@ -64,13 +64,26 @@ public class JVGDefaultFactory extends JVGFactory {
 					if (size > 0 && params[0] instanceof Shape) {
 						shape = (Shape) params[0];
 					}
-
 					if (shape == null) {
 						shape = new MutableGeneralPath();
 					}
 
-					JVGGroupPath path = new JVGGroupPath(shape, false);
-					path.setFill(false);
+					boolean coordinable = true;
+					if (size > 1 && params[1] instanceof Boolean) {
+						coordinable = (Boolean) params[1];
+					}
+
+					Resource<Stroke> pathStroke = null;
+					if (size > 2 && params[2] instanceof Resource) {
+						pathStroke = (Resource<Stroke>) params[2];
+					}
+
+					JVGGroupPath path = new JVGGroupPath(shape, coordinable);
+					if (pathStroke != null) {
+						path.setPathStroke(pathStroke);
+					} else {
+						path.setFill(false);
+					}
 					return (V) path;
 				} else if (clazz == JVGPath.class) {
 					Shape shape = null;
@@ -91,7 +104,7 @@ public class JVGDefaultFactory extends JVGFactory {
 						pathStroke = (Resource<Stroke>) params[2];
 					}
 
-					JVGPath path = new JVGPath(shape, false);
+					JVGPath path = new JVGPath(shape, coordinable);
 					if (pathStroke != null) {
 						path.setPathStroke(pathStroke);
 						path.setAntialias(true);

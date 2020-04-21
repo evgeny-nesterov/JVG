@@ -71,7 +71,7 @@ public class JVGClipboardContext {
 		if (snapshot == null) {
 			try {
 				SnapshotData snapshotData = ru.nest.jvg.editor.Util.getSnapshot(new ByteArrayInputStream(data.getBytes("UTF-8")), SNAPSHOT_WIDTH, SNAPSHOT_HEIGHT, INSETS);
-				snapshot = snapshotData.getImage();
+				snapshot = snapshotData != null ? snapshotData.getImage() : null;
 				if (width == -1) {
 					width = snapshotData.getWidth();
 					height = snapshotData.getHeight();

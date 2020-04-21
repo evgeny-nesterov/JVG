@@ -72,8 +72,10 @@ public class EndingsPainter extends Painter {
 
 	@Override
 	public void paint(Graphics2D g, JVGShape component, Shape shape) {
-		Pathable path = (Pathable) shape;
-		drawEndings(g, path, endings);
+		if (shape instanceof Pathable) {
+			Pathable path = (Pathable) shape;
+			drawEndings(g, path, endings);
+		}
 	}
 
 	public static void drawEndings(Graphics2D g, Pathable path, Endings endings) {

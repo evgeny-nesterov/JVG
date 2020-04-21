@@ -329,14 +329,14 @@ public class JVGGroupPath extends JVGPath {
 							for (int i = 0; i < childs.length; i++) {
 								JVGComponent c = childs[i];
 								if (c instanceof JVGSubPath) {
-									JVGSubPath p = (JVGSubPath) c;
-									if (!p.isLead() && p.getPosition() >= r1 && p.getPosition() <= r2) {
-										double deltaRatio = (p.getPosition() - r1) / (r2 - r1);
+									JVGSubPath subPath = (JVGSubPath) c;
+									if (!subPath.isLead() && subPath.getPosition() >= r1 && subPath.getPosition() <= r2) {
+										double deltaRatio = (subPath.getPosition() - r1) / (r2 - r1);
 										double x = lastX + deltaRatio * (thisX - lastX);
 										double y = lastY + deltaRatio * (thisY - lastY);
 
 										elementPath.lineTo(x, y);
-										p.setShape(elementPath, false);
+										subPath.setShape(elementPath, false);
 
 										// start collecting path for next element
 										elementPath = new MutableGeneralPath();
@@ -360,11 +360,77 @@ public class JVGGroupPath extends JVGPath {
 			}
 			validateTree = true;
 
+			// fit to point
+			Resource<? extends Stroke> pathStroke = getPathStroke();
+			if (pathStroke != null && pathStroke.getResource() instanceof ArrowStroke) {
+				ArrowStroke arrowStroke = (ArrowStroke) pathStroke.getResource();
+				arrowStroke.setFitToPoint(true);
+			}
+			for (int i = 0; i < childs.length; i++) {
+				JVGComponent c = childs[i];
+				if (c instanceof JVGSubPath) {
+					JVGSubPath subPath = (JVGSubPath) c;
+					Resource<? extends Stroke> subPathStroke = subPath.getPathStroke();
+					if (subPathStroke != null && subPathStroke.getResource() instanceof ArrowStroke) {
+						ArrowStroke arrowStroke = (ArrowStroke) subPathStroke.getResource();
+						if (arrowStroke.getType() == ArrowStroke.DIRECTION_BOTH) {
+							arrowStroke.setFitToPoint(true);
+						}
+					}
+				}
+			}
+
 			// compute children shapes
 			valid = true;
 			validateTree();
 
-			if (getPathStroke() != null) {
+			if (pathStroke != null) {
+				if (pathStroke.getResource() instanceof ArrowStroke) {
+					ArrowStroke arrowStroke = (ArrowStroke) pathStroke.getResource();
+					arrowStroke.setFitToPoint(false);
+					if (arrowStroke.getType() == ArrowStroke.DIRECTION_DIRECT) {
+						Area prevShape = null;
+						for (int i = 0; i < childs.length; i++) {
+							JVGComponent c = childs[i];
+							if (c instanceof JVGSubPath) {
+								JVGSubPath subPath = (JVGSubPath) c;
+								Shape shape = subPath.getShape();
+								Area area;
+								if (shape instanceof Area) {
+									area = (Area) shape;
+								} else {
+									area = new Area(shape);
+									subPath.setClientProperty(shapeId, area);
+								}
+								if (prevShape != null) {
+									area.subtract(prevShape);
+								}
+								prevShape = area;
+							}
+						}
+					} else if (arrowStroke.getType() == ArrowStroke.DIRECTION_BACK) {
+						Area prevShape = null;
+						for (int i = childs.length - 1; i >= 0; i--) {
+							JVGComponent c = childs[i];
+							if (c instanceof JVGSubPath) {
+								JVGSubPath subPath = (JVGSubPath) c;
+								Shape shape = subPath.getShape();
+								Area area;
+								if (shape instanceof Area) {
+									area = (Area) shape;
+								} else {
+									area = new Area(shape);
+									subPath.setClientProperty(shapeId, area);
+								}
+								if (prevShape != null) {
+									area.subtract(prevShape);
+								}
+								prevShape = area;
+							}
+						}
+					}
+				}
+
 				// shape
 				Shape strokedShape = computeStrokedShape();
 				if (strokedShape != path) {

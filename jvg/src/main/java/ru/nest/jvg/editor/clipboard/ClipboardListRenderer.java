@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -38,7 +39,10 @@ public class ClipboardListRenderer extends JLabel implements ListCellRenderer {
 		this.isSelected = isSelected;
 
 		JVGClipboardContext ctx = (JVGClipboardContext) value;
-		setIcon(ctx.getSnapshot());
+		ImageIcon icon = ctx.getSnapshot();
+		if (icon != null) {
+			setIcon(icon);
+		}
 
 		JPanel pnl = new JPanel();
 		pnl.setLayout(new BorderLayout());
