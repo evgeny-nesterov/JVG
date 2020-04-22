@@ -8,7 +8,6 @@ import ru.nest.hiscript.pol.model.FloatNode;
 import ru.nest.hiscript.pol.model.IntNode;
 import ru.nest.hiscript.pol.model.LongNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.pol.model.Operations;
 import ru.nest.hiscript.pol.model.ShortNode;
 import ru.nest.hiscript.pol.model.StringNode;
 import ru.nest.hiscript.pol.model.Types;

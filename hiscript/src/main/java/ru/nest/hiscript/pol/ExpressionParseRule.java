@@ -5,7 +5,6 @@ import ru.nest.hiscript.pol.model.ArrayIndexesNode;
 import ru.nest.hiscript.pol.model.BooleanNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.pol.model.Operations;
 import ru.nest.hiscript.pol.model.PrefixNode;
 import ru.nest.hiscript.pol.model.TriggerNode;
 import ru.nest.hiscript.tokenizer.OperationSymbols;
@@ -14,7 +13,6 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class ExpressionParseRule extends ParseRule<ExpressionNode> {

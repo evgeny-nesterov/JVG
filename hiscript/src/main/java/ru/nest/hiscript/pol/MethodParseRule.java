@@ -4,11 +4,9 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.pol.model.ArgumentsNode;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.MethodNode;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class MethodParseRule extends ParseRule<MethodNode> {

@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 import ru.nest.hiscript.ool.model.Clazz;
 import ru.nest.hiscript.ool.model.Constructor;
+import ru.nest.hiscript.ool.model.Constructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.Field;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.Constructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;

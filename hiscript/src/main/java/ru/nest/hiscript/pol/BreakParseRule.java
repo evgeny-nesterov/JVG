@@ -4,7 +4,6 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.pol.model.BreakNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class BreakParseRule extends ParseRule<BreakNode> {

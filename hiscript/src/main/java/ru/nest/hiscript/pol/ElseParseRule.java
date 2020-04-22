@@ -5,7 +5,6 @@ import ru.nest.hiscript.pol.model.IfNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class ElseParseRule extends ParseRule<IfNode> {

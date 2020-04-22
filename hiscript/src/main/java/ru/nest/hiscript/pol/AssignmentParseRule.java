@@ -8,7 +8,6 @@ import ru.nest.hiscript.pol.model.AssignmentNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.VariableNode;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;

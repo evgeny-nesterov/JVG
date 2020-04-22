@@ -24,7 +24,6 @@ import ru.nest.hiscript.pol.model.Method;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.RuntimeContext;
 import ru.nest.hiscript.pol.model.ScriptUtil;
-import ru.nest.hiscript.pol.model.Types;
 import ru.nest.hiscript.pol.model.ValueContainer;
 import ru.nest.hiscript.pol.model.Variable;
 import ru.nest.hiscript.tokenizer.Words;

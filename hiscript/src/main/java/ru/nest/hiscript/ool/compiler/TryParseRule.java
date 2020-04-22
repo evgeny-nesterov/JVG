@@ -4,11 +4,9 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class TryParseRule extends ParseRule<NodeTry> {

@@ -5,11 +5,9 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class ForParseRule extends ParseRule<NodeFor> {

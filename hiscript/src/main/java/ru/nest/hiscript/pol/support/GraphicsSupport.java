@@ -15,7 +15,6 @@ import ru.nest.hiscript.pol.model.ExecuteException;
 import ru.nest.hiscript.pol.model.Method;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.RuntimeContext;
-import ru.nest.hiscript.pol.model.Types;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class GraphicsSupport {

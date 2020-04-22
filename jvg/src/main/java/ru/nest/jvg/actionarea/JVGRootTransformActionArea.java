@@ -32,8 +32,8 @@ public abstract class JVGRootTransformActionArea extends JVGTransformActionArea 
 	@Override
 	public void paintAction(Graphics2D g, AffineTransform transform) {
 		// revalidate root action as root child may be changed and only this child will be revalidated
-//		invalidate();
-//		validate();
+		//		invalidate();
+		//		validate();
 		super.paintAction(g, transform);
 	}
 

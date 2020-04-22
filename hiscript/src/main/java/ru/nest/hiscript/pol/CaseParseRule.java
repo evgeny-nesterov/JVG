@@ -4,11 +4,9 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.CaseNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class CaseParseRule extends ParseRule<CaseNode> {

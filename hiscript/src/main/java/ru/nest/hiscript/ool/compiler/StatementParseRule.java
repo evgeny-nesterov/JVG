@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.Clazz;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
-import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;

@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeSynchronized;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {

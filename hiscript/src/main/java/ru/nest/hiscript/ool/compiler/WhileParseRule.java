@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public class WhileParseRule extends ParseRule<NodeWhile> {

@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Robot;
 import java.awt.Shape;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 

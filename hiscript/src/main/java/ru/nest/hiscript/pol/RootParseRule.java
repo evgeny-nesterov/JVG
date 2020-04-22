@@ -3,7 +3,6 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.pol.model.Types;
 import ru.nest.hiscript.pol.model.Variable;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;

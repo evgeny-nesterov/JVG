@@ -1,21 +1,21 @@
 while		condition, body				statement		+
 do-while	condition, body				statement		+
-if		condition, body, next-if		statement		+
-for		init, condition, expression, body	statement		+
+if			condition, body, next-if		statement		+
+for			init, condition, expression, body	statement		+
 switch		variable, ...casesValues, casesBodies	statement		+
 label		name, body				statement		+
 break		label					statement		+
 continue	label					statement		+
 return		values					statement		+
-try		body, catch-body, catch-err-name, finally-body	statement	+-
+try			body, catch-body, catch-err-name, finally-body	statement	+-
 empty							statement		+
 declaration	type, ...names, ...values		statement		+
 expression						statement		+
 synchronized	lock, body				statement		-
 
 
-new		type, ...arguments, class-body		statement		+
-new		type, ...array-sizes, array-body	statement		+
+new			type, ...arguments, class-body		statement		+
+new			type, ...array-sizes, array-body	statement		+
 
 
 method		return-type, name, ...arguments				+
