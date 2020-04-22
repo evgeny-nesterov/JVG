@@ -10,6 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.nest.hiscript.pol.model.ExecuteException;
+import ru.nest.hiscript.pol.model.Node;
+import ru.nest.hiscript.pol.model.RuntimeContext;
+import ru.nest.hiscript.pol.model.Types;
+import ru.nest.hiscript.pol.model.Variable;
+import ru.nest.hiscript.pol.support.GraphicsSupport;
+import ru.nest.hiscript.pol.support.SwingSupport;
+import ru.nest.hiscript.tokenizer.Words;
 import ru.nest.jvg.action.GroupAction;
 import ru.nest.jvg.action.PathOperationAction;
 import ru.nest.jvg.action.ToPathAction;
@@ -34,14 +42,6 @@ import ru.nest.jvg.shape.paint.ColorDraw;
 import ru.nest.jvg.shape.paint.Draw;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
-import script.pol.model.ExecuteException;
-import script.pol.model.Node;
-import script.pol.model.RuntimeContext;
-import script.pol.model.Types;
-import script.pol.model.Variable;
-import script.pol.support.GraphicsSupport;
-import script.pol.support.SwingSupport;
-import script.tokenizer.Words;
 
 // ===============================================
 // JVG methods:
@@ -187,7 +187,7 @@ public class JVGScriptSupport {
 		}
 	}
 
-	public void addMethod(script.pol.model.Method method) throws ExecuteException {
+	public void addMethod(ru.nest.hiscript.pol.model.Method method) throws ExecuteException {
 		if (method != null) {
 			ctx.addMethod(method);
 		}
@@ -195,7 +195,7 @@ public class JVGScriptSupport {
 
 	private void init() throws ExecuteException {
 		// Source
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getSource", new int[] { Words.LONG }, new int[] { 0 }, Words.STRING) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getSource", new int[] { Words.LONG }, new int[] { 0 }, Words.STRING) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -212,7 +212,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getSource", new int[] { Words.LONG }, new int[] { 1 }, Words.STRING) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getSource", new int[] { Words.LONG }, new int[] { 1 }, Words.STRING) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -228,7 +228,7 @@ public class JVGScriptSupport {
 		});
 
 		// Structure
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getParent", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getParent", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -245,7 +245,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "invalidate", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "invalidate", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -256,7 +256,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "repaint", new int[] {}, new int[] {}, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "repaint", new int[] {}, new int[] {}, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -264,7 +264,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getRoot", new int[] {}, new int[] {}, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getRoot", new int[] {}, new int[] {}, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -272,7 +272,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getComponents", new int[] {}, new int[] {}, Words.LONG, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getComponents", new int[] {}, new int[] {}, Words.LONG, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -281,7 +281,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getChildsCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getChildsCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -295,7 +295,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getChild", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getChild", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -313,7 +313,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getChild", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getChild", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -331,7 +331,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getComponent", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getComponent", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -346,7 +346,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getDeepestComponent", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getDeepestComponent", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -361,7 +361,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setComponentIndex", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setComponentIndex", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -378,7 +378,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "remove", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "remove", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -392,7 +392,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "remove", new int[] { Words.LONG }, new int[] { 1 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "remove", new int[] { Words.LONG }, new int[] { 1 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -407,7 +407,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -425,7 +425,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.STRING) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.STRING) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -445,7 +445,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.BOOLEAN) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.BOOLEAN) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -462,7 +462,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -477,7 +477,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.LONG, Words.STRING, Words.STRING, Words.STRING }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.LONG, Words.STRING, Words.STRING, Words.STRING }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -491,7 +491,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.STRING) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.STRING) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -509,7 +509,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.BOOLEAN) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.BOOLEAN) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -525,7 +525,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.LONG, Words.STRING, Words.STRING }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -538,7 +538,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.STRING, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setProperty", new int[] { Words.STRING, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -548,7 +548,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.STRING) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.STRING) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -558,7 +558,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.BOOLEAN) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "hasProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.BOOLEAN) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -567,7 +567,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "removeProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -576,7 +576,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setFillColor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setFillColor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -591,7 +591,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getFillColor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getFillColor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -612,7 +612,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setOutlineColor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setOutlineColor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -627,7 +627,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getOutlineColor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getOutlineColor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -648,7 +648,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setStroke", new int[] { Words.LONG, Words.FLOAT, Words.INT, Words.INT, Words.FLOAT, Words.FLOAT, Words.FLOAT }, new int[] { 0, 0, 0, 0, 0, 1, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setStroke", new int[] { Words.LONG, Words.FLOAT, Words.INT, Words.INT, Words.FLOAT, Words.FLOAT, Words.FLOAT }, new int[] { 0, 0, 0, 0, 0, 1, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -668,7 +668,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -683,7 +683,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeCap", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeCap", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -698,7 +698,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeJoin", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeJoin", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -713,7 +713,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeMiterLimit", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeMiterLimit", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -728,7 +728,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeDash", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeDash", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -743,7 +743,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getStrokeDashPhase", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getStrokeDashPhase", new int[] { Words.LONG }, new int[] { 0 }, Words.FLOAT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -758,7 +758,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "transform", new int[] { Words.LONG, Words.DOUBLE }, new int[] { 0, 1 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "transform", new int[] { Words.LONG, Words.DOUBLE }, new int[] { 0, 1 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -772,7 +772,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "transform", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "transform", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -784,7 +784,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "scale", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "scale", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -797,7 +797,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "translate", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "translate", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -810,7 +810,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "shear", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "shear", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -823,7 +823,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "rotate", new int[] { Words.LONG, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "rotate", new int[] { Words.LONG, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -835,7 +835,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "rotate", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "rotate", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -849,7 +849,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getX", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getX", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -862,7 +862,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getY", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getY", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -875,7 +875,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -888,7 +888,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getHeight", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getHeight", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -901,7 +901,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getInitialX", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getInitialX", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -914,7 +914,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getInitialY", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getInitialY", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -927,7 +927,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getInitialWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getInitialWidth", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -940,7 +940,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getInitialHeight", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getInitialHeight", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -954,7 +954,7 @@ public class JVGScriptSupport {
 		});
 
 		// Path
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "toPath", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "toPath", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -977,7 +977,7 @@ public class JVGScriptSupport {
 		addPathOperationMethod(PathOperationAction.UNION, "union");
 		addPathOperationMethod(PathOperationAction.XOR, "xor");
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPathCoordCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPathCoordCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -987,7 +987,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPathCurvesCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPathCurvesCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1001,7 +1001,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPathCoords", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPathCoords", new int[] { Words.LONG }, new int[] { 0 }, Words.DOUBLE, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1015,7 +1015,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPathCoord", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPathCoord", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1030,7 +1030,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getInitialPathCoord", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getInitialPathCoord", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1045,7 +1045,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPathCurveTypes", new int[] { Words.LONG }, new int[] { 0 }, Words.INT, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPathCurveTypes", new int[] { Words.LONG }, new int[] { 0 }, Words.INT, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1059,7 +1059,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setPathCoord", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setPathCoord", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1073,7 +1073,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setPathCoords", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 1, 1 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setPathCoords", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 1, 1 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1093,7 +1093,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "movePathCoords", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 1, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "movePathCoords", new int[] { Words.LONG, Words.INT, Words.DOUBLE }, new int[] { 0, 1, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1113,7 +1113,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setPathPoint", new int[] { Words.LONG, Words.INT, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setPathPoint", new int[] { Words.LONG, Words.INT, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1128,7 +1128,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "movePathPoints", new int[] { Words.LONG, Words.INT, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 1, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "movePathPoints", new int[] { Words.LONG, Words.INT, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 1, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1150,7 +1150,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "toInitial", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.DOUBLE, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "toInitial", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.DOUBLE, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1177,7 +1177,7 @@ public class JVGScriptSupport {
 				ctx.value.array = new double[] { dx, dy };
 			}
 		});
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "proect", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.DOUBLE) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "proect", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.DOUBLE) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1207,7 +1207,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "closePath", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "closePath", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1219,7 +1219,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "moveTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "moveTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1233,7 +1233,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "lineTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "lineTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1247,7 +1247,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "quadTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "quadTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1263,7 +1263,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "curveTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "curveTo", new int[] { Words.LONG, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0, 0, 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1311,7 +1311,7 @@ public class JVGScriptSupport {
 		addMethod("setID", new Class[] { long.class }, Words.VOID);
 		addMethod("getID", new Class[] {}, Words.LONG);
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getCursor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getCursor", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1327,7 +1327,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "setCursor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "setCursor", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1343,7 +1343,7 @@ public class JVGScriptSupport {
 		});
 
 		// pane methods
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPaneX", new int[] {}, new int[] {}, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPaneX", new int[] {}, new int[] {}, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1351,7 +1351,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPaneY", new int[] {}, new int[] {}, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPaneY", new int[] {}, new int[] {}, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1359,7 +1359,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPaneWidth", new int[] {}, new int[] {}, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPaneWidth", new int[] {}, new int[] {}, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1367,7 +1367,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getPaneHeight", new int[] {}, new int[] {}, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getPaneHeight", new int[] {}, new int[] {}, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1376,7 +1376,7 @@ public class JVGScriptSupport {
 		});
 
 		// Group
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "group", new int[] { Words.LONG }, new int[] { 1 }, Words.LONG) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "group", new int[] { Words.LONG }, new int[] { 1 }, Words.LONG) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1386,7 +1386,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "ungroup", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "ungroup", new int[] { Words.LONG }, new int[] { 0 }, Words.LONG, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1400,7 +1400,7 @@ public class JVGScriptSupport {
 		});
 
 		// Selection
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "clearSelection", new int[] {}, new int[] {}, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "clearSelection", new int[] {}, new int[] {}, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1408,7 +1408,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, "getSelection", new int[] {}, new int[] {}, Words.LONG, 1) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getSelection", new int[] {}, new int[] {}, Words.LONG, 1) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1431,7 +1431,7 @@ public class JVGScriptSupport {
 	}
 
 	private void addPathOperationMethod(final int type, String name) throws ExecuteException {
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, name, new int[] { Words.LONG, Words.LONG }, new int[] { 0, 1 }, Words.VOID) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, name, new int[] { Words.LONG, Words.LONG }, new int[] { 0, 1 }, Words.VOID) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1456,7 +1456,7 @@ public class JVGScriptSupport {
 			argDimensions[i] = Types.getDimension(types[i - 1]);
 		}
 
-		ctx.addMethod(new script.pol.model.Method(NAMESPACE, name, argTypes, argDimensions, returnType) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, name, argTypes, argDimensions, returnType) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -1506,7 +1506,7 @@ public class JVGScriptSupport {
 	public void executeScript(Script.Type scriptType, JVGKeyEvent e) {
 		String s = getScript(scriptType, e.getSource());
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1533,7 +1533,7 @@ public class JVGScriptSupport {
 	public void executeScript(Script.Type scriptType, JVGComponentEvent e) {
 		String s = getScript(scriptType, e.getSource());
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1551,7 +1551,7 @@ public class JVGScriptSupport {
 	public void executeScript(Script.Type scriptType, JVGPeerEvent e) {
 		String s = getScript(scriptType, e.getSource());
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1569,7 +1569,7 @@ public class JVGScriptSupport {
 	public void executeScript(Script.Type scriptType, JVGPropertyChangeEvent e) {
 		String s = getScript(scriptType, e.getSource());
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1590,7 +1590,7 @@ public class JVGScriptSupport {
 	public void executeScript(JVGComponent c, Graphics2D g) {
 		String s = getScript(Script.PAINT, c);
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1639,7 +1639,7 @@ public class JVGScriptSupport {
 		}
 
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1703,7 +1703,7 @@ public class JVGScriptSupport {
 	public void executeScript(ScriptResource scriptResource) {
 		String s = getScript(scriptResource);
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {
@@ -1720,7 +1720,7 @@ public class JVGScriptSupport {
 	public void executeScript(ScriptResource scriptResource, Long id) {
 		String s = getScript(scriptResource);
 		if (s != null) {
-			script.pol.Compiler p = script.pol.Compiler.getDefaultCompiler(s);
+			ru.nest.hiscript.pol.Compiler p = ru.nest.hiscript.pol.Compiler.getDefaultCompiler(s);
 			try {
 				Node node = p.build();
 				if (node != null) {

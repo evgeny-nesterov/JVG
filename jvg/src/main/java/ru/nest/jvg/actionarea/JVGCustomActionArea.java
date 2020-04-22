@@ -38,6 +38,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import ru.nest.hiscript.pol.CompileHandler;
+import ru.nest.hiscript.pol.Compiler;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.JVGPane;
@@ -50,9 +53,6 @@ import ru.nest.jvg.event.JVGSelectionEvent;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
-import script.pol.CompileHandler;
-import script.pol.Compiler;
-import script.tokenizer.TokenizerException;
 
 // TODO JVGCustomActionArea -> JVGControl, realize independently from action area
 public class JVGCustomActionArea extends JVGActionArea implements JVGPeerListener {

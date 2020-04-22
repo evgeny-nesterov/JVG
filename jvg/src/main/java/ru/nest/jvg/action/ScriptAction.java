@@ -20,14 +20,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import ru.nest.hiscript.pol.CompileHandler;
+import ru.nest.hiscript.pol.Compiler;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
-import script.pol.CompileHandler;
-import script.pol.Compiler;
-import script.tokenizer.TokenizerException;
 
 public class ScriptAction extends JVGAction {
 	private boolean chooseScript;
