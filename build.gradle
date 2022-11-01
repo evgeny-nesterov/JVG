@@ -6,6 +6,19 @@ buildscript {
 	}
 }
 
+allprojects {
+	apply plugin: 'idea'
+	apply plugin: 'maven'
+
+	idea {
+		module {
+			inheritOutputDirs = false
+			outputDir = file('bin')
+			testOutputDir = file('bin')
+		}
+	}
+}
+
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
@@ -13,6 +26,7 @@ subprojects {
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
+	compileJava.options.encoding = "windows-1251"
 
 	repositories {
 		mavenLocal()

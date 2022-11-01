@@ -111,7 +111,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 		}
 	}
 
-	private String checkName(Class<? extends Resource<?>> clazz, String name) {
+	private String checkName(Class<? extends Resource> clazz, String name) {
 		name = name != null ? name.trim() : "";
 		while (true) {
 			String message = null;
@@ -486,7 +486,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 
 	private HashMap<Class<?>, ResourcePanel<?>> panels_hash = new HashMap<Class<?>, ResourcePanel<?>>();
 
-	class ResourcePanel<V extends Resource<?>> extends JList {
+	class ResourcePanel<V extends Resource> extends JList {
 		private Class<V> clazz;
 
 		private ResourceListModel model = new ResourceListModel();
@@ -712,7 +712,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 		}
 	}
 
-	class ResourceProxy<V extends Resource<?>> {
+	class ResourceProxy<V extends Resource> {
 		public V show(V resource) {
 			return null;
 		}
