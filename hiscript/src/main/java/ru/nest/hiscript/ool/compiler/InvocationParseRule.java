@@ -26,7 +26,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 			if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
 				tokenizer.commit();
 
-				Node[] args = visitArguments(tokenizer, properties);
+				Node[] args = visitArgumentsValues(tokenizer, properties);
 
 				expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
 

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -52,7 +52,7 @@ public abstract class BinaryOperation extends Operation {
 
 	public abstract void doOperation(RuntimeContext ctx, Value v1, Value v2);
 
-	public void errorInvalidOperator(RuntimeContext ctx, Clazz type1, Clazz type2) {
+	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
 		String text = "operator '" + name + "' can not be applyed to " + type1.fullName + ", " + type2.fullName;
 		ctx.throwException(text);
 	}
@@ -77,7 +77,7 @@ public abstract class BinaryOperation extends Operation {
 		ctx.throwException(text);
 	}
 
-	public void errorCast(RuntimeContext ctx, Clazz typeFrom, Clazz typeTo) {
+	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
 		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
 		ctx.throwException(text);
 	}

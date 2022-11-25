@@ -2,7 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -27,7 +27,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		Field<?> field = Field.getField(type, name, initialization);
+		HiField<?> field = HiField.getField(type, name, initialization);
 		field.setModifiers(modifiers);
 
 		ctx.addVariable(field);

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
@@ -26,7 +26,7 @@ public class InterfaceParseRule extends ParserUtil {
 	private InterfaceParseRule() {
 	}
 
-	public Clazz visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -67,7 +67,7 @@ public class InterfaceParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			properties.clazz = new Clazz(null, properties.enclosingClass, interfaces, interfaceName, properties.classType);
+			properties.clazz = new HiClass(null, properties.enclosingClass, interfaces, interfaceName, properties.classType);
 			properties.clazz.isInterface = true;
 			properties.clazz.modifiers = modifiers;
 
@@ -82,11 +82,11 @@ public class InterfaceParseRule extends ParserUtil {
 	}
 
 	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		Clazz clazz = properties.clazz;
+		HiClass clazz = properties.clazz;
 		while (true) {
 			// inner class / interface
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, Clazz.CLASS_TYPE_INNER);
-			Clazz innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
+			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER);
+			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
 			}
@@ -98,7 +98,7 @@ public class InterfaceParseRule extends ParserUtil {
 			}
 
 			// method
-			Method method = visitMethod(tokenizer, properties);
+			HiMethod method = visitMethod(tokenizer, properties);
 			if (method != null) {
 				properties.addMethod(method);
 				continue;
@@ -115,9 +115,9 @@ public class InterfaceParseRule extends ParserUtil {
 		properties.initClass();
 	}
 
-	private Method visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Clazz clazz = properties.clazz;
+		HiClass clazz = properties.clazz;
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
@@ -141,7 +141,7 @@ public class InterfaceParseRule extends ParserUtil {
 					modifiers.setAbstract(true);
 
 					List<NodeArgument> arguments = new ArrayList<NodeArgument>();
-					visitArguments(tokenizer, arguments, properties);
+					visitArgumentsDefinitions(tokenizer, arguments, properties);
 					for (NodeArgument argument : arguments) {
 						properties.addLocalVariable(argument);
 					}
@@ -153,7 +153,7 @@ public class InterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					properties.exit();
-					return new Method(clazz, modifiers, type, name, arguments, null);
+					return new HiMethod(clazz, modifiers, type, name, arguments, null);
 				}
 			}
 		}
@@ -181,7 +181,7 @@ public class InterfaceParseRule extends ParserUtil {
 				Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 
 				Type type = Type.getArrayType(baseType, addDimension);
-				Field<?> field = Field.getField(type, name, initializer);
+				HiField<?> field = HiField.getField(type, name, initializer);
 				field.setModifiers(modifiers);
 
 				properties.addField(field);
@@ -205,7 +205,7 @@ public class InterfaceParseRule extends ParserUtil {
 		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 
 		Type type = Type.getArrayType(baseType, addDimension);
-		Field<?> field = Field.getField(type, name, initializer);
+		HiField<?> field = HiField.getField(type, name, initializer);
 		field.setModifiers(modifiers);
 
 		properties.addField(field);

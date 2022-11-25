@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import ru.nest.hiscript.ool.model.nodes.CodeContext;
 
 public class OperationsGroup {
 	public static ArrayList<Operation> empty = new ArrayList<Operation>(0);
@@ -78,7 +78,7 @@ public class OperationsGroup {
 
 	public int getCount() {
 		int count = (prefix != null ? prefix.size() : 0) + (postfix != null ? postfix.size() : 0);
-		if (operation != null && operation.getOperation() != OperationsIF.SKIP) {
+		if (operation != null && operation.getOperation() != OperationsIF.LOGICAL_SWITCH) {
 			count++;
 		}
 		return count;
@@ -152,7 +152,6 @@ public class OperationsGroup {
 		if (priority == Integer.MAX_VALUE) {
 			priority = -1;
 		}
-
 		return priority;
 	}
 
@@ -175,15 +174,14 @@ public class OperationsGroup {
 				priority = Math.max(priority, o.getPriority());
 			}
 		}
-
 		return priority;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		if (postfix != null) {
-			for (Operation o : postfix) {
+		if (prefix != null) {
+			for (Operation o : prefix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}
@@ -195,13 +193,12 @@ public class OperationsGroup {
 			buf.append("] ");
 		}
 
-		if (prefix != null) {
-			for (Operation o : prefix) {
+		if (postfix != null) {
+			for (Operation o : postfix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}
 		}
-
 		return buf.toString().trim();
 	}
 

@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 
 public class OperationArrayIndex extends BinaryOperation {
 	private static Operation instance = new OperationArrayIndex();
@@ -28,7 +28,7 @@ public class OperationArrayIndex extends BinaryOperation {
 			return;
 		}
 
-		ClazzArray type = (ClazzArray) v1.type;
+		HiClassArray type = (HiClassArray) v1.type;
 		Object array = v1.getArray();
 		if (array == null) {
 			ctx.throwException("null pointer");

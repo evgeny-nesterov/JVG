@@ -1,7 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.Operations;
@@ -9,6 +7,8 @@ import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+
+import java.io.IOException;
 
 public class NodeExpression extends Node {
 	/**
@@ -47,8 +47,8 @@ public class NodeExpression extends Node {
 			if (bufSize > 0) {
 				Operation lo = buf[bufSize - 1];
 				if (lo != null) {
-					int curentGroupMinPriority = og.getMinPriority();
-					while (lo.getPriority() <= curentGroupMinPriority) {
+					int currentGroupMinPriority = og.getMinPriority();
+					while (lo.getPriority() <= currentGroupMinPriority) {
 						operations[pos++] = lo; // operation
 						bufSize--;
 						if (bufSize == 0) {
@@ -66,8 +66,8 @@ public class NodeExpression extends Node {
 			if (bufSize > 0) {
 				Operation lo = buf[bufSize - 1];
 				if (lo != null) {
-					int curentGroupMinPriority = og.getMinPriority();
-					while (lo.getPriority() <= curentGroupMinPriority) {
+					int currentGroupMinPriority = og.getMinPriority();
+					while (lo.getPriority() <= currentGroupMinPriority) {
 						operations[pos++] = lo; // operation
 						bufSize--;
 						if (bufSize == 0) {
@@ -82,14 +82,14 @@ public class NodeExpression extends Node {
 			if (og.postfix != null) {
 				int l = og.postfix.size();
 				for (int j = 0; j < l; j++) {
-					Operation postOper = og.postfix.get(j);
-					pos += postOper.getOperandsCount() - 1;
-					operations[pos++] = postOper; // operation
+					Operation postOperation = og.postfix.get(j);
+					pos += postOperation.getOperandsCount() - 1;
+					operations[pos++] = postOperation; // operation
 				}
 			}
 
 			// append operation
-			if (og.getOperation() != null && og.getOperation().getOperation() == OperationsIF.SKIP) {
+			if (og.getOperation() != null && og.getOperation().getOperation() == OperationsIF.LOGICAL_SWITCH) {
 				operations[pos++] = null; // operation
 			} else {
 				bufSize = og.append(buf, bufSize);
@@ -150,6 +150,9 @@ public class NodeExpression extends Node {
 								ctx.value.valueType = Value.EXECUTE;
 								ctx.value.node = valueNode;
 							}
+						} else if (bufSize > 0 && i < operations.length - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.LOGICAL_SWITCH_CHECK) {
+							executeLater = true;
+							ctx.value.node = valueNode;
 						}
 
 						if (!executeLater) {
@@ -163,6 +166,7 @@ public class NodeExpression extends Node {
 					}
 				} else {
 					int skipToOperation = -1;
+					// TODO do not check && and || of inner blocks
 					if (operations[i].getOperation() == OperationsIF.LOGICAL_AND_CHECK) {
 						if (!values[bufSize - 1].bool) {
 							skipToOperation = OperationsIF.LOGICAL_AND;
@@ -171,6 +175,11 @@ public class NodeExpression extends Node {
 						if (values[bufSize - 1].bool) {
 							skipToOperation = OperationsIF.LOGICAL_OR;
 						}
+					} else if (operations[i].getOperation() == OperationsIF.LOGICAL_SWITCH_CHECK) {
+						values[bufSize].node = operands[valuePos];
+						bufSize++;
+						valuePos++;
+						i += 2;
 					}
 
 					if (skipToOperation != -1) {
@@ -190,10 +199,11 @@ public class NodeExpression extends Node {
 							bufSize = operations[i].skipOperation(ctx, bufSize);
 							i++;
 						}
-					} else {
-						// do operation
-						bufSize = operations[i].doOperation(ctx, bufSize, values);
+						continue;
 					}
+
+					// do operation
+					bufSize = operations[i].doOperation(ctx, bufSize, values);
 				}
 
 				if (ctx.exitFromBlock()) {

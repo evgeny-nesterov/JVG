@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.nest.hiscript.ool.model.ClassLoadListener;
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
@@ -19,13 +19,13 @@ import ru.nest.hiscript.ool.model.Type;
 public class DecodeContext {
 	private DataInputStream is;
 
-	private Clazz clazz;
+	private HiClass clazz;
 
-	public void setClazz(Clazz clazz) {
+	public void setHiClass(HiClass clazz) {
 		this.clazz = clazz;
 	}
 
-	public Clazz getClazz() {
+	public HiClass getHiClass() {
 		return clazz;
 	}
 
@@ -190,7 +190,7 @@ public class DecodeContext {
 		list.add(listener);
 	}
 
-	protected void fireClassLoaded(Clazz clazz, int index) {
+	protected void fireClassLoaded(HiClass clazz, int index) {
 		DecodeContext ctx = getRoot();
 		List<ClassLoadListener> list = ctx.classLoadListeners.get(index);
 		if (list != null) {
@@ -201,14 +201,14 @@ public class DecodeContext {
 		}
 	}
 
-	private Clazz[] classes;
+	private HiClass[] classes;
 
 	public void loadClasses() throws IOException {
 		int count = is.readShort();
-		classes = new Clazz[count];
+		classes = new HiClass[count];
 		for (int index = 0; index < count; index++) {
 			DecodeContext ctx = new DecodeContext(is, this);
-			classes[index] = Clazz.decode(ctx);
+			classes[index] = HiClass.decode(ctx);
 
 			// DEBUG
 			// System.out.println("class loaded: " + classes[index].fullName);
@@ -218,9 +218,9 @@ public class DecodeContext {
 		}
 	}
 
-	public Clazz readClass() throws IOException, NoClassException {
+	public HiClass readClass() throws IOException, NoClassException {
 		boolean isHasIndex = is.readBoolean();
-		Clazz clazz = null;
+		HiClass clazz = null;
 		if (isHasIndex) {
 			int clazzIndex = is.readShort();
 
@@ -230,13 +230,13 @@ public class DecodeContext {
 			clazz = getClass(clazzIndex);
 		} else {
 			String classFullName = is.readUTF();
-			clazz = Clazz.forName(null, classFullName);
+			clazz = HiClass.forName(null, classFullName);
 		}
 
 		return clazz;
 	}
 
-	public Clazz getClass(int index) throws NoClassException {
+	public HiClass getClass(int index) throws NoClassException {
 		DecodeContext ctx = getRoot();
 		if (ctx != this) {
 			return ctx.getClass(index);

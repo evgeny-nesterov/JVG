@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
@@ -30,8 +30,8 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		// local class / interface
-		CompileContext localProperties = new CompileContext(tokenizer, properties, properties.clazz, Clazz.CLASS_TYPE_LOCAL);
-		Clazz clazz = ClassParseRule.getInstance().visit(tokenizer, localProperties);
+		CompileContext localProperties = new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL);
+		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, localProperties);
 		if (clazz == null) {
 			clazz = InterfaceParseRule.getInstance().visit(tokenizer, localProperties);
 		}

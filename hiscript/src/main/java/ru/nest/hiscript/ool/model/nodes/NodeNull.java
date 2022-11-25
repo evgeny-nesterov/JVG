@@ -5,7 +5,7 @@ import java.io.IOException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzNull;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
 
 public class NodeNull extends Node {
 	public final static NodeNull instance = new NodeNull();
@@ -17,7 +17,7 @@ public class NodeNull extends Node {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = ClazzNull.NULL;
+		ctx.value.type = HiClassNull.NULL;
 		ctx.value.object = null;
 		ctx.value.array = null;
 	}

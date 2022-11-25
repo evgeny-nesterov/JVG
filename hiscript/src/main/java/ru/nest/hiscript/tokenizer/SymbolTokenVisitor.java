@@ -41,7 +41,18 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '.':
-				type = Symbols.POINT;
+				if (tokenizer.look_forward() == '.') {
+					tokenizer.next();
+					if (tokenizer.look_forward() == '.') {
+						tokenizer.next();
+						type = Symbols.TRIPLEPOINTS;
+						length = 3;
+					} else {
+						return null;
+					}
+				} else {
+					type = Symbols.POINT;
+				}
 				break;
 
 			case '\'':

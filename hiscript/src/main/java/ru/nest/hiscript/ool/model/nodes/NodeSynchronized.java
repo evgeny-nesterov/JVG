@@ -2,7 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
@@ -24,7 +24,7 @@ public class NodeSynchronized extends Node {
 			return;
 		}
 
-		Clazz clazz = ctx.value.type;
+		HiClass clazz = ctx.value.type;
 		if (clazz.isNull()) {
 			ctx.throwException("null pointer");
 			return;

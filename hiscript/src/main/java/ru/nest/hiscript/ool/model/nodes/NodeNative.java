@@ -2,14 +2,14 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Native;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
 public class NodeNative extends Node {
-	public NodeNative(Clazz clazz, Clazz returnType, String name, Clazz[] argTypes, String[] argNames) {
+	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
 		super("native", TYPE_NATIVE);
 
 		this.argNames = argNames;
@@ -49,7 +49,7 @@ public class NodeNative extends Node {
 		Object[] args = new Object[1 + argCount];
 		args[0] = ctx;
 		for (int i = 0; i < argCount; i++) {
-			Field<?> f = ctx.getVariable(argNames[i]);
+			HiField<?> f = ctx.getVariable(argNames[i]);
 			args[i + 1] = f.get();
 		}
 		Native.invoke(ctx, id, args);

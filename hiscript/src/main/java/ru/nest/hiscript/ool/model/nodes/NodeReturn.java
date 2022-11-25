@@ -2,7 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -27,7 +27,7 @@ public class NodeReturn extends Node {
 				// TODO: check on void return value
 			} else {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.type = Clazz.getPrimitiveClass("void");
+				ctx.value.type = HiClass.getPrimitiveClass("void");
 			}
 		} finally {
 			ctx.isReturn = true;

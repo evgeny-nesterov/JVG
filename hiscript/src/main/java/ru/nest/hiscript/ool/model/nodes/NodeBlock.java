@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeBlock extends Node implements NodeInitializer {
 	public NodeBlock() {

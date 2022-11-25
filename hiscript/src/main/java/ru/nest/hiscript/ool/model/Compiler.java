@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.InputStream;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.compiler.ParseRule;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+
+import java.io.InputStream;
 
 public class Compiler {
 	private Tokenizer tokenizer;
@@ -38,7 +38,7 @@ public class Compiler {
 	public static void testExecutor() {
 		StringBuilder buf = new StringBuilder();
 		try {
-			InputStream is = Compiler.class.getResourceAsStream("testScript.txt");
+			InputStream is = Compiler.class.getResourceAsStream("/oolTestSingle.hi");
 			int c;
 			while ((c = is.read()) != -1) {
 				buf.append((char) c);
@@ -70,6 +70,7 @@ public class Compiler {
 				// execute
 				RuntimeContext ctx = new RuntimeContext(true);
 				node.execute(ctx);
+				ctx.throwExceptionIf(true);
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();

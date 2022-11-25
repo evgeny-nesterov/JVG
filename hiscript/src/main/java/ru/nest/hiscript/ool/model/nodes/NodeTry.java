@@ -2,12 +2,12 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.fields.FieldObject;
+import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 
 public class NodeTry extends Node {
 	public NodeTry(Node body, Node catchBody, Type excType, String excName, Node finallyBody) {
@@ -41,13 +41,13 @@ public class NodeTry extends Node {
 		}
 
 		if (ctx.exception != null) {
-			Obj exception = ctx.exception;
+			HiObject exception = ctx.exception;
 			ctx.exception = null;
 
 			if (catchBody != null) {
 				ctx.enter(RuntimeContext.CATCH, line);
 
-				FieldObject exc = (FieldObject) Field.getField(excType, excName);
+				HiFieldObject exc = (HiFieldObject) HiField.getField(excType, excName);
 				exc.set(exception);
 				exc.initialized = true;
 

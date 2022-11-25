@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	private static Operation instance = new OperationCast();
@@ -26,7 +26,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			return;
 		}
 
-		Clazz t1 = v1.type = v1.variableType.getClazz(ctx);
+		HiClass t1 = v1.type = v1.variableType.getClass(ctx);
 		if (ctx.exitFromBlock()) {
 			return;
 		}
@@ -36,8 +36,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			castPrimitive(ctx, v1, v2);
 		} else if (t1.isArray()) {
 			// cast array
-			ClazzArray at1 = (ClazzArray) t1;
-			Clazz t2 = v2.type;
+			HiClassArray at1 = (HiClassArray) t1;
+			HiClass t2 = v2.type;
 			if (!canCastArray(at1, t2)) {
 				errorCast(ctx, v2.type, v1.type);
 				return;
@@ -46,7 +46,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			v1.array = v2.array;
 		} else {
 			// cast object
-			Clazz t2 = v2.object.clazz;
+			HiClass t2 = v2.object.clazz;
 
 			if (!t2.isInstanceof(t1)) {
 				errorCast(ctx, t2, t1);
@@ -59,13 +59,13 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		v1.valueType = Value.VALUE;
 	}
 
-	public static boolean canCastArray(ClazzArray from, Clazz to) {
+	public static boolean canCastArray(HiClassArray from, HiClass to) {
 		if (!to.isArray()) {
 			return false;
 		}
 
-		ClazzArray at1 = from;
-		ClazzArray at2 = (ClazzArray) to;
+		HiClassArray at1 = from;
+		HiClassArray at2 = (HiClassArray) to;
 		if (at1.dimension != at2.dimension) {
 			return false;
 		}
@@ -82,8 +82,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			return;
 		}
 
-		int type1 = FieldPrimitive.getType(v1.type);
-		int type2 = FieldPrimitive.getType(v2.type);
+		int type1 = HiFieldPrimitive.getType(v1.type);
+		int type2 = HiFieldPrimitive.getType(v2.type);
 		switch (type1) {
 			case BOOLEAN:
 				castBoolean(ctx, v1, v2, type2);

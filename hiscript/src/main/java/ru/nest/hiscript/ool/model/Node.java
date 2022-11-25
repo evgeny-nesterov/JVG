@@ -224,7 +224,7 @@ public abstract class Node implements Codable {
 			case TYPE_WHILE:
 				return NodeWhile.decode(os);
 			case TYPE_FIELD:
-				return Field.decode(os);
+				return HiField.decode(os);
 			case TYPE_SYNCHRONIZED:
 				return NodeSynchronized.decode(os);
 		}

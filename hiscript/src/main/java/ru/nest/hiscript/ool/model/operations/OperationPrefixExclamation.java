@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -18,7 +18,7 @@ public class OperationPrefixExclamation extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		Clazz c = v.type;
+		HiClass c = v.type;
 		if (c != TYPE_BOOLEAN) {
 			errorInvalidOperator(ctx, c);
 			return;

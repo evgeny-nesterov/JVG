@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Codable;
 import ru.nest.hiscript.ool.model.Type;
 
@@ -19,12 +19,12 @@ public class CodeContext {
 		this(null, null);
 	}
 
-	public CodeContext(CodeContext parent, Clazz clazz) {
+	public CodeContext(CodeContext parent, HiClass clazz) {
 		this.parent = parent;
 		this.clazz = clazz;
 	}
 
-	private Clazz clazz;
+	private HiClass clazz;
 
 	private CodeContext parent;
 
@@ -255,11 +255,11 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private HashMap<Clazz, Integer> classes = new HashMap<Clazz, Integer>();
+	private HashMap<HiClass, Integer> classes = new HashMap<HiClass, Integer>();
 
-	private HashMap<Integer, Clazz> index_to_classes = new HashMap<Integer, Clazz>();
+	private HashMap<Integer, HiClass> index_to_classes = new HashMap<Integer, HiClass>();
 
-	public void writeClass(Clazz clazz) throws IOException {
+	public void writeClass(HiClass clazz) throws IOException {
 		CodeContext ctx = getRoot();
 
 		int index = -1;
@@ -323,7 +323,7 @@ public class CodeContext {
 	}
 
 	public static class ClassCodeContext {
-		public Clazz clazz;
+		public HiClass clazz;
 
 		public CodeContext ctx;
 

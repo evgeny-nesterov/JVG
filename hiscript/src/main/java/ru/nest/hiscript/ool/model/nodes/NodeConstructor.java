@@ -3,12 +3,12 @@ package ru.nest.hiscript.ool.model.nodes;
 import java.io.IOException;
 
 import ru.nest.hiscript.ool.model.ClassLoadListener;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Constructor;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 
@@ -20,7 +20,7 @@ public class NodeConstructor extends Node {
 		name = type.getType().fullName.intern();
 	}
 
-	public NodeConstructor(Clazz clazz, Node[] argValues) {
+	public NodeConstructor(HiClass clazz, Node[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.clazz = clazz;
 		this.argValues = argValues;
@@ -35,7 +35,7 @@ public class NodeConstructor extends Node {
 
 	public NodeType type;
 
-	public Clazz clazz;
+	public HiClass clazz;
 
 	public Node[] argValues;
 
@@ -45,7 +45,7 @@ public class NodeConstructor extends Node {
 	public void execute(RuntimeContext ctx) {
 		if (clazz == null) {
 			// init by type
-			clazz = type.getType().getClazz(ctx);
+			clazz = type.getType().getClass(ctx);
 
 			if (clazz == null) {
 				ctx.throwException("class not found: " + name);
@@ -67,19 +67,19 @@ public class NodeConstructor extends Node {
 			ctx.addClass(clazz);
 		}
 
-		Obj outboundObject = ctx.getOutboundObject(clazz);
+		HiObject outboundObject = ctx.getOutboundObject(clazz);
 		invokeConstructor(ctx, clazz, argValues, null, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, Clazz clazz, Node[] argValues, Obj object, Obj outboundObject) {
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Node[] argValues, HiObject object, HiObject outboundObject) {
 		// build argument class array and
 		// evaluate method arguments
-		Clazz[] types = null;
-		Field<?>[] arguments = null;
+		HiClass[] types = null;
+		HiField<?>[] arguments = null;
 		if (argValues != null) {
 			int size = argValues.length;
-			arguments = new Field<?>[size];
-			types = new Clazz[size];
+			arguments = new HiField<?>[size];
+			types = new HiClass[size];
 			for (int i = 0; i < size; i++) {
 				argValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
@@ -89,7 +89,7 @@ public class NodeConstructor extends Node {
 				types[i] = ctx.value.type;
 
 				Type type = Type.getType(types[i]);
-				arguments[i] = Field.getField(type, null);
+				arguments[i] = HiField.getField(type, null);
 				arguments[i].set(ctx, ctx.value);
 				if (ctx.exitFromBlock()) {
 					return;
@@ -99,7 +99,7 @@ public class NodeConstructor extends Node {
 		}
 
 		// get constructor
-		Constructor constructor = clazz.searchConstructor(ctx, types);
+		HiConstructor constructor = clazz.searchConstructor(ctx, types);
 		if (constructor == null) {
 			ctx.throwException("constructor not found: " + clazz.fullName);
 			return;
@@ -139,7 +139,7 @@ public class NodeConstructor extends Node {
 			return new NodeConstructor(type, argValues);
 		} else {
 			try {
-				Clazz clazz = os.readClass();
+				HiClass clazz = os.readClass();
 				Node[] argValues = os.readArray(Node.class, os.readByte());
 				return new NodeConstructor(clazz, argValues);
 			} catch (NoClassException exc) {
@@ -147,7 +147,7 @@ public class NodeConstructor extends Node {
 				final NodeConstructor node = new NodeConstructor(argValues);
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
-					public void classLoaded(Clazz clazz) {
+					public void classLoaded(HiClass clazz) {
 						node.clazz = clazz;
 					}
 				}, exc.getIndex());

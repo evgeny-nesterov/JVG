@@ -1,20 +1,21 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import java.lang.reflect.Array;
-
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzNull;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+
+import java.lang.reflect.Array;
 
 public class OperationInvocation extends BinaryOperation {
 	private static Operation instance;
@@ -62,7 +63,7 @@ public class OperationInvocation extends BinaryOperation {
 		// a.new B(), where v1=a, v2=new B()
 		Node valueNode = v2.node;
 
-		Obj enterObject = null;
+		HiObject enterObject = null;
 		if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {
 			// Check previous operand on whether it's an object and not an array
 			if (!v1.type.isArray() && v1.type.isObject()) {
@@ -108,9 +109,9 @@ public class OperationInvocation extends BinaryOperation {
 			return;
 		}
 
-		Field<?> field = null;
-		Clazz clazz = null;
-		Obj object = null;
+		HiField<?> field = null;
+		HiClass clazz = null;
+		HiObject object = null;
 		// find by pattern: <VARIABLE|ARRAY>.<STATIC CLASS>
 		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.VALUE || v1.valueType == Value.ARRAY_INDEX) {
 			clazz = v1.type;
@@ -122,7 +123,7 @@ public class OperationInvocation extends BinaryOperation {
 					}
 
 					v1.valueType = Value.VALUE;
-					v1.type = Clazz.getPrimitiveClass("int");
+					v1.type = HiClass.getPrimitiveClass("int");
 					v1.intNumber = Array.getLength(v1.array);
 					return;
 				}
@@ -159,7 +160,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		if (field != null) {
-			Clazz fieldType = field.getClazz(ctx);
+			HiClass fieldType = field.getClass(ctx);
 			v1.valueType = Value.VALUE;
 			v1.type = fieldType;
 
@@ -188,8 +189,10 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		Node[] argValues = v2.arguments;
-		Clazz clazz = v1.type;
-		Obj obj = null;
+		int v1ValueType = v1.valueType;
+		HiClass v1Clazz = v1.type;
+		HiClass clazz = v1Clazz;
+		HiObject obj = null;
 		Object object = null;
 		boolean isStatic = false;
 		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.VALUE || v1.valueType == Value.ARRAY_INDEX) {
@@ -213,7 +216,7 @@ public class OperationInvocation extends BinaryOperation {
 			isStatic = true;
 		} else {
 			String text = "can't find symbol; variable " + name;
-			Clazz location = ctx.level.clazz;
+			HiClass location = ctx.level.clazz;
 			if (location != null) {
 				text += "; location " + location.fullName;
 			}
@@ -223,28 +226,36 @@ public class OperationInvocation extends BinaryOperation {
 
 		// build argument class array and
 		// evaluate method arguments
-		Clazz[] types = null;
-		Field<?>[] arguments = null;
+		HiClass[] types = null;
+		HiField<?>[] arguments = null;
 		if (argValues != null) {
 			int size = argValues.length;
-			arguments = new Field[size];
-			types = new Clazz[size];
+			types = new HiClass[size];
+			arguments = new HiField[size + 1];
 			for (int i = 0; i < size; i++) {
 				argValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-
 				types[i] = ctx.value.type;
 
 				Type type = Type.getType(types[i]);
-				arguments[i] = Field.getField(type, null);
+				arguments[i] = HiField.getField(type, null);
 				arguments[i].set(ctx, ctx.value);
 			}
 		}
 
+		if ((v1ValueType == Value.VARIABLE || v1ValueType == Value.VALUE) && clazz != v1Clazz) {
+			// find super method
+			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, types);
+			if (superMethod == null) {
+				ctx.throwException("can't find method " + v1Clazz.fullName + "." + name);
+				return;
+			}
+		}
+
 		// find method
-		Method method = clazz.searchMethod(ctx, name, types);
+		HiMethod method = clazz.searchMethod(ctx, name, types);
 		if (method == null) {
 			ctx.throwException("can't find method " + clazz.fullName + "." + name);
 			return;
@@ -256,20 +267,48 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// set names and types of arguments
-		if (arguments != null) {
-			int size = arguments.length;
+		if (types != null) {
+			int size = types.length;
+			if (method.hasVararg()) {
+				int varargSize = types.length - method.arguments.length + 1;
+				int mainSize = size - varargSize;
+				Type varargArrayType = method.arguments[method.arguments.length - 1].type;
+				HiClass varargClass = varargArrayType.getCellType().getClass(ctx);
+				HiClass varargArrayClass = varargArrayType.getClass(ctx);
+				HiField<?> varargField = HiField.getField(varargArrayType, null);
+
+				Class<?> _varargClass = Arrays.getClass(varargClass, 0);
+				Object array = Array.newInstance(_varargClass, varargSize);
+				for (int i = 0; i < varargSize; i++) {
+					v1.type = types[mainSize + i];
+					arguments[mainSize + i].get(ctx, v1);
+					Arrays.setArrayIndex(varargClass, array, i, v1, v2);
+				}
+
+				ctx.value.array = array;
+				ctx.value.type = varargArrayClass;
+				varargField.set(ctx, ctx.value);
+
+				arguments[mainSize] = varargField;
+				int newSize = mainSize + 1;
+				for (int i = newSize; i < size; i++) {
+					arguments[i] = null;
+				}
+				size = newSize;
+			}
+
 			for (int i = 0; i < size; i++) {
-				Clazz argClazz = arguments[i].getClazz(ctx);
+				HiClass argClass = arguments[i].getClass(ctx);
 
 				// on null argument update field class from ClazzNull on argument class
-				if (argClazz.isNull()) {
-					arguments[i] = Field.getField(method.arguments[i].type, null);
-					ctx.value.type = ClazzNull.NULL;
+				if (argClass.isNull()) {
+					arguments[i] = HiField.getField(method.arguments[i].type, null);
+					ctx.value.type = HiClassNull.NULL;
 					arguments[i].set(ctx, ctx.value);
-				} else if (!argClazz.isArray()) {
-					ctx.value.type = argClazz;
+				} else if (!argClass.isArray()) {
+					ctx.value.type = argClass;
 					arguments[i].get(ctx, ctx.value);
-					arguments[i] = Field.getField(method.arguments[i].type, null);
+					arguments[i] = HiField.getField(method.arguments[i].type, null);
 					arguments[i].set(ctx, ctx.value);
 				}
 				// TODO: update array cell type

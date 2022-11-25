@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
@@ -10,23 +10,23 @@ public class StringImpl extends ImplUtil {
 	public static void String_int_length(RuntimeContext ctx) {
 		char[] chars = getChars(ctx.value.object);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("int");
+		ctx.value.type = HiClass.getPrimitiveClass("int");
 		ctx.value.intNumber = chars.length;
 	}
 
-	public static void String_int_indexOf_String_int(RuntimeContext ctx, Obj string, int fromIndex) {
+	public static void String_int_indexOf_String_int(RuntimeContext ctx, HiObject string, int fromIndex) {
 		String s1 = getString(ctx.value.object);
 		String s2 = getString(string);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("int");
+		ctx.value.type = HiClass.getPrimitiveClass("int");
 		ctx.value.intNumber = s1.indexOf(s2, fromIndex);
 	}
 
-	public static void String_int_lastIndexOf_String_int(RuntimeContext ctx, Obj string, int fromIndex) {
+	public static void String_int_lastIndexOf_String_int(RuntimeContext ctx, HiObject string, int fromIndex) {
 		String s1 = getString(ctx.value.object);
 		String s2 = getString(string);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("int");
+		ctx.value.type = HiClass.getPrimitiveClass("int");
 		ctx.value.intNumber = s1.lastIndexOf(s2, fromIndex);
 	}
 
@@ -60,7 +60,7 @@ public class StringImpl extends ImplUtil {
 		NodeString.createString(ctx, s.toCharArray());
 	}
 
-	public static void String_boolean_equals_Object(RuntimeContext ctx, Obj o) {
+	public static void String_boolean_equals_Object(RuntimeContext ctx, HiObject o) {
 		boolean equals = false;
 		boolean isNull1 = ctx.value.object == null;
 		boolean isNull2 = o == null;
@@ -80,7 +80,7 @@ public class StringImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("boolean");
+		ctx.value.type = HiClass.getPrimitiveClass("boolean");
 		ctx.value.bool = equals;
 	}
 }

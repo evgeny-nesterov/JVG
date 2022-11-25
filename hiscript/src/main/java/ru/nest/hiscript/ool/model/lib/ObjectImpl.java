@@ -1,18 +1,18 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ObjectImpl extends ImplUtil {
 	public static void Object_int_hashCode(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("int");
+		ctx.value.type = HiClass.getPrimitiveClass("int");
 		if (ctx.value.type.isArray()) {
 			ctx.value.intNumber = ctx.value.array.hashCode();
 		} else {
@@ -25,7 +25,7 @@ public class ObjectImpl extends ImplUtil {
 		String text;
 		if (ctx.value.type.isArray()) {
 			if (ctx.value.array != null) {
-				ClazzArray type = (ClazzArray) ctx.value.type;
+				HiClassArray type = (HiClassArray) ctx.value.type;
 				text = type.className + "@" + Integer.toHexString(ctx.value.array.hashCode());
 			} else {
 				text = "null";
@@ -42,25 +42,25 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static void Object_Object_clone(RuntimeContext ctx) {
-		Obj src = ctx.value.object;
-		Obj clone = clone(src);
+		HiObject src = ctx.value.object;
+		HiObject clone = clone(src);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.OBJECT_CLASS;
+		ctx.value.type = HiClass.OBJECT_CLASS;
 		ctx.value.object = clone;
 	}
 
-	public static Obj clone(Obj src) {
-		Obj clone = new Obj(src.clazz, src.outboundObject);
+	public static HiObject clone(HiObject src) {
+		HiObject clone = new HiObject(src.clazz, src.outboundObject);
 		if (src.getSuperObject() != null) {
 			clone.setSuperObject(clone(src.getSuperObject()));
 		}
 
 		if (src.fields != null) {
 			int count = src.fields.length;
-			clone.fields = new Field[count];
+			clone.fields = new HiField[count];
 			for (int i = 0; i < count; i++) {
-				clone.fields[i] = (Field<?>) src.fields[i].clone();
+				clone.fields[i] = (HiField<?>) src.fields[i].clone();
 			}
 		}
 		return clone;
@@ -74,7 +74,7 @@ public class ObjectImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("boolean");
+		ctx.value.type = HiClass.getPrimitiveClass("boolean");
 	}
 
 	public static void Object_void_wait(RuntimeContext ctx) {
@@ -114,7 +114,7 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static void Object_Class_getClass(RuntimeContext ctx) {
-		Obj clazzObj = getClassObject(ctx, ctx.value.type);
+		HiObject clazzObj = getClassObject(ctx, ctx.value.type);
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = clazzObj.clazz;

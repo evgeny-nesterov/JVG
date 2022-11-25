@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Node;
@@ -39,9 +39,9 @@ public class RootParseRule extends ParseRule<Node> {
 
 		boolean createMainMethod = false;
 		if (ctx == null) {
-			ctx = new CompileContext(tokenizer, null, null, Clazz.CLASS_TYPE_TOP);
+			ctx = new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP);
 			if (wrapped) {
-				ctx.clazz = new Clazz(null, null, "@root", Clazz.CLASS_TYPE_TOP);
+				ctx.clazz = new HiClass(null, null, "@root", HiClass.CLASS_TYPE_TOP);
 				createMainMethod = true;
 			}
 		}
@@ -50,9 +50,9 @@ public class RootParseRule extends ParseRule<Node> {
 
 		Node node;
 		if (createMainMethod) {
-			Clazz clazz = ctx.clazz;
-			clazz.methods = new Method[1];
-			clazz.methods[0] = new Method(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
+			HiClass clazz = ctx.clazz;
+			clazz.methods = new HiMethod[1];
+			clazz.methods[0] = new HiMethod(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
 
 			node = new NodeMainWrapper(body);
 		} else {

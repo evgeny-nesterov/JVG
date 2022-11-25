@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
-import java.lang.reflect.Array;
-
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
+
+import java.lang.reflect.Array;
 
 /**
  * Буффер обмена данных. Содержит переменные всех типов данных.
@@ -38,7 +38,7 @@ public class Value implements PrimitiveTypes {
 
 	public int valueType;
 
-	public Clazz type;
+	public HiClass type;
 
 	// Переменные со всеми возможными типами данных
 	public byte byteNumber;
@@ -57,7 +57,7 @@ public class Value implements PrimitiveTypes {
 
 	public boolean bool;
 
-	public Obj object;
+	public HiObject object;
 
 	public Object array; // Obj[]...[] or <primitive>[]...[]
 
@@ -72,7 +72,7 @@ public class Value implements PrimitiveTypes {
 
 	public Type variableType;
 
-	public Field<?> variable;
+	public HiField<?> variable;
 
 	// Method arguments
 	public Node[] arguments;
@@ -100,7 +100,7 @@ public class Value implements PrimitiveTypes {
 
 		// primitives
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BOOLEAN:
 					return bool;
@@ -132,61 +132,61 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public void set(Object value) {
-		if (value instanceof Obj || value == null) {
+		if (value instanceof HiObject || value == null) {
 			valueType = VALUE;
 			if (value != null) {
-				object = (Obj) value;
+				object = (HiObject) value;
 				type = object.clazz;
 			} else {
 				object = null;
-				type = Clazz.OBJECT_CLASS;
+				type = HiClass.OBJECT_CLASS;
 			}
 		} else {
 			// arrays
 			Class<? extends Object> clazz = value.getClass();
 			if (clazz.isArray()) {
 				valueType = VALUE;
-				type = Clazz.getArrayType(clazz);
+				type = HiClass.getArrayType(clazz);
 				array = value;
 			}
 			// primitives
 			else if (value instanceof Double) {
 				valueType = VALUE;
 				doubleNumber = (Double) value;
-				type = Clazz.getPrimitiveClass("double");
+				type = HiClass.getPrimitiveClass("double");
 			} else if (value instanceof Float) {
 				valueType = VALUE;
 				floatNumber = (Float) value;
-				type = Clazz.getPrimitiveClass("float");
+				type = HiClass.getPrimitiveClass("float");
 			} else if (value instanceof Long) {
 				valueType = VALUE;
 				longNumber = (Long) value;
-				type = Clazz.getPrimitiveClass("long");
+				type = HiClass.getPrimitiveClass("long");
 			} else if (value instanceof Integer) {
 				valueType = VALUE;
 				intNumber = (Integer) value;
-				type = Clazz.getPrimitiveClass("int");
+				type = HiClass.getPrimitiveClass("int");
 			} else if (value instanceof Short) {
 				valueType = VALUE;
 				shortNumber = (Short) value;
-				type = Clazz.getPrimitiveClass("short");
+				type = HiClass.getPrimitiveClass("short");
 			} else if (value instanceof Byte) {
 				valueType = VALUE;
 				byteNumber = (Byte) value;
-				type = Clazz.getPrimitiveClass("byte");
+				type = HiClass.getPrimitiveClass("byte");
 			} else if (value instanceof Character) {
 				valueType = VALUE;
 				character = (Character) value;
-				type = Clazz.getPrimitiveClass("char");
+				type = HiClass.getPrimitiveClass("char");
 			} else if (value instanceof Boolean) {
 				valueType = VALUE;
 				bool = (Boolean) value;
-				type = Clazz.getPrimitiveClass("boolean");
+				type = HiClass.getPrimitiveClass("boolean");
 			}
 		}
 	}
 
-	public Obj getObject() {
+	public HiObject getObject() {
 		if (type.isPrimitive() || type.isArray()) {
 			ctx.throwException("object is expected");
 			return null;
@@ -206,7 +206,7 @@ public class Value implements PrimitiveTypes {
 
 	public boolean getBoolean() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			if (typeIndex == BOOLEAN) {
 				return bool;
 			}
@@ -218,7 +218,7 @@ public class Value implements PrimitiveTypes {
 
 	public char getChar() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			if (typeIndex == CHAR) {
 				return character;
 			}
@@ -230,7 +230,7 @@ public class Value implements PrimitiveTypes {
 
 	public byte getByte() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			if (typeIndex == BYTE) {
 				return byteNumber;
 			}
@@ -242,7 +242,7 @@ public class Value implements PrimitiveTypes {
 
 	public short getShort() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
@@ -258,7 +258,7 @@ public class Value implements PrimitiveTypes {
 
 	public int getInt() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
@@ -280,7 +280,7 @@ public class Value implements PrimitiveTypes {
 
 	public long getLong() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
@@ -305,7 +305,7 @@ public class Value implements PrimitiveTypes {
 
 	public float getFloat() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
@@ -333,7 +333,7 @@ public class Value implements PrimitiveTypes {
 
 	public double getDouble() {
 		if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
@@ -400,7 +400,7 @@ public class Value implements PrimitiveTypes {
 	public void copyToArray(Value value) {
 		// TODO: copy array and object
 
-		int typeIndex = FieldPrimitive.getType(type);
+		int typeIndex = HiFieldPrimitive.getType(type);
 		switch (typeIndex) {
 			case BOOLEAN:
 				Array.setBoolean(parentArray, arrayIndex, value.bool);
@@ -438,7 +438,7 @@ public class Value implements PrimitiveTypes {
 
 	public char[] getString(RuntimeContext ctx) {
 		if (type.isPrimitive()) {
-			int t = FieldPrimitive.getType(type);
+			int t = HiFieldPrimitive.getType(type);
 			switch (t) {
 				case BOOLEAN:
 					return Boolean.toString(bool).toCharArray();
@@ -470,7 +470,7 @@ public class Value implements PrimitiveTypes {
 			if (array == null) {
 				return NULL;
 			} else {
-				ClazzArray arrayType = (ClazzArray) type;
+				HiClassArray arrayType = (HiClassArray) type;
 				return (arrayType.className + "@" + Integer.toHexString(array.hashCode())).toCharArray();
 			}
 		}

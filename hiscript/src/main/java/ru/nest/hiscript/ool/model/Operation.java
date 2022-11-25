@@ -81,7 +81,7 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return index;
 	}
 
-	public void errorIncompatibleTypes(RuntimeContext ctx, Clazz type1, Clazz type2) {
+	public void errorIncompatibleTypes(RuntimeContext ctx, HiClass type1, HiClass type2) {
 		String text = "incompatible types; found " + type1.fullName + ", required " + type2.fullName;
 		ctx.throwException(text);
 	}

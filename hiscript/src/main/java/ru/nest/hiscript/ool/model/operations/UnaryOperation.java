@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -24,7 +24,7 @@ public abstract class UnaryOperation extends Operation {
 
 	public abstract void doOperation(RuntimeContext ctx, Value v);
 
-	public void errorInvalidOperator(RuntimeContext ctx, Clazz type) {
+	public void errorInvalidOperator(RuntimeContext ctx, HiClass type) {
 		// operator '<operator>' can not be applyed to <type>
 	}
 }

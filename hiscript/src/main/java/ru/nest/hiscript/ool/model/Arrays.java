@@ -3,8 +3,8 @@ package ru.nest.hiscript.ool.model;
 import java.lang.reflect.Array;
 import java.util.HashSet;
 
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class Arrays implements PrimitiveTypes {
 	private static HashSet<Class<?>> primitiveArrayClasses;
@@ -28,7 +28,7 @@ public class Arrays implements PrimitiveTypes {
 		}
 	}
 
-	public static Class<?> getClass(Clazz clazz, int dimension) {
+	public static Class<?> getClass(HiClass clazz, int dimension) {
 		Class<?> c = null;
 		if (dimension > 0) {
 			String prefix = "";
@@ -38,7 +38,7 @@ public class Arrays implements PrimitiveTypes {
 
 			try {
 				if (clazz.isPrimitive()) {
-					int typeIndex = FieldPrimitive.getType(clazz);
+					int typeIndex = HiFieldPrimitive.getType(clazz);
 					switch (typeIndex) {
 						case PrimitiveTypes.BOOLEAN:
 							c = Class.forName(prefix + "Z");
@@ -73,7 +73,7 @@ public class Arrays implements PrimitiveTypes {
 							break;
 					}
 				} else {
-					c = Class.forName(prefix + "L" + Obj.class.getName() + ";");
+					c = Class.forName(prefix + "L" + HiObject.class.getName() + ";");
 				}
 			} catch (Exception exc) {
 				// TODO: error
@@ -81,7 +81,7 @@ public class Arrays implements PrimitiveTypes {
 			}
 		} else {
 			if (clazz.isPrimitive()) {
-				int typeIndex = FieldPrimitive.getType(clazz);
+				int typeIndex = HiFieldPrimitive.getType(clazz);
 				switch (typeIndex) {
 					case PrimitiveTypes.BOOLEAN:
 						c = boolean.class;
@@ -116,7 +116,7 @@ public class Arrays implements PrimitiveTypes {
 						break;
 				}
 			} else {
-				c = Obj.class;
+				c = HiObject.class;
 			}
 		}
 		return c;
@@ -132,16 +132,16 @@ public class Arrays implements PrimitiveTypes {
 				v.array = null;
 			} else if (value instanceof Object[] || primitiveArrayClasses.contains(value.getClass())) {
 				v.array = value;
-			} else if (value instanceof Obj) {
-				v.object = (Obj) value;
+			} else if (value instanceof HiObject) {
+				v.object = (HiObject) value;
 				v.set(value);
 			} else {
 				throw new IllegalArgumentException("array cell: " + value);
 			}
 		} else {
-			ClazzArray arrayClazz = (ClazzArray) v.type;
-			Clazz cellType = arrayClazz.cellClass;
-			int typeIndex = FieldPrimitive.getType(cellType);
+			HiClassArray arrayClass = (HiClassArray) v.type;
+			HiClass cellType = arrayClass.cellClass;
+			int typeIndex = HiFieldPrimitive.getType(cellType);
 			switch (typeIndex) {
 				case BOOLEAN:
 					v.bool = Array.getBoolean(array, index);
@@ -178,7 +178,7 @@ public class Arrays implements PrimitiveTypes {
 		}
 	}
 
-	public static void setArrayIndex(Clazz type, Object parentArray, int index, Value value, Value dst) {
+	public static void setArrayIndex(HiClass type, Object parentArray, int index, Value value, Value dst) {
 		dst.type = type;
 
 		if (type.isArray()) {
@@ -186,7 +186,7 @@ public class Arrays implements PrimitiveTypes {
 			dst.object = value.object;
 			Array.set(parentArray, index, dst.array);
 		} else if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BOOLEAN:
 					dst.bool = value.getBoolean();
@@ -234,11 +234,11 @@ public class Arrays implements PrimitiveTypes {
 		}
 	}
 
-	public static void setArray(Clazz type, Object array, int index, Value value) {
+	public static void setArray(HiClass type, Object array, int index, Value value) {
 		if (type.isArray()) {
 			Array.set(array, index, value.getArray());
 		} else if (type.isPrimitive()) {
-			int typeIndex = FieldPrimitive.getType(type);
+			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BOOLEAN:
 					Array.setBoolean(array, index, value.getBoolean());

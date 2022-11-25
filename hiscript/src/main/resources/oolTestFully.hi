@@ -977,20 +977,23 @@ Util.header("Test super class outbound object");
   		class B {
        		int b1 = 67;
   		}
-  		
+
   		class D {
        		int b2 = 67;
   		}
-  		
+
   		void m() {
     		final int z = 65;
     		class D {
        			int b2 = 90;
-    		}
-    		
-    		Object o = new Object() {
+                void m() {
+                    System.println("wrong!!!");
+                }
+            }
+
+    		D o = new D() {
       			void m() {
-        			Object o2 = new Object() {
+        			D o2 = new D() {
           				void m() {
             				class C1 extends B {
             				}
@@ -1025,6 +1028,27 @@ Util.header("Check logical AND and OR, not all conditions are calculated");
 	}
 	A a = new A();
 	System.println("RESULT: " + (a == null && a.b(1) == 10 || 1 > 0 && a.b(2) == 3));
+}
+
+///////////////////////////////////////////////////////////////
+// Invalid method call
+///////////////////////////////////////////////////////////////
+Util.header("Check invalid method call");
+{
+    abstract class A {
+    }
+    class C extends A {
+        void get() {
+        }
+    }
+
+    A obj = new C();
+    try {
+        obj.get();
+        System.println("RESULT: failure");
+   } catch(Exception e) {
+        System.println("RESULT: success");
+    }
 }
 
 //*************** ALGORITHMS ************

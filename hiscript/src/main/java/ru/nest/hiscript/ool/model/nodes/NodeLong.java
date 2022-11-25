@@ -2,7 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -10,7 +10,7 @@ import ru.nest.hiscript.ool.model.Value;
 public class NodeLong extends Node {
 	private final static String name = "long";
 
-	private final static Clazz type = Clazz.getPrimitiveClass(name);
+	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
 	public NodeLong(long value) {
 		super(name, TYPE_LONG);

@@ -19,19 +19,19 @@ public interface PrimitiveTypes {
 
 	public final static int VOID = 8;
 
-	public final static Clazz TYPE_BOOLEAN = Clazz.getPrimitiveClass("boolean");
+	public final static HiClass TYPE_BOOLEAN = HiClass.getPrimitiveClass("boolean");
 
-	public final static Clazz TYPE_CHAR = Clazz.getPrimitiveClass("char");
+	public final static HiClass TYPE_CHAR = HiClass.getPrimitiveClass("char");
 
-	public final static Clazz TYPE_BYTE = Clazz.getPrimitiveClass("byte");
+	public final static HiClass TYPE_BYTE = HiClass.getPrimitiveClass("byte");
 
-	public final static Clazz TYPE_SHORT = Clazz.getPrimitiveClass("short");
+	public final static HiClass TYPE_SHORT = HiClass.getPrimitiveClass("short");
 
-	public final static Clazz TYPE_INT = Clazz.getPrimitiveClass("int");
+	public final static HiClass TYPE_INT = HiClass.getPrimitiveClass("int");
 
-	public final static Clazz TYPE_LONG = Clazz.getPrimitiveClass("long");
+	public final static HiClass TYPE_LONG = HiClass.getPrimitiveClass("long");
 
-	public final static Clazz TYPE_FLOAT = Clazz.getPrimitiveClass("float");
+	public final static HiClass TYPE_FLOAT = HiClass.getPrimitiveClass("float");
 
-	public final static Clazz TYPE_DOUBLE = Clazz.getPrimitiveClass("double");
+	public final static HiClass TYPE_DOUBLE = HiClass.getPrimitiveClass("double");
 }

@@ -2,26 +2,26 @@ package ru.nest.hiscript.ool.model.lib;
 
 import java.util.HashMap;
 
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
 // TODO: take to account hashCode of the object and equate method
 public class HashMapImpl extends ImplUtil {
 	private static HashMap<Object, Object> getMap(RuntimeContext ctx) {
-		Obj o = ctx.getCurrentObject();
+		HiObject o = ctx.getCurrentObject();
 		HashMap<Object, Object> map = (HashMap<Object, Object>) o.userObject;
 		return map;
 	}
 
 	private static void setCtx(RuntimeContext ctx, Object object) {
-		if (object instanceof Obj) {
-			Obj o = (Obj) object;
+		if (object instanceof HiObject) {
+			HiObject o = (HiObject) object;
 			o.ctx = ctx;
 		}
 	}
 
 	public static void HashMap_void_init(RuntimeContext ctx) {
-		Obj o = ctx.getCurrentObject();
+		HiObject o = ctx.getCurrentObject();
 		o.userObject = new HashMap<Object, Object>();
 		returnVoid(ctx);
 	}
@@ -74,7 +74,7 @@ public class HashMapImpl extends ImplUtil {
 		// TODO: realize
 	}
 
-	public static void HashMap_void_putAll_HashMap(RuntimeContext ctx, Obj map) {
+	public static void HashMap_void_putAll_HashMap(RuntimeContext ctx, HiObject map) {
 		HashMap<Object, Object> currentMap = getMap(ctx);
 		// TODO: realize
 	}

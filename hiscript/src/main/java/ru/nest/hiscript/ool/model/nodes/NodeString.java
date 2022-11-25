@@ -2,12 +2,12 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Constructor;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.fields.FieldArray;
+import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 
 public class NodeString extends Node {
 	public NodeString(String text) {
@@ -17,24 +17,24 @@ public class NodeString extends Node {
 
 	public char[] text;
 
-	private static Clazz clazz;
+	private static HiClass clazz;
 
-	private static Constructor constructor;
+	private static HiConstructor constructor;
 
 	@Override
 	public void execute(RuntimeContext ctx) {
 		createString(ctx, text);
 	}
 
-	public static Obj createString(RuntimeContext ctx, char[] text) {
+	public static HiObject createString(RuntimeContext ctx, char[] text) {
 		if (clazz == null) {
-			clazz = Clazz.forName(ctx, "String");
+			clazz = HiClass.forName(ctx, "String");
 			constructor = clazz.getConstructor(ctx);
 		}
 
-		Obj obj = constructor.newInstance(ctx, null, null);
+		HiObject obj = constructor.newInstance(ctx, null, null);
 		if (obj != null) {
-			FieldArray chars = (FieldArray) obj.getField("chars");
+			HiFieldArray chars = (HiFieldArray) obj.getField("chars");
 			chars.array = text;
 		}
 

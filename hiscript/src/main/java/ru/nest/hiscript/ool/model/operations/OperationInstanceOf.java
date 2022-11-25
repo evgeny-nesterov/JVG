@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -13,13 +13,13 @@ public class OperationInstanceOf extends BinaryOperation {
 	}
 
 	private OperationInstanceOf() {
-		super("instanceof", INSTANCEOF);
+		super("instanceof", INSTANCE_OF);
 	}
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		Clazz c1 = v1.type;
-		Clazz c2 = v2.type;
+		HiClass c1 = v1.type;
+		HiClass c2 = v2.type;
 		v1.type = TYPE_BOOLEAN;
 
 		if (!c1.isPrimitive()) {

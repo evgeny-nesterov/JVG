@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
@@ -55,13 +55,13 @@ public class NewParseRule extends ParseRule<Node> {
 
 	// new <type>(<arguments>) {<body>}
 	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
-		Node[] arguments = visitArguments(tokenizer, properties);
+		Node[] arguments = visitArgumentsValues(tokenizer, properties);
 
 		expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, properties.clazz, Clazz.CLASS_TYPE_ANONYMOUS);
-			innerProperties.clazz = new Clazz(type, properties.clazz, null, "", Clazz.CLASS_TYPE_ANONYMOUS);
+			CompileContext innerProperties = new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
+			innerProperties.clazz = new HiClass(type, properties.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
 			// TODO: do not allow parse constructors. ??? name is empty => ocnstructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties);

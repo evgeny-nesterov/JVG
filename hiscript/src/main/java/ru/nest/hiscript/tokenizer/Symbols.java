@@ -98,4 +98,6 @@ public interface Symbols {
 	public final static int SQUARE_BRACES_RIGHT = 48;
 
 	public final static int MASSIVE = 49;
+
+	public final static int TRIPLEPOINTS = 50;
 }

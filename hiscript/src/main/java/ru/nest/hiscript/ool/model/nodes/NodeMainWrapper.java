@@ -2,8 +2,8 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Node;
@@ -20,9 +20,9 @@ public class NodeMainWrapper extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		Clazz rootClass = new Clazz(null, null, "", Clazz.CLASS_TYPE_TOP);
-		rootClass.methods = new Method[1];
-		rootClass.methods[0] = new Method(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
+		HiClass rootClass = new HiClass(null, null, "", HiClass.CLASS_TYPE_TOP);
+		rootClass.methods = new HiMethod[1];
+		rootClass.methods[0] = new HiMethod(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
 
 		ctx.enterMethod(rootClass.methods[0], null, -1);
 		try {

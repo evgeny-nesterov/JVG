@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 
 import ru.nest.hiscript.ool.model.Arrays;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Constructor;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 
 public class NodeArray extends Node {
 	public NodeArray(Type cellType, Node[] dimensions) {
@@ -54,15 +54,15 @@ public class NodeArray extends Node {
 			}
 		}
 
-		ClazzArray clazz = (ClazzArray) type.getClazz(ctx);
+		HiClassArray clazz = (HiClassArray) type.getClass(ctx);
 		if (ctx.exitFromBlock()) {
 			return;
 		}
 
-		Constructor constructor = clazz.searchConstructor(ctx);
+		HiConstructor constructor = clazz.searchConstructor(ctx);
 		constructor.newInstance(ctx, null, null, null);
 
-		Clazz cellClass = clazz.cellClass;
+		HiClass cellClass = clazz.cellClass;
 		int dimension = dimensionsCount - dimensionsCountActive;
 		Class<?> c = Arrays.getClass(cellClass, dimension);
 

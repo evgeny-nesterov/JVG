@@ -28,6 +28,9 @@ import ru.nest.hiscript.ool.model.operations.OperationLogicalAnd;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalAndCheck;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalOR;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalOrCheck;
+import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitch;
+import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitchCheck;
+import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitchTrigger;
 import ru.nest.hiscript.ool.model.operations.OperationLower;
 import ru.nest.hiscript.ool.model.operations.OperationLowerOrEquals;
 import ru.nest.hiscript.ool.model.operations.OperationMinus;
@@ -44,9 +47,8 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixExclamation;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixIncrement;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixMinus;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
-import ru.nest.hiscript.ool.model.operations.OperationTriger;
+import ru.nest.hiscript.ool.model.operations.OperationVararg;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
-import ru.nest.hiscript.ool.model.operations.SkipOperation;
 import ru.nest.hiscript.tokenizer.Symbols;
 
 public class Operations implements OperationsIF, PrimitiveTypes {
@@ -56,6 +58,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case ARRAY_INDEX:
 			case POST_INCREMENT:
 			case POST_DECREMENT:
+			case VARARG:
 				return 0;
 
 			case PREFIX_INCREMENT:
@@ -70,7 +73,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return 20;
 
 			case MULTIPLY:
-			case DEVIDE:
+			case DIVIDE:
 			case PERCENT:
 				return 30;
 
@@ -87,7 +90,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOWER_OR_EQUALS:
 			case GREATER:
 			case GREATER_OR_EQUALS:
-			case INSTANCEOF:
+			case INSTANCE_OF:
 				return 60;
 
 			case EQUALS:
@@ -115,10 +118,12 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR:
 				return 113;
 
-			case SKIP:
+			case LOGICAL_SWITCH:
 				return 129;
-			case TRIGER:
+			case LOGICAL_SWITCH_TRIGGER:
 				return 130;
+			case LOGICAL_SWITCH_CHECK:
+				return 131;
 
 			case EQUATE:
 			case EQUATE_PLUS:
@@ -154,12 +159,12 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case PREFIX_MINUS:
 			case PREFIX_EXCLAMATION:
 			case PREFIX_BITWISE_REVERSE:
+			case LOGICAL_SWITCH:
+			case LOGICAL_SWITCH_CHECK:
 				return OPERANDS_UNARY;
-
-			case TRIGER:
+			case LOGICAL_SWITCH_TRIGGER:
 				return OPERANDS_TRINARY;
 		}
-
 		return OPERANDS_BINARY;
 	}
 
@@ -177,7 +182,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case PREFIX_BITWISE_REVERSE:
 			case CAST:
 			case MULTIPLY:
-			case DEVIDE:
+			case DIVIDE:
 			case PERCENT:
 			case PLUS:
 			case MINUS:
@@ -188,7 +193,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOWER_OR_EQUALS:
 			case GREATER:
 			case GREATER_OR_EQUALS:
-			case INSTANCEOF:
+			case INSTANCE_OF:
 			case EQUALS:
 			case NOT_EQUALS:
 			case AND:
@@ -196,8 +201,9 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case OR:
 			case LOGICAL_AND:
 			case LOGICAL_OR:
-			case SKIP:
-			case TRIGER:
+			case LOGICAL_SWITCH:
+			case LOGICAL_SWITCH_TRIGGER:
+			case LOGICAL_SWITCH_CHECK:
 			case EQUATE:
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
@@ -214,7 +220,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR_CHECK:
 				return true;
 		}
-
 		return false;
 	}
 
@@ -240,7 +245,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return MULTIPLY;
 
 			case Symbols.DEVIDE:
-				return DEVIDE;
+				return DIVIDE;
 
 			case Symbols.PERCENT:
 				return PERCENT;
@@ -330,12 +335,14 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return EQUATE_OR;
 
 			case Symbols.QUESTION:
-				return SKIP;
+				return LOGICAL_SWITCH;
 
 			case Symbols.COLON:
-				return TRIGER;
-		}
+				return LOGICAL_SWITCH_TRIGGER;
 
+			case Symbols.TRIPLEPOINTS:
+				return VARARG;
+		}
 		return -1;
 	}
 
@@ -377,7 +384,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case MULTIPLY:
 				return "*";
 
-			case DEVIDE:
+			case DIVIDE:
 				return "/";
 
 			case PERCENT:
@@ -410,7 +417,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case GREATER_OR_EQUALS:
 				return ">=";
 
-			case INSTANCEOF:
+			case INSTANCE_OF:
 				return "instanceof";
 
 			case EQUALS:
@@ -434,7 +441,13 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR:
 				return "||";
 
-			case TRIGER:
+			case LOGICAL_SWITCH:
+				return "?";
+
+			case LOGICAL_SWITCH_TRIGGER:
+				return ":";
+
+			case LOGICAL_SWITCH_CHECK:
 				return "?:";
 
 			case EQUATE:
@@ -473,16 +486,15 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case EQUATE_OR:
 				return "=|";
 
-			case SKIP:
-				return "->";
-
 			case LOGICAL_AND_CHECK:
 				return "?&&";
 
 			case LOGICAL_OR_CHECK:
 				return "?||";
-		}
 
+			case VARARG:
+				return "...";
+		}
 		return "<No such operation: " + operation + ">";
 	}
 
@@ -526,7 +538,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case MULTIPLY:
 				return OperationMultiply.getInstance();
 
-			case DEVIDE:
+			case DIVIDE:
 				return OperationDevide.getInstance();
 
 			case PERCENT:
@@ -574,7 +586,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case NOT_EQUALS:
 				return OperationNotEquals.getInstance();
 
-			case INSTANCEOF:
+			case INSTANCE_OF:
 				return OperationInstanceOf.getInstance();
 
 			case LOGICAL_AND:
@@ -619,19 +631,26 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case EQUATE_OR:
 				return OperationEquateOR.getInstance();
 
-			case TRIGER:
-				return OperationTriger.getInstance();
-
-			case SKIP:
-				return SkipOperation.getInstance();
-
 			case LOGICAL_AND_CHECK:
 				return OperationLogicalAndCheck.getInstance();
 
 			case LOGICAL_OR_CHECK:
 				return OperationLogicalOrCheck.getInstance();
-		}
 
+			case VARARG:
+				return OperationVararg.getInstance();
+
+			// logical switch
+			case LOGICAL_SWITCH:
+				return OperationLogicalSwitch.getInstance();
+
+			case LOGICAL_SWITCH_TRIGGER:
+				return OperationLogicalSwitchTrigger.getInstance();
+
+			case LOGICAL_SWITCH_CHECK:
+				return OperationLogicalSwitchCheck.getInstance();
+
+		}
 		return null;
 	}
 }

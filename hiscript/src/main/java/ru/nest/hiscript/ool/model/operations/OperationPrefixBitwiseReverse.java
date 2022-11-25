@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationPrefixBitwiseReverse extends UnaryOperation {
 	private static Operation instance = new OperationPrefixBitwiseReverse();
@@ -19,7 +19,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		Clazz c = v.type;
+		HiClass c = v.type;
 
 		boolean isP = c.isPrimitive();
 		if (!isP) {
@@ -27,7 +27,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 			return;
 		}
 
-		int t = FieldPrimitive.getType(c);
+		int t = HiFieldPrimitive.getType(c);
 		switch (t) {
 			case CHAR:
 				v.type = TYPE_INT;

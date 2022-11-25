@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Constructor;
-import ru.nest.hiscript.ool.model.Constructor.BodyConstructorType;
-import ru.nest.hiscript.ool.model.Field;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
@@ -32,7 +32,7 @@ public class ClassParseRule extends ParserUtil {
 	private ClassParseRule() {
 	}
 
-	public Clazz visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -86,7 +86,7 @@ public class ClassParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			ctx.clazz = new Clazz(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType);
+			ctx.clazz = new HiClass(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType);
 			ctx.clazz.modifiers = modifiers;
 
 			visitContent(tokenizer, ctx);
@@ -100,11 +100,11 @@ public class ClassParseRule extends ParserUtil {
 	}
 
 	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		Clazz clazz = properties.clazz;
+		HiClass clazz = properties.clazz;
 		while (true) {
 			// inner class / interface
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, Clazz.CLASS_TYPE_INNER);
-			Clazz innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
+			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER);
+			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
 			}
@@ -127,14 +127,14 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			// constructor
-			Constructor constructor = visitConstructor(tokenizer, properties);
+			HiConstructor constructor = visitConstructor(tokenizer, properties);
 			if (constructor != null) {
 				properties.addConstructor(constructor);
 				continue;
 			}
 
 			// method
-			Method method = visitMethod(tokenizer, properties);
+			HiMethod method = visitMethod(tokenizer, properties);
 			if (method != null) {
 				properties.addMethod(method);
 				continue;
@@ -156,22 +156,22 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (properties.constructors == null) {
-			Constructor defaultConstructor = new Constructor(clazz, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(clazz, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			properties.addConstructor(defaultConstructor);
 		}
 
 		properties.initClass();
 	}
 
-	private Constructor visitConstructor(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Clazz clazz = properties.clazz;
+		HiClass clazz = properties.clazz;
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
-				if (!name.equals(clazz.name) || clazz.type == Clazz.CLASS_TYPE_ANONYMOUS) {
+				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
 					throw new ParseException("invalid method declaration; return type is expected", tokenizer.currentToken());
 				}
 
@@ -181,7 +181,7 @@ public class ClassParseRule extends ParserUtil {
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<NodeArgument>();
-				visitArguments(tokenizer, arguments, properties);
+				visitArgumentsDefinitions(tokenizer, arguments, properties);
 				for (NodeArgument argument : arguments) {
 					properties.addLocalVariable(argument);
 				}
@@ -198,7 +198,7 @@ public class ClassParseRule extends ParserUtil {
 					int constructorType = visitServiceWord(tokenizer, THIS, SUPER);
 					if (constructorType != -1) {
 						if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
-							Node[] args = visitArguments(tokenizer, properties);
+							Node[] args = visitArgumentsValues(tokenizer, properties);
 							expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
 							expectSymbol(tokenizer, Symbols.SEMICOLON);
 
@@ -228,7 +228,7 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				properties.exit();
 
-				return new Constructor(clazz, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
+				return new HiConstructor(clazz, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
 			}
 		}
 
@@ -236,9 +236,9 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	private Method visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Clazz clazz = properties.clazz;
+		HiClass clazz = properties.clazz;
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
@@ -260,7 +260,7 @@ public class ClassParseRule extends ParserUtil {
 					properties.enter();
 
 					List<NodeArgument> arguments = new ArrayList<NodeArgument>();
-					visitArguments(tokenizer, arguments, properties);
+					visitArgumentsDefinitions(tokenizer, arguments, properties);
 					for (NodeArgument argument : arguments) {
 						properties.addLocalVariable(argument);
 					}
@@ -279,7 +279,7 @@ public class ClassParseRule extends ParserUtil {
 					}
 
 					properties.exit();
-					return new Method(clazz, modifiers, type, name, arguments, body);
+					return new HiMethod(clazz, modifiers, type, name, arguments, body);
 				}
 			}
 		}
@@ -312,7 +312,7 @@ public class ClassParseRule extends ParserUtil {
 					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
 
 					Type type = Type.getArrayType(baseType, addDimension);
-					Field<?> field = Field.getField(type, name, initializer);
+					HiField<?> field = HiField.getField(type, name, initializer);
 					field.setModifiers(modifiers);
 
 					properties.addField(field);
@@ -340,7 +340,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		Type type = Type.getArrayType(baseType, addDimension);
-		Field<?> field = Field.getField(type, name, initializer);
+		HiField<?> field = HiField.getField(type, name, initializer);
 		field.setModifiers(modifiers);
 
 		properties.addField(field);

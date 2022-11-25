@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationPrefixDecrement extends UnaryOperation {
 	private static Operation instance = new OperationPrefixDecrement();
@@ -20,7 +20,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		Clazz c = v.type;
+		HiClass c = v.type;
 
 		boolean isP = c.isPrimitive();
 		if (!isP) {
@@ -28,7 +28,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 			return;
 		}
 
-		int t = FieldPrimitive.getType(c);
+		int t = HiFieldPrimitive.getType(c);
 		if (t == BOOLEAN) {
 			errorInvalidOperator(ctx, c);
 			return;
@@ -64,7 +64,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 				break;
 		}
 
-		Field<?> var = v.variable;
+		HiField<?> var = v.variable;
 		var.set(ctx, v);
 	}
 }

@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-import java.util.HashMap;
-
-import ru.nest.hiscript.ool.model.classes.ClazzArray;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * »спользуетс€ дл€ описани€ типа до того как будет создана иерархи€ классов. ѕосле создана иерархии классов возможен поиск класса в данном
@@ -53,7 +53,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 				System.arraycopy(parent.path, 0, path, 0, parent.path.length);
 				path[path.length - 1] = parent;
 			} else {
-				path = new Type[] { parent };
+				path = new Type[] {parent};
 			}
 			this.fullName = parent.fullName + "." + name;
 		} else {
@@ -76,13 +76,14 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 	/**
 	 * Array type
 	 */
-	private Type(Type cellType) {
+	private Type(Type cellType, boolean vararg) {
 		this.parent = null;
 		this.cellType = cellType;
 		this.name = "0" + cellType.name;
 		this.dimension = cellType.dimension + 1;
 		this.primitive = false;
 		this.fullName = "0" + cellType.fullName;
+		this.vararg = vararg;
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;
@@ -105,12 +106,18 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 
 	private int dimension;
 
+	private boolean vararg;
+
 	public int getDimension() {
 		return dimension;
 	}
 
 	public boolean isArray() {
 		return dimension > 0;
+	}
+
+	public Type getCellType() {
+		return cellType;
 	}
 
 	private boolean primitive;
@@ -121,6 +128,10 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 
 	public boolean isNull() {
 		return this == getNullType();
+	}
+
+	public boolean isVararg() {
+		return vararg;
 	}
 
 	@Override
@@ -156,37 +167,37 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return false;
 	}
 
-	public Clazz getClazz(RuntimeContext ctx) {
+	public HiClass getClass(RuntimeContext ctx) {
 		// Ќельз€ кэшировать класс, т.к. имена разных классов могут совпадать в разных контекстах
-		Clazz clazz = resolveClass(ctx);
+		HiClass clazz = resolveClass(ctx);
 		return clazz;
 	}
 
-	public Clazz resolveClass(RuntimeContext ctx) {
+	public HiClass resolveClass(RuntimeContext ctx) {
 		if (isPrimitive()) {
-			return Clazz.getPrimitiveClass(name);
+			return HiClass.getPrimitiveClass(name);
 		}
 
 		if (isArray()) {
-			Clazz cellClazz = cellType.getClazz(ctx);
-			if (cellClazz == null) {
+			HiClass cellClass = cellType.getClass(ctx);
+			if (cellClass == null) {
 				if (!ctx.exitFromBlock()) {
 					ctx.throwException("Class '" + fullName + "' can not be resolved");
 				}
 				return null;
 			} else {
-				return ClazzArray.getArrayClass(cellClazz);
+				return HiClassArray.getArrayClass(cellClass);
 			}
 		}
 
 		if (isNull()) {
-			return Clazz.getNullClass();
+			return HiClass.getNullClass();
 		}
 
-		Clazz clazz = null;
+		HiClass clazz = null;
 		if (ctx != null) {
 			if (path != null) {
-				clazz = path[0].getClazz(ctx);
+				clazz = path[0].getClass(ctx);
 				for (int i = 1; i < path.length; i++) {
 					clazz = clazz.getClass(ctx, path[i].name);
 				}
@@ -195,13 +206,12 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 				clazz = ctx.getClass(name);
 			}
 		} else {
-			clazz = Clazz.forName(null, fullName);
+			clazz = HiClass.forName(null, fullName);
 		}
 
 		if (clazz == null) {
 			ctx.throwException("Class '" + fullName + "' can not be resolved");
 		}
-
 		return clazz;
 	}
 
@@ -266,7 +276,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 	public static Type getArrayType(Type type) {
 		Type arrayType = arrayTypes.get(type);
 		if (arrayType == null) {
-			arrayType = new Type(type);
+			arrayType = new Type(type, false);
 			arrayTypes.put(type, arrayType);
 		}
 		return arrayType;
@@ -279,18 +289,22 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return cellType;
 	}
 
+	public static Type getVarargType(Type cellType) {
+		return new Type(cellType, true);
+	}
+
 	public static Type getNullType() {
 		return predefinedTypes.get("null");
 	}
 
-	public static Type getType(Clazz clazz) {
+	public static Type getType(HiClass clazz) {
 		if (clazz.isPrimitive()) {
 			return getPrimitiveType(clazz.fullName);
 		}
 
 		if (clazz.isArray()) {
-			ClazzArray arrayClazz = (ClazzArray) clazz;
-			return getType(arrayClazz.cellClass.fullName, arrayClazz.dimension);
+			HiClassArray arrayClass = (HiClassArray) clazz;
+			return getType(arrayClass.cellClass.fullName, arrayClass.dimension);
 		}
 
 		return getType(clazz.fullName);

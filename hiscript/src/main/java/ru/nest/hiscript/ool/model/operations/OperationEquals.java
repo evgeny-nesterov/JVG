@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationEquals extends BinaryOperation {
 	private static Operation instance = new OperationEquals();
@@ -19,15 +19,15 @@ public class OperationEquals extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		Clazz c1 = v1.type;
-		Clazz c2 = v2.type;
+		HiClass c1 = v1.type;
+		HiClass c2 = v2.type;
 		v1.type = TYPE_BOOLEAN;
 
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
 		if (isP1 && isP2) {
-			int t1 = FieldPrimitive.getType(c1);
-			int t2 = FieldPrimitive.getType(c2);
+			int t1 = HiFieldPrimitive.getType(c1);
+			int t2 = HiFieldPrimitive.getType(c2);
 			switch (t1) {
 				case BOOLEAN:
 					if (t2 == BOOLEAN) {

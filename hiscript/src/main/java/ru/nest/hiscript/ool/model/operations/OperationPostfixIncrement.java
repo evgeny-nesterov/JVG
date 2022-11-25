@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.model.Arrays;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationPostfixIncrement extends UnaryOperation {
 	private static Operation instance = new OperationPostfixIncrement();
@@ -21,7 +21,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		Clazz c = v.type;
+		HiClass c = v.type;
 
 		boolean isPrimitive = c.isPrimitive();
 		if (!isPrimitive) {
@@ -29,13 +29,13 @@ public class OperationPostfixIncrement extends UnaryOperation {
 			return;
 		}
 
-		int type = FieldPrimitive.getType(c);
+		int type = HiFieldPrimitive.getType(c);
 		if (type == BOOLEAN) {
 			errorInvalidOperator(ctx, c);
 			return;
 		}
 
-		Field<?> var = v.variable;
+		HiField<?> var = v.variable;
 		Value[] vs = ctx.getValues(1);
 		try {
 			Value tmp = vs[0];

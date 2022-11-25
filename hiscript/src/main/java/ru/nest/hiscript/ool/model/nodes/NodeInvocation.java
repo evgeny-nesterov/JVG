@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import java.io.IOException;
 
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsIF;
@@ -70,7 +70,7 @@ public class NodeInvocation extends Node {
 	}
 
 	// TODO: do more usable
-	public static void invoke(RuntimeContext ctx, Obj object, String methodName, Node... arguments) {
+	public static void invoke(RuntimeContext ctx, HiObject object, String methodName, Node... arguments) {
 		Value[] vs = ctx.getValues(1);
 		try {
 			// v1 - contains value as object

@@ -2,8 +2,8 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -38,14 +38,14 @@ public class NodeIdentificator extends Node {
 
 	public static boolean resolveVariable(RuntimeContext ctx, Value v, boolean checkInitialization) {
 		String name = v.name;
-		Field<?> var = ctx.getVariable(name);
+		HiField<?> var = ctx.getVariable(name);
 		if (var != null) {
 			if (checkInitialization && !var.initialized) {
 				ctx.throwException("variable not initialized: " + var.name);
 			}
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = var.type.getClazz(ctx);
+			ctx.value.type = var.type.getClass(ctx);
 			var.execute(ctx);
 
 			ctx.value.copyTo(v);
@@ -59,7 +59,7 @@ public class NodeIdentificator extends Node {
 
 	public static boolean resolveClass(RuntimeContext ctx, Value v) {
 		String name = v.name;
-		Clazz clazz = ctx.getClass(name);
+		HiClass clazz = ctx.getClass(name);
 		if (clazz != null) {
 			v.valueType = Value.CLASS;
 			v.type = clazz;

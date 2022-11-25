@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.model.Arrays;
-import ru.nest.hiscript.ool.model.Field;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -28,7 +28,7 @@ public class OperationEquate extends BinaryOperation {
 
 		if (v1.valueType == Value.VARIABLE) {
 			// 1. copy variable from v1
-			Field<?> variable = v1.variable;
+			HiField<?> variable = v1.variable;
 
 			// 2. copy v2 to v1
 			v2.copyTo(v1);
@@ -45,7 +45,7 @@ public class OperationEquate extends BinaryOperation {
 			// System.out.println(v1.variable.name + " (" + v1.variable.getClazz(ctx)+ ") = " + v1.variable.get() + ", " + v1.get() + ", " +
 			// v1.type);
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
-			if (!Field.autoCast(v2.type, v1.type)) {
+			if (!HiField.autoCast(v2.type, v1.type)) {
 				ctx.throwException("incompatible types; found " + v2.type + ", required " + v1.type);
 				return;
 			}

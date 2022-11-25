@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
@@ -34,6 +31,9 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParserUtil implements Words {
 	public void skipComments(Tokenizer tokenizer) throws TokenizerException {
@@ -373,7 +373,7 @@ public class ParserUtil implements Words {
 		}
 	}
 
-	protected Node[] visitArguments(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		ArrayList<Node> args = new ArrayList<Node>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
@@ -392,14 +392,21 @@ public class ParserUtil implements Words {
 		return argsArray;
 	}
 
-	protected void visitArguments(Tokenizer tokenizer, List<NodeArgument> arguments, CompileContext properties) throws TokenizerException, ParseException {
-		NodeArgument arg = ArgumentParseRule.getInstance().visit(tokenizer, properties);
+	protected void visitArgumentsDefinitions(Tokenizer tokenizer, List<NodeArgument> arguments, CompileContext properties) throws TokenizerException, ParseException {
+		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			arguments.add(arg);
+			boolean hasVararg = arg.type.isVararg();
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				arg = ArgumentParseRule.getInstance().visit(tokenizer, properties);
+				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 				if (arg == null) {
 					throw new ParseException("argument is expected", tokenizer.currentToken());
+				}
+				if (arg.type.isVararg()) {
+					if (hasVararg) {
+						throw new ParseException("Vararg parameter must be the last in the list", tokenizer.currentToken());
+					}
+					hasVararg = true;
 				}
 				arguments.add(arg);
 			}

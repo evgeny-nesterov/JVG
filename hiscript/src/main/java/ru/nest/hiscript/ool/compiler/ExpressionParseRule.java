@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
@@ -28,6 +25,9 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	private final static ExpressionParseRule instance = new ExpressionParseRule();
 
@@ -45,7 +45,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		Token token = tokenizer.currentToken();
 		int codeLine = token != null ? token.getLine() : -1;
-		int skipCount = 0;
+		int logicalSwitchDeep = 0;
 
 		int operation = -1;
 		OperationsGroup operations = new OperationsGroup();
@@ -62,14 +62,15 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			tokenizer.start();
 			operation = visitOperation(tokenizer);
 			if (operation != -1) {
-				if (operation == OperationsIF.SKIP) {
-					skipCount++;
-				} else if (operation == OperationsIF.TRIGER) {
-					if (skipCount == 0) {
+				if (operation == OperationsIF.LOGICAL_SWITCH) {
+					logicalSwitchDeep++;
+				} else if (operation == OperationsIF.LOGICAL_SWITCH_TRIGGER) {
+					operations.addPostfixOperation(OperationsIF.LOGICAL_SWITCH_CHECK);
+					if (logicalSwitchDeep == 0) {
 						tokenizer.rollback();
 						break;
 					}
-					skipCount--;
+					logicalSwitchDeep--;
 				} else if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
 				} else if (operation == OperationsIF.LOGICAL_OR) {
@@ -100,7 +101,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		if (operations.hasOperations()) {
 			throw new ParseException("invalid expression", token);
 		}
-
 		return null;
 	}
 
@@ -153,7 +153,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			}
 			return true;
 		}
-
 		return false;
 	}
 
@@ -227,7 +226,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			operations.addPostfixOperation(OperationsIF.ARRAY_INDEX);
 			return true;
 		}
-
 		return false;
 	}
 
@@ -319,7 +317,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			operands.add(new NodeIdentificator(identificatorName));
 			return true;
 		}
-
 		return false;
 	}
 
@@ -337,10 +334,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			WordToken word = (WordToken) currentToken;
 			if (word.getType() == INSTANCEOF) {
 				tokenizer.nextToken();
-				return OperationsIF.INSTANCEOF;
+				return OperationsIF.INSTANCE_OF;
 			}
 		}
-
 		return -1;
 	}
 }

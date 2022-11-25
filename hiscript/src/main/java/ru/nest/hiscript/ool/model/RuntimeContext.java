@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.model.lib.ThreadImpl;
+import ru.nest.hiscript.ool.model.nodes.NodeInt;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ru.nest.hiscript.ool.model.lib.ThreadImpl;
-import ru.nest.hiscript.ool.model.nodes.NodeInt;
-import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class RuntimeContext {
 	public final static int SAME = -1;
@@ -77,14 +77,14 @@ public class RuntimeContext {
 			// copy local context
 			if (root.localClasses != null) {
 				if (localClasses == null) {
-					localClasses = new HashMap<Clazz, HashMap<String, Clazz>>();
+					localClasses = new HashMap<HiClass, HashMap<String, HiClass>>();
 				}
 				localClasses.putAll(root.localClasses);
 			}
 
 			if (root.localVariables != null) {
 				if (localVariables == null) {
-					localVariables = new HashMap<Clazz, HashMap<String, Field<?>>>();
+					localVariables = new HashMap<HiClass, HashMap<String, HiField<?>>>();
 				}
 				localVariables.putAll(root.localVariables);
 			}
@@ -105,11 +105,11 @@ public class RuntimeContext {
 
 	public Value value = new Value(this);
 
-	public Obj exception;
+	public HiObject exception;
 
-	private static Clazz excClazz;
+	private static HiClass excClass;
 
-	private static Constructor excConstructor;
+	private static HiConstructor excConstructor;
 
 	public void throwException(String message) {
 		if (exception != null) {
@@ -124,13 +124,13 @@ public class RuntimeContext {
 		// System.out.println(message);
 		// new Exception().printStackTrace();
 
-		if (excClazz == null) {
-			excClazz = Clazz.forName(this, "Exception");
-			excConstructor = excClazz.getConstructor(this, Clazz.forName(this, "String"));
+		if (excClass == null) {
+			excClass = HiClass.forName(this, "Exception");
+			excConstructor = excClass.getConstructor(this, HiClass.forName(this, "String"));
 		}
 
-		Field<?>[] args = new Field<?>[1];
-		args[0] = Field.getField(Type.getType("String"), "msg");
+		HiField<?>[] args = new HiField<?>[1];
+		args[0] = HiField.getField(Type.getType("String"), "msg");
 		NodeString.createString(this, message.toCharArray());
 		args[0].set(this, value);
 		args[0].initialized = true;
@@ -158,23 +158,23 @@ public class RuntimeContext {
 	}
 
 	// for operations type of a.new B(), enter in object a
-	public void enterObject(Obj object, int codeLine) {
+	public void enterObject(HiObject object, int codeLine) {
 		level = getStack(OBJECT, level, object.clazz, null, null, object, null, codeLine);
 	}
 
-	public void enterMethod(Method method, Obj object, int codeLine) {
+	public void enterMethod(HiMethod method, HiObject object, int codeLine) {
 		level = getStack(METHOD, level, method.clazz, null, method, object, null, codeLine);
 	}
 
-	public void enterConstructor(Constructor constructor, Obj object, int codeLine) {
+	public void enterConstructor(HiConstructor constructor, HiObject object, int codeLine) {
 		level = getStack(CONSTRUCTOR, level, constructor.clazz, constructor, null, object, null, codeLine);
 	}
 
-	public void enterInitialization(Clazz clazz, Obj object, int codeLine) {
+	public void enterInitialization(HiClass clazz, HiObject object, int codeLine) {
 		level = getStack(INITIALIZATION, level, clazz, null, null, object, null, codeLine);
 	}
 
-	public void enterStart(Obj object, int codeLine) {
+	public void enterStart(HiObject object, int codeLine) {
 		level = getStack(START, level, object != null ? object.clazz : null, null, null, object, null, codeLine);
 	}
 
@@ -203,7 +203,7 @@ public class RuntimeContext {
 
 		if (level.type == START) {
 			if (exception != null) {
-				Method method = exception.clazz.getMethod(this, "printStackTrace");
+				HiMethod method = exception.clazz.getMethod(this, "printStackTrace");
 				enterMethod(method, exception, -1);
 				try {
 					exception = null;
@@ -243,12 +243,13 @@ public class RuntimeContext {
 		return lockedLevel;
 	}
 
-	public Field<?> getVariable(String name) {
-		Field<?> var = null;
+	public HiField<?> getVariable(String name) {
+		HiField<?> var = null;
 
 		// search in blocks upto method or constructor
 		StackLevel level = this.level;
-		WHILE: while (level != null) {
+		WHILE:
+		while (level != null) {
 			var = level.getVariable(name);
 
 			if (var != null) {
@@ -267,7 +268,7 @@ public class RuntimeContext {
 
 		// check object fields
 		if (var == null) {
-			Obj object = getCurrentObject();
+			HiObject object = getCurrentObject();
 			if (object != null) {
 				object = object.getMainObject();
 				var = object.getField(name);
@@ -276,9 +277,9 @@ public class RuntimeContext {
 
 		// check class static fields
 		if (var == null) {
-			Clazz enclosingClass = getCurrentClass();
+			HiClass enclosingClass = getCurrentClass();
 			if (enclosingClass != null) {
-				Field<?> field = enclosingClass.getField(name);
+				HiField<?> field = enclosingClass.getField(name);
 				if (field != null && field.isStatic()) {
 					var = field;
 				}
@@ -286,9 +287,9 @@ public class RuntimeContext {
 		}
 
 		// check local enclosing classes
-		Clazz clazz = this.level.clazz;
+		HiClass clazz = this.level.clazz;
 		while (clazz != null) {
-			Field<?> field = getLocalVariable(clazz, name);
+			HiField<?> field = getLocalVariable(clazz, name);
 			if (field != null) {
 				var = field;
 				break;
@@ -299,13 +300,14 @@ public class RuntimeContext {
 		return var;
 	}
 
-	public Clazz getClass(String name) {
+	public HiClass getClass(String name) {
 		// search in blocks upto method or constructor
 		StackLevel level = this.level;
-		Clazz clazz = null;
-		Obj levelObject = null;
-		Clazz levelClazz = null;
-		WHILE: while (level != null) {
+		HiClass clazz = null;
+		HiObject levelObject = null;
+		HiClass levelClass = null;
+		WHILE:
+		while (level != null) {
 			clazz = level.getClass(name);
 
 			if (level.object != null) {
@@ -313,7 +315,7 @@ public class RuntimeContext {
 			}
 
 			if (level.clazz != null) {
-				levelClazz = level.clazz;
+				levelClass = level.clazz;
 			}
 
 			if (clazz != null) {
@@ -337,8 +339,8 @@ public class RuntimeContext {
 		}
 
 		// поиск в текущем классе (например, в случае статического доступа)
-		if (clazz == null && levelClazz != null) {
-			clazz = levelClazz.getClass(this, name);
+		if (clazz == null && levelClass != null) {
+			clazz = levelClass.getClass(this, name);
 		}
 
 		// search in enclosing class
@@ -348,17 +350,17 @@ public class RuntimeContext {
 
 		// search by class full name
 		if (clazz == null) {
-			clazz = Clazz.forName(this, name);
+			clazz = HiClass.forName(this, name);
 		}
 
 		return clazz;
 	}
 
-	public Obj getCurrentObject() {
+	public HiObject getCurrentObject() {
 		return level != null ? level.object : null;
 	}
 
-	public Obj getOutboundObject(Clazz clazz) {
+	public HiObject getOutboundObject(HiClass clazz) {
 		if (clazz.isTopLevel()) {
 			return null;
 		}
@@ -373,27 +375,27 @@ public class RuntimeContext {
 		return null;
 	}
 
-	public Clazz getCurrentClass() {
+	public HiClass getCurrentClass() {
 		return level.clazz;
 	}
 
-	public void addVariable(Field<?> var) {
+	public void addVariable(HiField<?> var) {
 		level.putVariable(var);
 	}
 
-	public void addVariables(Field<?>[] vars) {
+	public void addVariables(HiField<?>[] vars) {
 		if (vars != null) {
 			level.putVariables(vars);
 		}
 	}
 
-	public void addClass(Clazz clazz) {
+	public void addClass(HiClass clazz) {
 		level.putClass(clazz);
 	}
 
 	private List<StackLevel> stacks_cache = new ArrayList<StackLevel>();
 
-	private StackLevel getStack(int type, StackLevel parent, Clazz clazz, Constructor constructor, Method method, Obj object, String name, int codeLine) {
+	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, int codeLine) {
 		StackLevel stack;
 		int cache_size = stacks_cache.size();
 		if (cache_size > 0) {
@@ -423,24 +425,24 @@ public class RuntimeContext {
 
 		public String label;
 
-		public Clazz clazz;
+		public HiClass clazz;
 
-		public Method method;
+		public HiMethod method;
 
-		public Constructor constructor;
+		public HiConstructor constructor;
 
-		public Obj object;
+		public HiObject object;
 
 		public int level;
 
 		public int codeLine;
 
-		private Map<String, Field<?>> variables;
+		private Map<String, HiField<?>> variables;
 
 		public StackLevel() {
 		}
 
-		public StackLevel set(int type, StackLevel parent, Clazz clazz, Constructor constructor, Method method, Obj object, String label, int codeLine) {
+		public StackLevel set(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, int codeLine) {
 			this.parent = parent;
 			this.clazz = clazz;
 			this.constructor = constructor;
@@ -462,52 +464,55 @@ public class RuntimeContext {
 			return this;
 		}
 
-		public void putVariable(Field<?> variable) {
+		public void putVariable(HiField<?> variable) {
 			if (variables == null) {
-				variables = new HashMap<String, Field<?>>(1);
+				variables = new HashMap<String, HiField<?>>(1);
 			}
 			variables.put(variable.name, variable);
 		}
 
-		public void putVariables(Field<?>[] list) {
+		public void putVariables(HiField<?>[] list) {
 			int size = list.length;
 			if (variables == null) {
-				variables = new HashMap<String, Field<?>>(size);
+				variables = new HashMap<String, HiField<?>>(size);
 			}
 
 			for (int i = 0; i < size; i++) {
-				Field<?> variable = list[i];
-				variables.put(variable.name, variable);
+				HiField<?> variable = list[i];
+				if (variable != null) {
+					variables.put(variable.name, variable);
+				}
 			}
 		}
 
-		public Field<?> getVariable(String name) {
+		public HiField<?> getVariable(String name) {
 			if (variables != null) {
 				return variables.get(name);
 			}
 			return null;
 		}
 
-		private Map<String, Clazz> classes;
+		private Map<String, HiClass> classes;
 
-		public void putClass(Clazz clazz) {
+		public void putClass(HiClass clazz) {
 			if (classes == null) {
-				classes = new HashMap<String, Clazz>();
+				classes = new HashMap<String, HiClass>();
 			}
 			classes.put(clazz.fullName, clazz);
 			classes.put(clazz.name, clazz);
 
 			// store final variables and classes
 			StackLevel level = this;
-			WHILE: while (level != null) {
+			WHILE:
+			while (level != null) {
 				if (level.classes != null) {
-					for (Clazz c : level.classes.values()) {
+					for (HiClass c : level.classes.values()) {
 						addLocalClass(clazz, c);
 					}
 				}
 
 				if (level.variables != null) {
-					for (Field<?> f : level.variables.values()) {
+					for (HiField<?> f : level.variables.values()) {
 						if (f.getModifiers().isFinal()) {
 							addLocalField(clazz, f);
 						}
@@ -531,10 +536,10 @@ public class RuntimeContext {
 		 *            имя или полное имя класса
 		 * @return найденный класс
 		 */
-		public Clazz getClass(String name) {
+		public HiClass getClass(String name) {
 			if (classes != null) {
 				// поиск в контексте по имени
-				Clazz clazz = classes.get(name);
+				HiClass clazz = classes.get(name);
 				if (clazz != null) {
 					return clazz;
 				}
@@ -554,7 +559,7 @@ public class RuntimeContext {
 
 			// clear from classes info about local final classes
 			if (classes != null) {
-				for (Clazz c : classes.values()) {
+				for (HiClass c : classes.values()) {
 					localClasses.remove(c);
 					if (localVariables != null) {
 						localVariables.remove(c);
@@ -571,11 +576,11 @@ public class RuntimeContext {
 		}
 	}
 
-	private HashMap<Clazz, HashMap<String, Clazz>> localClasses;
+	private HashMap<HiClass, HashMap<String, HiClass>> localClasses;
 
-	public Clazz getLocalClass(Clazz clazz, String name) {
+	public HiClass getLocalClass(HiClass clazz, String name) {
 		if (localClasses != null) {
-			HashMap<String, Clazz> classes = localClasses.get(clazz);
+			HashMap<String, HiClass> classes = localClasses.get(clazz);
 			if (classes != null && classes.containsKey(name)) {
 				return classes.get(name);
 			}
@@ -583,25 +588,25 @@ public class RuntimeContext {
 		return null;
 	}
 
-	public void addLocalClass(Clazz clazz, Clazz clazzLocal) {
+	public void addLocalClass(HiClass clazz, HiClass clazzLocal) {
 		if (localClasses == null) {
-			localClasses = new HashMap<Clazz, HashMap<String, Clazz>>();
+			localClasses = new HashMap<HiClass, HashMap<String, HiClass>>();
 		}
 
-		HashMap<String, Clazz> classes = localClasses.get(clazz);
+		HashMap<String, HiClass> classes = localClasses.get(clazz);
 		if (classes == null) {
-			classes = new HashMap<String, Clazz>();
+			classes = new HashMap<String, HiClass>();
 			localClasses.put(clazz, classes);
 		}
 		classes.put(clazzLocal.name, clazzLocal);
 		classes.put(clazzLocal.fullName, clazzLocal);
 	}
 
-	private HashMap<Clazz, HashMap<String, Field<?>>> localVariables;
+	private HashMap<HiClass, HashMap<String, HiField<?>>> localVariables;
 
-	public Field<?> getLocalVariable(Clazz clazz, String name) {
+	public HiField<?> getLocalVariable(HiClass clazz, String name) {
 		if (localVariables != null) {
-			HashMap<String, Field<?>> fields = localVariables.get(clazz);
+			HashMap<String, HiField<?>> fields = localVariables.get(clazz);
 			if (fields != null && fields.containsKey(name)) {
 				return fields.get(name);
 			}
@@ -609,14 +614,14 @@ public class RuntimeContext {
 		return null;
 	}
 
-	public void addLocalField(Clazz clazz, Field<?> field) {
+	public void addLocalField(HiClass clazz, HiField<?> field) {
 		if (localVariables == null) {
-			localVariables = new HashMap<Clazz, HashMap<String, Field<?>>>();
+			localVariables = new HashMap<HiClass, HashMap<String, HiField<?>>>();
 		}
 
-		HashMap<String, Field<?>> fields = localVariables.get(clazz);
+		HashMap<String, HiField<?>> fields = localVariables.get(clazz);
 		if (fields == null) {
-			fields = new HashMap<String, Field<?>>();
+			fields = new HashMap<String, HiField<?>>();
 			localVariables.put(clazz, fields);
 		}
 		fields.put(field.name, field);
@@ -691,7 +696,7 @@ public class RuntimeContext {
 		StackLevel level = this.level;
 
 		// remove stack trace for class Exception
-		Obj o = level.object; // instance of Exception
+		HiObject o = level.object; // instance of Exception
 		while (level != null && level.object == o) {
 			level = level.parent;
 		}
@@ -708,20 +713,20 @@ public class RuntimeContext {
 		return list;
 	}
 
-	private static Clazz steClazz;
+	private static HiClass steClass;
 
-	private static Constructor steConstructor;
+	private static HiConstructor steConstructor;
 
-	public Obj[] getNativeStack() {
+	public HiObject[] getNativeStack() {
 		List<RuntimeContext.StackLevel> list = getStack();
 		int size = list.size();
 
-		if (steClazz == null) {
-			steClazz = Clazz.forName(this, "StackTraceElement");
-			steConstructor = steClazz.getConstructor(this);
+		if (steClass == null) {
+			steClass = HiClass.forName(this, "StackTraceElement");
+			steConstructor = steClass.getConstructor(this);
 		}
 
-		Obj[] array = new Obj[size];
+		HiObject[] array = new HiObject[size];
 		for (int i = 0; i < size; i++) {
 			RuntimeContext.StackLevel level = list.get(i);
 
@@ -759,5 +764,28 @@ public class RuntimeContext {
 			l = l.parent;
 		}
 		return buf.toString();
+	}
+
+	public void throwExceptionIf(boolean printStachTrace) {
+		if (exception != null) {
+			HiField<?> messageField = exception.getMainObject().getField("message");
+			String message = messageField.getStringValue();
+			if (printStachTrace) {
+				HiField<?> stackTraceField = exception.getMainObject().getField("stackTrace");
+				HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
+				System.out.println("hiscript error: " + message);
+				for (HiObject stackTraceElement : stackTraceElements) {
+					String className = stackTraceElement.getField("className").getStringValue();
+					String methodName = stackTraceElement.getField("methodName").getStringValue();
+					Integer line = (Integer) stackTraceElement.getField("line").get();
+					System.out.print("\t" + className + "." + methodName);
+					if (line >= 0) {
+						System.out.print(":" + line);
+					}
+					System.out.println();
+				}
+			}
+			throw new RuntimeException("HiScript error: " + message);
+		}
 	}
 }

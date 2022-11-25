@@ -25,7 +25,7 @@ public interface OperationsIF {
 
 	public final static int MULTIPLY = 11;
 
-	public final static int DEVIDE = 12;
+	public final static int DIVIDE = 12;
 
 	public final static int PERCENT = 13;
 
@@ -47,7 +47,7 @@ public interface OperationsIF {
 
 	public final static int GREATER_OR_EQUALS = 22;
 
-	public final static int INSTANCEOF = 23;
+	public final static int INSTANCE_OF = 23;
 
 	public final static int EQUALS = 24;
 
@@ -63,7 +63,7 @@ public interface OperationsIF {
 
 	public final static int LOGICAL_OR = 30;
 
-	public final static int TRIGER = 31;
+	public final static int LOGICAL_SWITCH_TRIGGER = 31;
 
 	public final static int EQUATE = 32;
 
@@ -89,9 +89,13 @@ public interface OperationsIF {
 
 	public final static int EQUATE_OR = 43;
 
-	public final static int SKIP = 44;
+	public final static int LOGICAL_SWITCH = 44;
 
 	public final static int LOGICAL_AND_CHECK = 45;
 
 	public final static int LOGICAL_OR_CHECK = 46;
+
+	public final static int LOGICAL_SWITCH_CHECK = 47;
+
+	public final static int VARARG = 48;
 }

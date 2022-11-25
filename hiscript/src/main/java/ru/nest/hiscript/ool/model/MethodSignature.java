@@ -8,11 +8,11 @@ public class MethodSignature implements Cloneable {
 		set(signature.name, signature.argClasses);
 	}
 
-	public MethodSignature(String name, Clazz[] argClasses) {
+	public MethodSignature(String name, HiClass[] argClasses) {
 		set(name, argClasses);
 	}
 
-	public void set(String name, Clazz[] argClasses) {
+	public void set(String name, HiClass[] argClasses) {
 		this.name = name.intern();
 		this.argClasses = argClasses;
 		argCount = argClasses != null ? argClasses.length : 0;
@@ -22,7 +22,7 @@ public class MethodSignature implements Cloneable {
 
 	public String name;
 
-	public Clazz[] argClasses;
+	public HiClass[] argClasses;
 
 	@Override
 	public boolean equals(Object o) {

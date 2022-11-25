@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Clazz;
-import ru.nest.hiscript.ool.model.Constructor;
-import ru.nest.hiscript.ool.model.Field;
-import ru.nest.hiscript.ool.model.Method;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 public class CompileContext {
-	public CompileContext(Tokenizer tokenizer, CompileContext parent, Clazz enclosingClass, int classType) {
+	public CompileContext(Tokenizer tokenizer, CompileContext parent, HiClass enclosingClass, int classType) {
 		this.tokenizer = tokenizer;
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
@@ -24,68 +24,68 @@ public class CompileContext {
 
 	private Tokenizer tokenizer;
 
-	public Clazz clazz;
+	public HiClass clazz;
 
-	public Clazz enclosingClass;
+	public HiClass enclosingClass;
 
 	public int classType;
 
 	private CompileLevel level = new CompileLevel(null);
 
-	public List<Field<?>> fields = null;
+	public List<HiField<?>> fields = null;
 
-	public Map<String, Field<?>> fieldsMap = null;
+	public Map<String, HiField<?>> fieldsMap = null;
 
-	public List<Clazz> classes = null;
+	public List<HiClass> classes = null;
 
-	public Map<String, Clazz> classesMap = null;
+	public Map<String, HiClass> classesMap = null;
 
 	public List<NodeInitializer> initializers = null;
 
-	public List<Method> methods = null;
+	public List<HiMethod> methods = null;
 
-	public List<Constructor> constructors = null;
+	public List<HiConstructor> constructors = null;
 
 	public CompileContext parent = null;
 
-	public void addMethod(Method method) throws ParseException {
+	public void addMethod(HiMethod method) throws ParseException {
 		if (methods == null) {
-			methods = new ArrayList<Method>(1);
+			methods = new ArrayList<HiMethod>(1);
 		}
 		methods.add(method);
 	}
 
-	public Method[] getMethods() {
-		Method[] methodsArray = null;
+	public HiMethod[] getMethods() {
+		HiMethod[] methodsArray = null;
 		int size = methods != null ? methods.size() : 0;
 		if (size > 0) {
-			methodsArray = new Method[size];
+			methodsArray = new HiMethod[size];
 			methods.toArray(methodsArray);
 		}
 		return methodsArray;
 	}
 
-	public void addConstructor(Constructor constructor) throws ParseException {
+	public void addConstructor(HiConstructor constructor) throws ParseException {
 		if (constructors == null) {
-			constructors = new ArrayList<Constructor>(1);
+			constructors = new ArrayList<HiConstructor>(1);
 		}
 		constructors.add(constructor);
 	}
 
-	public Constructor[] getConstructors() {
-		Constructor[] constructorsArray = null;
+	public HiConstructor[] getConstructors() {
+		HiConstructor[] constructorsArray = null;
 		int size = constructors != null ? constructors.size() : 0;
 		if (size > 0) {
-			constructorsArray = new Constructor[size];
+			constructorsArray = new HiConstructor[size];
 			constructors.toArray(constructorsArray);
 		}
 		return constructorsArray;
 	}
 
-	public void addField(Field<?> field) throws ParseException {
+	public void addField(HiField<?> field) throws ParseException {
 		if (fields == null) {
-			fields = new ArrayList<Field<?>>(1);
-			fieldsMap = new HashMap<String, Field<?>>(1);
+			fields = new ArrayList<HiField<?>>(1);
+			fieldsMap = new HashMap<String, HiField<?>>(1);
 		}
 
 		if (initializers == null) {
@@ -101,20 +101,20 @@ public class CompileContext {
 		initializers.add(field);
 	}
 
-	public Field<?>[] getFields() {
-		Field<?>[] fieldsArray = null;
+	public HiField<?>[] getFields() {
+		HiField<?>[] fieldsArray = null;
 		int size = fields != null ? fields.size() : 0;
 		if (size > 0) {
-			fieldsArray = new Field<?>[size];
+			fieldsArray = new HiField<?>[size];
 			fields.toArray(fieldsArray);
 		}
 		return fieldsArray;
 	}
 
-	public void addClass(Clazz clazz) throws ParseException {
+	public void addClass(HiClass clazz) throws ParseException {
 		if (classes == null) {
-			classes = new ArrayList<Clazz>(1);
-			classesMap = new HashMap<String, Clazz>(1);
+			classes = new ArrayList<HiClass>(1);
+			classesMap = new HashMap<String, HiClass>(1);
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
@@ -125,11 +125,11 @@ public class CompileContext {
 		classesMap.put(clazz.name, clazz);
 	}
 
-	public Clazz[] getClasses() {
-		Clazz[] classesArray = null;
+	public HiClass[] getClasses() {
+		HiClass[] classesArray = null;
 		int size = classes != null ? classes.size() : 0;
 		if (size > 0) {
-			classesArray = new Clazz[size];
+			classesArray = new HiClass[size];
 			classes.toArray(classesArray);
 		}
 		return classesArray;
@@ -168,17 +168,17 @@ public class CompileContext {
 		level = level.parent;
 	}
 
-	public void addLocalClass(Clazz clazz) throws ParseException {
+	public void addLocalClass(HiClass clazz) throws ParseException {
 		if (getLocalClass(clazz.name) != null) {
 			throw new ParseException("Dublicate nested type " + clazz.fullName, tokenizer.currentToken());
 		}
 		level.addClass(clazz);
 	}
 
-	public Clazz getLocalClass(String name) {
+	public HiClass getLocalClass(String name) {
 		CompileLevel level = this.level;
 		while (level != null) {
-			Clazz clazz = level.getClass(name);
+			HiClass clazz = level.getClass(name);
 			if (clazz != null) {
 				return clazz;
 			}
@@ -207,7 +207,7 @@ public class CompileContext {
 	}
 
 	class CompileLevel {
-		Map<String, Clazz> classes = null;
+		Map<String, HiClass> classes = null;
 
 		Map<String, NodeVariable> localVariables = null;
 
@@ -231,14 +231,14 @@ public class CompileContext {
 			}
 		}
 
-		public void addClass(Clazz clazz) {
+		public void addClass(HiClass clazz) {
 			if (classes == null) {
-				classes = new HashMap<String, Clazz>(1);
+				classes = new HashMap<String, HiClass>(1);
 			}
 			classes.put(clazz.name, clazz);
 		}
 
-		public Clazz getClass(String name) {
+		public HiClass getClass(String name) {
 			return classes != null ? classes.get(name) : null;
 		}
 

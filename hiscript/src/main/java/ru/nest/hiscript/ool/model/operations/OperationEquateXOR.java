@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.FieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationEquateXOR extends BinaryOperation {
 	private static Operation instance = new OperationEquateXOR();
@@ -19,8 +19,8 @@ public class OperationEquateXOR extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		Clazz c1 = v1.type;
-		Clazz c2 = v2.type;
+		HiClass c1 = v1.type;
+		HiClass c2 = v2.type;
 
 		if (v1.valueType != Value.VARIABLE && v1.valueType != Value.ARRAY_INDEX) {
 			errorUnexpectedType(ctx);
@@ -30,8 +30,8 @@ public class OperationEquateXOR extends BinaryOperation {
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
 		if (isP1 && isP2) {
-			int t1 = FieldPrimitive.getType(c1);
-			int t2 = FieldPrimitive.getType(c2);
+			int t1 = HiFieldPrimitive.getType(c1);
+			int t2 = HiFieldPrimitive.getType(c2);
 
 			switch (t1) {
 				case FLOAT:

@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import java.io.IOException;
 
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 
@@ -16,7 +16,7 @@ public class NodeThis extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		Obj currentObject = ctx.getCurrentObject();
+		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null) {
 			ctx.throwException("can not accet to this");
 			return;

@@ -9,9 +9,9 @@ import java.util.Date;
 
 import ru.nest.hiscript.ool.compiler.CompileContext;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
-import ru.nest.hiscript.ool.model.Clazz;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Native;
-import ru.nest.hiscript.ool.model.Obj;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
@@ -21,7 +21,7 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 
 public class SystemImpl extends ImplUtil {
 	// System
-	public static void System_void_loadLib_String(RuntimeContext ctx, Obj path) {
+	public static void System_void_loadLib_String(RuntimeContext ctx, HiObject path) {
 		try {
 			String p = ImplUtil.getString(path);
 
@@ -74,18 +74,18 @@ public class SystemImpl extends ImplUtil {
 		}
 	}
 
-	public static void System_void_print_String(RuntimeContext ctx, Obj string) {
+	public static void System_void_print_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("void");
+		ctx.value.type = HiClass.getPrimitiveClass("void");
 		char[] chars = ImplUtil.getChars(string);
 		if (chars != null) {
 			System.out.print(chars);
 		}
 	}
 
-	public static void System_void_println_String(RuntimeContext ctx, Obj string) {
+	public static void System_void_println_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("void");
+		ctx.value.type = HiClass.getPrimitiveClass("void");
 		char[] chars = ImplUtil.getChars(string);
 		if (chars != null) {
 			System.out.println(chars);
@@ -94,7 +94,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_sleep_long(RuntimeContext ctx, long time) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("void");
+		ctx.value.type = HiClass.getPrimitiveClass("void");
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException exc) {
@@ -104,7 +104,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_long_time(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("long");
+		ctx.value.type = HiClass.getPrimitiveClass("long");
 		ctx.value.longNumber = System.currentTimeMillis();
 	}
 
@@ -112,26 +112,26 @@ public class SystemImpl extends ImplUtil {
 		ctx.isExit = true;
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("void");
+		ctx.value.type = HiClass.getPrimitiveClass("void");
 	}
 
-	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, Obj formatPatternObj) {
+	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {
 		char[] chars = ImplUtil.getChars(formatPatternObj);
 		SimpleDateFormat format = new SimpleDateFormat(new String(chars));
 		chars = format.format(new Date(time)).toCharArray();
 		NodeString.createString(ctx, chars);
 	}
 
-	public static void System_void_exec_String_boolean_boolean(RuntimeContext ctx, Obj code, final boolean newInstance, boolean separateThread) {
+	public static void System_void_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {
 		try {
 			String text = getString(code);
 			Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(text);
 
 			CompileContext compileCtx;
 			if (newInstance) {
-				compileCtx = new CompileContext(tokenizer, null, null, Clazz.CLASS_TYPE_TOP);
+				compileCtx = new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP);
 			} else {
-				compileCtx = new CompileContext(tokenizer, null, ctx.level.clazz, Clazz.CLASS_TYPE_TOP);
+				compileCtx = new CompileContext(tokenizer, null, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
 			}
 
 			final NodeBlock node = (NodeBlock) RootParseRule.getInstance().visit(tokenizer, compileCtx);
@@ -183,7 +183,7 @@ public class SystemImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = Clazz.getPrimitiveClass("void");
+		ctx.value.type = HiClass.getPrimitiveClass("void");
 	}
 
 	public static void System_void_arraycopy_Object_int_Object_int_int(RuntimeContext ctx, Object src, int srcOffset, Object dst, int dstOffset, int length) {
