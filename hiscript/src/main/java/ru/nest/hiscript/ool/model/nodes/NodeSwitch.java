@@ -38,6 +38,7 @@ public class NodeSwitch extends Node {
 			return;
 		}
 
+		// TODO support String
 		int value = ctx.value.getInt();
 		if (ctx.exitFromBlock()) {
 			return;

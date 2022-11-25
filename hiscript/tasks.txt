@@ -45,4 +45,7 @@ enum E {
 13. Binding to native java classes
 14. Allow Iterable for for(:) (currently only arrays)
 15. var
-16. switch in the expression
+
+		+16. switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN>: <bodyExpr>)
+
+16.  multiple case in statement switch

@@ -1,5 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.model.ClassLoadListener;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.NoClassException;
+import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.Type;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -9,12 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ru.nest.hiscript.ool.model.ClassLoadListener;
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.NoClassException;
-import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Type;
 
 public class DecodeContext {
 	private DataInputStream is;
@@ -280,6 +280,15 @@ public class DecodeContext {
 		List<N> list = new ArrayList<N>(size);
 		for (int i = 0; i < size; i++) {
 			list.add(readNullable(type));
+		}
+		return list;
+	}
+
+	public <N> List<N[]> readNullableListArray(Class<N> type, int size) throws IOException {
+		List<N[]> list = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			int arraySize = readShort();
+			list.add(readNullableArray(type, arraySize));
 		}
 		return list;
 	}

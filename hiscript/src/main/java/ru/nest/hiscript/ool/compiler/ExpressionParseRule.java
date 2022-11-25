@@ -65,11 +65,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				if (operation == OperationsIF.LOGICAL_SWITCH) {
 					logicalSwitchDeep++;
 				} else if (operation == OperationsIF.LOGICAL_SWITCH_TRIGGER) {
-					operations.addPostfixOperation(OperationsIF.LOGICAL_SWITCH_CHECK);
 					if (logicalSwitchDeep == 0) {
 						tokenizer.rollback();
 						break;
 					}
+					operations.addPostfixOperation(OperationsIF.LOGICAL_SWITCH_CHECK);
 					logicalSwitchDeep--;
 				} else if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
@@ -284,6 +284,12 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		// visit new object or array
 		if ((node = NewParseRule.getInstance().visit(tokenizer, properties)) != null) {
+			operands.add(node);
+			return true;
+		}
+
+		// visit switch
+		if ((node = ExpressionSwitchParseRule.getInstance().visit(tokenizer, properties)) != null) {
 			operands.add(node);
 			return true;
 		}

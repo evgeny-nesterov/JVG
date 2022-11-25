@@ -129,6 +129,16 @@ public class CodeContext {
 		}
 	}
 
+	public <N extends Codable> void writeArraysNullable(List<N[]> objectsArrays) throws IOException {
+		if (objectsArrays != null) {
+			for (int i = 0; i < objectsArrays.size(); i++) {
+				N[] objects = objectsArrays.get(i);
+				writeShort(objects != null ? objects.length : 0);
+				writeNullable(objects);
+			}
+		}
+	}
+
 	public <N extends Codable> void writeNullable(N[] objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++)
