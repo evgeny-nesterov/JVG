@@ -468,7 +468,7 @@ public class HiClass implements Codable {
 			for (HiMethod m : methods)
 				FOR:{
 					if (m.name == name) {
-						if (m.hasVararg()) {
+						if (m.hasVarargs()) {
 							int mainArgCount = m.argCount - 1;
 							if (mainArgCount > argTypes.length) {
 								continue;
@@ -481,9 +481,9 @@ public class HiClass implements Codable {
 									break FOR;
 								}
 							}
-							HiClass varargType = m.argClasses[mainArgCount].getArrayType();
+							HiClass varargsType = m.argClasses[mainArgCount].getArrayType();
 							for (int i = mainArgCount; i < argTypes.length; i++) {
-								if (!HiField.autoCast(argTypes[i], varargType)) {
+								if (!HiField.autoCast(argTypes[i], varargsType)) {
 									break FOR;
 								}
 							}

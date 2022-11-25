@@ -29,7 +29,7 @@ import <className>;
 
 9. add enum construction
 enum E {
-  A('a'), B('B'), C('C')
+  A('a'), B('B'), C('C');
   E(char c) {
     this.c = c;
   }
@@ -44,3 +44,5 @@ enum E {
 12. Annotations
 13. Binding to native java classes
 14. Allow Iterable for for(:) (currently only arrays)
+15. var
+16. switch in the expression

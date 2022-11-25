@@ -56,8 +56,8 @@ public class HiMethod implements Codable {
 		argCount = arguments != null ? arguments.length : 0;
 	}
 
-	public boolean hasVararg() {
-		return argCount > 0 && arguments[argCount - 1].type.isVararg();
+	public boolean hasVarargs() {
+		return argCount > 0 && arguments[argCount - 1].type.isVarargs();
 	}
 
 	public void resolve(RuntimeContext ctx) {

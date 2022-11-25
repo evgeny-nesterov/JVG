@@ -269,27 +269,27 @@ public class OperationInvocation extends BinaryOperation {
 		// set names and types of arguments
 		if (types != null) {
 			int size = types.length;
-			if (method.hasVararg()) {
-				int varargSize = types.length - method.arguments.length + 1;
-				int mainSize = size - varargSize;
-				Type varargArrayType = method.arguments[method.arguments.length - 1].type;
-				HiClass varargClass = varargArrayType.getCellType().getClass(ctx);
-				HiClass varargArrayClass = varargArrayType.getClass(ctx);
-				HiField<?> varargField = HiField.getField(varargArrayType, null);
+			if (method.hasVarargs()) {
+				int varargsSize = types.length - method.arguments.length + 1;
+				int mainSize = size - varargsSize;
+				Type varargsArrayType = method.arguments[method.arguments.length - 1].type;
+				HiClass varargsClass = varargsArrayType.getCellType().getClass(ctx);
+				HiClass varargsArrayClass = varargsArrayType.getClass(ctx);
+				HiField<?> varargsField = HiField.getField(varargsArrayType, null);
 
-				Class<?> _varargClass = Arrays.getClass(varargClass, 0);
-				Object array = Array.newInstance(_varargClass, varargSize);
-				for (int i = 0; i < varargSize; i++) {
+				Class<?> _varargClass = Arrays.getClass(varargsClass, 0);
+				Object array = Array.newInstance(_varargClass, varargsSize);
+				for (int i = 0; i < varargsSize; i++) {
 					v1.type = types[mainSize + i];
 					arguments[mainSize + i].get(ctx, v1);
-					Arrays.setArrayIndex(varargClass, array, i, v1, v2);
+					Arrays.setArrayIndex(varargsClass, array, i, v1, v2);
 				}
 
 				ctx.value.array = array;
-				ctx.value.type = varargArrayClass;
-				varargField.set(ctx, ctx.value);
+				ctx.value.type = varargsArrayClass;
+				varargsField.set(ctx, ctx.value);
 
-				arguments[mainSize] = varargField;
+				arguments[mainSize] = varargsField;
 				int newSize = mainSize + 1;
 				for (int i = newSize; i < size; i++) {
 					arguments[i] = null;

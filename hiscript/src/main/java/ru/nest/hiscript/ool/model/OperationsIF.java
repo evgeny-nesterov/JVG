@@ -97,5 +97,5 @@ public interface OperationsIF {
 
 	public final static int LOGICAL_SWITCH_CHECK = 47;
 
-	public final static int VARARG = 48;
+	public final static int VARARGS = 48;
 }

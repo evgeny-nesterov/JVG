@@ -8,14 +8,14 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 
 import java.lang.reflect.Array;
 
-public class OperationVararg extends BinaryOperation {
-	private static Operation instance = new OperationVararg();
+public class OperationVarargs extends BinaryOperation {
+	private static Operation instance = new OperationVarargs();
 
 	public static Operation getInstance() {
 		return instance;
 	}
 
-	private OperationVararg() {
+	private OperationVarargs() {
 		super("...", ARRAY_INDEX);
 	}
 

@@ -47,7 +47,7 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixExclamation;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixIncrement;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixMinus;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
-import ru.nest.hiscript.ool.model.operations.OperationVararg;
+import ru.nest.hiscript.ool.model.operations.OperationVarargs;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
 import ru.nest.hiscript.tokenizer.Symbols;
 
@@ -58,7 +58,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case ARRAY_INDEX:
 			case POST_INCREMENT:
 			case POST_DECREMENT:
-			case VARARG:
+			case VARARGS:
 				return 0;
 
 			case PREFIX_INCREMENT:
@@ -341,7 +341,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return LOGICAL_SWITCH_TRIGGER;
 
 			case Symbols.TRIPLEPOINTS:
-				return VARARG;
+				return VARARGS;
 		}
 		return -1;
 	}
@@ -492,7 +492,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR_CHECK:
 				return "?||";
 
-			case VARARG:
+			case VARARGS:
 				return "...";
 		}
 		return "<No such operation: " + operation + ">";
@@ -637,8 +637,8 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR_CHECK:
 				return OperationLogicalOrCheck.getInstance();
 
-			case VARARG:
-				return OperationVararg.getInstance();
+			case VARARGS:
+				return OperationVarargs.getInstance();
 
 			// logical switch
 			case LOGICAL_SWITCH:

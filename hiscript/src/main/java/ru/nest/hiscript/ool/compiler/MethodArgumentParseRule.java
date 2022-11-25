@@ -27,7 +27,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			if (visitSymbol(tokenizer, Symbols.TRIPLEPOINTS) != -1) {
-				type = Type.getVarargType(type);
+				type = Type.getVarargsType(type);
 			}
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);

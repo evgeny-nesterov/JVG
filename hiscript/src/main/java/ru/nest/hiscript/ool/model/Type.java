@@ -76,14 +76,14 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 	/**
 	 * Array type
 	 */
-	private Type(Type cellType, boolean vararg) {
+	private Type(Type cellType, boolean varargs) {
 		this.parent = null;
 		this.cellType = cellType;
 		this.name = "0" + cellType.name;
 		this.dimension = cellType.dimension + 1;
 		this.primitive = false;
 		this.fullName = "0" + cellType.fullName;
-		this.vararg = vararg;
+		this.varargs = varargs;
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;
@@ -106,7 +106,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 
 	private int dimension;
 
-	private boolean vararg;
+	private boolean varargs;
 
 	public int getDimension() {
 		return dimension;
@@ -130,8 +130,8 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return this == getNullType();
 	}
 
-	public boolean isVararg() {
-		return vararg;
+	public boolean isVarargs() {
+		return varargs;
 	}
 
 	@Override
@@ -289,7 +289,7 @@ public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
 		return cellType;
 	}
 
-	public static Type getVarargType(Type cellType) {
+	public static Type getVarargsType(Type cellType) {
 		return new Type(cellType, true);
 	}
 

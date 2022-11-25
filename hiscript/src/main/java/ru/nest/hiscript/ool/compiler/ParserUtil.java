@@ -396,17 +396,17 @@ public class ParserUtil implements Words {
 		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			arguments.add(arg);
-			boolean hasVararg = arg.type.isVararg();
+			boolean hasVarargs = arg.type.isVarargs();
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 				if (arg == null) {
 					throw new ParseException("argument is expected", tokenizer.currentToken());
 				}
-				if (arg.type.isVararg()) {
-					if (hasVararg) {
-						throw new ParseException("Vararg parameter must be the last in the list", tokenizer.currentToken());
+				if (arg.type.isVarargs()) {
+					if (hasVarargs) {
+						throw new ParseException("Varargs parameter must be the last in the list", tokenizer.currentToken());
 					}
-					hasVararg = true;
+					hasVarargs = true;
 				}
 				arguments.add(arg);
 			}
