@@ -1,7 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -23,6 +21,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeDouble;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
+import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
 import ru.nest.hiscript.ool.model.nodes.NodeIf;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
@@ -40,6 +39,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeThrow;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
+
+import java.io.IOException;
 
 public abstract class Node implements Codable {
 	public final static byte TYPE_EMPTY = -1;
@@ -122,6 +123,8 @@ public abstract class Node implements Codable {
 
 	public final static byte MAIN_WRAPPER = 39;
 
+	public final static byte TYPE_FOR_ITERATOR = 40;
+
 	public Node(String name, int type) {
 		this(name, type, -1);
 	}
@@ -191,6 +194,8 @@ public abstract class Node implements Codable {
 				return NodeFloat.decode(os);
 			case TYPE_FOR:
 				return NodeFor.decode(os);
+			case TYPE_FOR_ITERATOR:
+				return NodeForIterator.decode(os);
 			case TYPE_IDENTIFICATOR:
 				return NodeIdentificator.decode(os);
 			case TYPE_IF:

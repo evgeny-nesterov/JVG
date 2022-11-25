@@ -1,4 +1,4 @@
-class V {
+/*class V {
     int value;
     V (int value) {
         this.value = value;
@@ -22,7 +22,7 @@ new C().check1("abc");
 new C().check1("abc", new V(1));
 new C().check1("abc", new V(1), new V(2));
 new C().check1("abc", new V(1), new V(2), new V(3));
-new C().check2(222, new int[]{1, 2, 3});
+new C().check2(222, new int[]{1, 2, 3});*/
 
 /*class G {
     boolean g(boolean g, String s) {
@@ -33,3 +33,10 @@ new C().check2(222, new int[]{1, 2, 3});
 G g = new G();
 boolean a = 1>2 ? (g.g(1<2,"1")&&2>1&&g.g(2>1,"11")&&g.g(2>1,"12")) : (g.g(2>1,"2")||g.g(false,"21"));
 System.println("a: " + a);*/
+
+
+String[] arr = new String[]{"a", "b", "c"};
+int i = 0;
+for (Object s : arr) {
+	System.println("[" + i++ + "] " + s);
+}

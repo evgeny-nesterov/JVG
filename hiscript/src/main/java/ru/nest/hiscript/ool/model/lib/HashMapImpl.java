@@ -5,7 +5,7 @@ import java.util.HashMap;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
-// TODO: take to account hashCode of the object and equate method
+// TODO: take into account hashCode of the object and equals method
 public class HashMapImpl extends ImplUtil {
 	private static HashMap<Object, Object> getMap(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();

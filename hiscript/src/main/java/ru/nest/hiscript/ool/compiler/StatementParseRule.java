@@ -58,6 +58,11 @@ public class StatementParseRule extends ParseRule<Node> {
 			return node;
 		}
 
+		// before ForParseRule
+		if ((node = ForIteratorParseRule.getInstance().visit(tokenizer, properties)) != null) {
+			return node;
+		}
+
 		if ((node = ForParseRule.getInstance().visit(tokenizer, properties)) != null) {
 			return node;
 		}
