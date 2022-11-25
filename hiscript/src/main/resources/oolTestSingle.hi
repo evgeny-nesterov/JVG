@@ -53,5 +53,5 @@ class G {
     }
 }
 G g = new G();
-int b = 1 + 2 * switch(g.g(a-3, "1")) {case 0: g.g(0,"2") case 1, 22/-22: g.g(10,"3") case 2, 2+1: g.g(100,"4") default: -1}; // 21 
+int b = 1 + 2 * switch(g.g(a-3, "1")) {case 0: g.g(0,"2") case 1, 22/-22: g.g(10,"3") case 2, 2+1, -1: g.g(100,"4") default: -1}; // 21 
 System.println("b=" + b);
