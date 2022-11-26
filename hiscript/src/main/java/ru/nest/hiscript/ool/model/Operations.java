@@ -6,14 +6,14 @@ import ru.nest.hiscript.ool.model.operations.OperationBitwiseShiftLeft;
 import ru.nest.hiscript.ool.model.operations.OperationBitwiseShiftRight;
 import ru.nest.hiscript.ool.model.operations.OperationBitwiseShiftRightCyclic;
 import ru.nest.hiscript.ool.model.operations.OperationCast;
-import ru.nest.hiscript.ool.model.operations.OperationDevide;
+import ru.nest.hiscript.ool.model.operations.OperationDivide;
 import ru.nest.hiscript.ool.model.operations.OperationEquals;
 import ru.nest.hiscript.ool.model.operations.OperationEquate;
 import ru.nest.hiscript.ool.model.operations.OperationEquateAnd;
 import ru.nest.hiscript.ool.model.operations.OperationEquateBitwiseShiftLeft;
 import ru.nest.hiscript.ool.model.operations.OperationEquateBitwiseShiftRight;
 import ru.nest.hiscript.ool.model.operations.OperationEquateBitwiseShiftRightCyclic;
-import ru.nest.hiscript.ool.model.operations.OperationEquateDevide;
+import ru.nest.hiscript.ool.model.operations.OperationEquateDivide;
 import ru.nest.hiscript.ool.model.operations.OperationEquateMinus;
 import ru.nest.hiscript.ool.model.operations.OperationEquateMultiply;
 import ru.nest.hiscript.ool.model.operations.OperationEquateOR;
@@ -28,9 +28,6 @@ import ru.nest.hiscript.ool.model.operations.OperationLogicalAnd;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalAndCheck;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalOR;
 import ru.nest.hiscript.ool.model.operations.OperationLogicalOrCheck;
-import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitch;
-import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitchCheck;
-import ru.nest.hiscript.ool.model.operations.OperationLogicalSwitchTrigger;
 import ru.nest.hiscript.ool.model.operations.OperationLower;
 import ru.nest.hiscript.ool.model.operations.OperationLowerOrEquals;
 import ru.nest.hiscript.ool.model.operations.OperationMinus;
@@ -47,7 +44,6 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixExclamation;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixIncrement;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixMinus;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
-import ru.nest.hiscript.ool.model.operations.OperationVarargs;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
 import ru.nest.hiscript.tokenizer.Symbols;
 
@@ -58,7 +54,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case ARRAY_INDEX:
 			case POST_INCREMENT:
 			case POST_DECREMENT:
-			case VARARGS:
 				return 0;
 
 			case PREFIX_INCREMENT:
@@ -118,13 +113,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR:
 				return 113;
 
-			case LOGICAL_SWITCH:
-				return 129;
-			case LOGICAL_SWITCH_TRIGGER:
-				return 130;
-			case LOGICAL_SWITCH_CHECK:
-				return 131;
-
 			case EQUATE:
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
@@ -159,11 +147,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case PREFIX_MINUS:
 			case PREFIX_EXCLAMATION:
 			case PREFIX_BITWISE_REVERSE:
-			case LOGICAL_SWITCH:
-			case LOGICAL_SWITCH_CHECK:
 				return OPERANDS_UNARY;
-			case LOGICAL_SWITCH_TRIGGER:
-				return OPERANDS_TRINARY;
 		}
 		return OPERANDS_BINARY;
 	}
@@ -201,9 +185,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case OR:
 			case LOGICAL_AND:
 			case LOGICAL_OR:
-			case LOGICAL_SWITCH:
-			case LOGICAL_SWITCH_TRIGGER:
-			case LOGICAL_SWITCH_CHECK:
 			case EQUATE:
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
@@ -244,7 +225,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case Symbols.MULTIPLY:
 				return MULTIPLY;
 
-			case Symbols.DEVIDE:
+			case Symbols.DIVIDE:
 				return DIVIDE;
 
 			case Symbols.PERCENT:
@@ -310,7 +291,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case Symbols.EQUATE_MULTIPLY:
 				return EQUATE_MULTIPLY;
 
-			case Symbols.EQUATE_DEVIDE:
+			case Symbols.EQUATE_DIVIDE:
 				return EQUATE_DIVIDE;
 
 			case Symbols.EQUATE_PERCENT:
@@ -333,15 +314,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case Symbols.EQUATE_BITWISE_OR:
 				return EQUATE_OR;
-
-			case Symbols.QUESTION:
-				return LOGICAL_SWITCH;
-
-			case Symbols.COLON:
-				return LOGICAL_SWITCH_TRIGGER;
-
-			case Symbols.TRIPLEPOINTS:
-				return VARARGS;
 		}
 		return -1;
 	}
@@ -441,15 +413,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_OR:
 				return "||";
 
-			case LOGICAL_SWITCH:
-				return "?";
-
-			case LOGICAL_SWITCH_TRIGGER:
-				return ":";
-
-			case LOGICAL_SWITCH_CHECK:
-				return "?:";
-
 			case EQUATE:
 				return "=";
 
@@ -491,9 +454,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case LOGICAL_OR_CHECK:
 				return "?||";
-
-			case VARARGS:
-				return "...";
 		}
 		return "<No such operation: " + operation + ">";
 	}
@@ -539,7 +499,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return OperationMultiply.getInstance();
 
 			case DIVIDE:
-				return OperationDevide.getInstance();
+				return OperationDivide.getInstance();
 
 			case PERCENT:
 				return OperationPercent.getInstance();
@@ -608,7 +568,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return OperationEquateMultiply.getInstance();
 
 			case EQUATE_DIVIDE:
-				return OperationEquateDevide.getInstance();
+				return OperationEquateDivide.getInstance();
 
 			case EQUATE_PERCENT:
 				return OperationEquatePercent.getInstance();
@@ -636,19 +596,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case LOGICAL_OR_CHECK:
 				return OperationLogicalOrCheck.getInstance();
-
-			case VARARGS:
-				return OperationVarargs.getInstance();
-
-			// logical switch
-			case LOGICAL_SWITCH:
-				return OperationLogicalSwitch.getInstance();
-
-			case LOGICAL_SWITCH_TRIGGER:
-				return OperationLogicalSwitchTrigger.getInstance();
-
-			case LOGICAL_SWITCH_CHECK:
-				return OperationLogicalSwitchCheck.getInstance();
 
 		}
 		return null;

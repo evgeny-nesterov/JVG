@@ -9,8 +9,10 @@ import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
+import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.nodes.NodeSuper;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
@@ -45,7 +47,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		Token token = tokenizer.currentToken();
 		int codeLine = token != null ? token.getLine() : -1;
-		int logicalSwitchDeep = 0;
 
 		int operation = -1;
 		OperationsGroup operations = new OperationsGroup();
@@ -62,16 +63,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			tokenizer.start();
 			operation = visitOperation(tokenizer);
 			if (operation != -1) {
-				if (operation == OperationsIF.LOGICAL_SWITCH) {
-					logicalSwitchDeep++;
-				} else if (operation == OperationsIF.LOGICAL_SWITCH_TRIGGER) {
-					if (logicalSwitchDeep == 0) {
-						tokenizer.rollback();
-						break;
-					}
-					operations.addPostfixOperation(OperationsIF.LOGICAL_SWITCH_CHECK);
-					logicalSwitchDeep--;
-				} else if (operation == OperationsIF.LOGICAL_AND) {
+				if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
 				} else if (operation == OperationsIF.LOGICAL_OR) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_OR_CHECK);
@@ -94,7 +86,22 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			OperationsGroup[] operationsArray = new OperationsGroup[allOperations.size()];
 			allOperations.toArray(operationsArray);
 
-			NodeExpression expressionNode = new NodeExpression(operandsArray, operationsArray, codeLine);
+			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray, codeLine);
+			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+				NodeExpression trueValueNode = visit(tokenizer, properties);
+				if (trueValueNode == null) {
+					throw new ParseException("expression expected", tokenizer.currentToken());
+				}
+
+				expectSymbol(tokenizer, Symbols.COLON);
+
+				NodeExpression falseValueNode = visit(tokenizer, properties);
+				if (falseValueNode == null) {
+					throw new ParseException("expression expected", tokenizer.currentToken());
+				}
+
+				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
+			}
 			return expressionNode;
 		}
 
@@ -332,7 +339,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			if (OperationSymbols.isOperation(symbolToken.getType()) || symbolToken.getType() == Symbols.QUESTION || symbolToken.getType() == Symbols.COLON) {
+			if (OperationSymbols.isOperation(symbolToken.getType())) { // || symbolToken.getType() == Symbols.QUESTION || symbolToken.getType() == Symbols.COLON) {
 				tokenizer.nextToken();
 				return Operations.mapSymbolToOperation(symbolToken.getType());
 			}

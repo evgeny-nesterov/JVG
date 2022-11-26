@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+
+import java.io.IOException;
 
 public class NodeByte extends Node {
 	private final static String name = "byte";
@@ -49,5 +49,10 @@ public class NodeByte extends Node {
 
 	public static NodeByte decode(DecodeContext os) throws IOException {
 		return getInstance(os.readByte());
+	}
+
+	@Override
+	public String toString() {
+		return super.name + "=" + value;
 	}
 }

@@ -62,8 +62,8 @@ public abstract class BinaryOperation extends Operation {
 		ctx.throwException(text);
 	}
 
-	public void errorDevideByZero(RuntimeContext ctx) {
-		String text = "devide by zero";
+	public void errorDivideByZero(RuntimeContext ctx) {
+		String text = "divide by zero";
 		ctx.throwException(text);
 	}
 

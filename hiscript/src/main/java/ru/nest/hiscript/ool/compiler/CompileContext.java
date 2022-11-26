@@ -170,7 +170,7 @@ public class CompileContext {
 
 	public void addLocalClass(HiClass clazz) throws ParseException {
 		if (getLocalClass(clazz.name) != null) {
-			throw new ParseException("Dublicate nested type " + clazz.fullName, tokenizer.currentToken());
+			throw new ParseException("Duplicated nested type " + clazz.fullName, tokenizer.currentToken());
 		}
 		level.addClass(clazz);
 	}
@@ -189,7 +189,7 @@ public class CompileContext {
 
 	public void addLocalVariable(NodeVariable localVariable) throws ParseException {
 		if (getLocalVariable(localVariable.getVariableName()) != null) {
-			throw new ParseException("Dublicate local variable " + localVariable.getVariableName(), tokenizer.currentToken());
+			throw new ParseException("Duplicated local variable " + localVariable.getVariableName(), tokenizer.currentToken());
 		}
 		level.addField(localVariable);
 	}

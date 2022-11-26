@@ -42,7 +42,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeWhile;
 
 import java.io.IOException;
 
-public abstract class Node implements Codable {
+public abstract class Node implements Codeable {
 	public final static byte TYPE_EMPTY = -1;
 
 	public final static byte TYPE_ARGUMENT = 1;
@@ -124,6 +124,8 @@ public abstract class Node implements Codable {
 	public final static byte MAIN_WRAPPER = 39;
 
 	public final static byte TYPE_FOR_ITERATOR = 40;
+
+	public final static byte TYPE_LOGICAL_SWITCH = 41;
 
 	public Node(String name, int type) {
 		this(name, type, -1);

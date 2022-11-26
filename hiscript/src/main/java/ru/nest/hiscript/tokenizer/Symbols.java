@@ -41,7 +41,7 @@ public interface Symbols {
 
 	public final static int MULTIPLY = 19;
 
-	public final static int DEVIDE = 20;
+	public final static int DIVIDE = 20;
 
 	public final static int BITWISE_SHIFT_LEFT = 21;
 
@@ -63,7 +63,7 @@ public interface Symbols {
 
 	public final static int EQUATE_MULTIPLY = 30;
 
-	public final static int EQUATE_DEVIDE = 31;
+	public final static int EQUATE_DIVIDE = 31;
 
 	public final static int EQUATE_BITWISE_AND = 32;
 
@@ -99,5 +99,5 @@ public interface Symbols {
 
 	public final static int MASSIVE = 49;
 
-	public final static int TRIPLEPOINTS = 50;
+	public final static int TRIPLE_POINTS = 50;
 }

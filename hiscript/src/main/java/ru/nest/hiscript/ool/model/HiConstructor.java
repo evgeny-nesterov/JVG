@@ -10,7 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 
-public class HiConstructor implements Codable {
+public class HiConstructor implements Codeable {
 	public static enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
 		static BodyConstructorType[] types = { NONE, THIS, SUPER };

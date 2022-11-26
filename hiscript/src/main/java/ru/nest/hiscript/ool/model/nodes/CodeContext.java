@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Codable;
+import ru.nest.hiscript.ool.model.Codeable;
 import ru.nest.hiscript.ool.model.Type;
 
 public class CodeContext {
@@ -97,39 +97,39 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	public void writeNullable(Codable object) throws IOException {
+	public void writeNullable(Codeable object) throws IOException {
 		writeBoolean(object != null);
 		if (object != null) {
 			object.code(this);
 		}
 	}
 
-	public <N extends Codable> void write(N[] objects) throws IOException {
+	public <N extends Codeable> void write(N[] objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++)
 				objects[i].code(this);
 		}
 	}
 
-	public <N extends Codable> void write(List<N> objects) throws IOException {
+	public <N extends Codeable> void write(List<N> objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.size(); i++)
 				objects.get(i).code(this);
 		}
 	}
 
-	public <N extends Codable> void write(N object) throws IOException {
+	public <N extends Codeable> void write(N object) throws IOException {
 		object.code(this);
 	}
 
-	public <N extends Codable> void writeNullable(List<N> objects) throws IOException {
+	public <N extends Codeable> void writeNullable(List<N> objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.size(); i++)
 				writeNullable(objects.get(i));
 		}
 	}
 
-	public <N extends Codable> void writeArraysNullable(List<N[]> objectsArrays) throws IOException {
+	public <N extends Codeable> void writeArraysNullable(List<N[]> objectsArrays) throws IOException {
 		if (objectsArrays != null) {
 			for (int i = 0; i < objectsArrays.size(); i++) {
 				N[] objects = objectsArrays.get(i);
@@ -139,7 +139,7 @@ public class CodeContext {
 		}
 	}
 
-	public <N extends Codable> void writeNullable(N[] objects) throws IOException {
+	public <N extends Codeable> void writeNullable(N[] objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++)
 				writeNullable(objects[i]);

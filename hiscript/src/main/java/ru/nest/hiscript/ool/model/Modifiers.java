@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Words;
 
-public class Modifiers implements ModifiersIF, Codable {
+public class Modifiers implements ModifiersIF, Codeable {
 	public static int mapWordsToModification(int word) {
 		switch (word) {
 			case Words.PUBLIC:

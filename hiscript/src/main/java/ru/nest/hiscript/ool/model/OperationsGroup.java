@@ -61,7 +61,8 @@ public class OperationsGroup {
 	public int getPostfixOperandsCount() {
 		int count = 0;
 		if (postfix != null) {
-			for (int i = 0; i < postfix.size(); i++) {
+			int size = postfix.size();
+			for (int i = 0; i < size; i++) {
 				count += postfix.get(i).getIncrement();
 			}
 		}
@@ -78,7 +79,7 @@ public class OperationsGroup {
 
 	public int getCount() {
 		int count = (prefix != null ? prefix.size() : 0) + (postfix != null ? postfix.size() : 0);
-		if (operation != null && operation.getOperation() != OperationsIF.LOGICAL_SWITCH) {
+		if (operation != null) {
 			count++;
 		}
 		return count;

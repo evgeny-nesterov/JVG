@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 
-public interface NodeInitializer extends Codable {
+public interface NodeInitializer extends Codeable {
 	public boolean isStatic();
 
 	public void execute(RuntimeContext ctx);

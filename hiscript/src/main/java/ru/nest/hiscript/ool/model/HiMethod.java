@@ -8,7 +8,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeNative;
 import java.io.IOException;
 import java.util.List;
 
-public class HiMethod implements Codable {
+public class HiMethod implements Codeable {
 	public int argCount;
 
 	public HiClass clazz;

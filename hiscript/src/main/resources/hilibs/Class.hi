@@ -6,6 +6,10 @@ public final class Class {
   public native String getName();
 
   public native String getFullName();
-  
+
+  public native boolean isArray();
+
+  public native Class getComponentType();
+
   public static native Class forName(String name);
 }

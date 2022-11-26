@@ -41,7 +41,7 @@ public class SymbolToken extends Token implements Symbols {
 			case COMMA:
 				return ",";
 
-			case DEVIDE:
+			case DIVIDE:
 				return "/";
 
 			case DOUBLE_QUOTE:
@@ -53,7 +53,7 @@ public class SymbolToken extends Token implements Symbols {
 			case EQUATE:
 				return "=";
 
-			case EQUATE_DEVIDE:
+			case EQUATE_DIVIDE:
 				return "/=";
 
 			case EQUATE_BITWISE_AND:

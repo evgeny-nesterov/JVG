@@ -26,7 +26,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
-			if (visitSymbol(tokenizer, Symbols.TRIPLEPOINTS) != -1) {
+			if (visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1) {
 				type = Type.getVarargsType(type);
 			}
 

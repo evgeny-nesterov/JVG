@@ -85,7 +85,6 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		if (initializer != null) {
 			return initializer;
 		}
-
 		return null;
 	}
 

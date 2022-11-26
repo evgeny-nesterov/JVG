@@ -45,7 +45,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 					tokenizer.next();
 					if (tokenizer.look_forward() == '.') {
 						tokenizer.next();
-						type = Symbols.TRIPLEPOINTS;
+						type = Symbols.TRIPLE_POINTS;
 						length = 3;
 					} else {
 						return null;
@@ -70,10 +70,10 @@ public class SymbolTokenVisitor implements TokenVisitor {
 			case '/':
 				if (tokenizer.look_forward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_DEVIDE;
+					type = Symbols.EQUATE_DIVIDE;
 					length = 2;
 				} else {
-					type = Symbols.DEVIDE;
+					type = Symbols.DIVIDE;
 				}
 				break;
 

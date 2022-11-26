@@ -15,7 +15,7 @@ public class OperationSymbols implements Symbols {
 			case PLUS:
 			case MINUS:
 			case MULTIPLY:
-			case DEVIDE:
+			case DIVIDE:
 			case BITWISE_AND:
 			case BITWISE_OR:
 			case BITWISE_SHIFT_LEFT:
@@ -27,7 +27,7 @@ public class OperationSymbols implements Symbols {
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
 			case EQUATE_MULTIPLY:
-			case EQUATE_DEVIDE:
+			case EQUATE_DIVIDE:
 			case EQUATE_PERCENT:
 			case EQUATE_BITWISE_AND:
 			case EQUATE_BITWISE_OR:
@@ -61,7 +61,7 @@ public class OperationSymbols implements Symbols {
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
 			case EQUATE_MULTIPLY:
-			case EQUATE_DEVIDE:
+			case EQUATE_DIVIDE:
 			case EQUATE_PERCENT:
 			case EQUATE_BITWISE_AND:
 			case EQUATE_BITWISE_OR:
@@ -70,7 +70,7 @@ public class OperationSymbols implements Symbols {
 			case EQUATE_BITWISE_XOR:
 				return 300;
 
-			case DEVIDE:
+			case DIVIDE:
 				return 204;
 			case MULTIPLY:
 				return 203;
@@ -110,7 +110,7 @@ public class OperationSymbols implements Symbols {
 			case EQUATE_BITWISE_SHIFT_LEFT:
 			case EQUATE_BITWISE_SHIFT_RIGHT:
 			case EQUATE_BITWISE_XOR:
-			case EQUATE_DEVIDE:
+			case EQUATE_DIVIDE:
 			case EQUATE_MINUS:
 			case EQUATE_MULTIPLY:
 			case EQUATE_PERCENT:

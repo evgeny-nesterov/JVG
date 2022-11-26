@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
-public class HiClass implements Codable {
+public class HiClass implements Codeable {
 	public final static int CLASS_OBJECT = 0;
 
 	public final static int CLASS_PRIMITIVE = 1;

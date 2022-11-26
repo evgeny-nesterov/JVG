@@ -226,8 +226,8 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				left.type = DOUBLE;
 				break;
 
-			case DEVIDE:
-			case EQUATE_DEVIDE:
+			case DIVIDE:
+			case EQUATE_DIVIDE:
 				left.doubleNumber = left.getDouble() / right.getDouble();
 				left.type = DOUBLE;
 				break;
@@ -300,8 +300,8 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				left.type = FLOAT;
 				break;
 
-			case DEVIDE:
-			case EQUATE_DEVIDE:
+			case DIVIDE:
+			case EQUATE_DIVIDE:
 				left.floatNumber = left.getFloat() / right.getFloat();
 				left.type = FLOAT;
 				break;
@@ -374,8 +374,8 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				left.type = LONG;
 				break;
 
-			case DEVIDE:
-			case EQUATE_DEVIDE:
+			case DIVIDE:
+			case EQUATE_DIVIDE:
 				left.longNumber = left.getLong() / right.getLong();
 				left.type = LONG;
 				break;
@@ -478,8 +478,8 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				left.type = INT;
 				break;
 
-			case DEVIDE:
-			case EQUATE_DEVIDE:
+			case DIVIDE:
+			case EQUATE_DIVIDE:
 				int a = right.getInt();
 				if (a != 0) {
 					left.intNumber = left.getInt() / a;

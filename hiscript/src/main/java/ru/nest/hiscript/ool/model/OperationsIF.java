@@ -63,39 +63,31 @@ public interface OperationsIF {
 
 	public final static int LOGICAL_OR = 30;
 
-	public final static int LOGICAL_SWITCH_TRIGGER = 31;
+	public final static int EQUATE = 31;
 
-	public final static int EQUATE = 32;
+	public final static int EQUATE_PLUS = 32;
 
-	public final static int EQUATE_PLUS = 33;
+	public final static int EQUATE_MINUS = 33;
 
-	public final static int EQUATE_MINUS = 34;
+	public final static int EQUATE_MULTIPLY = 34;
 
-	public final static int EQUATE_MULTIPLY = 35;
+	public final static int EQUATE_DIVIDE = 35;
 
-	public final static int EQUATE_DIVIDE = 36;
+	public final static int EQUATE_PERCENT = 36;
 
-	public final static int EQUATE_PERCENT = 37;
+	public final static int EQUATE_BITWISE_SHIFT_LEFT = 37;
 
-	public final static int EQUATE_BITWISE_SHIFT_LEFT = 38;
+	public final static int EQUATE_BITWISE_SHIFT_RIGHT = 38;
 
-	public final static int EQUATE_BITWISE_SHIFT_RIGHT = 39;
+	public final static int EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC = 39;
 
-	public final static int EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC = 40;
+	public final static int EQUATE_AND = 40;
 
-	public final static int EQUATE_AND = 41;
+	public final static int EQUATE_XOR = 41;
 
-	public final static int EQUATE_XOR = 42;
+	public final static int EQUATE_OR = 42;
 
-	public final static int EQUATE_OR = 43;
+	public final static int LOGICAL_OR_CHECK = 43;
 
-	public final static int LOGICAL_SWITCH = 44;
-
-	public final static int LOGICAL_AND_CHECK = 45;
-
-	public final static int LOGICAL_OR_CHECK = 46;
-
-	public final static int LOGICAL_SWITCH_CHECK = 47;
-
-	public final static int VARARGS = 48;
+	public final static int LOGICAL_AND_CHECK = 44;
 }

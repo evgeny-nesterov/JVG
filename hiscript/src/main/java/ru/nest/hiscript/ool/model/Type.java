@@ -15,7 +15,7 @@ import java.util.HashMap;
  * = A, A.parent = null). В данном случае вначале производится поиск последнего суперкласса (A) по контексту, а потом в найденном классе
  * производится поиск по дочернего элемента (в A ищется B, а потом в B ищется C).
  */
-public class Type implements PrimitiveTypes, Codable, Comparable<Type> {
+public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
 
 	public final static int OBJECT = 1;

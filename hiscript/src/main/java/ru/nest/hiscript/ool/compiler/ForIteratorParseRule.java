@@ -31,8 +31,6 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
 
-			properties.enter();
-
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -43,7 +41,9 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 				if (checkSymbol(tokenizer, Symbols.COLON) != -1) {
 					tokenizer.commit();
 					tokenizer.nextToken();
-					
+
+					properties.enter();
+
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers());
 					properties.addLocalVariable(declaration);
 
