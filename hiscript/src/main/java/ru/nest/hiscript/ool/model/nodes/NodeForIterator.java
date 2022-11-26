@@ -36,7 +36,7 @@ public class NodeForIterator extends Node {
 			}
 
 			if (!ctx.value.type.isArray()) {
-				ctx.throwException("not iterable for");
+				ctx.throwRuntimeException("not iterable argument");
 			}
 
 			if (body != null) {

@@ -40,7 +40,7 @@ public class ClassImpl extends ImplUtil {
 	public static void Class_Class_getComponentType(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ctx.value.object.userObject;
 		if (!clazz.isArray()) {
-			ctx.throwException("class is not represent array");
+			ctx.throwRuntimeException("class is not represent array");
 		}
 
 		HiClassArray arrayClazz = (HiClassArray) clazz;

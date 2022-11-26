@@ -47,7 +47,7 @@ public class OperationInvocation extends BinaryOperation {
 				break;
 
 			default:
-				ctx.throwException("identifier is expected");
+				ctx.throwRuntimeException("identifier is expected");
 		}
 	}
 
@@ -56,7 +56,7 @@ public class OperationInvocation extends BinaryOperation {
 
 	public void invokeExecute(RuntimeContext ctx, Value v1, Value v2) {
 		if (v1.type.isPrimitive()) {
-			ctx.throwException("primitive type doesn't have a subclass " + name);
+			ctx.throwRuntimeException("primitive type doesn't have a subclass " + name);
 			return;
 		}
 
@@ -81,7 +81,7 @@ public class OperationInvocation extends BinaryOperation {
 					typeName = arrayValueNode.type.fullName;
 				}
 
-				ctx.throwException("class '" + typeName + "' cannot be resolved to a type");
+				ctx.throwRuntimeException("class '" + typeName + "' cannot be resolved to a type");
 				return;
 			}
 		}
@@ -105,7 +105,7 @@ public class OperationInvocation extends BinaryOperation {
 	public void invokeName(RuntimeContext ctx, Value v1, Value v2) {
 		String name = v2.name;
 		if (v1.type.isPrimitive()) {
-			ctx.throwException("primitive type doesn't have a field " + name);
+			ctx.throwRuntimeException("primitive type doesn't have a field " + name);
 			return;
 		}
 
@@ -118,7 +118,7 @@ public class OperationInvocation extends BinaryOperation {
 			if (clazz.isArray()) {
 				if (name.equals("length")) {
 					if (v1.array == null) {
-						ctx.throwException("null pointer");
+						ctx.throwRuntimeException("null pointer");
 						return;
 					}
 
@@ -130,7 +130,7 @@ public class OperationInvocation extends BinaryOperation {
 			} else {
 				object = v1.object;
 				if (object == null) {
-					ctx.throwException("null pointer");
+					ctx.throwRuntimeException("null pointer");
 					return;
 				}
 
@@ -138,7 +138,7 @@ public class OperationInvocation extends BinaryOperation {
 			}
 
 			if (field == null) {
-				ctx.throwException("type " + clazz.fullName + " doesn't contain field " + name);
+				ctx.throwRuntimeException("type " + clazz.fullName + " doesn't contain field " + name);
 				return;
 			}
 		} else if (v1.valueType == Value.CLASS) {
@@ -177,14 +177,14 @@ public class OperationInvocation extends BinaryOperation {
 			if (clazz != null) {
 				text += "; location " + clazz.fullName;
 			}
-			ctx.throwException(text);
+			ctx.throwRuntimeException(text);
 		}
 	}
 
 	public void invokeMethod(RuntimeContext ctx, Value v1, Value v2) {
 		String name = v2.name;
 		if (v1.type.isPrimitive()) {
-			ctx.throwException("primitive type doesn't have a method " + name);
+			ctx.throwRuntimeException("primitive type doesn't have a method " + name);
 			return;
 		}
 
@@ -209,7 +209,7 @@ public class OperationInvocation extends BinaryOperation {
 			}
 
 			if (object == null) {
-				ctx.throwException("null pointer");
+				ctx.throwRuntimeException("null pointer");
 				return;
 			}
 		} else if (v1.valueType == Value.CLASS) {
@@ -220,7 +220,7 @@ public class OperationInvocation extends BinaryOperation {
 			if (location != null) {
 				text += "; location " + location.fullName;
 			}
-			ctx.throwException(text);
+			ctx.throwRuntimeException(text);
 			return;
 		}
 
@@ -249,7 +249,7 @@ public class OperationInvocation extends BinaryOperation {
 			// find super method
 			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, types);
 			if (superMethod == null) {
-				ctx.throwException("can't find method " + v1Clazz.fullName + "." + name);
+				ctx.throwRuntimeException("can't find method " + v1Clazz.fullName + "." + name);
 				return;
 			}
 		}
@@ -257,12 +257,12 @@ public class OperationInvocation extends BinaryOperation {
 		// find method
 		HiMethod method = clazz.searchMethod(ctx, name, types);
 		if (method == null) {
-			ctx.throwException("can't find method " + clazz.fullName + "." + name);
+			ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
 			return;
 		}
 
 		if (isStatic && !method.modifiers.isStatic()) {
-			ctx.throwException("can't invoke not static method from static context");
+			ctx.throwRuntimeException("can't invoke not static method from static context");
 			return;
 		}
 

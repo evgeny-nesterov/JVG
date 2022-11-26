@@ -52,7 +52,7 @@ class Util {
     counter++;
   }
 
-  public static void assert(String descr, String result, String actualResult) {
+  public static void assertTrue(String descr, String result, String actualResult) {
      boolean equals = false;
      if(result == null || actualResult == null) {
        equals = result == actualResult;
@@ -82,7 +82,7 @@ Util.header("CHECK NULL ARGUMENT");
   		}
 	}
 	NullArg na = new NullArg();
-	Util.assert("result", na.a(null), "null");
+	Util.assertTrue("result", na.a(null), "null");
 }
 
 /////////////////
@@ -519,7 +519,11 @@ Util.header("EXPRESSION SWITCH");
 	    case 3, c + 2:  b + 2
 	};
 	System.println("\tc=" + c + " (7)");
-	System.println("\tc=" + switch(100) {case 1:  1 default: 2} + " (2)");
+	assert c == 7;
+
+	assert switch(1) {case 1:  1 default: 2} == 1;
+	assert switch(2) {case 1:  1 default: 2} == 2;
+	assert switch(3) {case 1, 2, 3, 4:  1 case 1, 2, 3, 4: 2} == 1;
 }
 
 ///////////
@@ -710,9 +714,28 @@ Util.header("TRY CATCH FINALLY");
 //////////////
 Util.header("THROW");
 {
+    class MyException extends Exception {
+        MyException(String msg) {
+            super(msg);
+        }
+    }
 	try{
-  		throw new Exception("<ERROR>");
+  		throw new MyException("<ERROR>");
+	} catch(MyException e) {
+  		e.printStackTrace();
+	}
+	try {
+        try{
+            throw new Exception("<ERROR>");
+        } catch(MyException e) {
+            assert false;
+        }
 	} catch(Exception e) {
+  		e.printStackTrace();
+    }
+	try{
+  		throw new RuntimeException("<RUNTIME ERROR>");
+	} catch(RuntimeException e) {
   		e.printStackTrace();
 	}
 }

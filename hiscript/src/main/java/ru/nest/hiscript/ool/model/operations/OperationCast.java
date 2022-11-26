@@ -22,7 +22,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v1.valueType != Value.TYPE) {
-			ctx.throwException("type is expected");
+			ctx.throwRuntimeException("type is expected");
 			return;
 		}
 

@@ -31,7 +31,7 @@ public class OperationVarargs extends BinaryOperation {
 		HiClassArray type = (HiClassArray) v1.type;
 		Object array = v1.getArray();
 		if (array == null) {
-			ctx.throwException("null pointer");
+			ctx.throwRuntimeException("null pointer");
 			return;
 		}
 

@@ -12,13 +12,13 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	@Override
 	public final void get(RuntimeContext ctx, Value value) {
 		if (!value.type.isPrimitive()) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 
 		int valueType = getType(value.type);
 		if (valueType == BOOLEAN) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 
@@ -33,18 +33,18 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	@Override
 	public final void set(RuntimeContext ctx, Value value) {
 		if (!value.type.isPrimitive()) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 
 		int valueType = getType(value.type);
 		if (valueType == BOOLEAN) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 
 		if (initialized && getModifiers().isFinal()) {
-			ctx.throwException("cannot assign a value to final variable " + name);
+			ctx.throwRuntimeException("cannot assign a value to final variable " + name);
 			return;
 		}
 

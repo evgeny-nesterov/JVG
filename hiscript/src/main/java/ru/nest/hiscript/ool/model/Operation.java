@@ -83,7 +83,7 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 
 	public void errorIncompatibleTypes(RuntimeContext ctx, HiClass type1, HiClass type2) {
 		String text = "incompatible types; found " + type1.fullName + ", required " + type2.fullName;
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void code(CodeContext os) throws IOException {

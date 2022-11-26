@@ -6,6 +6,7 @@ public class WordToken extends Token implements Words {
 	private final static HashMap<String, Integer> service_words = new HashMap<String, Integer>();
 
 	private final static HashMap<Integer, String> service_types = new HashMap<Integer, String>();
+
 	static {
 		service_words.put("do", DO);
 		service_words.put("while", WHILE);
@@ -34,6 +35,7 @@ public class WordToken extends Token implements Words {
 		service_words.put("finally", FINALLY);
 		service_words.put("default", DEFAULT);
 		service_words.put("synchronized", SYNCHRONIZED);
+		service_words.put("assert", ASSERT);
 
 		service_words.put("class", CLASS);
 		service_words.put("new", NEW);
@@ -68,7 +70,7 @@ public class WordToken extends Token implements Words {
 	}
 
 	public static int getType(String word) {
-		return service_words.containsKey(word) ? service_words.get(word) : NOT_SERVICE;
+		return service_words.getOrDefault(word, NOT_SERVICE);
 	}
 
 	public WordToken(String word, int line, int offset, int length, int lineOffset) {

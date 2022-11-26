@@ -1,13 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
+
+import java.io.IOException;
 
 public class NodeTry extends Node {
 	public NodeTry(Node body, Node catchBody, Type excType, String excName, Node finallyBody) {
@@ -25,6 +26,8 @@ public class NodeTry extends Node {
 
 	private Type excType;
 
+	private HiClass excClass;
+
 	private String excName;
 
 	private Node finallyBody;
@@ -40,23 +43,32 @@ public class NodeTry extends Node {
 			}
 		}
 
-		if (ctx.exception != null) {
+		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException")) {
 			HiObject exception = ctx.exception;
-			ctx.exception = null;
+			if (excClass == null) {
+				excClass = excType.getClass(ctx);
+				if (exception != ctx.exception) {
+					return;
+				}
+			}
 
-			if (catchBody != null) {
-				ctx.enter(RuntimeContext.CATCH, line);
+			if (exception.clazz.isInstanceof(excClass)) {
+				ctx.exception = null;
 
-				HiFieldObject exc = (HiFieldObject) HiField.getField(excType, excName);
-				exc.set(exception);
-				exc.initialized = true;
+				if (catchBody != null) {
+					ctx.enter(RuntimeContext.CATCH, line);
 
-				ctx.addVariable(exc);
+					HiFieldObject exc = (HiFieldObject) HiField.getField(excType, excName);
+					exc.set(exception);
+					exc.initialized = true;
 
-				try {
-					catchBody.execute(ctx);
-				} finally {
-					ctx.exit();
+					ctx.addVariable(exc);
+
+					try {
+						catchBody.execute(ctx);
+					} finally {
+						ctx.exit();
+					}
 				}
 			}
 		}

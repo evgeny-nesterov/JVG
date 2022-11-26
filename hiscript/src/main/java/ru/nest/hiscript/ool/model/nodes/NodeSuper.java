@@ -18,7 +18,7 @@ public class NodeSuper extends Node {
 	public void execute(RuntimeContext ctx) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null || currentObject.getSuperObject() == null) {
-			ctx.throwException("can not accet to super");
+			ctx.throwRuntimeException("can not access super");
 			return;
 		}
 

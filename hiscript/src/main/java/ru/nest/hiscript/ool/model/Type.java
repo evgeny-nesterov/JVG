@@ -182,7 +182,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 			HiClass cellClass = cellType.getClass(ctx);
 			if (cellClass == null) {
 				if (!ctx.exitFromBlock()) {
-					ctx.throwException("Class '" + fullName + "' can not be resolved");
+					ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
 				}
 				return null;
 			} else {
@@ -210,7 +210,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		}
 
 		if (clazz == null) {
-			ctx.throwException("Class '" + fullName + "' can not be resolved");
+			ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
 		}
 		return clazz;
 	}

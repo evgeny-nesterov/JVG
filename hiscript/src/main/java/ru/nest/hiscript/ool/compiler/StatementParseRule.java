@@ -104,6 +104,11 @@ public class StatementParseRule extends ParseRule<Node> {
 			return node;
 		}
 
+		if ((node = AssertParseRule.getInstance().visit(tokenizer, properties)) != null) {
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			return node;
+		}
+
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			node = BlockParseRule.getInstance().visit(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);

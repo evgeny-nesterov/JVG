@@ -129,12 +129,12 @@ public class HiConstructor implements Codeable {
 					// get default constructor from super classes
 					HiConstructor superDefaultConstructor = clazz.superClass.getConstructor(ctx);
 					if (superDefaultConstructor == null) {
-						ctx.throwException("Constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
+						ctx.throwRuntimeException("Constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
 						return null;
 					}
 
 					if (superDefaultConstructor == this) {
-						ctx.throwException("cyclyc dependence for constructor " + superDefaultConstructor);
+						ctx.throwRuntimeException("Cyclic dependence for constructor " + superDefaultConstructor);
 						return null;
 					}
 

@@ -69,7 +69,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (Exception exc) {
-			ctx.throwException(exc.getMessage());
+			ctx.throwRuntimeException(exc.getMessage());
 		}
 	}
 
@@ -82,7 +82,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (Exception exc) {
-			ctx.throwException(exc.getMessage());
+			ctx.throwRuntimeException(exc.getMessage());
 		}
 	}
 
@@ -95,7 +95,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (InterruptedException exc) {
-			ctx.throwException(exc.getMessage());
+			ctx.throwRuntimeException(exc.getMessage());
 		}
 	}
 
@@ -108,7 +108,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (InterruptedException exc) {
-			ctx.throwException(exc.getMessage());
+			ctx.throwRuntimeException(exc.getMessage());
 		}
 	}
 
@@ -118,7 +118,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (InterruptedException exc) {
-			ctx.throwException(exc.toString());
+			ctx.throwRuntimeException(exc.toString());
 		}
 	}
 
@@ -178,7 +178,7 @@ public class ThreadImpl extends ImplUtil {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = HiClass.getPrimitiveClass("void");
 		} catch (Throwable exc) {
-			ctx.throwException(exc.getMessage());
+			ctx.throwRuntimeException(exc.getMessage());
 		}
 	}
 

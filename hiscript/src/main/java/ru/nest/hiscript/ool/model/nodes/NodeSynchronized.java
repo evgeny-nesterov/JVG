@@ -26,7 +26,7 @@ public class NodeSynchronized extends Node {
 
 		HiClass clazz = ctx.value.type;
 		if (clazz.isNull()) {
-			ctx.throwException("null pointer");
+			ctx.throwRuntimeException("null pointer");
 			return;
 		}
 
@@ -36,12 +36,12 @@ public class NodeSynchronized extends Node {
 		} else if (clazz.isArray()) {
 			lockObject = ctx.value.array;
 		} else {
-			ctx.throwException("object is expected");
+			ctx.throwRuntimeException("object is expected");
 			return;
 		}
 
 		if (lockObject == null) {
-			ctx.throwException("null pointer");
+			ctx.throwRuntimeException("null pointer");
 			return;
 		}
 

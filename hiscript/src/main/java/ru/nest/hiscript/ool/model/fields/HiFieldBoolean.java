@@ -21,7 +21,7 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		if (value.type != getClass(ctx)) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 

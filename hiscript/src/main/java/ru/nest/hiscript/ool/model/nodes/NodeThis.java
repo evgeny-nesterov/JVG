@@ -18,7 +18,7 @@ public class NodeThis extends Node {
 	public void execute(RuntimeContext ctx) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null) {
-			ctx.throwException("can not accet to this");
+			ctx.throwRuntimeException("can not accet to this");
 			return;
 		}
 

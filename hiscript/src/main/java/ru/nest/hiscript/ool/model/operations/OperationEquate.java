@@ -21,7 +21,7 @@ public class OperationEquate extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v2.valueType == Value.VARIABLE) {
 			if (!v2.variable.initialized) {
-				ctx.throwException("variable not initialized: " + v2.variable.name);
+				ctx.throwRuntimeException("variable not initialized: " + v2.variable.name);
 				return;
 			}
 		}
@@ -46,7 +46,7 @@ public class OperationEquate extends BinaryOperation {
 			// v1.type);
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
 			if (!HiField.autoCast(v2.type, v1.type)) {
-				ctx.throwException("incompatible types; found " + v2.type + ", required " + v1.type);
+				ctx.throwRuntimeException("incompatible types; found " + v2.type + ", required " + v1.type);
 				return;
 			}
 			Arrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, v2, v1);

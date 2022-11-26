@@ -45,7 +45,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
 		if (valueType != BYTE) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;
 		}
 

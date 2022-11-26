@@ -86,7 +86,7 @@ public class NodeExpressionSwitch extends Node {
 				ctx.exit();
 			}
 		}
-		ctx.throwException("no sutable value in the switch");
+		ctx.throwRuntimeException("no sutable value in the switch");
 	}
 
 	@Override

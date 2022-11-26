@@ -57,11 +57,14 @@ public class HiClass implements Codeable {
 			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
+			// TODO define classes initialization order automatically
 			load(Compiler.class.getResource("/hilibs/String.hi"));
 			load(Compiler.class.getResource("/hilibs/Class.hi"));
 			load(Compiler.class.getResource("/hilibs/System.hi"));
 			load(Compiler.class.getResource("/hilibs/Math.hi"));
 			load(Compiler.class.getResource("/hilibs/Exception.hi"));
+			load(Compiler.class.getResource("/hilibs/RuntimeException.hi"));
+			load(Compiler.class.getResource("/hilibs/AssertException.hi"));
 			load(Compiler.class.getResource("/hilibs/ArrayList.hi"));
 			load(Compiler.class.getResource("/hilibs/HashMap.hi"));
 			load(Compiler.class.getResource("/hilibs/Thread.hi"));
@@ -251,7 +254,7 @@ public class HiClass implements Codeable {
 				}
 			} catch (Throwable exc) {
 				exc.printStackTrace();
-				ctx.throwException("can not initialize class " + fullName + ": " + exc.getMessage());
+				ctx.throwRuntimeException("Can not initialize class " + fullName + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
 				if (ctx != current_ctx) {

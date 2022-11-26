@@ -188,16 +188,24 @@ public class Value implements PrimitiveTypes {
 
 	public HiObject getObject() {
 		if (type.isPrimitive() || type.isArray()) {
-			ctx.throwException("object is expected");
+			ctx.throwRuntimeException("object is expected");
 			return null;
 		}
 
 		return object;
 	}
 
+	public String getString() {
+		HiObject object = getObject();
+		if (object != null) {
+			return object.getStringValue();
+		}
+		return null;
+	}
+
 	public Object getArray() {
 		if (!type.isArray()) {
-			ctx.throwException("array is expected: " + type.fullName);
+			ctx.throwRuntimeException("array is expected: " + type.fullName);
 			return null;
 		}
 
@@ -212,7 +220,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("boolean is expected");
+		ctx.throwRuntimeException("boolean is expected");
 		return false;
 	}
 
@@ -224,7 +232,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("char is expected");
+		ctx.throwRuntimeException("char is expected");
 		return 0;
 	}
 
@@ -236,7 +244,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("byte is expected");
+		ctx.throwRuntimeException("byte is expected");
 		return 0;
 	}
 
@@ -252,7 +260,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("short is expected");
+		ctx.throwRuntimeException("short is expected");
 		return 0;
 	}
 
@@ -274,7 +282,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("int is expected");
+		ctx.throwRuntimeException("int is expected");
 		return 0;
 	}
 
@@ -299,7 +307,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("long is expected");
+		ctx.throwRuntimeException("long is expected");
 		return 0;
 	}
 
@@ -327,7 +335,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("float is expected");
+		ctx.throwRuntimeException("float is expected");
 		return 0;
 	}
 
@@ -358,7 +366,7 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		ctx.throwException("double is expected");
+		ctx.throwRuntimeException("double is expected");
 		return 0;
 	}
 

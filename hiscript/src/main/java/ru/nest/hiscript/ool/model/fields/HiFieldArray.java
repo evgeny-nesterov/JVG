@@ -19,13 +19,13 @@ public class HiFieldArray extends HiField<Object> {
 	public void get(RuntimeContext ctx, Value value) {
 		// check value on array and on object
 		if (!value.type.isArray() && !(value.type.isObject() && value.type.superClass == null)) {
-			ctx.throwException("array is expected");
+			ctx.throwRuntimeException("array is expected");
 			return;
 		}
 
 		HiClass type = getClass(ctx);
 		if (!autoCast(value.type, type)) {
-			ctx.throwException("incompatible types; found " + type.getClassName() + ", required " + value.type.getClassName());
+			ctx.throwRuntimeException("incompatible types; found " + type.getClassName() + ", required " + value.type.getClassName());
 			return;
 		}
 
@@ -39,13 +39,13 @@ public class HiFieldArray extends HiField<Object> {
 		if (value.type == HiClass.getNullClass()) {
 			array = null;
 		} else if (!value.type.isArray()) {
-			ctx.throwException("array is expected");
+			ctx.throwRuntimeException("array is expected");
 			return;
 		} else {
 			// check cast
 			HiClass type = getClass(ctx);
 			if (!autoCast(value.type, type)) {
-				ctx.throwException("incompatible types; found " + value.type.getClassName() + ", required " + type.getClassName());
+				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + type.getClassName());
 				return;
 			}
 

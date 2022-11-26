@@ -33,10 +33,8 @@ public class TryParseRule extends ParseRule<NodeTry> {
 			if (visitWord(Words.CATCH, tokenizer) != null) {
 				expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
 				String typeName = visitWord(NOT_SERVICE, tokenizer);
-				if (!"Exception".equals(typeName)) {
-					throw new ParseException("Exception is expected", tokenizer.currentToken());
-				}
 				excType = Type.getType(typeName);
+				// TODO check excType extends Exception
 				excName = visitWord(NOT_SERVICE, tokenizer);
 				if (excName == null) {
 					throw new ParseException("identifier is expected", tokenizer.currentToken());

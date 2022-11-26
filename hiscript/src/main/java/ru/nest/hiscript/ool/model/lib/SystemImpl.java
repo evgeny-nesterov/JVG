@@ -39,7 +39,7 @@ public class SystemImpl extends ImplUtil {
 			}
 
 			if (url == null) {
-				ctx.throwException("can't load library: " + p);
+				ctx.throwRuntimeException("can't load library: " + p);
 			} else {
 				final Exception[] error = new Exception[1];
 				ClassLoader cl = new ClassLoader() {
@@ -66,11 +66,11 @@ public class SystemImpl extends ImplUtil {
 				if (clazz != null) {
 					Native.register(clazz);
 				} else {
-					ctx.throwException("can't load library: " + error[0].toString());
+					ctx.throwRuntimeException("can't load library: " + error[0].toString());
 				}
 			}
 		} catch (Exception exc) {
-			ctx.throwException("can't load library: " + exc.toString());
+			ctx.throwRuntimeException("can't load library: " + exc.toString());
 		}
 	}
 
@@ -178,7 +178,7 @@ public class SystemImpl extends ImplUtil {
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			ctx.throwException("script execution error");
+			ctx.throwRuntimeException("script execution error");
 			return;
 		}
 

@@ -18,7 +18,7 @@ public class HiFieldObject extends HiField<HiObject> {
 	public void get(RuntimeContext ctx, Value value) {
 		HiClass clazz = getClass(ctx);
 		if (!clazz.isNull() && (!value.type.isObject() || !clazz.isInstanceof(value.type))) {
-			ctx.throwException("incompatible types; found " + value.type.fullName + ", required " + clazz.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + clazz.fullName);
 			return;
 		}
 
@@ -40,7 +40,7 @@ public class HiFieldObject extends HiField<HiObject> {
 			return;
 		}
 		if (!valueClass.isObject() || !valueClass.isInstanceof(clazz)) {
-			ctx.throwException("incompatible types; found " + valueClass.fullName + ", required " + clazz.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + valueClass.fullName + ", required " + clazz.fullName);
 			return;
 		}
 

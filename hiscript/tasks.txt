@@ -40,12 +40,15 @@ enum E {
 }
 
 10. add asserts
-11. add throws for methods??? (all exceptions are runtime)
+11. add throws for methods, require catch or method throws for non runtime exceptions
 12. Annotations
 13. Binding to native java classes
 14. Allow Iterable for for(:) (currently only arrays)
 15. var
 
 		+16. switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN>: <bodyExpr>)
+        +17. multiple case in statement switch
+        +18. assert
+        +19. RuntimeException, AssertException, catch only declared exceptions
 
-16.  multiple case in statement switch
+20. Implement NodeExpression.getExpressionType() and check assert on boolean and etc

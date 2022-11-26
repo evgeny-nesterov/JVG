@@ -111,7 +111,11 @@ public class RuntimeContext {
 
 	private static HiConstructor excConstructor;
 
-	public void throwException(String message) {
+	public void throwRuntimeException(String message) {
+		throwException("RuntimeException", message);
+	}
+
+	public void throwException(String exceptionClass, String message) {
 		if (exception != null) {
 			return;
 		}
@@ -125,7 +129,7 @@ public class RuntimeContext {
 		// new Exception().printStackTrace();
 
 		if (excClass == null) {
-			excClass = HiClass.forName(this, "Exception");
+			excClass = HiClass.forName(this, exceptionClass);
 			excConstructor = excClass.getConstructor(this, HiClass.forName(this, "String"));
 		}
 

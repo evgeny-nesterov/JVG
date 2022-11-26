@@ -41,7 +41,7 @@ public class NodeIdentificator extends Node {
 		HiField<?> var = ctx.getVariable(name);
 		if (var != null) {
 			if (checkInitialization && !var.initialized) {
-				ctx.throwException("variable not initialized: " + var.name);
+				ctx.throwRuntimeException("variable not initialized: " + var.name);
 			}
 
 			ctx.value.valueType = Value.VALUE;

@@ -53,7 +53,7 @@ public class Native {
 			method.invoke(o, args);
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			ctx.throwException("native method '" + name + "' invocation error: " + exc.toString());
+			ctx.throwRuntimeException("native method '" + name + "' invocation error: " + exc.toString());
 		}
 	}
 }

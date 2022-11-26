@@ -48,17 +48,17 @@ public class NodeConstructor extends Node {
 			clazz = type.getType().getClass(ctx);
 
 			if (clazz == null) {
-				ctx.throwException("class not found: " + name);
+				ctx.throwRuntimeException("class not found: " + name);
 				return;
 			}
 
 			if (clazz.isInterface) {
-				ctx.throwException("cannot create object from interface '" + name + "'");
+				ctx.throwRuntimeException("cannot create object from interface '" + name + "'");
 				return;
 			}
 		} else {
 			if (clazz.isInterface) {
-				ctx.throwException("cannot create object from interface '" + name + "'");
+				ctx.throwRuntimeException("cannot create object from interface '" + name + "'");
 				return;
 			}
 
@@ -101,7 +101,7 @@ public class NodeConstructor extends Node {
 		// get constructor
 		HiConstructor constructor = clazz.searchConstructor(ctx, types);
 		if (constructor == null) {
-			ctx.throwException("constructor not found: " + clazz.fullName);
+			ctx.throwRuntimeException("constructor not found: " + clazz.fullName);
 			return;
 		}
 

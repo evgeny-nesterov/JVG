@@ -19,7 +19,7 @@ public abstract class BinaryOperation extends Operation {
 		if (v1.valueType == Value.NAME) {
 			boolean checkInitialization = operation != EQUATE;
 			if (!NodeIdentificator.resolve(ctx, v1, checkInitialization)) {
-				ctx.throwException("can't resolve identifier " + v1.name);
+				ctx.throwRuntimeException("can't resolve identifier " + v1.name);
 				return;
 			}
 
@@ -31,7 +31,7 @@ public abstract class BinaryOperation extends Operation {
 		if (operation != INVOCATION) {
 			if (v2.valueType == Value.NAME) {
 				if (!NodeIdentificator.resolve(ctx, v2, true)) {
-					ctx.throwException("can't resolve identifier " + v2.name);
+					ctx.throwRuntimeException("can't resolve identifier " + v2.name);
 					return;
 				}
 
@@ -54,31 +54,31 @@ public abstract class BinaryOperation extends Operation {
 
 	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
 		String text = "operator '" + name + "' can not be applyed to " + type1.fullName + ", " + type2.fullName;
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void errorUnexpectedType(RuntimeContext ctx) {
 		String text = "unexpected type";
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void errorDivideByZero(RuntimeContext ctx) {
 		String text = "divide by zero";
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void errorArrayRequired(RuntimeContext ctx) {
 		String text = "array required";
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void errorArrayIndexOutOfBound(RuntimeContext ctx, int arrayLenth, int index) {
 		String text = "array index out of bound: array length = " + arrayLenth + ", index = " + index;
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 
 	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
 		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
-		ctx.throwException(text);
+		ctx.throwRuntimeException(text);
 	}
 }

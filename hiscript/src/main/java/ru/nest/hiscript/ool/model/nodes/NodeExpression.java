@@ -10,4 +10,7 @@ public abstract class NodeExpression extends Node {
 	public NodeExpression(String name, int type, int line) {
 		super(name, type, line);
 	}
+
+	// TODO
+	// public Type getExpressionType();
 }

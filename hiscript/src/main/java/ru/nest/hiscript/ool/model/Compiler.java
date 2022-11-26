@@ -11,6 +11,8 @@ import java.io.InputStream;
 public class Compiler {
 	private Tokenizer tokenizer;
 
+	private boolean assertsActive = false;
+
 	public Compiler(Tokenizer tokenizer) {
 		this.tokenizer = tokenizer;
 	}
@@ -38,7 +40,7 @@ public class Compiler {
 	public static void testExecutor() {
 		StringBuilder buf = new StringBuilder();
 		try {
-			InputStream is = Compiler.class.getResourceAsStream("/oolTestSingle.hi");
+			InputStream is = Compiler.class.getResourceAsStream("/oolTestFully.hi");
 			int c;
 			while ((c = is.read()) != -1) {
 				buf.append((char) c);
@@ -47,9 +49,10 @@ public class Compiler {
 			exc.printStackTrace();
 		}
 
-		Compiler p = getDefaultCompiler(buf.toString());
+		Compiler compiler = getDefaultCompiler(buf.toString());
+		compiler.setAssertsActive(true);
 		try {
-			Node node = p.build();
+			Node node = compiler.build();
 			if (node != null) {
 				// CodeContext ctxCode = new CodeContext();
 				// node.code(ctxCode);
@@ -75,5 +78,13 @@ public class Compiler {
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	public boolean isAssertsActive() {
+		return assertsActive;
+	}
+
+	public void setAssertsActive(boolean assertsActive) {
+		this.assertsActive = assertsActive;
 	}
 }

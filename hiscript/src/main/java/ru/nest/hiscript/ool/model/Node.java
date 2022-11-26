@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
+import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeBreak;
@@ -27,6 +28,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeIf;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeLabel;
+import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNative;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
@@ -126,6 +128,8 @@ public abstract class Node implements Codeable {
 	public final static byte TYPE_FOR_ITERATOR = 40;
 
 	public final static byte TYPE_LOGICAL_SWITCH = 41;
+
+	public final static byte TYPE_ASSERT = 42;
 
 	public Node(String name, int type) {
 		this(name, type, -1);
@@ -234,6 +238,10 @@ public abstract class Node implements Codeable {
 				return HiField.decode(os);
 			case TYPE_SYNCHRONIZED:
 				return NodeSynchronized.decode(os);
+			case TYPE_LOGICAL_SWITCH:
+				return NodeLogicalSwitch.decode(os);
+			case TYPE_ASSERT:
+				return NodeAssert.decode(os);
 		}
 		throw new RuntimeException("Node can't be decoded: undefined type " + type);
 	}

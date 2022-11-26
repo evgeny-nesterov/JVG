@@ -13,6 +13,7 @@ empty                                               statement       +
 declaration	type, ...names, ...values               statement       +
 expression                                          statement       +
 synchronized	lock, body                          statement       +
+assert      condition, message                      statement       +
 
 
 new			type, ...arguments, class-body		    statement		+

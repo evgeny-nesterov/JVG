@@ -92,4 +92,6 @@ public interface Words {
 	public final static int SYNCHRONIZED = 44;
 
 	public final static int THIS = 45;
+
+	public final static int ASSERT = 46;
 }

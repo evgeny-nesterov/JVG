@@ -81,7 +81,7 @@ public class ObjectImpl extends ImplUtil {
 		try {
 			ctx.value.object.wait();
 		} catch (Throwable e) {
-			ctx.throwException(e.toString());
+			ctx.throwRuntimeException(e.toString());
 		}
 		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
@@ -90,7 +90,7 @@ public class ObjectImpl extends ImplUtil {
 		try {
 			ctx.value.object.wait(timeout);
 		} catch (Throwable e) {
-			ctx.throwException(e.toString());
+			ctx.throwRuntimeException(e.toString());
 		}
 		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
@@ -99,7 +99,7 @@ public class ObjectImpl extends ImplUtil {
 		try {
 			ctx.value.object.notify();
 		} catch (Throwable e) {
-			ctx.throwException(e.getMessage());
+			ctx.throwRuntimeException(e.getMessage());
 		}
 		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
@@ -108,7 +108,7 @@ public class ObjectImpl extends ImplUtil {
 		try {
 			ctx.value.object.notifyAll();
 		} catch (Throwable e) {
-			ctx.throwException(e.getMessage());
+			ctx.throwRuntimeException(e.getMessage());
 		}
 		ctx.value.valueType = PrimitiveTypes.VOID;
 	}
