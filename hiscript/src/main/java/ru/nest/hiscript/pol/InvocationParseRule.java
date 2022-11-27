@@ -75,7 +75,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 				if (ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 					while (visitSymbol(tokenizer, handler, Symbols.COMMA) != -1) {
 						if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-							errorOccured(tokenizer, handler, "Argument is expected");
+							errorOccurred(tokenizer, handler, "Argument is expected");
 						}
 					}
 				}

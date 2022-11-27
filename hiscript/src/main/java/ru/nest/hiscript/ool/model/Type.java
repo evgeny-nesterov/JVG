@@ -22,7 +22,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 
 	public final static int ARRAY = 2;
 
-	private static HashMap<String, Type> predefinedTypes = new HashMap<String, Type>();
+	private static HashMap<String, Type> predefinedTypes = new HashMap<>();
 
 	static {
 		predefinedTypes.put("char", new Type("char"));
@@ -219,7 +219,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 
 	public Type getInnerType(String name, int dimension) {
 		if (innerTypes == null) {
-			innerTypes = new HashMap<String, Type>(1);
+			innerTypes = new HashMap<>(1);
 		}
 
 		Type type = innerTypes.get(name);
@@ -233,9 +233,9 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	}
 
 	// === Static Methods ===
-	private static HashMap<String, Type> types = new HashMap<String, Type>();
+	private static HashMap<String, Type> types = new HashMap<>();
 
-	private static HashMap<Type, Type> arrayTypes = new HashMap<Type, Type>();
+	private static HashMap<Type, Type> arrayTypes = new HashMap<>();
 
 	public static Type getType(Type parent, String name) {
 		if (parent != null) {
@@ -265,7 +265,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		if (dimension > 0) {
 			type = getArrayType(type, dimension);
 		}
-
 		return type;
 	}
 
@@ -306,7 +305,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 			HiClassArray arrayClass = (HiClassArray) clazz;
 			return getType(arrayClass.cellClass.fullName, arrayClass.dimension);
 		}
-
 		return getType(clazz.fullName);
 	}
 
@@ -315,7 +313,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		if (dimension != type.dimension) {
 			return dimension - type.dimension;
 		}
-
 		return name.compareTo(type.name);
 	}
 

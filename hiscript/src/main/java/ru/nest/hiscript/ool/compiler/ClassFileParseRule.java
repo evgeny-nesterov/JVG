@@ -27,18 +27,16 @@ public class ClassFileParseRule extends ParseRule<Node> {
 				continue;
 			}
 
-			HiClass interfac = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
-			if (interfac != null) {
+			HiClass interfase = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
+			if (interfase != null) {
 				continue;
 			}
-
 			break;
 		}
 
 		if (tokenizer.hasNext()) {
 			throw new ParseException("unexpected token", tokenizer.currentToken());
 		}
-
 		return null;
 	}
 }

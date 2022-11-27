@@ -17,7 +17,7 @@ public class NodeNative extends Node {
 		StringBuilder id = new StringBuilder();
 		id.append(clazz.fullName);
 		id.append('_');
-		id.append(returnType.fullName);
+		id.append(returnType != null ? returnType.fullName : "void");
 		id.append('_');
 		id.append(name);
 		if (argTypes != null) {

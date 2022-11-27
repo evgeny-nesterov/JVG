@@ -81,11 +81,11 @@ import ru.nest.jvg.shape.text.JVGStyleConstants;
 import sun.misc.BASE64Decoder;
 
 public class JVGParser_1_0 implements JVGParserInterface {
-	protected final static Map<String, Integer> shadows = new HashMap<String, Integer>();
+	protected final static Map<String, Integer> shadows = new HashMap<>();
 
-	protected final static Map<String, Integer> endings_types = new HashMap<String, Integer>();
+	protected final static Map<String, Integer> endings_types = new HashMap<>();
 
-	protected final static Map<String, Integer> endings_figures = new HashMap<String, Integer>();
+	protected final static Map<String, Integer> endings_figures = new HashMap<>();
 
 	static {
 		shadows.put("slope-left-back", ShadowPainter.SLOPE_LEFT_BACK);
@@ -116,7 +116,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 
 	protected Color documentColor;
 
-	protected Map<String, ScriptResource> documentScripts = new HashMap<String, ScriptResource>();
+	protected Map<String, ScriptResource> documentScripts = new HashMap<>();
 
 	public JVGParser_1_0(JVGFactory factory, JVGResources resources) {
 		this.factory = factory;
@@ -460,7 +460,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 		if (propertiesElement != null) {
 			Map<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
 			if (hash == null) {
-				hash = new HashMap<String, String>();
+				hash = new HashMap<>();
 				component.setClientProperty("component-properties", hash);
 			}
 
@@ -501,7 +501,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 			Painter painter = getPainter(paintElement);
 			if (painter != null) {
 				if (painters == null) {
-					painters = new ArrayList<Painter>();
+					painters = new ArrayList<>();
 				}
 				painters.add(painter);
 			}
@@ -708,7 +708,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 		} else {
 			try {
 				String[] a = JVGParseUtil.getStringArray(url, ";");
-				ImageResource<Icon> image = new ImageResource<Icon>(new URL(a[0]));
+				ImageResource<Icon> image = new ImageResource<>(new URL(a[0]));
 				Rectangle2D anchor = null;
 				String anchorValue = a.length > 1 ? a[1] : null;
 				String[] anchorArray = JVGParseUtil.getStringArray(anchorValue, ",");
@@ -838,7 +838,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 				return resources.getResource(StrokeResource.class, id);
 			} else {
 				Stroke stroke = JVGParseUtil.getStroke(value);
-				return new StrokeResource<Stroke>(stroke);
+				return new StrokeResource<>(stroke);
 			}
 		}
 		return null;
@@ -888,9 +888,9 @@ public class JVGParser_1_0 implements JVGParserInterface {
 						try {
 							if ("base64".equals(dataType)) {
 								byte[] bytes = new BASE64Decoder().decodeBuffer(sourceValue);
-								return new ImageResource<ImageIcon>(bytes);
+								return new ImageResource<>(bytes);
 							} else {
-								return new ImageResource<ImageIcon>((String) null, sourceValue);
+								return new ImageResource<>((String) null, sourceValue);
 							}
 						} catch (Exception exc) {
 						}

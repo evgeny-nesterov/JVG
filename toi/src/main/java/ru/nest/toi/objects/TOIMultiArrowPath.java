@@ -29,7 +29,7 @@ public class TOIMultiArrowPath extends TOIPath implements Arrow {
 
 	private double arrowLength = 6;
 
-	private List<TOIArrowPathElement> elements = new ArrayList<TOIArrowPathElement>();
+	private List<TOIArrowPathElement> elements = new ArrayList<>();
 
 	private Stroke stroke;
 
@@ -281,7 +281,7 @@ public class TOIMultiArrowPath extends TOIPath implements Arrow {
 
 	public static void main(String[] args) {
 		try {
-			Set<Character> set = new TreeSet<Character>();
+			Set<Character> set = new TreeSet<>();
 			for (File f : new File("C:/Users/john/Dropbox/Satis Soft/Рабочие материалы/Common/ЦОДД/Контроллеры/Пофазки_общ/contoller-log").listFiles()) {
 				BufferedReader r = new BufferedReader(new FileReader(f));
 				String line;

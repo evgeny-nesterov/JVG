@@ -257,7 +257,7 @@ public class JVGEditor extends JFrame {
 
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.addFlavorListener(new FlavorListener() {
-			private Set<Integer> hash = new HashSet<Integer>();
+			private Set<Integer> hash = new HashSet<>();
 
 			@Override
 			public void flavorsChanged(FlavorEvent e) {
@@ -410,7 +410,7 @@ public class JVGEditor extends JFrame {
 	}
 
 	public JVGPaneInternalFrame[] getAllDocuments() {
-		List<JVGPaneInternalFrame> list = new ArrayList<JVGPaneInternalFrame>();
+		List<JVGPaneInternalFrame> list = new ArrayList<>();
 		for (JInternalFrame frame : desktop.getAllFramesInLayer(1)) {
 			if (frame instanceof JVGPaneInternalFrame) {
 				list.add((JVGPaneInternalFrame) frame);
@@ -595,7 +595,7 @@ public class JVGEditor extends JFrame {
 
 		pane.addJVGListener(new JVGListener() {
 			@Override
-			public void eventOccured(JVGEvent e) {
+			public void eventOccurred(JVGEvent e) {
 				if (e.getID() == JVGFocusEvent.FOCUS_GAINED || e.getID() == JVGFocusEvent.FOCUS_LOST) {
 					editorActions.updateDependedOnSelectionAndFocus();
 				}
@@ -1415,7 +1415,7 @@ public class JVGEditor extends JFrame {
 	}
 
 	public List<JVGEditPane> getAllPanes() {
-		List<JVGEditPane> panes = new ArrayList<JVGEditPane>();
+		List<JVGEditPane> panes = new ArrayList<>();
 		for (JInternalFrame frame : desktop.getAllFramesInLayer(1)) {
 			if (frame instanceof JVGPaneInternalFrame) {
 				panes.add(((JVGPaneInternalFrame) frame).getPane());

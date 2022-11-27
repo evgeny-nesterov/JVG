@@ -14,7 +14,7 @@ public class SelectionRotater extends Thread {
 
 	private Stroke selectionStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3f, new float[] { 3f, 3f }, 0f);
 
-	private Map<Float, Stroke> strokes = new HashMap<Float, Stroke>();
+	private Map<Float, Stroke> strokes = new HashMap<>();
 
 	public SelectionRotater(TOIPane pane) {
 		this.pane = pane;

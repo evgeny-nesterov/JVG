@@ -23,7 +23,7 @@ public class FileTreeModel implements TreeModel {
 		this.fileComparator = fileComparator;
 	}
 
-	private HashMap<String, SoftReference<File[]>> cache = new HashMap<String, SoftReference<File[]>>();
+	private HashMap<String, SoftReference<File[]>> cache = new HashMap<>();
 
 	private File[] getFiles(Object node) {
 		if (root.equals(node)) {
@@ -53,7 +53,7 @@ public class FileTreeModel implements TreeModel {
 					Arrays.sort(files, fileComparator);
 				}
 			}
-			cache.put(path, new SoftReference<File[]>(files));
+			cache.put(path, new SoftReference<>(files));
 		}
 
 		return files;

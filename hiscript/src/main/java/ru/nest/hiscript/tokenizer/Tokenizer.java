@@ -134,11 +134,11 @@ public class Tokenizer {
 		return currentToken;
 	}
 
-	private ArrayList<Token> buffer = new ArrayList<Token>();
+	private ArrayList<Token> buffer = new ArrayList<>();
 
-	private ArrayList<Integer> startOffsets = new ArrayList<Integer>();
+	private ArrayList<Integer> startOffsets = new ArrayList<>();
 
-	private ArrayList<Token> startPrevTokens = new ArrayList<Token>();
+	private ArrayList<Token> startPrevTokens = new ArrayList<>();
 
 	private int tokenOffset = 0;
 
@@ -163,7 +163,7 @@ public class Tokenizer {
 		currentToken = startPrevTokens.remove(startPrevTokens.size() - 1);
 	}
 
-	private ArrayList<TokenVisitor> visitors = new ArrayList<TokenVisitor>();
+	private ArrayList<TokenVisitor> visitors = new ArrayList<>();
 
 	public void addVisitor(TokenVisitor visitor) {
 		visitors.add(visitor);
@@ -191,7 +191,6 @@ public class Tokenizer {
 
 			rollback(offset, line, lineOffset);
 		}
-
 		return null;
 	}
 
@@ -206,7 +205,7 @@ public class Tokenizer {
 		return t;
 	}
 
-	public static HashMap<?, ?> properties = new HashMap<Object, Object>();
+	public static HashMap<?, ?> properties = new HashMap<>();
 
 	public static void main(String[] args) {
 		String s = "'\\333'\n\n \"12\\\"3\"";

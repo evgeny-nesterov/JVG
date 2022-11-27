@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
@@ -15,6 +12,9 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewParseRule extends ParseRule<Node> {
 	private final static NewParseRule instance = new NewParseRule();
@@ -31,7 +31,7 @@ public class NewParseRule extends ParseRule<Node> {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
-				throw new ParseException("identificator is expected", tokenizer.currentToken());
+				throw new ParseException("identifier is expected", tokenizer.currentToken());
 			}
 
 			int brace_type = visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
@@ -49,7 +49,6 @@ public class NewParseRule extends ParseRule<Node> {
 					return visitNewArrayValue(tokenizer, type, properties);
 			}
 		}
-
 		return null;
 	}
 
@@ -77,7 +76,7 @@ public class NewParseRule extends ParseRule<Node> {
 
 	// new a.b.c.d[<index>]...[<index>] []...[]
 	private Node visitNewArray(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
-		List<Node> indexes = new ArrayList<Node>();
+		List<Node> indexes = new ArrayList<>();
 
 		Node index = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (index == null) {
@@ -116,7 +115,7 @@ public class NewParseRule extends ParseRule<Node> {
 
 	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			ArrayList<Node> list = new ArrayList<Node>(1);
+			ArrayList<Node> list = new ArrayList<>(1);
 
 			Node cell = visitCell(tokenizer, type, dimensions - 1, properties);
 			if (cell != null) {
@@ -146,11 +145,6 @@ public class NewParseRule extends ParseRule<Node> {
 			return cell;
 		}
 
-		cell = visitArrayValue(tokenizer, type, dimensions, properties);
-		if (cell != null) {
-			return cell;
-		}
-
-		return null;
+		return visitArrayValue(tokenizer, type, dimensions, properties);
 	}
 }

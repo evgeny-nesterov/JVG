@@ -10,7 +10,7 @@ public class ExpressionContext {
 		variables.put("E", new NumberValue(Math.E));
 	}
 
-	private HashMap<String, Value> variables = new HashMap<String, Value>();
+	private HashMap<String, Value> variables = new HashMap<>();
 
 	public void addVariable(String id, Value var) {
 		variables.put(id, var);
@@ -20,7 +20,7 @@ public class ExpressionContext {
 		return variables.get(id);
 	}
 
-	private HashMap<String, Function> functions = new HashMap<String, Function>();
+	private HashMap<String, Function> functions = new HashMap<>();
 
 	public boolean isFunction(String id) {
 		return functions.containsKey(id);

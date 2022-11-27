@@ -79,11 +79,11 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 
 				expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 				if (visitWord(Words.STRING, tokenizer, handler) == null) {
-					errorOccured(tokenizer, handler, "'string' expected");
+					errorOccurred(tokenizer, handler, "'string' expected");
 				}
 				errorVariableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 				if (errorVariableName == null) {
-					errorOccured(tokenizer, handler, "variable expected");
+					errorOccurred(tokenizer, handler, "variable expected");
 				}
 				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
@@ -101,7 +101,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			}
 
 			if (!thereIsCatch && !thereIsFinally) {
-				errorOccured(tokenizer, handler, "'catch' or 'finally' expected");
+				errorOccurred(tokenizer, handler, "'catch' or 'finally' expected");
 			}
 
 			return true;

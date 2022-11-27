@@ -22,7 +22,7 @@ public class GraphicsSupport {
 
 	private Graphics2D g;
 
-	private List<Method> methods = new ArrayList<Method>();
+	private List<Method> methods = new ArrayList<>();
 
 	public GraphicsSupport() {
 		init();

@@ -19,9 +19,9 @@ public class Animator implements Runnable {
 
 	private int quantum = 10;
 
-	private List<AniTask> tasks = new ArrayList<AniTask>();
+	private List<AniTask> tasks = new ArrayList<>();
 
-	private List<AniTask> executed = new ArrayList<AniTask>();
+	private List<AniTask> executed = new ArrayList<>();
 
 	@Override
 	public void run() {

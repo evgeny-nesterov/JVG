@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  (operand) [postfix operations...] operation [prefix operations...] (operand)
+ */
 public class OperationsGroup {
-	public static ArrayList<Operation> empty = new ArrayList<Operation>(0);
+	public static ArrayList<Operation> empty = new ArrayList<>(0);
 
 	private Operation operation;
 
@@ -18,9 +21,9 @@ public class OperationsGroup {
 	public OperationsGroup() {
 	}
 
-	public OperationsGroup(int operation) {
-		setOperation(operation);
-	}
+	//	public OperationsGroup(int operation) {
+	//		setOperation(operation);
+	//	}
 
 	public int appendPrefix(Operation[] stack, int index) {
 		if (prefix != null) {
@@ -31,14 +34,14 @@ public class OperationsGroup {
 		return index;
 	}
 
-	public int appendPostfix(Operation[] stack, int index) {
-		if (postfix != null) {
-			for (int i = postfix.size() - 1; i >= 0; i--) {
-				stack[index++] = postfix.get(i);
-			}
-		}
-		return index;
-	}
+	//	public int appendPostfix(Operation[] stack, int index) {
+	//		if (postfix != null) {
+	//			for (int i = postfix.size() - 1; i >= 0; i--) {
+	//				stack[index++] = postfix.get(i);
+	//			}
+	//		}
+	//		return index;
+	//	}
 
 	public int append(Operation[] stack, int index) {
 		if (operation != null) {
@@ -58,16 +61,16 @@ public class OperationsGroup {
 		return count;
 	}
 
-	public int getPostfixOperandsCount() {
-		int count = 0;
-		if (postfix != null) {
-			int size = postfix.size();
-			for (int i = 0; i < size; i++) {
-				count += postfix.get(i).getIncrement();
-			}
-		}
-		return count;
-	}
+	//	public int getPostfixOperandsCount() {
+	//		int count = 0;
+	//		if (postfix != null) {
+	//			int size = postfix.size();
+	//			for (int i = 0; i < size; i++) {
+	//				count += postfix.get(i).getIncrement();
+	//			}
+	//		}
+	//		return count;
+	//	}
 
 	public int getOperandsCount() {
 		if (operation != null) {
@@ -95,33 +98,33 @@ public class OperationsGroup {
 
 	public void addPrefixOperation(int o) {
 		if (prefix == null) {
-			prefix = new ArrayList<Operation>(1);
+			prefix = new ArrayList<>(1);
 		}
 		prefix.add(Operations.getOperation(o));
 	}
 
-	public List<Operation> getPrefixOperations() {
-		return prefix != null ? prefix : empty;
-	}
-
-	public boolean hasPrefixOperations() {
-		return prefix != null;
-	}
+	//	public List<Operation> getPrefixOperations() {
+	//		return prefix != null ? prefix : empty;
+	//	}
+	//
+	//	public boolean hasPrefixOperations() {
+	//		return prefix != null;
+	//	}
 
 	public void addPostfixOperation(int o) {
 		if (postfix == null) {
-			postfix = new ArrayList<Operation>(1);
+			postfix = new ArrayList<>(1);
 		}
 		postfix.add(Operations.getOperation(o));
 	}
 
-	public List<Operation> getPostfixOperations() {
-		return postfix != null ? postfix : empty;
-	}
-
-	public boolean hasPostfixOperations() {
-		return postfix != null;
-	}
+	//	public List<Operation> getPostfixOperations() {
+	//		return postfix != null ? postfix : empty;
+	//	}
+	//
+	//	public boolean hasPostfixOperations() {
+	//		return postfix != null;
+	//	}
 
 	public boolean hasOperations() {
 		return operation != null || prefix != null || postfix != null;
@@ -133,13 +136,7 @@ public class OperationsGroup {
 			priority = operation.getPriority();
 		}
 
-		if (prefix != null) {
-			int size = prefix.size();
-			for (int i = 0; i < size; i++) {
-				Operation o = prefix.get(i);
-				priority = Math.min(priority, o.getPriority());
-			}
-		}
+		// do not take into account prefix!
 
 		if (postfix != null) {
 			int size = postfix.size();
@@ -156,33 +153,33 @@ public class OperationsGroup {
 		return priority;
 	}
 
-	public int getMaxPriority() {
-		int priority = 0;
-		if (operation != null) {
-			priority = operation.getPriority();
-		}
-
-		if (prefix != null) {
-			for (int i = 0; i < prefix.size(); i++) {
-				Operation o = prefix.get(i);
-				priority = Math.max(priority, o.getPriority());
-			}
-		}
-
-		if (postfix != null) {
-			for (int i = 0; i < postfix.size(); i++) {
-				Operation o = postfix.get(i);
-				priority = Math.max(priority, o.getPriority());
-			}
-		}
-		return priority;
-	}
+	//	public int getMaxPriority() {
+	//		int priority = 0;
+	//		if (operation != null) {
+	//			priority = operation.getPriority();
+	//		}
+	//
+	//		if (prefix != null) {
+	//			for (int i = 0; i < prefix.size(); i++) {
+	//				Operation o = prefix.get(i);
+	//				priority = Math.max(priority, o.getPriority());
+	//			}
+	//		}
+	//
+	//		if (postfix != null) {
+	//			for (int i = 0; i < postfix.size(); i++) {
+	//				Operation o = postfix.get(i);
+	//				priority = Math.max(priority, o.getPriority());
+	//			}
+	//		}
+	//		return priority;
+	//	}
 
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		if (prefix != null) {
-			for (Operation o : prefix) {
+		if (postfix != null) {
+			for (Operation o : postfix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}
@@ -194,8 +191,8 @@ public class OperationsGroup {
 			buf.append("] ");
 		}
 
-		if (postfix != null) {
-			for (Operation o : postfix) {
+		if (prefix != null) {
+			for (Operation o : prefix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}

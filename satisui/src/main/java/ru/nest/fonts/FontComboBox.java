@@ -17,7 +17,7 @@ import javax.swing.JList;
 public class FontComboBox extends JComboBox<Font> {
 	private static final long serialVersionUID = -8740738997362097624L;
 
-	private List<Font> lastFonts = new ArrayList<Font>();
+	private List<Font> lastFonts = new ArrayList<>();
 
 	public FontComboBox() {
 		this((Font[]) null);

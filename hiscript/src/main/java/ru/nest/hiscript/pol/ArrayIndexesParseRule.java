@@ -42,7 +42,7 @@ public class ArrayIndexesParseRule extends ParseRule<ArrayIndexesNode> {
 		boolean found = false;
 		while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "expression expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 			found = true;

@@ -1,7 +1,4 @@
-try {
-    int x = 1 / 0;
-} catch(Exception exc) {
-    System.println("\t[catch]");
-} finally {
-    System.println("\t[finally]");
-}
+int c = (char)-1;
+// char c = (char)-1;
+System.println("c: " + c);
+assert c == 65535;

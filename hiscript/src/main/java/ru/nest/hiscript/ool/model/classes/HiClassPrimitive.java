@@ -30,7 +30,7 @@ public class HiClassPrimitive extends HiClass {
 		super((HiClass) null, null, name, CLASS_TYPE_TOP);
 	}
 
-	private static HashMap<String, HiClassPrimitive> primitiveClasses = new HashMap<String, HiClassPrimitive>();
+	private static HashMap<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
 	static {
 		primitiveClasses.put("char", CHAR);
 		primitiveClasses.put("boolean", BOOLEAN);

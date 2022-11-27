@@ -19,7 +19,7 @@ public class SwitchNode extends Node implements Breakable {
 		return value;
 	}
 
-	private ArrayList<CaseNode> cases = new ArrayList<CaseNode>();
+	private ArrayList<CaseNode> cases = new ArrayList<>();
 
 	public void addCase(CaseNode node) {
 		cases.add(node);

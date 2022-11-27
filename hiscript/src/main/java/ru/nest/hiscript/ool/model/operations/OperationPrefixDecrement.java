@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
@@ -65,6 +66,10 @@ public class OperationPrefixDecrement extends UnaryOperation {
 		}
 
 		HiField<?> var = v.variable;
-		var.set(ctx, v);
+		if (v.valueType == Value.ARRAY_INDEX) {
+			Arrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
+		} else {
+			var.set(ctx, v);
+		}
 	}
 }

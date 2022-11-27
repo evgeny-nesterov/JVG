@@ -50,7 +50,7 @@ public class ChooseShadowButton extends ActionChooser {
 		return choosePanel.getPopupMenu();
 	}
 
-	private HashMap<Integer, ShadowButton> map = new HashMap<Integer, ShadowButton>();
+	private HashMap<Integer, ShadowButton> map = new HashMap<>();
 
 	class ShadowButton extends JMenuItem implements ActionListener {
 		protected Action action;

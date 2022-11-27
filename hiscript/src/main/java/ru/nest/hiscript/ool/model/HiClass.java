@@ -42,8 +42,14 @@ public class HiClass implements Codeable {
 
 	public static HiClass OBJECT_CLASS;
 
+	public static String ROOT_CLASS_NAME = "@root";
+
 	static {
-		loadedClasses = new HashMap<String, HiClass>();
+		loadSystemClasses();
+	}
+
+	private static void loadSystemClasses() {
+		loadedClasses = new HashMap<>();
 
 		Native.register(SystemImpl.class);
 		Native.register(ObjectImpl.class);
@@ -71,6 +77,13 @@ public class HiClass implements Codeable {
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	public static void clearClassLoader() {
+		cellTypes.clear();
+		HiClassArray.clear();
+		Native.clear();
+		loadSystemClasses();
 	}
 
 	// TODO: ClassLoader
@@ -170,10 +183,12 @@ public class HiClass implements Codeable {
 		this.fullName = fullName.intern();
 
 		// register class by fullName
-		if (loadedClasses.containsKey(fullName)) {
-			throw new ClassLoadException("class '" + fullName + "' already loaded");
+		if (!ROOT_CLASS_NAME.equals(fullName)) {
+			if (loadedClasses.containsKey(fullName)) {
+				throw new ClassLoadException("class '" + fullName + "' already loaded");
+			}
+			loadedClasses.put(fullName, this);
 		}
-		loadedClasses.put(fullName, this);
 	}
 
 	private boolean isInitialized = false;
@@ -324,7 +339,7 @@ public class HiClass implements Codeable {
 		HiClass clazz = _getClass(ctx, name);
 		if (clazz != null) {
 			if (classes_map == null) {
-				classes_map = new HashMap<String, HiClass>(1);
+				classes_map = new HashMap<>(1);
 			}
 			classes_map.put(name, clazz);
 		}
@@ -377,7 +392,7 @@ public class HiClass implements Codeable {
 	public boolean isInstanceof(HiClass clazz) {
 		HiClass c = this;
 		while (c != null) {
-			if (c == clazz) {
+			if (c == clazz || c.fullName.equals(clazz.fullName)) {
 				return true;
 			}
 			if (c.hasInterfaceInstanceof(clazz)) {
@@ -385,7 +400,6 @@ public class HiClass implements Codeable {
 			}
 			c = c.superClass;
 		}
-
 		return false;
 	}
 
@@ -439,7 +453,7 @@ public class HiClass implements Codeable {
 
 		if (field != null) {
 			if (fields_map == null) {
-				fields_map = new HashMap<String, HiField<?>>();
+				fields_map = new HashMap<>();
 			}
 			fields_map.put(name, field);
 		}
@@ -447,7 +461,7 @@ public class HiClass implements Codeable {
 		return field;
 	}
 
-	private HashMap<MethodSignature, HiMethod> methods_hash = new HashMap<MethodSignature, HiMethod>();
+	private HashMap<MethodSignature, HiMethod> methods_hash = new HashMap<>();
 
 	private MethodSignature signature = new MethodSignature();
 
@@ -680,7 +694,7 @@ public class HiClass implements Codeable {
 		return fullName;
 	}
 
-	private static HashMap<Class<?>, HiClass> cellTypes = new HashMap<Class<?>, HiClass>(9);
+	private static HashMap<Class<?>, HiClass> cellTypes = new HashMap<>(9);
 
 	public static HiClass getCellType(Class<?> clazz) {
 		if (cellTypes.containsKey(clazz)) {

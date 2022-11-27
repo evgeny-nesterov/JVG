@@ -43,7 +43,7 @@ public class ArgumentsParseRule extends ParseRule<ArgumentsNode> {
 		if (ArgumentParseRule.getInstance().visit(tokenizer, handler)) {
 			while (visitSymbol(tokenizer, handler, Symbols.COMMA) != -1) {
 				if (!ArgumentParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "argument expected");
+					errorOccurred(tokenizer, handler, "argument expected");
 				}
 			}
 

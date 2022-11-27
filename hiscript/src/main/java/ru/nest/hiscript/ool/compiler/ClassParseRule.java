@@ -66,7 +66,7 @@ public class ClassParseRule extends ParserUtil {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
 
-				interfacesList = new ArrayList<Type>(1);
+				interfacesList = new ArrayList<>(1);
 				interfacesList.add(interfaceType);
 
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
@@ -180,7 +180,7 @@ public class ClassParseRule extends ParserUtil {
 				properties.enter(); // before arguments
 
 				// visit arguments
-				List<NodeArgument> arguments = new ArrayList<NodeArgument>();
+				List<NodeArgument> arguments = new ArrayList<>();
 				visitArgumentsDefinitions(tokenizer, arguments, properties);
 				for (NodeArgument argument : arguments) {
 					properties.addLocalVariable(argument);
@@ -244,7 +244,7 @@ public class ClassParseRule extends ParserUtil {
 		Type type = visitType(tokenizer, true);
 		if (type == null) {
 			if (visitWord(Words.VOID, tokenizer) != null) {
-				type = Type.getType("void");
+				type = Type.getPrimitiveType("void");
 			}
 		} else {
 			int dimension = visitDimension(tokenizer);
@@ -259,7 +259,7 @@ public class ClassParseRule extends ParserUtil {
 					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 					properties.enter();
 
-					List<NodeArgument> arguments = new ArrayList<NodeArgument>();
+					List<NodeArgument> arguments = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, arguments, properties);
 					for (NodeArgument argument : arguments) {
 						properties.addLocalVariable(argument);

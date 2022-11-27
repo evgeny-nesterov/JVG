@@ -34,9 +34,9 @@ import ru.nest.jvg.geom.coord.VarCoordinate;
 import ru.nest.jvg.parser.JVGParseUtil;
 
 public class ComplexShapeParser {
-	private static Map<String, Function> functions = new HashMap<String, Function>();
+	private static Map<String, Function> functions = new HashMap<>();
 
-	private static Map<String, Element> cache = new HashMap<String, Element>();
+	private static Map<String, Element> cache = new HashMap<>();
 
 	private ExpressionParser expParser;
 
@@ -66,14 +66,14 @@ public class ComplexShapeParser {
 
 	private List<JVGCoordinateConnectionActionArea> connections;
 
-	public static enum ConnectionType {
+	public enum ConnectionType {
 		client, server
 	}
 
 	public ComplexShapeParser() {
-		coordinates = new HashMap<String, Coordinable>();
-		arguments = new HashMap<String, NumberValue>();
-		mainCoordinates = new ArrayList<Coordinable>();
+		coordinates = new HashMap<>();
+		arguments = new HashMap<>();
+		mainCoordinates = new ArrayList<>();
 
 		expParser = new ExpressionParser();
 		expContext = expParser.getContext();
@@ -379,8 +379,8 @@ public class ComplexShapeParser {
 					String expression = setElement.getText();
 					if (param != null && expression != null) {
 						if (set == null) {
-							set = new ArrayList<NumberValue>();
-							function = new ArrayList<Value>();
+							set = new ArrayList<>();
+							function = new ArrayList<>();
 						}
 
 						set.add((NumberValue) expContext.getVariable(param));
@@ -494,7 +494,7 @@ public class ComplexShapeParser {
 
 	private void parseManage(Element e) {
 		if (e != null) {
-			actions = new ArrayList<JVGCoordinateActionArea>();
+			actions = new ArrayList<>();
 			Iterator<Element> iter = e.getChildren("point").iterator();
 			while (iter.hasNext()) {
 				Element pointElement = iter.next();
@@ -518,7 +518,7 @@ public class ComplexShapeParser {
 
 	private void parseBounds(Element e) {
 		if (e != null) {
-			boundsPoints = new ArrayList<Coordinable>();
+			boundsPoints = new ArrayList<>();
 			Iterator<Element> iter = e.getChildren("point").iterator();
 			while (iter.hasNext()) {
 				Element pointElement = iter.next();
@@ -578,7 +578,7 @@ public class ComplexShapeParser {
 
 	private void parseConnections(Element e) throws Exception {
 		if (e != null) {
-			connections = new ArrayList<JVGCoordinateConnectionActionArea>();
+			connections = new ArrayList<>();
 			Iterator<Element> iter = e.getChildren("connection").iterator();
 			while (iter.hasNext()) {
 				Element pointElement = iter.next();

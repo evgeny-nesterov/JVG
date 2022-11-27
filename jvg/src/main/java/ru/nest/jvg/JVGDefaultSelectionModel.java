@@ -14,7 +14,7 @@ public class JVGDefaultSelectionModel implements JVGSelectionModel {
 	private HashMap<JVGComponent, Boolean> hash;
 
 	public JVGDefaultSelectionModel() {
-		hash = new HashMap<JVGComponent, Boolean>();
+		hash = new HashMap<>();
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class JVGDefaultSelectionModel implements JVGSelectionModel {
 		return (o != null) ? hash.containsKey(o) : false;
 	}
 
-	private List<JVGSelectionListener> listeners = new ArrayList<JVGSelectionListener>();
+	private List<JVGSelectionListener> listeners = new ArrayList<>();
 
 	@Override
 	public void addSelectionListener(JVGSelectionListener listener) {

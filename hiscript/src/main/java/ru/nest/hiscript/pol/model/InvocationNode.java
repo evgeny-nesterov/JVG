@@ -24,7 +24,7 @@ public class InvocationNode extends Node implements Value {
 		return methodName;
 	}
 
-	private List<Node> arguments = new ArrayList<Node>();
+	private List<Node> arguments = new ArrayList<>();
 
 	public void addArgument(Node argument) {
 		arguments.add(argument);

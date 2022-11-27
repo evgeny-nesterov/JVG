@@ -42,7 +42,7 @@ public abstract class SetPathStrokeAction<S extends Stroke> extends JVGAction {
 	}
 
 	protected void set(S stroke, int type) {
-		set(new StrokeResource<S>(stroke), type);
+		set(new StrokeResource<>(stroke), type);
 	}
 
 	protected void set(Resource<S> stroke, int type) {

@@ -80,7 +80,7 @@ public class CoordinateLayout implements LayoutManager2 {
 	}
 
 	// -------------
-	private HashMap<Component, CoordinateConstraints> map = new HashMap<Component, CoordinateConstraints>();
+	private HashMap<Component, CoordinateConstraints> map = new HashMap<>();
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {

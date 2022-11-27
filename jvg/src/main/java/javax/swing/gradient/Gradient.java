@@ -12,7 +12,7 @@ public abstract class Gradient {
 		this.cycleMethod = cycleMethod;
 	}
 
-	public static enum GradientUnitsType {
+	public enum GradientUnitsType {
 		ABSOLUTE, BOUNDS
 	}
 

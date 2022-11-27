@@ -77,7 +77,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		boolean prefix = PrefixParseRule.getInstance().visit(tokenizer, handler);
 		boolean value = visitSimpleExpression(tokenizer, handler);
 		if (!value && prefix) {
-			errorOccured(tokenizer, handler, "expression is expected");
+			errorOccurred(tokenizer, handler, "expression is expected");
 		}
 
 		if (value) {
@@ -87,7 +87,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				prefix = PrefixParseRule.getInstance().visit(tokenizer, handler);
 				value = visitSimpleExpression(tokenizer, handler);
 				if (!value) {
-					errorOccured(tokenizer, handler, "illegal start of expression");
+					errorOccurred(tokenizer, handler, "illegal start of expression");
 				}
 				ArrayIndexesParseRule.getInstance().visit(tokenizer, handler);
 			}
@@ -96,14 +96,14 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			if (visitSymbol(tokenizer, handler, Symbols.QUESTION) != -1) {
 				boolean trueValue = visit(tokenizer, handler);
 				if (!trueValue) {
-					errorOccured(tokenizer, handler, "expression is expected");
+					errorOccurred(tokenizer, handler, "expression is expected");
 				}
 
 				expectSymbol(Symbols.COLON, tokenizer, handler);
 
 				boolean falseValue = visit(tokenizer, handler);
 				if (!falseValue) {
-					errorOccured(tokenizer, handler, "expression is expected");
+					errorOccurred(tokenizer, handler, "expression is expected");
 				}
 			}
 
@@ -221,7 +221,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		// visit block
 		if (visitSymbol(tokenizer, handler, Symbols.PARANTHESIS_LEFT) != -1) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression is expected");
 			}
 
 			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
@@ -259,7 +259,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return -1;

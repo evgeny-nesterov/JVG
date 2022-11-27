@@ -56,7 +56,7 @@ public class BasicStrokeAction extends JVGAction {
 	}
 
 	public BasicStrokeAction(BasicStroke stroke) {
-		this(new StrokeResource<BasicStroke>(stroke));
+		this(new StrokeResource<>(stroke));
 	}
 
 	public BasicStrokeAction(Resource<BasicStroke> stroke) {
@@ -65,7 +65,7 @@ public class BasicStrokeAction extends JVGAction {
 
 	public BasicStrokeAction(String name, BasicStroke stroke, int type) {
 		super(name);
-		this.stroke = new StrokeResource<BasicStroke>(stroke);
+		this.stroke = new StrokeResource<>(stroke);
 		this.type = type;
 	}
 
@@ -203,7 +203,7 @@ public class BasicStrokeAction extends JVGAction {
 			boolean changed = oldBasicStroke == null || oldBasicStroke.getLineWidth() != lineWidth || oldBasicStroke.getEndCap() != endCap || oldBasicStroke.getLineJoin() != lineJoin || oldBasicStroke.getMiterLimit() != miterLimit || oldBasicStroke.getDashPhase() != dashPhase || !CommonUtil.equals(oldBasicStroke.getDashArray(), dashArray);
 			if (changed) {
 				if (oldBasicStroke != null && type != TYPE_STROKE) {
-					newStrokeResource = new StrokeResource<S>((S) stroke);
+					newStrokeResource = new StrokeResource<>((S) stroke);
 				}
 
 				edit.add(new PropertyUndoRedo(actionName, pane, outliner, "setStroke", Resource.class, outliner.getStroke(), newStrokeResource));

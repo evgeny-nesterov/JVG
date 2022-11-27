@@ -10,7 +10,7 @@ import ru.nest.hiscript.ool.model.Value;
 public class ArrayListImpl extends ImplUtil {
 	public static void ArrayList_void_init_int(RuntimeContext ctx, int initialCapacity) {
 		HiObject o = ctx.getCurrentObject();
-		o.userObject = new ArrayList<Object>(initialCapacity);
+		o.userObject = new ArrayList<>(initialCapacity);
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");
@@ -20,7 +20,7 @@ public class ArrayListImpl extends ImplUtil {
 		ArrayList<?> a = (ArrayList<?>) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		o.userObject = new ArrayList<Object>(a);
+		o.userObject = new ArrayList<>(a);
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");

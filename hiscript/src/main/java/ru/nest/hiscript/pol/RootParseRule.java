@@ -42,12 +42,12 @@ public class RootParseRule extends ParseRule<Node> {
 
 			skipComments(tokenizer);
 			if (tokenizer.hasNext()) {
-				errorOccured(tokenizer, handler, "unexpected token");
+				errorOccurred(tokenizer, handler, "unexpected token");
 			}
 
 			return true;
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return false;

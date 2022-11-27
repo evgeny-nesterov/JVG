@@ -1,15 +1,20 @@
 package ru.nest.hiscript.ool.model;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class Native {
-	private static HashMap<String, java.lang.reflect.Method> methods = new HashMap<String, Method>();
+	private static HashMap<String, java.lang.reflect.Method> methods = new HashMap<>();
 
-	private static HashMap<String, Object> objects = new HashMap<String, Object>();
+	private static HashMap<String, Object> objects = new HashMap<>();
 
-	private static HashSet<Class<?>> registered = new HashSet<Class<?>>();
+	private static HashSet<Class<?>> registered = new HashSet<>();
+
+	public static void clear() {
+		methods.clear();
+		objects.clear();
+		registered.clear();
+	}
 
 	public static void register(Object o) {
 		if (o != null) {

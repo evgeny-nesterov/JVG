@@ -40,7 +40,7 @@ public class SameSpacesAction extends JVGAction {
 			if (selectionModel != null) {
 				JVGComponent[] selection = selectionModel.getSelection();
 				if (selection != null && selection.length > 0) {
-					HashMap<JVGShape, JVGShape> shapes = new HashMap<JVGShape, JVGShape>();
+					HashMap<JVGShape, JVGShape> shapes = new HashMap<>();
 					for (int i = 0; i < selection.length; i++) {
 						JVGComponent c = selection[i];
 						if (c instanceof JVGShape) {
@@ -54,9 +54,9 @@ public class SameSpacesAction extends JVGAction {
 						boolean first = true;
 						double minX = 0, minY = 0, maxX = 0, maxY = 0, sumW = 0, sumH = 0;
 
-						TreeMap<Double, JVGShape> sortedShapesX = new TreeMap<Double, JVGShape>();
-						TreeMap<Double, JVGShape> sortedShapesY = new TreeMap<Double, JVGShape>();
-						HashMap<JVGComponent, AffineTransform> transforms = new HashMap<JVGComponent, AffineTransform>();
+						TreeMap<Double, JVGShape> sortedShapesX = new TreeMap<>();
+						TreeMap<Double, JVGShape> sortedShapesY = new TreeMap<>();
+						HashMap<JVGComponent, AffineTransform> transforms = new HashMap<>();
 						for (int i = 0; i < selection.length; i++) {
 							JVGComponent c = selection[i];
 							if (shapes.containsKey(c)) {

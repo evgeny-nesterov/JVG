@@ -50,7 +50,7 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 				tokenizer.commit();
 
 				if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "Statement is expected");
+					errorOccurred(tokenizer, handler, "Statement is expected");
 				}
 
 				return true;

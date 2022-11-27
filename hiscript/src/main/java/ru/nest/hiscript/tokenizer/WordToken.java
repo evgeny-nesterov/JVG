@@ -3,9 +3,9 @@ package ru.nest.hiscript.tokenizer;
 import java.util.HashMap;
 
 public class WordToken extends Token implements Words {
-	private final static HashMap<String, Integer> service_words = new HashMap<String, Integer>();
+	private final static HashMap<String, Integer> service_words = new HashMap<>();
 
-	private final static HashMap<Integer, String> service_types = new HashMap<Integer, String>();
+	private final static HashMap<Integer, String> service_types = new HashMap<>();
 
 	static {
 		service_words.put("do", DO);

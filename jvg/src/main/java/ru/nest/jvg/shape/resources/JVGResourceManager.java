@@ -9,7 +9,7 @@ import ru.nest.jvg.shape.resources.filter.JVGImageFilterResourceManager;
 public abstract class JVGResourceManager<V extends JVGResource> {
 	public final static int IMAGE_FILTER = 0;
 
-	private static HashMap<Integer, JVGResourceManager<?>> map = new HashMap<Integer, JVGResourceManager<?>>();
+	private static HashMap<Integer, JVGResourceManager<?>> map = new HashMap<>();
 	{
 		map.put(IMAGE_FILTER, new JVGImageFilterResourceManager<V>());
 	}

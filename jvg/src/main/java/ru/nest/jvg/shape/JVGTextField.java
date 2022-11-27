@@ -23,7 +23,7 @@ public class JVGTextField extends JVGShape {
 
 	private FontRenderContext frc;
 
-	public static enum TextAnchor {
+	public enum TextAnchor {
 		start, middle, end
 	}
 

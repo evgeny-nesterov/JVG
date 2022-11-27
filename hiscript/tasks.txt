@@ -1,50 +1,48 @@
-		+1. add signature
-		void method(Object... array) {
-		}
-		method("arg1", "arg2", "arg3");
+		+1. Add variable arguments
+                void method(Object... array) {
+                }
+                method("arg1", "arg2", "arg3");
 
-		-2. autoboxing/unboxing
-		Integer a = 1;
-		int b = a;
+		-2. Autoboxing/unboxing (add classes Integer etc)
+            Integer a = 1;
+            int b = a;
 
-3. add class loader
+!3. Add class loader
+?4. Add imports
+    import <className>;
 
-?4. add imports
-import <className>;
+		+5. Class implementation
+            class A implements If1, If2 {
+               // compiler has to check implementation for non abstract class
+            }
+            Object a = new A();
+            If1 b = (If1)a; // cast
 
-		+5. implementation, 
-		class A implements If1, If2 {
-		   // compiler has to check implementation for non abstract class
-		}
-		Object a = new A();
-		If1 b = (If1)a; // cast
-		
-		+6. native HashMap
-		
-		+7. add construction
-		for(V v : list) {
-		}
+		+6. Native HashMap
 
-8. indicate code line number while throwing exceptions
+		+7. Iterable for
+            for(V v : list) {
+            }
 
-9. add enum construction
-enum E {
-  A('a'), B('B'), C('C');
-  E(char c) {
-    this.c = c;
-  }
-  char c;
-  public char getChar() {
-    return c;
-  }
-}
+8. Indicate code line number while throwing exceptions
+9. Add enum
+    enum E {
+      A('a'), B('B'), C('C');
+      E(char c) {
+        this.c = c;
+      }
+      char c;
+      public char getChar() {
+        return c;
+      }
+    }
 
-10. add asserts
-11. add throws for methods, require catch or method throws for non runtime exceptions
+10. Add asserts
+11. Add throws for methods, require catch or method throws for non runtime exceptions
 12. Annotations
-13. Binding to native java classes
+13. Auto binding to native java classes
 14. Allow Iterable for for(:) (currently only arrays)
-15. var
+15. Add var
 
 		+16. switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN>: <bodyExpr>)
         +17. multiple case in statement switch
@@ -52,3 +50,4 @@ enum E {
         +19. RuntimeException, AssertException, catch only declared exceptions
 
 20. Implement NodeExpression.getExpressionType() and check assert on boolean and etc
+!!!21. text blocks """..."""

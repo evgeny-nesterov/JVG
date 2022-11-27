@@ -22,7 +22,7 @@ public class JVGPath extends JVGShape {
 
 	public static List<Painter> getDefaultPainters() {
 		if (defaultPainters == null) {
-			defaultPainters = new ArrayList<Painter>();
+			defaultPainters = new ArrayList<>();
 			defaultPainters.add(new OutlinePainter(null, OutlinePainter.DEFAULT_COLOR));
 		}
 		return defaultPainters;

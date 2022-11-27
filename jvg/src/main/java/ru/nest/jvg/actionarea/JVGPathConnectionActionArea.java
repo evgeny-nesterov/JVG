@@ -158,7 +158,7 @@ public class JVGPathConnectionActionArea extends JVGAbstractConnectionActionArea
 					Position pos = server.accept(this, x, y);
 					if (pos != null) {
 						if (list == null) {
-							list = new ArrayList<ConnectionContext>();
+							list = new ArrayList<>();
 							positions.put(server, list);
 						}
 
@@ -174,7 +174,7 @@ public class JVGPathConnectionActionArea extends JVGAbstractConnectionActionArea
 		return list != null && list.size() > 0;
 	}
 
-	private Map<ConnectionServer, List<ConnectionContext>> positions = new HashMap<ConnectionServer, List<ConnectionContext>>();
+	private Map<ConnectionServer, List<ConnectionContext>> positions = new HashMap<>();
 
 	private int positionsCount = 0;
 

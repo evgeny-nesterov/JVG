@@ -92,7 +92,6 @@ public class HiMethod implements Codeable {
 					ctx.value.object = (HiObject) object;
 				}
 			}
-
 			body.execute(ctx);
 		}
 	}
@@ -114,7 +113,6 @@ public class HiMethod implements Codeable {
 			buf.append(')');
 			descr = buf.toString();
 		}
-
 		return descr;
 	}
 

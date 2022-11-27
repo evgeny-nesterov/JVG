@@ -1,19 +1,18 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 
-public class NodeLong extends Node {
+import java.io.IOException;
+
+public class NodeLong extends NodeNumber {
 	private final static String name = "long";
 
 	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
-	public NodeLong(long value) {
-		super(name, TYPE_LONG);
+	public NodeLong(long value, boolean hasSign) {
+		super(name, TYPE_LONG, hasSign);
 		this.value = value;
 	}
 
@@ -30,9 +29,10 @@ public class NodeLong extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeLong(value);
+		os.writeBoolean(hasSign);
 	}
 
 	public static NodeLong decode(DecodeContext os) throws IOException {
-		return new NodeLong(os.readLong());
+		return new NodeLong(os.readLong(), os.readBoolean());
 	}
 }

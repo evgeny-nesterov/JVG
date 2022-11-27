@@ -97,7 +97,7 @@ public abstract class JVGAbstractConnectionActionArea extends JVGActionArea impl
 	protected boolean isDrawConnection = false;
 
 	@Override
-	public void eventOccured(JVGEvent e) {
+	public void eventOccurred(JVGEvent e) {
 		if (e.getID() == JVGMouseEvent.MOUSE_PRESSED) {
 			isDrawConnection = e.getSource().getPane().isConnectionsEnabled();
 		} else if (e.getID() == JVGMouseEvent.MOUSE_RELEASED) {

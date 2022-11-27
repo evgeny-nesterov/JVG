@@ -13,7 +13,7 @@ public class Trace {
 		}
 	}
 
-	private HashMap<Value, Double> values = new HashMap<Value, Double>();
+	private HashMap<Value, Double> values = new HashMap<>();
 
 	public HashMap<Value, Double> getValues() {
 		return values;

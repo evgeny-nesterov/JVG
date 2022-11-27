@@ -279,7 +279,7 @@ public class ExplorerPanel extends JPanel {
 	}
 
 	// listeners
-	private ArrayList<Listener> listeners = new ArrayList<Listener>();
+	private ArrayList<Listener> listeners = new ArrayList<>();
 
 	public void addListener(Listener listener) {
 		synchronized (listeners) {

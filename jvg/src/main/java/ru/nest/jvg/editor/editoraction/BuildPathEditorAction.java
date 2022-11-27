@@ -59,7 +59,7 @@ public class BuildPathEditorAction extends EditorAction {
 
 	private double x, y;
 
-	private List<Point2D> middlePoints = new ArrayList<Point2D>();
+	private List<Point2D> middlePoints = new ArrayList<>();
 
 	private boolean isPressed = false;
 

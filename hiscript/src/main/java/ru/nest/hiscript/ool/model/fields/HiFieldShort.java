@@ -34,7 +34,8 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 				break;
 
 			default:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				break;
 		}
 	}
 
@@ -49,12 +50,15 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 				this.value = value.shortNumber;
 				break;
 
-			case CHAR:
-			case INT:
-			case LONG:
-			case FLOAT:
-			case DOUBLE:
-				// error
+			default:
+				// autocast
+				if (value.valueType == Value.VALUE && valueType == INT) {
+					if (value.intNumber >= Short.MIN_VALUE && value.intNumber <= Short.MAX_VALUE) {
+						this.value = (short) value.intNumber;
+						return;
+					}
+				}
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 				break;
 		}
 	}

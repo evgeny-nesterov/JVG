@@ -38,7 +38,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.CASE, tokenizer, handler) != null) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression is expected");
 			}
 			expectSymbol(Symbols.COLON, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);

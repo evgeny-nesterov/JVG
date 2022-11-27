@@ -28,7 +28,7 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 
 		VariableNode variable = visitVariable(tokenizer);
 		if (variable != null) {
-			List<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
+			List<ExpressionNode> indexes = new ArrayList<>();
 			while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (index == null) {
@@ -61,10 +61,10 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 
 		VariableNode variable = visitVariable(tokenizer, handler);
 		if (variable != null) {
-			List<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
+			List<ExpressionNode> indexes = new ArrayList<>();
 			while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "array dimension missing");
+					errorOccurred(tokenizer, handler, "array dimension missing");
 				}
 				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 			}
@@ -73,11 +73,11 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 			if (equateType != -1) {
 				tokenizer.commit();
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "Expression is expected");
+					errorOccurred(tokenizer, handler, "Expression is expected");
 				}
 				return true;
 			} else if (indexes.size() > 0) {
-				errorOccured(tokenizer, handler, "not a statement");
+				errorOccurred(tokenizer, handler, "not a statement");
 			}
 		}
 

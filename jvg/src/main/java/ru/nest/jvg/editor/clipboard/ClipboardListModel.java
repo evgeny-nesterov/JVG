@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 public class ClipboardListModel extends AbstractListModel {
-	private List<JVGClipboardContext> list = new ArrayList<JVGClipboardContext>();
+	private List<JVGClipboardContext> list = new ArrayList<>();
 
 	public void clear() {
 		int size = list.size();

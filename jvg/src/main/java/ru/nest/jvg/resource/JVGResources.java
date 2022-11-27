@@ -19,10 +19,10 @@ public class JVGResources {
 		}
 	}
 
-	private Map<Class<?>, ClassResource<Resource<?>>> classes = new HashMap<Class<?>, ClassResource<Resource<?>>>();
+	private Map<Class<?>, ClassResource<Resource<?>>> classes = new HashMap<>();
 
 	public List<Class<?>> getClasses() {
-		return new ArrayList<Class<?>>(classes.keySet());
+		return new ArrayList<>(classes.keySet());
 	}
 
 	public void addResources(JVGResources resources) {
@@ -38,7 +38,7 @@ public class JVGResources {
 	public <V extends Resource<?>> void addResource(V resource) {
 		ClassResource<Resource<?>> resources = classes.get(resource.getClass());
 		if (resources == null) {
-			resources = new ClassResource<Resource<?>>();
+			resources = new ClassResource<>();
 			classes.put(resource.getClass(), resources);
 		}
 		resources.addResource(resource);
@@ -47,7 +47,7 @@ public class JVGResources {
 	public <V extends Resource<?>> void addResource(int index, V resource) {
 		ClassResource<Resource<?>> resources = classes.get(resource.getClass());
 		if (resources == null) {
-			resources = new ClassResource<Resource<?>>();
+			resources = new ClassResource<>();
 			classes.put(resource.getClass(), resources);
 		}
 		resources.addResource(index, resource);
@@ -117,9 +117,9 @@ public class JVGResources {
 	}
 
 	class ClassResource<V extends Resource<?>> {
-		Map<String, V> resources = new HashMap<String, V>();
+		Map<String, V> resources = new HashMap<>();
 
-		List<V> list = new ArrayList<V>();
+		List<V> list = new ArrayList<>();
 
 		public void addResource(V resource) {
 			addResource(-1, resource);
@@ -180,7 +180,7 @@ public class JVGResources {
 		public void resourceRemoved(Resource<?> resource);
 	}
 
-	private List<Listener> listeners = new ArrayList<Listener>();
+	private List<Listener> listeners = new ArrayList<>();
 
 	public void addListener(Listener listener) {
 		synchronized (listeners) {

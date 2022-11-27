@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class OperationEquatePlus extends BinaryOperation {
 	private static Operation instance = new OperationEquatePlus();
@@ -266,6 +267,16 @@ public class OperationEquatePlus extends BinaryOperation {
 				}
 				return;
 			}
+		} else if (c1.fullName.equals("String")) {
+			char[] chars1 = v1.getString(ctx);
+			char[] chars2 = v2.getString(ctx);
+			char[] chars = new char[chars1.length + chars2.length];
+			System.arraycopy(chars1, 0, chars, 0, chars1.length);
+			System.arraycopy(chars2, 0, chars, chars1.length, chars2.length);
+			NodeString.createString(ctx, chars);
+
+			v1.variable.set(ctx, ctx.value);
+			return;
 		}
 
 		errorInvalidOperator(ctx, c1, c2);

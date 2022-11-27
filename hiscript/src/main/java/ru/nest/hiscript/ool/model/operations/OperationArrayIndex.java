@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import java.lang.reflect.Array;
-
 import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+
+import java.lang.reflect.Array;
 
 public class OperationArrayIndex extends BinaryOperation {
 	private static Operation instance = new OperationArrayIndex();
@@ -52,5 +52,6 @@ public class OperationArrayIndex extends BinaryOperation {
 		v1.type = type.cellClass;
 		v1.parentArray = array;
 		v1.arrayIndex = index;
+		v1.variable = null; // for cases (new int[1])[0]
 	}
 }

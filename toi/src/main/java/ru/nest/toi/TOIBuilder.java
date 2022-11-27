@@ -46,7 +46,7 @@ public class TOIBuilder {
 	}
 
 	public List<TOIObject> load(List<Element> list) throws Exception {
-		List<TOIObject> objects = new ArrayList<TOIObject>();
+		List<TOIObject> objects = new ArrayList<>();
 		for (Element p : list) {
 			String objectType = p.getName();
 			TOIObject o = null;
@@ -190,7 +190,7 @@ public class TOIBuilder {
 	}
 
 	public String export(TOIObject object) throws Exception {
-		List<TOIObject> objects = new ArrayList<TOIObject>();
+		List<TOIObject> objects = new ArrayList<>();
 		objects.add(object);
 
 		StringWriter w = new StringWriter();

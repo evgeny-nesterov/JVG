@@ -34,16 +34,43 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 				break;
 
 			default:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				break;
 		}
 	}
 
 	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
-		if (valueType != CHAR) {
-			// error
+		if (valueType == CHAR) {
+			this.value = value.character;
+		} else {
+			// autocast
+			if (value.valueType == Value.VALUE) {
+				switch (valueType) {
+					case BYTE:
+						if (value.byteNumber >= Character.MIN_VALUE) {
+							this.value = (char) value.byteNumber;
+							return;
+						}
+						break;
+
+					case SHORT:
+						if (value.shortNumber >= Character.MIN_VALUE && value.shortNumber <= Character.MAX_VALUE) {
+							this.value = (char) value.shortNumber;
+							return;
+						}
+						break;
+
+					case INT:
+						if (value.intNumber >= Character.MIN_VALUE && value.intNumber <= Character.MAX_VALUE) {
+							this.value = (char) value.intNumber;
+							return;
+						}
+						break;
+				}
+			}
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 		}
-		this.value = value.character;
 	}
 
 	@Override

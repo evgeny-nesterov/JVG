@@ -44,14 +44,14 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 			if (visitStatement(tokenizer, handler)) {
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					if (!visitStatement(tokenizer, handler)) {
-						errorOccured(tokenizer, handler, "statement is expected");
+						errorOccurred(tokenizer, handler, "statement is expected");
 					}
 				}
 
 				return true;
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return false;

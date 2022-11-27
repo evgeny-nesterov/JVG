@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
@@ -10,10 +7,13 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 
-public class ImplUtil {
-	protected final static HashMap<RuntimeContext, HiObject> threads = new HashMap<RuntimeContext, HiObject>();
+import java.util.HashMap;
+import java.util.Map;
 
-	private final static Map<HiClass, HiObject> classes = new HashMap<HiClass, HiObject>();
+public class ImplUtil {
+	protected final static HashMap<RuntimeContext, HiObject> threads = new HashMap<>();
+
+	private final static Map<HiClass, HiObject> classes = new HashMap<>();
 
 	private static HiClass classClass;
 
@@ -51,7 +51,7 @@ public class ImplUtil {
 	}
 
 	public static char[] getChars(HiObject str) {
-		HiField<?> field = str.getField("chars");
+		HiField<?> field = str != null ? str.getField("chars") : null;
 		if (field != null) {
 			return (char[]) field.get();
 		} else {

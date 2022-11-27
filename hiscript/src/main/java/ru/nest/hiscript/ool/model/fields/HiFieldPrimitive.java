@@ -1,16 +1,17 @@
 package ru.nest.hiscript.ool.model.fields;
 
-import java.util.HashMap;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.Type;
 
-public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
-	protected static HashMap<Type, Integer> types_hash_type = new HashMap<Type, Integer>();
+import java.util.HashMap;
 
-	protected static HashMap<HiClass, Integer> types_hash_class = new HashMap<HiClass, Integer>();
+public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
+	protected static HashMap<Type, Integer> types_hash_type = new HashMap<>();
+
+	protected static HashMap<HiClass, Integer> types_hash_class = new HashMap<>();
+
 	static {
 		types_hash_type.put(Type.getPrimitiveType("char"), CHAR);
 		types_hash_type.put(Type.getPrimitiveType("byte"), BYTE);
@@ -126,7 +127,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 				}
 				break;
 		}
-
 		return false;
 	}
 }

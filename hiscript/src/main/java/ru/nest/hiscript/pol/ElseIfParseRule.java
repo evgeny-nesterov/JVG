@@ -54,12 +54,12 @@ public class ElseIfParseRule extends ParseRule<IfNode> {
 
 				expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "expression is expected");
+					errorOccurred(tokenizer, handler, "expression is expected");
 				}
 				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
 				if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccured(tokenizer, handler, "statement is expected");
+					errorOccurred(tokenizer, handler, "statement is expected");
 				}
 
 				return true;

@@ -130,7 +130,7 @@ public class EraserEditorAction extends EditorAction {
 	private Area getEraser(boolean connect) {
 		Area a = eraser;
 		if (connect) {
-			List<Point2D> p = new ArrayList<Point2D>();
+			List<Point2D> p = new ArrayList<>();
 			double cx = 0, cy = 0;
 
 			PathIterator it = new FlatteningPathIterator(eraser.getPathIterator(null), 1);

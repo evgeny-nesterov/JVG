@@ -61,7 +61,7 @@ public class JVGGroupPath extends JVGPath {
 		setFill(true);
 
 		addPainter(new FillPainter(FillPainter.DEFAULT_COLOR));
-		addPainter(new OutlinePainter(new StrokeResource<Stroke>(1f), ColorResource.black));
+		addPainter(new OutlinePainter(new StrokeResource<>(1f), ColorResource.black));
 
 		leadSubPath = add(1, true);
 
@@ -118,7 +118,7 @@ public class JVGGroupPath extends JVGPath {
 			}
 		});
 
-		setPathStroke(new StrokeResource<ArrowStroke>(new ArrowStroke(14, 14, 14, ArrowStroke.DIRECTION_DIRECT)));
+		setPathStroke(new StrokeResource<>(new ArrowStroke(14, 14, 14, ArrowStroke.DIRECTION_DIRECT)));
 	}
 
 	@Override
@@ -581,7 +581,7 @@ public class JVGGroupPath extends JVGPath {
 		// copy painters
 		List<Painter> painters = null;
 		if (this.painters != null) {
-			painters = new ArrayList<Painter>(this.painters.size());
+			painters = new ArrayList<>(this.painters.size());
 			for (Painter painter : this.painters) {
 				painters.add((Painter) painter.clone());
 			}

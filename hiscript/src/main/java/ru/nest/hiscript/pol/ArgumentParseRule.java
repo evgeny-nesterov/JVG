@@ -42,7 +42,7 @@ public class ArgumentParseRule extends ParseRule<ArgumentNode> {
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			if (name == null) {
-				errorOccured(tokenizer, handler, "argument expected");
+				errorOccurred(tokenizer, handler, "argument expected");
 			}
 
 			int dimension = commonDimension + visitDimension(tokenizer, handler);

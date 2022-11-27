@@ -60,7 +60,7 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 		if (type != -1) {
 			expectSymbol(Symbols.SQUARE_BRACES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "array dimension missing");
+				errorOccurred(tokenizer, handler, "array dimension missing");
 			}
 			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
 

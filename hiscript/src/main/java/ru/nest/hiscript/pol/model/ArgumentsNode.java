@@ -13,7 +13,7 @@ public class ArgumentsNode extends Node {
 		return value;
 	}
 
-	private ArrayList<ArgumentNode> arguments = new ArrayList<ArgumentNode>();
+	private ArrayList<ArgumentNode> arguments = new ArrayList<>();
 
 	public void addArgument(ArgumentNode argument) {
 		arguments.add(argument);

@@ -514,7 +514,7 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 		double movx = 0, movy = 0;
 		double curx = 0, cury = 0;
 		double newx, newy;
-		Vector<Curve> curves = new Vector<Curve>();
+		Vector<Curve> curves = new Vector<>();
 		for (int i = 0; i < numTypes; i++) {
 			int type = pointTypes[i];
 			int coordsCount = CoordinablePathIterator.curvesize[type];

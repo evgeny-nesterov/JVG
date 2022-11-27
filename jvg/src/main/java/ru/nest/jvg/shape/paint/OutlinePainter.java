@@ -16,7 +16,7 @@ public class OutlinePainter extends Painter {
 	public final static Resource<Color> DEFAULT_COLOR = ColorResource.black;
 
 	public OutlinePainter() {
-		this(new StrokeResource<Stroke>(1f), DEFAULT_COLOR);
+		this(new StrokeResource<>(1f), DEFAULT_COLOR);
 	}
 
 	public OutlinePainter(Resource<Stroke> stroke) {

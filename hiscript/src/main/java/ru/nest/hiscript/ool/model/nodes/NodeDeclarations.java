@@ -20,7 +20,7 @@ public class NodeDeclarations extends Node {
 		return field;
 	}
 
-	private List<Node> declarations = new ArrayList<Node>();
+	private List<Node> declarations = new ArrayList<>();
 
 	@Override
 	public void execute(RuntimeContext ctx) {

@@ -21,7 +21,7 @@ public class ExclusiveActionAreaAction extends JVGAction {
 
 	public static int VECTOR = 3;
 
-	private final static Map<Class<?>, Integer> areaClasses = new HashMap<Class<?>, Integer>();
+	private final static Map<Class<?>, Integer> areaClasses = new HashMap<>();
 	static {
 		areaClasses.put(JVGScaleActionArea.class, SCALE);
 		areaClasses.put(JVGShearActionArea.class, SHEAR);

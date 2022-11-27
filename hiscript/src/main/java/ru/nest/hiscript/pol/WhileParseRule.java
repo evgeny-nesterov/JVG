@@ -45,12 +45,12 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 		if (visitWord(Words.WHILE, tokenizer, handler) != null) {
 			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "Expression is expected");
+				errorOccurred(tokenizer, handler, "Expression is expected");
 			}
 			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "Statement is expected");
+				errorOccurred(tokenizer, handler, "Statement is expected");
 			}
 
 			return true;

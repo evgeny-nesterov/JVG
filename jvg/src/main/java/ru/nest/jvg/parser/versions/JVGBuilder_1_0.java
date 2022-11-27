@@ -70,11 +70,11 @@ import ru.nest.jvg.shape.text.JVGStyleConstants;
 import sun.misc.BASE64Encoder;
 
 public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
-	private final static Map<Integer, String> shadows = new HashMap<Integer, String>();
+	private final static Map<Integer, String> shadows = new HashMap<>();
 
-	private final static Map<Integer, String> endings_types = new HashMap<Integer, String>();
+	private final static Map<Integer, String> endings_types = new HashMap<>();
 
-	private final static Map<Integer, String> endings_figures = new HashMap<Integer, String>();
+	private final static Map<Integer, String> endings_figures = new HashMap<>();
 
 	static {
 		shadows.put(ShadowPainter.SLOPE_LEFT_BACK, "slope-left-back");
@@ -917,7 +917,7 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 		}
 	}
 
-	private static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
+	private static Map<Class<?>, String> types = new HashMap<>();
 	static {
 		types.put(JVGGroup.class, "container");
 		types.put(JVGPath.class, "path");

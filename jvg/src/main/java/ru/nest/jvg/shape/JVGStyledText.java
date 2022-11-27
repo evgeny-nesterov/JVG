@@ -66,7 +66,7 @@ public class JVGStyledText extends JVGShape {
 	private StyleContext styleContext = new StyleContext() {
 		private transient FontKey fontSearch = new FontKey(null, 0, 0);
 
-		private transient Hashtable<FontKey, Font> fontTable = new Hashtable<FontKey, Font>();
+		private transient Hashtable<FontKey, Font> fontTable = new Hashtable<>();
 
 		@Override
 		public Font getFont(String family, int style, int size) {
@@ -940,7 +940,7 @@ public class JVGStyledText extends JVGShape {
 
 	public static ArrayList<Painter> getDefaultPainters() {
 		if (defaultPainters == null) {
-			defaultPainters = new ArrayList<Painter>();
+			defaultPainters = new ArrayList<>();
 		}
 
 		return defaultPainters;
@@ -1033,7 +1033,7 @@ public class JVGStyledText extends JVGShape {
 		int p0 = editor.getSelectionStart();
 		int p1 = editor.getSelectionEnd();
 
-		List<Element> paragraphs = new ArrayList<Element>();
+		List<Element> paragraphs = new ArrayList<>();
 		for (int i = p0; i < p1;) {
 			Element paragraph = editor.getStyledDocument().getParagraphElement(i);
 			paragraphs.add(paragraph);

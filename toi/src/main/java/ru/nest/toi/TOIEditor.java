@@ -432,7 +432,7 @@ public class TOIEditor extends JPanel {
 
 	private FontComboBox cmbFont = new FontComboBox(Fonts.getPixelFont());
 
-	private JComboBox<Integer> cmbFontSize = new JComboBox<Integer>(new Integer[] { 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32, 36, 40, 45, 50, 60, 70, 80, 90, 100 });
+	private JComboBox<Integer> cmbFontSize = new JComboBox<>(new Integer[] {6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32, 36, 40, 45, 50, 60, 70, 80, 90, 100});
 
 	private ToolToggleButton btnBold = new ToolToggleButton(new ImageIcon(TOIEditor.class.getResource("img/text_bold.gif")));
 

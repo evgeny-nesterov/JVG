@@ -8,7 +8,7 @@ import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 
 public class ConnectionManager {
-	private static HashMap<JVGPane, ConnectionContainer> containers = new HashMap<JVGPane, ConnectionContainer>();
+	private static HashMap<JVGPane, ConnectionContainer> containers = new HashMap<>();
 
 	public static void register(Connection c) {
 		if (c != null) {
@@ -124,17 +124,17 @@ public class ConnectionManager {
 	}
 
 	static class ConnectionContainer {
-		private HashSet<ConnectionClient> clients = new HashSet<ConnectionClient>();
+		private HashSet<ConnectionClient> clients = new HashSet<>();
 
-		private ArrayList<ConnectionClient> clients_list = new ArrayList<ConnectionClient>();
+		private ArrayList<ConnectionClient> clients_list = new ArrayList<>();
 
 		public ArrayList<ConnectionClient> getClients() {
 			return clients_list;
 		}
 
-		private HashSet<ConnectionServer> servers = new HashSet<ConnectionServer>();
+		private HashSet<ConnectionServer> servers = new HashSet<>();
 
-		private ArrayList<ConnectionServer> servers_list = new ArrayList<ConnectionServer>();
+		private ArrayList<ConnectionServer> servers_list = new ArrayList<>();
 
 		public ArrayList<ConnectionServer> getServers() {
 			return servers_list;
@@ -182,9 +182,9 @@ public class ConnectionManager {
 			return false;
 		}
 
-		private HashSet<Relation> relations = new HashSet<Relation>();
+		private HashSet<Relation> relations = new HashSet<>();
 
-		private ArrayList<Relation> relations_list = new ArrayList<Relation>();
+		private ArrayList<Relation> relations_list = new ArrayList<>();
 
 		public ArrayList<Relation> getRelations() {
 			return relations_list;
@@ -228,7 +228,7 @@ public class ConnectionManager {
 			}
 		}
 
-		private HashSet<JVGComponent> adjusted = new HashSet<JVGComponent>();
+		private HashSet<JVGComponent> adjusted = new HashSet<>();
 
 		public boolean accept(JVGComponent change) {
 			int size = relations_list.size();

@@ -135,12 +135,12 @@ public class HiObject {
 		// cache
 		if (field != null) {
 			if (fields_map == null) {
-				fields_map = new HashMap<HiClass, Map<String, HiField<?>>>(1);
+				fields_map = new HashMap<>(1);
 			}
 
 			Map<String, HiField<?>> class_fields_map = fields_map.get(clazz);
 			if (class_fields_map == null) {
-				class_fields_map = new HashMap<String, HiField<?>>(1);
+				class_fields_map = new HashMap<>(1);
 				fields_map.put(clazz, class_fields_map);
 			}
 			class_fields_map.put(name, field);

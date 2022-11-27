@@ -86,7 +86,7 @@ public class SetPathArrowStrokeAction extends SetPathStrokeAction<ArrowStroke> {
 		changed |= oldStroke != null && oldStroke.getArrowLength() != endCapLength;
 
 		if (changed) {
-			return new StrokeResource<ArrowStroke>(stroke);
+			return new StrokeResource<>(stroke);
 		} else {
 			return null;
 		}

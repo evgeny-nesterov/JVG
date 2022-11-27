@@ -47,10 +47,8 @@ public class MethodSignature implements Cloneable {
 					}
 				}
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -80,7 +78,6 @@ public class MethodSignature implements Cloneable {
 			buf.append(')');
 			descr = buf.toString();
 		}
-
 		return descr;
 	}
 }

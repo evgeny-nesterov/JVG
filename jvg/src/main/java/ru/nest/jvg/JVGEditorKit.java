@@ -187,7 +187,7 @@ public class JVGEditorKit {
 
 	public final static String PANE_ZOOM_OUT = "pane-zoom-out";
 
-	private static Map<String, JVGAction> defaultActions = new HashMap<String, JVGAction>();
+	private static Map<String, JVGAction> defaultActions = new HashMap<>();
 	static {
 		// select
 		defaultActions.put(SELECT_FOCUSED_ACTION, new SelectAction(SelectAction.SELECT_FOCUSED));

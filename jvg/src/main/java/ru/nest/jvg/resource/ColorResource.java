@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class ColorResource extends Resource<Color> {
-	private final static TreeMap<String, ColorResource> defaults = new TreeMap<String, ColorResource>();
+	private final static TreeMap<String, ColorResource> defaults = new TreeMap<>();
 
 	public final static Resource<Color> getDefault(String name) {
 		if (name != null) {

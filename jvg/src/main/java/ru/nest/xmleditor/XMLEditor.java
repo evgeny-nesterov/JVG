@@ -162,7 +162,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 	public void stopParseXML() {
 	}
 
-	private ArrayList<Request> requests = new ArrayList<Request>();
+	private ArrayList<Request> requests = new ArrayList<>();
 
 	private void addRequest(int offset, int length, AttributeSet attr, boolean replace) {
 		Request request = getRequest();
@@ -195,7 +195,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 		}
 	}
 
-	private ArrayList<Request> cache = new ArrayList<Request>();
+	private ArrayList<Request> cache = new ArrayList<>();
 
 	private Request getRequest() {
 		synchronized (cache) {
@@ -237,7 +237,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 	}
 
 	// ---
-	private ArrayList<Boolean> update = new ArrayList<Boolean>();
+	private ArrayList<Boolean> update = new ArrayList<>();
 
 	private Updater updater = null;
 
@@ -341,7 +341,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 		}
 
 		@Override
-		public int read() throws IOException {
+		public int read() {
 			if (offset < length) {
 				if (text.current() == CharacterIterator.DONE) {
 					next();

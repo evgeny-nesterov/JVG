@@ -61,7 +61,7 @@ public abstract class JVGComponent {
 		return lock;
 	}
 
-	private static Set<Long> ids = new HashSet<Long>();
+	private static Set<Long> ids = new HashSet<>();
 
 	private static Long nextID(Long id) {
 		synchronized (ids) {
@@ -1224,7 +1224,7 @@ public abstract class JVGComponent {
 			}
 		} else {
 			if (clientProperties == null) {
-				clientProperties = new HashMap<Object, Object>();
+				clientProperties = new HashMap<>();
 			}
 
 			synchronized (clientProperties) {
@@ -1245,7 +1245,7 @@ public abstract class JVGComponent {
 	public void setClientProperty(String type, String parameter, String value) {
 		Map<String, String> hash = (Map<String, String>) getClientProperty(type);
 		if (hash == null) {
-			hash = new HashMap<String, String>();
+			hash = new HashMap<>();
 			hash.put(parameter, value);
 			setClientProperty(type, hash);
 		} else {
@@ -1323,14 +1323,14 @@ public abstract class JVGComponent {
 
 	public boolean addTag(String tag) {
 		if (tags == null) {
-			tags = new HashSet<String>();
+			tags = new HashSet<>();
 		}
 		return tags.add(tag);
 	}
 
 	public boolean addTags(Collection<String> list) {
 		if (tags == null) {
-			tags = new HashSet<String>();
+			tags = new HashSet<>();
 		}
 		return tags.addAll(list);
 	}

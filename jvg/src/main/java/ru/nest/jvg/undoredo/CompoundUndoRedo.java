@@ -18,7 +18,7 @@ public class CompoundUndoRedo extends JVGUndoRedo {
 
 	public synchronized void add(UndoableEdit edit) {
 		if (edits == null) {
-			edits = new ArrayList<UndoableEdit>();
+			edits = new ArrayList<>();
 		}
 		edits.add(edit);
 	}

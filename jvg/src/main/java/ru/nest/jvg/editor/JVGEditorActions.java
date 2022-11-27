@@ -171,7 +171,7 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 		this.editor = editor;
 	}
 
-	protected Map<String, ComponentAction> actionsMap = new HashMap<String, ComponentAction>();
+	protected Map<String, ComponentAction> actionsMap = new HashMap<>();
 
 	public ComponentAction getAction(String actionCommand) {
 		return actionsMap.get(actionCommand);
@@ -180,9 +180,9 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 	// toolbars
 	protected JPanel toolBars = new JPanel();
 
-	protected List<WToolBar> toolbarsList = new ArrayList<WToolBar>();
+	protected List<WToolBar> toolbarsList = new ArrayList<>();
 
-	private List<WCheckBoxMenuItem> toolbarMenus = new ArrayList<WCheckBoxMenuItem>();
+	private List<WCheckBoxMenuItem> toolbarMenus = new ArrayList<>();
 
 	protected WToolBar editorToolbar;
 
@@ -372,7 +372,7 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 			if (option == JOptionPane.OK_OPTION) {
 				String text = txt.getText();
 				if (text.length() != 0) {
-					Resource<? extends Stroke> stroke = new StrokeResource<TextStroke>(text, getFont(), true, false);
+					Resource<? extends Stroke> stroke = new StrokeResource<>(text, getFont(), true, false);
 					JVGPath path = editor.getCurrentPane().getEditorKit().getFactory().createComponent(JVGPath.class, new Object[] { new MutableGeneralPath(), false, stroke });
 					return path;
 				}
@@ -789,11 +789,11 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 
 	protected ToggleButtonAction actionVectorActionArea = new ToggleButtonAction(lm.getValue("button.action.area.vector", "Vector Action Area"), "action-area-vector", new ExclusiveActionAreaAction(ExclusiveActionAreaAction.VECTOR), "action_vector.png");
 
-	protected ToggleButtonAction actionRotateActionArea = new ToggleButtonAction(lm.getValue("button.action.area.rotate", "Rotate Action Area"), "action-area-rotate", new ActionAreaAction<JVGRotateActionArea>(JVGRotateActionArea.class), "action_rotate.png");
+	protected ToggleButtonAction actionRotateActionArea = new ToggleButtonAction(lm.getValue("button.action.area.rotate", "Rotate Action Area"), "action-area-rotate", new ActionAreaAction<>(JVGRotateActionArea.class), "action_rotate.png");
 
-	protected ToggleButtonAction actionCoordinateActionArea = new ToggleButtonAction(lm.getValue("button.action.area.coordinate", "Coordinate Action Area"), "action-area-coordinate", new ActionAreaAction<JVGCoordinateActionArea>(JVGCoordinateActionArea.class), "action_coordinate.png");
+	protected ToggleButtonAction actionCoordinateActionArea = new ToggleButtonAction(lm.getValue("button.action.area.coordinate", "Coordinate Action Area"), "action-area-coordinate", new ActionAreaAction<>(JVGCoordinateActionArea.class), "action_coordinate.png");
 
-	protected ToggleButtonAction actionConnectionActionArea = new ToggleButtonAction(lm.getValue("button.action.area.connection", "Connection Action Area"), "action-area-connection", new ActionAreaAction<JVGAbstractConnectionActionArea>(JVGAbstractConnectionActionArea.class), "action_connection.png");
+	protected ToggleButtonAction actionConnectionActionArea = new ToggleButtonAction(lm.getValue("button.action.area.connection", "Connection Action Area"), "action-area-connection", new ActionAreaAction<>(JVGAbstractConnectionActionArea.class), "action_connection.png");
 
 	protected ToggleButtonAction actionMoveActionArea = new ToggleButtonAction(lm.getValue("button.action.area.move", "Shape drag enabled"), "action-area-move", new ShapeDraggingAction(), "action_move.png");
 
@@ -1315,7 +1315,7 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 
 	private WMenuItem menuDefineConnections = new WMenuItem(lm.getValue("button.show.connections.define", "Define connections"));
 
-	private List<WCheckBoxMenuItem> viewCheckMenus = new ArrayList<WCheckBoxMenuItem>();
+	private List<WCheckBoxMenuItem> viewCheckMenus = new ArrayList<>();
 
 	public void updateViewMenus() {
 		ignoreEvent = true;
@@ -2014,13 +2014,13 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 
 	private Icon[] selectionTypeIcons = { new ImageIcon(JVGEditor.class.getResource("/ru/nest/jvg/editor/img/selection_none.png")), new ImageIcon(JVGEditor.class.getResource("/ru/nest/jvg/editor/img/selection_rect.png")), new ImageIcon(JVGEditor.class.getResource("/ru/nest/jvg/editor/img/selection_lasso.png")) };
 
-	protected JComboBox<String> cmbSelectionType = new WComboBox<String>(selectionTypeValues);
+	protected JComboBox<String> cmbSelectionType = new WComboBox<>(selectionTypeValues);
 
-	protected JComboBox<String> cmbCurveTo = new WComboBox<String>(new String[] { lm.getValue("path.moveto", "Move"), lm.getValue("path.lineto", "Line"), lm.getValue("path.quadto", "Quad"), lm.getValue("path.curveto", "Cubic") });
+	protected JComboBox<String> cmbCurveTo = new WComboBox<>(new String[] { lm.getValue("path.moveto", "Move"), lm.getValue("path.lineto", "Line"), lm.getValue("path.quadto", "Quad"), lm.getValue("path.curveto", "Cubic") });
 
 	private final static int[] ZOOMINGS = { 10, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 500, 1000, -1 };
 
-	protected JComboBox<String> cmbZoom = new WComboBox<String>(new String[] { " " + lm.getValue("zoom.10%", "10%") + " ", //
+	protected JComboBox<String> cmbZoom = new WComboBox<>(new String[] { " " + lm.getValue("zoom.10%", "10%") + " ", //
 			" " + lm.getValue("zoom.25%", "25%") + " ", //
 			" " + lm.getValue("zoom.50%", "50%") + " ", //
 			" " + lm.getValue("zoom.75%", "75%") + " ", //
@@ -2841,7 +2841,7 @@ public class JVGEditorActions implements ActionListener, ChangeListener, ItemLis
 		if (getOutlineDraw().getDraw() != null) {
 			Draw<?> draw = (Draw<?>) getOutlineDraw().getDraw().clone();
 			Stroke stroke = getStroke();
-			Painter painter = new OutlinePainter(new StrokeResource<Stroke>(stroke), draw);
+			Painter painter = new OutlinePainter(new StrokeResource<>(stroke), draw);
 			return painter;
 		} else {
 			return null;

@@ -106,7 +106,7 @@ public abstract class GradientChooser<G extends Gradient> extends AbstractChoose
 
 	@Override
 	protected JPanel constractChooserPanel() {
-		positions = new ArrayList<GradPos>();
+		positions = new ArrayList<>();
 
 		JPanel pnlContent = new JPanel();
 		pnlContent.setLayout(new GridBagLayout());

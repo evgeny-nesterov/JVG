@@ -38,18 +38,43 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 				break;
 
 			default:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				break;
 		}
 	}
 
 	@Override
 	public void set(RuntimeContext ctx, Value value, int valueType) {
-		if (valueType != BYTE) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
-			return;
-		}
+		if (valueType == BYTE) {
+			this.value = value.byteNumber;
+		} else {
+			// autocast
+			if (value.valueType == Value.VALUE) {
+				switch (valueType) {
+					case CHAR:
+						if (value.character <= Byte.MAX_VALUE) {
+							this.value = (byte) value.character;
+							return;
+						}
+						break;
 
-		this.value = value.byteNumber;
+					case SHORT:
+						if (value.shortNumber >= Byte.MIN_VALUE && value.shortNumber <= Byte.MAX_VALUE) {
+							this.value = (byte) value.shortNumber;
+							return;
+						}
+						break;
+
+					case INT:
+						if (value.intNumber >= Byte.MIN_VALUE && value.intNumber <= Byte.MAX_VALUE) {
+							this.value = (byte) value.intNumber;
+							return;
+						}
+						break;
+				}
+			}
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+		}
 	}
 
 	@Override

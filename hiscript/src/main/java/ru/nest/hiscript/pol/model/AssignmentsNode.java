@@ -8,7 +8,7 @@ public class AssignmentsNode extends Node {
 		super("assignments");
 	}
 
-	public List<Node> assignments = new ArrayList<Node>();
+	public List<Node> assignments = new ArrayList<>();
 
 	public void addAssignment(Node assignment) {
 		assignments.add(assignment);

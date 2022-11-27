@@ -98,7 +98,7 @@ public class Types implements Words {
 		return false;
 	}
 
-	private final static HashMap<Class<?>, Integer> types = new HashMap<Class<?>, Integer>();
+	private final static HashMap<Class<?>, Integer> types = new HashMap<>();
 
 	public static int getType(Class<?> c) {
 		Class<?> clazz;

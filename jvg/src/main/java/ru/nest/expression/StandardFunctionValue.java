@@ -50,7 +50,7 @@ public class StandardFunctionValue extends FunctionValue {
 
 	public final static int SIGN = 22;
 
-	private static HashMap<String, Integer> standardFunctions = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> standardFunctions = new HashMap<>();
 	static {
 		standardFunctions.put("sin", SIN);
 		standardFunctions.put("cos", COS);

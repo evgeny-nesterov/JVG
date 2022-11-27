@@ -52,12 +52,12 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
 
 			if (visitWord(Words.WHILE, tokenizer, handler) == null) {
-				errorOccured(tokenizer, handler, "while expected");
+				errorOccurred(tokenizer, handler, "while expected");
 			}
 
 			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression is expected");
 			}
 			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 			expectSymbol(Symbols.SEMICOLON, tokenizer, handler);

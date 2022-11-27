@@ -134,7 +134,7 @@ class AlfaPaintContext implements PaintContext {
 		}
 
 		cachedModel = cm;
-		cached = new WeakReference<Raster>(ras);
+		cached = new WeakReference<>(ras);
 	}
 
 	Raster saved;

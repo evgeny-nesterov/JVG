@@ -85,7 +85,7 @@ public class TOIParser implements JVGParserInterface {
 
 			if (o instanceof TOIMultiArrowPath) {
 				TOIMultiArrowPath toipath = (TOIMultiArrowPath) o;
-				Resource<ArrowStroke> pathStroke = new StrokeResource<ArrowStroke>(new ArrowStroke(toipath.getWidth(), toipath.getArrowWidth(), toipath.getArrowLength(), ArrowStroke.DIRECTION_DIRECT));
+				Resource<ArrowStroke> pathStroke = new StrokeResource<>(new ArrowStroke(toipath.getWidth(), toipath.getArrowWidth(), toipath.getArrowLength(), ArrowStroke.DIRECTION_DIRECT));
 
 				JVGGroupPath p = factory.createComponent(JVGGroupPath.class, toipath.getPath(), false);
 				p.setPathStroke(pathStroke);
@@ -103,7 +103,7 @@ public class TOIParser implements JVGParserInterface {
 					}
 					c = arrow;
 				} else {
-					Resource<ArrowStroke> pathStroke = new StrokeResource<ArrowStroke>(new ArrowStroke(toiarrow.getWidth(), toiarrow.getArrowWidth(), toiarrow.getArrowLength(), ArrowStroke.DIRECTION_DIRECT));
+					Resource<ArrowStroke> pathStroke = new StrokeResource<>(new ArrowStroke(toiarrow.getWidth(), toiarrow.getArrowWidth(), toiarrow.getArrowLength(), ArrowStroke.DIRECTION_DIRECT));
 					JVGPath p = factory.createComponent(JVGPath.class, toiarrow.getPath(), false);
 					p.setPathStroke(pathStroke);
 					c = p;
@@ -118,7 +118,7 @@ public class TOIParser implements JVGParserInterface {
 				c = g;
 			} else if (o instanceof TOITextPath) {
 				TOITextPath toitextpath = (TOITextPath) o;
-				Resource<Stroke> pathStroke = new StrokeResource<Stroke>(toitextpath.getText(), toitextpath.getFont(), true, false);
+				Resource<Stroke> pathStroke = new StrokeResource<>(toitextpath.getText(), toitextpath.getFont(), true, false);
 				JVGPath path = factory.createComponent(JVGPath.class, toitextpath.getPath(), false, pathStroke);
 				c = path;
 			} else if (o instanceof TOIText) {
@@ -127,14 +127,14 @@ public class TOIParser implements JVGParserInterface {
 				c = text;
 			} else if (o instanceof TOIImage) {
 				TOIImage toiimage = (TOIImage) o;
-				JVGImage image = factory.createComponent(JVGImage.class, new ImageResource<Icon>(toiimage.getData(), toiimage.getDescr()));
+				JVGImage image = factory.createComponent(JVGImage.class, new ImageResource<>(toiimage.getData(), toiimage.getDescr()));
 				c = image;
 			}
 
 			if (c != null) {
 				c.removeAllPainters();
 				if (outlineWidth != null) {
-					c.addPainter(new OutlinePainter(new StrokeResource<Stroke>((float) (2 * outlineWidth)), new ColorDraw(Color.black)));
+					c.addPainter(new OutlinePainter(new StrokeResource<>((float) (2 * outlineWidth)), new ColorDraw(Color.black)));
 				}
 				if (!(o instanceof TOIImage)) {
 					c.addPainter(new FillPainter(new ColorDraw(o.getColor() != null ? o.getColor() : Color.lightGray)));

@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
+import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.tokenizer.ByteToken;
@@ -147,36 +148,35 @@ public class ParserUtil implements Words {
 		return type;
 	}
 
-	protected Node visitNumber(Tokenizer tokenizer) throws TokenizerException {
+	protected NodeNumber visitNumber(Tokenizer tokenizer) throws TokenizerException {
 		skipComments(tokenizer);
 
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof DoubleToken) {
 			DoubleToken token = (DoubleToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeDouble(token.getNumber());
+			return new NodeDouble(token.getNumber(), token.hasSign());
 		} else if (currentToken instanceof FloatToken) {
 			FloatToken token = (FloatToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeFloat(token.getNumber());
+			return new NodeFloat(token.getNumber(), token.hasSign());
 		} else if (currentToken instanceof LongToken) {
 			LongToken token = (LongToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeLong(token.getNumber());
+			return new NodeLong(token.getNumber(), token.hasSign());
 		} else if (currentToken instanceof IntToken) {
 			IntToken token = (IntToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeInt(token.getNumber());
+			return new NodeInt(token.getNumber(), token.hasSign());
 		} else if (currentToken instanceof ShortToken) {
 			ShortToken token = (ShortToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeShort(token.getNumber());
+			return new NodeShort(token.getNumber(), token.hasSign());
 		} else if (currentToken instanceof ByteToken) {
 			ByteToken token = (ByteToken) currentToken;
 			tokenizer.nextToken();
-			return NodeByte.getInstance(token.getNumber());
+			return NodeByte.getInstance(token.getNumber(), token.hasSign());
 		}
-
 		return null;
 	}
 
@@ -189,7 +189,6 @@ public class ParserUtil implements Words {
 			tokenizer.nextToken();
 			return NodeChar.getInstance(token.getChar());
 		}
-
 		return null;
 	}
 
@@ -202,7 +201,6 @@ public class ParserUtil implements Words {
 			tokenizer.nextToken();
 			return new NodeString(token.getString());
 		}
-
 		return null;
 	}
 
@@ -219,7 +217,6 @@ public class ParserUtil implements Words {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -235,7 +232,6 @@ public class ParserUtil implements Words {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -374,7 +370,7 @@ public class ParserUtil implements Words {
 	}
 
 	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		ArrayList<Node> args = new ArrayList<Node>(3);
+		ArrayList<Node> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			args.add(arg);

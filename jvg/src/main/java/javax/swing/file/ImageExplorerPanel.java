@@ -39,9 +39,9 @@ public class ImageExplorerPanel extends JPanel implements ExplorerPanel.Listener
 
 	public static ImageIcon[] IMAGE_FILES_ICONS = { imgFileBMP, imgFileJPG, imgFileJPG, imgFileTIF, imgFileTIF, imgFileGIF, imgFilePNG };
 
-	public final static HashSet<String> IMAGE_EXTENTIONS_HASH = new HashSet<String>();
+	public final static HashSet<String> IMAGE_EXTENTIONS_HASH = new HashSet<>();
 
-	public final static HashMap<String, Icon> IMAGE_FILE_ICONS_MAP = new HashMap<String, Icon>();
+	public final static HashMap<String, Icon> IMAGE_FILE_ICONS_MAP = new HashMap<>();
 	static {
 		for (int i = 0; i < IMAGE_EXTENTIONS.length; i++) {
 			IMAGE_EXTENTIONS_HASH.add(IMAGE_EXTENTIONS[i]);

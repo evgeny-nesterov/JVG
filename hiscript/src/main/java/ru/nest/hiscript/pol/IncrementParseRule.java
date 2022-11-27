@@ -54,7 +54,7 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 		if (operation != -1) {
 			VariableNode variable = visitVariable(tokenizer, handler);
 			if (variable == null) {
-				errorOccured(tokenizer, handler, "variable is expected");
+				errorOccurred(tokenizer, handler, "variable is expected");
 			}
 			tokenizer.commit();
 			return true;

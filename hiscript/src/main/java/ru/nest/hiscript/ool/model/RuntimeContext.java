@@ -60,7 +60,7 @@ public class RuntimeContext {
 
 	public RuntimeContext root;
 
-	private List<Value[]> cache_values = new ArrayList<Value[]>();
+	private List<Value[]> cache_values = new ArrayList<>();
 
 	public RuntimeContext(boolean main) {
 		this.main = main;
@@ -77,14 +77,14 @@ public class RuntimeContext {
 			// copy local context
 			if (root.localClasses != null) {
 				if (localClasses == null) {
-					localClasses = new HashMap<HiClass, HashMap<String, HiClass>>();
+					localClasses = new HashMap<>();
 				}
 				localClasses.putAll(root.localClasses);
 			}
 
 			if (root.localVariables != null) {
 				if (localVariables == null) {
-					localVariables = new HashMap<HiClass, HashMap<String, HiField<?>>>();
+					localVariables = new HashMap<>();
 				}
 				localVariables.putAll(root.localVariables);
 			}
@@ -397,7 +397,7 @@ public class RuntimeContext {
 		level.putClass(clazz);
 	}
 
-	private List<StackLevel> stacks_cache = new ArrayList<StackLevel>();
+	private List<StackLevel> stacks_cache = new ArrayList<>();
 
 	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, int codeLine) {
 		StackLevel stack;
@@ -470,7 +470,7 @@ public class RuntimeContext {
 
 		public void putVariable(HiField<?> variable) {
 			if (variables == null) {
-				variables = new HashMap<String, HiField<?>>(1);
+				variables = new HashMap<>(1);
 			}
 			variables.put(variable.name, variable);
 		}
@@ -478,7 +478,7 @@ public class RuntimeContext {
 		public void putVariables(HiField<?>[] list) {
 			int size = list.length;
 			if (variables == null) {
-				variables = new HashMap<String, HiField<?>>(size);
+				variables = new HashMap<>(size);
 			}
 
 			for (int i = 0; i < size; i++) {
@@ -500,7 +500,7 @@ public class RuntimeContext {
 
 		public void putClass(HiClass clazz) {
 			if (classes == null) {
-				classes = new HashMap<String, HiClass>();
+				classes = new HashMap<>();
 			}
 			classes.put(clazz.fullName, clazz);
 			classes.put(clazz.name, clazz);
@@ -594,12 +594,12 @@ public class RuntimeContext {
 
 	public void addLocalClass(HiClass clazz, HiClass clazzLocal) {
 		if (localClasses == null) {
-			localClasses = new HashMap<HiClass, HashMap<String, HiClass>>();
+			localClasses = new HashMap<>();
 		}
 
 		HashMap<String, HiClass> classes = localClasses.get(clazz);
 		if (classes == null) {
-			classes = new HashMap<String, HiClass>();
+			classes = new HashMap<>();
 			localClasses.put(clazz, classes);
 		}
 		classes.put(clazzLocal.name, clazzLocal);
@@ -620,12 +620,12 @@ public class RuntimeContext {
 
 	public void addLocalField(HiClass clazz, HiField<?> field) {
 		if (localVariables == null) {
-			localVariables = new HashMap<HiClass, HashMap<String, HiField<?>>>();
+			localVariables = new HashMap<>();
 		}
 
 		HashMap<String, HiField<?>> fields = localVariables.get(clazz);
 		if (fields == null) {
-			fields = new HashMap<String, HiField<?>>();
+			fields = new HashMap<>();
 			localVariables.put(clazz, fields);
 		}
 		fields.put(field.name, field);
@@ -672,7 +672,7 @@ public class RuntimeContext {
 	}
 
 	// buffer
-	private static List<RuntimeContext> cacheRC = new ArrayList<RuntimeContext>();
+	private static List<RuntimeContext> cacheRC = new ArrayList<>();
 
 	public static RuntimeContext get() {
 		RuntimeContext ctx;
@@ -695,7 +695,7 @@ public class RuntimeContext {
 	}
 
 	public List<StackLevel> getStack() {
-		List<StackLevel> list = new ArrayList<StackLevel>();
+		List<StackLevel> list = new ArrayList<>();
 
 		StackLevel level = this.level;
 
@@ -747,7 +747,7 @@ public class RuntimeContext {
 				array[i].getField("methodName").set(this, value);
 			}
 
-			new NodeInt(level.codeLine).execute(this);
+			new NodeInt(level.codeLine, false).execute(this);
 			array[i].getField("line").set(this, value);
 
 			// TODO: set codeLine for StackTraceElement in RuntimeContext, at the current moment codeLine=-1

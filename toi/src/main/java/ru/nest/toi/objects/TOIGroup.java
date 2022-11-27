@@ -14,7 +14,7 @@ import ru.nest.toi.TOIObject;
 import ru.nest.toi.TOIPaintContext;
 
 public class TOIGroup extends TOIObject {
-	private List<TOIObject> objects = new ArrayList<TOIObject>();
+	private List<TOIObject> objects = new ArrayList<>();
 
 	private boolean combinePathes = true;
 

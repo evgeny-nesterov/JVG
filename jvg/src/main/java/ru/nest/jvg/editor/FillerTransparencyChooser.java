@@ -30,7 +30,7 @@ public class FillerTransparencyChooser extends WComboBox {
 
 	private Action[] actions;
 
-	private Map<Float, Color> colors = new HashMap<Float, Color>();
+	private Map<Float, Color> colors = new HashMap<>();
 
 	private JVGLocaleManager lm = JVGLocaleManager.getInstance();
 

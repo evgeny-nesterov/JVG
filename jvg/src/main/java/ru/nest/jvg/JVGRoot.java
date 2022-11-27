@@ -145,7 +145,7 @@ public class JVGRoot extends JVGContainer implements Repainter {
 
 	private SelectionRotater selectionRotater = null;
 
-	private Set<JVGComponent> selectedComponentsHash = new HashSet<JVGComponent>();
+	private Set<JVGComponent> selectedComponentsHash = new HashSet<>();
 
 	public void selectChilds(Shape selectionShape) {
 		JVGPane pane = getPane();
@@ -341,7 +341,7 @@ public class JVGRoot extends JVGContainer implements Repainter {
 	}
 
 	// hash of all components
-	private Map<Long, JVGComponent> hash = new HashMap<Long, JVGComponent>(1);
+	private Map<Long, JVGComponent> hash = new HashMap<>(1);
 
 	public JVGComponent getComponent(Long id) {
 		return hash.get(id);

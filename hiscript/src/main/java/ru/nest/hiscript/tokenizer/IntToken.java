@@ -1,8 +1,8 @@
 package ru.nest.hiscript.tokenizer;
 
 public class IntToken extends NumberToken {
-	public IntToken(int number, int line, int offset, int length, int lineOffset) {
-		super(line, offset, length, lineOffset);
+	public IntToken(int number, int line, int offset, int length, int lineOffset, boolean hasSign) {
+		super(line, offset, length, lineOffset, hasSign);
 		this.number = number;
 	}
 

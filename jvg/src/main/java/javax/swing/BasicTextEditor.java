@@ -49,9 +49,9 @@ import ru.nest.jvg.editor.resources.JVGLocaleManager;
 public class BasicTextEditor extends JTextPane implements UndoableEditListener {
 	private JVGLocaleManager lm = JVGLocaleManager.getInstance();
 
-	private static Vector<String> searchList = new Vector<String>();
+	private static Vector<String> searchList = new Vector<>();
 
-	private static Vector<String> replaceList = new Vector<String>();
+	private static Vector<String> replaceList = new Vector<>();
 
 	private UndoManager undo = new UndoManager();
 

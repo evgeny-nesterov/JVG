@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.Operations;
@@ -17,7 +16,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 	 */
 	public NodeExpressionNoLS(Node[] operands, OperationsGroup[] operations, int codeLine) {
 		super("expression", TYPE_EXPRESSION, codeLine);
-		assert operands.length == operations.length - 1;
 		compile(operands, operations);
 	}
 
@@ -37,64 +35,65 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 		operations = new Operation[operandsCount + operationsCount];
 
-		Operation[] buf = new Operation[operationsCount];
-		int bufSize = 0;
+		Operation[] stack = new Operation[operationsCount];
+		int stackSize = 0;
 		int pos = 1;
-		for (int i = 1; i < o.length; i++) {
-			OperationsGroup og_prev = o[i - 1];
+		for (int i = 0; i < o.length; i++) {
 			OperationsGroup og = o[i];
 
-			// compare latest operation with current group operation having min priority
-			if (bufSize > 0) {
-				Operation lo = buf[bufSize - 1];
-				if (lo != null) {
-					int currentGroupMinPriority = og.getMinPriority();
-					while (lo.getPriority() <= currentGroupMinPriority) {
-						operations[pos++] = lo; // operation
-						bufSize--;
-						if (bufSize == 0) {
-							break;
-						}
-						lo = buf[bufSize - 1];
-					}
-				}
-			}
-
-			bufSize = og_prev.appendPrefix(buf, bufSize);
-			pos += og_prev.getPrefixOperandsCount();
-
 			// check after appending prefixes
-			if (bufSize > 0) {
-				Operation lo = buf[bufSize - 1];
-				if (lo != null) {
+			if (stackSize > 0) {
+				Operation lastStackOperation = stack[stackSize - 1];
+				if (lastStackOperation != null) {
 					int currentGroupMinPriority = og.getMinPriority();
-					while (lo.getPriority() <= currentGroupMinPriority) {
-						operations[pos++] = lo; // operation
-						bufSize--;
-						if (bufSize == 0) {
+					while (lastStackOperation.getPriority() <= currentGroupMinPriority) {
+						operations[pos++] = lastStackOperation; // operation
+						stackSize--;
+						if (stackSize == 0) {
 							break;
 						}
-						lo = buf[bufSize - 1];
+						lastStackOperation = stack[stackSize - 1];
 					}
 				}
 			}
 
 			// append postfixes
+			// priority of postfixes has to be greater or equals (for example, . and []) of operation priority
 			if (og.postfix != null) {
 				int l = og.postfix.size();
 				for (int j = 0; j < l; j++) {
 					Operation postOperation = og.postfix.get(j);
+
+					// prev operation may has same priority (for example, object.getArray()[index])
+					if (stackSize > 0) {
+						Operation lastStackOperation = stack[stackSize - 1];
+						if (lastStackOperation != null) {
+							while (lastStackOperation.getPriority() <= postOperation.getPriority()) { // < is the error!
+								operations[pos++] = lastStackOperation; // operation
+								stackSize--;
+								if (stackSize == 0) {
+									break;
+								}
+								lastStackOperation = stack[stackSize - 1];
+							}
+						}
+					}
+
 					pos += postOperation.getOperandsCount() - 1;
 					operations[pos++] = postOperation; // operation
 				}
 			}
 
-			bufSize = og.append(buf, bufSize);
+			stackSize = og.append(stack, stackSize);
 			pos += og.getOperandsCount();
+
+			// priority of prefixes has to be greater of operation priority
+			stackSize = og.appendPrefix(stack, stackSize);
+			pos += og.getPrefixOperandsCount();
 		}
 
-		while (bufSize != 0) {
-			operations[pos++] = buf[--bufSize];
+		while (stackSize != 0 && pos < operations.length) {
+			operations[pos++] = stack[--stackSize];
 		}
 
 		// DEBUG

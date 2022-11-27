@@ -104,12 +104,12 @@ public class Compiler {
 				d.setCharacterAttributes(0, d.getLength(), defaultAttr, true);
 
 				// precompile
-				final ArrayList<String> errors = new ArrayList<String>();
+				final ArrayList<String> errors = new ArrayList<>();
 				Compiler p = getDefaultCompiler(script);
 				try {
 					p.compile(new CompileHandler() {
 						@Override
-						public void errorOccured(int line, int offset, int length, String msg) {
+						public void errorOccurred(int line, int offset, int length, String msg) {
 							line++;
 
 							d.setCharacterAttributes(offset, length, errorAttr, false);

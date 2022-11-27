@@ -13,7 +13,7 @@ public class LocaleContainer {
 
 	private String lang;
 
-	private HashMap<String, String> items = new HashMap<String, String>();
+	private HashMap<String, String> items = new HashMap<>();
 
 	public void load() {
 		try {

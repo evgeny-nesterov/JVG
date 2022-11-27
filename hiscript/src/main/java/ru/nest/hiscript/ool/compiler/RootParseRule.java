@@ -41,7 +41,7 @@ public class RootParseRule extends ParseRule<Node> {
 		if (ctx == null) {
 			ctx = new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP);
 			if (wrapped) {
-				ctx.clazz = new HiClass(null, null, "@root", HiClass.CLASS_TYPE_TOP);
+				ctx.clazz = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP);
 				createMainMethod = true;
 			}
 		}

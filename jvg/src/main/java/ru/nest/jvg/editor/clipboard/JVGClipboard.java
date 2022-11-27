@@ -31,7 +31,7 @@ public class JVGClipboard {
 		}
 	}
 
-	private Set<JVGClipboardContext> data = new HashSet<JVGClipboardContext>();
+	private Set<JVGClipboardContext> data = new HashSet<>();
 
 	public boolean add(final JVGClipboardContext ctx) {
 		synchronized (data) {
@@ -76,7 +76,7 @@ public class JVGClipboard {
 		fireClipboardEvent(new JVGClipboardEvent(ctx, JVGClipboardEvent.DATA_REMOVED));
 	}
 
-	private List<JVGClipboardListener> listeners = new ArrayList<JVGClipboardListener>();
+	private List<JVGClipboardListener> listeners = new ArrayList<>();
 
 	public void addListener(JVGClipboardListener listener) {
 		if (listener != null) {

@@ -159,7 +159,7 @@ public class ScriptAction extends JVGAction {
 						try {
 							p.compile(new CompileHandler() {
 								@Override
-								public void errorOccured(int line, int offset, int length, String msg) {
+								public void errorOccurred(int line, int offset, int length, String msg) {
 									scrollErrors.setVisible(true);
 									d.setCharacterAttributes(offset, length, errorAttr, false);
 									txtErrors.append(offset + " - " + length + ": " + msg + "\n");

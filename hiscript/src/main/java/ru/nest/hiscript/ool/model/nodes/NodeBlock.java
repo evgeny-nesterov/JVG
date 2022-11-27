@@ -17,7 +17,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		super(name, TYPE_BLOCK);
 	}
 
-	private List<Node> statements = new ArrayList<Node>(0);
+	private List<Node> statements = new ArrayList<>(0);
 
 	public void addStatement(Node statement) {
 		statements.add(statement);

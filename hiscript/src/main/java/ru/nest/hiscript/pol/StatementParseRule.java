@@ -223,12 +223,12 @@ public class StatementParseRule extends ParseRule<Node> {
 			try {
 				tokenizer.nextToken();
 			} catch (TokenizerException exc) {
-				errorOccured(tokenizer, handler, exc.getMessage());
+				errorOccurred(tokenizer, handler, exc.getMessage());
 			}
 		}
 
 		if (lastToken != null) {
-			handler.errorOccured(line, offset, lastToken.getOffset() + lastToken.getLength() - offset, "not a statement");
+			handler.errorOccurred(line, offset, lastToken.getOffset() + lastToken.getLength() - offset, "not a statement");
 		}
 
 		return found;

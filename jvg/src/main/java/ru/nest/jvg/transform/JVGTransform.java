@@ -7,7 +7,7 @@ import java.util.List;
 import ru.nest.jvg.shape.JVGShape;
 
 public class JVGTransform {
-	private List<JVGTransformElement> transforms = new ArrayList<JVGTransformElement>(1);
+	private List<JVGTransformElement> transforms = new ArrayList<>(1);
 
 	public JVGTransform() {
 	}

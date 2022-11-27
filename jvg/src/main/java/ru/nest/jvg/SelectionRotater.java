@@ -33,7 +33,7 @@ public class SelectionRotater extends Thread {
 		return selectionStroke;
 	}
 
-	private Map<Float, Stroke> strokes = new HashMap<Float, Stroke>();
+	private Map<Float, Stroke> strokes = new HashMap<>();
 
 	@Override
 	public void run() {

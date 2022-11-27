@@ -1262,7 +1262,7 @@ abstract class MultipleGradientPaintContext implements PaintContext {
 			}
 		}
 		cachedModel = cm;
-		cached = new WeakReference<WritableRaster>(ras);
+		cached = new WeakReference<>(ras);
 	}
 
 	/**

@@ -99,7 +99,7 @@ public class JVGCustomActionArea extends JVGActionArea implements JVGPeerListene
 		final JPanel pnlScripts = new JPanel();
 		pnlScripts.setLayout(new GridBagLayout());
 
-		final Map<Script.Type, BasicTextEditor> map = new HashMap<Script.Type, BasicTextEditor>();
+		final Map<Script.Type, BasicTextEditor> map = new HashMap<>();
 		int y = 0;
 		for (final Script.Type type : Script.types) {
 			final BasicTextEditor txt = new BasicTextEditor();
@@ -200,7 +200,7 @@ public class JVGCustomActionArea extends JVGActionArea implements JVGPeerListene
 							try {
 								p.compile(new CompileHandler() {
 									@Override
-									public void errorOccured(int line, int offset, int length, String msg) {
+									public void errorOccurred(int line, int offset, int length, String msg) {
 										scrollErrors.setVisible(true);
 										d.setCharacterAttributes(offset, length, errorAttr, false);
 										txtErrors.append(offset + " - " + length + ": " + msg + "\n");

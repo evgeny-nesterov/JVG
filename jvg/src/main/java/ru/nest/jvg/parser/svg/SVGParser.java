@@ -321,7 +321,7 @@ public class SVGParser implements JVGParserInterface {
 	}
 
 	private void parsePainters(Element e, JVGShape shape, Draw defaulFill) throws JVGParseException {
-		List<Painter> painters = new ArrayList<Painter>();
+		List<Painter> painters = new ArrayList<>();
 		FillPainter fill = parseFill(shape, e, painters, defaulFill);
 		if (fill != null) {
 			shape.setFill(true);
@@ -696,7 +696,7 @@ public class SVGParser implements JVGParserInterface {
 					dasharray = null;
 				}
 
-				Resource<Stroke> strokeResource = new StrokeResource<Stroke>(width, cap, join, miterlimit, dasharray, dashoffset);
+				Resource<Stroke> strokeResource = new StrokeResource<>(width, cap, join, miterlimit, dasharray, dashoffset);
 				return new OutlinePainter(strokeResource, draw);
 			}
 		}

@@ -27,7 +27,7 @@ public class OutlinePatternChooser extends ActionChooser {
 
 	private float[][] values = { {}, { 16f, 10f }, { 8f, 6f }, { 4f, 3f }, { 8f, 6f, 4f, 6f }, { 8f, 6f, 4f, 6f, 4f, 6f }, { 20f, 8f, 8f, 8f }, { 2, 4 }, { 2, 2 }, { 1, 3 }, { 1, 1 } };
 
-	private HashMap<float[], BasicStroke> strokes = new HashMap<float[], BasicStroke>();
+	private HashMap<float[], BasicStroke> strokes = new HashMap<>();
 
 	public OutlinePatternChooser() {
 		JMenu menu = new JMenu();

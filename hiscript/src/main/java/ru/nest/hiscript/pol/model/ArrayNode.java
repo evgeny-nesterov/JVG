@@ -16,7 +16,7 @@ public class ArrayNode extends Node {
 		return type;
 	}
 
-	private List<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
+	private List<ExpressionNode> indexes = new ArrayList<>();
 
 	public void addIndex(ExpressionNode index) {
 		indexes.add(index);

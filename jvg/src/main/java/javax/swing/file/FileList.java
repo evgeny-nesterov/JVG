@@ -110,7 +110,7 @@ public class FileList extends JList {
 		repaint();
 	}
 
-	private HashMap<String, Integer> indexes = new HashMap<String, Integer>();
+	private HashMap<String, Integer> indexes = new HashMap<>();
 
 	public boolean openSelected() {
 		String rootPath = model.getRoot() != null ? model.getRoot().getAbsolutePath() : null;

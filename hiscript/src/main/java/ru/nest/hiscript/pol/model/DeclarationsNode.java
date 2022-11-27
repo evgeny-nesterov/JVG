@@ -19,13 +19,13 @@ public class DeclarationsNode extends Node {
 		return type;
 	}
 
-	public List<Integer> dimensions = new ArrayList<Integer>();
+	public List<Integer> dimensions = new ArrayList<>();
 
-	public List<String> namespaces = new ArrayList<String>();
+	public List<String> namespaces = new ArrayList<>();
 
-	public List<String> names = new ArrayList<String>();
+	public List<String> names = new ArrayList<>();
 
-	public Map<String, Node> variables = new HashMap<String, Node>();
+	public Map<String, Node> variables = new HashMap<>();
 
 	public void addVariable(String namespace, String name, int dimension, Node value) {
 		String fullname;

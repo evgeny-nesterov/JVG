@@ -59,14 +59,14 @@ public class JVGImage extends JVGShape {
 	int c = 10;
 
 	public JVGImage(URL url) throws Exception {
-		this(new ImageResource<ImageIcon>(url));
+		this(new ImageResource<>(url));
 	}
 
 	static List<Painter> defaultPainters = null;
 
 	public static List<Painter> getDefaultPainters() {
 		if (defaultPainters == null) {
-			defaultPainters = new ArrayList<Painter>();
+			defaultPainters = new ArrayList<>();
 		}
 
 		return defaultPainters;

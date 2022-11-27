@@ -32,7 +32,7 @@ public class DefaultFilter implements Filter {
 	public void exclude(JVGComponent c) {
 		if (c != null) {
 			if (exclude == null) {
-				exclude = new HashSet<JVGComponent>();
+				exclude = new HashSet<>();
 			}
 			exclude.add(c);
 		}
@@ -43,7 +43,7 @@ public class DefaultFilter implements Filter {
 	public void addClass(Class<?> c) {
 		if (c != null) {
 			if (classes == null) {
-				classes = new HashSet<Class<?>>();
+				classes = new HashSet<>();
 			}
 			classes.add(c);
 		}

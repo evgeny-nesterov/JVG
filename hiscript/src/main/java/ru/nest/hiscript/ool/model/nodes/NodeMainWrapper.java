@@ -20,7 +20,7 @@ public class NodeMainWrapper extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		HiClass rootClass = new HiClass(null, null, "", HiClass.CLASS_TYPE_TOP);
+		HiClass rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP);
 		rootClass.methods = new HiMethod[1];
 		rootClass.methods[0] = new HiMethod(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
 

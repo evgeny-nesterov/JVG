@@ -21,9 +21,9 @@ public class ApploximatedLinePath extends MutableGeneralPath {
 		return super.moveTo(x, y);
 	}
 
-	private List<Double> X = new ArrayList<Double>();
+	private List<Double> X = new ArrayList<>();
 
-	private List<Double> Y = new ArrayList<Double>();
+	private List<Double> Y = new ArrayList<>();
 
 	private double[] result = new double[4];
 

@@ -15,8 +15,8 @@ public class NodeSwitch extends Node {
 
 	public void add(NodeExpression caseValue, NodeBlock caseBody) {
 		if (casesValues == null) {
-			casesValues = new ArrayList<Node>();
-			casesNodes = new ArrayList<Node>();
+			casesValues = new ArrayList<>();
+			casesNodes = new ArrayList<>();
 		}
 		casesValues.add(caseValue);
 		casesNodes.add(caseBody);

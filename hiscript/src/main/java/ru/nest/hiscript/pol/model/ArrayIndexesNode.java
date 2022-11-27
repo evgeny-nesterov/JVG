@@ -7,7 +7,7 @@ public class ArrayIndexesNode extends Node {
 		super("array-indexes");
 	}
 
-	private ArrayList<ExpressionNode> indexes = new ArrayList<ExpressionNode>();
+	private ArrayList<ExpressionNode> indexes = new ArrayList<>();
 
 	public void addIndex(ExpressionNode index) {
 		indexes.add(index);

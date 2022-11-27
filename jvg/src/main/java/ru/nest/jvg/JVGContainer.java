@@ -119,13 +119,13 @@ public class JVGContainer extends JVGComponent {
 	}
 
 	public <C extends JVGComponent> C[] getChilds(Class<?>... types) {
-		List<C> list = new ArrayList<C>(0);
+		List<C> list = new ArrayList<>(0);
 		getChilds(false, list, types);
 		return (C[]) list.toArray(new JVGComponent[0]);
 	}
 
 	public <C extends JVGComponent> C[] getChilds(boolean deep, Class<?>... types) {
-		List<C> list = new ArrayList<C>(0);
+		List<C> list = new ArrayList<>(0);
 		getChilds(deep, list, types);
 		return (C[]) list.toArray(new JVGComponent[0]);
 	}

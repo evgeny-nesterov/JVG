@@ -7,7 +7,7 @@ public class ExpressionParser {
 	public ExpressionParser() {
 		ctx = new ExpressionContext();
 		t = new ExpressionTokenizer();
-		tokens = new ArrayList<ExpressionToken>();
+		tokens = new ArrayList<>();
 	}
 
 	private ExpressionContext ctx;
@@ -98,8 +98,8 @@ public class ExpressionParser {
 	}
 
 	private Value getValue() throws Exception {
-		ArrayList<Value> values = new ArrayList<Value>();
-		ArrayList<Integer> operations = new ArrayList<Integer>();
+		ArrayList<Value> values = new ArrayList<>();
+		ArrayList<Integer> operations = new ArrayList<>();
 
 		while (!afterEnd) {
 			// ========================================================================
@@ -263,7 +263,7 @@ public class ExpressionParser {
 					throw new Exception("Function '" + word + "' doesn't exists");
 				}
 
-				ArrayList<Value> arguments = new ArrayList<Value>();
+				ArrayList<Value> arguments = new ArrayList<>();
 				getArguments(arguments);
 
 				if (curType == ExpressionToken.PARENTHESIS_CLOSE) {

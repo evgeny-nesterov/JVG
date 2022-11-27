@@ -158,7 +158,7 @@ public class JVGScriptSupport {
 
 	private JVGPane pane;
 
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, String> properties = new HashMap<>();
 
 	private SwingSupport swingSupport;
 
@@ -417,7 +417,7 @@ public class JVGScriptSupport {
 					String value = (String) arguments[2];
 					Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 					if (hash == null) {
-						hash = new HashMap<String, String>();
+						hash = new HashMap<>();
 						component.setClientProperty("component-properties", hash);
 					}
 					hash.put(parameter, value);
@@ -1605,7 +1605,7 @@ public class JVGScriptSupport {
 		}
 	}
 
-	private Map<Long, double[]> lastPos = new HashMap<Long, double[]>();
+	private Map<Long, double[]> lastPos = new HashMap<>();
 
 	// TODO optimize - use object ScriptContext (String script, Node compilation)
 	public void executeScript(Script.Type scriptType, JVGMouseEvent e) {
@@ -1736,7 +1736,7 @@ public class JVGScriptSupport {
 	}
 
 	public static JVGShape[] getShapes(JVGPane pane, long[] ids) {
-		ArrayList<JVGShape> shapesList = new ArrayList<JVGShape>();
+		ArrayList<JVGShape> shapesList = new ArrayList<>();
 		for (int i = 0; i < ids.length; i++) {
 			JVGComponent component = pane.getComponent(ids[i]);
 			if (component instanceof JVGShape) {

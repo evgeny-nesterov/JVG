@@ -178,13 +178,13 @@ public class DecodeContext {
 		}
 	}
 
-	private Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<Integer, List<ClassLoadListener>>();
+	private Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>();
 
 	public void addClassLoadListener(ClassLoadListener listener, int index) {
 		DecodeContext ctx = getRoot();
 		List<ClassLoadListener> list = ctx.classLoadListeners.get(index);
 		if (list == null) {
-			list = new ArrayList<ClassLoadListener>();
+			list = new ArrayList<>();
 			ctx.classLoadListeners.put(index, list);
 		}
 		list.add(listener);
@@ -253,7 +253,7 @@ public class DecodeContext {
 	}
 
 	public <N> List<N> readList(Class<N> type, int size) throws IOException {
-		List<N> list = new ArrayList<N>(size);
+		List<N> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			list.add(read(type));
 		}
@@ -277,7 +277,7 @@ public class DecodeContext {
 	}
 
 	public <N> List<N> readNullableList(Class<N> type, int size) throws IOException {
-		List<N> list = new ArrayList<N>(size);
+		List<N> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			list.add(readNullable(type));
 		}

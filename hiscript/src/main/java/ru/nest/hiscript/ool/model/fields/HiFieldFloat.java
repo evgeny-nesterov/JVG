@@ -22,7 +22,8 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			default:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				break;
 		}
 	}
 
@@ -54,7 +55,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			case DOUBLE:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 				break;
 		}
 	}

@@ -92,19 +92,19 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				int dimension = commonDimension + visitDimension(tokenizer, handler);
 				if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
 					if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-						errorOccured(tokenizer, handler, "expression is expected");
+						errorOccurred(tokenizer, handler, "expression is expected");
 					}
 				}
 
 				while (visitSymbol(tokenizer, handler, Symbols.COMMA) != -1) {
 					if (visitWord(Words.NOT_SERVICE, tokenizer, handler) == null) {
-						errorOccured(tokenizer, handler, "<identifier> is expected");
+						errorOccurred(tokenizer, handler, "<identifier> is expected");
 					}
 					dimension = commonDimension + visitDimension(tokenizer, handler);
 
 					if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
 						if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-							errorOccured(tokenizer, handler, "expression is expected");
+							errorOccurred(tokenizer, handler, "expression is expected");
 						}
 					}
 				}

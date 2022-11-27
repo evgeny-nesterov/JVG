@@ -32,13 +32,13 @@ public class JVGParseUtil {
 
 	final static float pixPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
 
-	private final static Map<Integer, String> CAP_TO_STRING = new HashMap<Integer, String>();
+	private final static Map<Integer, String> CAP_TO_STRING = new HashMap<>();
 
-	private final static Map<String, Integer> CAP_FROM_STRING = new HashMap<String, Integer>();
+	private final static Map<String, Integer> CAP_FROM_STRING = new HashMap<>();
 
-	private final static Map<Integer, String> JOIN_TO_STRING = new HashMap<Integer, String>();
+	private final static Map<Integer, String> JOIN_TO_STRING = new HashMap<>();
 
-	private final static Map<String, Integer> JOIN_FROM_STRING = new HashMap<String, Integer>();
+	private final static Map<String, Integer> JOIN_FROM_STRING = new HashMap<>();
 	static {
 		// Caps
 		CAP_TO_STRING.put(BasicStroke.CAP_BUTT, "butt");
@@ -66,7 +66,7 @@ public class JVGParseUtil {
 	public static Map<String, String> getMap(String s) {
 		String[] params = getStringArray(s, ";");
 		if (params != null) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			for (String p : params) {
 				int index = p.indexOf("=");
 				if (index != -1) {

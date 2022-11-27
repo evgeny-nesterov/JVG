@@ -21,7 +21,7 @@ public class JVGLocaleManager {
 	private JVGLocaleManager() {
 	}
 
-	private HashMap<String, LocaleContainer> locales = new HashMap<String, LocaleContainer>();
+	private HashMap<String, LocaleContainer> locales = new HashMap<>();
 
 	public void setLanguage(String lang) {
 		current = locales.get(lang);

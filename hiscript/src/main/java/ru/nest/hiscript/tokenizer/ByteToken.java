@@ -1,8 +1,8 @@
 package ru.nest.hiscript.tokenizer;
 
 public class ByteToken extends NumberToken {
-	public ByteToken(byte number, int line, int offset, int length, int lineOffset) {
-		super(line, offset, length, lineOffset);
+	public ByteToken(byte number, int line, int offset, int length, int lineOffset, boolean hasSign) {
+		super(line, offset, length, lineOffset, hasSign);
 		this.number = number;
 	}
 

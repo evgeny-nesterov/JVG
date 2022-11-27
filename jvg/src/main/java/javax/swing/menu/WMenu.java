@@ -39,7 +39,7 @@ public class WMenu extends JMenu {
 		final JPopupMenu popup = getPopupMenu();
 		popup.setBackground(new Color(249, 248, 247));
 		popup.setBorder(new Border() {
-			private HashSet<Integer> positions = new HashSet<Integer>();
+			private HashSet<Integer> positions = new HashSet<>();
 
 			@Override
 			public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

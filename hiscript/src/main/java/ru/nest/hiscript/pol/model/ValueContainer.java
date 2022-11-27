@@ -252,7 +252,6 @@ public class ValueContainer implements Words {
 			case DOUBLE:
 				throw new ExecuteException("possible loss of precision; found " + getTypeDescr() + ", required char");
 		}
-
 		return character;
 	}
 
@@ -260,7 +259,6 @@ public class ValueContainer implements Words {
 		if (type != STRING) {
 			throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required string");
 		}
-
 		return string;
 	}
 

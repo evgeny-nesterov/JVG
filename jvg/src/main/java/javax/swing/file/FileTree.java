@@ -47,7 +47,7 @@ public class FileTree extends JTree {
 	}
 
 	public TreePath getPath(File file) {
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<File> files = new ArrayList<>();
 		while (file != null) {
 			files.add(file);
 			file = file.getParentFile();

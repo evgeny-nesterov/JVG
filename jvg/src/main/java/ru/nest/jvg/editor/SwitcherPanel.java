@@ -37,7 +37,7 @@ public class SwitcherPanel extends JList {
 		});
 	}
 
-	private List<JVGPaneInternalFrame> list = new ArrayList<JVGPaneInternalFrame>();
+	private List<JVGPaneInternalFrame> list = new ArrayList<>();
 
 	private SwitcherListModel model = new SwitcherListModel();
 

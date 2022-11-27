@@ -34,7 +34,7 @@ public class ContinueNode extends Node {
 		return mark;
 	}
 
-	private ArrayList<Breakable> breakableNodes = new ArrayList<Breakable>();
+	private ArrayList<Breakable> breakableNodes = new ArrayList<>();
 
 	public ArrayList<Breakable> getBreakableNodes() {
 		return breakableNodes;

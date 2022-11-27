@@ -1,19 +1,20 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 
-public class NodeFloat extends Node {
+import java.io.IOException;
+
+public class NodeFloat extends NodeNumber {
 	private final static String name = "float";
 
 	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
-	public NodeFloat(float value) {
-		super(name, TYPE_FLOAT);
+	// TODO NaN, Infinite
+
+	public NodeFloat(float value, boolean hasSign) {
+		super(name, TYPE_FLOAT, hasSign);
 		this.value = value;
 	}
 
@@ -30,9 +31,10 @@ public class NodeFloat extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeFloat(value);
+		os.writeBoolean(hasSign);
 	}
 
 	public static NodeFloat decode(DecodeContext os) throws IOException {
-		return new NodeFloat(os.readFloat());
+		return new NodeFloat(os.readFloat(), os.readBoolean());
 	}
 }

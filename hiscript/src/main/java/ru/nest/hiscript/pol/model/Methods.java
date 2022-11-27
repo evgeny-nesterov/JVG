@@ -52,25 +52,25 @@ public class Methods {
 
 	public void add(Method method) {
 		if (hash_methods == null) {
-			hash_methods = new HashMap<String, Map<String, Map<Integer, List<Method>>>>();
+			hash_methods = new HashMap<>();
 		}
 
 		Map<String, Map<Integer, List<Method>>> namespace_methods = hash_methods.get(method.getNamespace());
 		if (namespace_methods == null) {
-			namespace_methods = new HashMap<String, Map<Integer, List<Method>>>();
+			namespace_methods = new HashMap<>();
 			hash_methods.put(method.getNamespace(), namespace_methods);
 		}
 
 		Map<Integer, List<Method>> argcount_methods = namespace_methods.get(method.getName());
 		if (argcount_methods == null) {
-			argcount_methods = new HashMap<Integer, List<Method>>();
+			argcount_methods = new HashMap<>();
 			namespace_methods.put(method.getName(), argcount_methods);
 		}
 
 		int argCount = method.getArgTypes().length;
 		List<Method> methods = argcount_methods.get(argCount);
 		if (methods == null) {
-			methods = new ArrayList<Method>();
+			methods = new ArrayList<>();
 			argcount_methods.put(argCount, methods);
 		}
 		methods.add(method);

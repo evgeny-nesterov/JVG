@@ -18,7 +18,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	private static java.lang.reflect.Constructor<HiField<?>> getConstructor(String name) {
 		if (primitiveBuilders == null) {
-			primitiveBuilders = new HashMap<String, Constructor<HiField<?>>>();
+			primitiveBuilders = new HashMap<>();
 		}
 
 		if (!primitiveBuilders.containsKey(name)) {
@@ -102,7 +102,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 			// if there is no initializer then do default initialization,
 			// ie initialization will be done in any case
 			if (initializer != null) {
-
 				initializer.execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return;

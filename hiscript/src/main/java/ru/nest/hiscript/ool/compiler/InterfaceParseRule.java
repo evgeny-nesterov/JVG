@@ -47,7 +47,7 @@ public class InterfaceParseRule extends ParserUtil {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
 
-				interfacesList = new ArrayList<Type>(1);
+				interfacesList = new ArrayList<>(1);
 				interfacesList.add(interfaceType);
 
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
@@ -140,7 +140,7 @@ public class InterfaceParseRule extends ParserUtil {
 					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 					modifiers.setAbstract(true);
 
-					List<NodeArgument> arguments = new ArrayList<NodeArgument>();
+					List<NodeArgument> arguments = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, arguments, properties);
 					for (NodeArgument argument : arguments) {
 						properties.addLocalVariable(argument);

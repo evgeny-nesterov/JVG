@@ -79,9 +79,9 @@ public class SwingSupport {
 		return id++;
 	}
 
-	private Map<Long, JComponent> id_components = new HashMap<Long, JComponent>();
+	private Map<Long, JComponent> id_components = new HashMap<>();
 
-	private Map<JComponent, Long> components_id = new HashMap<JComponent, Long>();
+	private Map<JComponent, Long> components_id = new HashMap<>();
 
 	public long registerComponent(JComponent component) {
 		long id = nextID();
@@ -97,7 +97,7 @@ public class SwingSupport {
 		return components_id.get(c);
 	}
 
-	private List<Method> methods = new ArrayList<Method>();
+	private List<Method> methods = new ArrayList<>();
 
 	private void init() {
 		// Structure
@@ -494,7 +494,7 @@ public class SwingSupport {
 
 			private void execute(MouseEvent e) {
 				try {
-					Map<String, Variable> variables = new HashMap<String, Variable>();
+					Map<String, Variable> variables = new HashMap<>();
 					setMouseEventVariables(variables, e);
 
 					parent.addVariables(variables);
@@ -531,7 +531,7 @@ public class SwingSupport {
 
 			private void execute(MouseEvent e) {
 				try {
-					HashMap<String, Variable> variables = new HashMap<String, Variable>();
+					HashMap<String, Variable> variables = new HashMap<>();
 					setMouseEventVariables(variables, e);
 
 					ScriptUtil.execute(ctx, parent, script, variables);
@@ -566,7 +566,7 @@ public class SwingSupport {
 
 			private void execute(KeyEvent e) {
 				try {
-					HashMap<String, Variable> variables = new HashMap<String, Variable>();
+					HashMap<String, Variable> variables = new HashMap<>();
 					setKeyEventVariables(variables, e);
 
 					parent.addVariables(variables);

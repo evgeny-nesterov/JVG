@@ -406,7 +406,7 @@ public class TableLayout implements LayoutManager2 {
 	}
 
 	// -------------
-	private HashMap<Component, TableConstraints> map = new HashMap<Component, TableConstraints>();
+	private HashMap<Component, TableConstraints> map = new HashMap<>();
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {

@@ -462,7 +462,7 @@ public abstract class JVGShape extends JVGContainer {
 	public void addPainter(int index, Painter painter) {
 		if (painter != null) {
 			if (painters == null) {
-				painters = new ArrayList<Painter>();
+				painters = new ArrayList<>();
 			}
 
 			if (index != -1) {
@@ -580,7 +580,7 @@ public abstract class JVGShape extends JVGContainer {
 
 	public static List<Painter> getDefaultPainters() {
 		if (defaultPainters == null) {
-			defaultPainters = new ArrayList<Painter>();
+			defaultPainters = new ArrayList<>();
 			defaultPainters.add(new FillPainter(FillPainter.DEFAULT_COLOR));
 		}
 		return defaultPainters;
@@ -614,7 +614,7 @@ public abstract class JVGShape extends JVGContainer {
 				Method method = getClass().getMethod("getDefaultPainters");
 				painters = (List<Painter>) method.invoke(null);
 			} catch (Exception exc) {
-				painters = new ArrayList<Painter>();
+				painters = new ArrayList<>();
 				setPainters(painters);
 				System.err.println("Can't get default painters");
 			}
@@ -723,7 +723,7 @@ public abstract class JVGShape extends JVGContainer {
 			return;
 		}
 
-		Set<JVGShape> locked = new HashSet<JVGShape>();
+		Set<JVGShape> locked = new HashSet<>();
 		transform(transform, locked);
 		JVGUtil.unlock(locked);
 	}
@@ -918,7 +918,7 @@ public abstract class JVGShape extends JVGContainer {
 		// copy painters
 		List<Painter> painters = null;
 		if (this.painters != null) {
-			painters = new ArrayList<Painter>(this.painters.size());
+			painters = new ArrayList<>(this.painters.size());
 			for (Painter painter : this.painters) {
 				painters.add((Painter) painter.clone());
 			}

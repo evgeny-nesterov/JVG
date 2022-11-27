@@ -120,7 +120,7 @@ public class RuntimeContext {
 		return current_id++;
 	}
 
-	private static Set<Long> locks = new HashSet<Long>();
+	private static Set<Long> locks = new HashSet<>();
 
 	private volatile static long current_lock_id = 0;
 
@@ -147,9 +147,9 @@ public class RuntimeContext {
 		this.parentContext = parentContext;
 	}
 
-	private final static List<Method> nativeMethods = new ArrayList<Method>();
+	private final static List<Method> nativeMethods = new ArrayList<>();
 
-	private static Map<Long, Thread> threads = new HashMap<Long, Thread>();
+	private static Map<Long, Thread> threads = new HashMap<>();
 	static {
 		try {
 			// In, Out

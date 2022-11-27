@@ -72,7 +72,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression is expected");
 			}
 			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
@@ -86,7 +86,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				Token token = tokenizer.currentToken();
 				if (visitWord(Words.DEFAULT, tokenizer, handler) != null) {
 					if (defaultFound) {
-						errorOccured(handler, "dublicate default label", token);
+						errorOccurred(handler, "dublicate default label", token);
 					}
 					expectSymbol(Symbols.COLON, tokenizer, handler);
 

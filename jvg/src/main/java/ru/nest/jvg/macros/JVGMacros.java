@@ -7,7 +7,7 @@ import java.util.List;
 import ru.nest.jvg.JVGPane;
 
 public class JVGMacros {
-	private List<JVGMacrosCode> codeList = new ArrayList<JVGMacrosCode>();
+	private List<JVGMacrosCode> codeList = new ArrayList<>();
 
 	private boolean active = true;
 

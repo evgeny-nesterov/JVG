@@ -68,7 +68,7 @@ public abstract class TOIObject {
 		return null;
 	}
 
-	protected List<TOIObjectControl> controls = new ArrayList<TOIObjectControl>();
+	protected List<TOIObjectControl> controls = new ArrayList<>();
 
 	public List<TOIObjectControl> getControls() {
 		return controls;

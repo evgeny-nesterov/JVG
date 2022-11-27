@@ -70,7 +70,7 @@ public abstract class IFileFilter extends FileFilter {
 
 		public final static int GIF = 6;
 
-		private List<String> extensions = new ArrayList<String>();
+		private List<String> extensions = new ArrayList<>();
 
 		@Override
 		public List<String> getExtensions() {
@@ -93,7 +93,7 @@ public abstract class IFileFilter extends FileFilter {
 	public static class XMLFileFilter extends IFileFilter {
 		public final static int XML = 0;
 
-		private List<String> extensions = new ArrayList<String>();
+		private List<String> extensions = new ArrayList<>();
 
 		@Override
 		public List<String> getExtensions() {
@@ -109,7 +109,7 @@ public abstract class IFileFilter extends FileFilter {
 	public static class SchemaFileFilter extends IFileFilter {
 		public final static int SVG = 0;
 
-		private List<String> extensions = new ArrayList<String>();
+		private List<String> extensions = new ArrayList<>();
 
 		@Override
 		public List<String> getExtensions() {
@@ -131,7 +131,7 @@ public abstract class IFileFilter extends FileFilter {
 
 		public final static int TXT = 3;
 
-		private List<String> extensions = new ArrayList<String>();
+		private List<String> extensions = new ArrayList<>();
 
 		@Override
 		public List<String> getExtensions() {
@@ -150,7 +150,7 @@ public abstract class IFileFilter extends FileFilter {
 	public static class DocumentFileFilter extends IFileFilter {
 		public final static int JCM = 0;
 
-		private List<String> extensions = new ArrayList<String>();
+		private List<String> extensions = new ArrayList<>();
 
 		@Override
 		public List<String> getExtensions() {

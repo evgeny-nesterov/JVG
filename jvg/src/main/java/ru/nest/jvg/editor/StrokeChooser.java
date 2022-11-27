@@ -177,7 +177,7 @@ public class StrokeChooser extends AbstractChooserDialog<BasicStroke> implements
 
 	@Override
 	public Resource<BasicStroke> createResource() {
-		return new StrokeResource<BasicStroke>(getStroke());
+		return new StrokeResource<>(getStroke());
 	}
 
 	public int getCap() {

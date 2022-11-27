@@ -877,7 +877,7 @@ public class JVGEditPane extends JVGPane {
 		}
 	}
 
-	private List<InputComponent> inputs = new ArrayList<InputComponent>();
+	private List<InputComponent> inputs = new ArrayList<>();
 
 	public void showInputText(JVGComponent c, String text, InputTextHandler handler) {
 		for (InputComponent i : inputs) {

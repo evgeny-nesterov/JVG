@@ -131,7 +131,7 @@ public class SetPathTextStrokeAction extends SetPathStrokeAction<TextStroke> {
 		changed |= oldStroke != null && oldStroke.isRepeat() != repeat;
 
 		if (changed) {
-			return new StrokeResource<TextStroke>(stroke);
+			return new StrokeResource<>(stroke);
 		} else {
 			return null;
 		}

@@ -23,14 +23,14 @@ import ru.nest.jvg.shape.JVGShape;
 public class JVGUtil {
 	public static void transform(JVGComponent[] components, AffineTransform transform) {
 		if (components != null) {
-			HashSet<JVGShape> shapes = new HashSet<JVGShape>();
+			HashSet<JVGShape> shapes = new HashSet<>();
 			getShapes(components, shapes);
 			transform(shapes, transform);
 		}
 	}
 
 	public static void transform(HashSet<JVGShape> shapes, AffineTransform transform) {
-		HashSet<JVGShape> locked = new HashSet<JVGShape>();
+		HashSet<JVGShape> locked = new HashSet<>();
 		transform(shapes, transform, locked);
 		unlock(locked);
 	}
@@ -47,7 +47,7 @@ public class JVGUtil {
 
 	public static void transform(JVGComponent[] components, AffineTransform[] transforms) {
 		if (components != null) {
-			HashMap<JVGComponent, AffineTransform> map = new HashMap<JVGComponent, AffineTransform>();
+			HashMap<JVGComponent, AffineTransform> map = new HashMap<>();
 			for (int i = 0; i < components.length; i++) {
 				map.put(components[i], transforms[i]);
 			}
@@ -57,8 +57,8 @@ public class JVGUtil {
 
 	public static void transform(HashMap<JVGComponent, AffineTransform> components) {
 		// transform components
-		HashSet<JVGShape> shapes = new HashSet<JVGShape>();
-		HashSet<JVGShape> locked = new HashSet<JVGShape>();
+		HashSet<JVGShape> shapes = new HashSet<>();
+		HashSet<JVGShape> locked = new HashSet<>();
 		for (JVGComponent component : components.keySet()) {
 			if (component instanceof JVGShape) {
 				JVGShape shapeComponent = (JVGShape) component;
@@ -166,7 +166,7 @@ public class JVGUtil {
 	}
 
 	public static HashMap<JVGComponent, JVGComponent> toMap(JVGComponent[] components) {
-		HashMap<JVGComponent, JVGComponent> map = new HashMap<JVGComponent, JVGComponent>();
+		HashMap<JVGComponent, JVGComponent> map = new HashMap<>();
 		for (int i = 0; i < components.length; i++) {
 			JVGComponent component = components[i];
 			map.put(component, component);
@@ -175,7 +175,7 @@ public class JVGUtil {
 	}
 
 	public static <V> HashSet<V> toSet(V[] components) {
-		HashSet<V> set = new HashSet<V>();
+		HashSet<V> set = new HashSet<>();
 		for (int i = 0; i < components.length; i++) {
 			V component = components[i];
 			set.add(component);
@@ -184,7 +184,7 @@ public class JVGUtil {
 	}
 
 	public static <V> ArrayList<V> toArrayList(V[] components) {
-		ArrayList<V> list = new ArrayList<V>();
+		ArrayList<V> list = new ArrayList<>();
 		for (int i = 0; i < components.length; i++) {
 			V component = components[i];
 			list.add(component);
@@ -270,7 +270,7 @@ public class JVGUtil {
 	}
 
 	public static JVGComponent[] find(JVGContainer root, String pattern, boolean matchCase, boolean wholeWord, boolean regexp) {
-		List<JVGComponent> result = new ArrayList<JVGComponent>();
+		List<JVGComponent> result = new ArrayList<>();
 		find(root, pattern, matchCase, wholeWord, regexp, result);
 
 		JVGComponent[] array = new JVGComponent[result.size()];

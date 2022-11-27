@@ -13,7 +13,7 @@ public class Arrays implements PrimitiveTypes {
 
 	private static void init() {
 		if (!initialized) {
-			primitiveArrayClasses = new HashSet<Class<?>>(8);
+			primitiveArrayClasses = new HashSet<>(8);
 
 			primitiveArrayClasses.add(boolean[].class);
 			primitiveArrayClasses.add(char[].class);

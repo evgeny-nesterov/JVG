@@ -22,7 +22,7 @@ public class HashMapImpl extends ImplUtil {
 
 	public static void HashMap_void_init(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
-		o.userObject = new HashMap<Object, Object>();
+		o.userObject = new HashMap<>();
 		returnVoid(ctx);
 	}
 

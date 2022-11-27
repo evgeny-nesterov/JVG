@@ -42,7 +42,7 @@ public class ChooseColorButton extends AbstractChooseColorButton {
 
 	public Action getAction(Draw draw) {
 		if (map == null) {
-			map = new HashMap<Draw, Action>();
+			map = new HashMap<>();
 		}
 
 		if (draw != null) {

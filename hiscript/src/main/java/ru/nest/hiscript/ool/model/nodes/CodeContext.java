@@ -149,9 +149,9 @@ public class CodeContext {
 	// ============================================================================
 	private int len_utf = 0;
 
-	private Map<String, Integer> stringsHash = new HashMap<String, Integer>();
+	private Map<String, Integer> stringsHash = new HashMap<>();
 
-	private List<String> strings = new ArrayList<String>();
+	private List<String> strings = new ArrayList<>();
 
 	private int getUTFIndex(String value) throws IOException {
 		CodeContext ctx = getRoot();
@@ -205,9 +205,9 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private Map<Type, Integer> typesHash = new HashMap<Type, Integer>();
+	private Map<Type, Integer> typesHash = new HashMap<>();
 
-	private List<Type> types = new ArrayList<Type>();
+	private List<Type> types = new ArrayList<>();
 
 	public void writeType(Type type) throws IOException {
 		CodeContext ctx = getRoot();
@@ -265,9 +265,9 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private HashMap<HiClass, Integer> classes = new HashMap<HiClass, Integer>();
+	private HashMap<HiClass, Integer> classes = new HashMap<>();
 
-	private HashMap<Integer, HiClass> index_to_classes = new HashMap<Integer, HiClass>();
+	private HashMap<Integer, HiClass> index_to_classes = new HashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
 		CodeContext ctx = getRoot();
@@ -320,7 +320,7 @@ public class CodeContext {
 	}
 
 	public List<ClassCodeContext> getClassesCode() throws IOException {
-		List<ClassCodeContext> list = new ArrayList<ClassCodeContext>();
+		List<ClassCodeContext> list = new ArrayList<>();
 		getClassesCode(list);
 		return list;
 	}

@@ -30,25 +30,25 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private ArrayList<Integer> operations = new ArrayList<Integer>();
+	private ArrayList<Integer> operations = new ArrayList<>();
 
 	public ArrayList<Integer> getOperations() {
 		return operations;
 	}
 
-	private ArrayList<PrefixNode> prefixes = new ArrayList<PrefixNode>();
+	private ArrayList<PrefixNode> prefixes = new ArrayList<>();
 
 	public ArrayList<PrefixNode> getPrefixes() {
 		return prefixes;
 	}
 
-	private ArrayList<Node> values = new ArrayList<Node>();
+	private ArrayList<Node> values = new ArrayList<>();
 
 	public ArrayList<Node> getValues() {
 		return values;
 	}
 
-	private ArrayList<ArrayIndexesNode> indexes = new ArrayList<ArrayIndexesNode>();
+	private ArrayList<ArrayIndexesNode> indexes = new ArrayList<>();
 
 	public ArrayList<ArrayIndexesNode> getIndexes() {
 		return indexes;

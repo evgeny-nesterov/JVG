@@ -55,7 +55,7 @@ public class SetPathBasicStrokeAction extends SetPathStrokeAction<BasicStroke> {
 		changed |= oldStroke != null && oldStroke.getDashPhase() != dashPhase;
 
 		if (changed) {
-			return new StrokeResource<BasicStroke>(stroke);
+			return new StrokeResource<>(stroke);
 		} else {
 			return null;
 		}

@@ -14,9 +14,11 @@ import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
+import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeSuper;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
+import ru.nest.hiscript.tokenizer.NumberToken;
 import ru.nest.hiscript.tokenizer.OperationSymbols;
 import ru.nest.hiscript.tokenizer.StringToken;
 import ru.nest.hiscript.tokenizer.SymbolToken;
@@ -42,8 +44,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 	@Override
 	public NodeExpression visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		List<Node> operands = new ArrayList<Node>();
-		List<OperationsGroup> allOperations = new ArrayList<OperationsGroup>();
+		List<Node> operands = new ArrayList<>();
+		List<OperationsGroup> allOperations = new ArrayList<>();
 
 		Token token = tokenizer.currentToken();
 		int codeLine = token != null ? token.getLine() : -1;
@@ -61,7 +63,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			visitIncrement(tokenizer, operations, false);
 
 			tokenizer.start();
-			operation = visitOperation(tokenizer);
+			operation = visitOperation(tokenizer, operands);
 			if (operation != -1) {
 				if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
@@ -99,7 +101,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				if (falseValueNode == null) {
 					throw new ParseException("expression expected", tokenizer.currentToken());
 				}
-
 				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
 			}
 			return expressionNode;
@@ -113,20 +114,38 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 	public boolean visitPrefixes(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands) throws TokenizerException, ParseException {
 		boolean found = false;
+		boolean isBoolean = false;
+		boolean isNumber = false;
+		tokenizer.start();
 		while (true) {
 			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
 			if (operation != -1) {
 				switch (operation) {
 					case Symbols.PLUS:
+						if (isBoolean) {
+							tokenizer.rollback();
+							return false;
+						}
 						operation = OperationsIF.PREFIX_PLUS;
+						isNumber = true;
 						break;
 
 					case Symbols.MINUS:
+						if (isBoolean) {
+							tokenizer.rollback();
+							return false;
+						}
 						operation = OperationsIF.PREFIX_MINUS;
+						isNumber = true;
 						break;
 
 					case Symbols.EXCLAMATION:
+						if (isNumber) {
+							tokenizer.rollback();
+							return false;
+						}
 						operation = OperationsIF.PREFIX_EXCLAMATION;
+						isBoolean = true;
 						break;
 				}
 
@@ -141,10 +160,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			}
 			break;
 		}
+		tokenizer.commit();
 		return found;
 	}
 
-	public boolean visitIncrement(Tokenizer tokenizer, OperationsGroup operations, boolean prefix) throws TokenizerException, ParseException {
+	public boolean visitIncrement(Tokenizer tokenizer, OperationsGroup operations, boolean prefix) throws TokenizerException {
 		int operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 		if (operation != -1) {
 			if (operation == Symbols.PLUS_PLUS) {
@@ -246,9 +266,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<Node> operands, CompileContext properties) throws TokenizerException, ParseException {
 		// visit number
-		Node node;
-		if ((node = visitNumber(tokenizer)) != null) {
-			operands.add(node);
+		NodeNumber numberNode = visitNumber(tokenizer);
+		if (numberNode != null) {
+			operands.add(numberNode);
 			return true;
 		}
 
@@ -278,6 +298,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit character
+		Node node;
 		if ((node = visitCharacter(tokenizer)) != null) {
 			operands.add(node);
 			return true;
@@ -333,7 +354,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	private int visitOperation(Tokenizer tokenizer) throws TokenizerException {
+	private int visitOperation(Tokenizer tokenizer, List<Node> operands) throws TokenizerException {
 		skipComments(tokenizer);
 
 		Token currentToken = tokenizer.currentToken();
@@ -349,6 +370,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				tokenizer.nextToken();
 				return OperationsIF.INSTANCE_OF;
 			}
+		} else if (currentToken instanceof NumberToken && operands.size() > 0 && ((NumberToken) currentToken).hasSign()) {
+			return OperationsIF.PLUS;
 		}
 		return -1;
 	}

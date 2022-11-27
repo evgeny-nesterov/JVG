@@ -47,13 +47,13 @@ public class TOIPane extends JPanel {
 
 	public static Stroke selectedStroke2 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f, new float[] { 3f, 3f }, 0f);
 
-	private List<TOIObject> objects = new ArrayList<TOIObject>();
+	private List<TOIObject> objects = new ArrayList<>();
 
 	private boolean editable = false;
 
 	private TOIObject focusedObject;
 
-	private Set<TOIObject> selectedObjects = new HashSet<TOIObject>();
+	private Set<TOIObject> selectedObjects = new HashSet<>();
 
 	private TOIController controller;
 
@@ -108,7 +108,7 @@ public class TOIPane extends JPanel {
 
 	public List<TOIObject> getObjects() {
 		synchronized (objects) {
-			return new ArrayList<TOIObject>(objects);
+			return new ArrayList<>(objects);
 		}
 	}
 
@@ -457,7 +457,7 @@ public class TOIPane extends JPanel {
 	}
 
 	public List<TOIObject> getSelectedObjects() {
-		return new ArrayList<TOIObject>(selectedObjects);
+		return new ArrayList<>(selectedObjects);
 	}
 
 	public int getSelectionSize() {

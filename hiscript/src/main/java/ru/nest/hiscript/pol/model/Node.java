@@ -37,7 +37,7 @@ public abstract class Node {
 		}
 
 		if (variables == null) {
-			variables = new HashMap<String, Variable>();
+			variables = new HashMap<>();
 		}
 
 		variables.put(var.getFullname(), var);
@@ -47,7 +47,7 @@ public abstract class Node {
 	public void addVariables(Map<String, Variable> variables) throws ExecuteException {
 		if (variables != null) {
 			if (this.variables == null) {
-				this.variables = new HashMap<String, Variable>();
+				this.variables = new HashMap<>();
 			}
 			this.variables.putAll(variables);
 		}
@@ -62,7 +62,7 @@ public abstract class Node {
 	}
 
 	public Map<String, Variable> getAllVariables() {
-		Map<String, Variable> variables = new HashMap<String, Variable>();
+		Map<String, Variable> variables = new HashMap<>();
 		getAllVariables(variables);
 		return variables;
 	}
@@ -134,7 +134,7 @@ public abstract class Node {
 		}
 
 		if (classes == null) {
-			classes = new HashMap<String, Class<?>>();
+			classes = new HashMap<>();
 		}
 
 		classes.put(clazz.getName(), clazz);

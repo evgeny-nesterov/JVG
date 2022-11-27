@@ -8,7 +8,7 @@ import java.util.Map;
 import ru.nest.toi.TOIEditor;
 
 public class Fonts {
-	private static Map<String, Font> fonts = new HashMap<String, Font>();
+	private static Map<String, Font> fonts = new HashMap<>();
 
 	static {
 		try {

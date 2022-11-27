@@ -33,7 +33,7 @@ public class OutlineWidthChooser extends WComboBox {
 
 	private Action[] actions;
 
-	private Map<Float, Stroke> strokes = new HashMap<Float, Stroke>();
+	private Map<Float, Stroke> strokes = new HashMap<>();
 
 	private float currentWidth = 1f;
 

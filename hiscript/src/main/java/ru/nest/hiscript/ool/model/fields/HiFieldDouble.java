@@ -12,10 +12,11 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
-		if (valueType != DOUBLE) {
-			// error
+		if (valueType == DOUBLE) {
+			value.doubleNumber = this.value;
+		} else {
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 		}
-		value.doubleNumber = this.value;
 	}
 
 	@Override

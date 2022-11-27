@@ -72,7 +72,7 @@ public class StrokePathAction extends JVGAction {
 				edit.add(new ShapeChangedUndoRedo(getName(), pane, path, oldShape, newShape));
 
 				if (outliner != null) {
-					BasicStrokeAction.setStroke(pane, outliner, new StrokeResource<BasicStroke>(DEFAULT_STROKE), getName(), edit, BasicStrokeAction.TYPE_STROKE);
+					BasicStrokeAction.setStroke(pane, outliner, new StrokeResource<>(DEFAULT_STROKE), getName(), edit, BasicStrokeAction.TYPE_STROKE);
 				}
 			}
 

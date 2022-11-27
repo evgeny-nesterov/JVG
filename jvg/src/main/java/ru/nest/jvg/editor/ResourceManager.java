@@ -147,7 +147,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<ColorResource> createColorResourcesPanel() {
-		ResourcePanel<ColorResource> pnl = new ResourcePanel<ColorResource>(ColorResource.class, new ResourceProxy<ColorResource>() {
+		ResourcePanel<ColorResource> pnl = new ResourcePanel<>(ColorResource.class, new ResourceProxy<ColorResource>() {
 			@Override
 			public ColorResource show(ColorResource resource) {
 				Color color = resource != null ? resource.getResource() : Color.white;
@@ -187,7 +187,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<FontResource> createFontResourcesPanel() {
-		ResourcePanel<FontResource> pnl = new ResourcePanel<FontResource>(FontResource.class, new ResourceProxy<FontResource>() {
+		ResourcePanel<FontResource> pnl = new ResourcePanel<>(FontResource.class, new ResourceProxy<FontResource>() {
 			@Override
 			public FontResource show(FontResource resource) {
 				FontChooser chooser = new FontChooser(resources, resource);
@@ -213,7 +213,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<TransformResource> createTransformResourcesPanel() {
-		ResourcePanel<TransformResource> pnl = new ResourcePanel<TransformResource>(TransformResource.class, new ResourceProxy<TransformResource>() {
+		ResourcePanel<TransformResource> pnl = new ResourcePanel<>(TransformResource.class, new ResourceProxy<TransformResource>() {
 			@Override
 			public TransformResource show(TransformResource resource) {
 				TransformChooser chooser = new TransformChooser(resources, resource);
@@ -239,7 +239,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<ScriptResource> createScriptResourcesPanel() {
-		ResourcePanel<ScriptResource> pnl = new ResourcePanel<ScriptResource>(ScriptResource.class, new ResourceProxy<ScriptResource>() {
+		ResourcePanel<ScriptResource> pnl = new ResourcePanel<>(ScriptResource.class, new ResourceProxy<ScriptResource>() {
 			@Override
 			public ScriptResource show(ScriptResource resource) {
 				Script script = ScriptAction.chooseScript(null, resource);
@@ -274,7 +274,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<LinearGradientResource> createLinearGradientResourcesPanel() {
-		ResourcePanel<LinearGradientResource> pnl = new ResourcePanel<LinearGradientResource>(LinearGradientResource.class, new ResourceProxy<LinearGradientResource>() {
+		ResourcePanel<LinearGradientResource> pnl = new ResourcePanel<>(LinearGradientResource.class, new ResourceProxy<LinearGradientResource>() {
 			@Override
 			public LinearGradientResource show(LinearGradientResource resource) {
 				LinearGradientChooser chooser = new LinearGradientChooser(resources, resource);
@@ -309,7 +309,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<RadialGradientResource> createRadialGradientResourcesPanel() {
-		ResourcePanel<RadialGradientResource> pnl = new ResourcePanel<RadialGradientResource>(RadialGradientResource.class, new ResourceProxy<RadialGradientResource>() {
+		ResourcePanel<RadialGradientResource> pnl = new ResourcePanel<>(RadialGradientResource.class, new ResourceProxy<RadialGradientResource>() {
 			@Override
 			public RadialGradientResource show(RadialGradientResource resource) {
 				RadialGradientChooser chooser = new RadialGradientChooser(resources, resource);
@@ -342,7 +342,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<ImageResource> createImageResourcesPanel() {
-		ResourcePanel<ImageResource> pnl = new ResourcePanel<ImageResource>(ImageResource.class, new ResourceProxy<ImageResource>() {
+		ResourcePanel<ImageResource> pnl = new ResourcePanel<>(ImageResource.class, new ResourceProxy<ImageResource>() {
 			@Override
 			public ImageResource show(ImageResource resource) {
 				ImageChooser chooser = new ImageChooser(resources, resource);
@@ -374,7 +374,7 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 	}
 
 	private ResourcePanel<?> createStrokeResourcesPanel() {
-		ResourcePanel<?> pnl = new ResourcePanel<StrokeResource>(StrokeResource.class, new ResourceProxy<StrokeResource>() {
+		ResourcePanel<?> pnl = new ResourcePanel<>(StrokeResource.class, new ResourceProxy<StrokeResource>() {
 			@Override
 			public StrokeResource show(StrokeResource resource) {
 				StrokeChooser chooser = new StrokeChooser(resources, resource);
@@ -482,9 +482,9 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 		return index >= 0 ? panels.get(index) : null;
 	}
 
-	private ArrayList<ResourcePanel<?>> panels = new ArrayList<ResourcePanel<?>>();
+	private ArrayList<ResourcePanel<?>> panels = new ArrayList<>();
 
-	private HashMap<Class<?>, ResourcePanel<?>> panels_hash = new HashMap<Class<?>, ResourcePanel<?>>();
+	private HashMap<Class<?>, ResourcePanel<?>> panels_hash = new HashMap<>();
 
 	class ResourcePanel<V extends Resource> extends JList {
 		private Class<V> clazz;

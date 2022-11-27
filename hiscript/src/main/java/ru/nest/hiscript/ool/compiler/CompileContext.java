@@ -50,7 +50,7 @@ public class CompileContext {
 
 	public void addMethod(HiMethod method) throws ParseException {
 		if (methods == null) {
-			methods = new ArrayList<HiMethod>(1);
+			methods = new ArrayList<>(1);
 		}
 		methods.add(method);
 	}
@@ -67,7 +67,7 @@ public class CompileContext {
 
 	public void addConstructor(HiConstructor constructor) throws ParseException {
 		if (constructors == null) {
-			constructors = new ArrayList<HiConstructor>(1);
+			constructors = new ArrayList<>(1);
 		}
 		constructors.add(constructor);
 	}
@@ -84,12 +84,12 @@ public class CompileContext {
 
 	public void addField(HiField<?> field) throws ParseException {
 		if (fields == null) {
-			fields = new ArrayList<HiField<?>>(1);
-			fieldsMap = new HashMap<String, HiField<?>>(1);
+			fields = new ArrayList<>(1);
+			fieldsMap = new HashMap<>(1);
 		}
 
 		if (initializers == null) {
-			initializers = new ArrayList<NodeInitializer>(1);
+			initializers = new ArrayList<>(1);
 		}
 
 		if (fieldsMap.containsKey(field.name)) {
@@ -113,8 +113,8 @@ public class CompileContext {
 
 	public void addClass(HiClass clazz) throws ParseException {
 		if (classes == null) {
-			classes = new ArrayList<HiClass>(1);
-			classesMap = new HashMap<String, HiClass>(1);
+			classes = new ArrayList<>(1);
+			classesMap = new HashMap<>(1);
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
@@ -137,7 +137,7 @@ public class CompileContext {
 
 	public void addBlockInitializer(NodeInitializer block) {
 		if (initializers == null) {
-			initializers = new ArrayList<NodeInitializer>(1);
+			initializers = new ArrayList<>(1);
 		}
 		initializers.add(block);
 	}
@@ -233,7 +233,7 @@ public class CompileContext {
 
 		public void addClass(HiClass clazz) {
 			if (classes == null) {
-				classes = new HashMap<String, HiClass>(1);
+				classes = new HashMap<>(1);
 			}
 			classes.put(clazz.name, clazz);
 		}
@@ -244,7 +244,7 @@ public class CompileContext {
 
 		public void addField(NodeVariable localVariable) {
 			if (localVariables == null) {
-				localVariables = new HashMap<String, NodeVariable>(1);
+				localVariables = new HashMap<>(1);
 			}
 			localVariables.put(localVariable.getVariableName(), localVariable);
 		}

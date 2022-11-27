@@ -65,7 +65,7 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return null;
@@ -105,7 +105,7 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return -1;
@@ -139,7 +139,7 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return -1;
@@ -188,7 +188,7 @@ public abstract class ParseRule<N extends Node> {
 				return true;
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return false;
@@ -217,7 +217,7 @@ public abstract class ParseRule<N extends Node> {
 				return true;
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return false;
@@ -246,7 +246,7 @@ public abstract class ParseRule<N extends Node> {
 				return true;
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return false;
@@ -284,7 +284,7 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return -1;
@@ -309,11 +309,11 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		if (lastToken != null) {
-			handler.errorOccured(tokenizer.getLine(), offset, 1, "'" + SymbolToken.getSymbol(type) + "' is expected");
+			handler.errorOccurred(tokenizer.getLine(), offset, 1, "'" + SymbolToken.getSymbol(type) + "' is expected");
 			// lastToken.getOffset() + lastToken.getLength() - offset
 		}
 	}
@@ -346,7 +346,7 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 
 		return -1;
@@ -367,12 +367,12 @@ public abstract class ParseRule<N extends Node> {
 				dimension++;
 			}
 		} catch (TokenizerException exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 		return dimension;
 	}
 
-	protected VariableNode visitVariable(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	protected VariableNode visitVariable(Tokenizer tokenizer) throws TokenizerException {
 		String namespace = null;
 		String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
@@ -399,18 +399,18 @@ public abstract class ParseRule<N extends Node> {
 				return new VariableNode(namespace, variableName);
 			}
 		} catch (Exception exc) {
-			errorOccured(tokenizer, handler, exc.getMessage());
+			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
 		return null;
 	}
 
-	public void errorOccured(Tokenizer tokenizer, CompileHandler handler, String message) {
-		errorOccured(handler, message, tokenizer.currentToken());
+	public void errorOccurred(Tokenizer tokenizer, CompileHandler handler, String message) {
+		errorOccurred(handler, message, tokenizer.currentToken());
 	}
 
-	public void errorOccured(CompileHandler handler, String message, Token token) {
+	public void errorOccurred(CompileHandler handler, String message, Token token) {
 		if (token != null) {
-			handler.errorOccured(token.getLine(), token.getOffset(), token.getLength(), message);
+			handler.errorOccurred(token.getLine(), token.getOffset(), token.getLength(), message);
 		}
 	}
 

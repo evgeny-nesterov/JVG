@@ -70,7 +70,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "statement is expected");
+				errorOccurred(tokenizer, handler, "statement is expected");
 			}
 
 			return true;

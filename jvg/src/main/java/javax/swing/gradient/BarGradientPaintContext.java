@@ -97,7 +97,7 @@ class BarGradientPaintContext implements PaintContext {
 			}
 		}
 		cachedModel = cm;
-		cached = new WeakReference<Raster>(ras);
+		cached = new WeakReference<>(ras);
 	}
 
 	private int interp[];

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Fonts {
-	private static Map<String, Font> fonts = new HashMap<String, Font>();
+	private static Map<String, Font> fonts = new HashMap<>();
 
 	private static Font[] fontsArray;
 

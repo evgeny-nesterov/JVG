@@ -29,7 +29,7 @@ public class IfNode extends Node {
 		return body;
 	}
 
-	private ArrayList<IfNode> elseIf = new ArrayList<IfNode>();
+	private ArrayList<IfNode> elseIf = new ArrayList<>();
 
 	public void addElseIf(IfNode node) {
 		elseIf.add(node);

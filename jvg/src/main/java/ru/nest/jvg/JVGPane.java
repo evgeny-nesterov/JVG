@@ -638,7 +638,7 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 	public void addJVGListener(JVGListener listener) {
 		if (listener != null) {
 			if (listeners == null) {
-				listeners = new ArrayList<JVGListener>();
+				listeners = new ArrayList<>();
 			}
 			listeners.add(listener);
 		}
@@ -653,7 +653,7 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 	public void processJVGEvent(JVGEvent e) {
 		if (listeners != null) {
 			for (JVGListener listener : listeners) {
-				listener.eventOccured(e);
+				listener.eventOccurred(e);
 			}
 		}
 
@@ -1265,7 +1265,7 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 
 	private ImageCapabilities capabilities = new ImageCapabilities(true);
 
-	private Map<Integer, VolatileImage> drawBuffers = new HashMap<Integer, VolatileImage>();
+	private Map<Integer, VolatileImage> drawBuffers = new HashMap<>();
 
 	// not thread safe
 	protected VolatileImage createDrawBuffer(int level) throws Exception {

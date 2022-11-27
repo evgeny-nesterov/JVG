@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
@@ -13,6 +10,9 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 public class HiClassArray extends HiClass {
 	public HiClass cellClass;
@@ -60,7 +60,11 @@ public class HiClassArray extends HiClass {
 		return cellClass;
 	}
 
-	private static HashMap<HiClass, HiClassArray> arrayClasses = new HashMap<HiClass, HiClassArray>();
+	private static HashMap<HiClass, HiClassArray> arrayClasses = new HashMap<>();
+
+	public static void clear() {
+		arrayClasses.clear();
+	}
 
 	public static HiClassArray getArrayClass(HiClass cellClass) {
 		HiClassArray c = arrayClasses.get(cellClass);

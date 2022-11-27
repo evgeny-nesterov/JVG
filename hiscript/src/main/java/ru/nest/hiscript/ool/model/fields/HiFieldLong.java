@@ -26,7 +26,8 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				break;
 
 			default:
-				// error
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				break;
 		}
 	}
 
@@ -53,9 +54,8 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				this.value = value.longNumber;
 				break;
 
-			case FLOAT:
-			case DOUBLE:
-				// error
+			default:
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 				break;
 		}
 	}

@@ -35,7 +35,7 @@ public class ElseParseRule extends ParseRule<IfNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.ELSE, tokenizer, handler) != null) {
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccured(tokenizer, handler, "Statement is expected");
+				errorOccurred(tokenizer, handler, "Statement is expected");
 			}
 
 			return true;
