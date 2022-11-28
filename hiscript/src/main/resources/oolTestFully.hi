@@ -13,11 +13,11 @@
 {
 	{
 		class A{}
-		System.println("A ¹1: " + new A().getClass().getFullName());
+		System.println("A ï¿½1: " + new A().getClass().getFullName());
 	}
 	{
 		class A{}
-		System.println("A ¹2: " + new A().getClass().getFullName());
+		System.println("A ï¿½2: " + new A().getClass().getFullName());
 	}
 }
 
@@ -521,16 +521,16 @@ Util.header("EXPRESSION SWITCH");
 	int a = 1;
 	int b = 2;
 	int c = 1 + 2 * switch(1 + 2 * a) {
-	    case 1:         b
-	    case 2, 3:      b + 1
-	    case 3, c + 2:  b + 2
+	    case 1 ->           b;
+	    case 2, 3 ->        b + 1;
+	    case 3, c + 2 ->    b + 2;
 	};
 	System.println("\tc=" + c + " (7)");
 	assert c == 7;
 
-	assert switch(1) {case 1:  1 default: 2} == 1;
-	assert switch(2) {case 1:  1 default: 2} == 2;
-	assert switch(3) {case 1, 2, 3, 4:  1 case 1, 2, 3, 4: 2} == 1;
+	assert switch(1) {case 1->  1; default-> 2;} == 1;
+	assert switch(2) {case 1->  1; default-> 2;} == 2;
+	assert switch(3) {case 1, 2, 3, 4->  1; case 1, 2, 3, 4-> 2;} == 1;
 }
 
 ///////////

@@ -29,6 +29,7 @@ public class WordToken extends Token implements Words {
 		service_words.put("float", FLOAT);
 		service_words.put("long", LONG);
 		service_words.put("double", DOUBLE);
+		service_words.put("var", VAR);
 		service_words.put("void", VOID);
 		service_words.put("try", TRY);
 		service_words.put("catch", CATCH);
@@ -38,7 +39,12 @@ public class WordToken extends Token implements Words {
 		service_words.put("assert", ASSERT);
 
 		service_words.put("class", CLASS);
+		service_words.put("enum", ENUM);
+		service_words.put("record", RECORD);
 		service_words.put("new", NEW);
+
+		service_words.put("package", PACKAGE);
+		service_words.put("import", IMPORT);
 
 		service_words.put("public", PUBLIC);
 		service_words.put("protected", PROTECTED);
@@ -52,8 +58,8 @@ public class WordToken extends Token implements Words {
 		service_words.put("throws", THROWS);
 
 		service_words.put("interface", INTERFACE);
-		service_words.put("instanceof", INSTANCEOF);
-		service_words.put("implements", IMPLEMENS);
+		service_words.put("instanceof", INSTANCE_OF);
+		service_words.put("implements", IMPLEMENTS);
 		service_words.put("extends", EXTENDS);
 
 		service_words.put("super", SUPER);

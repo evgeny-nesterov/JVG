@@ -154,8 +154,10 @@ public class SymbolToken extends Token implements Symbols {
 
 			case MASSIVE:
 				return "[]";
-		}
 
+			case REFERENCE:
+				return "->";
+		}
 		return "";
 	}
 

@@ -100,4 +100,6 @@ public interface Symbols {
 	public final static int MASSIVE = 49;
 
 	public final static int TRIPLE_POINTS = 50;
+
+	public final static int REFERENCE = 51;
 }

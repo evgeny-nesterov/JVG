@@ -144,6 +144,10 @@ public class SymbolTokenVisitor implements TokenVisitor {
 					tokenizer.next();
 					type = Symbols.EQUATE_MINUS;
 					length = 2;
+				} else if (tokenizer.look_forward() == '>') {
+					tokenizer.next();
+					type = Symbols.REFERENCE;
+					length = 2;
 				} else {
 					type = Symbols.MINUS;
 				}

@@ -1,10 +1,9 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
-import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -31,21 +30,22 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
 					Node[] caseValue = visitArgumentsValues(tokenizer, properties);
-					expectSymbol(tokenizer, Symbols.COLON);
+					expectSymbol(tokenizer, Symbols.REFERENCE);
 					NodeExpression caseBody = expectExpression(tokenizer, properties);
+					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					node.add(caseValue, caseBody);
 					continue;
 				}
 
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
-					expectSymbol(tokenizer, Symbols.COLON);
+					expectSymbol(tokenizer, Symbols.REFERENCE);
 					NodeExpression caseBody = expectExpression(tokenizer, properties);
+					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					node.add(null, caseBody);
 					continue;
 				}
-
 				break;
 			}
 

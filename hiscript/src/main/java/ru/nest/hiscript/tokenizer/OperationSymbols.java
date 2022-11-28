@@ -38,7 +38,6 @@ public class OperationSymbols implements Symbols {
 			case POINT:
 				return true;
 		}
-
 		return false;
 	}
 
@@ -51,7 +50,6 @@ public class OperationSymbols implements Symbols {
 			case EXCLAMATION:
 				return true;
 		}
-
 		return false;
 	}
 
@@ -98,7 +96,6 @@ public class OperationSymbols implements Symbols {
 			case LOGICAL_OR:
 				return 0;
 		}
-
 		return 0;
 	}
 
@@ -117,7 +114,6 @@ public class OperationSymbols implements Symbols {
 			case EQUATE_PLUS:
 				return true;
 		}
-
 		return false;
 	}
 }

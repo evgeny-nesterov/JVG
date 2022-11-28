@@ -366,7 +366,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			}
 		} else if (currentToken instanceof WordToken) {
 			WordToken word = (WordToken) currentToken;
-			if (word.getType() == INSTANCEOF) {
+			if (word.getType() == INSTANCE_OF) {
 				tokenizer.nextToken();
 				return OperationsIF.INSTANCE_OF;
 			}

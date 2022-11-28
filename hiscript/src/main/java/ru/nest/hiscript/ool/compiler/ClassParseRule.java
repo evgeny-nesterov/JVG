@@ -60,7 +60,7 @@ public class ClassParseRule extends ParserUtil {
 
 			// parse 'implements'
 			List<Type> interfacesList = null;
-			if (visitWord(Words.IMPLEMENS, tokenizer) != null) {
+			if (visitWord(Words.IMPLEMENTS, tokenizer) != null) {
 				Type interfaceType = visitType(tokenizer, false);
 				if (interfaceType == null) {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());

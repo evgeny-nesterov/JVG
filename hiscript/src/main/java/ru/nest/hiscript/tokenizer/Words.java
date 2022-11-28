@@ -77,9 +77,9 @@ public interface Words {
 
 	public final static int INTERFACE = 37;
 
-	public final static int INSTANCEOF = 38;
+	public final static int INSTANCE_OF = 38;
 
-	public final static int IMPLEMENS = 39;
+	public final static int IMPLEMENTS = 39;
 
 	public final static int EXTENDS = 40;
 
@@ -94,4 +94,14 @@ public interface Words {
 	public final static int THIS = 45;
 
 	public final static int ASSERT = 46;
+
+	public final static int ENUM = 47;
+
+	public final static int VAR = 48;
+
+	public final static int RECORD = 49;
+
+	public final static int IMPORT = 50;
+
+	public final static int PACKAGE = 51;
 }
