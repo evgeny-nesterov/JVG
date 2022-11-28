@@ -361,12 +361,12 @@ public class Util {
 			enc.encode(image);
 		} else if (ext.equals("jpg") || ext.equals("jpeg")) {
 			JComboBox boxQuality = new JComboBox();
-			boxQuality.addItem("Высокое");
-			boxQuality.addItem("Среднее");
-			boxQuality.addItem("Низкое");
+			boxQuality.addItem("Р’С‹СЃРѕРєРѕРµ");
+			boxQuality.addItem("РЎСЂРµРґРЅРµРµ");
+			boxQuality.addItem("РќРёР·РєРѕРµ");
 			boxQuality.setSelectedIndex(1);
 
-			if (JOptionPane.showConfirmDialog(null, boxQuality, "Выберите качество", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+			if (JOptionPane.showConfirmDialog(null, boxQuality, "Р’С‹Р±РµСЂРёС‚Рµ РєР°С‡РµСЃС‚РІРѕ", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 				double quality = 1.0;
 				if (boxQuality.getSelectedIndex() == 1) {
 					quality = 0.7;

@@ -282,7 +282,7 @@ public class TOIMultiArrowPath extends TOIPath implements Arrow {
 	public static void main(String[] args) {
 		try {
 			Set<Character> set = new TreeSet<>();
-			for (File f : new File("C:/Users/john/Dropbox/Satis Soft/Рабочие материалы/Common/ЦОДД/Контроллеры/Пофазки_общ/contoller-log").listFiles()) {
+			for (File f : new File("C:/Users/john/Dropbox/Satis Soft/Р Р°Р±РѕС‡РёРµ РјР°С‚РµСЂРёР°Р»С‹/Common/Р¦РћР”Р”/РљРѕРЅС‚СЂРѕР»Р»РµСЂС‹/РџРѕС„Р°Р·РєРё_РѕР±С‰/contoller-log").listFiles()) {
 				BufferedReader r = new BufferedReader(new FileReader(f));
 				String line;
 				while ((line = r.readLine()) != null) {

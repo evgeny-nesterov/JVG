@@ -77,7 +77,7 @@ public class ImageViewPanel extends JPanel implements ActionListener {
 
 	public static void main(String[] args) {
 		ImageViewPanel pnl = new ImageViewPanel();
-		pnl.getImagePanel().setImage(new ImageIcon("C:/Users/john/Desktop/Zuratkul big/Аттестация 002.jpg"));
+		pnl.getImagePanel().setImage(new ImageIcon("C:/Users/john/Desktop/Zuratkul big/РђС‚С‚РµСЃС‚Р°С†РёСЏ 002.jpg"));
 
 		JFrame f = new JFrame();
 		f.setContentPane(pnl);

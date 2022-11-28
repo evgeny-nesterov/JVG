@@ -337,12 +337,12 @@ public class RuntimeContext {
 			level = level.parent;
 		}
 
-		// поиск в классе текущего объекта
+		// РїРѕРёСЃРє РІ РєР»Р°СЃСЃРµ С‚РµРєСѓС‰РµРіРѕ РѕР±СЉРµРєС‚Р°
 		if (clazz == null && levelObject != null) {
 			clazz = levelObject.clazz.getClass(this, name);
 		}
 
-		// поиск в текущем классе (например, в случае статического доступа)
+		// РїРѕРёСЃРє РІ С‚РµРєСѓС‰РµРј РєР»Р°СЃСЃРµ (РЅР°РїСЂРёРјРµСЂ, РІ СЃР»СѓС‡Р°Рµ СЃС‚Р°С‚РёС‡РµСЃРєРѕРіРѕ РґРѕСЃС‚СѓРїР°)
 		if (clazz == null && levelClass != null) {
 			clazz = levelClass.getClass(this, name);
 		}
@@ -537,12 +537,12 @@ public class RuntimeContext {
 
 		/**
 		 * @param name
-		 *            имя или полное имя класса
-		 * @return найденный класс
+		 *            РёРјСЏ РёР»Рё РїРѕР»РЅРѕРµ РёРјСЏ РєР»Р°СЃСЃР°
+		 * @return РЅР°Р№РґРµРЅРЅС‹Р№ РєР»Р°СЃСЃ
 		 */
 		public HiClass getClass(String name) {
 			if (classes != null) {
-				// поиск в контексте по имени
+				// РїРѕРёСЃРє РІ РєРѕРЅС‚РµРєСЃС‚Рµ РїРѕ РёРјРµРЅРё
 				HiClass clazz = classes.get(name);
 				if (clazz != null) {
 					return clazz;

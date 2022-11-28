@@ -239,8 +239,8 @@ public abstract class JVGShape extends JVGContainer {
 
 	public boolean containsShape(double x, double y) {
 		/**
-		 * ERROR: Если bounds меньше чем shape, то при клике на часть фигуры, которая находится вне bounds, объект не выделяется. 
-		 * Данную оптимизацию необходимо применять выборочно.
+		 * ERROR: Р•СЃР»Рё bounds РјРµРЅСЊС€Рµ С‡РµРј shape, С‚Рѕ РїСЂРё РєР»РёРєРµ РЅР° С‡Р°СЃС‚СЊ С„РёРіСѓСЂС‹, РєРѕС‚РѕСЂР°СЏ РЅР°С…РѕРґРёС‚СЃСЏ РІРЅРµ bounds, РѕР±СЉРµРєС‚ РЅРµ РІС‹РґРµР»СЏРµС‚СЃСЏ. 
+		 * Р”Р°РЅРЅСѓСЋ РѕРїС‚РёРјРёР·Р°С†РёСЋ РЅРµРѕР±С…РѕРґРёРјРѕ РїСЂРёРјРµРЅСЏС‚СЊ РІС‹Р±РѕСЂРѕС‡РЅРѕ.
 		 */
 		// optimization
 		// Rectangle2D shapeBounds = getRectangleBounds(); // is probably

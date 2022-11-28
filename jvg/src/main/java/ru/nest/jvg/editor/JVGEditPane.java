@@ -249,7 +249,7 @@ public class JVGEditPane extends JVGPane {
 
 		if (e.getID() == KeyEvent.KEY_PRESSED) {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				// инструмент "Рука" с нажатой клавишей "Пробел"
+				// РёРЅСЃС‚СЂСѓРјРµРЅС‚ "Р СѓРєР°" СЃ РЅР°Р¶Р°С‚РѕР№ РєР»Р°РІРёС€РµР№ "РџСЂРѕР±РµР»"
 				if (oldSelectionType == JVGRoot.SELECTION_NONE) {
 					oldSelectionType = getRoot().getSelectionType();
 					getRoot().setSelectionType(JVGRoot.SELECTION_NONE);
@@ -257,7 +257,7 @@ public class JVGEditPane extends JVGPane {
 			}
 		} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				// инструмент "Рука" с нажатой клавишей "Пробел"
+				// РёРЅСЃС‚СЂСѓРјРµРЅС‚ "Р СѓРєР°" СЃ РЅР°Р¶Р°С‚РѕР№ РєР»Р°РІРёС€РµР№ "РџСЂРѕР±РµР»"
 				if (oldSelectionType != JVGRoot.SELECTION_NONE) {
 					getRoot().setSelectionType(oldSelectionType);
 					oldSelectionType = JVGRoot.SELECTION_NONE;

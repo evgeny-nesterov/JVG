@@ -82,7 +82,7 @@ public class ArrowDirectionChooseButton extends JComboBox<Integer> {
 			}
 		});
 		setBorder(new LineBorder(Color.lightGray));
-		setToolTipText("Выбор направления стрелок");
+		setToolTipText("Р’С‹Р±РѕСЂ РЅР°РїСЂР°РІР»РµРЅРёСЏ СЃС‚СЂРµР»РѕРє");
 		setSelectedItem(TOIArrowPathElement.DIRECTION_DIRECT);
 	}
 

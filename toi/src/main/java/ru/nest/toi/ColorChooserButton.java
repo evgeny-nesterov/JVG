@@ -42,7 +42,7 @@ public class ColorChooserButton extends IconButton {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!ignoreShowDialog) {
-					Color color = JColorChooser.showDialog(null, "Выберите цвет", getColor());
+					Color color = JColorChooser.showDialog(null, "Р’С‹Р±РµСЂРёС‚Рµ С†РІРµС‚", getColor());
 					if (color != null) {
 						setColor(color);
 					}

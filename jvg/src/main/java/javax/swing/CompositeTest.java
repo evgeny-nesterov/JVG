@@ -34,7 +34,7 @@ public class CompositeTest {
 				g.fillRect(40, 40, 100, 100);
 
 				g.setColor(Color.black);
-				g.drawString("Однажды в студёную зимнюю пору я вышел был сильный мороз", 50, 50);
+				g.drawString("РћРґРЅР°Р¶РґС‹ РІ СЃС‚СѓРґС‘РЅСѓСЋ Р·РёРјРЅСЋСЋ РїРѕСЂСѓ СЏ РІС‹С€РµР» Р±С‹Р» СЃРёР»СЊРЅС‹Р№ РјРѕСЂРѕР·", 50, 50);
 
 				g2d.setComposite(new C());
 

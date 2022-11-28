@@ -1289,7 +1289,7 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 			p = new JVGPane();
 			p.setEditable(false);
 			JVGParser parser = new JVGParser(p.getEditorKit().getFactory());
-			JVGRoot root = parser.parse(new File("C:/Documents and Settings/john/Мои документы/test2.xml"));
+			JVGRoot root = parser.parse(new File("C:/Documents and Settings/john/РњРѕРё РґРѕРєСѓРјРµРЅС‚С‹/test2.xml"));
 			p.setRoot(root);
 
 			JFrame f = new JFrame();

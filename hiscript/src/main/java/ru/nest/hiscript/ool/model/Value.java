@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import java.lang.reflect.Array;
 
 /**
- * Буффер обмена данных. Содержит переменные всех типов данных.
+ * Р‘СѓС„РµСЂ РѕР±РјРµРЅР° РґР°РЅРЅС‹С…. РЎРѕРґРµСЂР¶РёС‚ РїРµСЂРµРјРµРЅРЅС‹Рµ РІСЃРµС… С‚РёРїРѕРІ РґР°РЅРЅС‹С….
  */
 public class Value implements PrimitiveTypes {
 	private final static char[] NULL = "null".toCharArray();
@@ -40,7 +40,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiClass type;
 
-	// Переменные со всеми возможными типами данных
+	// РџРµСЂРµРјРµРЅРЅС‹Рµ СЃРѕ РІСЃРµРјРё РІРѕР·РјРѕР¶РЅС‹РјРё С‚РёРїР°РјРё РґР°РЅРЅС‹С…
 	public byte byteNumber;
 
 	public short shortNumber;
@@ -90,7 +90,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	/**
-	 * Возвращает текущее значение в виде объекта в зависимости от типа.
+	 * Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РµРµ Р·РЅР°С‡РµРЅРёРµ РІ РІРёРґРµ РѕР±СЉРµРєС‚Р° РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР°.
 	 */
 	public Object get() {
 		// array

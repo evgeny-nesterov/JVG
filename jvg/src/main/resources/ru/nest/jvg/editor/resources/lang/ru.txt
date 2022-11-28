@@ -1,281 +1,281 @@
-title=Редактор Схем
+title=Р РµРґР°РєС‚РѕСЂ РЎС…РµРј
 
 #============= Menu Bar ======================
-menubar.file=Файл
-menubar.edit=Правка
-menubar.document=Документ
-menubar.view=Настройки
-menubar.insert=Вставка
-menubar.transforms=Трансформация
-menubar.help=Помощь
+menubar.file=Р¤Р°Р№Р»
+menubar.edit=РџСЂР°РІРєР°
+menubar.document=Р”РѕРєСѓРјРµРЅС‚
+menubar.view=РќР°СЃС‚СЂРѕР№РєРё
+menubar.insert=Р’СЃС‚Р°РІРєР°
+menubar.transforms=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ
+menubar.help=РџРѕРјРѕС‰СЊ
 
 #============= Toolbar =======================
-toolbar.editor=Редактор
-toolbar.insert=Вставка
-toolbar.outline=Контур
-toolbar.text=Текст
-toolbar.paragraph=Параграф
-toolbar.align=Выравнивание
-toolbar.same=Одинаковый размер
-toolbar.transform=Трансформация
-toolbar.path.operations=Операции с путями
-toolbar.id=Имя
-toolbar.display=Экран
-toolbar.action-area=Элементы воздействия
-toolbar.arrows=Стрелки
+toolbar.editor=Р РµРґР°РєС‚РѕСЂ
+toolbar.insert=Р’СЃС‚Р°РІРєР°
+toolbar.outline=РљРѕРЅС‚СѓСЂ
+toolbar.text=РўРµРєСЃС‚
+toolbar.paragraph=РџР°СЂР°РіСЂР°С„
+toolbar.align=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ
+toolbar.same=РћРґРёРЅР°РєРѕРІС‹Р№ СЂР°Р·РјРµСЂ
+toolbar.transform=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ
+toolbar.path.operations=РћРїРµСЂР°С†РёРё СЃ РїСѓС‚СЏРјРё
+toolbar.id=РРјСЏ
+toolbar.display=Р­РєСЂР°РЅ
+toolbar.action-area=Р­Р»РµРјРµРЅС‚С‹ РІРѕР·РґРµР№СЃС‚РІРёСЏ
+toolbar.arrows=РЎС‚СЂРµР»РєРё
 
-toolbar.id.name=Имя:
-toolbar.display.opacity=Прозрачность:
+toolbar.id.name=РРјСЏ:
+toolbar.display.opacity=РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ:
 
 #============= Buttons / Menus ===============
 ### File
-button.new=Новый документ
-button.save=Сохранить
-button.saveas=Сохранить как...
-button.save-selection=Сохранить выделенное
-button.saveall=Сохранить всё
-button.close=Закрыть документ
-button.open=Открыть
-button.exit=Выйти
-button.export=Экспорт...
-button.recent-files=Недавно открытые файлы
-button.save-editor-config=Сохранить настройки редактора
+button.new=РќРѕРІС‹Р№ РґРѕРєСѓРјРµРЅС‚
+button.save=РЎРѕС…СЂР°РЅРёС‚СЊ
+button.saveas=РЎРѕС…СЂР°РЅРёС‚СЊ РєР°Рє...
+button.save-selection=РЎРѕС…СЂР°РЅРёС‚СЊ РІС‹РґРµР»РµРЅРЅРѕРµ
+button.saveall=РЎРѕС…СЂР°РЅРёС‚СЊ РІСЃС‘
+button.close=Р—Р°РєСЂС‹С‚СЊ РґРѕРєСѓРјРµРЅС‚
+button.open=РћС‚РєСЂС‹С‚СЊ
+button.exit=Р’С‹Р№С‚Рё
+button.export=Р­РєСЃРїРѕСЂС‚...
+button.recent-files=РќРµРґР°РІРЅРѕ РѕС‚РєСЂС‹С‚С‹Рµ С„Р°Р№Р»С‹
+button.save-editor-config=РЎРѕС…СЂР°РЅРёС‚СЊ РЅР°СЃС‚СЂРѕР№РєРё СЂРµРґР°РєС‚РѕСЂР°
 
 ### Edit
-button.undo=Отменить действие
-button.redo=Повторить действие
-button.cut=Вырезать
-button.copy=Копировать
-button.paste=Вставить
-button.delete=Удалить
-button.selectall=Выделить всё
-button.bounds.initial=Выделять в исходной системе координат
+button.undo=РћС‚РјРµРЅРёС‚СЊ РґРµР№СЃС‚РІРёРµ
+button.redo=РџРѕРІС‚РѕСЂРёС‚СЊ РґРµР№СЃС‚РІРёРµ
+button.cut=Р’С‹СЂРµР·Р°С‚СЊ
+button.copy=РљРѕРїРёСЂРѕРІР°С‚СЊ
+button.paste=Р’СЃС‚Р°РІРёС‚СЊ
+button.delete=РЈРґР°Р»РёС‚СЊ
+button.selectall=Р’С‹РґРµР»РёС‚СЊ РІСЃС‘
+button.bounds.initial=Р’С‹РґРµР»СЏС‚СЊ РІ РёСЃС…РѕРґРЅРѕР№ СЃРёСЃС‚РµРјРµ РєРѕРѕСЂРґРёРЅР°С‚
 
-button.selectiontype=Тип выделения
-button.selectiontype.none=Нет
-button.selectiontype.area=Прямоугольник
-button.selectiontype.lasso=Произвольная область
+button.selectiontype=РўРёРї РІС‹РґРµР»РµРЅРёСЏ
+button.selectiontype.none=РќРµС‚
+button.selectiontype.area=РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
+button.selectiontype.lasso=РџСЂРѕРёР·РІРѕР»СЊРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ
 
 ### Action Area
-button.action.areas=Элементы воздействия
-button.action.area.scale=Масштабирование
-button.action.area.shear=Сдвиг
-button.action.area.vector=Вектор
-button.action.area.no=Нет
+button.action.areas=Р­Р»РµРјРµРЅС‚С‹ РІРѕР·РґРµР№СЃС‚РІРёСЏ
+button.action.area.scale=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+button.action.area.shear=РЎРґРІРёРі
+button.action.area.vector=Р’РµРєС‚РѕСЂ
+button.action.area.no=РќРµС‚
 
 # Path
-button.path=Путь
-button.path.operations=Операции над путем
-button.path.close=Закрыть путь
-button.path.topath=Преобразовать в путь
-button.path.smooth=Сгладить путь
-button.path.edit=Править путь
-button.path.union=Объединение
-button.path.intersection=Пересечение
-button.path.subtraction=Вычитание
-button.path.xor=Исключающее или
-button.path.eraser=Ластик
-button.path.stroke-path=Путь -> Внешний контур
-button.path.flat-path=Разбить путь на отрезки
-button.path.remove-transform=Удалить трансформацию
+button.path=РџСѓС‚СЊ
+button.path.operations=РћРїРµСЂР°С†РёРё РЅР°Рґ РїСѓС‚РµРј
+button.path.close=Р—Р°РєСЂС‹С‚СЊ РїСѓС‚СЊ
+button.path.topath=РџСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ РїСѓС‚СЊ
+button.path.smooth=РЎРіР»Р°РґРёС‚СЊ РїСѓС‚СЊ
+button.path.edit=РџСЂР°РІРёС‚СЊ РїСѓС‚СЊ
+button.path.union=РћР±СЉРµРґРёРЅРµРЅРёРµ
+button.path.intersection=РџРµСЂРµСЃРµС‡РµРЅРёРµ
+button.path.subtraction=Р’С‹С‡РёС‚Р°РЅРёРµ
+button.path.xor=РСЃРєР»СЋС‡Р°СЋС‰РµРµ РёР»Рё
+button.path.eraser=Р›Р°СЃС‚РёРє
+button.path.stroke-path=РџСѓС‚СЊ -> Р’РЅРµС€РЅРёР№ РєРѕРЅС‚СѓСЂ
+button.path.flat-path=Р Р°Р·Р±РёС‚СЊ РїСѓС‚СЊ РЅР° РѕС‚СЂРµР·РєРё
+button.path.remove-transform=РЈРґР°Р»РёС‚СЊ С‚СЂР°РЅСЃС„РѕСЂРјР°С†РёСЋ
 
-button.pencil=Карандаш
-button.pencil.adjusted=Выровненный по сетке карандаш
-button.marker=Маркер
+button.pencil=РљР°СЂР°РЅРґР°С€
+button.pencil.adjusted=Р’С‹СЂРѕРІРЅРµРЅРЅС‹Р№ РїРѕ СЃРµС‚РєРµ РєР°СЂР°РЅРґР°С€
+button.marker=РњР°СЂРєРµСЂ
 
-button.antialias=Сглаживание
+button.antialias=РЎРіР»Р°Р¶РёРІР°РЅРёРµ
 
 # Text Path
-button.text-path=Текстовый путь
+button.text-path=РўРµРєСЃС‚РѕРІС‹Р№ РїСѓС‚СЊ
 
 # Text
-button.text=Текст
-button.text.wrap=Перенос по словам
-button.text.bold=Жирный
-button.text.italic=Наклонный
-button.text.underline=Подчёркнутый
-button.text.strike=Зачёркнутый
-button.text.superscript=Верхний индекс
-button.text.subscript=Нижний индекс
-button.text.align.left=Налево
-button.text.align.center=Центрировать
-button.text.align.right=Направо
-button.text.line.spacing.increase=Увеличить расстояние между линиями
-button.text.line.spacing.decrease=Уменьшить расстояние между линиями
+button.text=РўРµРєСЃС‚
+button.text.wrap=РџРµСЂРµРЅРѕСЃ РїРѕ СЃР»РѕРІР°Рј
+button.text.bold=Р–РёСЂРЅС‹Р№
+button.text.italic=РќР°РєР»РѕРЅРЅС‹Р№
+button.text.underline=РџРѕРґС‡С‘СЂРєРЅСѓС‚С‹Р№
+button.text.strike=Р—Р°С‡С‘СЂРєРЅСѓС‚С‹Р№
+button.text.superscript=Р’РµСЂС…РЅРёР№ РёРЅРґРµРєСЃ
+button.text.subscript=РќРёР¶РЅРёР№ РёРЅРґРµРєСЃ
+button.text.align.left=РќР°Р»РµРІРѕ
+button.text.align.center=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ
+button.text.align.right=РќР°РїСЂР°РІРѕ
+button.text.line.spacing.increase=РЈРІРµР»РёС‡РёС‚СЊ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ Р»РёРЅРёСЏРјРё
+button.text.line.spacing.decrease=РЈРјРµРЅСЊС€РёС‚СЊ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ Р»РёРЅРёСЏРјРё
 button.text.bullets=Bullets
-button.text.paragraph.spacing.increase=Увеличить расстояние между параграфами
-button.text.paragraph.spacing.decrease=Уменьшить расстояние между параграфами
-button.text.paragraph.indent.left.increase=Увеличить левый отступ параграфа
-button.text.paragraph.indent.left.decrease=Уменьшить левый отступ параграфа
-button.text.bullets.numeric=Нумерованный список
-button.text.bullets.shift.left=Сдвиг налево
-button.text.bullets.shift.right=Сдвиг направо
+button.text.paragraph.spacing.increase=РЈРІРµР»РёС‡РёС‚СЊ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РїР°СЂР°РіСЂР°С„Р°РјРё
+button.text.paragraph.spacing.decrease=РЈРјРµРЅСЊС€РёС‚СЊ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РїР°СЂР°РіСЂР°С„Р°РјРё
+button.text.paragraph.indent.left.increase=РЈРІРµР»РёС‡РёС‚СЊ Р»РµРІС‹Р№ РѕС‚СЃС‚СѓРї РїР°СЂР°РіСЂР°С„Р°
+button.text.paragraph.indent.left.decrease=РЈРјРµРЅСЊС€РёС‚СЊ Р»РµРІС‹Р№ РѕС‚СЃС‚СѓРї РїР°СЂР°РіСЂР°С„Р°
+button.text.bullets.numeric=РќСѓРјРµСЂРѕРІР°РЅРЅС‹Р№ СЃРїРёСЃРѕРє
+button.text.bullets.shift.left=РЎРґРІРёРі РЅР°Р»РµРІРѕ
+button.text.bullets.shift.right=РЎРґРІРёРі РЅР°РїСЂР°РІРѕ
 
 # Shadow
-button.shadow.no=Нет тени
+button.shadow.no=РќРµС‚ С‚РµРЅРё
 
 # Scripts
-button.scripts=Скрипты
-button.scripts.mouse.pressed=Кнопка мыши нажата
-button.scripts.mouse.released=Кнопка мыши отжата
-button.scripts.mouse.entered=Курсор мыши вошёл
-button.scripts.mouse.exited=Курсор мыши вышёл
-button.scripts.mouse.moved=Мышь двигается
-button.scripts.mouse.dragged=Мышь перетаскивается
-button.scripts.key.pressed=Клавиша нажата
-button.scripts.key.released=Клавиша отжата
-button.scripts.start=Старт
-button.scripts.validation=Валидация
-button.add-custom-action-area=Добавить область управления
-button.scripts.mouse.clicked=Клик мышью
-button.scripts.mouse.wheel=Прокручивание колеса мыши
-button.scripts.key.typed=Клавиша введена
-button.scripts.component-shown=Компонент показан
-button.scripts.component-hidden=Компонент стал невидимым
-button.scripts.component-geometry-changed=Изменение геометрии
-button.scripts.component-transformed=Трансформация
-button.scripts.component-added=Компонент добавлен
-button.scripts.component-removed=Компонент удалён
-button.scripts.component-order-changed=Изменён порядок следования компонента
-button.scripts.component-connected-to-peer=Компонент добавлен на панель
-button.scripts.component-disconnected-from-peer=Компонент удален с панели
-button.scripts.focus-lost=Потеря фокуса
-button.scripts.focus-gained=Получение фокуса
-button.scripts.property-changed=Изменение свойства
-button.scripts.paint=Рисование
+button.scripts=РЎРєСЂРёРїС‚С‹
+button.scripts.mouse.pressed=РљРЅРѕРїРєР° РјС‹С€Рё РЅР°Р¶Р°С‚Р°
+button.scripts.mouse.released=РљРЅРѕРїРєР° РјС‹С€Рё РѕС‚Р¶Р°С‚Р°
+button.scripts.mouse.entered=РљСѓСЂСЃРѕСЂ РјС‹С€Рё РІРѕС€С‘Р»
+button.scripts.mouse.exited=РљСѓСЂСЃРѕСЂ РјС‹С€Рё РІС‹С€С‘Р»
+button.scripts.mouse.moved=РњС‹С€СЊ РґРІРёРіР°РµС‚СЃСЏ
+button.scripts.mouse.dragged=РњС‹С€СЊ РїРµСЂРµС‚Р°СЃРєРёРІР°РµС‚СЃСЏ
+button.scripts.key.pressed=РљР»Р°РІРёС€Р° РЅР°Р¶Р°С‚Р°
+button.scripts.key.released=РљР»Р°РІРёС€Р° РѕС‚Р¶Р°С‚Р°
+button.scripts.start=РЎС‚Р°СЂС‚
+button.scripts.validation=Р’Р°Р»РёРґР°С†РёСЏ
+button.add-custom-action-area=Р”РѕР±Р°РІРёС‚СЊ РѕР±Р»Р°СЃС‚СЊ СѓРїСЂР°РІР»РµРЅРёСЏ
+button.scripts.mouse.clicked=РљР»РёРє РјС‹С€СЊСЋ
+button.scripts.mouse.wheel=РџСЂРѕРєСЂСѓС‡РёРІР°РЅРёРµ РєРѕР»РµСЃР° РјС‹С€Рё
+button.scripts.key.typed=РљР»Р°РІРёС€Р° РІРІРµРґРµРЅР°
+button.scripts.component-shown=РљРѕРјРїРѕРЅРµРЅС‚ РїРѕРєР°Р·Р°РЅ
+button.scripts.component-hidden=РљРѕРјРїРѕРЅРµРЅС‚ СЃС‚Р°Р» РЅРµРІРёРґРёРјС‹Рј
+button.scripts.component-geometry-changed=РР·РјРµРЅРµРЅРёРµ РіРµРѕРјРµС‚СЂРёРё
+button.scripts.component-transformed=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ
+button.scripts.component-added=РљРѕРјРїРѕРЅРµРЅС‚ РґРѕР±Р°РІР»РµРЅ
+button.scripts.component-removed=РљРѕРјРїРѕРЅРµРЅС‚ СѓРґР°Р»С‘РЅ
+button.scripts.component-order-changed=РР·РјРµРЅС‘РЅ РїРѕСЂСЏРґРѕРє СЃР»РµРґРѕРІР°РЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚Р°
+button.scripts.component-connected-to-peer=РљРѕРјРїРѕРЅРµРЅС‚ РґРѕР±Р°РІР»РµРЅ РЅР° РїР°РЅРµР»СЊ
+button.scripts.component-disconnected-from-peer=РљРѕРјРїРѕРЅРµРЅС‚ СѓРґР°Р»РµРЅ СЃ РїР°РЅРµР»Рё
+button.scripts.focus-lost=РџРѕС‚РµСЂСЏ С„РѕРєСѓСЃР°
+button.scripts.focus-gained=РџРѕР»СѓС‡РµРЅРёРµ С„РѕРєСѓСЃР°
+button.scripts.property-changed=РР·РјРµРЅРµРЅРёРµ СЃРІРѕР№СЃС‚РІР°
+button.scripts.paint=Р РёСЃРѕРІР°РЅРёРµ
 
 ### Document
-button.resize-document=Изменить размер
-button.document-color=Цвет документа
-button.preview=Просмотр
-button.source=Источник
-button.dom=Дерево DOM
+button.resize-document=РР·РјРµРЅРёС‚СЊ СЂР°Р·РјРµСЂ
+button.document-color=Р¦РІРµС‚ РґРѕРєСѓРјРµРЅС‚Р°
+button.preview=РџСЂРѕСЃРјРѕС‚СЂ
+button.source=РСЃС‚РѕС‡РЅРёРє
+button.dom=Р”РµСЂРµРІРѕ DOM
 
 ### View
-button.toolbars=Панели инструментов
-button.show.toolbar.editor=Редактор
-button.show.toolbar.insert=Вставка
-button.show.toolbar.outline=Контур
-button.show.toolbar.text=Текст
-button.show.toolbar.paragraph=Параграф
-button.show.toolbar.align=Выравнивание
-button.show.toolbar.same=Одинаковый размер
-button.show.toolbar.transform=Трансформация
-button.show.toolbar.path.operations=Операции над путями
-button.show.toolbar.all.show=Показать всё
-button.show.toolbar.all.hide=Закрыть всё
-button.show.toolbar.action.areas=Элементы воздействия
-button.show.toolbar.arrows=Стрелки
+button.toolbars=РџР°РЅРµР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ
+button.show.toolbar.editor=Р РµРґР°РєС‚РѕСЂ
+button.show.toolbar.insert=Р’СЃС‚Р°РІРєР°
+button.show.toolbar.outline=РљРѕРЅС‚СѓСЂ
+button.show.toolbar.text=РўРµРєСЃС‚
+button.show.toolbar.paragraph=РџР°СЂР°РіСЂР°С„
+button.show.toolbar.align=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ
+button.show.toolbar.same=РћРґРёРЅР°РєРѕРІС‹Р№ СЂР°Р·РјРµСЂ
+button.show.toolbar.transform=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ
+button.show.toolbar.path.operations=РћРїРµСЂР°С†РёРё РЅР°Рґ РїСѓС‚СЏРјРё
+button.show.toolbar.all.show=РџРѕРєР°Р·Р°С‚СЊ РІСЃС‘
+button.show.toolbar.all.hide=Р—Р°РєСЂС‹С‚СЊ РІСЃС‘
+button.show.toolbar.action.areas=Р­Р»РµРјРµРЅС‚С‹ РІРѕР·РґРµР№СЃС‚РІРёСЏ
+button.show.toolbar.arrows=РЎС‚СЂРµР»РєРё
 
-button.show.panel.shapes=Панель фигур
-button.show.panel.switcher=Панель переключения окон
-button.show.rules=Координатные линейки
-button.show.grid=Решетка
-button.show.grid.align=Выравнивание по решетке
-button.show.grid.above=Решетка сверху
-button.show.connections.enable=Связи
-button.show.connections.define=Обновить связи
-button.show.panel.clipboard=Буффер
-button.show.panel.resources=Ресурсы
-button.show.panel.zoom-preview=Панель масштабирования
-button.show.full-screen=На весь экран
-button.show.toolbar.ID=Имя
-button.show.toolbar.display=Экран
+button.show.panel.shapes=РџР°РЅРµР»СЊ С„РёРіСѓСЂ
+button.show.panel.switcher=РџР°РЅРµР»СЊ РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РѕРєРѕРЅ
+button.show.rules=РљРѕРѕСЂРґРёРЅР°С‚РЅС‹Рµ Р»РёРЅРµР№РєРё
+button.show.grid=Р РµС€РµС‚РєР°
+button.show.grid.align=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ СЂРµС€РµС‚РєРµ
+button.show.grid.above=Р РµС€РµС‚РєР° СЃРІРµСЂС…Сѓ
+button.show.connections.enable=РЎРІСЏР·Рё
+button.show.connections.define=РћР±РЅРѕРІРёС‚СЊ СЃРІСЏР·Рё
+button.show.panel.clipboard=Р‘СѓС„С„РµСЂ
+button.show.panel.resources=Р РµСЃСѓСЂСЃС‹
+button.show.panel.zoom-preview=РџР°РЅРµР»СЊ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ
+button.show.full-screen=РќР° РІРµСЃСЊ СЌРєСЂР°РЅ
+button.show.toolbar.ID=РРјСЏ
+button.show.toolbar.display=Р­РєСЂР°РЅ
 
 ### Insert
-button.mouse=Указатель
-button.line=Линия
-button.rectangle=Прямоугольник
-button.ellipse=Эллипс
-button.text=Текст
-button.image=Изображение
-button.multi-arrow-path=Стрелка
-button.multi-arrow-path.add-sub-arrow=Добавить подстрелку
-button.multi-arrow-path.move-sub-arrow=Редактировать подстрелку
-button.multi-arrow-path.arrow-width.tooltip=Ширина стрелки
-button.multi-arrow-path.arrow-end-cap-width.tooltip=Ширина наконечника стрелки
-button.multi-arrow-path.arrow-end-cap-length.tooltip=Длина наконечника стрелки
-button.textfield=Текстовое поле
+button.mouse=РЈРєР°Р·Р°С‚РµР»СЊ
+button.line=Р›РёРЅРёСЏ
+button.rectangle=РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
+button.ellipse=Р­Р»Р»РёРїСЃ
+button.text=РўРµРєСЃС‚
+button.image=РР·РѕР±СЂР°Р¶РµРЅРёРµ
+button.multi-arrow-path=РЎС‚СЂРµР»РєР°
+button.multi-arrow-path.add-sub-arrow=Р”РѕР±Р°РІРёС‚СЊ РїРѕРґСЃС‚СЂРµР»РєСѓ
+button.multi-arrow-path.move-sub-arrow=Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РїРѕРґСЃС‚СЂРµР»РєСѓ
+button.multi-arrow-path.arrow-width.tooltip=РЁРёСЂРёРЅР° СЃС‚СЂРµР»РєРё
+button.multi-arrow-path.arrow-end-cap-width.tooltip=РЁРёСЂРёРЅР° РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё
+button.multi-arrow-path.arrow-end-cap-length.tooltip=Р”Р»РёРЅР° РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё
+button.textfield=РўРµРєСЃС‚РѕРІРѕРµ РїРѕР»Рµ
 
 ### Transformations
-button.align.relative.focus=Выравнивание относительно фокуса
-button.align.relative.focus.top=Вверх
-button.align.relative.focus.left=Налево
-button.align.relative.focus.bottom=Вниз
-button.align.relative.focus.right=Направо
-button.align.relative.focus.center=Центрировать
-button.align.relative.focus.center.x=Центрировать по оси X
-button.align.relative.focus.center.y=Центрировать по оси Y
+button.align.relative.focus=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ С„РѕРєСѓСЃР°
+button.align.relative.focus.top=Р’РІРµСЂС…
+button.align.relative.focus.left=РќР°Р»РµРІРѕ
+button.align.relative.focus.bottom=Р’РЅРёР·
+button.align.relative.focus.right=РќР°РїСЂР°РІРѕ
+button.align.relative.focus.center=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ
+button.align.relative.focus.center.x=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ РїРѕ РѕСЃРё X
+button.align.relative.focus.center.y=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ РїРѕ РѕСЃРё Y
 
-button.align.relative.pane=Выравнивание относительно листа
-button.align.relative.pane.top=Вверх
-button.align.relative.pane.left=Налево
-button.align.relative.pane.bottom=Вниз
-button.align.relative.pane.right=Направо
-button.align.relative.pane.center=Центрировать
-button.align.relative.pane.center.x=Центрировать по оси X
-button.align.relative.pane.center.y=Центрировать по оси Y
+button.align.relative.pane=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ Р»РёСЃС‚Р°
+button.align.relative.pane.top=Р’РІРµСЂС…
+button.align.relative.pane.left=РќР°Р»РµРІРѕ
+button.align.relative.pane.bottom=Р’РЅРёР·
+button.align.relative.pane.right=РќР°РїСЂР°РІРѕ
+button.align.relative.pane.center=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ
+button.align.relative.pane.center.x=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ РїРѕ РѕСЃРё X
+button.align.relative.pane.center.y=Р¦РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ РїРѕ РѕСЃРё Y
 
-button.order=Порядок
-button.order.to.front=На передний план
-button.order.to.up=Вперед
-button.order.to.down=Назан
-button.order.to.back=На задний план
+button.order=РџРѕСЂСЏРґРѕРє
+button.order.to.front=РќР° РїРµСЂРµРґРЅРёР№ РїР»Р°РЅ
+button.order.to.up=Р’РїРµСЂРµРґ
+button.order.to.down=РќР°Р·Р°РЅ
+button.order.to.back=РќР° Р·Р°РґРЅРёР№ РїР»Р°РЅ
 
-button.same=Одинаковый размер
-button.same.width=Ширина
-button.same.height=Высота
-button.same.size=Размер
+button.same=РћРґРёРЅР°РєРѕРІС‹Р№ СЂР°Р·РјРµСЂ
+button.same.width=РЁРёСЂРёРЅР°
+button.same.height=Р’С‹СЃРѕС‚Р°
+button.same.size=Р Р°Р·РјРµСЂ
 
-button.same.spaces=Одинаковое расстояние между объектами
-button.same.spaces.hor=По горизонтали
-button.same.spaces.ver=По вертикали
+button.same.spaces=РћРґРёРЅР°РєРѕРІРѕРµ СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РѕР±СЉРµРєС‚Р°РјРё
+button.same.spaces.hor=РџРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+button.same.spaces.ver=РџРѕ РІРµСЂС‚РёРєР°Р»Рё
 
-button.flip=Отражение
-button.flip.hor=По горизонтали
-button.flip.ver=По вертикали
+button.flip=РћС‚СЂР°Р¶РµРЅРёРµ
+button.flip.hor=РџРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+button.flip.ver=РџРѕ РІРµСЂС‚РёРєР°Р»Рё
 
-button.translate.up=Вверх
-button.translate.left=Налево
-button.translate.down=Вниз
-button.translate.right=Направо
+button.translate.up=Р’РІРµСЂС…
+button.translate.left=РќР°Р»РµРІРѕ
+button.translate.down=Р’РЅРёР·
+button.translate.right=РќР°РїСЂР°РІРѕ
 
-button.rotate=Повернуть
+button.rotate=РџРѕРІРµСЂРЅСѓС‚СЊ
 button.rotate.180=180
 button.rotate.90=90
 button.rotate.-90=-90
 
-button.group=Группировать
+button.group=Р“СЂСѓРїРїРёСЂРѕРІР°С‚СЊ
 
 ### Help
-button.about=О программе
+button.about=Рћ РїСЂРѕРіСЂР°РјРјРµ
 
 ### Action Area
-button.action.area.rotate=Вращение
-button.action.area.coordinate=Перемещение узлов объекта
-button.action.area.connection=Соединение
-button.action.area.move=Перемещение объекта
+button.action.area.rotate=Р’СЂР°С‰РµРЅРёРµ
+button.action.area.coordinate=РџРµСЂРµРјРµС‰РµРЅРёРµ СѓР·Р»РѕРІ РѕР±СЉРµРєС‚Р°
+button.action.area.connection=РЎРѕРµРґРёРЅРµРЅРёРµ
+button.action.area.move=РџРµСЂРµРјРµС‰РµРЅРёРµ РѕР±СЉРµРєС‚Р°
 
-button.find=Найти
-button.path.eraser-lasso=Вырезание
-button.text.align.justify=Выравнять
+button.find=РќР°Р№С‚Рё
+button.path.eraser-lasso=Р’С‹СЂРµР·Р°РЅРёРµ
+button.text.align.justify=Р’С‹СЂР°РІРЅСЏС‚СЊ
 
 #============= Create new document dialog ==========
-create.title=Создать новый документ...
-create.width=Ширина:
-create.height=Высота:
+create.title=РЎРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ РґРѕРєСѓРјРµРЅС‚...
+create.width=РЁРёСЂРёРЅР°:
+create.height=Р’С‹СЃРѕС‚Р°:
 
 #============= Path ================================
-path.moveto=Переместить курсор
-path.lineto=Линия
-path.quadto=Парабола
-path.curveto=Кубическая кривая
-path.close=Закрыть путь
+path.moveto=РџРµСЂРµРјРµСЃС‚РёС‚СЊ РєСѓСЂСЃРѕСЂ
+path.lineto=Р›РёРЅРёСЏ
+path.quadto=РџР°СЂР°Р±РѕР»Р°
+path.curveto=РљСѓР±РёС‡РµСЃРєР°СЏ РєСЂРёРІР°СЏ
+path.close=Р—Р°РєСЂС‹С‚СЊ РїСѓС‚СЊ
 
 #============= Selection ===========================
-selection.type.none=Нет
-selection.type.area=Прямоугольник
-selection.type.lasso=Произвольная область
+selection.type.none=РќРµС‚
+selection.type.area=РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
+selection.type.lasso=РџСЂРѕРёР·РІРѕР»СЊРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ
 
 #============= Zoom ================================
 zoom.10%=10%
@@ -291,393 +291,393 @@ zoom.225%=225%
 zoom.250%=250%
 zoom.500%=500%
 zoom.1000%=1000%
-zoom.other=Другой
-zoom.dialog.title=Введите значение (%)
+zoom.other=Р”СЂСѓРіРѕР№
+zoom.dialog.title=Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ (%)
 
 #============= Pane frame ==========================
-pane.default.name=Без названия*
+pane.default.name=Р‘РµР· РЅР°Р·РІР°РЅРёСЏ*
 pane.info.pointer.x=X=
 pane.info.pointer.y=Y=
 pane.info.selection.x=X=
 pane.info.selection.y=Y=
-pane.info.selection.width=Ш=
-pane.info.selection.height=В=
-pane.message.cant.save=Сохранение невозможно
+pane.info.selection.width=РЁ=
+pane.info.selection.height=Р’=
+pane.message.cant.save=РЎРѕС…СЂР°РЅРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 
 #============= Shapes frame ========================
-shapes.title=Компоненты
-shapes.common-shapes=Стандартные фигуры
+shapes.title=РљРѕРјРїРѕРЅРµРЅС‚С‹
+shapes.common-shapes=РЎС‚Р°РЅРґР°СЂС‚РЅС‹Рµ С„РёРіСѓСЂС‹
 
 #============= Preview frame =======================
-preview.title=Просмотр
+preview.title=РџСЂРѕСЃРјРѕС‚СЂ
 
 #============= About frame =========================
-about.title=О программе
-about.author=Автор
-about.author.name=Нестеров Евгений
-about.button.close=Закрыть
+about.title=Рћ РїСЂРѕРіСЂР°РјРјРµ
+about.author=РђРІС‚РѕСЂ
+about.author.name=РќРµСЃС‚РµСЂРѕРІ Р•РІРіРµРЅРёР№
+about.button.close=Р—Р°РєСЂС‹С‚СЊ
 
 #============= Source editor frame =================
-source.editor.title=Редактор источника
-source.editor.error=Ошибка
-source.editor.error.line=линия
-source.editor.button.ok=ДА
-source.editor.button.apply=Применить
-source.editor.button.close=Закрыть
-source.editor.message.cant.apply=Сохранение невозможно
+source.editor.title=Р РµРґР°РєС‚РѕСЂ РёСЃС‚РѕС‡РЅРёРєР°
+source.editor.error=РћС€РёР±РєР°
+source.editor.error.line=Р»РёРЅРёСЏ
+source.editor.button.ok=Р”Рђ
+source.editor.button.apply=РџСЂРёРјРµРЅРёС‚СЊ
+source.editor.button.close=Р—Р°РєСЂС‹С‚СЊ
+source.editor.message.cant.apply=РЎРѕС…СЂР°РЅРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 
 #============= Script editor frame =================
-script.title=Скрипт
+script.title=РЎРєСЂРёРїС‚
 
 #============= Eraser frame ========================
-eraser.title=Ластик
-eraser.scale=Масштаб
-eraser.rotate=Поворот
+eraser.title=Р›Р°СЃС‚РёРє
+eraser.scale=РњР°СЃС€С‚Р°Р±
+eraser.rotate=РџРѕРІРѕСЂРѕС‚
 
 #============= Choosers ============================
 ### Color
-chooser.color.more=Больше...
-chooser.color.more.choose=Выбор цвета
+chooser.color.more=Р‘РѕР»СЊС€Рµ...
+chooser.color.more.choose=Р’С‹Р±РѕСЂ С†РІРµС‚Р°
 
 ### Fill
-chooser.fill.no=Нет заполнения
-chooser.fill.solid=Однородный
-chooser.fill.linear.left-right=Линейный градиент (слева направо)
-chooser.fill.linear.right-left=Линейный градиент (справа налево)
-chooser.fill.radial.out=Радиальный градиент (из центра)
-chooser.fill.radial.in=Радиальный градиент (в центр)
-chooser.fill.gradient.linear=Линейный градиент
-chooser.fill.gradient.radial=Радиальный градиент
-chooser.fill.texture=Текстура
+chooser.fill.no=РќРµС‚ Р·Р°РїРѕР»РЅРµРЅРёСЏ
+chooser.fill.solid=РћРґРЅРѕСЂРѕРґРЅС‹Р№
+chooser.fill.linear.left-right=Р›РёРЅРµР№РЅС‹Р№ РіСЂР°РґРёРµРЅС‚ (СЃР»РµРІР° РЅР°РїСЂР°РІРѕ)
+chooser.fill.linear.right-left=Р›РёРЅРµР№РЅС‹Р№ РіСЂР°РґРёРµРЅС‚ (СЃРїСЂР°РІР° РЅР°Р»РµРІРѕ)
+chooser.fill.radial.out=Р Р°РґРёР°Р»СЊРЅС‹Р№ РіСЂР°РґРёРµРЅС‚ (РёР· С†РµРЅС‚СЂР°)
+chooser.fill.radial.in=Р Р°РґРёР°Р»СЊРЅС‹Р№ РіСЂР°РґРёРµРЅС‚ (РІ С†РµРЅС‚СЂ)
+chooser.fill.gradient.linear=Р›РёРЅРµР№РЅС‹Р№ РіСЂР°РґРёРµРЅС‚
+chooser.fill.gradient.radial=Р Р°РґРёР°Р»СЊРЅС‹Р№ РіСЂР°РґРёРµРЅС‚
+chooser.fill.texture=РўРµРєСЃС‚СѓСЂР°
 
 ### Shadow
 
 ### Fill Transparency
-chooser.fill.transparency.tooltip=Прозрачность заполнения
-chooser.fill.transparency.no=Не прозрачный
+chooser.fill.transparency.tooltip=РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ Р·Р°РїРѕР»РЅРµРЅРёСЏ
+chooser.fill.transparency.no=РќРµ РїСЂРѕР·СЂР°С‡РЅС‹Р№
 
 ### Outline pattern
-chooser.outline.pattern.noline=Нет контура
-chooser.outline.pattern.tooltip=Тип контура
-chooser.outline.pattern.other=Другой
-chooser.outline.pattern.message-enter-dash-array=Конфигурация контура
+chooser.outline.pattern.noline=РќРµС‚ РєРѕРЅС‚СѓСЂР°
+chooser.outline.pattern.tooltip=РўРёРї РєРѕРЅС‚СѓСЂР°
+chooser.outline.pattern.other=Р”СЂСѓРіРѕР№
+chooser.outline.pattern.message-enter-dash-array=РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ РєРѕРЅС‚СѓСЂР°
 
 ### Outline width
-chooser.outline.width.tooltip=Ширина контура
-chooser.outline.width.other=Другая
-chooser.outline.width.other.title=Введите значение толщины
+chooser.outline.width.tooltip=РЁРёСЂРёРЅР° РєРѕРЅС‚СѓСЂР°
+chooser.outline.width.other=Р”СЂСѓРіР°СЏ
+chooser.outline.width.other.title=Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ С‚РѕР»С‰РёРЅС‹
 
 ### Outline cap
-chooser.outline.endcap.tooltip=Оформление конца линии
-chooser.outline.endcap.butt=Закругленный конец линии
-chooser.outline.endcap.square=Квадратный конец линии
-chooser.outline.endcap.round=Оформление отстутствует
+chooser.outline.endcap.tooltip=РћС„РѕСЂРјР»РµРЅРёРµ РєРѕРЅС†Р° Р»РёРЅРёРё
+chooser.outline.endcap.butt=Р—Р°РєСЂСѓРіР»РµРЅРЅС‹Р№ РєРѕРЅРµС† Р»РёРЅРёРё
+chooser.outline.endcap.square=РљРІР°РґСЂР°С‚РЅС‹Р№ РєРѕРЅРµС† Р»РёРЅРёРё
+chooser.outline.endcap.round=РћС„РѕСЂРјР»РµРЅРёРµ РѕС‚СЃС‚СѓС‚СЃС‚РІСѓРµС‚
 
 ### Outline join
-chooser.outline.linejoin.tooltip=Способ сопряжения линий
-chooser.outline.linejoin.round=Линии сопрягаются дугой окружности
-chooser.outline.linejoin.bevel=Линии сопрягаются отрезком прямой, перпендикулярным биссектрисе угла между линиями
-chooser.outline.linejoin.miter=Линии стыкуются
+chooser.outline.linejoin.tooltip=РЎРїРѕСЃРѕР± СЃРѕРїСЂСЏР¶РµРЅРёСЏ Р»РёРЅРёР№
+chooser.outline.linejoin.round=Р›РёРЅРёРё СЃРѕРїСЂСЏРіР°СЋС‚СЃСЏ РґСѓРіРѕР№ РѕРєСЂСѓР¶РЅРѕСЃС‚Рё
+chooser.outline.linejoin.bevel=Р›РёРЅРёРё СЃРѕРїСЂСЏРіР°СЋС‚СЃСЏ РѕС‚СЂРµР·РєРѕРј РїСЂСЏРјРѕР№, РїРµСЂРїРµРЅРґРёРєСѓР»СЏСЂРЅС‹Рј Р±РёСЃСЃРµРєС‚СЂРёСЃРµ СѓРіР»Р° РјРµР¶РґСѓ Р»РёРЅРёСЏРјРё
+chooser.outline.linejoin.miter=Р›РёРЅРёРё СЃС‚С‹РєСѓСЋС‚СЃСЏ
 
 #============= Text editor =========================
-editor.text.button.cut=Вырезать
-editor.text.button.copy=Копировать
-editor.text.button.paste=Вставить
-editor.text.button.find=Найти
-editor.text.button.replace=Заменить
-editor.text.button.goto=Перейти на линию
-editor.text.button.undo=Отменить операцию
-editor.text.button.redo=Повторить операцию
+editor.text.button.cut=Р’С‹СЂРµР·Р°С‚СЊ
+editor.text.button.copy=РљРѕРїРёСЂРѕРІР°С‚СЊ
+editor.text.button.paste=Р’СЃС‚Р°РІРёС‚СЊ
+editor.text.button.find=РќР°Р№С‚Рё
+editor.text.button.replace=Р—Р°РјРµРЅРёС‚СЊ
+editor.text.button.goto=РџРµСЂРµР№С‚Рё РЅР° Р»РёРЅРёСЋ
+editor.text.button.undo=РћС‚РјРµРЅРёС‚СЊ РѕРїРµСЂР°С†РёСЋ
+editor.text.button.redo=РџРѕРІС‚РѕСЂРёС‚СЊ РѕРїРµСЂР°С†РёСЋ
 
-editor.text.find.text=Искать текст:
-editor.text.find.replace=Заменить на:
-editor.text.find.button.find=Найти
-editor.text.find.error.message=Поиск невозможен, если строка пустаю
-editor.text.find.error=Ошибка поиска
-editor.text.find.button.replace=Заменить
-editor.text.find.button.cancel=Отменить
-editor.text.find.title=Поиск текста
+editor.text.find.text=РСЃРєР°С‚СЊ С‚РµРєСЃС‚:
+editor.text.find.replace=Р—Р°РјРµРЅРёС‚СЊ РЅР°:
+editor.text.find.button.find=РќР°Р№С‚Рё
+editor.text.find.error.message=РџРѕРёСЃРє РЅРµРІРѕР·РјРѕР¶РµРЅ, РµСЃР»Рё СЃС‚СЂРѕРєР° РїСѓСЃС‚Р°СЋ
+editor.text.find.error=РћС€РёР±РєР° РїРѕРёСЃРєР°
+editor.text.find.button.replace=Р—Р°РјРµРЅРёС‚СЊ
+editor.text.find.button.cancel=РћС‚РјРµРЅРёС‚СЊ
+editor.text.find.title=РџРѕРёСЃРє С‚РµРєСЃС‚Р°
 
-editor.text.find.next.string=Строка
-editor.text.find.next.not.found=не найдена
+editor.text.find.next.string=РЎС‚СЂРѕРєР°
+editor.text.find.next.not.found=РЅРµ РЅР°Р№РґРµРЅР°
 editor.text.find.next.message.search.failed=Search Failed
 
-editor.text.replace.button.yes=Да
-editor.text.replace.button.no=Нет
-editor.text.replace.button.all=Все
-editor.text.replace.button.done=Готово
-editor.text.replace.message.replace.occurence=Заменить это совпадение
-editor.text.replace.message.confirm=Подтвердите замену
+editor.text.replace.button.yes=Р”Р°
+editor.text.replace.button.no=РќРµС‚
+editor.text.replace.button.all=Р’СЃРµ
+editor.text.replace.button.done=Р“РѕС‚РѕРІРѕ
+editor.text.replace.message.replace.occurence=Р—Р°РјРµРЅРёС‚СЊ СЌС‚Рѕ СЃРѕРІРїР°РґРµРЅРёРµ
+editor.text.replace.message.confirm=РџРѕРґС‚РІРµСЂРґРёС‚Рµ Р·Р°РјРµРЅСѓ
 
-editor.text.goto.line.number=Номер линии:
-editor.text.goto.title=Перейти на линию
+editor.text.goto.line.number=РќРѕРјРµСЂ Р»РёРЅРёРё:
+editor.text.goto.title=РџРµСЂРµР№С‚Рё РЅР° Р»РёРЅРёСЋ
 
-editor.message.check.unsaved.schema=Схема '{!name}' не сохранена.\nСохранить данную схему?\nДля отмены закрытия нажмите 'Отмена'.
+editor.message.check.unsaved.schema=РЎС…РµРјР° '{!name}' РЅРµ СЃРѕС…СЂР°РЅРµРЅР°.\nРЎРѕС…СЂР°РЅРёС‚СЊ РґР°РЅРЅСѓСЋ СЃС…РµРјСѓ?\nР”Р»СЏ РѕС‚РјРµРЅС‹ Р·Р°РєСЂС‹С‚РёСЏ РЅР°Р¶РјРёС‚Рµ 'РћС‚РјРµРЅР°'.
 
-editor.textfield.entertext=Введите текст
+editor.textfield.entertext=Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚
 
 
 #============= Switcher frame ========================
-switcher.title=Окна
+switcher.title=РћРєРЅР°
 
 
 #============= Options =========================
-option.ok=Да
-option.yes=Да
-option.no=Нет
-option.cancel=Отмена
+option.ok=Р”Р°
+option.yes=Р”Р°
+option.no=РќРµС‚
+option.cancel=РћС‚РјРµРЅР°
 
-attention=Внимание
+attention=Р’РЅРёРјР°РЅРёРµ
 
-UndoableEdit.undoText=Отменить действие
-UndoableEdit.redoText=Повторить действие
+UndoableEdit.undoText=РћС‚РјРµРЅРёС‚СЊ РґРµР№СЃС‚РІРёРµ
+UndoableEdit.redoText=РџРѕРІС‚РѕСЂРёС‚СЊ РґРµР№СЃС‚РІРёРµ
 
 #============= Clipboard frame ========================
-clipboard.title=Буффер
-clipboard.insert=Вставить
-clipboard.delete=Удалить
-clipboard.preview=Просмотр
+clipboard.title=Р‘СѓС„С„РµСЂ
+clipboard.insert=Р’СЃС‚Р°РІРёС‚СЊ
+clipboard.delete=РЈРґР°Р»РёС‚СЊ
+clipboard.preview=РџСЂРѕСЃРјРѕС‚СЂ
 
 #============= Resources frame ========================
-resources.title=Ресурсы
-resources.tab.color=Цвет
-resources.tab.gradiant.linear=Лин. градиент
-resources.tab.gradiant.radial=Рад. градиент
-resources.tab.stroke=Вид линии
-resources.tab.image=Изобр.
-resources.tab.font=Фонт
-resources.tab.transform=Трансформ.
-resources.tab.script=Скрипт
+resources.title=Р РµСЃСѓСЂСЃС‹
+resources.tab.color=Р¦РІРµС‚
+resources.tab.gradiant.linear=Р›РёРЅ. РіСЂР°РґРёРµРЅС‚
+resources.tab.gradiant.radial=Р Р°Рґ. РіСЂР°РґРёРµРЅС‚
+resources.tab.stroke=Р’РёРґ Р»РёРЅРёРё
+resources.tab.image=РР·РѕР±СЂ.
+resources.tab.font=Р¤РѕРЅС‚
+resources.tab.transform=РўСЂР°РЅСЃС„РѕСЂРј.
+resources.tab.script=РЎРєСЂРёРїС‚
 
 #============= Zoom frame ========================
-zoom-preview.title=Просмотр
+zoom-preview.title=РџСЂРѕСЃРјРѕС‚СЂ
 
 #============= Chooser ========================
-chooser.name=Имя:
-chooser.resources=Ресурсы:
-chooser.button.ok=Да
-chooser.button.cancel=Отмена
+chooser.name=РРјСЏ:
+chooser.resources=Р РµСЃСѓСЂСЃС‹:
+chooser.button.ok=Р”Р°
+chooser.button.cancel=РћС‚РјРµРЅР°
 
 #============= Chooser Font ========================
-chooser.font.title=Фонты
-chooser.font.bold=Толстый
-chooser.font.italic=Наклонный
-chooser.font.antialias=Сглаженный
-chooser.font.fractional-metrix=Фрактальная метрика
-chooser.font.family=Название:
-chooser.font.size=Размер:
-chooser.font.transform=Трансформация:
-chooser.font.preview=Предпросмотр
+chooser.font.title=Р¤РѕРЅС‚С‹
+chooser.font.bold=РўРѕР»СЃС‚С‹Р№
+chooser.font.italic=РќР°РєР»РѕРЅРЅС‹Р№
+chooser.font.antialias=РЎРіР»Р°Р¶РµРЅРЅС‹Р№
+chooser.font.fractional-metrix=Р¤СЂР°РєС‚Р°Р»СЊРЅР°СЏ РјРµС‚СЂРёРєР°
+chooser.font.family=РќР°Р·РІР°РЅРёРµ:
+chooser.font.size=Р Р°Р·РјРµСЂ:
+chooser.font.transform=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ:
+chooser.font.preview=РџСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ
 
 #============= Chooser Stroke ========================
-chooser.stroke.title=Вид линии
-chooser.stroke.cap.butt=Отсутствует
-chooser.stroke.cap.round=Закруглённый
-chooser.stroke.cap.square=Квадратный
-chooser.stroke.join.miter=Стыкование линий
-chooser.stroke.join.round=Закруглённое соединение
-chooser.stroke.join.bevel=Отсечённое соединение
-chooser.stroke.antialias=Сграженный
-chooser.stroke.line-width=Толщина линии:
-chooser.stroke.end-cap=Окончание:
-chooser.stroke.line-join=Соединение линий:
+chooser.stroke.title=Р’РёРґ Р»РёРЅРёРё
+chooser.stroke.cap.butt=РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚
+chooser.stroke.cap.round=Р—Р°РєСЂСѓРіР»С‘РЅРЅС‹Р№
+chooser.stroke.cap.square=РљРІР°РґСЂР°С‚РЅС‹Р№
+chooser.stroke.join.miter=РЎС‚С‹РєРѕРІР°РЅРёРµ Р»РёРЅРёР№
+chooser.stroke.join.round=Р—Р°РєСЂСѓРіР»С‘РЅРЅРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ
+chooser.stroke.join.bevel=РћС‚СЃРµС‡С‘РЅРЅРѕРµ СЃРѕРµРґРёРЅРµРЅРёРµ
+chooser.stroke.antialias=РЎРіСЂР°Р¶РµРЅРЅС‹Р№
+chooser.stroke.line-width=РўРѕР»С‰РёРЅР° Р»РёРЅРёРё:
+chooser.stroke.end-cap=РћРєРѕРЅС‡Р°РЅРёРµ:
+chooser.stroke.line-join=РЎРѕРµРґРёРЅРµРЅРёРµ Р»РёРЅРёР№:
 chooser.stroke.miter-limit=Miter limit:
-chooser.stroke.dash-array=Массив пунктира:
-chooser.stroke.dash-phase=Фаза пунктира:
+chooser.stroke.dash-array=РњР°СЃСЃРёРІ РїСѓРЅРєС‚РёСЂР°:
+chooser.stroke.dash-phase=Р¤Р°Р·Р° РїСѓРЅРєС‚РёСЂР°:
 
 #============= Chooser Gradient ========================
-chooser.gradient.colors=Цвета
-chooser.gradient.properties=Свойства
-chooser.gradient.cycle-method.no=Не цикличный
-chooser.gradient.cycle-method.repeat=Повторяющийся
-chooser.gradient.cycle-method.reflect=Отражающийся
-chooser.gradient.offset=Позиция:
+chooser.gradient.colors=Р¦РІРµС‚Р°
+chooser.gradient.properties=РЎРІРѕР№СЃС‚РІР°
+chooser.gradient.cycle-method.no=РќРµ С†РёРєР»РёС‡РЅС‹Р№
+chooser.gradient.cycle-method.repeat=РџРѕРІС‚РѕСЂСЏСЋС‰РёР№СЃСЏ
+chooser.gradient.cycle-method.reflect=РћС‚СЂР°Р¶Р°СЋС‰РёР№СЃСЏ
+chooser.gradient.offset=РџРѕР·РёС†РёСЏ:
 chooser.gradient.percent=%
-chooser.gradient.color=Цвет:
-chooser.gradient.opacity=Прозрачность:
-chooser.gradient.cycle-method=Тип цикличности:
-chooser.gradient.button.ok=Да
-chooser.gradient.button.cancel=Отмена
+chooser.gradient.color=Р¦РІРµС‚:
+chooser.gradient.opacity=РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ:
+chooser.gradient.cycle-method=РўРёРї С†РёРєР»РёС‡РЅРѕСЃС‚Рё:
+chooser.gradient.button.ok=Р”Р°
+chooser.gradient.button.cancel=РћС‚РјРµРЅР°
 
 #============= Chooser Transform ========================
-chooser.transform.title=Трансформация
-chooser.transform.to-identity=Сбросить
-chooser.transform.scale=Масштаб
-chooser.transform.shear=Сдвиг
-chooser.transform.rotate=Поворот
-chooser.transform.transform=Трансформация:
-chooser.transform.preview=Предпросмотр
+chooser.transform.title=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ
+chooser.transform.to-identity=РЎР±СЂРѕСЃРёС‚СЊ
+chooser.transform.scale=РњР°СЃС€С‚Р°Р±
+chooser.transform.shear=РЎРґРІРёРі
+chooser.transform.rotate=РџРѕРІРѕСЂРѕС‚
+chooser.transform.transform=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ:
+chooser.transform.preview=РџСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ
 
 #============= Chooser Image ========================
-chooser.image.title=Изображение
+chooser.image.title=РР·РѕР±СЂР°Р¶РµРЅРёРµ
 
 #============= Chooser Endings ========================
-chooser.endings.pattern.tooltip=Тип окончания
+chooser.endings.pattern.tooltip=РўРёРї РѕРєРѕРЅС‡Р°РЅРёСЏ
 
 #============= Marker =================================
-marker.title = Маркер
-marker.size=Размер
-marker.angle=Угол
+marker.title = РњР°СЂРєРµСЂ
+marker.size=Р Р°Р·РјРµСЂ
+marker.angle=РЈРіРѕР»
 
 #============= Undo Redo =================================
-undo.move=Перемещение
-undo.add=Добавление
-undo.remove-selected=Удаление
+undo.move=РџРµСЂРµРјРµС‰РµРЅРёРµ
+undo.add=Р”РѕР±Р°РІР»РµРЅРёРµ
+undo.remove-selected=РЈРґР°Р»РµРЅРёРµ
 
-undo.rotate=Вращение
-undo.rotate-90=Поворот на 90 градусов по часовой стрелке
-undo.rotate-minus-90=Поворот на 90 градусов против часовой стрелке
-undo.rotate-180=Поворот на 180 градусов
+undo.rotate=Р’СЂР°С‰РµРЅРёРµ
+undo.rotate-90=РџРѕРІРѕСЂРѕС‚ РЅР° 90 РіСЂР°РґСѓСЃРѕРІ РїРѕ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРµ
+undo.rotate-minus-90=РџРѕРІРѕСЂРѕС‚ РЅР° 90 РіСЂР°РґСѓСЃРѕРІ РїСЂРѕС‚РёРІ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРµ
+undo.rotate-180=РџРѕРІРѕСЂРѕС‚ РЅР° 180 РіСЂР°РґСѓСЃРѕРІ
 
-undo.scale-right=Масштабирование
-undo.scale-left=Масштабирование
-undo.scale-top-left=Масштабирование
-undo.scale-top=Масштабирование
-undo.scale-top-right=Масштабирование
-undo.scale-bottom-right=Масштабирование
-undo.scale-bottom=Масштабирование
-undo.scale-bottom-left=Масштабирование
+undo.scale-right=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-left=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-top-left=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-top=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-top-right=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-bottom-right=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-bottom=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
+undo.scale-bottom-left=РњР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
 
-undo.solid-filler=Заполнение цветом
-undo.linear-gradient-filler=Заполнение линейным градиентом
-undo.radial-gradient-filler=Заполнение радиальным градиентом
-undo.texture-filler=Заполнение текстурой
-undo.no-fill=Удаление заполнения
-undo.outline=Изменение контура
+undo.solid-filler=Р—Р°РїРѕР»РЅРµРЅРёРµ С†РІРµС‚РѕРј
+undo.linear-gradient-filler=Р—Р°РїРѕР»РЅРµРЅРёРµ Р»РёРЅРµР№РЅС‹Рј РіСЂР°РґРёРµРЅС‚РѕРј
+undo.radial-gradient-filler=Р—Р°РїРѕР»РЅРµРЅРёРµ СЂР°РґРёР°Р»СЊРЅС‹Рј РіСЂР°РґРёРµРЅС‚РѕРј
+undo.texture-filler=Р—Р°РїРѕР»РЅРµРЅРёРµ С‚РµРєСЃС‚СѓСЂРѕР№
+undo.no-fill=РЈРґР°Р»РµРЅРёРµ Р·Р°РїРѕР»РЅРµРЅРёСЏ
+undo.outline=РР·РјРµРЅРµРЅРёРµ РєРѕРЅС‚СѓСЂР°
 
-undo.filler-transparency=Прозрачность
-undo.shadow=Тень
-undo.no-shadow=Удаление тени
+undo.filler-transparency=РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ
+undo.shadow=РўРµРЅСЊ
+undo.no-shadow=РЈРґР°Р»РµРЅРёРµ С‚РµРЅРё
 
-undo.path-geom=Изменение геометрии
-undo.path-union=Объединение фигур
-undo.path-subtraction=Вычитание фигур
-undo.path-intersection=Пересечение фигур
-undo.path-xor=Операция исключающая или над фигурами
-undo.path-add-curve=Добавление элемента пути
-undo.path-delete-curve=Удаление элемента пути
-undo.path-delete-curve-point=Удаление точки
+undo.path-geom=РР·РјРµРЅРµРЅРёРµ РіРµРѕРјРµС‚СЂРёРё
+undo.path-union=РћР±СЉРµРґРёРЅРµРЅРёРµ С„РёРіСѓСЂ
+undo.path-subtraction=Р’С‹С‡РёС‚Р°РЅРёРµ С„РёРіСѓСЂ
+undo.path-intersection=РџРµСЂРµСЃРµС‡РµРЅРёРµ С„РёРіСѓСЂ
+undo.path-xor=РћРїРµСЂР°С†РёСЏ РёСЃРєР»СЋС‡Р°СЋС‰Р°СЏ РёР»Рё РЅР°Рґ С„РёРіСѓСЂР°РјРё
+undo.path-add-curve=Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїСѓС‚Рё
+undo.path-delete-curve=РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РїСѓС‚Рё
+undo.path-delete-curve-point=РЈРґР°Р»РµРЅРёРµ С‚РѕС‡РєРё
 
-undo.paste=Вставка
-undo.to-path=Преобразование в путь
-undo.smooth-path=Сглаживание пути
-undo.stroke-shape=Преобразование пути во внешний контур
-undo.flat-path=Разбиение пути на отрезки
-undo.group=Группировака
-undo.ungroup=Разгруппировка
-undo.Marker=Маркер
-undo.antialias=Сглаживание
-undo.Eraser=Стирание ластиком
-undo.remove-transform=Удаление трансформации
-undo.endings=Установка окончания контура
-undo.alfa-layer=Альфа фильтр
-undo.pencil=Карандаш
+undo.paste=Р’СЃС‚Р°РІРєР°
+undo.to-path=РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ РїСѓС‚СЊ
+undo.smooth-path=РЎРіР»Р°Р¶РёРІР°РЅРёРµ РїСѓС‚Рё
+undo.stroke-shape=РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РїСѓС‚Рё РІРѕ РІРЅРµС€РЅРёР№ РєРѕРЅС‚СѓСЂ
+undo.flat-path=Р Р°Р·Р±РёРµРЅРёРµ РїСѓС‚Рё РЅР° РѕС‚СЂРµР·РєРё
+undo.group=Р“СЂСѓРїРїРёСЂРѕРІР°РєР°
+undo.ungroup=Р Р°Р·РіСЂСѓРїРїРёСЂРѕРІРєР°
+undo.Marker=РњР°СЂРєРµСЂ
+undo.antialias=РЎРіР»Р°Р¶РёРІР°РЅРёРµ
+undo.Eraser=РЎС‚РёСЂР°РЅРёРµ Р»Р°СЃС‚РёРєРѕРј
+undo.remove-transform=РЈРґР°Р»РµРЅРёРµ С‚СЂР°РЅСЃС„РѕСЂРјР°С†РёРё
+undo.endings=РЈСЃС‚Р°РЅРѕРІРєР° РѕРєРѕРЅС‡Р°РЅРёСЏ РєРѕРЅС‚СѓСЂР°
+undo.alfa-layer=РђР»СЊС„Р° С„РёР»СЊС‚СЂ
+undo.pencil=РљР°СЂР°РЅРґР°С€
 
-undo.translate-right=Перемещение направо
-undo.translate-up=Перемещение вверх
-undo.translate-down=Перемещение вниз
-undo.translate-left=Перемещение налево
+undo.translate-right=РџРµСЂРµРјРµС‰РµРЅРёРµ РЅР°РїСЂР°РІРѕ
+undo.translate-up=РџРµСЂРµРјРµС‰РµРЅРёРµ РІРІРµСЂС…
+undo.translate-down=РџРµСЂРµРјРµС‰РµРЅРёРµ РІРЅРёР·
+undo.translate-left=РџРµСЂРµРјРµС‰РµРЅРёРµ РЅР°Р»РµРІРѕ
 
-undo.to-up=Позиция слоя - наверх на единицу
-undo.to-down=Позиция слоя - вниз на единицу
-undo.to-front=Позиция слоя - наверх
-undo.to-back=Позиция слоя - вниз
+undo.to-up=РџРѕР·РёС†РёСЏ СЃР»РѕСЏ - РЅР°РІРµСЂС… РЅР° РµРґРёРЅРёС†Сѓ
+undo.to-down=РџРѕР·РёС†РёСЏ СЃР»РѕСЏ - РІРЅРёР· РЅР° РµРґРёРЅРёС†Сѓ
+undo.to-front=РџРѕР·РёС†РёСЏ СЃР»РѕСЏ - РЅР°РІРµСЂС…
+undo.to-back=РџРѕР·РёС†РёСЏ СЃР»РѕСЏ - РІРЅРёР·
 
-undo.lasso-subtract=Ножницы - отрезание
-undo.lasso-union=Ножницы - объединение
-undo.lasso-intersect=Ножницы - пересечение
-undo.lasso-separate=Ножницы - разделение
+undo.lasso-subtract=РќРѕР¶РЅРёС†С‹ - РѕС‚СЂРµР·Р°РЅРёРµ
+undo.lasso-union=РќРѕР¶РЅРёС†С‹ - РѕР±СЉРµРґРёРЅРµРЅРёРµ
+undo.lasso-intersect=РќРѕР¶РЅРёС†С‹ - РїРµСЂРµСЃРµС‡РµРЅРёРµ
+undo.lasso-separate=РќРѕР¶РЅРёС†С‹ - СЂР°Р·РґРµР»РµРЅРёРµ
 
-undo.outline-none=Удаление внешнего контура
-undo.outline-dash-array=Установка внешнего контура
-undo.outline-width=Ширина линии
-undo.outline-line-join-miter=Оформление соединения линий (стыкование)
-undo.outline-line-join-bevel=Оформление соединения линий (отсечённый)
-undo.outline-line-join-round=Оформление соединения линий (закруглённый)
-undo.outline-end-cap-butt=Оформление окончания линии (отсутствует)
-undo.outline-end-cap-square=Оформление окончания линии (квадратный)
-undo.outline-end-cap-round=Оформление окончания линии (закругленный)
+undo.outline-none=РЈРґР°Р»РµРЅРёРµ РІРЅРµС€РЅРµРіРѕ РєРѕРЅС‚СѓСЂР°
+undo.outline-dash-array=РЈСЃС‚Р°РЅРѕРІРєР° РІРЅРµС€РЅРµРіРѕ РєРѕРЅС‚СѓСЂР°
+undo.outline-width=РЁРёСЂРёРЅР° Р»РёРЅРёРё
+undo.outline-line-join-miter=РћС„РѕСЂРјР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ Р»РёРЅРёР№ (СЃС‚С‹РєРѕРІР°РЅРёРµ)
+undo.outline-line-join-bevel=РћС„РѕСЂРјР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ Р»РёРЅРёР№ (РѕС‚СЃРµС‡С‘РЅРЅС‹Р№)
+undo.outline-line-join-round=РћС„РѕСЂРјР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ Р»РёРЅРёР№ (Р·Р°РєСЂСѓРіР»С‘РЅРЅС‹Р№)
+undo.outline-end-cap-butt=РћС„РѕСЂРјР»РµРЅРёРµ РѕРєРѕРЅС‡Р°РЅРёСЏ Р»РёРЅРёРё (РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚)
+undo.outline-end-cap-square=РћС„РѕСЂРјР»РµРЅРёРµ РѕРєРѕРЅС‡Р°РЅРёСЏ Р»РёРЅРёРё (РєРІР°РґСЂР°С‚РЅС‹Р№)
+undo.outline-end-cap-round=РћС„РѕСЂРјР»РµРЅРёРµ РѕРєРѕРЅС‡Р°РЅРёСЏ Р»РёРЅРёРё (Р·Р°РєСЂСѓРіР»РµРЅРЅС‹Р№)
 
-undo.left-alignment=Выравнивание по левому краю
-undo.center-hor-alignment=Выравнивание по центру по горизонтали
-undo.right-alignment=Выравнивание по правому краю
-undo.top-alignment=Выравнивание по верхнему краю
-undo.center-ver-alignment=Выравнивание по центру по вертикали
-undo.bottom-alignment=Выравнивание по нижнему краю
+undo.left-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ Р»РµРІРѕРјСѓ РєСЂР°СЋ
+undo.center-hor-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ С†РµРЅС‚СЂСѓ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+undo.right-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ РїСЂР°РІРѕРјСѓ РєСЂР°СЋ
+undo.top-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ РІРµСЂС…РЅРµРјСѓ РєСЂР°СЋ
+undo.center-ver-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ С†РµРЅС‚СЂСѓ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
+undo.bottom-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ РЅРёР¶РЅРµРјСѓ РєСЂР°СЋ
 
-undo.flip-horizontal=Отражение по горизонтали
-undo.flip-vertical=Отражение по вертикали
+undo.flip-horizontal=РћС‚СЂР°Р¶РµРЅРёРµ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+undo.flip-vertical=РћС‚СЂР°Р¶РµРЅРёРµ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
 
-undo.same-width=Одинаковая ширина
-undo.same-height=Одинаковая высота
-undo.same-spaces-horizontal=Одинаковые расстояния по горизонтали
-undo.same-spaces-vertical=Одинаковые расстояния по вертикали
+undo.same-width=РћРґРёРЅР°РєРѕРІР°СЏ С€РёСЂРёРЅР°
+undo.same-height=РћРґРёРЅР°РєРѕРІР°СЏ РІС‹СЃРѕС‚Р°
+undo.same-spaces-horizontal=РћРґРёРЅР°РєРѕРІС‹Рµ СЂР°СЃСЃС‚РѕСЏРЅРёСЏ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+undo.same-spaces-vertical=РћРґРёРЅР°РєРѕРІС‹Рµ СЂР°СЃСЃС‚РѕСЏРЅРёСЏ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
 
-undo.vector-right=Трансформация (вращение + масштабирование)
-undo.vector-top=Трансформация (вращение + масштабирование)
+undo.vector-right=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ (РІСЂР°С‰РµРЅРёРµ + РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ)
+undo.vector-top=РўСЂР°РЅСЃС„РѕСЂРјР°С†РёСЏ (РІСЂР°С‰РµРЅРёРµ + РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ)
 
-undo.shear-top=Сдвиг
-undo.shear-right=Сдвиг
-undo.shear-bottom=Сдвиг
-undo.shear-left=Сдвиг
+undo.shear-top=РЎРґРІРёРі
+undo.shear-right=РЎРґРІРёРі
+undo.shear-bottom=РЎРґРІРёРі
+undo.shear-left=РЎРґРІРёРі
 
-undo.right-group-alignment=Выравнивание справа
-undo.left-group-alignment=Выравнивание слева
-undo.top-group-alignment=Выравнивание сверху
-undo.bottom-group-alignment=Выравнивание снизу
+undo.right-group-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ СЃРїСЂР°РІР°
+undo.left-group-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ СЃР»РµРІР°
+undo.top-group-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ СЃРІРµСЂС…Сѓ
+undo.bottom-group-alignment=Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ СЃРЅРёР·Сѓ
 
-undo.text-wrap=Перенос слов на новую строку
-undo.text-wrap-size=Ширина текста
+undo.text-wrap=РџРµСЂРµРЅРѕСЃ СЃР»РѕРІ РЅР° РЅРѕРІСѓСЋ СЃС‚СЂРѕРєСѓ
+undo.text-wrap-size=РЁРёСЂРёРЅР° С‚РµРєСЃС‚Р°
 
-undo.pathstroke-text-stroke-text=Текст на пути
-undo.pathstroke-text-stroke-pathstroke-text-stroke-font-family=Шрифт на пути
-undo.pathstroke-text-stroke-font-size=Размер шрифта на пути
-undo.pathstroke-text-stroke-font-bold=Стиль шрифта на пути
-undo.pathstroke-text-stroke-font-italic=Стиль шрифта
-undo.pathstroke-text-stroke-stretch=Растягивание текста на путь
-undo.pathstroke-text-stroke-repeat=Цикличное повторение текста на пути
+undo.pathstroke-text-stroke-text=РўРµРєСЃС‚ РЅР° РїСѓС‚Рё
+undo.pathstroke-text-stroke-pathstroke-text-stroke-font-family=РЁСЂРёС„С‚ РЅР° РїСѓС‚Рё
+undo.pathstroke-text-stroke-font-size=Р Р°Р·РјРµСЂ С€СЂРёС„С‚Р° РЅР° РїСѓС‚Рё
+undo.pathstroke-text-stroke-font-bold=РЎС‚РёР»СЊ С€СЂРёС„С‚Р° РЅР° РїСѓС‚Рё
+undo.pathstroke-text-stroke-font-italic=РЎС‚РёР»СЊ С€СЂРёС„С‚Р°
+undo.pathstroke-text-stroke-stretch=Р Р°СЃС‚СЏРіРёРІР°РЅРёРµ С‚РµРєСЃС‚Р° РЅР° РїСѓС‚СЊ
+undo.pathstroke-text-stroke-repeat=Р¦РёРєР»РёС‡РЅРѕРµ РїРѕРІС‚РѕСЂРµРЅРёРµ С‚РµРєСЃС‚Р° РЅР° РїСѓС‚Рё
 
-undo.pathstroke-arrow-direction=Направление стрелки
-undo.pathstroke-arrow-width=Ширина стрелки
-undo.pathstroke-arrow-end-cap-width=Размер наконечника стрелки
-undo.pathstroke-arrow-end-cap-length=Длина наконечника стрелки
-undo.pathstroke-arrow=Размер стрелки
+undo.pathstroke-arrow-direction=РќР°РїСЂР°РІР»РµРЅРёРµ СЃС‚СЂРµР»РєРё
+undo.pathstroke-arrow-width=РЁРёСЂРёРЅР° СЃС‚СЂРµР»РєРё
+undo.pathstroke-arrow-end-cap-width=Р Р°Р·РјРµСЂ РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё
+undo.pathstroke-arrow-end-cap-length=Р”Р»РёРЅР° РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё
+undo.pathstroke-arrow=Р Р°Р·РјРµСЂ СЃС‚СЂРµР»РєРё
 
-undo.move-sub-path=Перемещение подстрелки
+undo.move-sub-path=РџРµСЂРµРјРµС‰РµРЅРёРµ РїРѕРґСЃС‚СЂРµР»РєРё
 
 #============= Path Geom Action =================================
-path-geom-action.remove-point=Удалить точку
-path-geom-action.remove-curve=Удалить кривую
+path-geom-action.remove-point=РЈРґР°Р»РёС‚СЊ С‚РѕС‡РєСѓ
+path-geom-action.remove-curve=РЈРґР°Р»РёС‚СЊ РєСЂРёРІСѓСЋ
 
-path-geom-action.replace-element=Заменить на
-path-geom-action.replace-element-tomove=Перенос
-path-geom-action.replace-element-toline=Линию
-path-geom-action.replace-element-toquad=Квадратичную кривую
-path-geom-action.replace-element-tocurve=Кубическую кривую
+path-geom-action.replace-element=Р—Р°РјРµРЅРёС‚СЊ РЅР°
+path-geom-action.replace-element-tomove=РџРµСЂРµРЅРѕСЃ
+path-geom-action.replace-element-toline=Р›РёРЅРёСЋ
+path-geom-action.replace-element-toquad=РљРІР°РґСЂР°С‚РёС‡РЅСѓСЋ РєСЂРёРІСѓСЋ
+path-geom-action.replace-element-tocurve=РљСѓР±РёС‡РµСЃРєСѓСЋ РєСЂРёРІСѓСЋ
 
-path-geom-action.insert-element=Вставить
-path-geom-action.insert-element-move=Перенос
-path-geom-action.insert-element-line=Линию
-path-geom-action.insert-element-quad=Квадратичную кривую
-path-geom-action.insert-element-curve=Кубическую кривую
+path-geom-action.insert-element=Р’СЃС‚Р°РІРёС‚СЊ
+path-geom-action.insert-element-move=РџРµСЂРµРЅРѕСЃ
+path-geom-action.insert-element-line=Р›РёРЅРёСЋ
+path-geom-action.insert-element-quad=РљРІР°РґСЂР°С‚РёС‡РЅСѓСЋ РєСЂРёРІСѓСЋ
+path-geom-action.insert-element-curve=РљСѓР±РёС‡РµСЃРєСѓСЋ РєСЂРёРІСѓСЋ
 
 #============= Control Action Area =================================
-control-action-area.menu.edit=Редактировать
-control-action-area.button.ok=Применить и закрыть
-control-action-area.button.apply=Применить
-control-action-area.button.cancel=Отменить
-control-action-area.title=Настройка области управления
+control-action-area.menu.edit=Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ
+control-action-area.button.ok=РџСЂРёРјРµРЅРёС‚СЊ Рё Р·Р°РєСЂС‹С‚СЊ
+control-action-area.button.apply=РџСЂРёРјРµРЅРёС‚СЊ
+control-action-area.button.cancel=РћС‚РјРµРЅРёС‚СЊ
+control-action-area.title=РќР°СЃС‚СЂРѕР№РєР° РѕР±Р»Р°СЃС‚Рё СѓРїСЂР°РІР»РµРЅРёСЏ
 
 #============= Search =================================
-search.title=Поиск по имени
-search.checkbox.regexp=Регулярное выражение
-search.checkbox.match-case=Учитывать регистр
-search.checkbox.whole-word=Слово целиком
-search.label.text-to-find=Найти: 
-search.panel.options=Опции
-search.checkbox.current-document=Текущий документ
+search.title=РџРѕРёСЃРє РїРѕ РёРјРµРЅРё
+search.checkbox.regexp=Р РµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
+search.checkbox.match-case=РЈС‡РёС‚С‹РІР°С‚СЊ СЂРµРіРёСЃС‚СЂ
+search.checkbox.whole-word=РЎР»РѕРІРѕ С†РµР»РёРєРѕРј
+search.label.text-to-find=РќР°Р№С‚Рё:
+search.panel.options=РћРїС†РёРё
+search.checkbox.current-document=РўРµРєСѓС‰РёР№ РґРѕРєСѓРјРµРЅС‚
 
-menu.group.paint-order=Порядок отрисовки
-menu.group.action-order.components=По компонентам
-menu.group.action-order.first-outline=Сначала контуры
-menu.group.action-order.first-fill=Сначала заполнение
+menu.group.paint-order=РџРѕСЂСЏРґРѕРє РѕС‚СЂРёСЃРѕРІРєРё
+menu.group.action-order.components=РџРѕ РєРѕРјРїРѕРЅРµРЅС‚Р°Рј
+menu.group.action-order.first-outline=РЎРЅР°С‡Р°Р»Р° РєРѕРЅС‚СѓСЂС‹
+menu.group.action-order.first-fill=РЎРЅР°С‡Р°Р»Р° Р·Р°РїРѕР»РЅРµРЅРёРµ

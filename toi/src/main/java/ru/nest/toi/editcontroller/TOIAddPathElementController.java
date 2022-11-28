@@ -83,7 +83,7 @@ public class TOIAddPathElementController implements TOIController {
 		if (point != null) {
 			JPopupMenu popup = new JPopupMenu();
 
-			JMenuItem menuDeletePathElement = new JMenuItem("Удалить");
+			JMenuItem menuDeletePathElement = new JMenuItem("РЈРґР°Р»РёС‚СЊ");
 			menuDeletePathElement.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

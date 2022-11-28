@@ -163,7 +163,7 @@ public class MoveMouseListener extends JVGMouseAdapter {
 		double newX = getDraggedX(e);
 		double newY = getDraggedY(e);
 
-		// перетаскивание объекта инструментом "Выделение" с нажатой клавишей Alt
+		// РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёРµ РѕР±СЉРµРєС‚Р° РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРј "Р’С‹РґРµР»РµРЅРёРµ" СЃ РЅР°Р¶Р°С‚РѕР№ РєР»Р°РІРёС€РµР№ Alt
 		if (e.isAltDown() && !cloned) {
 			double dx = newX - x;
 			double dy = newY - y;

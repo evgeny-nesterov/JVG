@@ -24,7 +24,7 @@ public class TOIAddTextController implements TOIController {
 		if (e.getID() == MouseEvent.MOUSE_PRESSED) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 				JTextField txt = new JTextField();
-				int option = JOptionPane.showConfirmDialog(pane, txt, "Òåêñò", JOptionPane.PLAIN_MESSAGE);
+				int option = JOptionPane.showConfirmDialog(pane, txt, "Ð¢ÐµÐºÑÑ‚", JOptionPane.PLAIN_MESSAGE);
 				if (option == JOptionPane.OK_OPTION && txt.getText().trim().length() > 0) {
 					TOIText t = pane.getFactory().create(TOIText.class);
 					t.setText(txt.getText().trim());

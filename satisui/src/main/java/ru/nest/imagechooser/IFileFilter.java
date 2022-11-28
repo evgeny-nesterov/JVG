@@ -48,7 +48,7 @@ public abstract class IFileFilter extends FileFilter {
 	@Override
 	public String getDescription() {
 		if (filterIndex == ALL_SUPPORTED_FORMATS) {
-			return "Все поддерживаемые форматы";
+			return "Р’СЃРµ РїРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ С„РѕСЂРјР°С‚С‹";
 		} else {
 			return "*." + getExtensions().get(filterIndex);
 		}

@@ -307,10 +307,10 @@ public class TOIGeometryController implements TOIController {
 	public void showPopup(MouseEvent e, double x, double y, double adjustX, double adjustY) {
 		JPopupMenu popup = new JPopupMenu();
 		if (pressedPoint != null) {
-			JMenu menuAddSegment = new JMenu("Вставить сегмент");
+			JMenu menuAddSegment = new JMenu("Р’СЃС‚Р°РІРёС‚СЊ СЃРµРіРјРµРЅС‚");
 			popup.add(menuAddSegment);
 
-			JMenuItem menuAddSegmentLine = new JMenuItem("Прямая линия");
+			JMenuItem menuAddSegmentLine = new JMenuItem("РџСЂСЏРјР°СЏ Р»РёРЅРёСЏ");
 			menuAddSegmentLine.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -326,7 +326,7 @@ public class TOIGeometryController implements TOIController {
 			});
 			menuAddSegment.add(menuAddSegmentLine);
 
-			JMenuItem menuAddSegmentQuad = new JMenuItem("Квадратичная кривая");
+			JMenuItem menuAddSegmentQuad = new JMenuItem("РљРІР°РґСЂР°С‚РёС‡РЅР°СЏ РєСЂРёРІР°СЏ");
 			menuAddSegmentQuad.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -342,7 +342,7 @@ public class TOIGeometryController implements TOIController {
 			});
 			menuAddSegment.add(menuAddSegmentQuad);
 
-			JMenuItem menuAddSegmentCubic = new JMenuItem("Кубическая кривая");
+			JMenuItem menuAddSegmentCubic = new JMenuItem("РљСѓР±РёС‡РµСЃРєР°СЏ РєСЂРёРІР°СЏ");
 			menuAddSegmentCubic.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -358,7 +358,7 @@ public class TOIGeometryController implements TOIController {
 			});
 			menuAddSegment.add(menuAddSegmentCubic);
 
-			JMenuItem menuDeleteSegment = new JMenuItem("Удалить сегмент");
+			JMenuItem menuDeleteSegment = new JMenuItem("РЈРґР°Р»РёС‚СЊ СЃРµРіРјРµРЅС‚");
 			menuDeleteSegment.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

@@ -315,7 +315,7 @@ public class TOIEditor extends JPanel {
 			chooser.setFileFilter(ff_initial);
 
 			chooser.setAcceptAllFileFilterUsed(false);
-			chooser.setDialogTitle("Экпорт изображения");
+			chooser.setDialogTitle("Р­РєРїРѕСЂС‚ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ");
 			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			chooser.setMultiSelectionEnabled(false);
 
@@ -543,7 +543,7 @@ public class TOIEditor extends JPanel {
 	});
 
 	protected void initToolbar() {
-		btnSaveImage.setToolTipText("Сохранить изображение");
+		btnSaveImage.setToolTipText("РЎРѕС…СЂР°РЅРёС‚СЊ РёР·РѕР±СЂР°Р¶РµРЅРёРµ");
 		btnSaveImage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -554,7 +554,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnCopy.setToolTipText("Скопировать в буфер [ctrl-c]");
+		btnCopy.setToolTipText("РЎРєРѕРїРёСЂРѕРІР°С‚СЊ РІ Р±СѓС„РµСЂ [ctrl-c]");
 		btnCopy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -563,7 +563,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnCopy);
 
-		btnPaste.setToolTipText("Вставить из буфера [ctrl-v]");
+		btnPaste.setToolTipText("Р’СЃС‚Р°РІРёС‚СЊ РёР· Р±СѓС„РµСЂР° [ctrl-v]");
 		btnPaste.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -574,7 +574,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnSelectAll.setToolTipText("Выделить все [ctrl-a]");
+		btnSelectAll.setToolTipText("Р’С‹РґРµР»РёС‚СЊ РІСЃРµ [ctrl-a]");
 		btnSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -584,7 +584,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnSelectAll);
 
 		ToolButton btnDelete = new ToolButton(new ImageIcon(TOIEditor.class.getResource("img/delete.gif")));
-		btnDelete.setToolTipText("Удалить выделенные объекты [del]");
+		btnDelete.setToolTipText("РЈРґР°Р»РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Рµ РѕР±СЉРµРєС‚С‹ [del]");
 		btnDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -593,11 +593,11 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnDelete);
 
-		btnDeleteAll.setToolTipText("Удалить все объекты [ctrl-a, del]");
+		btnDeleteAll.setToolTipText("РЈРґР°Р»РёС‚СЊ РІСЃРµ РѕР±СЉРµРєС‚С‹ [ctrl-a, del]");
 		btnDeleteAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int option = JOptionPane.showConfirmDialog(TOIEditor.this, "Удалить все объекты?");
+				int option = JOptionPane.showConfirmDialog(TOIEditor.this, "РЈРґР°Р»РёС‚СЊ РІСЃРµ РѕР±СЉРµРєС‚С‹?");
 				if (option == JOptionPane.OK_OPTION) {
 					pane.removeAllObjects();
 				}
@@ -605,7 +605,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnDeleteAll);
 
-		btnLock.setToolTipText("Заблокировать [exc]");
+		btnLock.setToolTipText("Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ [exc]");
 		btnLock.setSelected(true);
 		btnLock.addActionListener(new ActionListener() {
 			@Override
@@ -616,7 +616,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnLock);
 		controlButtonsGroup.add(btnLock);
 
-		btnChangeGeometry.setToolTipText("Редактировать геометрию объектов [F1]");
+		btnChangeGeometry.setToolTipText("Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РіРµРѕРјРµС‚СЂРёСЋ РѕР±СЉРµРєС‚РѕРІ [F1]");
 		btnChangeGeometry.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -626,7 +626,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnChangeGeometry);
 		controlButtonsGroup.add(btnChangeGeometry);
 
-		btnAddArrow.setToolTipText("Добавить / Удалить стрелки [F8]");
+		btnAddArrow.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ / РЈРґР°Р»РёС‚СЊ СЃС‚СЂРµР»РєРё [F8]");
 		btnAddArrow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -636,7 +636,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddArrow);
 		controlButtonsGroup.add(btnAddArrow);
 
-		btnAddIcon.setToolTipText("Добавить картинку");
+		btnAddIcon.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ РєР°СЂС‚РёРЅРєСѓ");
 		btnAddIcon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -646,7 +646,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddIcon);
 		controlButtonsGroup.add(btnAddIcon);
 
-		btnAddText.setToolTipText("Добавить текст");
+		btnAddText.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ С‚РµРєСЃС‚");
 		btnAddText.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -658,7 +658,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnAddPathLine.setToolTipText("Добавить стрелку в виде прямой линии [F2]");
+		btnAddPathLine.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РїСЂСЏРјРѕР№ Р»РёРЅРёРё [F2]");
 		btnAddPathLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -668,7 +668,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddPathLine);
 		controlButtonsGroup.add(btnAddPathLine);
 
-		btnAddPathQuad.setToolTipText("Добавить стрелку в виде квадратичной кривой [F3]");
+		btnAddPathQuad.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РєРІР°РґСЂР°С‚РёС‡РЅРѕР№ РєСЂРёРІРѕР№ [F3]");
 		btnAddPathQuad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -678,7 +678,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddPathQuad);
 		controlButtonsGroup.add(btnAddPathQuad);
 
-		btnAddPathCube.setToolTipText("Добавить стрелку в виде кубической кривой [F4]");
+		btnAddPathCube.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РєСѓР±РёС‡РµСЃРєРѕР№ РєСЂРёРІРѕР№ [F4]");
 		btnAddPathCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -704,7 +704,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnAddMultiArrowPathLine.setToolTipText("Добавить стрелку в виде прямой линии [Ctrl-F2]");
+		btnAddMultiArrowPathLine.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РїСЂСЏРјРѕР№ Р»РёРЅРёРё [Ctrl-F2]");
 		btnAddMultiArrowPathLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -714,7 +714,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddMultiArrowPathLine);
 		controlButtonsGroup.add(btnAddMultiArrowPathLine);
 
-		btnAddMultiArrowPathQuad.setToolTipText("Добавить стрелку в виде квадратичной кривой [Ctrl-F3]");
+		btnAddMultiArrowPathQuad.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РєРІР°РґСЂР°С‚РёС‡РЅРѕР№ РєСЂРёРІРѕР№ [Ctrl-F3]");
 		btnAddMultiArrowPathQuad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -724,7 +724,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddMultiArrowPathQuad);
 		controlButtonsGroup.add(btnAddMultiArrowPathQuad);
 
-		btnAddMultiArrowPathCube.setToolTipText("Добавить стрелку в виде кубической кривой [Ctrl-F4]");
+		btnAddMultiArrowPathCube.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРµР»РєСѓ РІ РІРёРґРµ РєСѓР±РёС‡РµСЃРєРѕР№ РєСЂРёРІРѕР№ [Ctrl-F4]");
 		btnAddMultiArrowPathCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -736,7 +736,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnAddTextPathLine.setToolTipText("Добавить текст по прямой линии [F5]");
+		btnAddTextPathLine.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ С‚РµРєСЃС‚ РїРѕ РїСЂСЏРјРѕР№ Р»РёРЅРёРё [F5]");
 		btnAddTextPathLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -746,7 +746,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddTextPathLine);
 		controlButtonsGroup.add(btnAddTextPathLine);
 
-		btnAddTextPathQuad.setToolTipText("Добавить текст по квадратичной кривой [F6]");
+		btnAddTextPathQuad.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ С‚РµРєСЃС‚ РїРѕ РєРІР°РґСЂР°С‚РёС‡РЅРѕР№ РєСЂРёРІРѕР№ [F6]");
 		btnAddTextPathQuad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -756,7 +756,7 @@ public class TOIEditor extends JPanel {
 		toolbar1.add(btnAddTextPathQuad);
 		controlButtonsGroup.add(btnAddTextPathQuad);
 
-		btnAddTextPathCube.setToolTipText("Добавить текст по кубической кривой [F7]");
+		btnAddTextPathCube.setToolTipText("Р”РѕР±Р°РІРёС‚СЊ С‚РµРєСЃС‚ РїРѕ РєСѓР±РёС‡РµСЃРєРѕР№ РєСЂРёРІРѕР№ [F7]");
 		btnAddTextPathCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -768,7 +768,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnToFront.setToolTipText("Переместить выделенный на верхний уровень [ctrl-pageup]");
+		btnToFront.setToolTipText("РџРµСЂРµРјРµСЃС‚РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РЅР° РІРµСЂС…РЅРёР№ СѓСЂРѕРІРµРЅСЊ [ctrl-pageup]");
 		btnToFront.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -777,7 +777,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnToFront);
 
-		btnUp.setToolTipText("Переместить выделенный объект на уровень выше [ctrl-up]");
+		btnUp.setToolTipText("РџРµСЂРµРјРµСЃС‚РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РѕР±СЉРµРєС‚ РЅР° СѓСЂРѕРІРµРЅСЊ РІС‹С€Рµ [ctrl-up]");
 		btnUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -786,7 +786,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnUp);
 
-		btnDown.setToolTipText("Переместить выделенный объект на уровень ниже [ctrl-down]");
+		btnDown.setToolTipText("РџРµСЂРµРјРµСЃС‚РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РѕР±СЉРµРєС‚ РЅР° СѓСЂРѕРІРµРЅСЊ РЅРёР¶Рµ [ctrl-down]");
 		btnDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -795,7 +795,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnDown);
 
-		btnToBack.setToolTipText("Переместить выделенный на нижний уровень [ctrl-pagedown]");
+		btnToBack.setToolTipText("РџРµСЂРµРјРµСЃС‚РёС‚СЊ РІС‹РґРµР»РµРЅРЅС‹Р№ РЅР° РЅРёР¶РЅРёР№ СѓСЂРѕРІРµРЅСЊ [ctrl-pagedown]");
 		btnToBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -806,7 +806,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnRotate90.setToolTipText("Повернуть на 90 градусов по часовой стрелке");
+		btnRotate90.setToolTipText("РџРѕРІРµСЂРЅСѓС‚СЊ РЅР° 90 РіСЂР°РґСѓСЃРѕРІ РїРѕ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРµ");
 		btnRotate90.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -815,7 +815,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnRotate90);
 
-		btnRotateMinus90.setToolTipText("Повернуть на 90 градусов против часовой стрелке");
+		btnRotateMinus90.setToolTipText("РџРѕРІРµСЂРЅСѓС‚СЊ РЅР° 90 РіСЂР°РґСѓСЃРѕРІ РїСЂРѕС‚РёРІ С‡Р°СЃРѕРІРѕР№ СЃС‚СЂРµР»РєРµ");
 		btnRotateMinus90.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -824,7 +824,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnRotateMinus90);
 
-		btnRotateMinus180.setToolTipText("Повернуть на 180 градусов");
+		btnRotateMinus180.setToolTipText("РџРѕРІРµСЂРЅСѓС‚СЊ РЅР° 180 РіСЂР°РґСѓСЃРѕРІ");
 		btnRotateMinus180.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -833,7 +833,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnRotateMinus180);
 
-		btnFlipHor.setToolTipText("Перевернуть по горизонтали");
+		btnFlipHor.setToolTipText("РџРµСЂРµРІРµСЂРЅСѓС‚СЊ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё");
 		btnFlipHor.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -842,7 +842,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnFlipHor);
 
-		btnFlipVer.setToolTipText("Перевернуть по вертикали");
+		btnFlipVer.setToolTipText("РџРµСЂРµРІРµСЂРЅСѓС‚СЊ РїРѕ РІРµСЂС‚РёРєР°Р»Рё");
 		btnFlipVer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -853,7 +853,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnRotateControl.setToolTipText("Разрешить поворот объектов");
+		btnRotateControl.setToolTipText("Р Р°Р·СЂРµС€РёС‚СЊ РїРѕРІРѕСЂРѕС‚ РѕР±СЉРµРєС‚РѕРІ");
 		btnRotateControl.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -863,7 +863,7 @@ public class TOIEditor extends JPanel {
 		btnRotateControl.setSelected(true);
 		toolbar1.add(btnRotateControl);
 
-		btnScaleControl.setToolTipText("Разрешить масштабирование объектов");
+		btnScaleControl.setToolTipText("Р Р°Р·СЂРµС€РёС‚СЊ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ РѕР±СЉРµРєС‚РѕРІ");
 		btnScaleControl.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -875,7 +875,7 @@ public class TOIEditor extends JPanel {
 
 		toolbar1.add(new ToolSeparator(14));
 
-		btnScaleArrow.setToolTipText("Ширина стрелки");
+		btnScaleArrow.setToolTipText("РЁРёСЂРёРЅР° СЃС‚СЂРµР»РєРё");
 		btnScaleArrow.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -912,7 +912,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnScaleArrow);
 
-		btnScaleArrowEnd.setToolTipText("Размер наконечника стрелки");
+		btnScaleArrowEnd.setToolTipText("Р Р°Р·РјРµСЂ РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё");
 		btnScaleArrowEnd.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -949,7 +949,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar1.add(btnScaleArrowEnd);
 
-		btnScaleArrowEndLength.setToolTipText("Длина наконечника стрелки");
+		btnScaleArrowEndLength.setToolTipText("Р”Р»РёРЅР° РЅР°РєРѕРЅРµС‡РЅРёРєР° СЃС‚СЂРµР»РєРё");
 		btnScaleArrowEndLength.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -1009,7 +1009,7 @@ public class TOIEditor extends JPanel {
 		toolbar2.add(new JLabel("  "));
 
 		cmbFont.setEnabled(false);
-		cmbFont.setToolTipText("Фонт");
+		cmbFont.setToolTipText("Р¤РѕРЅС‚");
 		cmbFont.setRequestFocusEnabled(false);
 		cmbFont.setFocusable(false);
 		cmbFont.setPreferredSize(new Dimension(100, 18));
@@ -1031,7 +1031,7 @@ public class TOIEditor extends JPanel {
 		toolbar2.add(new JLabel("  "));
 
 		cmbFontSize.setEnabled(false);
-		cmbFontSize.setToolTipText("Размер фонта");
+		cmbFontSize.setToolTipText("Р Р°Р·РјРµСЂ С„РѕРЅС‚Р°");
 		cmbFontSize.setRequestFocusEnabled(false);
 		cmbFontSize.setFocusable(false);
 		cmbFontSize.setPreferredSize(new Dimension(45, 18));
@@ -1053,7 +1053,7 @@ public class TOIEditor extends JPanel {
 		toolbar2.add(new JLabel("  "));
 
 		btnBold.setEnabled(false);
-		btnBold.setToolTipText("Жирный текст");
+		btnBold.setToolTipText("Р–РёСЂРЅС‹Р№ С‚РµРєСЃС‚");
 		btnBold.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1067,7 +1067,7 @@ public class TOIEditor extends JPanel {
 		toolbar2.add(btnBold);
 
 		btnItalic.setEnabled(false);
-		btnItalic.setToolTipText("Курсивный текст");
+		btnItalic.setToolTipText("РљСѓСЂСЃРёРІРЅС‹Р№ С‚РµРєСЃС‚");
 		btnItalic.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1084,7 +1084,7 @@ public class TOIEditor extends JPanel {
 
 		btnColor.setRequestFocusEnabled(false);
 		btnColor.setFocusable(false);
-		btnColor.setToolTipText("Цвет объекта");
+		btnColor.setToolTipText("Р¦РІРµС‚ РѕР±СЉРµРєС‚Р°");
 		btnColor.setEnabled(false);
 		btnColor.addActionListener(new ActionListener() {
 			@Override
@@ -1097,7 +1097,7 @@ public class TOIEditor extends JPanel {
 		});
 		toolbar2.add(btnColor);
 
-		btnGroup.setToolTipText("Группировка объектов");
+		btnGroup.setToolTipText("Р“СЂСѓРїРїРёСЂРѕРІРєР° РѕР±СЉРµРєС‚РѕРІ");
 		btnGroup.setEnabled(false);
 		btnGroup.addActionListener(new ActionListener() {
 			@Override
@@ -1189,7 +1189,7 @@ public class TOIEditor extends JPanel {
 
 		ToolButton btnZoomIn = new ToolButton(new ImageIcon(TOIEditor.class.getResource("img/plus.gif")));
 		btnZoomIn.setPreferredSize(new Dimension(24, 24));
-		btnZoomIn.setToolTipText("Увеличить масштаб [+]");
+		btnZoomIn.setToolTipText("РЈРІРµР»РёС‡РёС‚СЊ РјР°СЃС€С‚Р°Р± [+]");
 		btnZoomIn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1224,7 +1224,7 @@ public class TOIEditor extends JPanel {
 
 		ToolButton btnZoomOut = new ToolButton(new ImageIcon(TOIEditor.class.getResource("img/minus.gif")));
 		btnZoomOut.setPreferredSize(new Dimension(24, 24));
-		btnZoomOut.setToolTipText("Уменьшить масштаб [-]");
+		btnZoomOut.setToolTipText("РЈРјРµРЅСЊС€РёС‚СЊ РјР°СЃС€С‚Р°Р± [-]");
 		btnZoomOut.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1237,7 +1237,7 @@ public class TOIEditor extends JPanel {
 
 		ToolButton btnStretchToFit = new ToolButton(new ImageIcon(TOIEditor.class.getResource("img/fit.gif")));
 		btnStretchToFit.setPreferredSize(new Dimension(24, 24));
-		btnStretchToFit.setToolTipText("Уменьшить масштаб [-]");
+		btnStretchToFit.setToolTipText("РЈРјРµРЅСЊС€РёС‚СЊ РјР°СЃС€С‚Р°Р± [-]");
 		btnStretchToFit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1609,7 +1609,7 @@ public class TOIEditor extends JPanel {
 		TOIObject o = pane.getObject(x, y);
 		if (o instanceof TOIGroup) {
 			final TOIGroup g = (TOIGroup) o;
-			JCheckBoxMenuItem menuCombine = new JCheckBoxMenuItem("Объединять стрелки", g.isCombinePathes());
+			JCheckBoxMenuItem menuCombine = new JCheckBoxMenuItem("РћР±СЉРµРґРёРЅСЏС‚СЊ СЃС‚СЂРµР»РєРё", g.isCombinePathes());
 			menuCombine.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

@@ -231,7 +231,7 @@ public class JVGParser implements JVGParserInterface {
 
 	public static void main(String[] args) {
 		try {
-			for (File f : new File("C:/Users/john/Dropbox/Satis Soft/Рабочие материалы/Common/ЦОДД/Контроллеры/Подложки svg").listFiles()) {
+			for (File f : new File("C:/Users/john/Dropbox/Satis Soft/Р Р°Р±РѕС‡РёРµ РјР°С‚РµСЂРёР°Р»С‹/Common/Р¦РћР”Р”/РљРѕРЅС‚СЂРѕР»Р»РµСЂС‹/РџРѕРґР»РѕР¶РєРё svg").listFiles()) {
 				System.out.println(f.getName());
 				if (f.getName().endsWith(".svg")) {
 					JVGParser p = new JVGParser(null);

@@ -75,7 +75,7 @@ public class TOIAddPathController implements TOIController {
 						// Do nothing
 					} else if (path instanceof TOITextPath) {
 						JTextField txt = new JTextField();
-						int option = JOptionPane.showConfirmDialog(pane, txt, "Òåêñò", JOptionPane.PLAIN_MESSAGE);
+						int option = JOptionPane.showConfirmDialog(pane, txt, "Ð¢ÐµÐºÑÑ‚", JOptionPane.PLAIN_MESSAGE);
 						if (option == JOptionPane.OK_OPTION && txt.getText().trim().length() > 0) {
 							((TOITextPath) path).setText(txt.getText().trim());
 						} else {

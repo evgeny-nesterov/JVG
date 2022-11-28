@@ -19,7 +19,7 @@ public class ImageChooser extends JFileChooser {
 		addChoosableFileFilter(new IFileFilter.ImageFileFilter(IFileFilter.ImageFileFilter.GIF));
 		addChoosableFileFilter(new IFileFilter.ImageFileFilter(IFileFilter.ALL_SUPPORTED_FORMATS));
 		setAcceptAllFileFilterUsed(false);
-		setDialogTitle("Выбор изображения");
+		setDialogTitle("Р’С‹Р±РѕСЂ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ");
 		setFileSelectionMode(JFileChooser.FILES_ONLY);
 		setMultiSelectionEnabled(false);
 
