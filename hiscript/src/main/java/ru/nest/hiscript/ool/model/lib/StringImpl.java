@@ -54,6 +54,14 @@ public class StringImpl extends ImplUtil {
 		NodeString.createString(ctx, s.toCharArray());
 	}
 
+	public static void String_String_replace_String_String(RuntimeContext ctx, HiObject s1, HiObject s2) {
+		String s = getString(ctx.value.object);
+		String _s1 = new String(getChars(s1));
+		String _s2 = new String(getChars(s2));
+		s = s.replace(_s1, _s2);
+		NodeString.createString(ctx, s.toCharArray());
+	}
+
 	public static void String_String_trim(RuntimeContext ctx) {
 		String s = getString(ctx.value.object);
 		s = s.trim();
@@ -69,7 +77,8 @@ public class StringImpl extends ImplUtil {
 		} else if (o.clazz.fullName.equals("String")) {
 			char[] chars1 = getChars(ctx.value.object);
 			char[] chars2 = getChars(o);
-			IF: if (chars1.length == chars2.length) {
+			IF:
+			if (chars1.length == chars2.length) {
 				for (int i = 0; i < chars1.length; i++) {
 					if (chars1[i] != chars2[i]) {
 						break IF;

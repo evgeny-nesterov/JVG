@@ -102,4 +102,6 @@ public interface Symbols {
 	public final static int TRIPLE_POINTS = 50;
 
 	public final static int REFERENCE = 51;
+
+	public final static int TRIPLE_DOUBLE_QUOTES = 52;
 }

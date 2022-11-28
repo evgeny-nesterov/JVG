@@ -80,9 +80,19 @@ public class Tokenizer {
 	}
 
 	protected void skipWhitespaces() {
-		while (current == ' ' || current == '\n' || current == '\t' || current == '\r') {
+		while (isWhiteSpace(current) || current == '\n') {
 			next();
 		}
+	}
+
+	protected void skipLineWhitespaces() {
+		while (isWhiteSpace(current)) {
+			next();
+		}
+	}
+
+	public static boolean isWhiteSpace(char c) {
+		return c == ' ' || c == '\t' || c == '\r';
 	}
 
 	public Token nextToken() throws TokenizerException {

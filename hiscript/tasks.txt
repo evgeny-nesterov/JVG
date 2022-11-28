@@ -24,7 +24,7 @@
             for(V v : list) {
             }
 
-8. Indicate code line number while throwing exceptions
+!8. Indicate code line number while throwing exceptions
 9. Add enum
     enum E {
       A('a'), B('B'), C('C');
@@ -37,11 +37,14 @@
       }
     }
 
-10. Add asserts
+        +10. Add asserts
+
 11. Add throws for methods, require catch or method throws for non runtime exceptions
 12. Annotations
-13. Auto binding to native java classes
-14. Allow Iterable for for(:) (currently only arrays)
+
+        +13. Auto binding to native java classes
+
+!14. Allow Iterable for for(:) (currently only arrays)
 15. Add var
 
 		+16. switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN>: <bodyExpr>)
@@ -50,4 +53,5 @@
         +19. RuntimeException, AssertException, catch only declared exceptions
 
 20. Implement NodeExpression.getExpressionType() and check assert on boolean and etc
-!!!21. text blocks """..."""
+
+        +21. text blocks """\n..."""

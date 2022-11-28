@@ -817,6 +817,16 @@ Util.header("STRING");
 	System.println("\t\"abc\".replace('a', '1') = " + "abc".replace('a', '1'));
 	System.println("\t\"abc\".charAt(2) = " + "abc".charAt(2));
 	System.println("\t\" abc \".trim() = " + " abc ".trim());
+
+	System.println("""
+	                line 1
+	                    line2
+	                line 3   """);
+	System.println("""
+	                class A {             |
+	                    String s = "text";|
+	                }                     |
+	             """.replace("|\n", "\n").replace(' ', '.'));
 }
 
 /////////////

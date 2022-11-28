@@ -60,7 +60,18 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '"':
-				type = Symbols.DOUBLE_QUOTE;
+				if (tokenizer.look_forward() == '.') {
+					tokenizer.next();
+					if (tokenizer.look_forward() == '.') {
+						tokenizer.next();
+						type = Symbols.TRIPLE_DOUBLE_QUOTES;
+						length = 3;
+					} else {
+						return null;
+					}
+				} else {
+					type = Symbols.DOUBLE_QUOTE;
+				}
 				break;
 
 			case '\\':

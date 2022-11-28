@@ -47,6 +47,9 @@ public class SymbolToken extends Token implements Symbols {
 			case DOUBLE_QUOTE:
 				return "\"";
 
+			case TRIPLE_DOUBLE_QUOTES:
+				return "\"\"\"";
+
 			case EQUALS:
 				return "==";
 

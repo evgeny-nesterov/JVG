@@ -25,6 +25,7 @@ constructor	...arguments                                            +
 field		expression                                              +
 class		name, ...fields, ...methods, ...classes	statement	    +
 block		...statements                                           +
+text block
 
 
 expression	...operations, ...expressions
@@ -38,4 +39,4 @@ operations	+ - * / %			    numeric
 		+ - ! (type) ++ --			prefix
 		++ -- [index] .				postfix
 		?:							logical switch
-		switch (expr) {case excp1, expr2: expr case expr2: expr default: expr}
+		switch (expr) {case excp1, expr2-> expr; case expr2-> expr; default-> expr;}
