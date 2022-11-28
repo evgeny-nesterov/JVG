@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.io.IOException;
 
 public class Modifiers implements ModifiersIF, Codeable {
 	public static int mapWordsToModification(int word) {
@@ -29,6 +29,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 			case Words.ABSTRACT:
 				return ABSTRACT;
+
+			case Words.DEFAULT:
+				return DEFAULT;
 		}
 		return -1;
 	}
@@ -90,6 +93,16 @@ public class Modifiers implements ModifiersIF, Codeable {
 		this.isAbstract = isAbstract;
 	}
 
+	private boolean isDefault = false;
+
+	public boolean isDefault() {
+		return isDefault;
+	}
+
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -142,6 +155,8 @@ public class Modifiers implements ModifiersIF, Codeable {
 				return "abstract";
 			case NATIVE:
 				return "native";
+			case DEFAULT:
+				return "default";
 		}
 		return null;
 	}
@@ -165,6 +180,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 			modifiers |= ABSTRACT;
 		}
 
+		if (isDefault) {
+			modifiers |= DEFAULT;
+		}
 		return modifiers;
 	}
 
@@ -173,6 +191,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 		setFinal((code & FINAL) != 0);
 		setNative((code & NATIVE) != 0);
 		setAbstract((code & ABSTRACT) != 0);
+		setDefault((code & DEFAULT) != 0);
 
 		if ((code & ACCESS_PUBLIC) != 0) {
 			setAccess(ACCESS_PUBLIC);
@@ -219,6 +238,10 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 			if (isNative && (allowedMask & NATIVE) == 0) {
 				return NATIVE;
+			}
+
+			if (isDefault && (allowedMask & DEFAULT) == 0) {
+				return DEFAULT;
 			}
 		}
 		return -1;

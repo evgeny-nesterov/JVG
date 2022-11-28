@@ -1,18 +1,20 @@
 package ru.nest.hiscript.ool.compiler;
 
+import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiEnumValue;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.NodeInitializer;
+import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.nodes.NodeVariable;
+import ru.nest.hiscript.tokenizer.Tokenizer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.NodeInitializer;
-import ru.nest.hiscript.ool.model.nodes.NodeVariable;
-import ru.nest.hiscript.tokenizer.Tokenizer;
 
 public class CompileContext {
 	public CompileContext(Tokenizer tokenizer, CompileContext parent, HiClass enclosingClass, int classType) {
@@ -46,7 +48,16 @@ public class CompileContext {
 
 	public List<HiConstructor> constructors = null;
 
+	public List<HiEnumValue> enumValues = null;
+
 	public CompileContext parent = null;
+
+	public void addEnum(HiEnumValue enumValue) throws ParseException {
+		if (enumValues == null) {
+			enumValues = new ArrayList<>(1);
+		}
+		enumValues.add(enumValue);
+	}
 
 	public void addMethod(HiMethod method) throws ParseException {
 		if (methods == null) {
@@ -158,6 +169,9 @@ public class CompileContext {
 		clazz.methods = getMethods();
 		clazz.fields = getFields();
 		clazz.initializers = getInitializers();
+		if (clazz instanceof HiClassEnum) {
+			((HiClassEnum) clazz).enumValues = enumValues;
+		}
 	}
 
 	public void enter() {

@@ -35,9 +35,12 @@ public class StatementParseRule extends ParseRule<Node> {
 		if (clazz == null) {
 			clazz = InterfaceParseRule.getInstance().visit(tokenizer, localProperties);
 		}
+		if (clazz == null) {
+			clazz = EnumParseRule.getInstance().visit(tokenizer, localProperties);
+		}
 		if (clazz != null) {
 			// check modifiers
-			if (clazz.isStatic()) {
+			if (properties.enclosingClass != null && clazz.isStatic()) {
 				throw new ParseException("Illegal modifier for the local class " + clazz.fullName + "; only abstract or final is permitted", tokenizer.currentToken());
 			}
 

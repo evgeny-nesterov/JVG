@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -21,6 +18,9 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassParseRule extends ParserUtil {
 	private final static ClassParseRule instance = new ClassParseRule();
@@ -53,7 +53,7 @@ public class ClassParseRule extends ParserUtil {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
 			} else if (!"Object".equals(className)) {
-				superClassType = Type.ObjectType;
+				superClassType = Type.objectType;
 			} else {
 				superClassType = null;
 			}
@@ -65,6 +65,7 @@ public class ClassParseRule extends ParserUtil {
 				if (interfaceType == null) {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
+				Enum a;
 
 				interfacesList = new ArrayList<>(1);
 				interfacesList.add(interfaceType);
@@ -108,7 +109,9 @@ public class ClassParseRule extends ParserUtil {
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
 			}
-
+			if (innerClass == null) {
+				innerClass = EnumParseRule.getInstance().visit(tokenizer, innerProperties);
+			}
 			if (innerClass != null) {
 				if (!clazz.isTopLevel() && !clazz.isStatic()) {
 					if (innerClass.isInterface) {
@@ -134,7 +137,7 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			// method
-			HiMethod method = visitMethod(tokenizer, properties);
+			HiMethod method = visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 			if (method != null) {
 				properties.addMethod(method);
 				continue;
@@ -151,7 +154,6 @@ public class ClassParseRule extends ParserUtil {
 				properties.addBlockInitializer(block);
 				continue;
 			}
-
 			break;
 		}
 
@@ -236,7 +238,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	private HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties, int... allowed) throws TokenizerException, ParseException {
 		tokenizer.start();
 		HiClass clazz = properties.clazz;
 
@@ -256,8 +258,9 @@ public class ClassParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
 					tokenizer.commit();
-					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 					properties.enter();
+
+					checkModifiers(tokenizer, modifiers, allowed);
 
 					List<NodeArgument> arguments = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, arguments, properties);
@@ -288,7 +291,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	private boolean visitFields(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public boolean visitFields(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);

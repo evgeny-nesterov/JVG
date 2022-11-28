@@ -1,4 +1,3 @@
-int c = (char)-1;
-// char c = (char)-1;
-System.println("c: " + c);
-assert c == 65535;
+enum E {
+    a, b, c;
+}

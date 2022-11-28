@@ -109,7 +109,6 @@ public class NewParseRule extends ParseRule<Node> {
 		if (value == null) {
 			throw new ParseException("dimension is expected", tokenizer.currentToken());
 		}
-
 		return value;
 	}
 
@@ -135,7 +134,6 @@ public class NewParseRule extends ParseRule<Node> {
 			list.toArray(array);
 			return new NodeArrayValue(type, dimensions, array);
 		}
-
 		return null;
 	}
 
@@ -144,7 +142,6 @@ public class NewParseRule extends ParseRule<Node> {
 		if (cell != null) {
 			return cell;
 		}
-
 		return visitArrayValue(tokenizer, type, dimensions, properties);
 	}
 }

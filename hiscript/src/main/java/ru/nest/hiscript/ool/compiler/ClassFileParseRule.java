@@ -27,8 +27,13 @@ public class ClassFileParseRule extends ParseRule<Node> {
 				continue;
 			}
 
-			HiClass interfase = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
-			if (interfase != null) {
+			HiClass interfaceClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
+			if (interfaceClass != null) {
+				continue;
+			}
+
+			HiClass enumClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
+			if (enumClass != null) {
 				continue;
 			}
 			break;

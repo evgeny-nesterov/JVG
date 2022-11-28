@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -15,6 +12,9 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InterfaceParseRule extends ParserUtil {
 	private final static InterfaceParseRule instance = new InterfaceParseRule();
@@ -90,7 +90,9 @@ public class InterfaceParseRule extends ParserUtil {
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
 			}
-
+			if (innerClass == null) {
+				innerClass = EnumParseRule.getInstance().visit(tokenizer, innerProperties);
+			}
 			if (innerClass != null) {
 				innerClass.enclosingClass = clazz;
 				properties.addClass(innerClass);
@@ -98,7 +100,7 @@ public class InterfaceParseRule extends ParserUtil {
 			}
 
 			// method
-			HiMethod method = visitMethod(tokenizer, properties);
+			HiMethod method = ClassParseRule.getInstance().visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT);
 			if (method != null) {
 				properties.addMethod(method);
 				continue;
@@ -108,58 +110,10 @@ public class InterfaceParseRule extends ParserUtil {
 			if (visitFields(tokenizer, properties)) {
 				continue;
 			}
-
 			break;
 		}
 
 		properties.initClass();
-	}
-
-	private HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		tokenizer.start();
-		HiClass clazz = properties.clazz;
-
-		Modifiers modifiers = visitModifiers(tokenizer);
-		Type type = visitType(tokenizer, true);
-		if (type == null) {
-			if (visitWord(Words.VOID, tokenizer) != null) {
-				type = Type.getType("void");
-			}
-		} else {
-			int dimension = visitDimension(tokenizer);
-			type = Type.getArrayType(type, dimension);
-		}
-
-		if (type != null) {
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
-			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
-					tokenizer.commit();
-					properties.enter();
-
-					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
-					modifiers.setAbstract(true);
-
-					List<NodeArgument> arguments = new ArrayList<>();
-					visitArgumentsDefinitions(tokenizer, arguments, properties);
-					for (NodeArgument argument : arguments) {
-						properties.addLocalVariable(argument);
-					}
-
-					expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
-
-					// TODO: visit throws
-
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
-
-					properties.exit();
-					return new HiMethod(clazz, modifiers, type, name, arguments, null);
-				}
-			}
-		}
-
-		tokenizer.rollback();
-		return null;
 	}
 
 	private boolean visitFields(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {

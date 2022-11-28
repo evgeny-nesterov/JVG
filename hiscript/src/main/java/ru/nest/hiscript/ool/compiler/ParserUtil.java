@@ -54,7 +54,6 @@ public class ParserUtil implements Words {
 				return wordToken.getWord();
 			}
 		}
-
 		return null;
 	}
 
@@ -80,7 +79,6 @@ public class ParserUtil implements Words {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -98,7 +96,6 @@ public class ParserUtil implements Words {
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -116,7 +113,6 @@ public class ParserUtil implements Words {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -289,7 +285,7 @@ public class ParserUtil implements Words {
 		while (true) {
 			if ((word = visitWord(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != null) {
 				if (m != null && m.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
-					throw new ParseException("repeated modifier", tokenizer.currentToken());
+					throw new ParseException("Illegal combination of modifiers: 'public' and 'public'", tokenizer.currentToken());
 				}
 
 				if (m == null) {
@@ -302,7 +298,7 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWord(tokenizer, FINAL)) != null) {
 				if (m != null && m.isFinal()) {
-					throw new ParseException("repeated modifier", tokenizer.currentToken());
+					throw new ParseException("Illegal combination of modifiers: 'final' and 'final'", tokenizer.currentToken());
 				}
 
 				if (m == null) {
@@ -315,7 +311,11 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWord(tokenizer, STATIC)) != null) {
 				if (m != null && m.isStatic()) {
-					throw new ParseException("repeated modifier", tokenizer.currentToken());
+					throw new ParseException("Illegal combination of modifiers: 'static' and 'static'", tokenizer.currentToken());
+				} else if (m != null && m.isAbstract()) {
+					throw new ParseException("Illegal combination of modifiers: 'static' and 'abstract'", tokenizer.currentToken());
+				} else if (m != null && m.isDefault()) {
+					throw new ParseException("Illegal combination of modifiers: 'static' and 'default'", tokenizer.currentToken());
 				}
 
 				if (m == null) {
@@ -328,7 +328,9 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWord(tokenizer, NATIVE)) != null) {
 				if (m != null && m.isNative()) {
-					throw new ParseException("repeated modifier", tokenizer.currentToken());
+					throw new ParseException("Illegal combination of modifiers: 'native' and 'native'", tokenizer.currentToken());
+				} else if (m != null && m.isDefault()) {
+					throw new ParseException("Illegal combination of modifiers: 'native' and 'default'", tokenizer.currentToken());
 				}
 
 				if (m == null) {
@@ -341,7 +343,11 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWord(tokenizer, ABSTRACT)) != null) {
 				if (m != null && m.isAbstract()) {
-					throw new ParseException("repeated modifier", tokenizer.currentToken());
+					throw new ParseException("Illegal combination of modifiers: 'abstract' and 'abstract'", tokenizer.currentToken());
+				} else if (m != null && m.isDefault()) {
+					throw new ParseException("Illegal combination of modifiers: 'abstract' and 'default'", tokenizer.currentToken());
+				} else if (m != null && m.isStatic()) {
+					throw new ParseException("Illegal combination of modifiers: 'abstract' and 'static'", tokenizer.currentToken());
 				}
 
 				if (m == null) {
@@ -352,6 +358,24 @@ public class ParserUtil implements Words {
 				continue;
 			}
 
+			if ((word = visitWord(tokenizer, DEFAULT)) != null) {
+				if (m != null && m.isDefault()) {
+					throw new ParseException("Illegal combination of modifiers: 'default' and 'default'", tokenizer.currentToken());
+				} else if (m != null && m.isAbstract()) {
+					throw new ParseException("Illegal combination of modifiers: 'default' and 'abstract'", tokenizer.currentToken());
+				} else if (m != null && m.isStatic()) {
+					throw new ParseException("Illegal combination of modifiers: 'default' and 'static'", tokenizer.currentToken());
+				} else if (m != null && m.isNative()) {
+					throw new ParseException("Illegal combination of modifiers: 'default' and 'native'", tokenizer.currentToken());
+				}
+
+				if (m == null) {
+					m = new Modifiers();
+				}
+
+				m.setDefault(true);
+				continue;
+			}
 			break;
 		}
 

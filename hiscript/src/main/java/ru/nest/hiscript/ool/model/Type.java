@@ -367,5 +367,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	}
 
 	// has to be set at the end of class init
-	public final static Type ObjectType = getType("Object");
+	public final static Type objectType = getType("Object");
+
+	public final static Type enumType = getType("Enum");
 }

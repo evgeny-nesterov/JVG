@@ -53,6 +53,7 @@ public class WordToken extends Token implements Words {
 		service_words.put("final", FINAL);
 		service_words.put("native", NATIVE);
 		service_words.put("abstract", ABSTRACT);
+		service_words.put("volatile", ABSTRACT); // reserved
 
 		service_words.put("throw", THROW);
 		service_words.put("throws", THROWS);

@@ -9,11 +9,13 @@ public interface ModifiersIF {
 
 	public final static int ABSTRACT = 8;
 
-	public final static int ACCESS_PUBLIC = 16;
+	public final static int DEFAULT = 16;
 
-	public final static int ACCESS_PROTECTED = 32;
+	public final static int ACCESS_PUBLIC = 32;
 
-	public final static int ACCESS_PRIVATE = 64;
+	public final static int ACCESS_PROTECTED = 64;
 
-	public final static int ACCESS_DEFAULT = 128;
+	public final static int ACCESS_PRIVATE = 128;
+
+	public final static int ACCESS_DEFAULT = 258;
 }

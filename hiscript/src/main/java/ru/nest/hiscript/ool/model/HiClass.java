@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.compiler.ClassFileParseRule;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
@@ -25,7 +26,9 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_ARRAY = 2;
 
-	public final static int CLASS_NULL = 3;
+	public final static int CLASS_ENUM = 3;
+
+	public final static int CLASS_NULL = 4;
 
 	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
 
@@ -66,6 +69,7 @@ public class HiClass implements Codeable {
 			// TODO define classes initialization order automatically
 			load(Compiler.class.getResource("/hilibs/String.hi"));
 			load(Compiler.class.getResource("/hilibs/Class.hi"));
+			load(Compiler.class.getResource("/hilibs/Enum.hi"));
 			load(Compiler.class.getResource("/hilibs/System.hi"));
 			load(Compiler.class.getResource("/hilibs/Math.hi"));
 			load(Compiler.class.getResource("/hilibs/Exception.hi"));
@@ -242,7 +246,7 @@ public class HiClass implements Codeable {
 			// set super class to Object by default
 			if (superClass == null && this != OBJECT_CLASS) {
 				superClass = OBJECT_CLASS;
-				superClassType = Type.ObjectType;
+				superClassType = Type.objectType;
 			}
 
 			// init children classes
@@ -661,6 +665,10 @@ public class HiClass implements Codeable {
 		return true;
 	}
 
+	public boolean isEnum() {
+		return false;
+	}
+
 	public HiClass getArrayType() {
 		return null;
 	}
@@ -739,8 +747,12 @@ public class HiClass implements Codeable {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
+		code(os, CLASS_OBJECT);
+	}
+
+	public void code(CodeContext os, int classType) throws IOException {
 		// write class type
-		os.writeByte(CLASS_OBJECT);
+		os.writeByte(classType);
 
 		// constructor parameters
 		if (superClass != null) {
@@ -788,7 +800,7 @@ public class HiClass implements Codeable {
 		int classType = os.readByte();
 		switch (classType) {
 			case CLASS_OBJECT:
-				return decodeObject(os);
+				return decodeObject(os, classType);
 
 			case CLASS_PRIMITIVE:
 				return HiClassPrimitive.decode(os);
@@ -796,13 +808,16 @@ public class HiClass implements Codeable {
 			case CLASS_ARRAY:
 				return HiClassArray.decode(os);
 
+			case CLASS_ENUM:
+				return HiClassEnum.decode(os);
+
 			case CLASS_NULL:
 				return HiClassNull.decode(os);
 		}
 		throw new RuntimeException("unknown class type: " + classType);
 	}
 
-	public static HiClass decodeObject(DecodeContext os) throws IOException {
+	public static HiClass decodeObject(DecodeContext os, int classType) throws IOException {
 		final HiClass[] classAccess = new HiClass[1];
 
 		// constructor parameters
@@ -830,7 +845,7 @@ public class HiClass implements Codeable {
 		String name = os.readUTF();
 		int type = os.readByte();
 
-		HiClass clazz = new HiClass(superClassType, name, type);
+		HiClass clazz = classType == CLASS_ENUM ? new HiClassEnum(name, type) : new HiClass(superClassType, name, type);
 		classAccess[0] = clazz;
 		if (initClass) {
 			clazz.init(outerClass, name, type);

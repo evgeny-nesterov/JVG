@@ -22,7 +22,6 @@ public class NodeByte extends NodeNumber {
 		if (cache[index] == null) {
 			cache[index] = new NodeByte(value, hasSign);
 		}
-
 		return cache[index];
 	}
 
