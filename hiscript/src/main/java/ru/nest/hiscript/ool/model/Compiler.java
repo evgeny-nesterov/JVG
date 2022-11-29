@@ -40,7 +40,7 @@ public class Compiler {
 	public static void testExecutor() {
 		StringBuilder buf = new StringBuilder();
 		try {
-			InputStream is = Compiler.class.getResourceAsStream("/oolTestFully.hi");
+			InputStream is = Compiler.class.getResourceAsStream("/oolTestSingle.hi");
 			int c;
 			while ((c = is.read()) != -1) {
 				buf.append((char) c);

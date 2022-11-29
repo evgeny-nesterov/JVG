@@ -1,34 +1,22 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 
 import java.io.IOException;
 
 public class NodeTry extends Node {
-	public NodeTry(Node body, Node catchBody, Type excType, String excName, Node finallyBody) {
+	public NodeTry(Node body, NodeCatch[] catches, Node finallyBody) {
 		super("try", TYPE_TRY);
 		this.body = body;
-		this.catchBody = catchBody;
-		this.excType = excType;
-		this.excName = excName.intern();
+		this.catches = catches;
 		this.finallyBody = finallyBody;
 	}
 
 	private Node body;
 
-	private Node catchBody;
-
-	private Type excType;
-
-	private HiClass excClass;
-
-	private String excName;
+	private NodeCatch[] catches;
 
 	private Node finallyBody;
 
@@ -43,32 +31,17 @@ public class NodeTry extends Node {
 			}
 		}
 
-		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException")) {
-			HiObject exception = ctx.exception;
-			if (excClass == null) {
-				excClass = excType.getClass(ctx);
-				if (exception != ctx.exception) {
+		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException") && catches != null) {
+			for (NodeCatch catchNode : catches) {
+				int index = catchNode.getMatchedExceptionClass(ctx);
+				if (index == -2) {
+					// error occurred while catch exception class resolving
 					return;
 				}
-			}
 
-			if (exception.clazz.isInstanceof(excClass)) {
-				ctx.exception = null;
-
-				if (catchBody != null) {
-					ctx.enter(RuntimeContext.CATCH, line);
-
-					HiFieldObject exc = (HiFieldObject) HiField.getField(excType, excName);
-					exc.set(exception);
-					exc.initialized = true;
-
-					ctx.addVariable(exc);
-
-					try {
-						catchBody.execute(ctx);
-					} finally {
-						ctx.exit();
-					}
+				if (index >= 0) {
+					catchNode.execute(ctx);
+					break;
 				}
 			}
 		}
@@ -87,13 +60,12 @@ public class NodeTry extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(body);
-		os.writeNullable(catchBody);
-		os.writeType(excType);
-		os.writeUTF(excName);
+		os.writeShort(catches != null ? catches.length : 0);
+		os.writeNullable(catches);
 		os.writeNullable(finallyBody);
 	}
 
 	public static NodeTry decode(DecodeContext os) throws IOException {
-		return new NodeTry(os.readNullable(Node.class), os.readNullable(Node.class), os.readType(), os.readUTF(), os.readNullable(Node.class));
+		return new NodeTry(os.readNullable(Node.class), os.readNullableArray(NodeCatch.class, os.readShort()), os.readNullable(Node.class));
 	}
 }

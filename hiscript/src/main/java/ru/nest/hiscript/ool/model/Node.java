@@ -133,6 +133,8 @@ public abstract class Node implements Codeable {
 
 	public final static byte TYPE_ENUM = 43;
 
+	public final static byte TYPE_CATCH = 44;
+
 	public Node(String name, int type) {
 		this(name, type, -1);
 	}

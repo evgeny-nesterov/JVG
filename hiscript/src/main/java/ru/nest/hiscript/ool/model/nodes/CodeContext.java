@@ -1,5 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.model.Codeable;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.Type;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,10 +13,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Codeable;
-import ru.nest.hiscript.ool.model.Type;
 
 public class CodeContext {
 	public CodeContext() {
@@ -141,8 +141,9 @@ public class CodeContext {
 
 	public <N extends Codeable> void writeNullable(N[] objects) throws IOException {
 		if (objects != null) {
-			for (int i = 0; i < objects.length; i++)
+			for (int i = 0; i < objects.length; i++) {
 				writeNullable(objects[i]);
+			}
 		}
 	}
 
@@ -222,6 +223,13 @@ public class CodeContext {
 		}
 
 		writeShort(index);
+	}
+
+	public void writeTypes(Type[] types) throws IOException {
+		writeByte(types.length);
+		for (int i = 0; i < types.length; i++) {
+			writeType(types[i]);
+		}
 	}
 
 	public byte[] getTypesCode() throws IOException {

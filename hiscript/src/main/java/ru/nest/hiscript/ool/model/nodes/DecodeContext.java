@@ -165,6 +165,14 @@ public class DecodeContext {
 		return getType(is.readShort());
 	}
 
+	public Type[] readTypes() throws IOException {
+		Type[] types = new Type[is.readByte()];
+		for (int i = 0; i < types.length; i++) {
+			types[i] = readType();
+		}
+		return types;
+	}
+
 	public Type getType(int index) {
 		DecodeContext ctx = getRoot();
 		if (ctx != this) {

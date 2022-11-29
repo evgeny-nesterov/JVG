@@ -45,7 +45,6 @@
 20. Implement NodeExpression.getExpressionType() and check assert on boolean and etc
 
         +21. text blocks """\n..."""
-
         -22. volatile field modifier
-
         +23. instanceof with autocast (a instanceof B b)
+        +24. multi catches, multi exception in the catch

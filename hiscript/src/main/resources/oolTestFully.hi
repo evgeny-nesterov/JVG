@@ -723,6 +723,16 @@ Util.header("TRY CATCH FINALLY");
     		} finally {
       			System.println("\t[finally]");
     		}
+
+    		try {
+    		    throw new Exc1();
+    		} catch(Exc12 | Exc22 exc) {
+      			System.println("\tExc12 | Exc22");
+    		} catch(Exc1 | Exc2 exc) {
+      			System.println("\tExc1 | Exc2");
+    		} finally {
+      			System.println("\t[finally]");
+    		}
   		}
 	}
 	new Try().hope1(0);
@@ -733,6 +743,42 @@ Util.header("TRY CATCH FINALLY");
   		System.println();
   		exc.printStackTrace();
 	}
+
+    class Exc1 extends Exception    {Exc1(){this("exc1");} Exc1(String msg){super(msg);}}
+    class Exc12 extends Exc1        {Exc12(){super("exc12");}}
+    class Exc2 extends Exception    {Exc2(){this("exc2");} Exc2(String msg){super(msg);}}
+    class Exc22 extends Exc2        {Exc22(){super("exc22");}}
+    try {
+        throw new Exc1();
+    } catch(Exc12 | Exc22 exc) {
+        System.println("\tExc12 | Exc22");
+    } catch(Exc1 | Exc2 exc) {
+        System.println("\tExc1 | Exc2");
+    }
+
+    try {
+        throw new Exc2();
+    } catch(Exc12 | Exc22 exc) {
+        System.println("\tExc12 | Exc22");
+    } catch(Exc1 | Exc2 exc) {
+        System.println("\tExc1 | Exc2");
+    }
+
+    try {
+        throw new Exc12();
+    } catch(Exc12 | Exc22 exc) {
+        System.println("\tExc12 | Exc22");
+    } catch(Exc1 | Exc2 exc) {
+        System.println("\tExc1 | Exc2");
+    }
+
+    try {
+        throw new Exc22();
+    } catch(Exc12 | Exc22 exc) {
+        System.println("\tExc12 | Exc22");
+    } catch(Exc1 | Exc2 exc) {
+        System.println("\tExc1 | Exc2");
+    }
 }
 
 //////////////
