@@ -8,7 +8,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 public class NodeContinue extends Node {
 	public NodeContinue(String label) {
 		super("continue", TYPE_CONTINUE);
-		this.label = label.intern();
+		this.label = label != null ? label.intern() : null;
 	}
 
 	private String label;

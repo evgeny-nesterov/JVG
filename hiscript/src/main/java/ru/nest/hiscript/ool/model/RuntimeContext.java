@@ -26,7 +26,7 @@ public class RuntimeContext {
 
 	public final static int IF = 6;
 
-	public final static int DOWHILE = 7;
+	public final static int DO_WHILE = 7;
 
 	public final static int SWITCH = 8;
 
@@ -226,7 +226,7 @@ public class RuntimeContext {
 		if (isBroken) {
 			switch (level.type) {
 				case WHILE:
-				case DOWHILE:
+				case DO_WHILE:
 				case FOR:
 					label = null;
 					isBreak = false;
@@ -305,7 +305,6 @@ public class RuntimeContext {
 			}
 			clazz = clazz.enclosingClass;
 		}
-
 		return var;
 	}
 

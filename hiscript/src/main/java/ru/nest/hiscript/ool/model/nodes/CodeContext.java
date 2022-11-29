@@ -239,6 +239,19 @@ public class CodeContext {
 		DataOutputStream oldDos = dos;
 		dos = dos_type;
 
+		int typesSize = types.size();
+		for (int i = 0; i < typesSize; i++) {
+			Type type = types.get(i);
+			while (type != null) {
+				if (!typesHash.containsKey(type)) {
+					int index = typesHash.size();
+					typesHash.put(type, index);
+					types.add(type);
+				}
+				type = type.cellType;
+			}
+		}
+
 		Collections.sort(types, new Comparator<Type>() {
 			@Override
 			public int compare(Type t1, Type t2) {
@@ -262,10 +275,6 @@ public class CodeContext {
 		for (Type type : types) {
 			writeShort(typesHash.get(type));
 			write(type);
-
-			// DEBUG
-			// System.out.println("write type: " + type + ", index=" +
-			// typesHash.get(type));
 		}
 
 		dos = oldDos;

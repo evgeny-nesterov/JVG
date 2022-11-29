@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
@@ -29,7 +30,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
-					NodeExpression caseValue = expectExpression(tokenizer, properties);
+					Node[] caseValue = visitArgumentsValues(tokenizer, properties);
 					expectSymbol(tokenizer, Symbols.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, properties);
 
@@ -44,7 +45,6 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 					node.add(null, caseBody);
 					continue;
 				}
-
 				break;
 			}
 

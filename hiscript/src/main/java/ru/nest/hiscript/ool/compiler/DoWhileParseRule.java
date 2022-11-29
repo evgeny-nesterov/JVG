@@ -25,7 +25,7 @@ public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 			NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-			expectWord(Words.DO, tokenizer);
+			expectWord(Words.WHILE, tokenizer);
 			NodeExpression condition = expectCondition(tokenizer, properties);
 
 			NodeDoWhile node = new NodeDoWhile(body, condition);

@@ -3,6 +3,8 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.compiler.ParseRule;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -40,7 +42,7 @@ public class Compiler {
 	public static void testExecutor() {
 		StringBuilder buf = new StringBuilder();
 		try {
-			InputStream is = Compiler.class.getResourceAsStream("/oolTestSingle.hi");
+			InputStream is = Compiler.class.getResourceAsStream("/oolTestFully.hi");
 			int c;
 			while ((c = is.read()) != -1) {
 				buf.append((char) c);
@@ -54,21 +56,21 @@ public class Compiler {
 		try {
 			Node node = compiler.build();
 			if (node != null) {
-				// CodeContext ctxCode = new CodeContext();
-				// node.code(ctxCode);
-				//
-				// byte[] res = ctxCode.code();
-				//
-				// System.out.println("======================");
-				// ctxCode.statistics();
-				// System.out.println("total: " + res.length + " bytes");
-				// System.out.println("======================");
+				CodeContext ctxCode = new CodeContext();
+				node.code(ctxCode);
 
-				// System.out.println("\n" + new String(res));
-				// System.out.println("======================");
+				byte[] res = ctxCode.code();
 
-				// DecodeContext ctxDecode = new DecodeContext(res);
-				// node = ctxDecode.load();
+				System.out.println("======================");
+				ctxCode.statistics();
+				System.out.println("total: " + res.length + " bytes");
+				System.out.println("======================");
+
+				System.out.println("\n" + new String(res));
+				System.out.println("======================");
+
+				DecodeContext ctxDecode = new DecodeContext(res);
+				node = ctxDecode.load();
 
 				// execute
 				RuntimeContext ctx = new RuntimeContext(true);

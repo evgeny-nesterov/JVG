@@ -47,6 +47,15 @@ public class HiClassEnum extends HiClass {
 		return enumsMap.get(name);
 	}
 
+	public int getEnumOrdinal(String name) {
+		for (HiEnumValue enumValue : enumValues) {
+			if (enumValue.getName().equals(name)) {
+				return enumValue.getOrdinal();
+			}
+		}
+		return -1;
+	}
+
 	@Override
 	public boolean isNull() {
 		return false;

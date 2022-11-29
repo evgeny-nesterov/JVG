@@ -20,7 +20,7 @@ public class NodeDoWhile extends Node {
 	public void execute(RuntimeContext ctx) {
 		boolean is;
 		do {
-			ctx.enter(RuntimeContext.DOWHILE, line);
+			ctx.enter(RuntimeContext.DO_WHILE, line);
 			try {
 				if (body != null) {
 					body.execute(ctx);

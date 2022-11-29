@@ -310,10 +310,12 @@ Util.header("CAST: PRIMITIVES");
 	int i3 = (int)1000L;
 	System.println("\tint i3=(int)1000L: " + i3);
 
-	byte b1 = (byte)130;
+	byte b1 = (byte)130f;
 	System.println("\tbyte b1 = (byte)130: " + b1);
 	char c1 = (char)80;
 	System.println("\tchar c1 = (char)80: " + c1);
+	float f1 = (float)80.0;
+	System.println("\tfloat f1 = (float)80.0: " + f1);
 }
 
 //////////////
@@ -530,6 +532,55 @@ Util.header("SWITCH");
   		default:
     	System.println("\tdefault");
 	}
+
+    String a = "a";
+    switch(a) {
+        case "b":
+            System.println("[1] fail");
+            break;
+        case "a", "b":
+            System.println("[1] success");
+            break;
+    }
+    a = "a1";
+    switch(a) {
+        case "a" + 1, "x":
+            System.println("[2] success 1");
+        case "b":
+            System.println("[2] fail");
+            break;
+        case "a1":
+            System.println("[2] success 2");
+            break;
+    }
+
+    int i = 3;
+    switch(i) {
+        case 2:
+            System.println("[3] xxx");
+            break;
+        default:
+            System.println("[3] def");
+        case 1 - 1:
+            System.println("[3] success!");
+            break;
+    }
+
+    System.println("[4]: " + switch(i) {case 0, 1, 2 -> 1; case 3, 4 -> 2;});
+
+    enum E {e1, e2, e3}
+    E e = E.e2;
+    switch(e) {
+        case e1:
+            System.println("[5] e1");
+            break;
+        case e2:
+            System.println("[5] e2");
+            break;
+        case e3:
+            System.println("[5] e3");
+            break;
+    }
 }
 
 /////////////////////////
@@ -572,9 +623,12 @@ Util.header("IF");
 	Util.header("WHILE");
 	int x = 0;
 	while(x < 3) {
-  	System.println("\twhile(x < 3): x=" + x);
-  	x = x + 1;
+        System.println("\twhile(x < 3): x=" + x);
+        x = x + 1;
 	}
+	do {
+	    x--;
+	} while(x != 0);
 }
 
 ////////////////////////////
@@ -596,6 +650,7 @@ Util.header("ITERABLE FOR");
     int i = 0;
     for (Object s : arr) {
         System.println("\t[" + i++ + "] " + s);
+        continue;
     }
 }
 
@@ -1243,7 +1298,7 @@ Util.header("Check invalid method call");
         System.println("RESULT: failure");
    } catch(Exception e) {
         System.println("RESULT: success");
-    }
+   }
 }
 
 //*************** ALGORITHMS ************

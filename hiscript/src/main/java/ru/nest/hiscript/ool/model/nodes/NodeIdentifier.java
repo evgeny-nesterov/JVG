@@ -16,6 +16,10 @@ public class NodeIdentifier extends Node {
 
 	private String name;
 
+	public String getName() {
+		return name;
+	}
+
 	private String castedVariableName;
 
 	public String getCastedVariableName() {

@@ -68,7 +68,7 @@ public class ObjectImpl extends ImplUtil {
 
 	public static void Object_boolean_equals_Object(RuntimeContext ctx, Object obj) {
 		if (ctx.value.type.isArray()) {
-			ctx.value.bool = ctx.value.array == obj;
+			ctx.value.bool = ctx.value.array == obj;String s;
 		} else {
 			ctx.value.bool = ctx.value.object == obj;
 		}

@@ -157,7 +157,7 @@ public class DecodeContext {
 			types[index] = Type.decode(this);
 
 			// DEBUG
-			// System.out.println(index + ": " + types[index].name);
+			System.out.println(index + ": " + types[index].name);
 		}
 	}
 

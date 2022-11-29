@@ -65,7 +65,6 @@ public class ClassParseRule extends ParserUtil {
 				if (interfaceType == null) {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
-				Enum a;
 
 				interfacesList = new ArrayList<>(1);
 				interfacesList.add(interfaceType);

@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 
@@ -177,6 +179,34 @@ public class HiObject {
 	public char[] toString(RuntimeContext ctx) {
 		NodeInvocation.invoke(ctx, this, "toString");
 		return ImplUtil.getChars(ctx.value.object);
+	}
+
+	public boolean equals(RuntimeContext ctx, HiObject object) {
+		HiClass objectClass = HiClass.forName(ctx, "Object");
+		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
+		HiField objectField = new HiFieldObject(Type.getType("Object"), equalsMethod.argNames[0], object);
+
+		// enter into method
+		ctx.enterMethod(equalsMethod, this, -1);
+		boolean result;
+		try {
+			// register variables in method
+			ctx.addVariable(objectField);
+
+			// perform method invocation
+			Value oldValue = ctx.value;
+			try {
+				equalsMethod.invoke(ctx, HiClassPrimitive.getPrimitiveClass("boolean"), this, new HiField[] {objectField});
+				result = ctx.value.getBoolean();
+			} finally {
+				ctx.value = oldValue;
+			}
+		} finally {
+			// exit from method
+			ctx.exit();
+			ctx.isReturn = false;
+		}
+		return result;
 	}
 
 	@Override
