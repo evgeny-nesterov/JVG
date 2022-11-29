@@ -780,10 +780,10 @@ Util.header("OBJECT FIELD");
 ///////////////
 Util.header("STRING");
 {
-	String str = new String();
-	str.chars = new char[10];
+	char[] chars = new char[10];
 	for(int i = 0; i < 10; i++)
-  		str.chars[i] = 'A';
+  		chars[i] = 'A';
+	String str = new String(chars);
 	String copyString = new String(str);
 
 	System.println("\tstr=" + str);
@@ -798,8 +798,6 @@ Util.header("STRING");
 	str = new String("12345\n\t    67890");
 	System.println("\tstr=" + str);
 	String str2 = new String(str);
-	str2.chars = str.chars;
-	str2.chars[1] = 'X';
 	System.println("\tstr2=" + str2);
 
 	int LLL = "length".length();

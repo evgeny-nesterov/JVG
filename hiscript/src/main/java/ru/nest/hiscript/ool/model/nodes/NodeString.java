@@ -37,7 +37,6 @@ public class NodeString extends Node {
 			HiFieldArray chars = (HiFieldArray) obj.getField("chars");
 			chars.array = text;
 		}
-
 		return obj;
 	}
 

@@ -191,7 +191,6 @@ public class Value implements PrimitiveTypes {
 			ctx.throwRuntimeException("object is expected");
 			return null;
 		}
-
 		return object;
 	}
 

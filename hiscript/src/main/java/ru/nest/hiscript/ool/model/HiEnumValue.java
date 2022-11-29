@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class HiEnumValue implements Codeable {
 	private String name;
@@ -28,6 +29,14 @@ public class HiEnumValue implements Codeable {
 
 	public Node[] getArguments() {
 		return arguments;
+	}
+
+	public void initEnumValue(RuntimeContext ctx) {
+		if (arguments!=null) {
+			for (Node argument : arguments) {
+
+			}
+		}
 	}
 
 	@Override

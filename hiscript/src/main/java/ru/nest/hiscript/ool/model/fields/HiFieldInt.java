@@ -8,6 +8,12 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 		super("int", name);
 	}
 
+	public HiFieldInt(String name, int value) {
+		super("int", name);
+		this.value = value;
+		this.initialized = true;
+	}
+
 	private int value;
 
 	@Override
@@ -33,6 +39,10 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 				break;
 		}
+	}
+
+	public void set(int value) {
+		this.value = value;
 	}
 
 	@Override

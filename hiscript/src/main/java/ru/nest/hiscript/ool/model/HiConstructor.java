@@ -1,19 +1,23 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-import java.util.List;
-
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldInt;
+import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 
+import java.io.IOException;
+import java.util.List;
+
 public class HiConstructor implements Codeable {
 	public enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
-		static BodyConstructorType[] types = { NONE, THIS, SUPER };
+
+		static BodyConstructorType[] types = {NONE, THIS, SUPER};
 
 		int intType;
 
@@ -127,20 +131,31 @@ public class HiConstructor implements Codeable {
 					superObject = ctx.value.getObject();
 				} else {
 					// get default constructor from super classes
-					HiConstructor superDefaultConstructor = clazz.superClass.getConstructor(ctx);
-					if (superDefaultConstructor == null) {
-						ctx.throwRuntimeException("Constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
-						return null;
-					}
+					if ("Enum".equals(clazz.superClass.fullName)) {
+						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, "String"), HiClassPrimitive.getPrimitiveClass("int"));
 
-					if (superDefaultConstructor == this) {
-						ctx.throwRuntimeException("Cyclic dependence for constructor " + superDefaultConstructor);
-						return null;
-					}
+						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
+						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());
+						superObject = enumDefaultConstructor.newInstance(ctx, new HiField<?>[] {enumName, enumOrdinal}, null);
+						if (ctx.exitFromBlock()) {
+							return null;
+						}
+					} else {
+						HiConstructor superDefaultConstructor = clazz.superClass.getConstructor(ctx);
+						if (superDefaultConstructor == null) {
+							ctx.throwRuntimeException("Constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
+							return null;
+						}
 
-					superObject = superDefaultConstructor.newInstance(ctx, null, superOutboundObject);
-					if (ctx.exitFromBlock()) {
-						return null;
+						if (superDefaultConstructor == this) {
+							ctx.throwRuntimeException("Cyclic dependence for constructor " + superDefaultConstructor);
+							return null;
+						}
+
+						superObject = superDefaultConstructor.newInstance(ctx, null, superOutboundObject);
+						if (ctx.exitFromBlock()) {
+							return null;
+						}
 					}
 				}
 				object.setSuperObject(superObject);
@@ -203,6 +218,13 @@ public class HiConstructor implements Codeable {
 			// execute constructor body
 			if (body != null) {
 				body.execute(ctx);
+			}
+
+			// at the end of initialization
+			if (object.fields != null) {
+				for (int i = 0; i < object.fields.length; i++) {
+					object.fields[i].initialized = true;
+				}
 			}
 		} finally {
 			// exit from constructor

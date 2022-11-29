@@ -40,7 +40,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 				registerBuilder("double", packageName + ".HiFieldDouble");
 			}
 		}
-
 		return primitiveBuilders.get(name);
 	}
 
@@ -97,7 +96,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 		// do initialization work
 		if (!initialized) {
-			initialized = true;
+			// initialized = true; ???
 
 			// if there is no initializer then do default initialization,
 			// ie initialization will be done in any case
@@ -107,7 +106,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 					return;
 				}
 
-				initialized = false;
 				set(ctx, ctx.value);
 				initialized = true;
 
@@ -157,13 +155,12 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 			return new HiFieldObject(type, name);
 		}
 
-		java.lang.reflect.Constructor<HiField<?>> constr = getConstructor(type.name);
+		java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(type.name);
 		try {
-			return constr.newInstance(name);
+			return constructor.newInstance(name);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
-
 		return null;
 	}
 
@@ -220,7 +217,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 			return autoCast(asrc.cellClass, adst.cellClass);
 		}
-
 		return src.isInstanceof(dst);
 	}
 

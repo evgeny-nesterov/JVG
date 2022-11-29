@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-
 import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -11,6 +8,9 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
 
 public class NodeArray extends Node {
 	public NodeArray(Type cellType, Node[] dimensions) {
@@ -59,7 +59,7 @@ public class NodeArray extends Node {
 			return;
 		}
 
-		HiConstructor constructor = clazz.searchConstructor(ctx);
+		HiConstructor constructor = clazz.searchConstructor(ctx, null);
 		constructor.newInstance(ctx, null, null, null);
 
 		HiClass cellClass = clazz.cellClass;

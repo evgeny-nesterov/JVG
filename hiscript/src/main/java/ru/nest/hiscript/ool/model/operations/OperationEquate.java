@@ -17,6 +17,10 @@ public class OperationEquate extends BinaryOperation {
 		super("=", EQUATE);
 	}
 
+	enum E {
+		a, b
+	}
+
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v2.valueType == Value.VARIABLE) {
@@ -29,6 +33,10 @@ public class OperationEquate extends BinaryOperation {
 		if (v1.valueType == Value.VARIABLE) {
 			// 1. copy variable from v1
 			HiField<?> variable = v1.variable;
+			if (variable.initialized && variable.getModifiers().isFinal()) {
+				ctx.throwException("RuntimeException", "Cannot assign a value to final variable '" + variable.name + "'");
+				return;
+			}
 
 			// 2. copy v2 to v1
 			v2.copyTo(v1);

@@ -1,15 +1,22 @@
 package ru.nest.hiscript.ool.model.fields;
 
-import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class HiFieldObject extends HiField<HiObject> {
 	public HiFieldObject(Type type, String name) {
 		super(type, name);
+	}
+
+	public HiFieldObject(Type type, String name, HiObject object) {
+		super(type, name);
+		this.object = object;
+		this.initialized = true;
 	}
 
 	private HiObject object;
@@ -45,6 +52,7 @@ public class HiFieldObject extends HiField<HiObject> {
 		}
 
 		object = value.object;
+		initialized = true;
 	}
 
 	@Override
@@ -54,5 +62,9 @@ public class HiFieldObject extends HiField<HiObject> {
 
 	public void set(HiObject object) {
 		this.object = object;
+	}
+
+	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {
+		return new HiFieldObject(Type.getType("String"), "name", NodeString.createString(ctx, value.toCharArray()));
 	}
 }

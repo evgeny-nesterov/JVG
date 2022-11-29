@@ -1,30 +1,30 @@
 public abstract class Enum {
-  protected Enum(String name, int ordinal) {
-    this.name = name;
-    this.ordinal = ordinal;
-  }
+    protected Enum(String name, int ordinal) {
+        this.name = name;
+        this.ordinal = ordinal;
+    }
 
-  private final String name;
+    private final String name;
 
-  public final String name() {
-    return name;
-  }
+    public final String name() {
+        return name;
+    }
 
-  private final int ordinal;
+    private final int ordinal;
 
-  public final int ordinal() {
-    return ordinal;
-  }
+    public final int ordinal() {
+        return ordinal;
+    }
 
-  public String toString() {
-    return name;
-  }
+    public String toString() {
+        return name;
+    }
 
-  public final boolean equals(Object other) {
-    return this==other;
-  }
+    public final boolean equals(Object other) {
+        return this==other;
+    }
 
-  public final int hashCode() {
-    return super.hashCode();
-  }
+    public final int hashCode() {
+        return super.hashCode();
+    }
 }

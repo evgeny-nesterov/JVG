@@ -22,6 +22,7 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 	public void set(RuntimeContext ctx, Value value) {
 		if (value.type == getClass(ctx)) {
 			this.value = value.bool;
+			this.initialized = true;
 		} else {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 		}

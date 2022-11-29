@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
@@ -144,17 +145,24 @@ public class OperationInvocation extends BinaryOperation {
 		} else if (v1.valueType == Value.CLASS) {
 			clazz = v1.type;
 
-			// find by pattern: <CLASS>.<STATIC FIELD>
-			field = clazz.getField(name);
-			if (field != null && !field.getModifiers().isStatic()) {
-				field = null;
+			// find by pattern: <ENUM CLASS>.<ENUM VALUE>
+			if (clazz.isEnum()) {
+				field = ((HiClassEnum) clazz).getEnumValue(name);
 			}
 
-			// find by pattern: <CLASS>.<STATIC CLASS>
 			if (field == null) {
-				clazz = clazz.getChildren(ctx, name);
-				if (clazz != null && !clazz.modifiers.isStatic()) {
-					clazz = null;
+				// find by pattern: <CLASS>.<STATIC FIELD>
+				field = clazz.getField(name);
+				if (field != null && !field.getModifiers().isStatic()) {
+					field = null;
+				}
+
+				// find by pattern: <CLASS>.<STATIC CLASS>
+				if (field == null) {
+					clazz = clazz.getChildren(ctx, name);
+					if (clazz != null && !clazz.modifiers.isStatic()) {
+						clazz = null;
+					}
 				}
 			}
 		}

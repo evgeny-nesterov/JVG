@@ -271,6 +271,10 @@ public class HiClass implements Codeable {
 						}
 					}
 				}
+
+				if (isEnum()) {
+					((HiClassEnum) this).initEnumValues(ctx);
+				}
 			} catch (Throwable exc) {
 				exc.printStackTrace();
 				ctx.throwRuntimeException("Can not initialize class " + fullName + ": " + exc.getMessage());
@@ -421,7 +425,7 @@ public class HiClass implements Codeable {
 		return false;
 	}
 
-	private HashMap<String, HiField<?>> fields_map;
+	protected HashMap<String, HiField<?>> fields_map;
 
 	public HiField<?> getField(String name) {
 		if (fields_map != null && fields_map.containsKey(name)) {
@@ -461,7 +465,6 @@ public class HiClass implements Codeable {
 			}
 			fields_map.put(name, field);
 		}
-
 		return field;
 	}
 
@@ -577,7 +580,6 @@ public class HiClass implements Codeable {
 								break FOR;
 							}
 						}
-
 						return m;
 					}
 				}
@@ -603,12 +605,12 @@ public class HiClass implements Codeable {
 		return null;
 	}
 
-	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass... argTypes) {
+	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
 		if (constructors != null) {
 			for (HiConstructor c : constructors)
 				FOR:{
 					int argCount = c.arguments != null ? c.arguments.length : 0;
-					if (argCount != argTypes.length) {
+					if (argCount != (argTypes != null ? argTypes.length : 0)) {
 						continue;
 					}
 
@@ -622,7 +624,6 @@ public class HiClass implements Codeable {
 					return c;
 				}
 		}
-
 		return null;
 	}
 
@@ -641,11 +642,9 @@ public class HiClass implements Codeable {
 							break FOR;
 						}
 					}
-
 					return c;
 				}
 		}
-
 		return null;
 	}
 
@@ -882,7 +881,6 @@ public class HiClass implements Codeable {
 		if (superClassType != null) {
 			clazz.superClass = superClassType.getClass(null);
 		}
-
 		return clazz;
 	}
 

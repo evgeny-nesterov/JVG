@@ -62,6 +62,8 @@ public class RuntimeContext {
 
 	private List<Value[]> cache_values = new ArrayList<>();
 
+	public HiEnumValue initializingEnumValue;
+
 	public RuntimeContext(boolean main) {
 		this.main = main;
 		if (main) {
