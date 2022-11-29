@@ -1,11 +1,11 @@
 package ru.nest.hiscript.pol.model;
 
-import java.lang.reflect.Array;
-
 import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.lang.reflect.Array;
 
 public class ValueContainer implements Words {
 	public int type;
@@ -34,17 +34,7 @@ public class ValueContainer implements Words {
 
 	public double doubleNumber;
 
-	public int massiveSize;
-
 	public Object array;
-
-	public Object getArrayValue(Object array, int index) throws ExecuteException {
-		if (isArray()) {
-			return Types.getArrayValue(array, type, index);
-		} else {
-			throw new ExecuteException("array required; but " + getTypeDescr() + " found");
-		}
-	}
 
 	public void copy(ValueContainer value) throws ExecuteException {
 		if (!value.isArray()) {
@@ -139,7 +129,7 @@ public class ValueContainer implements Words {
 			return;
 		}
 
-		dimension = Types.getDimension(o != null ? o.getClass() : null);
+		dimension = Types.getDimension(o.getClass());
 		if (dimension == 0) {
 			switch (Types.getType(o.getClass())) {
 				case CHAR:
@@ -626,7 +616,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required char");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required char");
 
 			case BYTE:
 				character = (char) byteNumber;
@@ -658,13 +648,13 @@ public class ValueContainer implements Words {
 
 	public void castString() throws ExecuteException {
 		if (type != STRING) {
-			throw new ExecuteException("inconvertable types; found " + getTypeDescr() + ", required string");
+			throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required string");
 		}
 	}
 
 	public void castBoolean() throws ExecuteException {
 		if (type != BOOLEAN) {
-			throw new ExecuteException("inconvertable types; found " + getTypeDescr() + ", required boolean");
+			throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required boolean");
 		}
 	}
 
@@ -673,7 +663,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required byte");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required byte");
 
 			case CHAR:
 				byteNumber = (byte) character;
@@ -708,7 +698,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required short");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required short");
 
 			case CHAR:
 				shortNumber = (short) character;
@@ -743,7 +733,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required int");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required int");
 
 			case CHAR:
 				intNumber = character;
@@ -778,7 +768,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required float");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required float");
 
 			case CHAR:
 				floatNumber = character;
@@ -813,7 +803,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required long");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required long");
 
 			case CHAR:
 				longNumber = character;
@@ -848,7 +838,7 @@ public class ValueContainer implements Words {
 			case VOID:
 			case STRING:
 			case BOOLEAN:
-				throw new ExecuteException("incovertable types; found " + getTypeDescr() + ", required double");
+				throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required double");
 
 			case CHAR:
 				doubleNumber = character;
@@ -880,7 +870,7 @@ public class ValueContainer implements Words {
 
 	public void castArray(int type, int dimension) throws ExecuteException {
 		if (this.type != type || this.dimension != dimension) {
-			throw new ExecuteException("inconvertable types; found " + getTypeDescr() + ", required " + Types.getTypeDescr(type, dimension));
+			throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required " + Types.getTypeDescr(type, dimension));
 		}
 	}
 
@@ -1005,12 +995,12 @@ public class ValueContainer implements Words {
 		}
 
 		if (deltaDimension > 0) {
-			if (deltaDimension > 0 && type != value.type) {
+			if (type != value.type) {
 				throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + value.getTypeDescr());
 			}
 
 			if (equateType != Symbols.EQUATE) {
-				throw new ExecuteException("operator " + SymbolToken.getSymbol(equateType) + " can not be applyed to " + getTypeDescr() + ", " + value.getTypeDescr());
+				throw new ExecuteException("operator " + SymbolToken.getSymbol(equateType) + " can not be applied to " + getTypeDescr() + ", " + value.getTypeDescr());
 			}
 
 			Array.set(array, indexes[indexes.length - 1], value.getArray(type, deltaDimension));

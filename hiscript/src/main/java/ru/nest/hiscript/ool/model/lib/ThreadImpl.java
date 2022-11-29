@@ -14,10 +14,10 @@ public class ThreadImpl extends ImplUtil {
 				return;
 			}
 
-			// TODO: cache thread class and constr
+			// TODO: cache thread class and constructor
 			HiClass clazz = HiClass.forName(ctx, "Thread");
-			HiConstructor constr = clazz.getConstructor(ctx);
-			HiObject obj = constr.newInstance(ctx, null, null);
+			HiConstructor constructor = clazz.getConstructor(ctx);
+			HiObject obj = constructor.newInstance(ctx, null, null);
 			obj.userObject = Thread.currentThread();
 			threads.put(ctx, obj);
 		}

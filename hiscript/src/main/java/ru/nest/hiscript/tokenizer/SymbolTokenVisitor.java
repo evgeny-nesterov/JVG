@@ -13,11 +13,11 @@ public class SymbolTokenVisitor implements TokenVisitor {
 		char c = tokenizer.getCurrent();
 		switch (c) {
 			case '(':
-				type = Symbols.PARANTHESIS_LEFT;
+				type = Symbols.PARENTHESES_LEFT;
 				break;
 
 			case ')':
-				type = Symbols.PARANTHESIS_RIGHT;
+				type = Symbols.PARENTHESES_RIGHT;
 				break;
 
 			case '{':

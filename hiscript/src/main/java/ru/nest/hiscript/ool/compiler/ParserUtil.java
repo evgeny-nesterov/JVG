@@ -248,12 +248,12 @@ public class ParserUtil implements Words {
 	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
+		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (condition == null) {
 			throw new ParseException("expression is expected", tokenizer.currentToken());
 		}
-		expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 		return condition;
 	}
 

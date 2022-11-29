@@ -30,7 +30,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 		}
 
 		if (methodName != null) {
-			if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.commit();
 				InvocationNode node = new InvocationNode(namespace, methodName);
 
@@ -47,7 +47,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 					}
 				}
 
-				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 				return node;
 			}
 		}
@@ -69,7 +69,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 
 		// String methodName = visitWord(WordToken.NOT_SERVICE, tokenizer, handler);
 		if (methodName != null) {
-			if (visitSymbol(tokenizer, handler, Symbols.PARANTHESIS_LEFT) != -1) {
+			if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.commit();
 
 				if (ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
@@ -80,7 +80,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 					}
 				}
 
-				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 				return true;
 			}
 		}

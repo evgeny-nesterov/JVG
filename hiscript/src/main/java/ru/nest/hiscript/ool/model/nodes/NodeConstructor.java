@@ -1,16 +1,16 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+
+import java.io.IOException;
 
 public class NodeConstructor extends Node {
 	public NodeConstructor(NodeType type, Node[] argValues) {
@@ -30,7 +30,6 @@ public class NodeConstructor extends Node {
 	private NodeConstructor(Node[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.argValues = argValues;
-		name = clazz.fullName.intern();
 	}
 
 	public NodeType type;
@@ -90,6 +89,10 @@ public class NodeConstructor extends Node {
 
 				Type type = Type.getType(types[i]);
 				arguments[i] = HiField.getField(type, null);
+				if (arguments[i] == null) {
+					ctx.throwRuntimeException("argument with type '" + type.fullName + "' is not found");
+					return;
+				}
 				arguments[i].set(ctx, ctx.value);
 				if (ctx.exitFromBlock()) {
 					return;
@@ -149,6 +152,7 @@ public class NodeConstructor extends Node {
 					@Override
 					public void classLoaded(HiClass clazz) {
 						node.clazz = clazz;
+						node.name = clazz.fullName.intern();
 					}
 				}, exc.getIndex());
 				return node;

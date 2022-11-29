@@ -24,13 +24,13 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	@Override
 	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (value == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 			SwitchNode node = new SwitchNode(value);
 
@@ -46,7 +46,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
 					expectSymbol(Symbols.COLON, tokenizer);
 					if (defaultFound) {
-						throw new ParseException("dublicate default label", tokenizer.currentToken());
+						throw new ParseException("duplicate default label", tokenizer.currentToken());
 					}
 
 					BlockNode defaultBody = BlockParseRule.getInstance().visit(tokenizer);
@@ -69,12 +69,12 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.SWITCH, tokenizer, handler) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression is expected");
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 			boolean defaultFound = false;
 			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
@@ -86,7 +86,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				Token token = tokenizer.currentToken();
 				if (visitWord(Words.DEFAULT, tokenizer, handler) != null) {
 					if (defaultFound) {
-						errorOccurred(handler, "dublicate default label", token);
+						errorOccurred(handler, "duplicate default label", token);
 					}
 					expectSymbol(Symbols.COLON, tokenizer, handler);
 

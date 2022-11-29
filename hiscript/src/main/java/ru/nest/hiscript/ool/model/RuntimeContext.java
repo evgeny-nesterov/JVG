@@ -142,6 +142,9 @@ public class RuntimeContext {
 		args[0].initialized = true;
 
 		exception = excConstructor.newInstance(this, args, null);
+
+		// DEBUG
+		// new Exception("DEBUG").printStackTrace();
 	}
 
 	public boolean exitFromBlock() {
@@ -155,7 +158,7 @@ public class RuntimeContext {
 		if (level != null) {
 			level = getStack(type, level, level.clazz, level.constructor, level.method, level.object, null, codeLine);
 		} else {
-			level = getStack(type, level, null, null, null, null, null, codeLine);
+			level = getStack(type, null, null, null, null, null, null, codeLine);
 		}
 	}
 
@@ -200,7 +203,7 @@ public class RuntimeContext {
 	}
 
 	public StackLevel exit(boolean lockLevel) {
-		boolean isBreaked = (isBreak || isContinue) && isCurrentLabel();
+		boolean isBroken = (isBreak || isContinue) && isCurrentLabel();
 
 		// String s = "";
 		// while(s.length() != 2 * level.level)
@@ -220,7 +223,7 @@ public class RuntimeContext {
 			}
 		}
 
-		if (isBreaked) {
+		if (isBroken) {
 			switch (level.type) {
 				case WHILE:
 				case DOWHILE:
@@ -415,7 +418,6 @@ public class RuntimeContext {
 		// while(s.length() != 2 * stack.level)
 		// s += "  ";
 		// System.out.println(s + "ENTER: " + stack);
-
 		return stack;
 	}
 
@@ -772,11 +774,11 @@ public class RuntimeContext {
 		return buf.toString();
 	}
 
-	public void throwExceptionIf(boolean printStachTrace) {
+	public void throwExceptionIf(boolean printStackTrace) {
 		if (exception != null) {
 			HiField<?> messageField = exception.getMainObject().getField("message");
 			String message = messageField.getStringValue();
-			if (printStachTrace) {
+			if (printStackTrace) {
 				HiField<?> stackTraceField = exception.getMainObject().getField("stackTrace");
 				HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
 				System.out.println("hiscript error: " + message);

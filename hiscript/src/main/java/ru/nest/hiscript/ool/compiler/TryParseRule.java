@@ -31,7 +31,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 			Type excType = null;
 			String excName = null;
 			if (visitWord(Words.CATCH, tokenizer) != null) {
-				expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
+				expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 				String typeName = visitWord(NOT_SERVICE, tokenizer);
 				excType = Type.getType(typeName);
 				// TODO check excType extends Exception
@@ -39,7 +39,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				if (excName == null) {
 					throw new ParseException("identifier is expected", tokenizer.currentToken());
 				}
-				expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 				catchBody = BlockParseRule.getInstance().visit(tokenizer, properties);

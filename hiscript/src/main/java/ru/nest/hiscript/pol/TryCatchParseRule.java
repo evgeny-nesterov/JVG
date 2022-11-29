@@ -31,7 +31,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			if (visitWord(Words.CATCH, tokenizer) != null) {
 				thereIsCatch = true;
 
-				expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
+				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 				if (visitWord(Words.STRING, tokenizer) == null) {
 					throw new ParseException("'string' expected", tokenizer.currentToken());
 				}
@@ -39,7 +39,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 				if (errorVariableName == null) {
 					throw new ParseException("variable expected", tokenizer.currentToken());
 				}
-				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 				expectSymbol(Symbols.BRACES_LEFT, tokenizer);
 				catchBody = BlockParseRule.getInstance().visit(tokenizer);
@@ -77,7 +77,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			if (visitWord(Words.CATCH, tokenizer, handler) != null) {
 				thereIsCatch = true;
 
-				expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
+				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 				if (visitWord(Words.STRING, tokenizer, handler) == null) {
 					errorOccurred(tokenizer, handler, "'string' expected");
 				}
@@ -85,7 +85,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 				if (errorVariableName == null) {
 					errorOccurred(tokenizer, handler, "variable expected");
 				}
-				expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 				expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
 				BlockParseRule.getInstance().visit(tokenizer, handler);

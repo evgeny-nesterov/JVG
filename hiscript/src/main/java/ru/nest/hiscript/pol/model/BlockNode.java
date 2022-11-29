@@ -17,11 +17,10 @@ public class BlockNode extends Node implements Breakable {
 		statement.setParent(this);
 	}
 
-	private boolean isBreaked = false;
+	private boolean isBroken = false;
 
-	@Override
-	public void Break() {
-		isBreaked = true;
+	public void breakBlock() {
+		isBroken = true;
 	}
 
 	private int size;
@@ -46,7 +45,7 @@ public class BlockNode extends Node implements Breakable {
 
 	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		isBreaked = false;
+		isBroken = false;
 		for (int i = 0; i < size; i++) {
 			nodes[i].execute(ctx);
 			nodes[i].removeVariables();
@@ -55,7 +54,7 @@ public class BlockNode extends Node implements Breakable {
 				return;
 			}
 
-			if (isBreaked) {
+			if (isBroken) {
 				break;
 			}
 		}

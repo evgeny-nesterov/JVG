@@ -21,9 +21,9 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	@Override
 	public NodeSynchronized visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.SYNCHRONIZED, tokenizer) != null) {
-			expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
+			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 			Node lock = expectExpression(tokenizer, properties);
-			expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 			Node body = BlockParseRule.getInstance().visit(tokenizer, properties);

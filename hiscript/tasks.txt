@@ -23,19 +23,9 @@
 		+7. Iterable for
             for(V v : list) {
             }
+        +8. Add enum
 
-!8. Indicate code line number while throwing exceptions
-9. Add enum
-    enum E {
-      A('a'), B('B'), C('C');
-      E(char c) {
-        this.c = c;
-      }
-      char c;
-      public char getChar() {
-        return c;
-      }
-    }
+!9. Indicate code line number while throwing exceptions
 
         +10. Add asserts
 
@@ -56,4 +46,6 @@
 
         +21. text blocks """\n..."""
 
--22. volatile field modifier
+        -22. volatile field modifier
+
+        +23. instanceof with autocast (a instanceof B b)

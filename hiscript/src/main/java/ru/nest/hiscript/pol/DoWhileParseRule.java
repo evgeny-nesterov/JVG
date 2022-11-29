@@ -30,12 +30,12 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 				throw new ParseException("while expected", tokenizer.currentToken());
 			}
 
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 			expectSymbol(Symbols.SEMICOLON, tokenizer);
 
 			return new DoWhileNode(condition, body);
@@ -55,11 +55,11 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 				errorOccurred(tokenizer, handler, "while expected");
 			}
 
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression is expected");
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 			expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
 
 			return true;

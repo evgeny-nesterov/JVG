@@ -23,7 +23,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 	@Override
 	public ForNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 
 			DeclarationsNode initialization1 = DeclarationsParseRule.getInstance().visit(tokenizer);
 			AssignmentsNode initialization2 = null;
@@ -34,8 +34,8 @@ public class ForParseRule extends ParseRule<ForNode> {
 			expectSymbol(Symbols.SEMICOLON, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			expectSymbol(Symbols.SEMICOLON, tokenizer);
-			Node asignments = AssignmentsParseRule.getInstance().visit(tokenizer);
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+			Node assignments = AssignmentsParseRule.getInstance().visit(tokenizer);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) {
@@ -43,11 +43,11 @@ public class ForParseRule extends ParseRule<ForNode> {
 			}
 
 			if (initialization1 != null) {
-				return new ForNode(initialization1, condition, asignments, body);
+				return new ForNode(initialization1, condition, assignments, body);
 			} else if (initialization2 != null) {
-				return new ForNode(initialization2, condition, asignments, body);
+				return new ForNode(initialization2, condition, assignments, body);
 			} else {
-				return new ForNode(condition, asignments, body);
+				return new ForNode(condition, assignments, body);
 			}
 		}
 
@@ -57,7 +57,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.FOR, tokenizer, handler) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!DeclarationsParseRule.getInstance().visit(tokenizer, handler)) {
 				AssignmentsParseRule.getInstance().visit(tokenizer, handler);
@@ -67,7 +67,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 			ExpressionParseRule.getInstance().visit(tokenizer, handler);
 			expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
 			AssignmentsParseRule.getInstance().visit(tokenizer, handler);
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "statement is expected");

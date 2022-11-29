@@ -157,7 +157,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			ExpressionNode enode = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (enode == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
@@ -169,7 +169,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				node = enode;
 			}
 
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 			return node;
 		}
 
@@ -219,12 +219,12 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, handler, Symbols.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression is expected");
 			}
 
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 			return true;
 		}
 

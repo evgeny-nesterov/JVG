@@ -61,7 +61,9 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 
 		VariableNode variable = visitVariable(tokenizer, handler);
 		if (variable != null) {
+			// TODO
 			List<ExpressionNode> indexes = new ArrayList<>();
+
 			while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 					errorOccurred(tokenizer, handler, "array dimension missing");

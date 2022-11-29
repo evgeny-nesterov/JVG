@@ -36,6 +36,8 @@ public class HiFieldObject extends HiField<HiObject> {
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
+		declared = true;
+
 		HiClass valueClass = value.type;
 		if (valueClass.isNull()) {
 			object = null;
@@ -61,7 +63,9 @@ public class HiFieldObject extends HiField<HiObject> {
 	}
 
 	public void set(HiObject object) {
+		declared = true;
 		this.object = object;
+		initialized = true;
 	}
 
 	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {

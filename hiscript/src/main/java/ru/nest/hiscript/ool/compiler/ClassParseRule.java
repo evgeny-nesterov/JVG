@@ -172,7 +172,7 @@ public class ClassParseRule extends ParserUtil {
 		Modifiers modifiers = visitModifiers(tokenizer);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
-			if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
 					throw new ParseException("invalid method declaration; return type is expected", tokenizer.currentToken());
 				}
@@ -188,7 +188,7 @@ public class ClassParseRule extends ParserUtil {
 					properties.addLocalVariable(argument);
 				}
 
-				expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
 				NodeConstructor enclosingConstructor = null;
@@ -199,9 +199,9 @@ public class ClassParseRule extends ParserUtil {
 				try {
 					int constructorType = visitServiceWord(tokenizer, THIS, SUPER);
 					if (constructorType != -1) {
-						if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+						if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 							Node[] args = visitArgumentsValues(tokenizer, properties);
-							expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+							expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 							expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 							Type type;
@@ -256,7 +256,7 @@ public class ClassParseRule extends ParserUtil {
 		if (type != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
 					properties.enter();
 
@@ -268,7 +268,7 @@ public class ClassParseRule extends ParserUtil {
 						properties.addLocalVariable(argument);
 					}
 
-					expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					// TODO: visit throws
 

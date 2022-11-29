@@ -4,7 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 
 public abstract class BinaryOperation extends Operation {
 	BinaryOperation(String name, int operation) {
@@ -18,7 +18,7 @@ public abstract class BinaryOperation extends Operation {
 
 		if (v1.valueType == Value.NAME) {
 			boolean checkInitialization = operation != EQUATE;
-			if (!NodeIdentificator.resolve(ctx, v1, checkInitialization)) {
+			if (!NodeIdentifier.resolve(ctx, v1, checkInitialization)) {
 				ctx.throwRuntimeException("can't resolve identifier " + v1.name);
 				return;
 			}
@@ -30,7 +30,7 @@ public abstract class BinaryOperation extends Operation {
 
 		if (operation != INVOCATION) {
 			if (v2.valueType == Value.NAME) {
-				if (!NodeIdentificator.resolve(ctx, v2, true)) {
+				if (!NodeIdentifier.resolve(ctx, v2, true)) {
 					ctx.throwRuntimeException("can't resolve identifier " + v2.name);
 					return;
 				}
@@ -53,7 +53,7 @@ public abstract class BinaryOperation extends Operation {
 	public abstract void doOperation(RuntimeContext ctx, Value v1, Value v2);
 
 	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
-		String text = "operator '" + name + "' can not be applyed to " + type1.fullName + ", " + type2.fullName;
+		String text = "operator '" + name + "' can not be applied to " + type1.fullName + ", " + type2.fullName;
 		ctx.throwRuntimeException(text);
 	}
 
@@ -72,8 +72,8 @@ public abstract class BinaryOperation extends Operation {
 		ctx.throwRuntimeException(text);
 	}
 
-	public void errorArrayIndexOutOfBound(RuntimeContext ctx, int arrayLenth, int index) {
-		String text = "array index out of bound: array length = " + arrayLenth + ", index = " + index;
+	public void errorArrayIndexOutOfBound(RuntimeContext ctx, int arrayLength, int index) {
+		String text = "array index out of bound: array length = " + arrayLength + ", index = " + index;
 		ctx.throwRuntimeException(text);
 	}
 

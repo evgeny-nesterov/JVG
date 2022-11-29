@@ -51,7 +51,7 @@ import ru.nest.jvg.shape.paint.OutlinePainter;
 // long getParent(long id)
 // long getRoot()
 // long[] getComponents()
-// int getChildsCount(long id)
+// int getChildrenCount(long id)
 // long getChild(long id, int index)
 // long getChild(long id, string name)
 // long getComponent(double x, double y)
@@ -281,7 +281,7 @@ public class JVGScriptSupport {
 			}
 		});
 
-		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getChildsCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, "getChildrenCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);

@@ -4,7 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 
 public abstract class UnaryOperation extends Operation {
 	UnaryOperation(String name, int operation) {
@@ -16,7 +16,7 @@ public abstract class UnaryOperation extends Operation {
 		Value v = values[0];
 
 		if (v.valueType == Value.NAME) {
-			NodeIdentificator.resolve(ctx, v, true);
+			NodeIdentifier.resolve(ctx, v, true);
 		}
 
 		doOperation(ctx, v);
@@ -25,6 +25,6 @@ public abstract class UnaryOperation extends Operation {
 	public abstract void doOperation(RuntimeContext ctx, Value v);
 
 	public void errorInvalidOperator(RuntimeContext ctx, HiClass type) {
-		// operator '<operator>' can not be applyed to <type>
+		// operator '<operator>' can not be applied to <type>
 	}
 }

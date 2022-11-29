@@ -23,7 +23,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
-import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeIf;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
@@ -83,7 +83,7 @@ public abstract class Node implements Codeable {
 
 	public final static byte TYPE_FOR = 18;
 
-	public final static byte TYPE_IDENTIFICATOR = 19;
+	public final static byte TYPE_IDENTIFIER = 19;
 
 	public final static byte TYPE_IF = 20;
 
@@ -204,8 +204,8 @@ public abstract class Node implements Codeable {
 				return NodeFor.decode(os);
 			case TYPE_FOR_ITERATOR:
 				return NodeForIterator.decode(os);
-			case TYPE_IDENTIFICATOR:
-				return NodeIdentificator.decode(os);
+			case TYPE_IDENTIFIER:
+				return NodeIdentifier.decode(os);
 			case TYPE_IF:
 				return NodeIf.decode(os);
 			case TYPE_INT:

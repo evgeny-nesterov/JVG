@@ -70,6 +70,7 @@ public class StringTokenVisitor implements TokenVisitor {
 			} else if (startLine && (c == ' ' || c == '\t')) {
 				startLineWhiteSpaces++;
 			} else {
+				startLine = false;
 				if (startLineWhiteSpaces < minStartLineWhiteSpaces) {
 					minStartLineWhiteSpaces = startLineWhiteSpaces;
 				}

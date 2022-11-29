@@ -40,3 +40,4 @@ operations	+ - * / %			    numeric
 		++ -- [index] .				postfix
 		?:							logical switch
 		switch (expr) {case excp1, expr2-> expr; case expr2-> expr; default-> expr;}
+		instanceof (with autocast)  boolean

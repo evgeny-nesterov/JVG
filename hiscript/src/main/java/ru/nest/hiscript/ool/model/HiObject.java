@@ -173,7 +173,7 @@ public class HiObject {
 		return ImplUtil.getString(ctx.value.object);
 	}
 
-	// overriden toString
+	// overridden toString
 	public char[] toString(RuntimeContext ctx) {
 		NodeInvocation.invoke(ctx, this, "toString");
 		return ImplUtil.getChars(ctx.value.object);

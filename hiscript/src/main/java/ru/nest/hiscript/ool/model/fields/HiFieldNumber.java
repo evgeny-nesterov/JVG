@@ -32,6 +32,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 
 	@Override
 	public final void set(RuntimeContext ctx, Value value) {
+		declared = true;
 		if (!value.type.isPrimitive()) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
 			return;

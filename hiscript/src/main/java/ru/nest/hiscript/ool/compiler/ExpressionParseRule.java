@@ -10,7 +10,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
-import ru.nest.hiscript.ool.model.nodes.NodeIdentificator;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
@@ -185,12 +185,12 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 	public boolean visitCast(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands) throws TokenizerException, ParseException {
 		tokenizer.start();
-		if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
 				if (type.getDimension() == 0) {
 					// (a.b.c) (type)(var) + 1 - ???
-					if (visitSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT) != -1) {
+					if (visitSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) != -1) {
 						if (type.isPrimitive()) {
 							// for cases (int), (float) an so on
 							tokenizer.commit();
@@ -207,7 +207,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 							Token currentToken = tokenizer.currentToken();
 							if (currentToken instanceof WordToken || currentToken instanceof StringToken) {
 								isCast = true;
-							} else if (checkSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+							} else if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 								isCast = true;
 							}
 
@@ -224,7 +224,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				} else {
 					// for cases (int[]), (A.B.C[][]), (A[]) and so on
 					tokenizer.commit();
-					expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					Node typeNode = new NodeType(type);
 					operands.add(typeNode);
@@ -323,19 +323,19 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			node = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 			if (node == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 			operands.add(node);
 			return true;
 		}
 
 		// visit method name with arguments
 		if ((node = InvocationParseRule.getInstance().visit(tokenizer, properties)) != null) {
-			// determin is there prefix before method
+			// determine is there prefix before method
 			OperationsGroup lastOperationGroup = allOperations.size() > 0 ? allOperations.get(allOperations.size() - 1) : null;
 			Operation lastOperation = lastOperationGroup != null ? lastOperationGroup.getOperation() : null;
 			boolean inner = lastOperation == null || lastOperation.getOperation() != OperationsIF.INVOCATION;
@@ -345,10 +345,27 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			return true;
 		}
 
-		// visit identificator as word: package, class, method, field
-		String identificatorName = visitWord(Words.NOT_SERVICE, tokenizer);
-		if (identificatorName != null) {
-			operands.add(new NodeIdentificator(identificatorName));
+		// visit identifier as word: package, class, method, field
+		String identifierName = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (identifierName != null) {
+			NodeIdentifier identifier = new NodeIdentifier(identifierName);
+			operands.add(identifier);
+			if (allOperations.size() > 0) {
+				int index = allOperations.size() - 1;
+				Operation lastOperation = allOperations.get(index).getOperation();
+				while (lastOperation != null && lastOperation.getOperation() == Operations.INVOCATION) {
+					lastOperation = allOperations.get(--index).getOperation();
+				}
+				if (lastOperation != null && lastOperation.getOperation() == Operations.INSTANCE_OF) {
+					String castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
+					if (castedVariableName != null) {
+						if (properties.getLocalVariable(castedVariableName) != null) {
+							throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
+						}
+						identifier.setCastedVariableName(castedVariableName);
+					}
+				}
+			}
 			return true;
 		}
 		return false;
@@ -360,7 +377,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			if (OperationSymbols.isOperation(symbolToken.getType())) { // || symbolToken.getType() == Symbols.QUESTION || symbolToken.getType() == Symbols.COLON) {
+			if (OperationSymbols.isOperation(symbolToken.getType())) {
 				tokenizer.nextToken();
 				return Operations.mapSymbolToOperation(symbolToken.getType());
 			}

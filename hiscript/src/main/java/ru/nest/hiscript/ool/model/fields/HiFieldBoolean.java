@@ -20,6 +20,7 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
+		declared = true;
 		if (value.type == getClass(ctx)) {
 			this.value = value.bool;
 			this.initialized = true;

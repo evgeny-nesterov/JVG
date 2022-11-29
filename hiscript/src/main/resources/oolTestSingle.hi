@@ -1,24 +1,14 @@
-enum E1 {
-    a, b, c;
-}
-System.println("E1.a=" + E1.a);
-System.println("E1.b=" + E1.b);
-System.println("E1.c=" + E1.c);
+class A {int a = 1;}
+class B extends A {int a = 2; int b = 3;}
 
-enum E2 {
-    x(1, "a"), y(2, "b");
-    static int z = 3;
-    private int value;
-    E2(int value, String s) {this.value = value;}
-    public int getValue() {return value;}
-}
-System.println("E2.x=" + E2.x + ", value = " + E2.x.getValue());
-System.println("E2.y=" + E2.y + ", value = " + E2.y.getValue());
-System.println("E2.z=" + E2.z);
-assert E1.a == E1.a;
-assert E1.a != E1.b;
-assert E1.a instanceof Object;
+A a = new B();
+assert a.a == 1;
+assert ((B)a).a == 2;
 
-// FAIL E1.a = E1.b;
-E1 e1 = E1.a;
-System.println("e1=" + e1);
+a.a = 4;
+assert a.a == 4;
+assert ((B)a).a == 2;
+
+((B)a).a = 5;
+assert a.a == 4;
+assert ((B)a).a == 5;

@@ -25,11 +25,11 @@ public class WhileNode extends Node implements Breakable {
 		return body;
 	}
 
-	private boolean isBreaked = false;
+	private boolean isBroken = false;
 
 	@Override
-	public void Break() {
-		isBreaked = true;
+	public void breakBlock() {
+		isBroken = true;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class WhileNode extends Node implements Breakable {
 
 	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		isBreaked = false;
+		isBroken = false;
 		condition.execute(ctx);
 
 		while (ctx.value.getBoolean()) {
@@ -55,7 +55,7 @@ public class WhileNode extends Node implements Breakable {
 				return;
 			}
 
-			if (isBreaked) {
+			if (isBroken) {
 				break;
 			}
 

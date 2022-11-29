@@ -1,9 +1,9 @@
 package ru.nest.hiscript.pol.model;
 
-import java.util.HashMap;
-
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
+
+import java.util.HashMap;
 
 public class Types implements Words {
 	public final static int OBJECT = 28;
@@ -219,43 +219,6 @@ public class Types implements Words {
 
 	public static boolean isArray(Object o) {
 		return o != null && o.getClass().isArray();
-	}
-
-	public static Object getArrayValue(Object array, int type, int index) throws ExecuteException {
-		if (array instanceof Object[]) {
-			return ((Object[]) array)[index];
-		} else {
-			switch (type) {
-				case CHAR:
-					return ((char[]) array)[index];
-
-				case STRING:
-					return ((String[]) array)[index];
-
-				case BOOLEAN:
-					return ((boolean[]) array)[index];
-
-				case BYTE:
-					return ((byte[]) array)[index];
-
-				case SHORT:
-					return ((short[]) array)[index];
-
-				case INT:
-					return ((int[]) array)[index];
-
-				case FLOAT:
-					return ((float[]) array)[index];
-
-				case LONG:
-					return ((long[]) array)[index];
-
-				case DOUBLE:
-					return ((double[]) array)[index];
-			}
-		}
-
-		throw new ExecuteException("array required");
 	}
 
 	public static int getDimension(Class<?> c) {

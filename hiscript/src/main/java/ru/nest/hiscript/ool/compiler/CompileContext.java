@@ -104,7 +104,7 @@ public class CompileContext {
 		}
 
 		if (fieldsMap.containsKey(field.name)) {
-			throw new ParseException("Dublicate field " + clazz.fullName + "." + field.name, tokenizer.currentToken());
+			throw new ParseException("Duplicate field " + clazz.fullName + "." + field.name, tokenizer.currentToken());
 		}
 
 		fields.add(field);
@@ -129,7 +129,7 @@ public class CompileContext {
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
-			throw new ParseException("Dublicate nested type " + clazz.name, tokenizer.currentToken());
+			throw new ParseException("Duplicate nested type " + clazz.name, tokenizer.currentToken());
 		}
 
 		classes.add(clazz);

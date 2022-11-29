@@ -21,12 +21,12 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 	@Override
 	public WhileNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
 		if (visitWord(Words.WHILE, tokenizer) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) // may be ';'
@@ -43,11 +43,11 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.WHILE, tokenizer, handler) != null) {
-			expectSymbol(Symbols.PARANTHESIS_LEFT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "Expression is expected");
 			}
-			expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "Statement is expected");

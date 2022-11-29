@@ -70,6 +70,8 @@ public class Value implements PrimitiveTypes {
 	// This is not a value, this is an intermediate condition.
 	public String name;
 
+	public String castedVariableName;
+
 	public Type variableType;
 
 	public HiField<?> variable;
@@ -491,15 +493,11 @@ public class Value implements PrimitiveTypes {
 			return ImplUtil.getChars(object);
 		}
 
-		if (object == null) {
-			return NULL;
+		char[] toString = object.toString(ctx);
+		if (toString != null) {
+			return toString;
 		} else {
-			char[] toString = object.toString(ctx);
-			if (toString != null) {
-				return toString;
-			} else {
-				return NULL;
-			}
+			return NULL;
 		}
 	}
 

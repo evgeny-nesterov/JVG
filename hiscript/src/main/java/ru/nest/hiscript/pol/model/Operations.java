@@ -484,7 +484,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				if (a != 0) {
 					left.intNumber = left.getInt() / a;
 				} else {
-					throw new ExecuteException("devision by zero");
+					throw new ExecuteException("division by zero");
 				}
 				left.type = INT;
 				break;

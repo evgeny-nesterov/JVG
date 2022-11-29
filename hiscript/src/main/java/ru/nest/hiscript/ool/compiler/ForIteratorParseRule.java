@@ -29,7 +29,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	public NodeForIterator visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 		if (visitWord(Words.FOR, tokenizer) != null) {
-			expectSymbol(tokenizer, Symbols.PARANTHESIS_LEFT);
+			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
@@ -49,7 +49,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 
 					Node iterable = visitExpressions(tokenizer, properties);
 
-					expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					Node body = expectBody(tokenizer, properties);
 

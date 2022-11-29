@@ -23,12 +23,12 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 
 		String name = visitWord(tokenizer, NOT_SERVICE);
 		if (name != null) {
-			if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.commit();
 
 				Node[] args = visitArgumentsValues(tokenizer, properties);
 
-				expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 				NodeInvocation node = new NodeInvocation(name, args);
 				return node;

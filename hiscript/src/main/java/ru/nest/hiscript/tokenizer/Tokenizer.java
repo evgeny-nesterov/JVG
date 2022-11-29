@@ -164,7 +164,7 @@ public class Tokenizer {
 		startPrevTokens.remove(startPrevTokens.size() - 1);
 
 		// We may clear buffer up to position equals startOffset
-		// but to emprove performence it's better clear buffer fully.
+		// but to improve performance it's better clear buffer fully.
 		// We can do that when cursor position equals buffer length.
 	}
 

@@ -28,10 +28,10 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 			int dimension = visitDimension(tokenizer);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
 					ArgumentsNode arguments = ArgumentsParseRule.getInstance().visit(tokenizer);
-					expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer);
+					expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 					expectSymbol(Symbols.BRACES_LEFT, tokenizer);
 					BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
@@ -55,10 +55,10 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 			visitDimension(tokenizer, handler);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			if (name != null) {
-				if (visitSymbol(tokenizer, handler, Symbols.PARANTHESIS_LEFT) != -1) {
+				if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
 					ArgumentsParseRule.getInstance().visit(tokenizer, handler);
-					expectSymbol(Symbols.PARANTHESIS_RIGHT, tokenizer, handler);
+					expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 					expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
 					BlockParseRule.getInstance().visit(tokenizer, handler);

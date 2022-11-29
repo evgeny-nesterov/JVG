@@ -137,7 +137,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 	public final static int OPERANDS_TRINARY = 3;
 
-	public static int getOparandsCount(int operation) {
+	public static int getOperandsCount(int operation) {
 		switch (operation) {
 			case POST_INCREMENT:
 			case POST_DECREMENT:

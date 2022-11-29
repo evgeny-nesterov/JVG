@@ -57,9 +57,9 @@ public class EnumParseRule extends ParserUtil {
 			int ordinal = 0;
 			while (true) {
 				Node[] args = null;
-				if (visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT) != -1) {
+				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					args = visitArgumentsValues(tokenizer, properties);
-					expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 				}
 				properties.addEnum(new HiEnumValue(enumName, ordinal++, args));
 

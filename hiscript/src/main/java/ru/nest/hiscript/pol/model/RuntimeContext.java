@@ -586,8 +586,7 @@ public class RuntimeContext {
 						Node parent = new BlockNode();
 						parent.addVariables(variables);
 
-						// Create a new context to avoid breaking of data during
-						// concurency.
+						// Create a new context to avoid breaking of data during concurrency.
 						ScriptUtil.execute(new RuntimeContext(ctx), parent, s);
 						threads.remove(Thread.currentThread().getId());
 					} catch (ExecuteException exc) {

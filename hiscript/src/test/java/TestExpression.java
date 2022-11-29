@@ -89,10 +89,38 @@ public class TestExpression extends HiTest {
 		assertSuccess("assert !(null instanceof String);");
 		assertSuccess("assert !(null instanceof Object);");
 		assertSuccess("String s = \"\"; assert s instanceof Object;");
-		assertSuccess("String s = null; assert s instanceof Object;");
-		assertSuccess("class O1{}; class O2 extends O1{}; assert new O2() instanceof O2;");
-		assertSuccess("class O1{}; class O2 extends O1{}; assert new O2() instanceof O1;");
-		assertSuccess("class O1{}; class O2 extends O1{}; assert !(new O1() instanceof O2);");
+		assertSuccess("String s = null; assert !(s instanceof String);");
+		assertSuccess("String s = null; assert !(s instanceof Object);");
+		assertSuccess("Object s = new Object(); assert s instanceof Object;");
+		assertSuccess("Object s = \"\"; assert s instanceof Object;");
+		assertSuccess("Object s = \"\"; assert s instanceof String;");
+		assertSuccess("Object s = null; assert !(s instanceof Object);");
+		assertSuccess("class O1{}; class O2 extends O1{}; class O3 extends O2{}; class O4 extends O3{};" + //
+				"assert new O2() instanceof O2;" + //
+				"assert new O2() instanceof O1;" + //
+				"assert !(new O1() instanceof O2);" + //
+				"assert new O4() instanceof O1;");
+
+		assertSuccess("class A {int a = 1;} class B extends A{int b = 2;}" + //
+				"assert new A() instanceof A x? x.a == 1 : false;" + //
+				"assert new B() instanceof A y? y.a == 1 : false;" + //
+				"assert new B() instanceof B z? z.b == 2 : false;" + //
+				"A a = new A();" + //
+				"Object a1 = a;" + //
+				"a.a = 2;" + //
+				"assert ((A)a1).a == 2;" + //
+				"if (a1 instanceof A b) {" + //
+				"	assert b == a;" + //
+				"	assert b == a1;" + //
+				"	assert b instanceof A;" + //
+				"	assert a.a == 2;" + //
+				"	assert b.a == 2;" + //
+				"	((A)a1).a = 3;" + //
+				"	assert b.a == 3;" + //
+				"	assert a.a == 3;" + //
+				"} else {" + //
+				"	assert false;" + //
+				"}");
 	}
 
 	@Test

@@ -1,8 +1,8 @@
 package ru.nest.hiscript.pol.model;
 
-import java.util.ArrayList;
-
 import ru.nest.hiscript.Breakable;
+
+import java.util.ArrayList;
 
 public class BreakNode extends Node {
 	public BreakNode(String mark) {
@@ -50,7 +50,7 @@ public class BreakNode extends Node {
 		int size = breakableNodes.size();
 		for (int i = 0; i < size; i++) {
 			Breakable breakable = breakableNodes.get(i);
-			breakable.Break();
+			breakable.breakBlock();
 		}
 	}
 }

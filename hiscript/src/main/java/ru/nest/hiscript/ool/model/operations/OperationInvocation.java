@@ -72,8 +72,8 @@ public class OperationInvocation extends BinaryOperation {
 			} else {
 				String typeName = "";
 				if (valueNode instanceof NodeConstructor) {
-					NodeConstructor constrNode = (NodeConstructor) valueNode;
-					typeName = constrNode.name;
+					NodeConstructor constructorNode = (NodeConstructor) valueNode;
+					typeName = constructorNode.name;
 				} else if (valueNode instanceof NodeArray) {
 					NodeArray arrayNode = (NodeArray) valueNode;
 					typeName = arrayNode.type.fullName;
@@ -135,7 +135,7 @@ public class OperationInvocation extends BinaryOperation {
 					return;
 				}
 
-				field = object.getField(name);
+				field = object.getField(name, clazz);
 			}
 
 			if (field == null) {

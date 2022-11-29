@@ -5,9 +5,9 @@ public interface Symbols {
 
 	public final static int BRACES_RIGHT = 1;
 
-	public final static int PARANTHESIS_LEFT = 2;
+	public final static int PARENTHESES_LEFT = 2;
 
-	public final static int PARANTHESIS_RIGHT = 3;
+	public final static int PARENTHESES_RIGHT = 3;
 
 	public final static int SEMICOLON = 4;
 

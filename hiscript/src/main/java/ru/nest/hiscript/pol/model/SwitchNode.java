@@ -26,11 +26,11 @@ public class SwitchNode extends Node implements Breakable {
 		node.setParent(this);
 	}
 
-	private boolean isBreaked = false;
+	private boolean isBroken = false;
 
 	@Override
-	public void Break() {
-		isBreaked = true;
+	public void breakBlock() {
+		isBroken = true;
 	}
 
 	private BlockNode defaultBody = null;
@@ -61,7 +61,7 @@ public class SwitchNode extends Node implements Breakable {
 
 	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		isBreaked = false;
+		isBroken = false;
 
 		value.execute(ctx);
 		long number = ctx.value.getLong();
@@ -83,7 +83,7 @@ public class SwitchNode extends Node implements Breakable {
 				return;
 			}
 
-			if (isBreaked) {
+			if (isBroken) {
 				break;
 			}
 		}

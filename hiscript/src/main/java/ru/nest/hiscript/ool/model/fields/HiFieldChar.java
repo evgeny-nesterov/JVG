@@ -55,7 +55,7 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 						break;
 
 					case SHORT:
-						if (value.shortNumber >= Character.MIN_VALUE && value.shortNumber <= Character.MAX_VALUE) {
+						if (value.shortNumber >= Character.MIN_VALUE) {
 							this.value = (char) value.shortNumber;
 							return;
 						}

@@ -34,9 +34,9 @@ public class NewParseRule extends ParseRule<Node> {
 				throw new ParseException("identifier is expected", tokenizer.currentToken());
 			}
 
-			int brace_type = visitSymbol(tokenizer, Symbols.PARANTHESIS_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
+			int brace_type = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
 			switch (brace_type) {
-				case Symbols.PARANTHESIS_LEFT:
+				case Symbols.PARENTHESES_LEFT:
 					if (type.isPrimitive()) {
 						throw new ParseException("'[' expected", tokenizer.currentToken());
 					}
@@ -56,13 +56,13 @@ public class NewParseRule extends ParseRule<Node> {
 	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
 		Node[] arguments = visitArgumentsValues(tokenizer, properties);
 
-		expectSymbol(tokenizer, Symbols.PARANTHESIS_RIGHT);
+		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			CompileContext innerProperties = new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
 			innerProperties.clazz = new HiClass(type, properties.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
-			// TODO: do not allow parse constructors. ??? name is empty => ocnstructors will be not found
+			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);

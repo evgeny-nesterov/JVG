@@ -36,6 +36,7 @@ public class HiFieldArray extends HiField<Object> {
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
+		declared = true;
 		if (value.type == HiClass.getNullClass()) {
 			array = null;
 		} else if (!value.type.isArray()) {

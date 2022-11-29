@@ -1,23 +1,23 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import ru.nest.hiscript.ool.compiler.CompileContext;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Native;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.Native;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.tokenizer.Tokenizer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SystemImpl extends ImplUtil {
 	// System
@@ -38,36 +38,32 @@ public class SystemImpl extends ImplUtil {
 				url = new URL(p);
 			}
 
-			if (url == null) {
-				ctx.throwRuntimeException("can't load library: " + p);
-			} else {
-				final Exception[] error = new Exception[1];
-				ClassLoader cl = new ClassLoader() {
-					@Override
-					protected Class<?> findClass(String name) throws ClassNotFoundException {
-						try {
-							ByteArrayOutputStream bos = new ByteArrayOutputStream();
-							URL url = new URL("file", "localhost", name);
-							InputStream is = url.openStream();
-							int c;
-							while ((c = is.read()) != -1) {
-								bos.write(c);
-							}
-							return defineClass(null, bos.toByteArray(), 0, bos.size());
-						} catch (Exception exc) {
-							error[0] = exc;
-							exc.printStackTrace();
+			final Exception[] error = new Exception[1];
+			ClassLoader cl = new ClassLoader() {
+				@Override
+				protected Class<?> findClass(String name) throws ClassNotFoundException {
+					try {
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						URL url = new URL("file", "localhost", name);
+						InputStream is = url.openStream();
+						int c;
+						while ((c = is.read()) != -1) {
+							bos.write(c);
 						}
-						return null;
+						return defineClass(null, bos.toByteArray(), 0, bos.size());
+					} catch (Exception exc) {
+						error[0] = exc;
+						exc.printStackTrace();
 					}
-				};
-
-				Class<?> clazz = cl.loadClass(url.getFile());
-				if (clazz != null) {
-					Native.register(clazz);
-				} else {
-					ctx.throwRuntimeException("can't load library: " + error[0].toString());
+					return null;
 				}
+			};
+
+			Class<?> clazz = cl.loadClass(url.getFile());
+			if (clazz != null) {
+				Native.register(clazz);
+			} else {
+				ctx.throwRuntimeException("can't load library: " + error[0].toString());
 			}
 		} catch (Exception exc) {
 			ctx.throwRuntimeException("can't load library: " + exc.toString());
@@ -137,44 +133,42 @@ public class SystemImpl extends ImplUtil {
 			final NodeBlock node = (NodeBlock) RootParseRule.getInstance().visit(tokenizer, compileCtx);
 			node.setEnterType(RuntimeContext.SAME);
 
-			if (node != null) {
-				if (!separateThread) {
-					RuntimeContext new_ctx;
-					StackLevel level = null;
-					if (newInstance) {
-						new_ctx = new RuntimeContext(true);
-					} else {
-						new_ctx = ctx;
-
-						// go to upper level to get access to context from which exec method was invoked
-						level = ctx.exit(true);
-					}
-
-					node.execute(new_ctx);
-
-					if (!newInstance) {
-						// enter to method as OperationInvocation after method invocation perform ctx.exit()
-						ctx.enter(level);
-					}
+			if (!separateThread) {
+				RuntimeContext new_ctx;
+				StackLevel level = null;
+				if (newInstance) {
+					new_ctx = new RuntimeContext(true);
 				} else {
-					final RuntimeContext new_ctx;
-					if (newInstance) {
-						new_ctx = new RuntimeContext(false);
-					} else {
-						new_ctx = new RuntimeContext(ctx);
-					}
+					new_ctx = ctx;
 
-					new Thread() {
-						@Override
-						public void run() {
-							try {
-								node.execute(new_ctx);
-							} catch (Exception exc) {
-								exc.printStackTrace();
-							}
-						}
-					}.start();
+					// go to upper level to get access to context from which exec method was invoked
+					level = ctx.exit(true);
 				}
+
+				node.execute(new_ctx);
+
+				if (!newInstance) {
+					// enter to method as OperationInvocation after method invocation perform ctx.exit()
+					ctx.enter(level);
+				}
+			} else {
+				final RuntimeContext new_ctx;
+				if (newInstance) {
+					new_ctx = new RuntimeContext(false);
+				} else {
+					new_ctx = new RuntimeContext(ctx);
+				}
+
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							node.execute(new_ctx);
+						} catch (Exception exc) {
+							exc.printStackTrace();
+						}
+					}
+				}.start();
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();

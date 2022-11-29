@@ -3,21 +3,21 @@
 // TODO: invalid access
 {
 	class A {
-		private String b = "i'm private";
+		private String b = "i'm a private";
 	}
 	A a = new A();
-	System.println("a.b=" + a.b);
+	System.println("A 1st variant: a.b=" + a.b);
 }
 
 // check local class name
 {
 	{
 		class A{}
-		System.println("A �1: " + new A().getClass().getFullName());
+		System.println("A 2st variant: " + new A().getClass().getFullName());
 	}
 	{
 		class A{}
-		System.println("A �2: " + new A().getClass().getFullName());
+		System.println("A 3rd variant: " + new A().getClass().getFullName());
 	}
 }
 
@@ -134,9 +134,9 @@ Util.header("THREADS");
 }
 
 ////////////////////
-// Overriden method
+// Overridden method
 ////////////////////
-Util.header("OVERRIDEN METHOD");
+Util.header("OVERRIDDEN METHOD");
 {
 	final String finalString = "'final string'";
 	class A {
@@ -391,39 +391,58 @@ Util.header("OBJECT METHODS");
 }
 
 ///////////////////////////////////////////////////////
-// Test class extention, methods and fields overwrition
+// Test class extension, methods and fields overwrite
 ///////////////////////////////////////////////////////
-Util.header("EXTENDS, OWERWRITE METHODS AND FIELDS");
+Util.header("EXTENDS, OVERWRITE METHODS AND FIELDS");
 {
-	class OverwrittenClass {
-  		int a = 1;
-  		int c = 111;
+	{
+        class OverwrittenClass {
+            int a = 1;
+            int c = 111;
 
-  		int getA() {
-    		return 11;
-  		}
+            int getA() {
+                return 11;
+            }
 
-  		String get() {
-    		return "class A";
-  		}
-	}
+            String get() {
+                return "class A";
+            }
+        }
 
-	class OverwriteClass extends OverwrittenClass {
-  		int b = 2;
-  		int c = 222;
-  		
-  		int getB() {
-    		return 22;
-  		}
-  
-  		String get() {
-    		return "class B";
-  		}
-	}
-	OverwrittenClass a = new OverwrittenClass();
-	OverwriteClass b = new OverwriteClass();
-	System.println("\tOverwrittenClass: a=" + a.a + ", getA()=" + a.getA() + "; get()=" + a.get() + ", c=" + a.c);
-	System.println("\tOverwriteClass : a=" + b.a + ", getA()=" + b.getA() + "; get()=" + b.get() + ", c=" + b.c + "; b=" + b.b + ", getB()=" + b.getB());
+        class OverwriteClass extends OverwrittenClass {
+            int b = 2;
+            int c = 222;
+
+            int getB() {
+                return 22;
+            }
+
+            String get() {
+                return "class B";
+            }
+        }
+        OverwrittenClass a = new OverwrittenClass();
+        OverwriteClass b = new OverwriteClass();
+        System.println("\tOverwrittenClass: a=" + a.a + ", getA()=" + a.getA() + "; get()=" + a.get() + ", c=" + a.c);
+        System.println("\tOverwriteClass : a=" + b.a + ", getA()=" + b.getA() + "; get()=" + b.get() + ", c=" + b.c + "; b=" + b.b + ", getB()=" + b.getB());
+    }
+
+    {
+        class A {int a = 1;}
+        class B extends A {int a = 2; int b = 3;}
+
+        A a = new B();
+        assert a.a == 1;
+        assert ((B)a).a == 2;
+
+        a.a = 4;
+        assert a.a == 4;
+        assert ((B)a).a == 2;
+
+        ((B)a).a = 5;
+        assert a.a == 4;
+        assert ((B)a).a == 5;
+    }
 }
 
 //////////////
@@ -914,7 +933,7 @@ Util.header("STATIC FIELDS");
 }
 
 ////////////////////////////////////////////////
-// Test synchronization, wait and nortification
+// Test synchronization, wait and notification
 ////////////////////////////////////////////////
 Util.header("SYNCHRONIZATION, WAIT, NOTIFICATION");
 {
@@ -1114,6 +1133,37 @@ Util.header("Test super class outbound object");
 	a.m();
 }
 
+////////////
+// Test enum
+////////////
+Util.header("Test enum");
+{
+    enum E1 {
+        a, b, c;
+    }
+    System.println("E1.a=" + E1.a);
+    System.println("E1.b=" + E1.b);
+    System.println("E1.c=" + E1.c);
+
+    enum E2 {
+        x(1, "a"), y(2, "b");
+        static int z = 3;
+        private int value;
+        E2(int value, String s) {this.value = value;}
+        public int getValue() {return value;}
+    }
+    System.println("E2.x=" + E2.x + ", value = " + E2.x.getValue());
+    System.println("E2.y=" + E2.y + ", value = " + E2.y.getValue());
+    System.println("E2.z=" + E2.z);
+    assert E1.a == E1.a;
+    assert E1.a != E1.b;
+    assert E1.a instanceof Object;
+
+    // FAIL E1.a = E1.b;
+    E1 e1 = E1.a;
+    System.println("e1=" + e1);
+}
+
 ///////////////////////////////////////////////////////////////
 // Check logical AND and OR, not all conditions are calculated
 ///////////////////////////////////////////////////////////////
@@ -1204,7 +1254,7 @@ public class Braces {
 		blockStart = new int[bracesCount];
 		blockEnd = new int[bracesCount];
 
-		System.println("bloks: " + blocksCount);
+		System.println("blocks: " + blocksCount);
 
 		recuse(0, 0, 0);
 
@@ -1517,4 +1567,3 @@ System.println("Time: " + (endTime - startTime) / 1000.0 + " sec");
 
 System.println("EXIT");
 System.exit();
-

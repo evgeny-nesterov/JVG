@@ -119,10 +119,10 @@ public class SymbolToken extends Token implements Symbols {
 			case NOT_EQUALS:
 				return "!=";
 
-			case PARANTHESIS_LEFT:
+			case PARENTHESES_LEFT:
 				return "(";
 
-			case PARANTHESIS_RIGHT:
+			case PARENTHESES_RIGHT:
 				return ")";
 
 			case PERCENT:

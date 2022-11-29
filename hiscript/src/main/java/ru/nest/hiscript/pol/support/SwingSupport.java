@@ -34,7 +34,7 @@ import ru.nest.hiscript.tokenizer.Words;
 //	long getRoot()
 //	void add(long parent, long component)
 //	void remove(long parent, long component)
-//	int getChildsCount(long component)
+//	int getChildrenCount(long component)
 //	long getChild(long component, int index)
 //	void setBounds(long component, int x, int y, int w, int h)
 //	void setLocation(long component, int x, int y)
@@ -143,7 +143,7 @@ public class SwingSupport {
 			}
 		});
 
-		methods.add(new Method(NAMESPACE, "getChildsCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+		methods.add(new Method(NAMESPACE, "getChildrenCount", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, parent, arguments);
