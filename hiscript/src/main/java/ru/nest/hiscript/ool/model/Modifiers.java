@@ -214,35 +214,33 @@ public class Modifiers implements ModifiersIF, Codeable {
 	}
 
 	public int check(int... allowed) {
-		if (allowed.length > 0) {
-			int allowedMask = ACCESS_DEFAULT;
-			for (int word : allowed) {
-				allowedMask |= mapWordsToModification(word);
-			}
+		int allowedMask = ACCESS_DEFAULT;
+		for (int word : allowed) {
+			allowedMask |= mapWordsToModification(word);
+		}
 
-			if ((allowedMask & access) == 0) {
-				return access;
-			}
+		if ((allowedMask & access) == 0) {
+			return access;
+		}
 
-			if (isFinal && (allowedMask & FINAL) == 0) {
-				return FINAL;
-			}
+		if (isFinal && (allowedMask & FINAL) == 0) {
+			return FINAL;
+		}
 
-			if (isStatic && (allowedMask & STATIC) == 0) {
-				return STATIC;
-			}
+		if (isStatic && (allowedMask & STATIC) == 0) {
+			return STATIC;
+		}
 
-			if (isAbstract && (allowedMask & ABSTRACT) == 0) {
-				return ABSTRACT;
-			}
+		if (isAbstract && (allowedMask & ABSTRACT) == 0) {
+			return ABSTRACT;
+		}
 
-			if (isNative && (allowedMask & NATIVE) == 0) {
-				return NATIVE;
-			}
+		if (isNative && (allowedMask & NATIVE) == 0) {
+			return NATIVE;
+		}
 
-			if (isDefault && (allowedMask & DEFAULT) == 0) {
-				return DEFAULT;
-			}
+		if (isDefault && (allowedMask & DEFAULT) == 0) {
+			return DEFAULT;
 		}
 		return -1;
 	}

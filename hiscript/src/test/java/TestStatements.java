@@ -28,6 +28,7 @@ public class TestStatements extends HiTest {
 		assertSuccess("int x = 1; if (x > 0) if(x != 0) if (x == 1) x++; assert x == 2;");
 		assertSuccess("String s = \"a\"; if (s != null && s.length() == 1 && s.equals(\"a\")) {s = null;} assert s == null;");
 	}
+
 	@Test
 	public void testSwitch() {
 		assertSuccess("int x = 2; switch(x) {case 0: x=0; break; case 1: x--; break; case 2, 3, x + 1: x++; break;} assert x == 3;");

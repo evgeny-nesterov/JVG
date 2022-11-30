@@ -275,9 +275,14 @@ public class ClassParseRule extends ParserUtil {
 					if (modifiers.isNative() || modifiers.isAbstract()) {
 						expectSymbol(tokenizer, Symbols.SEMICOLON);
 					} else {
-						expectSymbol(tokenizer, Symbols.BRACES_LEFT);
-						body = BlockParseRule.getInstance().visit(tokenizer, properties);
-						expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+						if (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+							tokenizer.nextToken();
+							modifiers.setAbstract(true);
+						} else {
+							expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+							body = BlockParseRule.getInstance().visit(tokenizer, properties);
+							expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+						}
 					}
 
 					properties.exit();

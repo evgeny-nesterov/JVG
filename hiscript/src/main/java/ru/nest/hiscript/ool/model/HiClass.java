@@ -13,8 +13,11 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +73,7 @@ public class HiClass implements Codeable {
 			load(Compiler.class.getResource("/hilibs/String.hi"));
 			load(Compiler.class.getResource("/hilibs/Class.hi"));
 			load(Compiler.class.getResource("/hilibs/Enum.hi"));
+			load(Compiler.class.getResource("/hilibs/AutoCloseable.hi"));
 			load(Compiler.class.getResource("/hilibs/System.hi"));
 			load(Compiler.class.getResource("/hilibs/Math.hi"));
 			load(Compiler.class.getResource("/hilibs/Exception.hi"));
@@ -97,13 +101,14 @@ public class HiClass implements Codeable {
 
 	public static void load(InputStream is) throws Exception {
 		StringBuilder buf = new StringBuilder();
-
-		int c;
-		while ((c = is.read()) != -1) {
-			buf.append((char) c);
+		try (Reader r = new InputStreamReader(new BufferedInputStream(is, 2048))) {
+			char[] b = new char[1024];
+			int length;
+			while ((length = r.read(b)) != -1) {
+				buf.append(b, 0, length);
+			}
+			load(buf.toString());
 		}
-
-		load(buf.toString());
 	}
 
 	public static void load(String classCode) throws Exception {

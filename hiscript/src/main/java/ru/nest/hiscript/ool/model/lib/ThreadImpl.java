@@ -16,6 +16,9 @@ public class ThreadImpl extends ImplUtil {
 
 			// TODO: cache thread class and constructor
 			HiClass clazz = HiClass.forName(ctx, "Thread");
+			if (clazz == null) {
+				throw new RuntimeException("can't find class Thread");
+			}
 			HiConstructor constructor = clazz.getConstructor(ctx);
 			HiObject obj = constructor.newInstance(ctx, null, null);
 			obj.userObject = Thread.currentThread();

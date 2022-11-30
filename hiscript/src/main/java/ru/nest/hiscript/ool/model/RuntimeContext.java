@@ -117,6 +117,7 @@ public class RuntimeContext {
 		throwException("RuntimeException", message);
 	}
 
+	// TODO cause exception
 	public void throwException(String exceptionClass, String message) {
 		if (exception != null) {
 			return;

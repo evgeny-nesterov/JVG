@@ -95,4 +95,35 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		}
 		return initializer;
 	}
+
+	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileContext properties, boolean initialized) throws TokenizerException, ParseException {
+		tokenizer.start();
+
+		Modifiers modifiers = visitModifiers(tokenizer);
+		Type baseType = visitType(tokenizer, true);
+		if (baseType != null) {
+			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
+			if (varName != null) {
+				Type cellType = baseType.isArray() ? baseType.cellTypeRoot : baseType;
+				int addDimension = visitDimension(tokenizer);
+				Type type = Type.getArrayType(baseType, addDimension);
+
+				Node initializer = null;
+				if (initialized) {
+					expectSymbol(tokenizer, Symbols.EQUATE);
+					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), properties);
+				}
+
+				tokenizer.commit();
+				checkModifiers(tokenizer, modifiers);
+
+				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, modifiers);
+				properties.addLocalVariable(field);
+				return field;
+			}
+		}
+
+		tokenizer.rollback();
+		return null;
+	}
 }

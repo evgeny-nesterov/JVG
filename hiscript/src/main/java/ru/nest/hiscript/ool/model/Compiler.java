@@ -42,7 +42,7 @@ public class Compiler {
 	public static void testExecutor() {
 		StringBuilder buf = new StringBuilder();
 		try {
-			InputStream is = Compiler.class.getResourceAsStream("/oolTestFully.hi");
+			InputStream is = Compiler.class.getResourceAsStream("/oolTestSingle.hi");
 			int c;
 			while ((c = is.read()) != -1) {
 				buf.append((char) c);
@@ -56,21 +56,21 @@ public class Compiler {
 		try {
 			Node node = compiler.build();
 			if (node != null) {
-				CodeContext ctxCode = new CodeContext();
-				node.code(ctxCode);
-
-				byte[] res = ctxCode.code();
-
-				System.out.println("======================");
-				ctxCode.statistics();
-				System.out.println("total: " + res.length + " bytes");
-				System.out.println("======================");
-
-				System.out.println("\n" + new String(res));
-				System.out.println("======================");
-
-				DecodeContext ctxDecode = new DecodeContext(res);
-				node = ctxDecode.load();
+//				CodeContext ctxCode = new CodeContext();
+//				node.code(ctxCode);
+//
+//				byte[] res = ctxCode.code();
+//
+//				System.out.println("======================");
+//				ctxCode.statistics();
+//				System.out.println("total: " + res.length + " bytes");
+//				System.out.println("======================");
+//
+//				System.out.println("\n" + new String(res));
+//				System.out.println("======================");
+//
+//				DecodeContext ctxDecode = new DecodeContext(res);
+//				node = ctxDecode.load();
 
 				// execute
 				RuntimeContext ctx = new RuntimeContext(true);
