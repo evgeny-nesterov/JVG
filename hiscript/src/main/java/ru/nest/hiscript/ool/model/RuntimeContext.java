@@ -361,7 +361,6 @@ public class RuntimeContext {
 		if (clazz == null) {
 			clazz = HiClass.forName(this, name);
 		}
-
 		return clazz;
 	}
 
@@ -468,7 +467,6 @@ public class RuntimeContext {
 			if (classes != null) {
 				classes.clear();
 			}
-
 			return this;
 		}
 
@@ -573,7 +571,6 @@ public class RuntimeContext {
 						localVariables.remove(c);
 					}
 				}
-
 				classes.clear();
 			}
 		}

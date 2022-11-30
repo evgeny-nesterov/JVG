@@ -21,6 +21,8 @@ public class HiMethod implements Codeable {
 
 	public NodeArgument[] arguments;
 
+	public Type[] throwsTypes;
+
 	public Node body;
 
 	public HiClass[] argClasses;
@@ -33,27 +35,28 @@ public class HiMethod implements Codeable {
 
 	private String descr;
 
-	public HiMethod(HiClass clazz, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Node body) {
-		NodeArgument[] _arguments = new NodeArgument[arguments != null ? arguments.size() : 0];
+	public HiMethod(HiClass clazz, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, Node body) {
+		NodeArgument[] _arguments = null;
 		if (arguments != null) {
+			_arguments = new NodeArgument[arguments.size()];
 			arguments.toArray(_arguments);
 		}
-		set(clazz, modifiers, returnType, name, _arguments, body);
+		set(clazz, modifiers, returnType, name, _arguments, throwsTypes, body);
 	}
 
-	public HiMethod(HiClass clazz, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Node body) {
-		set(clazz, modifiers, returnType, name, arguments, body);
+	public HiMethod(HiClass clazz, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, Node body) {
+		set(clazz, modifiers, returnType, name, arguments, throwsTypes, body);
 	}
 
-	private void set(HiClass clazz, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Node body) {
+	private void set(HiClass clazz, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, Node body) {
 		this.clazz = clazz;
 		this.modifiers = modifiers != null ? modifiers : new Modifiers();
 		this.returnType = returnType;
 		this.name = name.intern();
 		this.arguments = arguments;
+		this.throwsTypes = throwsTypes;
 		this.body = body;
-
-		argCount = arguments != null ? arguments.length : 0;
+		this.argCount = arguments != null ? arguments.length : 0;
 	}
 
 	public boolean hasVarargs() {
@@ -124,28 +127,20 @@ public class HiMethod implements Codeable {
 		modifiers.code(os);
 		os.writeType(returnType);
 		os.writeUTF(name);
-
-		int count = arguments != null ? arguments.length : 0;
-		os.writeByte(count);
-		for (int i = 0; i < count; i++) {
-			arguments[i].code(os);
-		}
-
+		os.writeByte(argCount);
+		os.writeNullable(arguments);
+		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
+		os.writeNullable(throwsTypes);
 		os.writeNullable(body);
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
 		Modifiers modifiers = Modifiers.decode(os);
-
 		Type returnType = os.readType();
 		String name = os.readUTF();
-
-		int count = os.readByte();
-		NodeArgument[] arguments = new NodeArgument[count];
-		for (int i = 0; i < count; i++) {
-			arguments[i] = NodeArgument.decode(os);
-		}
-
-		return new HiMethod(os.getHiClass(), modifiers, returnType, name, arguments, os.readNullable(Node.class));
+		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
+		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
+		Node body = os.readNullable(Node.class);
+		return new HiMethod(os.getHiClass(), modifiers, returnType, name, arguments, throwsTypes, body);
 	}
 }

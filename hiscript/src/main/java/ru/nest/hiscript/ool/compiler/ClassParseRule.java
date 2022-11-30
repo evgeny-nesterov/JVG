@@ -269,7 +269,24 @@ public class ClassParseRule extends ParserUtil {
 
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-					// TODO: visit throws
+					Type[] exceptionTypes = null;
+					if (visitWordType(tokenizer, Words.THROWS) != -1) {
+						Type exceptionType = visitType(tokenizer, true);
+						if (exceptionType == null) {
+							throw new ParseException("identifier expected", tokenizer.currentToken());
+						}
+						List<Type> exceptionTypesList = new ArrayList<>(1);
+						exceptionTypesList.add(exceptionType);
+						if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
+							tokenizer.nextToken();
+							exceptionType = visitType(tokenizer, true);
+							if (exceptionType == null) {
+								throw new ParseException("identifier expected", tokenizer.currentToken());
+							}
+							exceptionTypesList.add(exceptionType);
+						}
+						exceptionTypes = exceptionTypesList.toArray(new Type[exceptionTypesList.size()]);
+					}
 
 					Node body = null;
 					if (modifiers.isNative() || modifiers.isAbstract()) {
@@ -286,7 +303,7 @@ public class ClassParseRule extends ParserUtil {
 					}
 
 					properties.exit();
-					return new HiMethod(clazz, modifiers, type, name, arguments, body);
+					return new HiMethod(clazz, modifiers, type, name, arguments, exceptionTypes, body);
 				}
 			}
 		}

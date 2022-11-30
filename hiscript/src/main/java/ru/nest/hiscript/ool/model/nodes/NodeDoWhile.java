@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+
+import java.io.IOException;
 
 public class NodeDoWhile extends Node {
 	public NodeDoWhile(NodeBlock body, NodeExpression condition) {
@@ -56,6 +56,6 @@ public class NodeDoWhile extends Node {
 	}
 
 	public static NodeDoWhile decode(DecodeContext os) throws IOException {
-		return new NodeDoWhile(os.readNullable(NodeBlock.class), os.read(NodeExpression.class));
+		return new NodeDoWhile((NodeBlock) os.readNullable(Node.class), (NodeExpression) os.read(Node.class));
 	}
 }

@@ -209,7 +209,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 			clazz = HiClass.forName(null, fullName);
 		}
 
-		if (clazz == null) {
+		if (clazz == null && ctx != null) {
 			ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
 		}
 		return clazz;
@@ -328,9 +328,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 
 		switch (type) {
 			case PRIMITIVE:
-				os.writeUTF(name);
-				break;
-
 			case OBJECT:
 				os.writeUTF(name);
 				break;

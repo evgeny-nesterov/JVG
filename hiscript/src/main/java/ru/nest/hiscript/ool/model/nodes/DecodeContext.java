@@ -157,7 +157,7 @@ public class DecodeContext {
 			types[index] = Type.decode(this);
 
 			// DEBUG
-			System.out.println(index + ": " + types[index].name);
+			// System.out.println(index + ": " + types[index].name);
 		}
 	}
 
@@ -228,7 +228,7 @@ public class DecodeContext {
 
 	public HiClass readClass() throws IOException, NoClassException {
 		boolean isHasIndex = is.readBoolean();
-		HiClass clazz = null;
+		HiClass clazz;
 		if (isHasIndex) {
 			int clazzIndex = is.readShort();
 
@@ -240,7 +240,6 @@ public class DecodeContext {
 			String classFullName = is.readUTF();
 			clazz = HiClass.forName(null, classFullName);
 		}
-
 		return clazz;
 	}
 
@@ -292,7 +291,7 @@ public class DecodeContext {
 		return list;
 	}
 
-	public <N> List<N[]> readNullableListArray(Class<N> type, int size) throws IOException {
+	public <N extends Node> List<N[]> readNullableListArray(Class<N> type, int size) throws IOException {
 		List<N[]> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			int arraySize = readShort();
@@ -302,14 +301,20 @@ public class DecodeContext {
 	}
 
 	public <N> N[] readNullableArray(Class<N> type, int size) throws IOException {
+		if (size == 0) {
+			return null;
+		}
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
-			nodes[i] = readNullable(type);
+			nodes[i] = (N) readNullable(type);
 		}
 		return nodes;
 	}
 
-	public <N> N[] readNullableNodeArray(Class<N> type, int size) throws IOException {
+	public <N extends Node> N[] readNullableNodeArray(Class<N> type, int size) throws IOException {
+		if (size == 0) {
+			return null;
+		}
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
 			nodes[i] = (N) readNullable(Node.class);

@@ -52,7 +52,7 @@ public class RootParseRule extends ParseRule<Node> {
 		if (createMainMethod) {
 			HiClass clazz = ctx.clazz;
 			clazz.methods = new HiMethod[1];
-			clazz.methods[0] = new HiMethod(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, body);
+			clazz.methods[0] = new HiMethod(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body);
 
 			node = new NodeMainWrapper(body);
 		} else {

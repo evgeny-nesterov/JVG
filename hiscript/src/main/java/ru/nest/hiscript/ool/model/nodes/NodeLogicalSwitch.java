@@ -46,7 +46,6 @@ public class NodeLogicalSwitch extends NodeExpression {
 	}
 
 	public static NodeLogicalSwitch decode(DecodeContext os) throws IOException {
-		NodeLogicalSwitch node = new NodeLogicalSwitch(os.read(NodeExpression.class), os.read(NodeExpression.class), os.read(NodeExpression.class));
-		return node;
+		return new NodeLogicalSwitch(os.read(NodeExpression.class), os.read(NodeExpression.class), os.read(NodeExpression.class));
 	}
 }

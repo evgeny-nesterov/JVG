@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compiler.ClassFileParseRule;
+import ru.nest.hiscript.ool.compiler.ParserUtil;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -13,10 +14,8 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
@@ -100,15 +99,11 @@ public class HiClass implements Codeable {
 	}
 
 	public static void load(InputStream is) throws Exception {
-		StringBuilder buf = new StringBuilder();
-		try (Reader r = new InputStreamReader(new BufferedInputStream(is, 2048))) {
-			char[] b = new char[1024];
-			int length;
-			while ((length = r.read(b)) != -1) {
-				buf.append(b, 0, length);
-			}
-			load(buf.toString());
-		}
+		load(ParserUtil.readString(is));
+	}
+
+	public static void load(Reader r) throws Exception {
+		load(ParserUtil.readString(r));
 	}
 
 	public static void load(String classCode) throws Exception {
@@ -155,49 +150,56 @@ public class HiClass implements Codeable {
 			topClass = this;
 		}
 
-		if (enclosingClass != null) {
-			switch (type) {
-				case CLASS_TYPE_TOP:
-				case CLASS_TYPE_INNER:
-					fullName = enclosingClass.fullName + "$" + name;
-					break;
-
-				case CLASS_TYPE_LOCAL:
-					int number = 0;
-					do {
-						fullName = enclosingClass.fullName + "$" + number + name;
-						number++;
-					} while (loadedClasses.containsKey(fullName));
-					break;
-
-				case CLASS_TYPE_ANONYMOUS:
-					number = 0;
-					do {
-						name = Integer.toString(number);
-						fullName = enclosingClass.fullName + "$" + number + name;
-						number++;
-					} while (loadedClasses.containsKey(fullName));
-					break;
-
-				default:
-					fullName = name;
-					break;
-			}
-		} else {
-			fullName = name;
-		}
-
 		// intern name to optimize via a == b
 		this.name = name.intern();
-		this.fullName = fullName.intern();
+		this.fullName = getFullName();
 
 		// register class by fullName
 		if (!ROOT_CLASS_NAME.equals(fullName)) {
 			if (loadedClasses.containsKey(fullName)) {
-				throw new ClassLoadException("class '" + fullName + "' already loaded");
+				//throw new ClassLoadException("class '" + fullName + "' already loaded");
 			}
 			loadedClasses.put(fullName, this);
 		}
+	}
+
+	public String getFullName() {
+		if (this.fullName == null) {
+			if (enclosingClass != null) {
+				switch (type) {
+					case CLASS_TYPE_TOP:
+					case CLASS_TYPE_INNER:
+						fullName = enclosingClass.fullName + "$" + name;
+						break;
+
+					case CLASS_TYPE_LOCAL:
+						int number = 0;
+						do {
+							fullName = enclosingClass.fullName + "$" + number + name;
+							number++;
+						} while (loadedClasses.containsKey(fullName));
+						break;
+
+					case CLASS_TYPE_ANONYMOUS:
+						number = 0;
+						do {
+							name = Integer.toString(number);
+							fullName = enclosingClass.fullName + "$" + number + name;
+							number++;
+						} while (loadedClasses.containsKey(fullName));
+						break;
+
+					default:
+						fullName = name;
+						break;
+				}
+			} else {
+				fullName = name;
+			}
+			// intern name to optimize via a == b
+			this.fullName = fullName.intern();
+		}
+		return this.fullName;
 	}
 
 	private boolean isInitialized = false;
@@ -209,6 +211,10 @@ public class HiClass implements Codeable {
 			// resolve super class if needed
 			if (superClass == null && superClassType != null) {
 				superClass = superClassType.getClass(current_ctx);
+				if (superClass == null) {
+					current_ctx.throwRuntimeException("Can't resolve class '" + superClassType.fullName + "'");
+					return;
+				}
 			}
 
 			if (superClass != null) {
@@ -679,7 +685,7 @@ public class HiClass implements Codeable {
 
 	public static HiClass forName(RuntimeContext ctx, String name) {
 		HiClass clazz = loadedClasses.get(name);
-		if (clazz != null) {
+		if (clazz != null && ctx != null) {
 			clazz.init(ctx);
 		}
 		return clazz;
@@ -703,7 +709,7 @@ public class HiClass implements Codeable {
 
 	@Override
 	public String toString() {
-		return fullName;
+		return fullName != null ? fullName : name;
 	}
 
 	private static HashMap<Class<?>, HiClass> cellTypes = new HashMap<>(9);
@@ -761,10 +767,12 @@ public class HiClass implements Codeable {
 		// constructor parameters
 		if (superClass != null) {
 			os.writeBoolean(true);
-			Type.getType(superClass).code(os);
+			os.writeType(Type.getType(superClass));
+			// Type.getType(superClass).code(os);
 		} else if (superClassType != null) {
 			os.writeBoolean(true);
-			superClassType.code(os);
+			os.writeType(superClassType);
+			// superClassType.code(os);
 		} else {
 			os.writeBoolean(false);
 		}
@@ -882,9 +890,9 @@ public class HiClass implements Codeable {
 
 		os.setHiClass(oldClass);
 
-		// resolve super class
+		// try resolve super class
 		if (superClassType != null) {
-			clazz.superClass = superClassType.getClass(null);
+			clazz.superClass = superClassType.resolveClass(null);
 		}
 		return clazz;
 	}

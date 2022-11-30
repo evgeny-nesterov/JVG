@@ -1,5 +1,10 @@
 package ru.nest.hiscript.tokenizer;
 
+import ru.nest.hiscript.ool.compiler.ParserUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -202,6 +207,14 @@ public class Tokenizer {
 			rollback(offset, line, lineOffset);
 		}
 		return null;
+	}
+
+	public static Tokenizer getDefaultTokenizer(InputStream is) throws IOException {
+		return getDefaultTokenizer(ParserUtil.readString(is));
+	}
+
+	public static Tokenizer getDefaultTokenizer(Reader r) throws IOException {
+		return getDefaultTokenizer(ParserUtil.readString(r));
 	}
 
 	public static Tokenizer getDefaultTokenizer(String s) {

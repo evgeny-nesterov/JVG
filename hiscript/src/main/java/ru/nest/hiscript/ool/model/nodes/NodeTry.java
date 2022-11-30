@@ -136,6 +136,6 @@ public class NodeTry extends Node {
 	}
 
 	public static NodeTry decode(DecodeContext os) throws IOException {
-		return new NodeTry(os.readNullable(Node.class), os.readNullableArray(NodeCatch.class, os.readShort()), os.readNullable(Node.class), os.readNullableArray(NodeDeclaration.class, os.readShort()));
+		return new NodeTry(os.readNullable(Node.class), os.readNullableNodeArray(NodeCatch.class, os.readShort()), os.readNullable(Node.class), os.readNullableNodeArray(NodeDeclaration.class, os.readShort()));
 	}
 }

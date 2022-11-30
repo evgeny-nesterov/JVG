@@ -72,6 +72,6 @@ public class NodeForIterator extends Node {
 	}
 
 	public static NodeForIterator decode(DecodeContext os) throws IOException {
-		return new NodeForIterator((NodeDeclaration) os.read(Node.class), os.readNullable(Node.class), os.readNullable(Node.class));
+		return new NodeForIterator((NodeDeclaration) os.readNullable(Node.class), os.readNullable(Node.class), os.readNullable(Node.class));
 	}
 }

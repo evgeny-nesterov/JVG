@@ -174,9 +174,9 @@ public class NodeSwitch extends Node {
 
 	public static NodeSwitch decode(DecodeContext os) throws IOException {
 		NodeSwitch node = new NodeSwitch(os.read(Node.class));
-		int size = os.readShort();
-		node.casesValues = os.readNullableListArray(Node.class, size);
-		node.casesNodes = os.readNullableList(Node.class, size);
+		node.size = os.readShort();
+		node.casesValues = os.readNullableListArray(Node.class, node.size);
+		node.casesNodes = os.readNullableList(Node.class, node.size);
 		return node;
 	}
 }

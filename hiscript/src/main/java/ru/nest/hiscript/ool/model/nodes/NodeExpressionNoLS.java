@@ -234,7 +234,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 				operations[i] = Operations.getOperation(operationType);
 			}
 		}
-
 		return new NodeExpressionNoLS(operands, operations);
 	}
 

@@ -47,7 +47,6 @@ public class NodeIdentifier extends Node {
 		if (resolveClass(ctx, v)) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -88,9 +87,12 @@ public class NodeIdentifier extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);
+		os.writeNullableUTF(castedVariableName);
 	}
 
 	public static NodeIdentifier decode(DecodeContext os) throws IOException {
-		return new NodeIdentifier(os.readUTF());
+		NodeIdentifier node = new NodeIdentifier(os.readUTF());
+		node.castedVariableName = os.readNullableUTF();
+		return node;
 	}
 }

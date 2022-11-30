@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeBreak;
 import ru.nest.hiscript.ool.model.nodes.NodeByte;
+import ru.nest.hiscript.ool.model.nodes.NodeCatch;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -19,7 +20,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
 import ru.nest.hiscript.ool.model.nodes.NodeDoWhile;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
-import ru.nest.hiscript.ool.model.nodes.NodeExpression;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
@@ -37,6 +38,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeSynchronized;
+import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeThrow;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
@@ -199,7 +201,7 @@ public abstract class Node implements Codeable {
 			case TYPE_DO_WHILE:
 				return NodeDoWhile.decode(os);
 			case TYPE_EXPRESSION:
-				return NodeExpression.decode(os);
+				return NodeExpressionNoLS.decode(os);
 			case TYPE_FLOAT:
 				return NodeFloat.decode(os);
 			case TYPE_FOR:
@@ -246,6 +248,10 @@ public abstract class Node implements Codeable {
 				return NodeLogicalSwitch.decode(os);
 			case TYPE_ASSERT:
 				return NodeAssert.decode(os);
+			case THIS:
+				return NodeThis.decode(os);
+			case TYPE_CATCH:
+				return NodeCatch.decode(os);
 		}
 		throw new RuntimeException("Node can't be decoded: undefined type " + type);
 	}

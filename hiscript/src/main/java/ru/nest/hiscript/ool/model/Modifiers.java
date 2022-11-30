@@ -135,7 +135,6 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (isNative) {
 			sb.append("native ");
 		}
-
 		return sb.toString();
 	}
 
@@ -163,7 +162,6 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 	public int getModifiers() {
 		int modifiers = access;
-
 		if (isStatic) {
 			modifiers |= STATIC;
 		}

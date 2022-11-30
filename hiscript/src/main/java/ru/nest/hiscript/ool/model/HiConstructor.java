@@ -279,19 +279,18 @@ public class HiConstructor implements Codeable {
 
 		os.writeNullable(body);
 		os.writeNullable(bodyConstructor);
-		os.writeInt(bodyConstructorType.getType());
+		os.writeByte(bodyConstructorType.getType());
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
 		Modifiers modifiers = Modifiers.decode(os);
 
 		int count = os.readByte();
-		NodeArgument[] arguments = new NodeArgument[count];
+		NodeArgument[] arguments = count > 0 ? new NodeArgument[count] : null;
 		for (int i = 0; i < count; i++) {
-			arguments[i] = NodeArgument.decode(os);
+			arguments[i] = (NodeArgument) Node.decode(os);
 		}
-
-		return new HiConstructor(os.getHiClass(), modifiers, arguments, os.readNullable(Node.class), os.readNullable(NodeConstructor.class), BodyConstructorType.get(os.readByte()));
+		return new HiConstructor(os.getHiClass(), modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
 	}
 
 	public static void main(String[] a) {

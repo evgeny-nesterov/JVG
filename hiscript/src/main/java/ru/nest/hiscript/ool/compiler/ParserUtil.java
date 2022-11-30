@@ -33,6 +33,11 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -430,6 +435,24 @@ public class ParserUtil implements Words {
 				}
 				arguments.add(arg);
 			}
+		}
+	}
+
+	public static String readString(InputStream is) throws IOException {
+		return readString(new InputStreamReader(new BufferedInputStream(is, 2048)));
+	}
+
+	public static String readString(Reader r) throws IOException {
+		try {
+			StringBuilder buf = new StringBuilder();
+			char[] b = new char[1024];
+			int length;
+			while ((length = r.read(b)) != -1) {
+				buf.append(b, 0, length);
+			}
+			return buf.toString();
+		} finally {
+			r.close();
 		}
 	}
 }

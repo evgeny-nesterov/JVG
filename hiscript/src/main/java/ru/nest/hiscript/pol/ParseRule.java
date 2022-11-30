@@ -48,7 +48,26 @@ public abstract class ParseRule<N extends Node> {
 				return wordToken.getWord();
 			}
 		}
+		return null;
+	}
 
+	public static class NamespaceName {
+		public String name;
+
+		public String namespace;
+	}
+
+	protected NamespaceName visitNamespaceName(Tokenizer tokenizer) throws TokenizerException {
+		String name = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (name != null) {
+			NamespaceName namespaceName = new NamespaceName();
+			namespaceName.name = name;
+			if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+				namespaceName.namespace = namespaceName.name;
+				namespaceName.name = visitWord(Words.NOT_SERVICE, tokenizer);
+			}
+			return namespaceName;
+		}
 		return null;
 	}
 
@@ -67,7 +86,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return null;
 	}
 
@@ -85,7 +103,6 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -107,7 +124,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return -1;
 	}
 
@@ -122,7 +138,6 @@ public abstract class ParseRule<N extends Node> {
 				return wordToken.getType();
 			}
 		}
-
 		return -1;
 	}
 
@@ -141,7 +156,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return -1;
 	}
 
@@ -174,7 +188,6 @@ public abstract class ParseRule<N extends Node> {
 			tokenizer.nextToken();
 			return new ByteNode(token.getNumber());
 		}
-
 		return null;
 	}
 
@@ -190,7 +203,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return false;
 	}
 
@@ -203,7 +215,6 @@ public abstract class ParseRule<N extends Node> {
 			tokenizer.nextToken();
 			return new CharacterNode(token.getChar());
 		}
-
 		return null;
 	}
 
@@ -219,7 +230,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return false;
 	}
 
@@ -232,7 +242,6 @@ public abstract class ParseRule<N extends Node> {
 			tokenizer.nextToken();
 			return new StringNode(token.getString());
 		}
-
 		return null;
 	}
 
@@ -248,7 +257,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return false;
 	}
 
@@ -265,7 +273,6 @@ public abstract class ParseRule<N extends Node> {
 				}
 			}
 		}
-
 		return -1;
 	}
 
@@ -286,7 +293,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return -1;
 	}
 
@@ -329,7 +335,6 @@ public abstract class ParseRule<N extends Node> {
 				return symbolToken.getType();
 			}
 		}
-
 		return -1;
 	}
 
@@ -348,7 +353,6 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return -1;
 	}
 

@@ -106,15 +106,17 @@ public class CodeContext {
 
 	public <N extends Codeable> void write(N[] objects) throws IOException {
 		if (objects != null) {
-			for (int i = 0; i < objects.length; i++)
+			for (int i = 0; i < objects.length; i++) {
 				objects[i].code(this);
+			}
 		}
 	}
 
 	public <N extends Codeable> void write(List<N> objects) throws IOException {
 		if (objects != null) {
-			for (int i = 0; i < objects.size(); i++)
+			for (int i = 0; i < objects.size(); i++) {
 				objects.get(i).code(this);
+			}
 		}
 	}
 
@@ -124,8 +126,9 @@ public class CodeContext {
 
 	public <N extends Codeable> void writeNullable(List<N> objects) throws IOException {
 		if (objects != null) {
-			for (int i = 0; i < objects.size(); i++)
+			for (int i = 0; i < objects.size(); i++) {
 				writeNullable(objects.get(i));
+			}
 		}
 	}
 
@@ -168,20 +171,17 @@ public class CodeContext {
 			// DEBUG
 			// System.out.println("string: '" + value + "', index = " + index);
 		}
-
 		return index;
 	}
 
 	public byte[] getStringsCode() throws IOException {
 		ByteArrayOutputStream bos_string = new ByteArrayOutputStream();
 		DataOutputStream dos_string = new DataOutputStream(bos_string);
-
 		dos_string.writeShort(stringsHash.size());
 		for (String s : strings) {
 			dos_string.writeUTF(s);
 			len_utf += s.length();
 		}
-
 		return bos_string.toByteArray();
 	}
 
@@ -282,21 +282,21 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private HashMap<HiClass, Integer> classes = new HashMap<>();
+	private Map<String, Integer> classes = new HashMap<>();
 
-	private HashMap<Integer, HiClass> index_to_classes = new HashMap<>();
+	private Map<Integer, HiClass> index_to_classes = new HashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
 		CodeContext ctx = getRoot();
 
-		int index = -1;
-		if (ctx.classes.containsKey(clazz)) {
-			index = ctx.classes.get(clazz);
+		int index;
+		if (ctx.classes.containsKey(clazz.fullName)) {
+			index = ctx.classes.get(clazz.fullName);
 		} else {
 			index = ctx.classes.size();
-			ctx.classes.put(clazz, index);
-			ctx.index_to_classes.put(index, clazz);
+			ctx.classes.put(clazz.fullName, index);
 		}
+		ctx.index_to_classes.put(index, clazz);
 
 		boolean isHasIndex = index != -1;
 		writeBoolean(isHasIndex);
@@ -321,10 +321,6 @@ public class CodeContext {
 		System.out.println("utf count: " + stringsHash.size());
 		System.out.println("types count: " + typesHash.size());
 		System.out.println("classes count: " + classes.size());
-	}
-
-	public int getClassesCount() {
-		return classes.size();
 	}
 
 	public ClassCodeContext getClassContext(int index) throws IOException {
@@ -389,8 +385,7 @@ public class CodeContext {
 		dos_all.write(bos.toByteArray());
 
 		// DEBUG
-		// System.out.println((clazz != null ? (clazz.fullName + ": ") : "") +
-		// "size=" + bos_all.size());
+		// System.out.println((clazz != null ? (clazz.fullName + ": ") : "") + "size=" + bos_all.size());
 		return bos_all.toByteArray();
 	}
 }

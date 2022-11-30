@@ -80,6 +80,6 @@ public class NodeArray extends Node {
 	}
 
 	public static NodeArray decode(DecodeContext os) throws IOException {
-		return new NodeArray(os.readType(), os.readNullableArray(Node.class, os.readByte()));
+		return new NodeArray(os.readType(), os.readNullableNodeArray(Node.class, os.readByte()));
 	}
 }
