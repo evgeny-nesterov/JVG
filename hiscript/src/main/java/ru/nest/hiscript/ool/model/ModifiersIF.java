@@ -17,5 +17,5 @@ public interface ModifiersIF {
 
 	public final static int ACCESS_PRIVATE = 128;
 
-	public final static int ACCESS_DEFAULT = 258;
+	public final static int ACCESS_DEFAULT = 256;
 }

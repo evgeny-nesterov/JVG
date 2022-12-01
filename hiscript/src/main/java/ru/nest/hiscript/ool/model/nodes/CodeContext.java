@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.model.Codeable;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.TypeArgumentIF;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -225,10 +226,21 @@ public class CodeContext {
 		writeShort(index);
 	}
 
+	public void writeTypeArgument(TypeArgumentIF typeArgument) throws IOException {
+		writeType(typeArgument.getType());
+		if (typeArgument.isArray()) {
+			writeBoolean(typeArgument.isVarargs());
+		}
+	}
+
 	public void writeTypes(Type[] types) throws IOException {
-		writeByte(types.length);
-		for (int i = 0; i < types.length; i++) {
-			writeType(types[i]);
+		if (types != null) {
+			writeByte(types.length);
+			for (int i = 0; i < types.length; i++) {
+				writeType(types[i]);
+			}
+		} else {
+			writeByte(0);
 		}
 	}
 
@@ -255,8 +267,8 @@ public class CodeContext {
 		Collections.sort(types, new Comparator<Type>() {
 			@Override
 			public int compare(Type t1, Type t2) {
-				int type1 = t1.getType();
-				int type2 = t2.getType();
+				int type1 = t1.getTypeClass();
+				int type2 = t2.getTypeClass();
 				if (type1 != type2) {
 					return type1 - type2;
 				}

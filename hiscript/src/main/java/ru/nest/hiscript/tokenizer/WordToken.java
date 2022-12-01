@@ -38,6 +38,7 @@ public class WordToken extends Token implements Words {
 		service_words.put("synchronized", SYNCHRONIZED);
 		service_words.put("assert", ASSERT);
 
+		service_words.put("interface", INTERFACE);
 		service_words.put("class", CLASS);
 		service_words.put("enum", ENUM);
 		service_words.put("record", RECORD);
@@ -58,7 +59,6 @@ public class WordToken extends Token implements Words {
 		service_words.put("throw", THROW);
 		service_words.put("throws", THROWS);
 
-		service_words.put("interface", INTERFACE);
 		service_words.put("instanceof", INSTANCE_OF);
 		service_words.put("implements", IMPLEMENTS);
 		service_words.put("extends", EXTENDS);

@@ -6,10 +6,12 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  */
-public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
+public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
 
 	public final static int OBJECT = 1;
@@ -70,14 +72,13 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	/**
 	 * Array type
 	 */
-	private Type(Type cellType, boolean varargs) {
+	private Type(Type cellType) {
 		this.parent = null;
 		this.cellType = cellType;
 		this.name = "0" + cellType.name;
 		this.dimension = cellType.dimension + 1;
 		this.primitive = false;
 		this.fullName = "0" + cellType.fullName;
-		this.varargs = varargs;
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;
@@ -100,14 +101,8 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 
 	private int dimension;
 
-	private boolean varargs;
-
 	public int getDimension() {
 		return dimension;
-	}
-
-	public boolean isArray() {
-		return dimension > 0;
 	}
 
 	public Type getCellType() {
@@ -124,8 +119,9 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		return this == getNullType();
 	}
 
-	public boolean isVarargs() {
-		return varargs;
+	@Override
+	public int hashCode() {
+		return Objects.hash(fullName, dimension);
 	}
 
 	@Override
@@ -208,7 +204,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		return clazz;
 	}
 
-	private HashMap<String, Type> innerTypes;
+	private Map<String, Type> innerTypes;
 
 	public Type getInnerType(String name, int dimension) {
 		if (innerTypes == null) {
@@ -226,39 +222,49 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	}
 
 	// === Static Methods ===
-	private static HashMap<String, Type> types = new HashMap<>();
+	private static Map<String, Type> typesWithoutParent = new HashMap<>();
 
-	private static HashMap<Type, Type> arrayTypes = new HashMap<>();
+	private static Map<Type, Type> arrayTypes = new HashMap<>();
 
 	public static Type getType(Type parent, String name) {
 		if (parent != null) {
 			return parent.getInnerType(name, 0);
 		} else {
-			return getType(name);
+			return getTopType(name);
 		}
 	}
 
-	public static Type getType(String name) {
-		Type type = types.get(name);
+	public static Type getTopType(String name) {
+		Type type = predefinedTypes.get(name);
+		if (type != null) {
+			return type;
+		}
+
+		type = typesWithoutParent.get(name);
 		if (type == null) {
 			type = new Type(null, name);
-			types.put(name, type);
+			typesWithoutParent.put(name, type);
 		}
 		return type;
 	}
 
-	public static Type getType(String name, int dimension) {
-		Type type = null;
-		if (predefinedTypes.containsKey(name)) {
-			type = getPrimitiveType(name);
+	public static Type getTypeByFullName(String fullName) {
+		int index = fullName.indexOf('.');
+		if (index != -1) {
+			Type type = getType(null, fullName.substring(0, index));
+			while (index != -1) {
+				int nextIndex = fullName.indexOf('.', index + 1);
+				if (index != -1) {
+					type = getType(null, fullName.substring(index, nextIndex));
+					index = nextIndex;
+				} else {
+					type = getType(null, fullName.substring(index));
+				}
+			}
+			return type;
 		} else {
-			type = getType(name);
+			return getType(null, fullName);
 		}
-
-		if (dimension > 0) {
-			type = getArrayType(type, dimension);
-		}
-		return type;
 	}
 
 	public static Type getPrimitiveType(String name) {
@@ -268,7 +274,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	public static Type getArrayType(Type type) {
 		Type arrayType = arrayTypes.get(type);
 		if (arrayType == null) {
-			arrayType = new Type(type, false);
+			arrayType = new Type(type);
 			arrayTypes.put(type, arrayType);
 		}
 		return arrayType;
@@ -281,10 +287,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		return cellType;
 	}
 
-	public static Type getVarargsType(Type cellType) {
-		return new Type(cellType, true);
-	}
-
 	public static Type getNullType() {
 		return predefinedTypes.get("null");
 	}
@@ -293,12 +295,15 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 		if (clazz.isPrimitive()) {
 			return getPrimitiveType(clazz.fullName);
 		}
-
 		if (clazz.isArray()) {
 			HiClassArray arrayClass = (HiClassArray) clazz;
-			return getType(arrayClass.cellClass.fullName, arrayClass.dimension);
+			Type cellType = getTypeByFullName(arrayClass.cellClass.fullName);
+			return getArrayType(cellType, arrayClass.dimension);
 		}
-		return getType(clazz.fullName);
+		if (clazz.isNull()) {
+			return null;
+		}
+		return getTypeByFullName(clazz.fullName);
 	}
 
 	@Override
@@ -316,13 +321,13 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		byte type = getType();
-		os.writeByte(type);
+		byte typeClass = getTypeClass();
+		os.writeByte(typeClass);
 
-		switch (type) {
+		switch (typeClass) {
 			case PRIMITIVE:
 			case OBJECT:
-				os.writeUTF(name);
+				os.writeUTF(fullName);
 				break;
 
 			case ARRAY:
@@ -332,32 +337,62 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	}
 
 	public static Type decode(DecodeContext os) throws IOException {
-		int type = os.readByte();
-		switch (type) {
+		int typeType = os.readByte();
+		switch (typeType) {
 			case PRIMITIVE:
 				return getPrimitiveType(os.readUTF());
 
 			case OBJECT:
-				return getType(os.readUTF());
+				String fullName = os.readUTF();
+				String[] path = fullName.split("\\.");
+				Type type = null;
+				for (String name : path) {
+					type = getType(type, name);
+				}
+				return type;
 
 			case ARRAY:
 				return getArrayType(os.readType());
 		}
-		throw new RuntimeException("unknown type " + type);
+		throw new RuntimeException("unknown type " + typeType);
 	}
 
-	public byte getType() {
-		byte type = OBJECT; // object
+	public byte getTypeClass() {
+		byte typeClass = OBJECT; // object
 		if (isPrimitive()) {
-			type = PRIMITIVE; // primitive
+			typeClass = PRIMITIVE; // primitive
 		} else if (isArray()) {
-			type = ARRAY; // array
+			typeClass = ARRAY; // array
 		}
-		return type;
+		return typeClass;
+	}
+
+	@Override
+	public Type getType() {
+		return this;
+	}
+
+	@Override
+	public boolean isArray() {
+		return dimension > 0;
+	}
+
+	@Override
+	public boolean isVarargs() {
+		return false;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	// has to be set at the end of class init
-	public final static Type objectType = getType("Object");
+	public final static Type objectType = getTopType("Object");
 
-	public final static Type enumType = getType("Enum");
+	public final static Type enumType = getTopType("Enum");
+
+	public final static Type recordType = getTopType("Record");
+
+	public final static Type stringType = getTopType("String");
 }

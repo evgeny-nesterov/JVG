@@ -7,6 +7,12 @@ import ru.nest.hiscript.tokenizer.Words;
 import java.io.IOException;
 
 public class Modifiers implements ModifiersIF, Codeable {
+	public static Modifiers PUBLIC() {
+		Modifiers modifiers = new Modifiers();
+		modifiers.setAccess(ACCESS_PUBLIC);
+		return modifiers;
+	}
+
 	public static int mapWordsToModification(int word) {
 		switch (word) {
 			case Words.PUBLIC:

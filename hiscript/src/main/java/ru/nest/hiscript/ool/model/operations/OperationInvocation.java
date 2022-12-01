@@ -246,8 +246,10 @@ public class OperationInvocation extends BinaryOperation {
 				types[i] = ctx.value.type;
 
 				Type type = Type.getType(types[i]);
-				arguments[i] = HiField.getField(type, null);
-				arguments[i].set(ctx, ctx.value);
+				if (type != null) {
+					arguments[i] = HiField.getField(type, null);
+					arguments[i].set(ctx, ctx.value);
+				}
 			}
 		}
 
@@ -284,7 +286,7 @@ public class OperationInvocation extends BinaryOperation {
 			if (method.hasVarargs()) {
 				int varargsSize = types.length - method.arguments.length + 1;
 				int mainSize = size - varargsSize;
-				Type varargsArrayType = method.arguments[method.arguments.length - 1].type;
+				Type varargsArrayType = method.arguments[method.arguments.length - 1].getType();
 				HiClass varargsClass = varargsArrayType.getCellType().getClass(ctx);
 				HiClass varargsArrayClass = varargsArrayType.getClass(ctx);
 				HiField<?> varargsField = HiField.getField(varargsArrayType, null);
@@ -310,17 +312,17 @@ public class OperationInvocation extends BinaryOperation {
 			}
 
 			for (int i = 0; i < size; i++) {
-				HiClass argClass = arguments[i].getClass(ctx);
+				HiClass argClass = arguments[i] != null ? arguments[i].getClass(ctx) : HiClassNull.NULL;
 
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
-					arguments[i] = HiField.getField(method.arguments[i].type, null);
+					arguments[i] = HiField.getField(method.arguments[i].getType(), null);
 					ctx.value.type = HiClassNull.NULL;
 					arguments[i].set(ctx, ctx.value);
 				} else if (!argClass.isArray()) {
 					ctx.value.type = argClass;
 					arguments[i].get(ctx, ctx.value);
-					arguments[i] = HiField.getField(method.arguments[i].type, null);
+					arguments[i] = HiField.getField(method.arguments[i].getType(), null);
 					arguments[i].set(ctx, ctx.value);
 				}
 				// TODO: update array cell type

@@ -36,6 +36,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.model.nodes.NodeSuper;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeSynchronized;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
@@ -252,6 +253,8 @@ public abstract class Node implements Codeable {
 				return NodeThis.decode(os);
 			case TYPE_CATCH:
 				return NodeCatch.decode(os);
+			case SUPER:
+				return NodeSuper.decode(os);
 		}
 		throw new RuntimeException("Node can't be decoded: undefined type " + type);
 	}

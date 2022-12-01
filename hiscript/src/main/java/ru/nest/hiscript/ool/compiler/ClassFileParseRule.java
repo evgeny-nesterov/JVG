@@ -36,6 +36,11 @@ public class ClassFileParseRule extends ParseRule<Node> {
 			if (enumClass != null) {
 				continue;
 			}
+
+			HiClass recordClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP));
+			if (recordClass != null) {
+				continue;
+			}
 			break;
 		}
 

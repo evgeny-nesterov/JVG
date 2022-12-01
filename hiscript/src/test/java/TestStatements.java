@@ -47,16 +47,14 @@ public class TestStatements extends HiTest {
 	public void testExceptions() {
 		assertSuccessSerialize("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
 		assertSuccessSerialize("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
-		assertFail("throw new Exception(\"error\");");
-		assertFail("throw new Object();");
-		assertFail("class E extends Exception{} throw new E();");
+		assertFailSerialize("throw new Exception(\"error\");");
+		assertFailSerialize("throw new Object();");
+		assertFailSerialize("class E extends Exception{} throw new E();");
 		assertSuccessSerialize("try {throw new Exception(\"error\");} catch(Exception e) {assert e.getMessage().equals(\"error\");} ");
 		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
-		assertFail("class E extends Exception {} try {throw new Exception();} catch(E e) {}");
+		assertFailSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {}");
 		assertSuccessSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {assert false;} catch(RuntimeException e) {assert false;} catch(Exception e){}");
-
-		// FAIL assertSuccessSerialize
-		assertSuccess("class E extends Exception {E(String message){super(message);}} " + //
+		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} " + //
 				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
 				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
 	}
@@ -72,62 +70,70 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("class C{int c;} assert new C().c == 0;");
 		assertSuccessSerialize("class C{int c = 1;} assert new C().c == 1;");
 		assertSuccessSerialize("class C{static int c;} assert C.c == 0;");
-
-		// FAIL assertSuccessSerialize
-		assertSuccess("class C{static int c = 1;} assert C.c == 1;");
+		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
 	}
 
-	// FAIL assertSuccessSerialize
 	@Test
 	public void testInnerClasses() {
 		// static inner class
-		assertSuccess("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
-		assertSuccess("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
-		assertSuccess("class A{static class B{static class C{static class D{}}}} A.B.C.D d = new A.B.C.D(); assert d instanceof A.B.C.D;");
-		assertFail("class A{static class B{}} A a = new A(); A.B b = a.new B();");
-		assertFail("class A{static class B{}} B b;");
-		assertFail("class A{static class B{}} A.B b = new B();");
+		assertSuccessSerialize("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
+		assertSuccessSerialize("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
+		assertSuccessSerialize("class A{static class B{static class C{static class D{}}}} A.B.C.D d = new A.B.C.D(); assert d instanceof A.B.C.D;");
+		assertFailSerialize("class A{static class B{}} A a = new A(); A.B b = a.new B();");
+		assertFailSerialize("class A{static class B{}} B b;");
+		assertFailSerialize("class A{static class B{}} A.B b = new B();");
+		assertSuccessSerialize("class A {void get(){}} A a = new A(); a.get();");
 
 		// not static inner class
-		assertSuccess("class A{class B{}} A a = new A(); A.B b = a.new B(); new A().new B();");
-		assertSuccess("class A{static class B{class C{C(int i){}}}} A.B b = new A.B(); A.B.C c = b.new C(0); new A.B().new C(0);");
-		assertFail("class A{class B{}} A.B b = new A.B();");
-		assertSuccess("class A{class B{class C{int get(){return 123;}} C c = new C();} B b = new B();} A a = new A(); assert a.b != null; assert a.b.c != null; assert a.b.c.get() == 123;");
-		assertSuccess("class A{class B{} B b = new B();} A a = new A(); assert a.b instanceof A.B;");
+		assertSuccessSerialize("class A{class B{}} A a = new A(); A.B b = a.new B(); new A().new B();");
+		assertSuccessSerialize("class A{static class B{class C{C(int i){}}}} A.B b = new A.B(); A.B.C c = b.new C(0); new A.B().new C(0);");
+		assertFailSerialize("class A{class B{}} A.B b = new A.B();");
+		assertSuccessSerialize("class A{class B{class C{int get(){return 123;}} C c = new C();} B b = new B();} A a = new A(); assert a.b != null; assert a.b.c != null; assert a.b.c.get() == 123;");
+		assertSuccessSerialize("class A{class B{} B b = new B();} A a = new A(); assert a.b instanceof A.B;");
 	}
 
-	// FAIL assertSuccessSerialize
 	@Test
 	public void testInterfaces() {
 		// extends, implements
-		assertSuccess("interface I{} class C implements I{} assert new C() instanceof C; assert new C() instanceof I;");
-		assertFail("interface I{} new I();");
-		assertSuccess("interface I1{} interface I2 extends I1{} class C implements I2{} I1 c = new C(); c instanceof C; c instanceof I1; c instanceof I2;");
-		assertSuccess("interface I1{} interface I2{} interface I3 extends I1{} interface I12 extends I1, I1{} class C implements I12, I3{} Object c = new C(); c instanceof C; c instanceof I1; c instanceof I2; c instanceof I3; c instanceof I12;");
+		assertSuccessSerialize("interface I{} class C implements I{} assert new C() instanceof C; assert new C() instanceof I;");
+		assertFailSerialize("interface I{} new I();");
+		assertSuccessSerialize("interface I1{} interface I2 extends I1{} class C implements I2{} I1 c = new C(); c instanceof C; c instanceof I1; c instanceof I2;");
+		assertSuccessSerialize("interface I1{} interface I2{} interface I3 extends I1{} interface I12 extends I1, I1{} class C implements I12, I3{} Object c = new C(); c instanceof C; c instanceof I1; c instanceof I2; c instanceof I3; c instanceof I12;");
 
 		// fields
-		assertFail("interface I{int c;}");
-		assertSuccess("interface I{int c = 1, d = 0;} assert I.c == 1;");
-		assertFail("interface I{static int c;}");
-		assertSuccess("interface I{static int c = 1;} assert I.c == 1;");
-		assertFail("interface I{int c = 0;} I.c = 1;");
-		assertFail("interface I{ { System.println(\"\"); } }");
-		assertFail("interface I{ static { System.println(\"\"); } }");
+		assertFailSerialize("interface I{int c;}");
+		assertSuccessSerialize("interface I{int c = 1, d = 0;} assert I.c == 1;");
+		assertFailSerialize("interface I{static int c;}");
+		assertSuccessSerialize("interface I{static int c = 1;} assert I.c == 1;");
+		assertFailSerialize("interface I{int c = 0;} I.c = 1;");
+		assertFailSerialize("interface I{ { System.println(\"\"); } }");
+		assertFailSerialize("interface I{ static { System.println(\"\"); } }");
 
 		// default
-		assertSuccess("interface I{default int get(){return 1;}} class C implements I{}; assert new C().get() == 1;");
-		assertFail("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{}; new C().get();");
-		assertFail("interface I1{int get();} interface I2{int get();} class C implements I1, I2{}; new C().get();");
-		assertSuccess("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{int get(){return 3;}}; assert new C().get() == 3;");
-		assertSuccess("interface I1{int get();} interface I2{default int get(){return 2;}} class C implements I1, I2{}; assert new C().get() == 2;");
+		assertSuccessSerialize("interface I{default int get(){return 1;}} class C implements I{}; assert new C().get() == 1;");
+		assertFailSerialize("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{}; new C().get();");
+		assertFailSerialize("interface I1{int get();} interface I2{int get();} class C implements I1, I2{}; new C().get();");
+		assertSuccessSerialize("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{int get(){return 3;}}; assert new C().get() == 3;");
+		assertSuccessSerialize("interface I1{int get();} interface I2{default int get(){return 2;}} class C implements I1, I2{}; assert new C().get() == 2;");
 	}
 
-	// FAIL assertSuccessSerialize
 	@Test
 	public void testMethods() {
-		assertSuccess("class C{int get(int... n){return n.length;}} assert new C().get(1, 2, 3) == 3;");
-		assertSuccess("class O{} class O1 extends O{} class C{int get(O... n){return n.length;}} assert new C().get(new O1(), new O()) == 2;");
-		assertSuccess("class O{} class C{int get(Object... n){return n.length;}} assert new C().get(new O(), \"x\", new Object()) == 3;");
-		assertSuccess("class A{int get(){return 1;}} class B extends A{int get(){return super.get() + 1;}} assert new A().get() == 1; assert new B().get() == 2; ");
+		assertSuccessSerialize("class C{int get(int... n){return n.length;}} assert new C().get(1, 2, 3) == 3;");
+		assertSuccessSerialize("class O{} class O1 extends O{} class C{int get(O... n){return n.length;}} assert new C().get(new O1(), new O()) == 2;");
+		assertSuccessSerialize("class O{} class C{int get(Object... n){return n.length;}} assert new C().get(new O(), \"x\", new Object()) == 3;");
+		assertSuccessSerialize("class A{int get(){return 1;}} class B extends A{int get(){return super.get() + 1;}} assert new A().get() == 1; assert new B().get() == 2; ");
+
+		// null value
+		assertSuccessSerialize("class A{String a(String arg){}} new A().a(null); ");
+	}
+
+	@Test
+	public void testEnms() {
+	}
+
+	@Test
+	public void testRecords() {
+		assertSuccessSerialize("record Rec(int a, int b); Rec rec = new Rec(1, 2);");
 	}
 }

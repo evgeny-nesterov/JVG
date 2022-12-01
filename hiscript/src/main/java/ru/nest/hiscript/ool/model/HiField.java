@@ -156,10 +156,12 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 		}
 
 		java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(type.name);
-		try {
-			return constructor.newInstance(name);
-		} catch (Exception exc) {
-			exc.printStackTrace();
+		if (constructor != null) {
+			try {
+				return constructor.newInstance(name);
+			} catch (Exception exc) {
+				exc.printStackTrace();
+			}
 		}
 		return null;
 	}

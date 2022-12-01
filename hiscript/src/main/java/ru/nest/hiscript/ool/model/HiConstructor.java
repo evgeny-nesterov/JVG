@@ -65,7 +65,7 @@ public class HiConstructor implements Codeable {
 		if (argClasses == null) {
 			argClasses = new HiClass[arguments != null ? arguments.length : 0];
 			for (int i = 0; i < argClasses.length; i++) {
-				argClasses[i] = arguments[i].type.getClass(ctx);
+				argClasses[i] = arguments[i].getType().getClass(ctx);
 			}
 		}
 	}

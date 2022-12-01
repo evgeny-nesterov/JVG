@@ -58,13 +58,11 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				String excName = null;
 				if (visitWord(Words.CATCH, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
-					String typeName = visitWord(NOT_SERVICE, tokenizer);
-					Type excType = Type.getType(typeName);
+					Type excType = visitObjectType(tokenizer);
 					// TODO check excType extends Exception
 					excTypes.add(excType);
 					while (visitSymbol(tokenizer, Symbols.BITWISE_OR) != -1) {
-						typeName = expectWord(NOT_SERVICE, tokenizer);
-						excType = Type.getType(typeName);
+						excType = visitObjectType(tokenizer);
 						// TODO check excType extends Exception
 						excTypes.add(excType);
 					}

@@ -183,7 +183,7 @@ public class HiObject {
 	public boolean equals(RuntimeContext ctx, HiObject object) {
 		HiClass objectClass = HiClass.forName(ctx, "Object");
 		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
-		HiField objectField = new HiFieldObject(Type.getType("Object"), equalsMethod.argNames[0], object);
+		HiField objectField = new HiFieldObject(Type.objectType, equalsMethod.argNames[0], object);
 
 		// enter into method
 		ctx.enterMethod(equalsMethod, this, -1);

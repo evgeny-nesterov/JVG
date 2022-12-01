@@ -69,6 +69,6 @@ public class HiFieldObject extends HiField<HiObject> {
 	}
 
 	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {
-		return new HiFieldObject(Type.getType("String"), "name", NodeString.createString(ctx, value.toCharArray()));
+		return new HiFieldObject(Type.stringType, "name", NodeString.createString(ctx, value.toCharArray()));
 	}
 }

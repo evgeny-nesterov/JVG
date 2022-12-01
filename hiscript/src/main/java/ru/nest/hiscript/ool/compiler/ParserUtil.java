@@ -129,22 +129,28 @@ public class ParserUtil implements Words {
 		}
 
 		if (type == null) {
-			name = visitWord(Words.NOT_SERVICE, tokenizer);
-			if (name != null) {
-				type = Type.getType(name);
-				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
-					name = visitWord(Words.NOT_SERVICE, tokenizer);
-					if (name == null) {
-						throw new ParseException("identifier is expected", tokenizer.currentToken());
-					}
-					type = Type.getType(type, name);
-				}
-			}
+			type = visitObjectType(tokenizer);
 		}
 
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
 			type = Type.getArrayType(type, dimension);
+		}
+		return type;
+	}
+
+	protected Type visitObjectType(Tokenizer tokenizer) throws TokenizerException, ParseException {
+		Type type = null;
+		String name = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (name != null) {
+			type = Type.getType(null, name);
+			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+				name = visitWord(Words.NOT_SERVICE, tokenizer);
+				if (name == null) {
+					throw new ParseException("identifier is expected", tokenizer.currentToken());
+				}
+				type = Type.getType(type, name);
+			}
 		}
 		return type;
 	}
@@ -421,13 +427,13 @@ public class ParserUtil implements Words {
 		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			arguments.add(arg);
-			boolean hasVarargs = arg.type.isVarargs();
+			boolean hasVarargs = arg.isVarargs();
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 				if (arg == null) {
 					throw new ParseException("argument is expected", tokenizer.currentToken());
 				}
-				if (arg.type.isVarargs()) {
+				if (arg.isVarargs()) {
 					if (hasVarargs) {
 						throw new ParseException("Varargs parameter must be the last in the list", tokenizer.currentToken());
 					}

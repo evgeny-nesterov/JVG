@@ -103,13 +103,15 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = properties.clazz;
 		while (true) {
 			// inner class / interface
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER);
-			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
+			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
 			if (innerClass == null) {
-				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
+				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
 			}
 			if (innerClass == null) {
-				innerClass = EnumParseRule.getInstance().visit(tokenizer, innerProperties);
+				innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+			}
+			if (innerClass == null) {
+				innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
 			}
 			if (innerClass != null) {
 				if (!clazz.isTopLevel() && !clazz.isStatic()) {

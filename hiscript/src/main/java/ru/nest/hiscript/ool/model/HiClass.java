@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -30,7 +31,9 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_ENUM = 3;
 
-	public final static int CLASS_NULL = 4;
+	public final static int CLASS_RECORD = 4;
+
+	public final static int CLASS_NULL = 5;
 
 	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
 
@@ -72,6 +75,7 @@ public class HiClass implements Codeable {
 			load(Compiler.class.getResource("/hilibs/String.hi"));
 			load(Compiler.class.getResource("/hilibs/Class.hi"));
 			load(Compiler.class.getResource("/hilibs/Enum.hi"));
+			load(Compiler.class.getResource("/hilibs/Record.hi"));
 			load(Compiler.class.getResource("/hilibs/AutoCloseable.hi"));
 			load(Compiler.class.getResource("/hilibs/System.hi"));
 			load(Compiler.class.getResource("/hilibs/Math.hi"));
@@ -654,23 +658,34 @@ public class HiClass implements Codeable {
 
 	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
 		if (constructors != null) {
-			for (HiConstructor c : constructors)
-				FOR:{
-					int argCount = c.arguments != null ? c.arguments.length : 0;
-					if (argCount != (argTypes != null ? argTypes.length : 0)) {
-						continue;
-					}
-
-					c.resolve(ctx);
-					for (int i = 0; i < argCount; i++) {
-						if (!HiField.autoCast(argTypes[i], c.argClasses[i])) {
-							break FOR;
-						}
-					}
-					return c;
+			for (HiConstructor constructor : constructors) {
+				if (matchConstructor(ctx, constructor, argTypes)) {
+					return constructor;
 				}
+			}
+		}
+		if (isRecord()) {
+			HiClassRecord recordClass = (HiClassRecord) this;
+			if (matchConstructor(ctx, recordClass.defaultConstructor, argTypes)) {
+				return recordClass.defaultConstructor;
+			}
 		}
 		return null;
+	}
+
+	private boolean matchConstructor(RuntimeContext ctx, HiConstructor constructor, HiClass[] argTypes) {
+		int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
+		if (argCount != (argTypes != null ? argTypes.length : 0)) {
+			return false;
+		}
+
+		constructor.resolve(ctx);
+		for (int i = 0; i < argCount; i++) {
+			if (!HiField.autoCast(argTypes[i], constructor.argClasses[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public HiConstructor getConstructor(RuntimeContext ctx, HiClass... argTypes) {
@@ -711,6 +726,10 @@ public class HiClass implements Codeable {
 	}
 
 	public boolean isEnum() {
+		return false;
+	}
+
+	public boolean isRecord() {
 		return false;
 	}
 
@@ -821,13 +840,13 @@ public class HiClass implements Codeable {
 		os.writeByte(type);
 
 		// content
+		os.writeBoolean(isInterface);
 		os.writeNullable(modifiers);
+		os.writeTypes(interfaceTypes);
 
 		os.writeShort(fields != null ? fields.length : 0);
-		os.write(fields);
-
 		os.writeShort(initializers != null ? initializers.length : 0);
-		os.write(initializers);
+		os.write(initializers); // contains ordered fields and blocks
 
 		os.writeShort(constructors != null ? constructors.length : 0);
 		os.write(constructors);
@@ -857,6 +876,9 @@ public class HiClass implements Codeable {
 
 			case CLASS_ENUM:
 				return HiClassEnum.decode(os);
+
+			case CLASS_RECORD:
+				return HiClassRecord.decode(os);
 
 			case CLASS_NULL:
 				return HiClassNull.decode(os);
@@ -892,7 +914,14 @@ public class HiClass implements Codeable {
 		String name = os.readUTF();
 		int type = os.readByte();
 
-		HiClass clazz = classType == CLASS_ENUM ? new HiClassEnum(name, type) : new HiClass(superClassType, name, type);
+		HiClass clazz;
+		if (classType == CLASS_ENUM) {
+			clazz = new HiClassEnum(name, type);
+		} else if (classType == CLASS_RECORD) {
+			clazz = new HiClassRecord(name, type);
+		} else {
+			clazz = new HiClass(superClassType, name, type);
+		}
 		classAccess[0] = clazz;
 		if (initClass) {
 			clazz.init(outerClass, name, type);
@@ -902,11 +931,23 @@ public class HiClass implements Codeable {
 		os.setHiClass(clazz);
 
 		// content
+		clazz.isInterface = os.readBoolean();
 		clazz.modifiers = os.readNullable(Modifiers.class);
-		clazz.fields = os.readNodeArray(HiField.class, os.readShort());
-		clazz.initializers = os.readNodeArray(NodeInitializer.class, os.readShort());
+		clazz.interfaceTypes = os.readTypes();
+		int fieldsCount = os.readShort();
+		clazz.initializers = os.readNodeArray(NodeInitializer.class, os.readShort()); // contains ordered fields and blocks
 		clazz.constructors = os.readArray(HiConstructor.class, os.readShort());
 		clazz.methods = os.readArray(HiMethod.class, os.readShort());
+
+		if (fieldsCount > 0) {
+			clazz.fields = new HiField[fieldsCount];
+			int index = 0;
+			for (NodeInitializer initializer : clazz.initializers) {
+				if (initializer instanceof HiField) {
+					clazz.fields[index++] = (HiField) initializer;
+				}
+			}
+		}
 
 		clazz.classes = new HiClass[os.readShort()];
 		for (int i = 0; i < clazz.classes.length; i++) {

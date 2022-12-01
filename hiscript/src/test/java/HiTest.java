@@ -63,6 +63,14 @@ public abstract class HiTest {
 		}
 	}
 
+	public void assertFailSerialize(String script) {
+		try {
+			execute(script, true);
+			onFail(script, "fail");
+		} catch (Exception e) {
+		}
+	}
+
 	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException {
 		Compiler compiler = Compiler.getDefaultCompiler(script);
 		compiler.setAssertsActive(true);

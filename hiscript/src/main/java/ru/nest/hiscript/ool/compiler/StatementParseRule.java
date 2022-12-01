@@ -30,13 +30,15 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		// local class / interface
-		CompileContext localProperties = new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL);
-		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, localProperties);
+		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
 		if (clazz == null) {
-			clazz = InterfaceParseRule.getInstance().visit(tokenizer, localProperties);
+			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {
-			clazz = EnumParseRule.getInstance().visit(tokenizer, localProperties);
+			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
+		}
+		if (clazz == null) {
+			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz != null) {
 			// check modifiers

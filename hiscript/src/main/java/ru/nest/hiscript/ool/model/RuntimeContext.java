@@ -137,7 +137,7 @@ public class RuntimeContext {
 		}
 
 		HiField<?>[] args = new HiField<?>[1];
-		args[0] = HiField.getField(Type.getType("String"), "msg");
+		args[0] = HiField.getField(Type.stringType, "msg");
 		NodeString.createString(this, message.toCharArray());
 		args[0].set(this, value);
 		args[0].initialized = true;

@@ -60,7 +60,7 @@ public class HiMethod implements Codeable {
 	}
 
 	public boolean hasVarargs() {
-		return argCount > 0 && arguments[argCount - 1].type.isVarargs();
+		return argCount > 0 && arguments[argCount - 1].isVarargs();
 	}
 
 	public void resolve(RuntimeContext ctx) {
@@ -70,7 +70,7 @@ public class HiMethod implements Codeable {
 				argClasses = new HiClass[length];
 				argNames = new String[length];
 				for (int i = 0; i < length; i++) {
-					argClasses[i] = arguments[i].type.getClass(ctx);
+					argClasses[i] = arguments[i].getType().getClass(ctx);
 					argNames[i] = arguments[i].name;
 				}
 			}
@@ -109,7 +109,7 @@ public class HiMethod implements Codeable {
 				if (i != 0) {
 					buf.append(", ");
 				}
-				buf.append(arguments[i].type.name);
+				buf.append(arguments[i].getArgumentName());
 				buf.append(' ');
 				buf.append(arguments[i].name);
 			}

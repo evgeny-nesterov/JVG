@@ -5,6 +5,8 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.TypeArgumentIF;
+import ru.nest.hiscript.ool.model.TypeVarargs;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -165,12 +167,26 @@ public class DecodeContext {
 		return getType(is.readShort());
 	}
 
-	public Type[] readTypes() throws IOException {
-		Type[] types = new Type[is.readByte()];
-		for (int i = 0; i < types.length; i++) {
-			types[i] = readType();
+	public TypeArgumentIF readTypeArgument() throws IOException {
+		Type type = getType(is.readShort());
+		if (type.isArray() && readBoolean()) {
+			return new TypeVarargs(type);
+		} else {
+			return type;
 		}
-		return types;
+	}
+
+	public Type[] readTypes() throws IOException {
+		int count = is.readByte();
+		if (count > 0) {
+			Type[] types = new Type[count];
+			for (int i = 0; i < count; i++) {
+				types[i] = readType();
+			}
+			return types;
+		} else {
+			return null;
+		}
 	}
 
 	public Type getType(int index) {
