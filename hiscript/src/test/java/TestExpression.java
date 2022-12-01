@@ -3,11 +3,11 @@ import org.junit.jupiter.api.Test;
 public class TestExpression extends HiTest {
 	@Test
 	public void testSimpleNumberExpressions() {
-		assertCondition("int a = 1 + 2;", "a == 3", "int plus");
-		assertCondition("int a = 10 - 1;", "a == 9", "int minus");
-		assertCondition("int a = 5 * 6;", "a == 30", "int multiply");
-		assertCondition("int a = 121 / 11;", "a == 11", "int divide");
-		assertCondition("int a = 10 % 9;", "a == 1", "int %");
+		assertSuccessSerialize("int a = 1 + 2; assert a == 3;");
+		assertSuccessSerialize("int a = 10 - 1; assert a == 9;");
+		assertSuccessSerialize("int a = 5 * 6; assert a == 30;");
+		assertSuccessSerialize("int a = 121 / 11; assert a == 11;");
+		assertSuccessSerialize("int a = 10 % 9; assert a == 1;");
 
 		assertCondition("long a = 1l + 2;", "a == 3", "long plus");
 		assertCondition("long a = 10 - 1;", "a == 9", "long minus");
@@ -31,23 +31,41 @@ public class TestExpression extends HiTest {
 		assertSuccess("byte a = " + Byte.MIN_VALUE + "; assert a == " + Byte.MIN_VALUE + ";");
 		assertSuccess("short a = " + Short.MAX_VALUE + "; assert a == " + Short.MAX_VALUE + ";");
 		assertSuccess("short a = " + Short.MIN_VALUE + "; assert a == " + Short.MIN_VALUE + ";");
+
+		assertSuccessSerialize("int a = 2; a /= 2; assert a == 1;");
+		assertSuccess("int a = 1; a *= 2; assert a == 2;");
+		assertSuccess("int a = 1; a += 1; assert a == 2;");
+		assertSuccess("int a = 1; a -= 1; assert a == 0;");
+		assertSuccess("int a = 1; a |= 2; assert a == 3;");
+		assertSuccess("int a = 1 | 2; assert a == 3;");
+		assertSuccess("int a = 3; a &= 2; assert a == 2;");
+		assertSuccess("int a = 3 & 2; assert a == 2;");
+		//		assertSuccess("int a = 11; a >>>= 2; assert a == " + (11 >>> 2) + ";");
+		assertSuccess("int a = 11; a >>= 2; assert a == " + (11 >> 2) + ";");
+		assertSuccess("int a = 11; a <<= 2; assert a == " + (11 << 2) + ";");
+		assertSuccess("int a = 11>>2; assert a == " + (11 >> 2) + ";");
+		assertSuccess("int a = 11<<2; assert a == " + (11 << 2) + ";");
+		assertSuccess("int a = 11; a ^= 7; assert a == " + (11 ^ 7) + ";");
+		assertSuccess("int a = 11 ^ 7; assert a == " + (11 ^ 7) + ";");
+		assertSuccess("boolean a = true; a &= false; assert !a;");
+		assertSuccess("boolean a = false; a |= true; assert a;");
 	}
 
 	@Test
 	public void testComplexNumberExpressions() {
 		assertCondition("int a = (10 + 5) & 7; System.println(\"a=\" + a);", "a == 7", "expression 2");
 		assertCondition("int a = (2 - +1) * +-+ + -2 / - + - + +2 /*=1*/    +    (((1))) * (2 -1/(int)1 + 1*0) /*=1*/    -    16/2/2/2 /*=2*/; System.println(\"a=\" + a);", "a == 0", "expression 1");
-		assertSuccess("assert (1 + (int)1.1 + 1) == 3;");
-		assertSuccess("assert (1 + (int)2.1 / (byte)2 + 1) == 3;");
-		assertSuccess("assert ((int)1.9f + (int)1 - (float)2) == 0.0;");
-		assertSuccess("assert ((int)1.9f + (float)(int)3 / (float)2) == 2.5;");
-		assertSuccess("int x = 5; assert (- -+ -x + - (int) + (float) - + + + + +(double)x) == 0;");
-		assertSuccess("assert 2 * 6 / 3 + 4 * 5 / (20 - 9 * 2) / 2 == 9;");
-		assertSuccess("assert (1 >= 0 ? 1 + 2 : 2 + 3) == 3;");
-		assertSuccess("assert (1 > 2 ? 3 > 4 ? 5 : 6 : 7 > 8 ? 9 : 10) == 10;");
-		assertSuccess("assert 16/-2/2/-2/+2*2/2 == 1;");
-		assertSuccess("assert 2/+ -2 == -100000000000L/100000000000L;");
-		assertSuccess("assert true;");
+		assertSuccessSerialize("assert (1 + (int)1.1 + 1) == 3;");
+		assertSuccessSerialize("assert (1 + (int)2.1 / (byte)2 + 1) == 3;");
+		assertSuccessSerialize("assert ((int)1.9f + (int)1 - (float)2) == 0.0;");
+		assertSuccessSerialize("assert ((int)1.9f + (float)(int)3 / (float)2) == 2.5;");
+		assertSuccessSerialize("int x = 5; assert (- -+ -x + - (int) + (float) - + + + + +(double)x) == 0;");
+		assertSuccessSerialize("assert 2 * 6 / 3 + 4 * 5 / (20 - 9 * 2) / 2 == 9;");
+		assertSuccessSerialize("assert (1 >= 0 ? 1 + 2 : 2 + 3) == 3;");
+		assertSuccessSerialize("assert (1 > 2 ? 3 > 4 ? 5 : 6 : 7 > 8 ? 9 : 10) == 10;");
+		assertSuccessSerialize("assert 16/-2/2/-2/+2*2/2 == 1;");
+		assertSuccessSerialize("assert 2/+ -2 == -100000000000L/100000000000L;");
+		assertSuccessSerialize("assert true;");
 	}
 
 	@Test
@@ -57,12 +75,12 @@ public class TestExpression extends HiTest {
 		String[] suffixes = {"", ".", ".0", ".0000", "f", "F", "d", "D", "l", "L", ".d", ".D", ".0d", ".0D", "e+0", "e-0", "0e-1"};
 		testSuccessNumbersCasts(prefixes1, prefixes2, suffixes, new String[] {"1", "127"});
 
-		assertSuccess("assert (byte)" + (Byte.MAX_VALUE + 1) + " == " + (byte) (Byte.MAX_VALUE + 1) + ";");
-		assertSuccess("assert (byte)" + (Byte.MIN_VALUE - 1) + " == " + (byte) (Byte.MIN_VALUE - 1) + ";");
-		assertSuccess("assert (short)" + (Short.MAX_VALUE + 1) + " == " + (short) (Short.MAX_VALUE + 1) + ";");
-		assertSuccess("assert (short)" + (Short.MIN_VALUE - 1) + " == " + (short) (Short.MIN_VALUE - 1) + ";");
-		assertSuccess("assert (int)" + (Integer.MAX_VALUE + 1l) + "L == " + (int) (Integer.MAX_VALUE + 1l) + "L;");
-		assertSuccess("assert ( int )" + (Integer.MIN_VALUE - 1l) + "L == " + (int) (Integer.MIN_VALUE - 1l) + ";");
+		assertSuccessSerialize("assert (byte)" + (Byte.MAX_VALUE + 1) + " == " + (byte) (Byte.MAX_VALUE + 1) + ";");
+		assertSuccessSerialize("assert (byte)" + (Byte.MIN_VALUE - 1) + " == " + (byte) (Byte.MIN_VALUE - 1) + ";");
+		assertSuccessSerialize("assert (short)" + (Short.MAX_VALUE + 1) + " == " + (short) (Short.MAX_VALUE + 1) + ";");
+		assertSuccessSerialize("assert (short)" + (Short.MIN_VALUE - 1) + " == " + (short) (Short.MIN_VALUE - 1) + ";");
+		assertSuccessSerialize("assert (int)" + (Integer.MAX_VALUE + 1l) + "L == " + (int) (Integer.MAX_VALUE + 1l) + "L;");
+		assertSuccessSerialize("assert ( int )" + (Integer.MIN_VALUE - 1l) + "L == " + (int) (Integer.MIN_VALUE - 1l) + ";");
 	}
 
 	private void testSuccessNumbersCasts(String[] prefixes, String[] prefixes2, String[] suffixes, String[] successNumbers) {
@@ -84,24 +102,24 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testInstanceOf() {
-		assertSuccess("assert \"\" instanceof String;");
-		assertSuccess("assert new Object() instanceof Object;");
-		assertSuccess("assert !(null instanceof String);");
-		assertSuccess("assert !(null instanceof Object);");
-		assertSuccess("String s = \"\"; assert s instanceof Object;");
-		assertSuccess("String s = null; assert !(s instanceof String);");
-		assertSuccess("String s = null; assert !(s instanceof Object);");
-		assertSuccess("Object s = new Object(); assert s instanceof Object;");
-		assertSuccess("Object s = \"\"; assert s instanceof Object;");
-		assertSuccess("Object s = \"\"; assert s instanceof String;");
-		assertSuccess("Object s = null; assert !(s instanceof Object);");
-		assertSuccess("class O1{}; class O2 extends O1{}; class O3 extends O2{}; class O4 extends O3{};" + //
+		assertSuccessSerialize("assert \"\" instanceof String;");
+		assertSuccessSerialize("assert new Object() instanceof Object;");
+		assertSuccessSerialize("assert !(null instanceof String);");
+		assertSuccessSerialize("assert !(null instanceof Object);");
+		assertSuccessSerialize("String s = \"\"; assert s instanceof Object;");
+		assertSuccessSerialize("String s = null; assert !(s instanceof String);");
+		assertSuccessSerialize("String s = null; assert !(s instanceof Object);");
+		assertSuccessSerialize("Object s = new Object(); assert s instanceof Object;");
+		assertSuccessSerialize("Object s = \"\"; assert s instanceof Object;");
+		assertSuccessSerialize("Object s = \"\"; assert s instanceof String;");
+		assertSuccessSerialize("Object s = null; assert !(s instanceof Object);");
+		assertSuccessSerialize("class O1{}; class O2 extends O1{}; class O3 extends O2{}; class O4 extends O3{};" + //
 				"assert new O2() instanceof O2;" + //
 				"assert new O2() instanceof O1;" + //
 				"assert !(new O1() instanceof O2);" + //
 				"assert new O4() instanceof O1;");
 
-		assertSuccess("class A {int a = 1;} class B extends A{int b = 2;}" + //
+		assertSuccessSerialize("class A {int a = 1;} class B extends A{int b = 2;}" + //
 				"assert new A() instanceof A x? x.a == 1 : false;" + //
 				"assert new B() instanceof A y? y.a == 1 : false;" + //
 				"assert new B() instanceof B z? z.b == 2 : false;" + //
@@ -125,20 +143,20 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testChars() {
-		assertSuccess("char c = 'a'; assert c == 'a';");
-		assertSuccess("char c = 'a' + 1; assert c == 'b';");
-		assertSuccess("char c = 'b' - 1; assert c == 'a';");
-		assertSuccess("char c = 'a' + (byte)1; assert c == 'b';");
-		assertSuccess("char c = 'a' + (short)1; assert c == 'b';");
-		assertSuccess("char c = 'a' + (int)1; assert c == 'b';");
+		assertSuccessSerialize("char c = 'a'; assert c == 'a';");
+		assertSuccessSerialize("char c = 'a' + 1; assert c == 'b';");
+		assertSuccessSerialize("char c = 'b' - 1; assert c == 'a';");
+		assertSuccessSerialize("char c = 'a' + (byte)1; assert c == 'b';");
+		assertSuccessSerialize("char c = 'a' + (short)1; assert c == 'b';");
+		assertSuccessSerialize("char c = 'a' + (int)1; assert c == 'b';");
 
-		assertSuccess("char c = 1; assert c == 1;");
-		assertSuccess("char c = (byte)1; assert c == 1;");
-		assertSuccess("char c = (short)1; assert c == 1;");
-		assertSuccess("char c = (int)1; assert c == 1;");
-		assertSuccess("char c = (int)1; assert c == 1;");
-		assertSuccess("char c = (char)-1; assert c == 65535;");
-		assertSuccess("int c = (char)-1; assert c == 65535;");
+		assertSuccessSerialize("char c = 1; assert c == 1;");
+		assertSuccessSerialize("char c = (byte)1; assert c == 1;");
+		assertSuccessSerialize("char c = (short)1; assert c == 1;");
+		assertSuccessSerialize("char c = (int)1; assert c == 1;");
+		assertSuccessSerialize("char c = (int)1; assert c == 1;");
+		assertSuccessSerialize("char c = (char)-1; assert c == 65535;");
+		assertSuccessSerialize("int c = (char)-1; assert c == 65535;");
 
 		assertFail("char c1 = -1;");
 		assertFail("char c1 = 'a'; char c2 = c1 + '1';");
@@ -147,14 +165,29 @@ public class TestExpression extends HiTest {
 		assertFail("char c1 = 'a'; char c2 = c1 + (byte)1;");
 		assertFail("char c1 = 'a'; char c2 = c1 + (short)1;");
 
-		assertSuccess("char c = \"x\".charAt(0); assert c == 'x';");
-		assertSuccess("String s = \"[\" + 'a' + 'b' + 'c' + \"]\"; assert s.equals(\"[abc]\");");
+		assertSuccessSerialize("char c = \"x\".charAt(0); assert c == 'x';");
+		assertSuccessSerialize("String s = \"[\" + 'a' + 'b' + 'c' + \"]\"; assert s.equals(\"[abc]\");");
 
-		assertSuccess("int c = 'a'; c++; assert c == 'b';");
-		assertSuccess("int c = 'a'; ++c; assert c == 'b';");
-		assertSuccess("int c = 'b'; c--; assert c == 'a';");
-		assertSuccess("int c = 'b'; --c; assert c == 'a';");
+		assertSuccessSerialize("int c = 'a'; c++; assert c == 'b';");
+		assertSuccessSerialize("int c = 'a'; ++c; assert c == 'b';");
+		assertSuccessSerialize("int c = 'b'; c--; assert c == 'a';");
+		assertSuccessSerialize("int c = 'b'; --c; assert c == 'a';");
 
-		assertSuccess("String s = \"\"; for (char c = '1'; c <='9'; c++) {s += c;}; System.println(\"s=\" + s); assert s.equals(\"123456789\");");
+		assertSuccessSerialize("String s = \"\"; for (char c = '1'; c <='9'; c++) {s += c;}; System.println(\"s=\" + s); assert s.equals(\"123456789\");");
+	}
+
+	@Test
+	public void testLogicalSwitch() {
+		assertSuccessSerialize("assert 1>0 ? true : false;");
+		assertSuccessSerialize("assert 1>0 ? true : false;");
+		assertSuccessSerialize("assert 1+1*2/1>2-2 ? 1/1>0*2 : 0*2>1/1;");
+		assertSuccessSerialize("assert 1>0?1>0?true:false:false;");
+		assertSuccessSerialize("assert 1>0?1<0?false:true:false;");
+		assertSuccessSerialize("assert 1<0?1<0?false:false:true;");
+		assertSuccessSerialize("assert 1>0?1>0?1>0?true:false:false:false;");
+		assertSuccessSerialize("assert 1>0?1<0?1>0?false:false:true:false;");
+		assertSuccessSerialize("assert 1>0?1>0?1<0?false:true:false:false;");
+		assertSuccessSerialize("assert 1<0?1>0?1>0?false:false:false:true;");
+		assertSuccessSerialize("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
 	}
 }

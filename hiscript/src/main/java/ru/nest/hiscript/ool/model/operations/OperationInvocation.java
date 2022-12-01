@@ -157,12 +157,9 @@ public class OperationInvocation extends BinaryOperation {
 					field = null;
 				}
 
-				// find by pattern: <CLASS>.<STATIC CLASS>
+				// find by pattern: <CLASS>.<CLASS>
 				if (field == null) {
 					clazz = clazz.getChildren(ctx, name);
-					if (clazz != null && !clazz.modifiers.isStatic()) {
-						clazz = null;
-					}
 				}
 			}
 		}
@@ -210,7 +207,8 @@ public class OperationInvocation extends BinaryOperation {
 			} else {
 				obj = v1.object;
 				if (obj != null) {
-					obj = obj.getMainObject();
+					// inf cycle
+					// obj = obj.getMainObject();
 					clazz = obj.clazz;
 				}
 				object = obj;
@@ -265,13 +263,19 @@ public class OperationInvocation extends BinaryOperation {
 		// find method
 		HiMethod method = clazz.searchMethod(ctx, name, types);
 		if (method == null) {
-			ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
+			if (ctx.exception == null) {
+				ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
+			}
 			return;
 		}
 
 		if (isStatic && !method.modifiers.isStatic()) {
 			ctx.throwRuntimeException("can't invoke not static method from static context");
 			return;
+		}
+
+		if (method.modifiers.isAbstract()) {
+			ctx.throwRuntimeException("can't invoke abstract method");
 		}
 
 		// set names and types of arguments

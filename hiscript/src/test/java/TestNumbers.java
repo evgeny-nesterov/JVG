@@ -24,6 +24,7 @@ public class TestNumbers extends HiTest {
 		assertCondition("int a = (short)1;", "a == (long)1", "int");
 		assertCondition("int a = (char)1;", "a == 1", "int");
 		assertCondition("int a = 'a';", "a == (int)'a'", "int");
+		assertFail("int a = 1e;");
 
 		assertCondition("long a = 1;", "a == 1", "long");
 		assertFail("long a = 1.;", "long");
@@ -142,20 +143,5 @@ public class TestNumbers extends HiTest {
 		assertSuccess("assert 1==1;");
 		assertSuccess("assert 1+1>0+0;");
 		assertSuccess("assert 1+1<2*2;");
-	}
-
-	@Test
-	public void testLogicalSwitch() {
-		assertSuccess("assert 1>0 ? true : false;");
-		assertSuccess("assert 1>0 ? true : false;");
-		assertSuccess("assert 1+1*2/1>2-2 ? 1/1>0*2 : 0*2>1/1;");
-		assertSuccess("assert 1>0?1>0?true:false:false;");
-		assertSuccess("assert 1>0?1<0?false:true:false;");
-		assertSuccess("assert 1<0?1<0?false:false:true;");
-		assertSuccess("assert 1>0?1>0?1>0?true:false:false:false;");
-		assertSuccess("assert 1>0?1<0?1>0?false:false:true:false;");
-		assertSuccess("assert 1>0?1>0?1<0?false:true:false:false;");
-		assertSuccess("assert 1<0?1>0?1>0?false:false:false:true;");
-		assertSuccess("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
 	}
 }

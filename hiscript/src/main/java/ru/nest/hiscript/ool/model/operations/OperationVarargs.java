@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 
 import java.lang.reflect.Array;
 
+ // TODO not used?
 public class OperationVarargs extends BinaryOperation {
 	private static Operation instance = new OperationVarargs();
 

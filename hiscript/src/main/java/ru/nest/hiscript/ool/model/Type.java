@@ -8,12 +8,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * Используется для описания типа до того как будет создана иерархия классов. После создана иерархии классов возможен поиск класса в данном
- * контексте по типу. Для разных классов из разных контекстов, у которых имена совпадают, тип также может совпадать и, наоборот, для разных типов
- * (например, С и A.B.C) класс может совпадать. Все зависит от того, в каком контексте производится поиск класса по типу. Если в коде указан
- * класс вместе с суперклассами (например, A.B.C), то для данного класса создается тип с соответствующей иерархией (Тип С, С.parent = B, B.parent
- * = A, A.parent = null). В данном случае вначале производится поиск последнего суперкласса (A) по контексту, а потом в найденном классе
- * производится поиск по дочернего элемента (в A ищется B, а потом в B ищется C).
  */
 public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
@@ -163,7 +157,6 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -194,7 +187,7 @@ public class Type implements PrimitiveTypes, Codeable, Comparable<Type> {
 			return HiClass.getNullClass();
 		}
 
-		HiClass clazz = null;
+		HiClass clazz;
 		if (ctx != null) {
 			if (path != null) {
 				clazz = path[0].getClass(ctx);

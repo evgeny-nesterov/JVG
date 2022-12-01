@@ -123,6 +123,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		Value ctxValue = ctx.value;
 		Value[] values = ctx.getValues(operands.length);
 		try {
 			int bufSize = 0;
@@ -130,7 +131,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 			for (int i = 0; i < operations.length; i++) {
 				if (operations[i] == null) {
 					// get value
-					Value oldValue = ctx.value;
 					try {
 						ctx.value = values[bufSize];
 						Node valueNode = operands[valuePos];
@@ -154,7 +154,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 						bufSize++;
 						valuePos++;
 					} finally {
-						ctx.value = oldValue;
+						ctx.value = ctxValue;
 					}
 				} else {
 					int skipToOperation = -1;

@@ -30,6 +30,10 @@ public class Exception {
   }
 
   private native void fillTrace();
+
+  public String toString() {
+    return message;
+  }
 }
 
 class StackTraceElement {

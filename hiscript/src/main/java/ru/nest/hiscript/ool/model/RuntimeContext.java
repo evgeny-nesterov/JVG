@@ -361,6 +361,10 @@ public class RuntimeContext {
 		if (clazz == null) {
 			clazz = HiClass.forName(this, name);
 		}
+
+		if (clazz != null) {
+			clazz.init(this);
+		}
 		return clazz;
 	}
 

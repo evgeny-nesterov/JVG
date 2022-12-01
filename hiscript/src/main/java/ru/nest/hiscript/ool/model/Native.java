@@ -54,8 +54,12 @@ public class Native {
 	public static void invoke(RuntimeContext ctx, String name, Object[] args) {
 		try {
 			java.lang.reflect.Method method = methods.get(name);
-			Object o = objects.get(name);
-			method.invoke(o, args);
+			if (method != null) {
+				Object o = objects.get(name);
+				method.invoke(o, args);
+			} else {
+				ctx.throwRuntimeException("native method '" + name + "' not found");
+			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			ctx.throwRuntimeException("native method '" + name + "' invocation error: " + exc.toString());

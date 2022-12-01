@@ -129,7 +129,6 @@ public class Value implements PrimitiveTypes {
 					return doubleNumber;
 			}
 		}
-
 		return object;
 	}
 
@@ -209,7 +208,6 @@ public class Value implements PrimitiveTypes {
 			ctx.throwRuntimeException("array is expected: " + type.fullName);
 			return null;
 		}
-
 		return array;
 	}
 

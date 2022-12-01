@@ -150,6 +150,11 @@ public class HiClass implements Codeable {
 			topClass = this;
 		}
 
+		// try resolve super class if needed
+		if (superClass == null && superClassType != null) {
+			superClass = HiClass.forName(null, superClassType.fullName);
+		}
+
 		// intern name to optimize via a == b
 		this.name = name.intern();
 		this.fullName = getFullName();
@@ -204,22 +209,22 @@ public class HiClass implements Codeable {
 
 	private boolean isInitialized = false;
 
-	public void init(RuntimeContext current_ctx) {
+	public void init(RuntimeContext currentCtx) {
 		if (!isInitialized) {
 			isInitialized = true;
 
 			// resolve super class if needed
 			if (superClass == null && superClassType != null) {
-				superClass = superClassType.getClass(current_ctx);
+				superClass = superClassType.getClass(currentCtx);
 				if (superClass == null) {
-					current_ctx.throwRuntimeException("Can't resolve class '" + superClassType.fullName + "'");
+					currentCtx.throwRuntimeException("Can't resolve class '" + superClassType.fullName + "'");
 					return;
 				}
 			}
 
 			if (superClass != null) {
 				// init super class
-				superClass.init(current_ctx);
+				superClass.init(currentCtx);
 
 				// TODO: move this logic to parser ???
 
@@ -238,24 +243,24 @@ public class HiClass implements Codeable {
 			if (interfaces == null && interfaceTypes != null) {
 				interfaces = new HiClass[interfaceTypes.length];
 				for (int i = 0; i < interfaceTypes.length; i++) {
-					interfaces[i] = interfaceTypes[i].getClass(current_ctx);
+					interfaces[i] = interfaceTypes[i].getClass(currentCtx);
 				}
 			}
 
 			if (interfaces != null) {
-				for (HiClass interfac : interfaces) {
+				for (HiClass classInterface : interfaces) {
 					// init interface
-					interfac.init(current_ctx);
+					classInterface.init(currentCtx);
 
 					// check interface on static
-					if (!interfac.isStatic() && !interfac.isTopLevel() && isStatic()) {
+					if (!classInterface.isStatic() && !classInterface.isTopLevel() && isStatic()) {
 						throw new IllegalStateException("Static class " + fullName + " can not extends not static and not top level class");
 					}
 				}
 			}
 
 			// set super class to Object by default
-			if (superClass == null && this != OBJECT_CLASS) {
+			if (superClass == null && this != OBJECT_CLASS && !isPrimitive() && !isNull()) {
 				superClass = OBJECT_CLASS;
 				superClassType = Type.objectType;
 			}
@@ -263,11 +268,11 @@ public class HiClass implements Codeable {
 			// init children classes
 			if (classes != null) {
 				for (HiClass clazz : classes) {
-					clazz.init(current_ctx);
+					clazz.init(currentCtx);
 				}
 			}
 
-			RuntimeContext ctx = current_ctx != null ? current_ctx : RuntimeContext.get();
+			RuntimeContext ctx = currentCtx != null ? currentCtx : RuntimeContext.get();
 			ctx.enterInitialization(this, null, -1);
 			try {
 				if (initializers != null) {
@@ -291,7 +296,7 @@ public class HiClass implements Codeable {
 				ctx.throwRuntimeException("Can not initialize class " + fullName + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
-				if (ctx != current_ctx) {
+				if (ctx != currentCtx) {
 					RuntimeContext.utilize(ctx);
 				}
 			}
@@ -381,6 +386,9 @@ public class HiClass implements Codeable {
 
 		// parent class
 		if (superClass != null) {
+			if (superClass == this) {
+				throw new RuntimeException("cyclic");
+			}
 			HiClass c = superClass.getClass(ctx, name);
 			if (c != null) {
 				return c;
@@ -549,6 +557,34 @@ public class HiClass implements Codeable {
 			}
 		}
 
+		if (interfaces != null) {
+			HiClass id = null;
+			HiMethod md = null;
+			HiClass i = null;
+			HiMethod m = null;
+			for (HiClass _i : interfaces) {
+				HiMethod _m = _i.searchMethod(ctx, name, argTypes);
+				if (_m != null) {
+					if (_m.modifiers.isDefault()) {
+						if (md != null) {
+							ctx.throwRuntimeException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + _i.fullName + ".");
+							return null;
+						}
+						id = _i;
+						md = _m;
+					} else {
+						i = _i;
+						m = _m;
+					}
+				}
+			}
+			if (md != null) {
+				return md;
+			} else if (m != null) {
+				return m;
+			}
+		}
+
 		// enclosing methods
 		if (!isTopLevel()) {
 			HiMethod m = enclosingClass.searchMethod(ctx, name, argTypes);
@@ -631,7 +667,6 @@ public class HiClass implements Codeable {
 							break FOR;
 						}
 					}
-
 					return c;
 				}
 		}

@@ -147,7 +147,6 @@ public class HiObject {
 			}
 			class_fields_map.put(name, field);
 		}
-
 		return field;
 	}
 

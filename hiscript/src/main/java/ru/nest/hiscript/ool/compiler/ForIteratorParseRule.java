@@ -4,7 +4,6 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -47,7 +46,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers());
 					properties.addLocalVariable(declaration);
 
-					Node iterable = visitExpressions(tokenizer, properties);
+					Node iterable = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
@@ -60,22 +59,6 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 			}
 		}
 		tokenizer.rollback();
-		return null;
-	}
-
-	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		Node expression = ExpressionParseRule.getInstance().visit(tokenizer, properties);
-		if (expression != null) {
-			NodeBlock expressions = new NodeBlock("expressions");
-			expressions.addStatement(expression);
-
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				expression = expectExpression(tokenizer, properties);
-				expressions.addStatement(expression);
-			}
-			return expressions;
-		}
-
 		return null;
 	}
 }

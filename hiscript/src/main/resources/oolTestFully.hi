@@ -25,9 +25,9 @@
 {
 	class NewClass {
 		static class A {
-		}     
+		}
 	}
-	
+
 	NewClass.A a = new NewClass.A();
 	Class c1 = Class.forName("@root$0NewClass$A");
 	Class c2 = a.getClass();
@@ -190,7 +190,7 @@ Util.header("INNER CLASSES");
     		BBB bbb = new BBB();
     		return bbb.get();
   		}
-  
+
   		public Object getUnknownClass() {
   			class Unknown {
   	  			public String toString() {
@@ -234,7 +234,7 @@ Util.header("INNER CLASSES");
     		x1 = x;
     		System.println("T1: x1 = " + x1);
   		}
-  
+
   		class T2 {
     		int x2 = 2;
     		T2(int x) {
@@ -265,7 +265,7 @@ Util.header("ANONYMOUS CLASSES");
     		return 1;
   		}
 	}
-	
+
 	System.println("\tnew Anonym().getAnonym(): " + new Anonym().getAnonym());
 	System.println("\tnew Anonym().getAnonym(){...}: " + new Anonym() {
   		public int getAnonym() {
@@ -746,7 +746,7 @@ Util.header("FOR: check performance");
 {
 	System.print("\t");
 	long time = System.time();
-	for(int i = 0; i < 100000; i++) 
+	for(int i = 0; i < 100000; i++)
 		if(i % 1000 == 999)
 			System.print("*");
 	System.println("\n\t[DONE] " + (System.time() - time) / 1000.0 + " sec");
@@ -761,7 +761,7 @@ Util.header("TRY CATCH FINALLY");
   		public void hope1(int i) {
     		hope2(i);
   		}
-  
+
   		public void hope2(int i) {
     		if(i < 2) {
       			hope1(i + 1);
@@ -1060,17 +1060,17 @@ Util.header("SYNCHRONIZATION, WAIT, NOTIFICATION");
 {
 	final Object lock = new Object();
 	class T extends Thread {
-  		String info; 
+  		String info;
   		T(String i) {
     		info = i;
   		}
-  
+
   		public void run() {
     		for(int i = 0; i < 10; i++) {
        			sleep(10);
        			System.print(info);
     		}
-    		
+
     		synchronized(lock) {
       			for(int i = 0; i < 10; i++) {
          			sleep(100);
@@ -1099,10 +1099,10 @@ Util.header("Test static fields and classes access");
 {
 	class A {
   		static B b = new B();
-  		
+
   		static class B {
     		static C c = new C();
-    		
+
     		static class C {
       			public static void p(int step) {
         			System.print(step + " | ");
@@ -1110,7 +1110,7 @@ Util.header("Test static fields and classes access");
     		}
   		}
 	}
-	
+
 	A a = new A();
 	a.b.c.p(1);
 	A.b.c.p(2);
@@ -1135,7 +1135,7 @@ Util.header("Test not static fields and classes access");
   		}
   		B b = new B();
 	}
-	
+
 	new A().new B().new C().access();
 	A a = new A();
 	System.println("\t" + a.b.c);
@@ -1165,22 +1165,22 @@ Util.header("Initialization order, this and super");
   		{
     		System.println("S<init>");
   		}
-  		
+
   		S(String s) {
     		System.println("S(String s): " + s);
   		}
 	}
-	
+
 	class A extends S {
   		{
     		System.println("A6<init>");
   		}
-  		
+
   		A(int x) {
     		this("[" + x + "]", x);
     		System.println("A(int x): " + x);
-  		}  
-  		
+  		}
+
   		A(String v, int x) {
     		super(v);
     		System.println("A6(String v, int x): " + v + ", " + x);
@@ -1195,10 +1195,10 @@ Util.header("Initialization order, this and super");
     		this.x = x;
     		System.println("B(int x): " + x + ", " + this.x + " (after this.x = x)");
   		}
-		
+
 		public void print() {
     		System.println("this.x=" + x + " (before local x)");
-    		int x = 321; 
+    		int x = 321;
     		System.println("local x=" + x);
     		System.println("this.x=" + this.x + " (after local x)");
   		}
@@ -1422,7 +1422,7 @@ public class Braces {
 			blockStart[id] = index;
 
 			index = numerateBraces(index + 1);
-			
+
 			blockIds[index] = id;
 			blockEnd[id] = index;
 			index++;
@@ -1436,7 +1436,7 @@ public class Braces {
 			printBlockValues();
 			return;
 		}
-	
+
 		int i1 = blockStart[id];
 		int i2 = blockEnd[id];
 
@@ -1643,7 +1643,7 @@ public class SumOfNumbers {
 			stack = new int[n];
 		} else if(stack.length < n) {
 			stack = new int[n];
-		} 
+		}
 
 		recurse(1, n);
 

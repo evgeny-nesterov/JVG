@@ -12,6 +12,8 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws IOException {
-		assertSuccess("class A { String get(int i, String s) throws Exception, Exc { return s + i;} } A a = new A(); a.get(1, \"abc\");");
+		// FAIL: native method '@root$1A_void_m' not found
+		// assertSuccessSerialize("class A {void m(){}} new A().m();");
+		assertFail("class A{static class B{}} A a = new A(); A.B b = a.new B();");
 	}
 }

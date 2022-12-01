@@ -121,7 +121,7 @@ public class HiConstructor implements Codeable {
 			// init object for super class
 			if (bodyConstructorType != BodyConstructorType.THIS && clazz.superClass != null) {
 				HiObject superOutboundObject = ctx.getOutboundObject(clazz.superClass);
-				HiObject superObject = null;
+				HiObject superObject;
 				if (bodyConstructorType == BodyConstructorType.SUPER) {
 					NodeConstructor.invokeConstructor(ctx, clazz.superClass, bodyConstructor.argValues, null, superOutboundObject);
 					if (ctx.exitFromBlock()) {
@@ -235,7 +235,6 @@ public class HiConstructor implements Codeable {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = clazz;
 		ctx.value.object = object;
-
 		return object;
 	}
 
