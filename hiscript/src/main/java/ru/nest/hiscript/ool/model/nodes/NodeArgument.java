@@ -23,7 +23,7 @@ public class NodeArgument extends Node implements NodeVariable {
 		return typeArgument.getType();
 	}
 
-	public String getArgumentName() {
+	public String getTypeName() {
 		return typeArgument.getName();
 	}
 

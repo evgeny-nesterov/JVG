@@ -314,7 +314,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public boolean visitFields(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public boolean visitFields(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -329,7 +329,7 @@ public class ClassParseRule extends ParserUtil {
 				if (checkSymbol(tokenizer, Symbols.SEMICOLON, Symbols.COMMA) != -1) {
 					isField = true;
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-					initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+					initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					isField = true;
 				}
 
@@ -341,10 +341,10 @@ public class ClassParseRule extends ParserUtil {
 					HiField<?> field = HiField.getField(type, name, initializer);
 					field.setModifiers(modifiers);
 
-					properties.addField(field);
+					ctx.addField(field);
 
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						expectField(tokenizer, baseType, modifiers, properties);
+						expectField(tokenizer, baseType, modifiers, ctx);
 					}
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 					return true;
@@ -356,37 +356,37 @@ public class ClassParseRule extends ParserUtil {
 		return false;
 	}
 
-	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileContext properties) throws TokenizerException, ParseException {
+	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileContext ctx) throws TokenizerException, ParseException {
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 
 		Node initializer = null;
 		if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-			initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		}
 
 		Type type = Type.getArrayType(baseType, addDimension);
 		HiField<?> field = HiField.getField(type, name, initializer);
 		field.setModifiers(modifiers);
 
-		properties.addField(field);
+		ctx.addField(field);
 	}
 
-	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		boolean isStatic = visitWord(tokenizer, STATIC) != null;
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			tokenizer.commit();
-			properties.enter();
+			ctx.enter();
 
-			NodeBlock block = BlockParseRule.getInstance().visit(tokenizer, properties);
+			NodeBlock block = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			if (block != null) {
 				block.setStatic(isStatic);
 			}
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
-			properties.exit();
+			ctx.exit();
 			return block;
 		}
 

@@ -116,7 +116,7 @@ public class InterfaceParseRule extends ParserUtil {
 		properties.initClass();
 	}
 
-	private boolean visitFields(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private boolean visitFields(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -132,16 +132,16 @@ public class InterfaceParseRule extends ParserUtil {
 
 				int addDimension = visitDimension(tokenizer);
 				expectSymbol(tokenizer, Symbols.EQUATE);
-				Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+				Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 				Type type = Type.getArrayType(baseType, addDimension);
 				HiField<?> field = HiField.getField(type, name, initializer);
 				field.setModifiers(modifiers);
 
-				properties.addField(field);
+				ctx.addField(field);
 
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-					expectField(tokenizer, baseType, modifiers, properties);
+					expectField(tokenizer, baseType, modifiers, ctx);
 				}
 				expectSymbol(tokenizer, Symbols.SEMICOLON);
 				return true;

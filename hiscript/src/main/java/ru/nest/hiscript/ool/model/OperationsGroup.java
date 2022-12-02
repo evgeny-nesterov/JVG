@@ -21,6 +21,10 @@ public class OperationsGroup {
 	public OperationsGroup() {
 	}
 
+	public OperationsGroup(int operation) {
+		this.operation = Operations.getOperation(operation);
+	}
+
 	//	public OperationsGroup(int operation) {
 	//		setOperation(operation);
 	//	}

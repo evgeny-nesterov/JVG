@@ -395,4 +395,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public final static Type recordType = getTopType("Record");
 
 	public final static Type stringType = getTopType("String");
+
+	public final static Type voidType = getTopType("void");
 }

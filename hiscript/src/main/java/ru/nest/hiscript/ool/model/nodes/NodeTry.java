@@ -71,7 +71,7 @@ public class NodeTry extends Node {
 
 						ctx.enterMethod(closeMethod, resourceObject, -1);
 						try {
-							closeMethod.invoke(ctx, HiClass.getNullClass(), resourceObject, null);
+							closeMethod.invoke(ctx, HiClass.getPrimitiveClass("void"), resourceObject, null);
 						} finally {
 							ctx.exit();
 							ctx.isReturn = false;

@@ -24,6 +24,13 @@ public class NodeReturn extends Node {
 					return;
 				}
 
+				if (ctx.value.valueType == Value.NAME) {
+					if (!NodeIdentifier.resolveVariable(ctx, ctx.value, true)) {
+						ctx.throwRuntimeException("can't resolve variable " + ctx.value.name);
+						return;
+					}
+				}
+
 				// TODO: check on void return value
 			} else {
 				ctx.value.valueType = Value.VALUE;

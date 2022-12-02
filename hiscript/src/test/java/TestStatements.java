@@ -129,11 +129,18 @@ public class TestStatements extends HiTest {
 	}
 
 	@Test
-	public void testEnms() {
+	public void testEnums() {
 	}
 
 	@Test
 	public void testRecords() {
-		assertSuccessSerialize("record Rec(int a, int b); Rec rec = new Rec(1, 2);");
+		assertSuccessSerialize("record Rec(int a); new Rec(1);");
+		assertFailSerialize("record Rec(int a, long a);");
+		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
+
+		assertSuccessSerialize("record Rec(int a, String field); Rec rec = new Rec(1, \"abc\"); assert rec.getA() == 1; assert rec.getField().equals(\"abc\");");
+		assertSuccessSerialize("record Rec(int a, int b){Rec(int a){this.a = a; b = 2;}}; Rec rec1 = new Rec(1, 2); Rec rec2 = new Rec(1); assert rec2.getA() == 1; assert rec2.getB() == 2;");
+		assertFailSerialize("record Rec();");
+		assertFailSerialize("record Rec(){int a;};");
 	}
 }

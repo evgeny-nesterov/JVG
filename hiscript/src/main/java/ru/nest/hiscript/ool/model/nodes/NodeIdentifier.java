@@ -37,21 +37,21 @@ public class NodeIdentifier extends Node {
 		ctx.value.castedVariableName = castedVariableName;
 	}
 
-	public static boolean resolve(RuntimeContext ctx, Value v, boolean checkInitialization) {
+	public static boolean resolve(RuntimeContext ctx, Value value, boolean checkInitialization) {
 		// object
-		if (resolveVariable(ctx, v, checkInitialization)) {
+		if (resolveVariable(ctx, value, checkInitialization)) {
 			return true;
 		}
 
 		// class
-		if (resolveClass(ctx, v)) {
+		if (resolveClass(ctx, value)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean resolveVariable(RuntimeContext ctx, Value v, boolean checkInitialization) {
-		String name = v.name;
+	public static boolean resolveVariable(RuntimeContext ctx, Value value, boolean checkInitialization) {
+		String name = value.name;
 		HiField<?> var = ctx.getVariable(name);
 		if (var != null) {
 			if (checkInitialization && !var.initialized) {
@@ -62,10 +62,10 @@ public class NodeIdentifier extends Node {
 			ctx.value.type = var.type.getClass(ctx);
 			var.execute(ctx);
 
-			ctx.value.copyTo(v);
-			v.valueType = Value.VARIABLE;
-			v.name = name;
-			v.variable = var;
+			ctx.value.copyTo(value);
+			value.valueType = Value.VARIABLE;
+			value.name = name;
+			value.variable = var;
 			return true;
 		}
 		return false;

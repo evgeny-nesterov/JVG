@@ -493,10 +493,9 @@ public class HiClass implements Codeable {
 
 	private HashMap<MethodSignature, HiMethod> methods_hash = new HashMap<>();
 
-	private MethodSignature signature = new MethodSignature();
-
 	// name - interned
 	public HiMethod searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
 		HiMethod method = methods_hash.get(signature);
 		if (method == null) {
@@ -602,6 +601,7 @@ public class HiClass implements Codeable {
 	}
 
 	public HiMethod getMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
 		HiMethod method = methods_hash.get(signature);
 		if (method == null) {

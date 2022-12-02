@@ -109,7 +109,7 @@ public class HiMethod implements Codeable {
 				if (i != 0) {
 					buf.append(", ");
 				}
-				buf.append(arguments[i].getArgumentName());
+				buf.append(arguments[i].getTypeName());
 				buf.append(' ');
 				buf.append(arguments[i].name);
 			}
