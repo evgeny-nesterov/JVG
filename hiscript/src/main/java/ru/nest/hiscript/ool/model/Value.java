@@ -405,6 +405,10 @@ public class Value implements PrimitiveTypes {
 
 		// EXECUTE
 		dst.node = node;
+
+		// cast
+		dst.castedVariableName = castedVariableName;
+		dst.castedRecordArguments = castedRecordArguments;
 	}
 
 	public void copyToArray(Value value) {

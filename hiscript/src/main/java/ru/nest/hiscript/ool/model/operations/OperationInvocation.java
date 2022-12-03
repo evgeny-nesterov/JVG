@@ -103,11 +103,14 @@ public class OperationInvocation extends BinaryOperation {
 		}
 	}
 
-	public void invokeName(RuntimeContext ctx, Value v1, Value v2) {
-		String name = v2.name;
+	public boolean invokeName(RuntimeContext ctx, Value v1, Value v2) {
+		return invokeName(ctx, v1, v2.name);
+	}
+
+	public static boolean invokeName(RuntimeContext ctx, Value v1, String name) {
 		if (v1.type.isPrimitive()) {
 			ctx.throwRuntimeException("primitive type doesn't have a field " + name);
-			return;
+			return false;
 		}
 
 		HiField<?> field = null;
@@ -120,19 +123,19 @@ public class OperationInvocation extends BinaryOperation {
 				if (name.equals("length")) {
 					if (v1.array == null) {
 						ctx.throwRuntimeException("null pointer");
-						return;
+						return false;
 					}
 
 					v1.valueType = Value.VALUE;
 					v1.type = HiClass.getPrimitiveClass("int");
 					v1.intNumber = Array.getLength(v1.array);
-					return;
+					return true;
 				}
 			} else {
 				object = v1.object;
 				if (object == null) {
 					ctx.throwRuntimeException("null pointer");
-					return;
+					return false;
 				}
 
 				field = object.getField(name, clazz);
@@ -140,7 +143,7 @@ public class OperationInvocation extends BinaryOperation {
 
 			if (field == null) {
 				ctx.throwRuntimeException("type " + clazz.fullName + " doesn't contain field " + name);
-				return;
+				return false;
 			}
 		} else if (v1.valueType == Value.CLASS) {
 			clazz = v1.type;
@@ -173,9 +176,11 @@ public class OperationInvocation extends BinaryOperation {
 
 			v1.valueType = Value.VARIABLE;
 			v1.variable = field;
+			return true;
 		} else if (clazz != null) {
 			v1.valueType = Value.CLASS;
 			v1.type = clazz;
+			return true;
 		} else {
 			String text = "can't find symbol; variable " + name;
 			clazz = ctx.level.clazz;
@@ -183,6 +188,7 @@ public class OperationInvocation extends BinaryOperation {
 				text += "; location " + clazz.fullName;
 			}
 			ctx.throwRuntimeException(text);
+			return false;
 		}
 	}
 

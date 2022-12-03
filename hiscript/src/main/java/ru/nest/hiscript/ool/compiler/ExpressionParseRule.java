@@ -354,19 +354,19 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			NodeIdentifier identifier = new NodeIdentifier(identifierName);
 			operands.add(identifier);
 
-			boolean isLastInstanceOf = false; // except fields invocations
+			boolean visitCastAfterIdentifier = false; // except fields invocations
 			if (allOperations.size() > 0) {
 				int index = allOperations.size() - 1;
-				Operation lastOperation = allOperations.get(index).getOperation();
-				while (lastOperation != null && lastOperation.getOperation() == Operations.INVOCATION) {
-					lastOperation = allOperations.get(--index).getOperation();
+				OperationsGroup lastOperation = allOperations.get(index);
+				while (lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INVOCATION) {
+					lastOperation = allOperations.get(--index);
 				}
-				if (lastOperation != null && lastOperation.getOperation() == Operations.INSTANCE_OF) {
-					isLastInstanceOf = true;
+				if (lastOperation == null || (lastOperation != null && lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INSTANCE_OF) || !lastOperation.hasOperations()) {
+					visitCastAfterIdentifier = true;
 				}
 			}
 
-			if (isLastInstanceOf) {
+			if (visitCastAfterIdentifier) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					List<NodeArgument> argumentsList = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, argumentsList, ctx);

@@ -1,10 +1,8 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
@@ -12,11 +10,13 @@ import java.util.Objects;
 
 public class RecordImpl extends ImplUtil {
 	public static void Record_boolean_equals_Object(RuntimeContext ctx, HiObject o2) {
+		if (!(ctx.value.type instanceof HiClassRecord)) {
+			returnBoolean(ctx, false);
+			return;
+		}
 		HiClassRecord clazz = (HiClassRecord) ctx.value.type;
 		if (clazz != o2.clazz) {
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("boolean");
-			ctx.value.bool = false;
+			returnBoolean(ctx, false);
 			return;
 		}
 
@@ -28,46 +28,34 @@ public class RecordImpl extends ImplUtil {
 			Object v2 = f2.get();
 			if (v1 instanceof HiObject) {
 				if (!(v2 instanceof HiObject)) {
-					ctx.value.valueType = Value.VALUE;
-					ctx.value.type = HiClass.getPrimitiveClass("boolean");
-					ctx.value.bool = false;
+					returnBoolean(ctx, false);
 					return;
 				}
 				HiObject vo1 = (HiObject) v1;
 				HiObject vo2 = (HiObject) v2;
 				if (!vo1.equals(ctx, vo2)) {
-					ctx.value.valueType = Value.VALUE;
-					ctx.value.type = HiClass.getPrimitiveClass("boolean");
-					ctx.value.bool = false;
+					returnBoolean(ctx, false);
 					return;
 				}
 			} else if (f1.type.isPrimitive()) {
 				if (!f2.type.isPrimitive() || !Objects.equals(v1, v2)) {
-					ctx.value.valueType = Value.VALUE;
-					ctx.value.type = HiClass.getPrimitiveClass("boolean");
-					ctx.value.bool = false;
+					returnBoolean(ctx, false);
 					return;
 				}
 			} else if (f1.type.isArray()) {
 				if (!f2.type.isArray() || v1 != v2) {
-					ctx.value.valueType = Value.VALUE;
-					ctx.value.type = HiClass.getPrimitiveClass("boolean");
-					ctx.value.bool = false;
+					returnBoolean(ctx, false);
 					return;
 				}
 			} else if (f1.type.isNull()) {
 				if (!f2.type.isNull()) {
-					ctx.value.valueType = Value.VALUE;
-					ctx.value.type = HiClass.getPrimitiveClass("boolean");
-					ctx.value.bool = false;
+					returnBoolean(ctx, false);
 					return;
 				}
 			}
 		}
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
-		ctx.value.bool = true;
+		returnBoolean(ctx, true);
 	}
 
 	public static void Record_int_hashCode(RuntimeContext ctx) {
@@ -84,9 +72,6 @@ public class RecordImpl extends ImplUtil {
 				hashCodes[i] = value.hashCode();
 			}
 		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
-		ctx.value.intNumber = Objects.hash(hashCodes);
+		returnInt(ctx, Objects.hash(hashCodes));
 	}
 }

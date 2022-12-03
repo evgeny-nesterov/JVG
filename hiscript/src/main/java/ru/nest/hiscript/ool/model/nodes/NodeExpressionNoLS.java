@@ -199,7 +199,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 			}
 
 			if (values[0].valueType == Value.NAME) {
-				if (!NodeIdentifier.resolveVariable(ctx, values[0], true)) {
+				if (!NodeIdentifier.resolve(ctx, values[0], true)) {
 					ctx.throwRuntimeException("can't resolve variable " + values[0].name);
 					return;
 				}

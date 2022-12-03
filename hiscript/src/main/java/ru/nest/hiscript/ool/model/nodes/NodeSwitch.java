@@ -1,9 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -122,7 +127,35 @@ public class NodeSwitch extends Node {
 								return;
 							}
 
-							if (ctx.value.type.isObject()) {
+							if (ctx.value.valueType == Value.CLASS) {
+								HiClass c1 = object.clazz;
+								HiClass c2 = ctx.value.type;
+								boolean isInstanceof = c1.isInstanceof(c2);
+								if (isInstanceof) {
+									if (ctx.value.castedVariableName != null) {
+										if (ctx.getVariable(ctx.value.castedVariableName) != null) {
+											ctx.throwRuntimeException("Variable '" + ctx.value.castedVariableName + "' is already defined in the scope");
+											return;
+										}
+
+										HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), ctx.value.castedVariableName);
+										castedField.set(object);
+										ctx.addVariable(castedField);
+									}
+									if (ctx.value.castedRecordArguments != null) {
+										if (!c2.isRecord()) {
+											ctx.throwRuntimeException("Inconvertible types; cannot cast " + c2.fullName + " to Record");
+											return;
+										}
+										for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
+											HiField castedField = object.getField(castedRecordArgument.name, c2);
+											ctx.addVariable(castedField);
+										}
+									}
+									index = i;
+									break FOR;
+								}
+							} else if (ctx.value.type.isObject()) {
 								if (object.equals(ctx, ctx.value.object)) {
 									index = i;
 									break FOR;
