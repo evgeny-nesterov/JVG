@@ -104,7 +104,13 @@ public class RecordParseRule extends ParserUtil {
 			ctx.clazz.modifiers = modifiers;
 
 			if (hasContent) {
-				visitContent(tokenizer, ctx);
+				ClassParseRule.getInstance().visitContent(tokenizer, ctx, new ParseVisitor() {
+					@Override
+					public boolean visit(Tokenizer tokenizer, CompileContext ctx) {
+						// TODO parse specific content
+						return false;
+					}
+				});
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			} else {
 				ctx.initClass();
@@ -114,11 +120,5 @@ public class RecordParseRule extends ParserUtil {
 
 		tokenizer.rollback();
 		return null;
-	}
-
-	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		// TODO specific content
-
-		ClassParseRule.getInstance().visitContent(tokenizer, properties);
 	}
 }

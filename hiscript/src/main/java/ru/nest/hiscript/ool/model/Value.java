@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 import java.lang.reflect.Array;
 
@@ -71,6 +72,8 @@ public class Value implements PrimitiveTypes {
 	public String name;
 
 	public String castedVariableName;
+
+	public NodeArgument[] castedRecordArguments;
 
 	public Type variableType;
 

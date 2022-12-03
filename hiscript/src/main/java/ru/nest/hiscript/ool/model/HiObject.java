@@ -210,6 +210,10 @@ public class HiObject {
 
 	@Override
 	public int hashCode() {
+		return hashCode(ctx);
+	}
+
+	public int hashCode(RuntimeContext ctx) {
 		HiMethod method = clazz.searchMethod(ctx, "hashCode");
 		if (method.clazz.superClass == null) {
 			// is Object

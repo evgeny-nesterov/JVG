@@ -18,20 +18,19 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	}
 
 	@Override
-	public NodeInvocation visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeInvocation visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		String name = visitWord(tokenizer, NOT_SERVICE);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-				tokenizer.commit();
-
-				Node[] args = visitArgumentsValues(tokenizer, properties);
-
-				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-
-				NodeInvocation node = new NodeInvocation(name, args);
-				return node;
+				Node[] args = visitArgumentsValues(tokenizer, ctx);
+				if (checkSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) != -1) {
+					tokenizer.nextToken();
+					tokenizer.commit();
+					NodeInvocation node = new NodeInvocation(name, args);
+					return node;
+				}
 			}
 		}
 

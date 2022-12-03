@@ -405,7 +405,7 @@ public class ParserUtil implements Words {
 	}
 
 	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		ArrayList<Node> args = new ArrayList<>(3);
+		List<Node> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			args.add(arg);

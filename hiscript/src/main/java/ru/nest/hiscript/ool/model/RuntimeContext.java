@@ -97,11 +97,9 @@ public class RuntimeContext {
 		if (label == null && level.label == null) {
 			return true;
 		}
-
 		if (label != null && label.equals(level.label)) {
 			return true;
 		}
-
 		return false;
 	}
 

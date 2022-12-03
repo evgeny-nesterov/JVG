@@ -14,26 +14,21 @@ public class NodeIdentifier extends Node {
 		this.name = name.intern();
 	}
 
-	private String name;
+	public String name;
 
 	public String getName() {
 		return name;
 	}
 
-	private String castedVariableName;
+	public NodeArgument[] castedRecordArguments;
 
-	public String getCastedVariableName() {
-		return castedVariableName;
-	}
-
-	public void setCastedVariableName(String castedVariableName) {
-		this.castedVariableName = castedVariableName;
-	}
+	public String castedVariableName;
 
 	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.NAME;
 		ctx.value.name = name;
+		ctx.value.castedRecordArguments = castedRecordArguments;
 		ctx.value.castedVariableName = castedVariableName;
 	}
 
@@ -87,11 +82,14 @@ public class NodeIdentifier extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);
+		os.writeByte(castedRecordArguments != null ? castedRecordArguments.length : 0);
+		os.writeNullable(castedRecordArguments);
 		os.writeNullableUTF(castedVariableName);
 	}
 
 	public static NodeIdentifier decode(DecodeContext os) throws IOException {
 		NodeIdentifier node = new NodeIdentifier(os.readUTF());
+		node.castedRecordArguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		node.castedVariableName = os.readNullableUTF();
 		return node;
 	}

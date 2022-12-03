@@ -129,7 +129,6 @@ public class StatementParseRule extends ParseRule<Node> {
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
-
 		return null;
 	}
 }

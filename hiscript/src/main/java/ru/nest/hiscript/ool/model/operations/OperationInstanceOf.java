@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 public class OperationInstanceOf extends BinaryOperation {
 	private static Operation instance = new OperationInstanceOf();
@@ -26,15 +27,27 @@ public class OperationInstanceOf extends BinaryOperation {
 		if (!v1.type.isPrimitive()) {
 			HiClass c1 = v1.object != null ? v1.object.clazz : HiClassNull.NULL;
 			boolean isInstanceof = c1.isInstanceof(c2);
-			if (isInstanceof && v2.castedVariableName != null) {
-				if (ctx.getVariable(v2.castedVariableName) != null) {
-					ctx.throwRuntimeException("Variable '" + v2.castedVariableName + "' is already defined in the scope");
-					return;
-				}
+			if (isInstanceof) {
+				if (v2.castedVariableName != null) {
+					if (ctx.getVariable(v2.castedVariableName) != null) {
+						ctx.throwRuntimeException("Variable '" + v2.castedVariableName + "' is already defined in the scope");
+						return;
+					}
 
-				HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), v2.castedVariableName);
-				castedField.set(v1.object);
-				ctx.addVariable(castedField);
+					HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), v2.castedVariableName);
+					castedField.set(v1.object);
+					ctx.addVariable(castedField);
+				}
+				if (v2.castedRecordArguments != null) {
+					if (!c2.isRecord()) {
+						ctx.throwRuntimeException("Inconvertible types; cannot cast " + c2.fullName + " to Record");
+						return;
+					}
+					for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
+						HiField castedField = v1.object.getField(castedRecordArgument.name, c2);
+						ctx.addVariable(castedField);
+					}
+				}
 			}
 
 			v1.type = TYPE_BOOLEAN;

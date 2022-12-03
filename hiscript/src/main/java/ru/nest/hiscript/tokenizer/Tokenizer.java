@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Tokenizer {
 	public Tokenizer(String s) {
@@ -149,11 +150,11 @@ public class Tokenizer {
 		return currentToken;
 	}
 
-	private ArrayList<Token> buffer = new ArrayList<>();
+	private List<Token> buffer = new ArrayList<>();
 
-	private ArrayList<Integer> startOffsets = new ArrayList<>();
+	private List<Integer> startOffsets = new ArrayList<>();
 
-	private ArrayList<Token> startPrevTokens = new ArrayList<>();
+	private List<Token> startPrevTokens = new ArrayList<>();
 
 	private int tokenOffset = 0;
 
@@ -178,7 +179,7 @@ public class Tokenizer {
 		currentToken = startPrevTokens.remove(startPrevTokens.size() - 1);
 	}
 
-	private ArrayList<TokenVisitor> visitors = new ArrayList<>();
+	private List<TokenVisitor> visitors = new ArrayList<>();
 
 	public void addVisitor(TokenVisitor visitor) {
 		visitors.add(visitor);

@@ -89,7 +89,7 @@ public class ClassParseRule extends ParserUtil {
 			ctx.clazz = new HiClass(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType);
 			ctx.clazz.modifiers = modifiers;
 
-			visitContent(tokenizer, ctx);
+			visitContent(tokenizer, ctx, null);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			return ctx.clazz;
@@ -99,71 +99,79 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		HiClass clazz = properties.clazz;
-		while (true) {
-			// inner class / interface
-			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
-			if (innerClass == null) {
-				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
-			}
-			if (innerClass == null) {
-				innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
-			}
-			if (innerClass == null) {
-				innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
-			}
-			if (innerClass != null) {
-				if (!clazz.isTopLevel() && !clazz.isStatic()) {
-					if (innerClass.isInterface) {
-						throw new ParseException("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", tokenizer.currentToken());
-					}
-
-					// check on valid static modifier
-					if (innerClass.isStatic() && !(innerClass.topClass != null && innerClass.topClass.fullName.equals("@root"))) {
-						throw new ParseException("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", tokenizer.currentToken());
-					}
-				}
-
-				innerClass.enclosingClass = clazz;
-				properties.addClass(innerClass);
-				continue;
-			}
-
-			// constructor
-			HiConstructor constructor = visitConstructor(tokenizer, properties);
-			if (constructor != null) {
-				properties.addConstructor(constructor);
-				continue;
-			}
-
-			// method
-			HiMethod method = visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
-			if (method != null) {
-				properties.addMethod(method);
-				continue;
-			}
-
-			// field
-			if (visitFields(tokenizer, properties)) {
-				continue;
-			}
-
-			// block
-			NodeInitializer block = visitBlock(tokenizer, properties);
-			if (block != null) {
-				properties.addBlockInitializer(block);
-				continue;
-			}
-			break;
+	public void visitContent(Tokenizer tokenizer, CompileContext properties, ParseVisitor visiter) throws TokenizerException, ParseException {
+		while (visitContentElement(tokenizer, properties, visiter)) {
 		}
 
 		if (properties.constructors == null) {
-			HiConstructor defaultConstructor = new HiConstructor(clazz, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(properties.clazz, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			properties.addConstructor(defaultConstructor);
 		}
 
 		properties.initClass();
+	}
+
+	public boolean visitContentElement(Tokenizer tokenizer, CompileContext properties, ParseVisitor visiter) throws TokenizerException, ParseException {
+		HiClass clazz = properties.clazz;
+
+		if (visiter != null && visiter.visit(tokenizer, properties)) {
+			return true;
+		}
+
+		// inner class / interface
+		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+		if (innerClass == null) {
+			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+		}
+		if (innerClass == null) {
+			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+		}
+		if (innerClass == null) {
+			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+		}
+		if (innerClass != null) {
+			if (!clazz.isTopLevel() && !clazz.isStatic()) {
+				if (innerClass.isInterface) {
+					throw new ParseException("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", tokenizer.currentToken());
+				}
+
+				// check on valid static modifier
+				if (innerClass.isStatic() && !(innerClass.topClass != null && innerClass.topClass.fullName.equals("@root"))) {
+					throw new ParseException("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", tokenizer.currentToken());
+				}
+			}
+
+			innerClass.enclosingClass = clazz;
+			properties.addClass(innerClass);
+			return true;
+		}
+
+		// constructor
+		HiConstructor constructor = visitConstructor(tokenizer, properties);
+		if (constructor != null) {
+			properties.addConstructor(constructor);
+			return true;
+		}
+
+		// method
+		HiMethod method = visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
+		if (method != null) {
+			properties.addMethod(method);
+			return true;
+		}
+
+		// field
+		if (visitFields(tokenizer, properties)) {
+			return true;
+		}
+
+		// block
+		NodeInitializer block = visitBlock(tokenizer, properties);
+		if (block != null) {
+			properties.addBlockInitializer(block);
+			return true;
+		}
+		return false;
 	}
 
 	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {

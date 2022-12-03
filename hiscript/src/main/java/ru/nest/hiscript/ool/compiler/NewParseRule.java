@@ -63,7 +63,7 @@ public class NewParseRule extends ParseRule<Node> {
 			innerProperties.clazz = new HiClass(type, properties.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
-			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties);
+			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties, null);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 

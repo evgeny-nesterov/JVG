@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
@@ -62,17 +63,19 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			visitArrayIndexes(tokenizer, operations, operands, properties);
 			visitIncrement(tokenizer, operations, false);
 
-			tokenizer.start();
+			// tokenizer.start();
 			operation = visitOperation(tokenizer, operands);
 			if (operation != -1) {
+				// tokenizer.commit();
 				if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
 				} else if (operation == OperationsIF.LOGICAL_OR) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_OR_CHECK);
 				}
 
-				tokenizer.commit();
 				operations.setOperation(operation);
+			} else {
+				// tokenizer.rollback();
 			}
 		} while (operation != -1);
 
@@ -264,7 +267,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return found;
 	}
 
-	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<Node> operands, CompileContext properties) throws TokenizerException, ParseException {
+	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<Node> operands, CompileContext ctx) throws TokenizerException, ParseException {
 		// visit number
 		NodeNumber numberNode = visitNumber(tokenizer);
 		if (numberNode != null) {
@@ -311,20 +314,20 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit new object or array
-		if ((node = NewParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = NewParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			operands.add(node);
 			return true;
 		}
 
 		// visit switch
-		if ((node = ExpressionSwitchParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ExpressionSwitchParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			operands.add(node);
 			return true;
 		}
 
 		// visit block
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-			node = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			node = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			if (node == null) {
 				throw new ParseException("expression is expected", tokenizer.currentToken());
 			}
@@ -334,7 +337,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit method name with arguments
-		if ((node = InvocationParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = InvocationParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			// determine is there prefix before method
 			OperationsGroup lastOperationGroup = allOperations.size() > 0 ? allOperations.get(allOperations.size() - 1) : null;
 			Operation lastOperation = lastOperationGroup != null ? lastOperationGroup.getOperation() : null;
@@ -350,6 +353,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		if (identifierName != null) {
 			NodeIdentifier identifier = new NodeIdentifier(identifierName);
 			operands.add(identifier);
+
+			boolean isLastInstanceOf = false; // except fields invocations
 			if (allOperations.size() > 0) {
 				int index = allOperations.size() - 1;
 				Operation lastOperation = allOperations.get(index).getOperation();
@@ -357,13 +362,26 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 					lastOperation = allOperations.get(--index).getOperation();
 				}
 				if (lastOperation != null && lastOperation.getOperation() == Operations.INSTANCE_OF) {
-					String castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
-					if (castedVariableName != null) {
-						if (properties.getLocalVariable(castedVariableName) != null) {
-							throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
-						}
-						identifier.setCastedVariableName(castedVariableName);
+					isLastInstanceOf = true;
+				}
+			}
+
+			if (isLastInstanceOf) {
+				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+					List<NodeArgument> argumentsList = new ArrayList<>();
+					visitArgumentsDefinitions(tokenizer, argumentsList, ctx);
+					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					if (argumentsList.size() > 0) {
+						identifier.castedRecordArguments = argumentsList.toArray(new NodeArgument[argumentsList.size()]);
 					}
+				}
+
+				String castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
+				if (castedVariableName != null) {
+					if (ctx.getLocalVariable(castedVariableName) != null) {
+						throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
+					}
+					identifier.castedVariableName = castedVariableName;
 				}
 			}
 			return true;

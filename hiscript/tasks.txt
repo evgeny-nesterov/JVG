@@ -30,4 +30,4 @@
 25. Generics (@Field int x)
 26. HiClassMulti for case of catch(Exc1 | Exc2 e)
         +27. try (auto closeable resources)
-27. records
+        +27. records, auto match if (r instanceof Rec(int a, in b) rec) {a = 1; ...

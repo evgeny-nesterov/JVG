@@ -184,7 +184,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 		if (field != null) {
 			field.initializer = initializer;
 		}
-
 		return field;
 	}
 

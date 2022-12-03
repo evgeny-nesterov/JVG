@@ -74,6 +74,6 @@ public class EnumParseRule extends ParserUtil {
 			}
 		}
 
-		ClassParseRule.getInstance().visitContent(tokenizer, properties);
+		ClassParseRule.getInstance().visitContent(tokenizer, properties, null);
 	}
 }
