@@ -1,8 +1,9 @@
 package ru.nest.hiscript.pol.model;
 
-import java.util.ArrayList;
-
 import ru.nest.hiscript.tokenizer.OperationSymbols;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpressionNode extends Node implements Value {
 	public ExpressionNode(PrefixNode prefix, Node value, ArrayIndexesNode index) {
@@ -30,27 +31,27 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private ArrayList<Integer> operations = new ArrayList<>();
+	private List<Integer> operations = new ArrayList<>();
 
-	public ArrayList<Integer> getOperations() {
+	public List<Integer> getOperations() {
 		return operations;
 	}
 
-	private ArrayList<PrefixNode> prefixes = new ArrayList<>();
+	private List<PrefixNode> prefixes = new ArrayList<>();
 
-	public ArrayList<PrefixNode> getPrefixes() {
+	public List<PrefixNode> getPrefixes() {
 		return prefixes;
 	}
 
-	private ArrayList<Node> values = new ArrayList<>();
+	private List<Node> values = new ArrayList<>();
 
-	public ArrayList<Node> getValues() {
+	public List<Node> getValues() {
 		return values;
 	}
 
-	private ArrayList<ArrayIndexesNode> indexes = new ArrayList<>();
+	private List<ArrayIndexesNode> indexes = new ArrayList<>();
 
-	public ArrayList<ArrayIndexesNode> getIndexes() {
+	public List<ArrayIndexesNode> getIndexes() {
 		return indexes;
 	}
 

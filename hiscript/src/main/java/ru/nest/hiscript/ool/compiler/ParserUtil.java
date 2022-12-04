@@ -256,11 +256,11 @@ public class ParserUtil implements Words {
 		return dimension;
 	}
 
-	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
-		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (condition == null) {
 			throw new ParseException("expression is expected", tokenizer.currentToken());
 		}
@@ -268,12 +268,12 @@ public class ParserUtil implements Words {
 		return condition;
 	}
 
-	protected Node expectBody(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	protected Node expectBody(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		properties.enter();
-		Node body = StatementParseRule.getInstance().visit(tokenizer, properties);
-		properties.exit();
+		ctx.enter();
+		Node body = StatementParseRule.getInstance().visit(tokenizer, ctx);
+		ctx.exit();
 		if (body == null) {
 			throw new ParseException("statement is expected", tokenizer.currentToken());
 		}

@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeBreak;
 import ru.nest.hiscript.ool.model.nodes.NodeByte;
+import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeCatch;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
@@ -138,6 +139,8 @@ public abstract class Node implements Codeable {
 
 	public final static byte TYPE_CATCH = 44;
 
+	public final static byte TYPE_CASTED_IDENTIFIER = 45;
+
 	public Node(String name, int type) {
 		this(name, type, -1);
 	}
@@ -211,6 +214,8 @@ public abstract class Node implements Codeable {
 				return NodeForIterator.decode(os);
 			case TYPE_IDENTIFIER:
 				return NodeIdentifier.decode(os);
+			case TYPE_CASTED_IDENTIFIER:
+				return NodeCastedIdentifier.decode(os);
 			case TYPE_IF:
 				return NodeIf.decode(os);
 			case TYPE_INT:

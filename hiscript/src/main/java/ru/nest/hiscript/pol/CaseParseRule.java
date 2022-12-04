@@ -30,7 +30,6 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 			BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
 			return new CaseNode(value, body);
 		}
-
 		return null;
 	}
 
@@ -44,7 +43,6 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			return true;
 		}
-
 		return false;
 	}
 }

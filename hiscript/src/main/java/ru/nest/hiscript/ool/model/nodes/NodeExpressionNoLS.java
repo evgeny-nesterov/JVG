@@ -243,4 +243,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 		return null;
 	}
+
+	public NodeCastedIdentifier checkCastedIdentifier() {
+		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeCastedIdentifier) {
+			return (NodeCastedIdentifier) operands[0];
+		}
+		return null;
+	}
 }

@@ -106,4 +106,6 @@ public interface Words {
 	public final static int PACKAGE = 51;
 
 	public final static int VOLATILE = 52;
+
+	public final static int WHEN = 53;
 }

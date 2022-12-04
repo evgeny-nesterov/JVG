@@ -73,6 +73,8 @@ public class Value implements PrimitiveTypes {
 
 	public String castedVariableName;
 
+	public Node castedCondition;
+
 	public NodeArgument[] castedRecordArguments;
 
 	public Type variableType;
@@ -409,6 +411,7 @@ public class Value implements PrimitiveTypes {
 		// cast
 		dst.castedVariableName = castedVariableName;
 		dst.castedRecordArguments = castedRecordArguments;
+		dst.castedCondition = castedCondition;
 	}
 
 	public void copyToArray(Value value) {

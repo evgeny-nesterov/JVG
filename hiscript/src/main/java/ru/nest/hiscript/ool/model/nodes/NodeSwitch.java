@@ -152,6 +152,17 @@ public class NodeSwitch extends Node {
 											ctx.addVariable(castedField);
 										}
 									}
+									if (ctx.value.castedCondition != null) {
+										ctx.value.castedCondition.execute(ctx);
+										if (!ctx.value.getBoolean()) {
+											continue;
+										}
+									}
+									index = i;
+									break FOR;
+								}
+							} else if (ctx.value.type.isPrimitive() && ctx.value.type.name.equals("boolean")) {
+								if (ctx.value.getBoolean()) {
 									index = i;
 									break FOR;
 								}

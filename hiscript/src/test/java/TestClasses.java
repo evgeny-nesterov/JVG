@@ -71,30 +71,33 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testRecords() {
-		//		assertSuccessSerialize("record Rec(int a); new Rec(1);");
-		//		assertFailSerialize("record Rec(int a, long a);");
-		//		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
-		//
-		//		assertSuccessSerialize("record Rec(int a, String field); Rec rec = new Rec(1, \"abc\"); assert rec.getA() == 1; assert rec.getField().equals(\"abc\");");
-		//		assertSuccessSerialize("record Rec(int a, int b){Rec(int a){this.a = a; b = 2;}}; Rec rec1 = new Rec(1, 2); Rec rec2 = new Rec(1); assert rec2.getA() == 1; assert rec2.getB() == 2;");
-		//		assertFailSerialize("record Rec();");
-		//		assertFailSerialize("record Rec(){int a;};");
-		//
-		//		// equals
-		//		assertSuccessSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(1));");
-		//		assertFailSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(2));");
-		//		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
-		//		assertSuccessSerialize("class O{} O o = new O(); record Rec(O o); assert new Rec(o).equals(new Rec(o));");
-		//		assertFailSerialize("class O{} record Rec(O o); assert new Rec(new O()).equals(new Rec(new O()));");
-		//		assertSuccessSerialize("class O{int a; O(int a){this.a = a;} boolean equals(Object o){return a == ((O)o).a;}} record Rec(O o); assert new Rec(new O(1)).equals(new Rec(new O(1)));");
-		//
-		//		// hashcode
-		//		assertSuccessSerialize("class O{} record Rec(O o, int x, String a); new Rec(new O(), 1, \"x\").hashCode();");
-		//
-		//		// instanceof
-		//		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
+		assertSuccessSerialize("record Rec(int a); new Rec(1);");
+		assertFailSerialize("record Rec(int a, long a);");
+		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
+
+		assertSuccessSerialize("record Rec(int a, String field); Rec rec = new Rec(1, \"abc\"); assert rec.getA() == 1; assert rec.getField().equals(\"abc\");");
+		assertSuccessSerialize("record Rec(int a, int b){Rec(int a){this.a = a; b = 2;}}; Rec rec1 = new Rec(1, 2); Rec rec2 = new Rec(1); assert rec2.getA() == 1; assert rec2.getB() == 2;");
+		assertFailSerialize("record Rec();");
+		assertFailSerialize("record Rec(){int a;};");
+
+		// equals
+		assertSuccessSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(1));");
+		assertFailSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(2));");
+		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
+		assertSuccessSerialize("class O{} O o = new O(); record Rec(O o); assert new Rec(o).equals(new Rec(o));");
+		assertFailSerialize("class O{} record Rec(O o); assert new Rec(new O()).equals(new Rec(new O()));");
+		assertSuccessSerialize("class O{int a; O(int a){this.a = a;} boolean equals(Object o){return a == ((O)o).a;}} record Rec(O o); assert new Rec(new O(1)).equals(new Rec(new O(1)));");
+
+		// hashcode
+		assertSuccessSerialize("class O{} record Rec(O o, int x, String a); new Rec(new O(), 1, \"x\").hashCode();");
+
+		// instanceof
+		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 
 		// switch-case
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
+		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
+		// Duplicated local variable a
+		assertFailSerialize("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 	}
 }

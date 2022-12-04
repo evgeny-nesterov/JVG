@@ -18,6 +18,7 @@ public class WordToken extends Token implements Words {
 		service_words.put("return", RETURN);
 		service_words.put("switch", SWITCH);
 		service_words.put("case", CASE);
+		service_words.put("when", WHEN);
 		service_words.put("true", TRUE);
 		service_words.put("false", FALSE);
 		service_words.put("char", CHAR);

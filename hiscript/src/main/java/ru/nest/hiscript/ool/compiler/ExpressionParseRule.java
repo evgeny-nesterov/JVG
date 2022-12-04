@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
+import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
@@ -351,10 +352,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// visit identifier as word: package, class, method, field
 		String identifierName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (identifierName != null) {
-			NodeIdentifier identifier = new NodeIdentifier(identifierName);
-			operands.add(identifier);
-
-			boolean visitCastAfterIdentifier = false; // except fields invocations
+			boolean visitCastAfterIdentifier = false;
 			if (allOperations.size() > 0) {
 				int index = allOperations.size() - 1;
 				OperationsGroup lastOperation = allOperations.get(index);
@@ -366,23 +364,37 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				}
 			}
 
+			NodeArgument[] castedRecordArguments = null;
+			String castedVariableName = null;
 			if (visitCastAfterIdentifier) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					List<NodeArgument> argumentsList = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, argumentsList, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 					if (argumentsList.size() > 0) {
-						identifier.castedRecordArguments = argumentsList.toArray(new NodeArgument[argumentsList.size()]);
+						for (NodeArgument argument : argumentsList) {
+							if (ctx.getLocalVariable(argument.name) != null) {
+								throw new ParseException("Duplicated local variable " + argument.name, tokenizer.currentToken());
+							}
+						}
+						castedRecordArguments = argumentsList.toArray(new NodeArgument[argumentsList.size()]);
 					}
 				}
 
-				String castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
-				if (castedVariableName != null) {
-					if (ctx.getLocalVariable(castedVariableName) != null) {
-						throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
-					}
-					identifier.castedVariableName = castedVariableName;
+				castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
+				if (castedVariableName != null && ctx.getLocalVariable(castedVariableName) != null) {
+					throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
 				}
+			}
+
+			if (castedRecordArguments != null || castedVariableName != null) {
+				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName);
+				identifier.castedRecordArguments = castedRecordArguments;
+				identifier.castedVariableName = castedVariableName;
+				operands.add(identifier);
+			} else {
+				NodeIdentifier identifier = new NodeIdentifier(identifierName);
+				operands.add(identifier);
 			}
 			return true;
 		}
