@@ -1,5 +1,11 @@
-package ru.nest.hiscript.ool.model;
+package ru.nest.hiscript.ool.model.java;
 
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 import java.lang.reflect.Constructor;

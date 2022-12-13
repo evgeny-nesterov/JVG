@@ -1,68 +1,18 @@
-package ru.nest.hiscript.ool.model;
+package ru.nest.hiscript.ool.model.java;
 
-import ru.nest.hiscript.ool.model.classes.HiClassJava;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HiMethodJava extends HiMethod {
-	public Method method;
-
-	public HiMethodJava(HiClassJava clazz, Method method, String name) {
-		super(clazz, null, null, name, (NodeArgument[]) null, null, null);
-		this.method = method;
-
-		Class[] argJavaClasses = method.getParameterTypes();
-		argCount = argJavaClasses.length;
-		arguments = new NodeArgument[argCount];
-		argNames = new String[argCount];
-		for (int i = 0; i < argCount; i++) {
-			Class argJavaClass = argJavaClasses[i];
-			Type argType = null;
-			if (argJavaClass.isPrimitive()) {
-				argType = Type.getPrimitiveType(argJavaClass.getName());
-			} else if (argJavaClass == String.class) {
-				argType = Type.getTopType("String");
-			}
-			String argName = "arg" + i;
-			arguments[i] = new NodeArgument(argType, argName, new Modifiers());
-			argNames[i] = argName;
-		}
-	}
-
-	@Override
-	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
-		Object javaObject = ((HiObject) object).userObject;
-
-		Object[] javaArgs = new Object[arguments.length - 1];
-		for (int i = 0; i < arguments.length - 1; i++) { // ignore enclosing object
-			HiField<?> argument = arguments[i];
-			Object argValue = argument.getJava(ctx);
-			if (argValue == null && !arguments[i].type.isNull()) {
-				ctx.throwRuntimeException("Inconvertible java class argument: " + arguments[i].type.fullName);
-				return;
-			}
-			javaArgs[i] = argValue;
-		}
-
-		try {
-			Object resultJavaValue = method.invoke(javaObject, javaArgs);
-			Object resultValue = convertFromJava(ctx, resultJavaValue);
-
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = type;
-			ctx.value.set(resultValue);
-		} catch (Exception e) {
-			ctx.throwRuntimeException(e.toString());
-		}
-	}
-
+public class HiJava {
 	public static Object convertFromJava(RuntimeContext ctx, Object javaObject) {
 		if (javaObject == null) {
 			return null;
@@ -167,8 +117,41 @@ public class HiMethodJava extends HiMethod {
 		}
 	}
 
-	@Override
-	public boolean isJava() {
-		return true;
+	public static Type getTypeByJavaClass(Class javaClass) {
+		if (javaClass == Integer.class || javaClass == int.class) {
+			return Type.getPrimitiveType("int");
+		} else if (javaClass == Long.class || javaClass == long.class) {
+			return Type.getPrimitiveType("long");
+		} else if (javaClass == Double.class || javaClass == double.class) {
+			return Type.getPrimitiveType("double");
+		} else if (javaClass == Boolean.class || javaClass == boolean.class) {
+			return Type.getPrimitiveType("boolean");
+		} else if (javaClass == Byte.class || javaClass == byte.class) {
+			return Type.getPrimitiveType("byte");
+		} else if (javaClass == Float.class || javaClass == float.class) {
+			return Type.getPrimitiveType("float");
+		} else if (javaClass == Short.class || javaClass == short.class) {
+			return Type.getPrimitiveType("short");
+		} else if (javaClass == Character.class || javaClass == char.class) {
+			return Type.getPrimitiveType("char");
+		} else if (javaClass == String.class) {
+			return Type.getTopType("String");
+		} else if (Map.class.isAssignableFrom(javaClass)) {
+			return Type.getTopType("HashMap");
+		} else if (List.class.isAssignableFrom(javaClass)) {
+			return Type.getTopType("ArrayList");
+		} else if (javaClass.isArray()) {
+			int dimension = 1;
+			Class elementClass = javaClass.getComponentType();
+			while (elementClass.isArray()) {
+				elementClass = elementClass.getComponentType();
+				dimension++;
+			}
+			Type rootElementType = getTypeByJavaClass(elementClass);
+			if (rootElementType != null) {
+				return Type.getArrayType(rootElementType, dimension);
+			}
+		}
+		return null;
 	}
 }

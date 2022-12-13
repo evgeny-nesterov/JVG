@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1067,8 +1068,13 @@ public class HiClass implements Codeable {
 	}
 
 	public Class getJavaClass() {
-		if (fullName.equals("String")) {
-			return String.class;
+		switch (fullName) {
+			case "String":
+				return String.class;
+			case "HashMap":
+				return HashMap.class;
+			case "ArrayList":
+				return ArrayList.class;
 		}
 		return null;
 	}

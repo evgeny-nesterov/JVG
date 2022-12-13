@@ -94,9 +94,7 @@ public class HiFieldArray extends HiField<Object> {
 				javaCellValue = getJavaArray(ctx, cellValue, cellClass.getComponentType());
 			} else {
 				HiObject cellObject = (HiObject) cellValue;
-				if (cellObject.clazz.fullName.equals("String")) {
-					javaCellValue = cellObject.getStringValue(ctx);
-				}
+				javaCellValue = cellObject.getJavaValue(ctx);
 			}
 			Array.set(array, i, javaCellValue);
 		}
