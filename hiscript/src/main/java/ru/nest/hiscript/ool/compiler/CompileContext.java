@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
@@ -17,12 +18,23 @@ import java.util.List;
 import java.util.Map;
 
 public class CompileContext {
-	public CompileContext(Tokenizer tokenizer, CompileContext parent, HiClass enclosingClass, int classType) {
-		this.tokenizer = tokenizer;
+	public CompileContext(HiCompiler compiler, HiClass enclosingClass, int classType) {
+		this.compiler = compiler;
+		this.tokenizer = compiler.getTokenizer();
+		this.parent = null;
+		this.enclosingClass = enclosingClass;
+		this.classType = classType;
+	}
+
+	public CompileContext(CompileContext parent, HiClass enclosingClass, int classType) {
+		this.compiler = parent.getCompiler();
+		this.tokenizer = compiler.getTokenizer();
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
 		this.classType = classType;
 	}
+
+	private HiCompiler compiler;
 
 	private Tokenizer tokenizer;
 
@@ -51,6 +63,10 @@ public class CompileContext {
 	public List<HiEnumValue> enumValues = null;
 
 	public CompileContext parent = null;
+
+	public HiCompiler getCompiler() {
+		return compiler;
+	}
 
 	public void addEnum(HiEnumValue enumValue) throws ParseException {
 		if (enumValues == null) {

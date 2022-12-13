@@ -5,7 +5,9 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeByte;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
@@ -280,6 +282,10 @@ public class ParserUtil implements Words {
 		ctx.exit();
 		if (body == null) {
 			throw new ParseException("statement is expected", tokenizer.currentToken());
+		}
+
+		if (!ctx.getCompiler().isAssertsActive() && body instanceof NodeAssert) {
+			body = EmptyNode.getInstance();
 		}
 		return body;
 	}

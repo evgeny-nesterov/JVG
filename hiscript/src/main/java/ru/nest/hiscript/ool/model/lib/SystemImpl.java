@@ -125,19 +125,19 @@ public class SystemImpl extends ImplUtil {
 
 			CompileContext compileCtx;
 			if (newInstance) {
-				compileCtx = new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileContext(ctx.compiler, null, HiClass.CLASS_TYPE_TOP);
 			} else {
-				compileCtx = new CompileContext(tokenizer, null, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileContext(ctx.compiler, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
 			}
 
-			final NodeBlock node = (NodeBlock) RootParseRule.getInstance().visit(tokenizer, compileCtx);
+			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false).visit(tokenizer, compileCtx);
 			node.setEnterType(RuntimeContext.SAME);
 
 			if (!separateThread) {
 				RuntimeContext new_ctx;
 				StackLevel level = null;
 				if (newInstance) {
-					new_ctx = new RuntimeContext(true);
+					new_ctx = new RuntimeContext(ctx.compiler, true);
 				} else {
 					new_ctx = ctx;
 
@@ -154,7 +154,7 @@ public class SystemImpl extends ImplUtil {
 			} else {
 				final RuntimeContext new_ctx;
 				if (newInstance) {
-					new_ctx = new RuntimeContext(false);
+					new_ctx = new RuntimeContext(ctx.compiler, false);
 				} else {
 					new_ctx = new RuntimeContext(ctx);
 				}

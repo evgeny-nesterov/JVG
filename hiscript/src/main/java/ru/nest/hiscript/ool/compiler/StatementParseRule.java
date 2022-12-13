@@ -24,98 +24,98 @@ public class StatementParseRule extends ParseRule<Node> {
 	 * assignment, new object throw
 	 */
 	@Override
-	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 			return EmptyNode.getInstance();
 		}
 
 		// local class / interface
-		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
+		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		if (clazz == null) {
-			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {
-			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {
-			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz != null) {
 			// check modifiers
-			if (properties.enclosingClass != null && clazz.isStatic()) {
+			if (ctx.enclosingClass != null && clazz.isStatic()) {
 				throw new ParseException("Illegal modifier for the local class " + clazz.fullName + "; only abstract or final is permitted", tokenizer.currentToken());
 			}
 
-			properties.addLocalClass(clazz);
+			ctx.addLocalClass(clazz);
 			return new NodeClass(clazz);
 		}
 
 		Node node = null;
-		if ((node = IfParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = IfParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = WhileParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = WhileParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = DoWhileParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = DoWhileParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
 		// before ForParseRule
-		if ((node = ForIteratorParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ForIteratorParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = ForParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ForParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = SwitchParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = SwitchParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = SynchronizedParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = SynchronizedParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = LabelParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = LabelParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = ReturnParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ReturnParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = TryParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = TryParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = ThrowParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ThrowParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = BreakParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = BreakParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = ContinueParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ContinueParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}
 
-		if ((node = DeclarationParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = DeclarationParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 
-		if ((node = AssertParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = AssertParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			node = BlockParseRule.getInstance().visit(tokenizer, properties);
+			node = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			if (node != null) {
 				return node;
@@ -125,7 +125,7 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		// expression has to be parsed at the end
-		if ((node = ExpressionParseRule.getInstance().visit(tokenizer, properties)) != null) {
+		if ((node = ExpressionParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}

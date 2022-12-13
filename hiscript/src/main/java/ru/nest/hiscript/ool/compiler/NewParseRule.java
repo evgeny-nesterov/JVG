@@ -53,14 +53,14 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new <type>(<arguments>) {<body>}
-	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
-		Node[] arguments = visitArgumentsValues(tokenizer, properties);
+	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileContext ctx) throws TokenizerException, ParseException {
+		Node[] arguments = visitArgumentsValues(tokenizer, ctx);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, properties.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerProperties.clazz = new HiClass(type, properties.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
+			CompileContext innerProperties = new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
+			innerProperties.clazz = new HiClass(type, ctx.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties, null);

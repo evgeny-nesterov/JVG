@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -81,11 +80,11 @@ public class InterfaceParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		HiClass clazz = properties.clazz;
+	public void visitContent(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+		HiClass clazz = ctx.clazz;
 		while (true) {
 			// inner class / interface
-			CompileContext innerProperties = new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER);
+			CompileContext innerProperties = new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER);
 			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
@@ -95,25 +94,25 @@ public class InterfaceParseRule extends ParserUtil {
 			}
 			if (innerClass != null) {
 				innerClass.enclosingClass = clazz;
-				properties.addClass(innerClass);
+				ctx.addClass(innerClass);
 				continue;
 			}
 
 			// method
-			HiMethod method = ClassParseRule.getInstance().visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT);
+			HiMethod method = ClassParseRule.getInstance().visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT);
 			if (method != null) {
-				properties.addMethod(method);
+				ctx.addMethod(method);
 				continue;
 			}
 
 			// field
-			if (visitFields(tokenizer, properties)) {
+			if (visitFields(tokenizer, ctx)) {
 				continue;
 			}
 			break;
 		}
 
-		properties.initClass();
+		ctx.initClass();
 	}
 
 	private boolean visitFields(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {

@@ -246,7 +246,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	@Override
 	public String toString() {
-		RuntimeContext ctx = new RuntimeContext(true);
+		RuntimeContext ctx = new RuntimeContext(null, true);
 		String value = getClass(ctx).fullName + " " + name + " = " + get();
 		ctx.throwExceptionIf(false);
 		return value;

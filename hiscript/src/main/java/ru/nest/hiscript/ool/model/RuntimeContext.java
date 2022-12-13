@@ -60,12 +60,15 @@ public class RuntimeContext {
 
 	public RuntimeContext root;
 
-	private List<Value[]> cache_values = new ArrayList<>();
+	private List<Value[]> cacheValues = new ArrayList<>();
 
 	public HiEnumValue initializingEnumValue;
 
-	public RuntimeContext(boolean main) {
+	public HiCompiler compiler;
+
+	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;
+		this.compiler = compiler;
 		if (main) {
 			ThreadImpl.createThread(this);
 		}
@@ -74,8 +77,9 @@ public class RuntimeContext {
 	// TODO: Used for a new thread to access to context of the parent thread
 	public RuntimeContext(RuntimeContext root) {
 		this.root = root;
-
 		if (root != null) {
+			this.compiler = root.compiler;
+
 			// copy local context
 			if (root.localClasses != null) {
 				if (localClasses == null) {
@@ -636,14 +640,14 @@ public class RuntimeContext {
 
 	public Value[] getValues(int size) {
 		Value[] values;
-		int bufSize = cache_values.size();
+		int bufSize = cacheValues.size();
 		if (bufSize == 0) {
 			values = new Value[size];
 			for (int i = 0; i < size; i++) {
 				values[i] = new Value(this);
 			}
 		} else {
-			values = cache_values.remove(bufSize - 1);
+			values = cacheValues.remove(bufSize - 1);
 			if (values.length < size) {
 				Value[] newValues = new Value[size];
 				System.arraycopy(values, 0, newValues, 0, values.length);
@@ -658,7 +662,7 @@ public class RuntimeContext {
 
 	public void putValues(Value[] values) {
 		if (values != null) {
-			cache_values.add(values);
+			cacheValues.add(values);
 		}
 	}
 
@@ -677,14 +681,14 @@ public class RuntimeContext {
 	// buffer
 	private static List<RuntimeContext> cacheRC = new ArrayList<>();
 
-	public static RuntimeContext get() {
+	public static RuntimeContext get(HiCompiler compiler) {
 		RuntimeContext ctx;
 		synchronized (cacheRC) {
 			int size = cacheRC.size();
 			if (size > 0) {
 				ctx = cacheRC.remove(size - 1);
 			} else {
-				ctx = new RuntimeContext(false);
+				ctx = new RuntimeContext(compiler, false);
 			}
 		}
 		return ctx;
@@ -775,6 +779,9 @@ public class RuntimeContext {
 
 	public void throwExceptionIf(boolean printStackTrace) {
 		if (exception != null) {
+			if (!exception.clazz.isInstanceof("Exception")) {
+				throw new RuntimeException("Bad exception value");
+			}
 			HiField<?> messageField = exception.getMainObject().getField(this, "message");
 			String message = messageField.getStringValue(this);
 			if (printStackTrace) {

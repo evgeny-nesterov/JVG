@@ -68,7 +68,7 @@ public class HiClass implements Codeable {
 
 		try {
 			// object
-			load(Compiler.class.getResource("/hilibs/Object.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Object.hi"));
 
 			OBJECT_CLASS = forName(null, "Object");
 			OBJECT_CLASS.superClassType = null;
@@ -76,20 +76,20 @@ public class HiClass implements Codeable {
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
 			// TODO define classes initialization order automatically
-			load(Compiler.class.getResource("/hilibs/String.hi"));
-			load(Compiler.class.getResource("/hilibs/Class.hi"));
-			load(Compiler.class.getResource("/hilibs/Enum.hi"));
-			load(Compiler.class.getResource("/hilibs/Record.hi"));
-			load(Compiler.class.getResource("/hilibs/AutoCloseable.hi"));
-			load(Compiler.class.getResource("/hilibs/System.hi"));
-			load(Compiler.class.getResource("/hilibs/Math.hi"));
-			load(Compiler.class.getResource("/hilibs/Exception.hi"));
-			load(Compiler.class.getResource("/hilibs/RuntimeException.hi"));
-			load(Compiler.class.getResource("/hilibs/AssertException.hi"));
-			load(Compiler.class.getResource("/hilibs/ArrayList.hi"));
-			load(Compiler.class.getResource("/hilibs/HashMap.hi"));
-			load(Compiler.class.getResource("/hilibs/Thread.hi"));
-			load(Compiler.class.getResource("/hilibs/Java.hi"));
+			load(HiCompiler.class.getResource("/hilibs/String.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Class.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Enum.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Record.hi"));
+			load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"));
+			load(HiCompiler.class.getResource("/hilibs/System.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Math.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Exception.hi"));
+			load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"));
+			load(HiCompiler.class.getResource("/hilibs/AssertException.hi"));
+			load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"));
+			load(HiCompiler.class.getResource("/hilibs/HashMap.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Thread.hi"));
+			load(HiCompiler.class.getResource("/hilibs/Java.hi"));
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
@@ -281,7 +281,7 @@ public class HiClass implements Codeable {
 				}
 			}
 
-			RuntimeContext ctx = currentCtx != null ? currentCtx : RuntimeContext.get();
+			RuntimeContext ctx = currentCtx != null ? currentCtx : RuntimeContext.get(null);
 			ctx.enterInitialization(this, null, -1);
 			try {
 				if (initializers != null) {
@@ -439,6 +439,20 @@ public class HiClass implements Codeable {
 		return false;
 	}
 
+	public boolean isInstanceof(String className) {
+		HiClass c = this;
+		while (c != null) {
+			if (c.fullName.equals(className)) {
+				return true;
+			}
+			if (c.hasInterfaceInstanceof(className)) {
+				return true;
+			}
+			c = c.superClass;
+		}
+		return false;
+	}
+
 	public boolean hasInterfaceInstanceof(HiClass superInterface) {
 		if (interfaces != null && superInterface.isInterface) {
 			for (HiClass in : interfaces) {
@@ -446,6 +460,20 @@ public class HiClass implements Codeable {
 					return true;
 				}
 				if (in.hasInterfaceInstanceof(superInterface)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean hasInterfaceInstanceof(String superInterfaceName) {
+		if (interfaces != null) {
+			for (HiClass in : interfaces) {
+				if (in.fullName.equals(superInterfaceName)) {
+					return true;
+				}
+				if (in.hasInterfaceInstanceof(superInterfaceName)) {
 					return true;
 				}
 			}

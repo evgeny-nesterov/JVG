@@ -49,7 +49,6 @@ public class RootParseRule extends ParseRule<Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return false;
 	}
 

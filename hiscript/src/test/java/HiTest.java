@@ -1,5 +1,5 @@
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Compiler;
+import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -72,14 +72,14 @@ public abstract class HiTest {
 	}
 
 	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException {
-		Compiler compiler = Compiler.getDefaultCompiler(script);
+		HiCompiler compiler = HiCompiler.getDefaultCompiler(script);
 		compiler.setAssertsActive(true);
 		Node node = compiler.build();
 		if (node != null) {
 			if (serialize) {
 				node = serialize(node);
 			}
-			RuntimeContext ctx = new RuntimeContext(true);
+			RuntimeContext ctx = new RuntimeContext(compiler, true);
 			node.execute(ctx);
 			ctx.throwExceptionIf(true);
 		}

@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compiler;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
+import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -19,29 +20,35 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 	}
 
 	@Override
-	public NodeBlock visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
-		properties.enter();
+	public NodeBlock visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+		ctx.enter();
 
 		NodeBlock block = null;
 		Node statement;
 		boolean isReturn = false;
-		while ((statement = StatementParseRule.getInstance().visit(tokenizer, properties)) != null) {
-			if (statement != EmptyNode.getInstance()) {
-				// check on statement after return statement
-				if (isReturn) {
-					throw new ParseException("Unreachable code", tokenizer.currentToken());
-				}
-				isReturn = statement instanceof NodeReturn;
-
-				// add to block
-				if (block == null) {
-					block = new NodeBlock();
-				}
-				block.addStatement(statement);
+		while ((statement = StatementParseRule.getInstance().visit(tokenizer, ctx)) != null) {
+			if (statement == EmptyNode.getInstance()) {
+				continue;
 			}
+
+			// check on statement after return statement
+			if (isReturn) {
+				throw new ParseException("Unreachable statement", tokenizer.currentToken());
+			}
+			isReturn = statement instanceof NodeReturn;
+
+			if (!ctx.getCompiler().isAssertsActive() && statement instanceof NodeAssert) {
+				continue;
+			}
+
+			// add to block
+			if (block == null) {
+				block = new NodeBlock();
+			}
+			block.addStatement(statement);
 		}
 
-		properties.exit();
+		ctx.exit();
 		return block;
 	}
 }

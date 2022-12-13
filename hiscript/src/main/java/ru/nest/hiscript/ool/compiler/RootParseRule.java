@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
@@ -15,22 +16,13 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 public class RootParseRule extends ParseRule<Node> {
-	private final static RootParseRule instance = new RootParseRule(false);
-
-	private final static RootParseRule instanceWrapped = new RootParseRule(true);
-
-	public static RootParseRule getInstance() {
-		return instance;
-	}
-
-	public static RootParseRule getInstanceWrapped() {
-		return instanceWrapped;
-	}
-
 	private boolean wrapped;
 
-	private RootParseRule(boolean wrapped) {
+	private HiCompiler compiler;
+
+	public RootParseRule(HiCompiler compiler, boolean wrapped) {
 		this.wrapped = wrapped;
+		this.compiler = compiler;
 	}
 
 	@Override
@@ -39,7 +31,7 @@ public class RootParseRule extends ParseRule<Node> {
 
 		boolean createMainMethod = false;
 		if (ctx == null) {
-			ctx = new CompileContext(tokenizer, null, null, HiClass.CLASS_TYPE_TOP);
+			ctx = new CompileContext(compiler, null, HiClass.CLASS_TYPE_TOP);
 			if (wrapped) {
 				ctx.clazz = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP);
 				createMainMethod = true;

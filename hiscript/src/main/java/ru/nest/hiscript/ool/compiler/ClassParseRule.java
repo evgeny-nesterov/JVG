@@ -111,23 +111,23 @@ public class ClassParseRule extends ParserUtil {
 		properties.initClass();
 	}
 
-	public boolean visitContentElement(Tokenizer tokenizer, CompileContext properties, ParseVisitor visiter) throws TokenizerException, ParseException {
-		HiClass clazz = properties.clazz;
+	public boolean visitContentElement(Tokenizer tokenizer, CompileContext ctx, ParseVisitor visitor) throws TokenizerException, ParseException {
+		HiClass clazz = ctx.clazz;
 
-		if (visiter != null && visiter.visit(tokenizer, properties)) {
+		if (visitor != null && visitor.visit(tokenizer, ctx)) {
 			return true;
 		}
 
 		// inner class / interface
-		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		if (innerClass == null) {
-			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass == null) {
-			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass == null) {
-			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(tokenizer, properties, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass != null) {
 			if (!clazz.isTopLevel() && !clazz.isStatic()) {
@@ -142,33 +142,33 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			innerClass.enclosingClass = clazz;
-			properties.addClass(innerClass);
+			ctx.addClass(innerClass);
 			return true;
 		}
 
 		// constructor
-		HiConstructor constructor = visitConstructor(tokenizer, properties);
+		HiConstructor constructor = visitConstructor(tokenizer, ctx);
 		if (constructor != null) {
-			properties.addConstructor(constructor);
+			ctx.addConstructor(constructor);
 			return true;
 		}
 
 		// method
-		HiMethod method = visitMethod(tokenizer, properties, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
+		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 		if (method != null) {
-			properties.addMethod(method);
+			ctx.addMethod(method);
 			return true;
 		}
 
 		// field
-		if (visitFields(tokenizer, properties)) {
+		if (visitFields(tokenizer, ctx)) {
 			return true;
 		}
 
 		// block
-		NodeInitializer block = visitBlock(tokenizer, properties);
+		NodeInitializer block = visitBlock(tokenizer, ctx);
 		if (block != null) {
-			properties.addBlockInitializer(block);
+			ctx.addBlockInitializer(block);
 			return true;
 		}
 		return false;
