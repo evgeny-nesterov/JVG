@@ -138,7 +138,7 @@ public class OperationInvocation extends BinaryOperation {
 					return false;
 				}
 
-				field = object.getField(name, clazz);
+				field = object.getField(ctx, name, clazz);
 			}
 
 			if (field == null) {
@@ -155,7 +155,7 @@ public class OperationInvocation extends BinaryOperation {
 
 			if (field == null) {
 				// find by pattern: <CLASS>.<STATIC FIELD>
-				field = clazz.getField(name);
+				field = clazz.getField(ctx, name);
 				if (field != null && !field.getModifiers().isStatic()) {
 					field = null;
 				}
@@ -277,13 +277,15 @@ public class OperationInvocation extends BinaryOperation {
 			return;
 		}
 
-		if (isStatic && !method.modifiers.isStatic()) {
-			ctx.throwRuntimeException("can't invoke not static method from static context");
-			return;
-		}
+		if (!method.isJava()) {
+			if (isStatic && !method.modifiers.isStatic()) {
+				ctx.throwRuntimeException("can't invoke not static method from static context");
+				return;
+			}
 
-		if (method.modifiers.isAbstract()) {
-			ctx.throwRuntimeException("can't invoke abstract method");
+			if (method.modifiers.isAbstract()) {
+				ctx.throwRuntimeException("can't invoke abstract method");
+			}
 		}
 
 		// set names and types of arguments

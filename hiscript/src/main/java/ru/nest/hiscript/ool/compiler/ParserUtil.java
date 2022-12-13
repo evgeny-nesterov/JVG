@@ -123,9 +123,13 @@ public class ParserUtil implements Words {
 
 	protected Type visitType(Tokenizer tokenizer, boolean allowArray) throws TokenizerException, ParseException {
 		Type type = null;
-		String name = visitWord(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE);
+		String name = visitWord(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR);
 		if (name != null) {
-			type = Type.getPrimitiveType(name);
+			if (name.equals("var")) {
+				return Type.varType;
+			} else {
+				type = Type.getPrimitiveType(name);
+			}
 		}
 
 		if (type == null) {

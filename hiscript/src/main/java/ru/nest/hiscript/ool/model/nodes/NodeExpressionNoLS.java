@@ -1,11 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.ValidationContext;
 import ru.nest.hiscript.ool.model.Value;
 
 import java.io.IOException;
@@ -122,6 +124,31 @@ public class NodeExpressionNoLS extends NodeExpression {
 	private Operation[] operations;
 
 	@Override
+	public HiClass getValueType(ValidationContext ctx) {
+		HiClass[] values = new HiClass[operands.length];
+		int bufSize = 0;
+		int valuePos = 0;
+		for (int i = 0; i < operations.length; i++) {
+			if (operations[i] == null) {
+				// get value
+				Node valueNode = operands[valuePos];
+				values[bufSize] = valueNode.getValueType(ctx);
+				bufSize++;
+				valuePos++;
+			} else {
+				// do operation
+				bufSize = operations[i].getOperationResultType(ctx, bufSize, values);
+			}
+		}
+		return values[0];
+	}
+
+	@Override
+	public void validate(ValidationContext ctx) {
+		// TODO validate
+	}
+
+	@Override
 	public void execute(RuntimeContext ctx) {
 		Value ctxValue = ctx.value;
 		Value[] values = ctx.getValues(operands.length);
@@ -200,7 +227,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 			if (values[0].valueType == Value.NAME) {
 				if (!NodeIdentifier.resolve(ctx, values[0], true)) {
-					ctx.throwRuntimeException("can't resolve variable " + values[0].name);
+					ctx.throwRuntimeException("Can't resolve variable " + values[0].name);
 					return;
 				}
 			}

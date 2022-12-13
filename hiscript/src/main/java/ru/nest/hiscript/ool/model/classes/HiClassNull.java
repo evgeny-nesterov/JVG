@@ -32,4 +32,9 @@ public class HiClassNull extends HiClass {
 	public static HiClass decode(DecodeContext os) throws IOException {
 		return NULL;
 	}
+
+	@Override
+	public Class getJavaClass() {
+		return null;
+	}
 }

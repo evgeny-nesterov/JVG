@@ -109,7 +109,7 @@ public class NodeConstructor extends Node {
 		}
 
 		// set names of arguments
-		if (arguments != null) {
+		if (!clazz.isJava() && arguments != null) {
 			int size = arguments.length;
 			for (int i = 0; i < size; i++) {
 				arguments[i].name = constructor.arguments[i].name;

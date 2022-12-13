@@ -143,4 +143,8 @@ public class HiMethod implements Codeable {
 		Node body = os.readNullable(Node.class);
 		return new HiMethod(os.getHiClass(), modifiers, returnType, name, arguments, throwsTypes, body);
 	}
+
+	public boolean isJava() {
+		return false;
+	}
 }

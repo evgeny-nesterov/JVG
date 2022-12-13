@@ -22,8 +22,8 @@ public class RecordImpl extends ImplUtil {
 
 		HiObject o1 = ctx.value.object;
 		for (NodeArgument field : clazz.defaultConstructor.arguments) {
-			HiField f1 = o1.getField(field.name);
-			HiField f2 = o2.getField(field.name);
+			HiField f1 = o1.getField(ctx, field.name);
+			HiField f2 = o2.getField(ctx, field.name);
 			Object v1 = f1.get();
 			Object v2 = f2.get();
 			if (v1 instanceof HiObject) {
@@ -63,7 +63,7 @@ public class RecordImpl extends ImplUtil {
 		HiObject object = ctx.value.object;
 		int[] hashCodes = new int[clazz.defaultConstructor.arguments.length];
 		for (int i = 0; i < clazz.defaultConstructor.arguments.length; i++) {
-			HiField field = object.getField(clazz.defaultConstructor.arguments[i].name);
+			HiField field = object.getField(ctx, clazz.defaultConstructor.arguments[i].name);
 			Object value = field.get();
 			if (value instanceof HiObject) {
 				HiObject vo = (HiObject) value;

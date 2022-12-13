@@ -1,11 +1,10 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import java.util.HashMap;
-
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
-// TODO: take into account hashCode of the object and equals method
+import java.util.HashMap;
+
 public class HashMapImpl extends ImplUtil {
 	private static HashMap<Object, Object> getMap(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
@@ -16,7 +15,7 @@ public class HashMapImpl extends ImplUtil {
 	private static void setCtx(RuntimeContext ctx, Object object) {
 		if (object instanceof HiObject) {
 			HiObject o = (HiObject) object;
-			o.ctx = ctx;
+			o.ctx = ctx; // used to compute hash code
 		}
 	}
 

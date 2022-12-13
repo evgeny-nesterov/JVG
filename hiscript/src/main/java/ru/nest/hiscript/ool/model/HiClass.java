@@ -21,6 +21,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClass implements Codeable {
 	public final static int CLASS_OBJECT = 0;
@@ -35,6 +37,8 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_NULL = 5;
 
+	public final static int CLASS_JAVA = 6;
+
 	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
 
 	public final static int CLASS_TYPE_TOP = 1; // No outbound class
@@ -46,7 +50,7 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_TYPE_ANONYMOUS = 4; // like new Object() {...}
 
-	private static HashMap<String, HiClass> loadedClasses;
+	public static Map<String, HiClass> loadedClasses;
 
 	public static HiClass OBJECT_CLASS;
 
@@ -57,7 +61,7 @@ public class HiClass implements Codeable {
 	}
 
 	private static void loadSystemClasses() {
-		loadedClasses = new HashMap<>();
+		loadedClasses = new ConcurrentHashMap<>();
 
 		Native.register(SystemImpl.class);
 		Native.register(ObjectImpl.class);
@@ -85,6 +89,7 @@ public class HiClass implements Codeable {
 			load(Compiler.class.getResource("/hilibs/ArrayList.hi"));
 			load(Compiler.class.getResource("/hilibs/HashMap.hi"));
 			load(Compiler.class.getResource("/hilibs/Thread.hi"));
+			load(Compiler.class.getResource("/hilibs/Java.hi"));
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
@@ -448,13 +453,24 @@ public class HiClass implements Codeable {
 		return false;
 	}
 
-	protected HashMap<String, HiField<?>> fields_map;
+	protected HashMap<String, HiField<?>> fieldsMap;
 
-	public HiField<?> getField(String name) {
-		if (fields_map != null && fields_map.containsKey(name)) {
-			return fields_map.get(name);
+	public HiField<?> getField(RuntimeContext ctx, String name) {
+		if (fieldsMap != null && fieldsMap.containsKey(name)) {
+			return fieldsMap.get(name);
 		}
 
+		HiField<?> field = _searchField(ctx, name);
+		if (field != null) {
+			if (fieldsMap == null) {
+				fieldsMap = new HashMap<>();
+			}
+			fieldsMap.put(name, field);
+		}
+		return field;
+	}
+
+	protected HiField<?> _searchField(RuntimeContext ctx, String name) {
 		HiField<?> field = null;
 
 		// this fields
@@ -469,8 +485,8 @@ public class HiClass implements Codeable {
 
 		// interfaces static fields
 		if (field == null && interfaces != null) {
-			for (HiClass in : interfaces) {
-				field = in.getField(name);
+			for (HiClass i : interfaces) {
+				field = i.getField(ctx, name);
 				if (field != null) {
 					break;
 				}
@@ -479,36 +495,29 @@ public class HiClass implements Codeable {
 
 		// super fields
 		if (field == null && superClass != null) {
-			field = superClass.getField(name);
-		}
-
-		if (field != null) {
-			if (fields_map == null) {
-				fields_map = new HashMap<>();
-			}
-			fields_map.put(name, field);
+			field = superClass.getField(ctx, name);
 		}
 		return field;
 	}
 
-	private HashMap<MethodSignature, HiMethod> methods_hash = new HashMap<>();
+	private HashMap<MethodSignature, HiMethod> methodsHash = new HashMap<>();
 
 	// name - interned
 	public HiMethod searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
-		HiMethod method = methods_hash.get(signature);
+		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
 			method = _searchMethod(ctx, name, argTypes);
 			if (method != null) {
-				methods_hash.put(new MethodSignature(signature), method);
+				methodsHash.put(new MethodSignature(signature), method);
 			}
 		}
 		return method;
 	}
 
 	// name - interned
-	private HiMethod _searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	protected HiMethod _searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
 		// this methods
 		if (methods != null && methods.length > 0) {
 			for (HiMethod m : methods)
@@ -603,11 +612,11 @@ public class HiClass implements Codeable {
 	public HiMethod getMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
-		HiMethod method = methods_hash.get(signature);
+		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
 			method = _getMethod(ctx, name, argTypes);
 			if (method != null) {
-				methods_hash.put(new MethodSignature(signature), method);
+				methodsHash.put(new MethodSignature(signature), method);
 			}
 		}
 		return method;
@@ -656,7 +665,22 @@ public class HiClass implements Codeable {
 		return null;
 	}
 
-	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
+	private Map<MethodSignature, HiConstructor> constructorsHash = new HashMap<>();
+
+	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass... argTypes) {
+		MethodSignature signature = new MethodSignature();
+		signature.set("", argTypes);
+		HiConstructor constructor = constructorsHash.get(signature);
+		if (constructor == null) {
+			constructor = _searchConstructor(ctx, argTypes);
+			if (constructor != null) {
+				constructorsHash.put(new MethodSignature(signature), constructor);
+			}
+		}
+		return constructor;
+	}
+
+	protected HiConstructor _searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
 		if (constructors != null) {
 			for (HiConstructor constructor : constructors) {
 				if (matchConstructor(ctx, constructor, argTypes)) {
@@ -664,16 +688,10 @@ public class HiClass implements Codeable {
 				}
 			}
 		}
-		if (isRecord()) {
-			HiClassRecord recordClass = (HiClassRecord) this;
-			if (matchConstructor(ctx, recordClass.defaultConstructor, argTypes)) {
-				return recordClass.defaultConstructor;
-			}
-		}
 		return null;
 	}
 
-	private boolean matchConstructor(RuntimeContext ctx, HiConstructor constructor, HiClass[] argTypes) {
+	protected boolean matchConstructor(RuntimeContext ctx, HiConstructor constructor, HiClass[] argTypes) {
 		int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
 		if (argCount != (argTypes != null ? argTypes.length : 0)) {
 			return false;
@@ -723,6 +741,10 @@ public class HiClass implements Codeable {
 
 	public boolean isObject() {
 		return true;
+	}
+
+	public boolean isJava() {
+		return false;
 	}
 
 	public boolean isEnum() {
@@ -776,21 +798,21 @@ public class HiClass implements Codeable {
 		HiClass cellType = null;
 		if (clazz == HiObject.class || clazz == Object.class) {
 			cellType = HiClass.OBJECT_CLASS;
-		} else if (clazz == Boolean.class) {
+		} else if (clazz == Boolean.class || clazz == boolean.class) {
 			cellType = HiClass.getPrimitiveClass("boolean");
-		} else if (clazz == Character.class) {
+		} else if (clazz == Character.class || clazz == char.class) {
 			cellType = HiClass.getPrimitiveClass("char");
-		} else if (clazz == Byte.class) {
+		} else if (clazz == Byte.class || clazz == byte.class) {
 			cellType = HiClass.getPrimitiveClass("byte");
-		} else if (clazz == Short.class) {
+		} else if (clazz == Short.class || clazz == short.class) {
 			cellType = HiClass.getPrimitiveClass("short");
-		} else if (clazz == Integer.class) {
+		} else if (clazz == Integer.class || clazz == int.class) {
 			cellType = HiClass.getPrimitiveClass("int");
-		} else if (clazz == Float.class) {
+		} else if (clazz == Float.class || clazz == float.class) {
 			cellType = HiClass.getPrimitiveClass("float");
-		} else if (clazz == Long.class) {
+		} else if (clazz == Long.class || clazz == long.class) {
 			cellType = HiClass.getPrimitiveClass("long");
-		} else if (clazz == Double.class) {
+		} else if (clazz == Double.class || clazz == double.class) {
 			cellType = HiClass.getPrimitiveClass("double");
 		}
 		cellTypes.put(clazz, cellType);
@@ -1014,5 +1036,12 @@ public class HiClass implements Codeable {
 
 	public boolean isTopLevel() {
 		return enclosingClass == null || enclosingClass.name == "@root";
+	}
+
+	public Class getJavaClass() {
+		if (fullName.equals("String")) {
+			return String.class;
+		}
+		return null;
 	}
 }

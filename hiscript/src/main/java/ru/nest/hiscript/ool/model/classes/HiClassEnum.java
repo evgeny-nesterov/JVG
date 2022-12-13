@@ -83,4 +83,9 @@ public class HiClassEnum extends HiClass {
 		enumClass.enumValues = os.readList(HiEnumValue.class, os.readShort());
 		return enumClass;
 	}
+
+	@Override
+	public Class getJavaClass() {
+		return null;
+	}
 }

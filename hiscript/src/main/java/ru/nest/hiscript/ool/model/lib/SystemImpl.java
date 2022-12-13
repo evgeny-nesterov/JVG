@@ -23,7 +23,7 @@ public class SystemImpl extends ImplUtil {
 	// System
 	public static void System_void_loadLib_String(RuntimeContext ctx, HiObject path) {
 		try {
-			String p = ImplUtil.getString(path);
+			String p = ImplUtil.getString(ctx, path);
 
 			URL url = SystemImpl.class.getResource(p);
 
@@ -73,7 +73,7 @@ public class SystemImpl extends ImplUtil {
 	public static void System_void_print_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");
-		char[] chars = ImplUtil.getChars(string);
+		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.print(chars);
 		}
@@ -82,7 +82,7 @@ public class SystemImpl extends ImplUtil {
 	public static void System_void_println_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");
-		char[] chars = ImplUtil.getChars(string);
+		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.println(chars);
 		}
@@ -112,7 +112,7 @@ public class SystemImpl extends ImplUtil {
 	}
 
 	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {
-		char[] chars = ImplUtil.getChars(formatPatternObj);
+		char[] chars = ImplUtil.getChars(ctx, formatPatternObj);
 		SimpleDateFormat format = new SimpleDateFormat(new String(chars));
 		chars = format.format(new Date(time)).toCharArray();
 		NodeString.createString(ctx, chars);
@@ -120,7 +120,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {
 		try {
-			String text = getString(code);
+			String text = getString(ctx, code);
 			Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(text);
 
 			CompileContext compileCtx;

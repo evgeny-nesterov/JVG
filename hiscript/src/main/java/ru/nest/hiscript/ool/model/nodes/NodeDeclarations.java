@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeDeclarations extends Node {
 	public NodeDeclarations() {
@@ -20,13 +20,13 @@ public class NodeDeclarations extends Node {
 		return field;
 	}
 
-	private List<Node> declarations = new ArrayList<>();
+	private List<NodeDeclaration> declarations = new ArrayList<>();
 
 	@Override
 	public void execute(RuntimeContext ctx) {
 		int size = declarations.size();
 		for (int i = 0; i < size; i++) {
-			Node declaration = declarations.get(i);
+			NodeDeclaration declaration = declarations.get(i);
 			declaration.execute(ctx);
 
 			if (ctx.exitFromBlock()) {
@@ -44,7 +44,7 @@ public class NodeDeclarations extends Node {
 
 	public static NodeDeclarations decode(DecodeContext os) throws IOException {
 		NodeDeclarations node = new NodeDeclarations();
-		node.declarations = os.readList(Node.class, os.readShort());
+		node.declarations = os.readNodesList(NodeDeclaration.class, os.readShort());
 		return node;
 	}
 }

@@ -137,15 +137,17 @@ public class Value implements PrimitiveTypes {
 		return object;
 	}
 
-	public void set(Object value) {
+	public boolean set(Object value) {
 		if (value instanceof HiObject || value == null) {
 			valueType = VALUE;
 			if (value != null) {
 				object = (HiObject) value;
 				type = object.clazz;
+				return true;
 			} else {
 				object = null;
 				type = HiClass.OBJECT_CLASS;
+				return true;
 			}
 		} else {
 			// arrays
@@ -154,41 +156,51 @@ public class Value implements PrimitiveTypes {
 				valueType = VALUE;
 				type = HiClass.getArrayType(clazz);
 				array = value;
+				return true;
 			}
 			// primitives
 			else if (value instanceof Double) {
 				valueType = VALUE;
 				doubleNumber = (Double) value;
 				type = HiClass.getPrimitiveClass("double");
+				return true;
 			} else if (value instanceof Float) {
 				valueType = VALUE;
 				floatNumber = (Float) value;
 				type = HiClass.getPrimitiveClass("float");
+				return true;
 			} else if (value instanceof Long) {
 				valueType = VALUE;
 				longNumber = (Long) value;
 				type = HiClass.getPrimitiveClass("long");
+				return true;
 			} else if (value instanceof Integer) {
 				valueType = VALUE;
 				intNumber = (Integer) value;
 				type = HiClass.getPrimitiveClass("int");
+				return true;
 			} else if (value instanceof Short) {
 				valueType = VALUE;
 				shortNumber = (Short) value;
 				type = HiClass.getPrimitiveClass("short");
+				return true;
 			} else if (value instanceof Byte) {
 				valueType = VALUE;
 				byteNumber = (Byte) value;
 				type = HiClass.getPrimitiveClass("byte");
+				return true;
 			} else if (value instanceof Character) {
 				valueType = VALUE;
 				character = (Character) value;
 				type = HiClass.getPrimitiveClass("char");
+				return true;
 			} else if (value instanceof Boolean) {
 				valueType = VALUE;
 				bool = (Boolean) value;
 				type = HiClass.getPrimitiveClass("boolean");
+				return true;
 			}
+			return false;
 		}
 	}
 
@@ -200,10 +212,10 @@ public class Value implements PrimitiveTypes {
 		return object;
 	}
 
-	public String getString() {
+	public String getStringValue(RuntimeContext ctx) {
 		HiObject object = getObject();
 		if (object != null) {
-			return object.getStringValue();
+			return object.getStringValue(ctx);
 		}
 		return null;
 	}
@@ -498,7 +510,7 @@ public class Value implements PrimitiveTypes {
 
 		boolean isString = object.clazz.fullName != null && "String".equals(object.clazz.fullName);
 		if (isString) {
-			return ImplUtil.getChars(object);
+			return ImplUtil.getChars(ctx, object);
 		}
 
 		char[] toString = object.toString(ctx);

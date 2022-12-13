@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
+
+import java.io.IOException;
 
 public abstract class Operation implements PrimitiveTypes, OperationsIF {
 	protected Operation(String name, int operandsCount, int operation) {
@@ -48,6 +48,10 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return increment;
 	}
 
+	public void getOperationResultType(ValidationContext ctx, HiClass... types) {
+		// TODO
+	}
+
 	public abstract void doOperation(RuntimeContext ctx, Value... values);
 
 	public int doOperation(RuntimeContext ctx, int index, Value... values) {
@@ -62,6 +66,23 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 
 			case 3:
 				doOperation(ctx, values[index - 3], values[index - 2], values[index - 1]);
+				return index - 3;
+		}
+		return index;
+	}
+
+	public int getOperationResultType(ValidationContext ctx, int index, HiClass... types) {
+		switch (operandsCount) {
+			case 1:
+				getOperationResultType(ctx, types[index - 1]);
+				return index;
+
+			case 2:
+				getOperationResultType(ctx, types[index - 2], types[index - 1]);
+				return index - 1;
+
+			case 3:
+				getOperationResultType(ctx, types[index - 3], types[index - 2], types[index - 1]);
 				return index - 3;
 		}
 		return index;

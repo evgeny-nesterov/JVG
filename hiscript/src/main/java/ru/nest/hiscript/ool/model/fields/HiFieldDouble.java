@@ -15,7 +15,7 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 		if (valueType == DOUBLE) {
 			value.doubleNumber = this.value;
 		} else {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 		}
 	}
 
@@ -54,6 +54,11 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	@Override
 	public Double get() {
+		return value;
+	}
+
+	@Override
+	public Object getJava(RuntimeContext ctx) {
 		return value;
 	}
 }

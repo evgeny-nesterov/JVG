@@ -27,6 +27,8 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testIf() {
 		assertSuccessSerialize("int x = 0; if (x == 0) x++; assert x == 1;");
+		assertSuccessSerialize("if (false) assert false;");
+		assertSuccessSerialize("if (true);");
 		assertSuccessSerialize("int x = 0; if (x != 0) {x++;} assert x == 0;");
 		assertSuccessSerialize("int x = 0; if (x != 0) {x = -1;} else {x = 1;} assert x == 1;");
 		assertSuccessSerialize("int x = 2; if (x == 0) {assert false;} else if(x == 1) {assert false;} else x++; assert x == 3;");
@@ -65,6 +67,22 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("new Object().toString();");
 		assertSuccessSerialize("assert new Object(){String toString(){return \"a\";}}.toString().equals(\"a\");");
 		assertSuccessSerialize("assert (new int[]{1})[0] == 1;");
+		assertSuccessSerialize("class A{} new A();");
+		assertSuccessSerialize("class A{A(int x){}} new A(1);");
 		// FAIL assertSuccessSerialize("assert (new int[1])[0] == 0;");
+	}
+
+	@Test
+	public void testBreakContinue() {
+		assertSuccess("A:{if(true) break A; assert false;};");
+		assertSuccess("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
+		assertSuccess("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
+		assertSuccess("for (int i = 0; i < 10; i++) BLOCK: {if(i<10) continue BLOCK; assert false;}");
+	}
+
+	@Test
+	public void testVar() {
+		// TODO
+		// assertSuccess("var a = 1;");
 	}
 }

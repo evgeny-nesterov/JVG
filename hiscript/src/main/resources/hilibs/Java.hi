@@ -1,0 +1,7 @@
+public class Java {
+    static {
+        System.loadLib("JavaImpl.class");
+    }
+
+    public static native void importClass(String className, String javaClassName);
+}

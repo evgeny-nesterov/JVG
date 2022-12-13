@@ -279,7 +279,7 @@ public class RuntimeContext {
 			HiObject object = getCurrentObject();
 			if (object != null) {
 				object = object.getMainObject();
-				var = object.getField(name);
+				var = object.getField(this, name);
 			}
 		}
 
@@ -287,7 +287,7 @@ public class RuntimeContext {
 		if (var == null) {
 			HiClass enclosingClass = getCurrentClass();
 			if (enclosingClass != null) {
-				HiField<?> field = enclosingClass.getField(name);
+				HiField<?> field = enclosingClass.getField(this, name);
 				if (field != null && field.isStatic()) {
 					var = field;
 				}
@@ -740,18 +740,18 @@ public class RuntimeContext {
 			array[i] = steConstructor.newInstance(this, null, null);
 
 			NodeString.createString(this, level.clazz.fullName.toCharArray());
-			array[i].getField("className").set(this, value);
+			array[i].getField(this, "className").set(this, value);
 
 			if (level.method != null) {
 				NodeString.createString(this, level.method.toString().toCharArray());
-				array[i].getField("methodName").set(this, value);
+				array[i].getField(this, "methodName").set(this, value);
 			} else {
 				NodeString.createString(this, "<init>".toCharArray());
-				array[i].getField("methodName").set(this, value);
+				array[i].getField(this, "methodName").set(this, value);
 			}
 
 			new NodeInt(level.codeLine, false).execute(this);
-			array[i].getField("line").set(this, value);
+			array[i].getField(this, "line").set(this, value);
 
 			// TODO: set codeLine for StackTraceElement in RuntimeContext, at the current moment codeLine=-1
 		}
@@ -775,16 +775,16 @@ public class RuntimeContext {
 
 	public void throwExceptionIf(boolean printStackTrace) {
 		if (exception != null) {
-			HiField<?> messageField = exception.getMainObject().getField("message");
-			String message = messageField.getStringValue();
+			HiField<?> messageField = exception.getMainObject().getField(this, "message");
+			String message = messageField.getStringValue(this);
 			if (printStackTrace) {
-				HiField<?> stackTraceField = exception.getMainObject().getField("stackTrace");
+				HiField<?> stackTraceField = exception.getMainObject().getField(this, "stackTrace");
 				HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
 				System.out.println("hiscript error: " + message);
 				for (HiObject stackTraceElement : stackTraceElements) {
-					String className = stackTraceElement.getField("className").getStringValue();
-					String methodName = stackTraceElement.getField("methodName").getStringValue();
-					Integer line = (Integer) stackTraceElement.getField("line").get();
+					String className = stackTraceElement.getField(this, "className").getStringValue(this);
+					String methodName = stackTraceElement.getField(this, "methodName").getStringValue(this);
+					Integer line = (Integer) stackTraceElement.getField(this, "line").get();
 					System.out.print("\t" + className + "." + methodName);
 					if (line >= 0) {
 						System.out.print(":" + line);

@@ -35,7 +35,7 @@ public class NodeAssert extends Node {
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-				message = ctx.value.getString();
+				message = ctx.value.getStringValue(ctx);
 			} else {
 				message = "Assert failed";
 			}

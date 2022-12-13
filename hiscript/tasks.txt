@@ -15,9 +15,9 @@
         +10. Add asserts
 *11. Add throws for methods, require catch or method throws for non-runtime exceptions
 12. Annotations
-!13. Auto binding to native java classes
+*13. Import native java classes, create instances, invoke methods and read fields
 !14. Allow Iterable for(:) (currently only arrays)
-15. Add var
+*15. Add var
 		+16. Switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN> -> <bodyExpr>)
         +17. Multiple case in statement switch (case <expr1>, <expr2>, ..., <exprN>: <statementBody>)
         +18. Assert (assert condition, or assert condition : message)

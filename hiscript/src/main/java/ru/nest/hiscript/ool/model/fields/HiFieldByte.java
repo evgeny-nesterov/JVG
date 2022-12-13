@@ -38,7 +38,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -73,12 +73,17 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 						break;
 				}
 			}
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 		}
 	}
 
 	@Override
 	public Byte get() {
+		return value;
+	}
+
+	@Override
+	public Object getJava(RuntimeContext ctx) {
 		return value;
 	}
 }

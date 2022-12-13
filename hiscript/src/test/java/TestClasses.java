@@ -62,7 +62,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{int get(){return 1;}} class B extends A{int get(){return super.get() + 1;}} assert new A().get() == 1; assert new B().get() == 2; ");
 
 		// null value
-		assertSuccessSerialize("class A{String a(String arg){}} new A().a(null); ");
+		assertSuccessSerialize("class A{String a(int x, String arg){}} new A().a(0, null); ");
 	}
 
 	@Test

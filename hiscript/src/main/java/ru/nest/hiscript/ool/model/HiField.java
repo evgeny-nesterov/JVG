@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
@@ -63,6 +64,8 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	public abstract T get();
 
+	public abstract Object getJava(RuntimeContext ctx);
+
 	public abstract void set(RuntimeContext ctx, Value value);
 
 	private Modifiers modifiers = new Modifiers();
@@ -77,7 +80,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	public Type type;
 
-	private HiClass clazz;
+	protected HiClass clazz;
 
 	public HiClass getClass(RuntimeContext ctx) {
 		if (clazz == null) {
@@ -151,6 +154,10 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 			return new HiFieldArray(type, name);
 		}
 
+		if (type == Type.varType) {
+			return new HiFieldVar(type, name);
+		}
+
 		if (!type.isPrimitive()) {
 			return new HiFieldObject(type, name);
 		}
@@ -170,6 +177,8 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 		HiField<?> field = null;
 		if (type.isArray()) {
 			field = new HiFieldArray(type, name);
+		} else if (type == Type.varType) {
+			field = new HiFieldVar(type, name);
 		} else if (type.isPrimitive()) {
 			java.lang.reflect.Constructor<HiField<?>> constr = getConstructor(type.name);
 			try {
@@ -215,7 +224,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 			if (asrc.dimension != adst.dimension) {
 				return false;
 			}
-
 			return autoCast(asrc.cellClass, adst.cellClass);
 		}
 		return src.isInstanceof(dst);
@@ -238,10 +246,13 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	@Override
 	public String toString() {
-		return getClass(null).fullName + " " + name + " = " + get();
+		RuntimeContext ctx = new RuntimeContext(true);
+		String value = getClass(ctx).fullName + " " + name + " = " + get();
+		ctx.throwExceptionIf(false);
+		return value;
 	}
 
-	public String getStringValue() {
-		return ((HiObject) get()).getStringValue();
+	public String getStringValue(RuntimeContext ctx) {
+		return ((HiObject) get()).getStringValue(ctx);
 	}
 }

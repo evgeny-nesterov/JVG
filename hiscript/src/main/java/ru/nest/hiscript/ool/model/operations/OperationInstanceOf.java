@@ -44,7 +44,7 @@ public class OperationInstanceOf extends BinaryOperation {
 						return;
 					}
 					for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
-						HiField castedField = v1.object.getField(castedRecordArgument.name, c2);
+						HiField castedField = v1.object.getField(ctx, castedRecordArgument.name, c2);
 						ctx.addVariable(castedField);
 					}
 				}

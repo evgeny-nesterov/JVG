@@ -26,7 +26,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -55,13 +55,18 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
 		}
 	}
 
 	@Override
 	public Long get() {
+		return value;
+	}
+
+	@Override
+	public Object getJava(RuntimeContext ctx) {
 		return value;
 	}
 }

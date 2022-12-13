@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
@@ -34,75 +33,7 @@ public class NodeExpressionSwitch extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		valueNode.execute(ctx);
-		if (ctx.exitFromBlock()) {
-			return;
-		}
-
-		int index = -1;
-		int value = ctx.value.getInt();
-		if (ctx.exitFromBlock()) {
-			return;
-		}
-		if (ctx.value.type.isPrimitive()) {
-			FOR:
-			for (int i = 0; i < size; i++) {
-				Node[] caseValueNodes = casesValues.get(i);
-				if (caseValueNodes != null && caseValueNodes.length > 0) {
-					for (int j = 0; j < caseValueNodes.length; j++) {
-						Node caseValueNode = caseValueNodes[j];
-						caseValueNode.execute(ctx);
-						if (ctx.exitFromBlock()) {
-							return;
-						}
-
-						int caseValue = ctx.value.getInt();
-						if (ctx.exitFromBlock()) {
-							return;
-						}
-
-						if (value == caseValue) {
-							index = i;
-							break FOR;
-						}
-					}
-				} else {
-					// default node
-					index = i;
-					break;
-				}
-			}
-		} else if (ctx.value.type.isObject()) {
-			HiObject object = ctx.value.object;
-			FOR:
-			for (int i = 0; i < size; i++) {
-				Node[] caseValueNodes = casesValues.get(i);
-				if (caseValueNodes != null && caseValueNodes.length > 0) {
-					for (int j = 0; j < caseValueNodes.length; j++) {
-						Node caseValueNode = caseValueNodes[j];
-						caseValueNode.execute(ctx);
-						if (ctx.exitFromBlock()) {
-							return;
-						}
-
-						if (ctx.value.type.isObject()) {
-							if (object.equals(ctx, ctx.value.object)) {
-								index = i;
-								break FOR;
-							}
-							if (ctx.exitFromBlock()) {
-								return;
-							}
-						}
-					}
-				} else {
-					// default node
-					index = i;
-					break;
-				}
-			}
-		}
-
+		int index = NodeSwitch.getCaseIndex(ctx, valueNode, size, casesValues);
 		if (index >= 0) {
 			ctx.enter(RuntimeContext.SWITCH, line);
 			try {

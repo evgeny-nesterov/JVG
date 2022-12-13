@@ -65,7 +65,6 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 						field = declarations.add(type, varName, initializer, modifiers);
 						properties.addLocalVariable(field);
 					}
-
 					return declarations;
 				}
 			}

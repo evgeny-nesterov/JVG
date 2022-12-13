@@ -196,7 +196,7 @@ public class HiConstructor implements Codeable {
 							if (!initializer.isStatic()) {
 								if (initializer instanceof HiField<?>) {
 									HiField<?> field = (HiField<?>) initializer;
-									initializer = object.getField(field.name);
+									initializer = object.getField(ctx, field.name);
 								}
 
 								initializer.execute(ctx);

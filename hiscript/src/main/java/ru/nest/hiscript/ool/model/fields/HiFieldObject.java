@@ -62,6 +62,11 @@ public class HiFieldObject extends HiField<HiObject> {
 		return object;
 	}
 
+	@Override
+	public Object getJava(RuntimeContext ctx) {
+		return object.getJavaValue(ctx);
+	}
+
 	public void set(HiObject object) {
 		declared = true;
 		this.object = object;

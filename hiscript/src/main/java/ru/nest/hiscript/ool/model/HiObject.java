@@ -5,7 +5,9 @@ import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HiObject {
@@ -65,10 +67,10 @@ public class HiObject {
 		return null;
 	}
 
-	private Map<HiClass, Map<String, HiField<?>>> fields_map;
+	private Map<HiClass, Map<String, HiField<?>>> fieldsMap;
 
-	public HiField<?> getField(String name) {
-		return getField(name, clazz);
+	public HiField<?> getField(RuntimeContext ctx, String name) {
+		return getField(ctx, name, clazz);
 	}
 
 	/**
@@ -77,11 +79,11 @@ public class HiObject {
 	 *            Super class, one of interfaces or super interfaces
 	 * @return
 	 */
-	public HiField<?> getField(String name, HiClass clazz) {
-		if (fields_map != null) {
-			Map<String, HiField<?>> class_fields_map = fields_map.get(clazz);
-			if (class_fields_map != null) {
-				HiField<?> field = class_fields_map.get(name);
+	public HiField<?> getField(RuntimeContext ctx, String name, HiClass clazz) {
+		if (fieldsMap != null) {
+			Map<String, HiField<?>> classFieldsMap = fieldsMap.get(clazz);
+			if (classFieldsMap != null) {
+				HiField<?> field = classFieldsMap.get(name);
 				if (field != null) {
 					return field;
 				}
@@ -89,63 +91,66 @@ public class HiObject {
 		}
 
 		HiField<?> field = null;
-
-		// this
-		if (fields != null && clazz == this.clazz) {
-			for (HiField<?> f : fields) {
-				if (f.name.equals(name)) {
-					field = f;
-					break;
+		if (!clazz.isJava()) {
+			// this
+			if (fields != null && clazz == this.clazz) {
+				for (HiField<?> f : fields) {
+					if (f.name.equals(name)) {
+						field = f;
+						break;
+					}
 				}
 			}
-		}
 
-		// static: class fields
-		if (field == null) {
-			field = clazz.getField(name);
-			if (field != null && !field.isStatic()) {
-				field = null;
+			// static: class fields
+			if (field == null) {
+				field = clazz.getField(ctx, name);
+				if (field != null && !field.isStatic()) {
+					field = null;
+				}
 			}
-		}
 
-		// super object (after this)
-		if (field == null && superObject != null) {
-			field = superObject.getField(name);
-		}
-
-		// static: super class
-		if (field == null && clazz.superClass != null) {
-			field = clazz.superClass.getField(name);
-			if (field != null && !field.isStatic()) {
-				field = null;
+			// super object (after this)
+			if (field == null && superObject != null) {
+				field = superObject.getField(ctx, name);
 			}
-		}
 
-		// outbound object (after super)
-		if (field == null && outboundObject != null) {
-			field = outboundObject.getField(name);
-		}
-
-		// static: outbound class
-		if (field == null && !clazz.isTopLevel()) {
-			field = clazz.enclosingClass.getField(name);
-			if (field != null && !field.isStatic()) {
-				field = null;
+			// static: super class
+			if (field == null && clazz.superClass != null) {
+				field = clazz.superClass.getField(ctx, name);
+				if (field != null && !field.isStatic()) {
+					field = null;
+				}
 			}
+
+			// outbound object (after super)
+			if (field == null && outboundObject != null) {
+				field = outboundObject.getField(ctx, name);
+			}
+
+			// static: outbound class
+			if (field == null && !clazz.isTopLevel()) {
+				field = clazz.enclosingClass.getField(ctx, name);
+				if (field != null && !field.isStatic()) {
+					field = null;
+				}
+			}
+		} else {
+			field = clazz.getField(ctx, name);
 		}
 
 		// cache
 		if (field != null) {
-			if (fields_map == null) {
-				fields_map = new HashMap<>(1);
+			if (fieldsMap == null) {
+				fieldsMap = new HashMap<>(1);
 			}
 
-			Map<String, HiField<?>> class_fields_map = fields_map.get(clazz);
-			if (class_fields_map == null) {
-				class_fields_map = new HashMap<>(1);
-				fields_map.put(clazz, class_fields_map);
+			Map<String, HiField<?>> classFieldsMap = fieldsMap.get(clazz);
+			if (classFieldsMap == null) {
+				classFieldsMap = new HashMap<>(1);
+				fieldsMap.put(clazz, classFieldsMap);
 			}
-			class_fields_map.put(name, field);
+			classFieldsMap.put(name, field);
 		}
 		return field;
 	}
@@ -171,25 +176,40 @@ public class HiObject {
 			ctx.exit();
 			ctx.isReturn = false;
 		}
-		return ImplUtil.getString(ctx.value.object);
+		return ImplUtil.getString(ctx, ctx.value.object);
 	}
 
 	// overridden toString
 	public char[] toString(RuntimeContext ctx) {
 		NodeInvocation.invoke(ctx, this, "toString");
-		return ImplUtil.getChars(ctx.value.object);
+		return ImplUtil.getChars(ctx, ctx.value.object);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof HiObject)) {
+			return false;
+		}
+		return equals(ctx, (HiObject) object);
 	}
 
 	public boolean equals(RuntimeContext ctx, HiObject object) {
+		if (this == object) {
+			return true;
+		}
+
 		HiClass objectClass = HiClass.forName(ctx, "Object");
 		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
-		HiField objectField = new HiFieldObject(Type.objectType, equalsMethod.argNames[0], object);
+		if (equalsMethod == null) {
+			return this == object;
+		}
 
 		// enter into method
 		ctx.enterMethod(equalsMethod, this, -1);
 		boolean result;
 		try {
 			// register variables in method
+			HiField objectField = new HiFieldObject(Type.objectType, equalsMethod.argNames[0], object);
 			ctx.addVariable(objectField);
 
 			// perform method invocation
@@ -230,7 +250,44 @@ public class HiObject {
 		return ctx.value.intNumber;
 	}
 
-	public String getStringValue() {
-		return new String((char[]) getField("chars").get());
+	public String getStringValue(RuntimeContext ctx) {
+		return new String((char[]) getField(ctx, "chars").get());
+	}
+
+	public Object getJavaValue(RuntimeContext ctx) {
+		switch (clazz.fullName) {
+			case "String":
+				return getStringValue(ctx);
+			case "HashMap":
+				Map<?, ?> map = (Map<?, ?>) userObject;
+				Map javaMap = new HashMap(map.size());
+				for (Map.Entry<?, ?> e : map.entrySet()) {
+					Object key = getJavaValue(ctx, e.getKey());
+					Object value = getJavaValue(ctx, e.getValue());
+					javaMap.put(key, value);
+				}
+				return map;
+			case "ArrayList":
+				List<?> list = (List<?>) userObject;
+				List javaList = new ArrayList(list.size());
+				for (Object value : list) {
+					javaList.add(getJavaValue(ctx, value));
+				}
+				return list;
+		}
+		if (clazz.isJava()) {
+			return userObject;
+		}
+		// TODO Non-convertible to java value error?
+		return null;
+	}
+
+	public static Object getJavaValue(RuntimeContext ctx, Object value) {
+		if (value instanceof HiObject) {
+			HiObject object = (HiObject) value;
+			return object.getJavaValue(ctx);
+		} else {
+			return value;
+		}
 	}
 }

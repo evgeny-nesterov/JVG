@@ -2,9 +2,12 @@ package ru.nest.hiscript.ool.model.fields;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+
+import java.lang.reflect.Array;
 
 public class HiFieldArray extends HiField<Object> {
 	public HiFieldArray(Type type, String name) {
@@ -59,5 +62,44 @@ public class HiFieldArray extends HiField<Object> {
 	@Override
 	public Object get() {
 		return array;
+	}
+
+	@Override
+	public Object getJava(RuntimeContext ctx) {
+		Class javaClass = arrayType.getJavaClass();
+		if (javaClass != null) {
+			Class roolCellClass = javaClass;
+			while (roolCellClass.isArray()) {
+				roolCellClass = javaClass.getComponentType();
+			}
+			if (roolCellClass.isPrimitive()) {
+				return array;
+			} else {
+				return getJavaArray(ctx, array, javaClass.getComponentType());
+			}
+		}
+		return null;
+	}
+
+	private Object getJavaArray(RuntimeContext ctx, Object array, Class cellClass) {
+		int length = Array.getLength(array);
+		Object javaArray = Array.newInstance(cellClass, length);
+		for (int i = 0; i < length; i++) {
+			Object cellValue = Array.get(array, i);
+			if (cellValue == null) {
+				continue;
+			}
+			Object javaCellValue = null;
+			if (cellClass.isArray()) {
+				javaCellValue = getJavaArray(ctx, cellValue, cellClass.getComponentType());
+			} else {
+				HiObject cellObject = (HiObject) cellValue;
+				if (cellObject.clazz.fullName.equals("String")) {
+					javaCellValue = cellObject.getStringValue(ctx);
+				}
+			}
+			Array.set(array, i, javaCellValue);
+		}
+		return javaArray;
 	}
 }

@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive CHAR = new HiClassPrimitive("char");
@@ -27,10 +27,11 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive VOID = new HiClassPrimitive("void");
 
 	private HiClassPrimitive(String name) {
-		super((HiClass) null, null, name, CLASS_TYPE_TOP);
+		super(null, null, name, CLASS_TYPE_TOP);
 	}
 
 	private static HashMap<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
+
 	static {
 		primitiveClasses.put("char", CHAR);
 		primitiveClasses.put("boolean", BOOLEAN);
@@ -66,5 +67,28 @@ public class HiClassPrimitive extends HiClass {
 
 	public static HiClass decode(DecodeContext os) throws IOException {
 		return getPrimitiveClass(os.readUTF());
+	}
+
+	@Override
+	public Class getJavaClass() {
+		switch (name) {
+			case "short":
+				return short.class;
+			case "byte":
+				return byte.class;
+			case "int":
+				return int.class;
+			case "long":
+				return long.class;
+			case "double":
+				return double.class;
+			case "float":
+				return float.class;
+			case "char":
+				return char.class;
+			case "boolean":
+				return boolean.class;
+		}
+		return null;
 	}
 }

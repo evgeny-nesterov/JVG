@@ -283,6 +283,14 @@ public class DecodeContext {
 		return list;
 	}
 
+	public <N extends Node> List<N> readNodesList(Class<N> type, int size) throws IOException {
+		List<N> list = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			list.add((N) read(Node.class));
+		}
+		return list;
+	}
+
 	public <N> N[] readArray(Class<N> type, int size) throws IOException {
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {

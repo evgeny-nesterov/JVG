@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
+
+import java.io.IOException;
 
 public class NodeString extends Node {
 	public NodeString(String text) {
@@ -34,7 +34,7 @@ public class NodeString extends Node {
 
 		HiObject obj = constructor.newInstance(ctx, null, null);
 		if (obj != null) {
-			HiFieldArray chars = (HiFieldArray) obj.getField("chars");
+			HiFieldArray chars = (HiFieldArray) obj.getField(ctx, "chars");
 			chars.array = text;
 		}
 		return obj;

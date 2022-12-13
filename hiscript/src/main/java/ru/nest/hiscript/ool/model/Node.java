@@ -162,6 +162,13 @@ public abstract class Node implements Codeable {
 		return name;
 	}
 
+	public HiClass getValueType(ValidationContext ctx) {
+		return null;
+	}
+
+	public void validate(ValidationContext ctx) {
+	}
+
 	public abstract void execute(RuntimeContext ctx);
 
 	@Override

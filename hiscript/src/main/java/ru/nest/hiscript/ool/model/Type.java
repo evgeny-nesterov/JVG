@@ -18,7 +18,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static int ARRAY = 2;
 
-	private static HashMap<String, Type> predefinedTypes = new HashMap<>();
+	private static Map<String, Type> predefinedTypes = new HashMap<>();
 
 	static {
 		predefinedTypes.put("char", new Type("char"));
@@ -29,7 +29,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		predefinedTypes.put("float", new Type("float"));
 		predefinedTypes.put("long", new Type("long"));
 		predefinedTypes.put("double", new Type("double"));
-		predefinedTypes.put("void", new Type("void"));
+		predefinedTypes.put("void", voidType = new Type("void"));
 		predefinedTypes.put("null", new Type("null"));
 	}
 
@@ -297,7 +297,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 		if (clazz.isArray()) {
 			HiClassArray arrayClass = (HiClassArray) clazz;
-			Type cellType = getTypeByFullName(arrayClass.cellClass.fullName);
+			int index = 0;
+			while (arrayClass.cellClass.fullName.charAt(index) == '0') {
+				index++;
+			}
+			Type cellType = getTypeByFullName(arrayClass.cellClass.fullName.substring(index));
 			return getArrayType(cellType, arrayClass.dimension);
 		}
 		if (clazz.isNull()) {
@@ -396,5 +400,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static Type stringType = getTopType("String");
 
-	public final static Type voidType = getTopType("void");
+	public final static Type voidType;
+
+	public final static Type varType = new Type("var");
 }

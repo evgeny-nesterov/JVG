@@ -22,7 +22,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -55,13 +55,18 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			case DOUBLE:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
 		}
 	}
 
 	@Override
 	public Float get() {
+		return value;
+	}
+
+	@Override
+	public Object getJava(RuntimeContext ctx) {
 		return value;
 	}
 }

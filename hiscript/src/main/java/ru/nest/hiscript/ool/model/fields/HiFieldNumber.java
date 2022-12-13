@@ -12,13 +12,13 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	@Override
 	public final void get(RuntimeContext ctx, Value value) {
 		if (!value.type.isPrimitive()) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 
 		int valueType = getType(value.type);
 		if (valueType == BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 
@@ -34,13 +34,13 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	public final void set(RuntimeContext ctx, Value value) {
 		declared = true;
 		if (!value.type.isPrimitive()) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 
 		int valueType = getType(value.type);
 		if (valueType == BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.name);
+			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 

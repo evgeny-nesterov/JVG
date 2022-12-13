@@ -20,7 +20,7 @@ public class ClassImpl extends ImplUtil {
 	}
 
 	public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {
-		String name = getString(string);
+		String name = getString(ctx, string);
 		HiClass clazz = HiClass.forName(ctx, name);
 
 		ctx.value.valueType = Value.VALUE;

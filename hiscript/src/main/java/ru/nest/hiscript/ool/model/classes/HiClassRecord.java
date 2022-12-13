@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -36,6 +37,17 @@ public class HiClassRecord extends HiClass {
 	}
 
 	@Override
+	protected HiConstructor _searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
+		HiConstructor constructor = super._searchConstructor(ctx, argTypes);
+		if (constructor == null) {
+			if (matchConstructor(ctx, defaultConstructor, argTypes)) {
+				constructor = defaultConstructor;
+			}
+		}
+		return constructor;
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		code(os, CLASS_RECORD);
 		os.write(defaultConstructor);
@@ -46,5 +58,10 @@ public class HiClassRecord extends HiClass {
 		recordClass.defaultConstructor = os.read(HiConstructor.class);
 		recordClass.defaultConstructor.clazz = recordClass;
 		return recordClass;
+	}
+
+	@Override
+	public Class getJavaClass() {
+		return null;
 	}
 }

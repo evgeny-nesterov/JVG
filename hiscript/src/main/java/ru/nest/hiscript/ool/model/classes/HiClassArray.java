@@ -13,6 +13,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassArray extends HiClass {
 	public HiClass cellClass;
@@ -98,5 +100,84 @@ public class HiClassArray extends HiClass {
 		// assumed cell class is already read
 		HiClass cellClass = os.readClass();
 		return getArrayClass(cellClass);
+	}
+
+	private static Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
+
+	@Override
+	public Class getJavaClass() {
+		Class javaClass = javaClassesMap.get(this);
+		if (javaClass != null) {
+			return javaClass;
+		}
+
+		HiClass rootCellClass = cellClass;
+		while (rootCellClass.isArray()) {
+			rootCellClass = ((HiClassArray) rootCellClass).cellClass;
+		}
+		Class javaRootCellClass = cellClass.getJavaClass();
+		if (javaRootCellClass != null) {
+			String name = "";
+			for (int i = 0; i < dimension; i++) {
+				name += '[';
+			}
+			if (javaRootCellClass.isPrimitive()) {
+				if (javaRootCellClass == boolean.class) {
+					name += "Z";
+				} else if (javaRootCellClass == byte.class) {
+					name += "B";
+				} else if (javaRootCellClass == char.class) {
+					name += "C";
+				} else if (javaRootCellClass == double.class) {
+					name += "D";
+				} else if (javaRootCellClass == float.class) {
+					name += "F";
+				} else if (javaRootCellClass == int.class) {
+					name += "I";
+				} else if (javaRootCellClass == long.class) {
+					name += "J";
+				} else if (javaRootCellClass == short.class) {
+					name += "S";
+				}
+			} else {
+				name += "L" + javaRootCellClass.getName() + ";";
+			}
+			try {
+				javaClass = Class.forName(name);
+				javaClassesMap.put(this, javaClass);
+				return javaClass;
+			} catch (ClassNotFoundException e) {
+			}
+		}
+		return null;
+	}
+
+	public static Class<?> getArrayClass(Class<?> componentType) throws ClassNotFoundException {
+		ClassLoader classLoader = componentType.getClassLoader();
+		String name;
+		if (componentType.isArray()) {
+			// just add a leading "["
+			name = "[" + componentType.getName();
+		} else if (componentType == boolean.class) {
+			name = "[Z";
+		} else if (componentType == byte.class) {
+			name = "[B";
+		} else if (componentType == char.class) {
+			name = "[C";
+		} else if (componentType == double.class) {
+			name = "[D";
+		} else if (componentType == float.class) {
+			name = "[F";
+		} else if (componentType == int.class) {
+			name = "[I";
+		} else if (componentType == long.class) {
+			name = "[J";
+		} else if (componentType == short.class) {
+			name = "[S";
+		} else {
+			// must be an object non-array class
+			name = "[L" + componentType.getName() + ";";
+		}
+		return classLoader != null ? classLoader.loadClass(name) : Class.forName(name);
 	}
 }

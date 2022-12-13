@@ -45,13 +45,13 @@ public class ImplUtil {
 		return classObject;
 	}
 
-	public static String getString(HiObject string) {
-		HiField<?> field = string.getField("chars");
+	public static String getString(RuntimeContext ctx, HiObject string) {
+		HiField<?> field = string.getField(ctx, "chars");
 		return new String((char[]) field.get());
 	}
 
-	public static char[] getChars(HiObject string) {
-		HiField<?> field = string != null ? string.getField("chars") : null;
+	public static char[] getChars(RuntimeContext ctx, HiObject string) {
+		HiField<?> field = string != null ? string.getField(ctx, "chars") : null;
 		if (field != null) {
 			return (char[]) field.get();
 		} else {
