@@ -67,7 +67,7 @@ public class IfNode extends Node {
 		int size = elseIf.size();
 		for (int i = 0; i < size; i++) {
 			IfNode node = elseIf.get(i);
-			boolean condition = false;
+			boolean condition;
 			if (node.getCondition() == null) {
 				condition = true;
 			} else {

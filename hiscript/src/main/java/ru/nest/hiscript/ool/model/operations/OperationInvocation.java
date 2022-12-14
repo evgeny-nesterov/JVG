@@ -52,9 +52,6 @@ public class OperationInvocation extends BinaryOperation {
 		}
 	}
 
-	public void invokeClass(RuntimeContext ctx, Value v1, Value v2) {
-	}
-
 	public void invokeExecute(RuntimeContext ctx, Value v1, Value v2) {
 		if (v1.type.isPrimitive()) {
 			ctx.throwRuntimeException("primitive type doesn't have a subclass " + name);
@@ -115,7 +112,7 @@ public class OperationInvocation extends BinaryOperation {
 
 		HiField<?> field = null;
 		HiClass clazz = null;
-		HiObject object = null;
+		HiObject object;
 		// find by pattern: <VARIABLE|ARRAY>.<STATIC CLASS>
 		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.VALUE || v1.valueType == Value.ARRAY_INDEX) {
 			clazz = v1.type;

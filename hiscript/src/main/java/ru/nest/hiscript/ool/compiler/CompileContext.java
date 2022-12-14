@@ -62,7 +62,7 @@ public class CompileContext {
 
 	public List<HiEnumValue> enumValues = null;
 
-	public CompileContext parent = null;
+	public CompileContext parent;
 
 	public HiCompiler getCompiler() {
 		return compiler;

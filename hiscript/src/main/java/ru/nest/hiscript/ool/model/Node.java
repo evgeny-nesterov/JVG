@@ -135,11 +135,9 @@ public abstract class Node implements Codeable {
 
 	public final static byte TYPE_ASSERT = 42;
 
-	public final static byte TYPE_ENUM = 43;
+	public final static byte TYPE_CATCH = 43;
 
-	public final static byte TYPE_CATCH = 44;
-
-	public final static byte TYPE_CASTED_IDENTIFIER = 45;
+	public final static byte TYPE_CASTED_IDENTIFIER = 44;
 
 	public Node(String name, int type) {
 		this(name, type, -1);
@@ -151,7 +149,7 @@ public abstract class Node implements Codeable {
 		this.line = line;
 	}
 
-	protected int line = -1;
+	protected int line;
 
 	protected String name;
 

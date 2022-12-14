@@ -50,7 +50,7 @@ public class StatementParseRule extends ParseRule<Node> {
 			return new NodeClass(clazz);
 		}
 
-		Node node = null;
+		Node node;
 		if ((node = IfParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			return node;
 		}

@@ -68,11 +68,11 @@ public class HiFieldArray extends HiField<Object> {
 	public Object getJava(RuntimeContext ctx) {
 		Class javaClass = arrayType.getJavaClass();
 		if (javaClass != null) {
-			Class roolCellClass = javaClass;
-			while (roolCellClass.isArray()) {
-				roolCellClass = javaClass.getComponentType();
+			Class rootCellClass = javaClass;
+			while (rootCellClass.isArray()) {
+				rootCellClass = rootCellClass.getComponentType();
 			}
-			if (roolCellClass.isPrimitive()) {
+			if (rootCellClass.isPrimitive()) {
 				return array;
 			} else {
 				return getJavaArray(ctx, array, javaClass.getComponentType());
@@ -89,7 +89,7 @@ public class HiFieldArray extends HiField<Object> {
 			if (cellValue == null) {
 				continue;
 			}
-			Object javaCellValue = null;
+			Object javaCellValue;
 			if (cellClass.isArray()) {
 				javaCellValue = getJavaArray(ctx, cellValue, cellClass.getComponentType());
 			} else {

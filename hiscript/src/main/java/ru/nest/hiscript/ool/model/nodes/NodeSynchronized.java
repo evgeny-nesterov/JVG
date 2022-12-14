@@ -30,7 +30,7 @@ public class NodeSynchronized extends Node {
 			return;
 		}
 
-		Object lockObject = null;
+		Object lockObject;
 		if (clazz.isObject()) {
 			lockObject = ctx.value.object;
 		} else if (clazz.isArray()) {

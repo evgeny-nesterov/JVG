@@ -72,7 +72,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
 
-			String errorVariableName = null;
+			String errorVariableName;
 			boolean thereIsCatch = false;
 			if (visitWord(Words.CATCH, tokenizer, handler) != null) {
 				thereIsCatch = true;

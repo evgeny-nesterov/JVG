@@ -53,9 +53,9 @@ public class TryParseRule extends ParseRule<NodeTry> {
 
 			List<NodeCatch> catchNodes = null;
 			while (true) {
-				Node catchBody = null;
+				Node catchBody;
 				List<Type> excTypes = new ArrayList<>(1);
-				String excName = null;
+				String excName;
 				if (visitWord(Words.CATCH, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 					Type excType = visitObjectType(tokenizer);

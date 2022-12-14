@@ -38,8 +38,6 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_NULL = 5;
 
-	public final static int CLASS_JAVA = 6;
-
 	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
 
 	public final static int CLASS_TYPE_TOP = 1; // No outbound class

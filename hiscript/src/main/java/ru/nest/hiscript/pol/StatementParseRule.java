@@ -31,7 +31,7 @@ public class StatementParseRule extends ParseRule<Node> {
 			return EmptyNode.getInstance();
 		}
 
-		Node node = null;
+		Node node;
 		if ((node = IfParseRule.getInstance().visit(tokenizer)) != null) {
 			return node;
 		}
