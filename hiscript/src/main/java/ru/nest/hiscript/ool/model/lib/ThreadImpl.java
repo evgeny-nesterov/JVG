@@ -42,7 +42,7 @@ public class ThreadImpl extends ImplUtil {
 				threads.put(new_ctx, o);
 			}
 
-			new_ctx.enterStart(o, -1);
+			new_ctx.enterStart(o);
 			try {
 				NodeInvocation.invoke(new_ctx, o, "run");
 			} finally {

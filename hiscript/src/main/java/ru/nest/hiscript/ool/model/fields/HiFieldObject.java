@@ -24,6 +24,10 @@ public class HiFieldObject extends HiField<HiObject> {
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		HiClass clazz = getClass(ctx);
+		if (clazz == null) {
+			return;
+		}
+
 		if (!clazz.isNull() && (!value.type.isObject() || !clazz.isInstanceof(value.type))) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + clazz.fullName);
 			return;

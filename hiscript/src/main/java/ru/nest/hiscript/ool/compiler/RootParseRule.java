@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
@@ -44,7 +44,7 @@ public class RootParseRule extends ParseRule<Node> {
 		if (createMainMethod) {
 			HiClass clazz = ctx.clazz;
 			clazz.methods = new HiMethod[1];
-			clazz.methods[0] = new HiMethod(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body);
+			clazz.methods[0] = new HiMethod(clazz, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body, body.getToken());
 
 			node = new NodeMainWrapper(body);
 		} else {

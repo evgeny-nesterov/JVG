@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
@@ -120,7 +120,7 @@ public class CompileContext {
 		}
 
 		if (fieldsMap.containsKey(field.name)) {
-			throw new ParseException("Duplicate field " + clazz.fullName + "." + field.name, tokenizer.currentToken());
+			throw new ParseException("Duplicate field " + field.type.fullName + " " + field.name, tokenizer.currentToken());
 		}
 
 		fields.add(field);

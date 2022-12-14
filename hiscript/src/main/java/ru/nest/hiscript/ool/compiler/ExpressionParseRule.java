@@ -48,11 +48,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	public NodeExpression visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		List<Node> operands = new ArrayList<>();
 		List<OperationsGroup> allOperations = new ArrayList<>();
+		Token startToken = tokenizer.currentToken();
 
-		Token token = tokenizer.currentToken();
-		int codeLine = token != null ? token.getLine() : -1;
-
-		int operation = -1;
+		int operation;
 		OperationsGroup operations = new OperationsGroup();
 		do {
 			visitPrefixes(tokenizer, operations, operands);
@@ -85,6 +83,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// DEBUG
 		// System.out.println(allOperations);
 
+		Token blockToken = tokenizer.getBlockToken(startToken);
 		if (operands.size() > 0) {
 			Node[] operandsArray = new Node[operands.size()];
 			operands.toArray(operandsArray);
@@ -92,7 +91,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			OperationsGroup[] operationsArray = new OperationsGroup[allOperations.size()];
 			allOperations.toArray(operationsArray);
 
-			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray, codeLine);
+			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray);
+			expressionNode.setToken(blockToken);
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				NodeExpression trueValueNode = visit(tokenizer, properties);
 				if (trueValueNode == null) {
@@ -105,13 +105,16 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				if (falseValueNode == null) {
 					throw new ParseException("expression expected", tokenizer.currentToken());
 				}
-				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
+
+				NodeLogicalSwitch logicalSwitchNode = new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
+				logicalSwitchNode.setToken(tokenizer.getBlockToken(startToken));
+				return logicalSwitchNode;
 			}
 			return expressionNode;
 		}
 
 		if (operations.hasOperations()) {
-			throw new ParseException("invalid expression", token);
+			throw new ParseException("invalid expression", blockToken);
 		}
 		return null;
 	}
@@ -352,6 +355,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// visit identifier as word: package, class, method, field
 		String identifierName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (identifierName != null) {
+			Token identifierToken = tokenizer.currentToken();
 			boolean visitCastAfterIdentifier = false;
 			if (allOperations.size() > 0) {
 				int index = allOperations.size() - 1;
@@ -389,6 +393,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 			if (castedRecordArguments != null || castedVariableName != null) {
 				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName);
+				identifier.setToken(identifierToken);
 				identifier.castedRecordArguments = castedRecordArguments;
 				identifier.castedVariableName = castedVariableName;
 				operands.add(identifier);

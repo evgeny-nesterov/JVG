@@ -35,7 +35,7 @@ public class NodeTry extends Node {
 		boolean closeException = false;
 		try {
 			if (body != null || resources != null) {
-				ctx.enter(RuntimeContext.TRY, line);
+				ctx.enter(RuntimeContext.TRY, token);
 			}
 
 			if (resources != null) {
@@ -69,7 +69,7 @@ public class NodeTry extends Node {
 							return;
 						}
 
-						ctx.enterMethod(closeMethod, resourceObject, -1);
+						ctx.enterMethod(closeMethod, resourceObject);
 						try {
 							closeMethod.invoke(ctx, HiClass.getPrimitiveClass("void"), resourceObject, null);
 						} finally {
@@ -115,7 +115,7 @@ public class NodeTry extends Node {
 		}
 
 		if (finallyBody != null) {
-			ctx.enter(RuntimeContext.FINALLY, line);
+			ctx.enter(RuntimeContext.FINALLY, token);
 			try {
 				finallyBody.execute(ctx);
 			} finally {

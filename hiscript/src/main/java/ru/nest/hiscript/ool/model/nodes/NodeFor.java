@@ -24,7 +24,7 @@ public class NodeFor extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.FOR, line);
+		ctx.enter(RuntimeContext.FOR, token);
 		try {
 			if (initialization != null) {
 				initialization.execute(ctx);

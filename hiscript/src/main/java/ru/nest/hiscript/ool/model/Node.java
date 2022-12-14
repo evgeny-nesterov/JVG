@@ -45,6 +45,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeThrow;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -140,16 +141,16 @@ public abstract class Node implements Codeable {
 	public final static byte TYPE_CASTED_IDENTIFIER = 44;
 
 	public Node(String name, int type) {
-		this(name, type, -1);
+		this(name, type, null);
 	}
 
-	public Node(String name, int type, int line) {
+	public Node(String name, int type, Token token) {
 		this.name = name;
 		this.type = type;
-		this.line = line;
+		this.token = token;
 	}
 
-	protected int line;
+	protected Token token;
 
 	protected String name;
 
@@ -158,6 +159,14 @@ public abstract class Node implements Codeable {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public Token getToken() {
+		return token;
+	}
+
+	public void setToken(Token token) {
+		this.token = token;
 	}
 
 	public HiClass getValueType(ValidationContext ctx) {
@@ -172,100 +181,156 @@ public abstract class Node implements Codeable {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeByte(type);
+		if (token != null) {
+			token.code(os);
+		} else {
+			os.writeInt(-1);
+		}
 	}
 
 	public static Node decode(DecodeContext os) throws IOException {
 		int type = os.readByte();
+		Token token = Token.decode(os);
+		Node node = null;
 		switch (type) {
 			case TYPE_EMPTY:
-				return EmptyNode.decode(os);
+				node = EmptyNode.decode(os);
+				break;
 			case TYPE_ARGUMENT:
-				return NodeArgument.decode(os);
+				node = NodeArgument.decode(os);
+				break;
 			case TYPE_ARRAY:
-				return NodeArray.decode(os);
+				node = NodeArray.decode(os);
+				break;
 			case TYPE_ARRAY_VALUE:
-				return NodeArrayValue.decode(os);
+				node = NodeArrayValue.decode(os);
+				break;
 			case TYPE_BLOCK:
-				return NodeBlock.decode(os);
+				node = NodeBlock.decode(os);
+				break;
 			case TYPE_BOOLEAN:
-				return NodeBoolean.decode(os);
+				node = NodeBoolean.decode(os);
+				break;
 			case TYPE_BREAK:
-				return NodeBreak.decode(os);
+				node = NodeBreak.decode(os);
+				break;
 			case TYPE_BYTE:
-				return NodeByte.decode(os);
+				node = NodeByte.decode(os);
+				break;
 			case TYPE_CHAR:
-				return NodeChar.decode(os);
+				node = NodeChar.decode(os);
+				break;
 			case TYPE_CLASS:
-				return NodeClass.decode(os);
+				node = NodeClass.decode(os);
+				break;
 			case TYPE_CONSTRUCTOR:
-				return NodeConstructor.decode(os);
+				node = NodeConstructor.decode(os);
+				break;
 			case TYPE_CONTINUE:
-				return NodeContinue.decode(os);
+				node = NodeContinue.decode(os);
+				break;
 			case TYPE_DECLARATION:
-				return NodeDeclaration.decode(os);
+				node = NodeDeclaration.decode(os);
+				break;
 			case TYPE_DECLARATIONS:
-				return NodeDeclarations.decode(os);
+				node = NodeDeclarations.decode(os);
+				break;
 			case TYPE_DOUBLE:
-				return NodeDouble.decode(os);
+				node = NodeDouble.decode(os);
+				break;
 			case TYPE_DO_WHILE:
-				return NodeDoWhile.decode(os);
+				node = NodeDoWhile.decode(os);
+				break;
 			case TYPE_EXPRESSION:
-				return NodeExpressionNoLS.decode(os);
+				node = NodeExpressionNoLS.decode(os);
+				break;
 			case TYPE_FLOAT:
-				return NodeFloat.decode(os);
+				node = NodeFloat.decode(os);
+				break;
 			case TYPE_FOR:
-				return NodeFor.decode(os);
+				node = NodeFor.decode(os);
+				break;
 			case TYPE_FOR_ITERATOR:
-				return NodeForIterator.decode(os);
+				node = NodeForIterator.decode(os);
+				break;
 			case TYPE_IDENTIFIER:
-				return NodeIdentifier.decode(os);
+				node = NodeIdentifier.decode(os);
+				break;
 			case TYPE_CASTED_IDENTIFIER:
-				return NodeCastedIdentifier.decode(os);
+				node = NodeCastedIdentifier.decode(os);
+				break;
 			case TYPE_IF:
-				return NodeIf.decode(os);
+				node = NodeIf.decode(os);
+				break;
 			case TYPE_INT:
-				return NodeInt.decode(os);
+				node = NodeInt.decode(os);
+				break;
 			case TYPE_INVOCATION:
-				return NodeInvocation.decode(os);
+				node = NodeInvocation.decode(os);
+				break;
 			case TYPE_LABEL:
-				return NodeLabel.decode(os);
+				node = NodeLabel.decode(os);
+				break;
 			case TYPE_LONG:
-				return NodeLong.decode(os);
+				node = NodeLong.decode(os);
+				break;
 			case TYPE_NATIVE:
-				return NodeNative.decode(os);
+				node = NodeNative.decode(os);
+				break;
 			case TYPE_NULL:
-				return NodeNull.decode(os);
+				node = NodeNull.decode(os);
+				break;
 			case TYPE_RETURN:
-				return NodeReturn.decode(os);
+				node = NodeReturn.decode(os);
+				break;
 			case TYPE_SHORT:
-				return NodeShort.decode(os);
+				node = NodeShort.decode(os);
+				break;
 			case TYPE_STRING:
-				return NodeString.decode(os);
+				node = NodeString.decode(os);
+				break;
 			case TYPE_SWITCH:
-				return NodeSwitch.decode(os);
+				node = NodeSwitch.decode(os);
+				break;
 			case TYPE_THROW:
-				return NodeThrow.decode(os);
+				node = NodeThrow.decode(os);
+				break;
 			case TYPE_TRY:
-				return NodeTry.decode(os);
+				node = NodeTry.decode(os);
+				break;
 			case TYPE_TYPE:
-				return NodeType.decode(os);
+				node = NodeType.decode(os);
+				break;
 			case TYPE_WHILE:
-				return NodeWhile.decode(os);
+				node = NodeWhile.decode(os);
+				break;
 			case TYPE_FIELD:
-				return HiField.decode(os);
+				node = HiField.decode(os);
+				break;
 			case TYPE_SYNCHRONIZED:
-				return NodeSynchronized.decode(os);
+				node = NodeSynchronized.decode(os);
+				break;
 			case TYPE_LOGICAL_SWITCH:
-				return NodeLogicalSwitch.decode(os);
+				node = NodeLogicalSwitch.decode(os);
+				break;
 			case TYPE_ASSERT:
-				return NodeAssert.decode(os);
+				node = NodeAssert.decode(os);
+				break;
 			case THIS:
-				return NodeThis.decode(os);
+				node = NodeThis.decode(os);
+				break;
 			case TYPE_CATCH:
-				return NodeCatch.decode(os);
+				node = NodeCatch.decode(os);
+				break;
 			case SUPER:
-				return NodeSuper.decode(os);
+				node = NodeSuper.decode(os);
+				break;
 		}
-		throw new RuntimeException("Node can't be decoded: undefined type " + type);
+		if (node != null) {
+			node.token = token;
+			return node;
+		} else {
+			throw new RuntimeException("Node can't be decoded: undefined type " + type);
+		}
 	}
 }

@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.model.lib.ThreadImpl;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,37 +158,37 @@ public class RuntimeContext {
 	public StackLevel level = null;
 
 	// inside method, constructor and initializers
-	public void enter(int type, int codeLine) {
+	public void enter(int type, Token token) {
 		if (level != null) {
-			level = getStack(type, level, level.clazz, level.constructor, level.method, level.object, null, codeLine);
+			level = getStack(type, level, level.clazz, level.constructor, level.method, level.object, null, token);
 		} else {
-			level = getStack(type, null, null, null, null, null, null, codeLine);
+			level = getStack(type, null, null, null, null, null, null, token);
 		}
 	}
 
-	public void enterLabel(String label, int codeLine) {
-		level = getStack(LABEL, level, level.clazz, level.constructor, level.method, level.object, label, codeLine);
+	public void enterLabel(String label, Token token) {
+		level = getStack(LABEL, level, level.clazz, level.constructor, level.method, level.object, label, token);
 	}
 
 	// for operations type of a.new B(), enter in object a
-	public void enterObject(HiObject object, int codeLine) {
-		level = getStack(OBJECT, level, object.clazz, null, null, object, null, codeLine);
+	public void enterObject(HiObject object, Token token) {
+		level = getStack(OBJECT, level, object.clazz, null, null, object, null, token);
 	}
 
-	public void enterMethod(HiMethod method, HiObject object, int codeLine) {
-		level = getStack(METHOD, level, method.clazz, null, method, object, null, codeLine);
+	public void enterMethod(HiMethod method, HiObject object) {
+		level = getStack(METHOD, level, method.clazz, null, method, object, null, method.token);
 	}
 
-	public void enterConstructor(HiConstructor constructor, HiObject object, int codeLine) {
-		level = getStack(CONSTRUCTOR, level, constructor.clazz, constructor, null, object, null, codeLine);
+	public void enterConstructor(HiConstructor constructor, HiObject object, Token token) {
+		level = getStack(CONSTRUCTOR, level, constructor.clazz, constructor, null, object, null, token);
 	}
 
-	public void enterInitialization(HiClass clazz, HiObject object, int codeLine) {
-		level = getStack(INITIALIZATION, level, clazz, null, null, object, null, codeLine);
+	public void enterInitialization(HiClass clazz, HiObject object, Token token) {
+		level = getStack(INITIALIZATION, level, clazz, null, null, object, null, token);
 	}
 
-	public void enterStart(HiObject object, int codeLine) {
-		level = getStack(START, level, object != null ? object.clazz : null, null, null, object, null, codeLine);
+	public void enterStart(HiObject object) {
+		level = getStack(START, level, object != null ? object.clazz : null, null, null, object, null, null);
 	}
 
 	public void enter(StackLevel level) {
@@ -216,7 +217,7 @@ public class RuntimeContext {
 		if (level.type == START) {
 			if (exception != null) {
 				HiMethod method = exception.clazz.getMethod(this, "printStackTrace");
-				enterMethod(method, exception, -1);
+				enterMethod(method, exception);
 				try {
 					exception = null;
 					method.invoke(this, level.object != null ? level.object.clazz : null, level.object, null);
@@ -409,7 +410,7 @@ public class RuntimeContext {
 
 	private List<StackLevel> stacks_cache = new ArrayList<>();
 
-	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, int codeLine) {
+	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, Token token) {
 		StackLevel stack;
 		int cache_size = stacks_cache.size();
 		if (cache_size > 0) {
@@ -417,7 +418,7 @@ public class RuntimeContext {
 		} else {
 			stack = new StackLevel();
 		}
-		stack.set(type, parent, clazz, constructor, method, object, name, codeLine);
+		stack.set(type, parent, clazz, constructor, method, object, name, token);
 
 		// String s = "";
 		// while(s.length() != 2 * stack.level)
@@ -448,14 +449,14 @@ public class RuntimeContext {
 
 		public int level;
 
-		public int codeLine;
+		public Token token;
 
 		private Map<String, HiField<?>> variables;
 
 		public StackLevel() {
 		}
 
-		public StackLevel set(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, int codeLine) {
+		public StackLevel set(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, Token token) {
 			this.parent = parent;
 			this.clazz = clazz;
 			this.constructor = constructor;
@@ -464,7 +465,7 @@ public class RuntimeContext {
 			this.level = parent != null ? parent.level + 1 : 0;
 			this.type = type;
 			this.label = label;
-			this.codeLine = codeLine;
+			this.token = token;
 
 			if (variables != null) {
 				variables.clear();
@@ -474,6 +475,10 @@ public class RuntimeContext {
 				classes.clear();
 			}
 			return this;
+		}
+
+		public int getLine() {
+			return token != null ? token.getLine() : -1;
 		}
 
 		public void putVariable(HiField<?> variable) {
@@ -754,7 +759,11 @@ public class RuntimeContext {
 				array[i].getField(this, "methodName").set(this, value);
 			}
 
-			new NodeInt(level.codeLine, false).execute(this);
+			RuntimeContext.StackLevel lineLevel = level;
+			while (lineLevel != null && lineLevel.getLine() == -1) {
+				lineLevel = lineLevel.parent;
+			}
+			new NodeInt(lineLevel != null ? lineLevel.getLine() : -1, false).execute(this);
 			array[i].getField(this, "line").set(this, value);
 
 			// TODO: set codeLine for StackTraceElement in RuntimeContext, at the current moment codeLine=-1

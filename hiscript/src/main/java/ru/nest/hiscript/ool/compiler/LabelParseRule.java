@@ -4,6 +4,7 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeLabel;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -24,12 +25,14 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 
 		String label;
 		if ((label = visitWord(Words.NOT_SERVICE, tokenizer)) != null) {
+			Token startToken = tokenizer.currentToken();
 			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
 				tokenizer.commit();
 
 				Node body = expectBody(tokenizer, properties);
 
 				NodeLabel node = new NodeLabel(label, body);
+				node.setToken(tokenizer.getBlockToken(startToken));
 				return node;
 			}
 		}

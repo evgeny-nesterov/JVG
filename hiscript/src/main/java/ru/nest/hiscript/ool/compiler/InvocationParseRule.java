@@ -4,6 +4,7 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -23,12 +24,14 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 
 		String name = visitWord(tokenizer, NOT_SERVICE);
 		if (name != null) {
+			Token startToken = tokenizer.currentToken();
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				Node[] args = visitArgumentsValues(tokenizer, ctx);
 				if (checkSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) != -1) {
 					tokenizer.nextToken();
 					tokenizer.commit();
 					NodeInvocation node = new NodeInvocation(name, args);
+					node.setToken(tokenizer.getBlockToken(startToken));
 					return node;
 				}
 			}

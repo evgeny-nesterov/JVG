@@ -281,7 +281,7 @@ public class HiClass implements Codeable {
 			}
 
 			RuntimeContext ctx = currentCtx != null ? currentCtx : RuntimeContext.get(null);
-			ctx.enterInitialization(this, null, -1);
+			ctx.enterInitialization(this, null, null);
 			try {
 				if (initializers != null) {
 					int size = initializers.length;

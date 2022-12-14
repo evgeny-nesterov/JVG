@@ -35,7 +35,7 @@ public class NodeExpressionSwitch extends Node {
 	public void execute(RuntimeContext ctx) {
 		int index = NodeSwitch.getCaseIndex(ctx, valueNode, size, casesValues);
 		if (index >= 0) {
-			ctx.enter(RuntimeContext.SWITCH, line);
+			ctx.enter(RuntimeContext.SWITCH, token);
 			try {
 				for (int i = index; i < size; i++) {
 					Node caseBody = casesNodes.get(i);

@@ -3,10 +3,11 @@ package ru.nest.hiscript.ool.compiler;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.TypeVarargs;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
+import ru.nest.hiscript.ool.model.TypeVarargs;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -25,6 +26,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	public NodeArgument visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
+		Token startToken = tokenizer.currentToken();
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
@@ -48,7 +50,10 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 			} else {
 				typeArgument = type;
 			}
-			return new NodeArgument(typeArgument, name, modifiers);
+
+			NodeArgument node = new NodeArgument(typeArgument, name, modifiers);
+			node.setToken(tokenizer.getBlockToken(startToken));
+			return node;
 		}
 
 		tokenizer.rollback();

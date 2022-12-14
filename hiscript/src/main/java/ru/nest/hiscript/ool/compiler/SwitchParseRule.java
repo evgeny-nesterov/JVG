@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -28,6 +29,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	@Override
 	public NodeSwitch visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
+			Token startToken = tokenizer.currentToken();
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
 
@@ -54,6 +56,8 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+
+			node.setToken(tokenizer.getBlockToken(startToken));
 			return node;
 		}
 		return null;

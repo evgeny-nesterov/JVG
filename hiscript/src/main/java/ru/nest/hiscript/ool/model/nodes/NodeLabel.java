@@ -19,7 +19,7 @@ public class NodeLabel extends Node {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		if (statement != null) {
-			ctx.enterLabel(label, line);
+			ctx.enterLabel(label, token);
 			try {
 				statement.execute(ctx);
 			} finally {

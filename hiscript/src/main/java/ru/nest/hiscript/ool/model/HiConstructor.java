@@ -105,7 +105,7 @@ public class HiConstructor implements Codeable {
 		}
 
 		// enter in constructor
-		ctx.enterConstructor(this, object, -1);
+		ctx.enterConstructor(this, object, null);
 		try {
 			// register argument variables in constructor
 			ctx.addVariables(arguments);
@@ -165,7 +165,7 @@ public class HiConstructor implements Codeable {
 			StackLevel constructorLevel = ctx.exit(true);
 
 			// enter in object initialization
-			ctx.enterInitialization(clazz, object, -1);
+			ctx.enterInitialization(clazz, object, null);
 			try {
 				// init object: copy not static fields from class
 				if (clazz.fields != null) {

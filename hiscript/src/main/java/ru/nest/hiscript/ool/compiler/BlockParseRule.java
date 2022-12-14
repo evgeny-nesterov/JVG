@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -22,6 +23,7 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 	@Override
 	public NodeBlock visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
 		ctx.enter();
+		Token startToken = tokenizer.currentToken();
 
 		NodeBlock block = null;
 		Node statement;
@@ -46,6 +48,9 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 				block = new NodeBlock();
 			}
 			block.addStatement(statement);
+		}
+		if (block != null) {
+			block.setToken(tokenizer.getBlockToken(startToken));
 		}
 
 		ctx.exit();

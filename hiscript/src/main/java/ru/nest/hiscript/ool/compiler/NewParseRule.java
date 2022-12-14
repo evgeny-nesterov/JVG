@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -29,24 +30,33 @@ public class NewParseRule extends ParseRule<Node> {
 	@Override
 	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
+			Token startToken = tokenizer.currentToken();
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
 				throw new ParseException("identifier is expected", tokenizer.currentToken());
 			}
 
 			int brace_type = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
+			Node node = null;
 			switch (brace_type) {
 				case Symbols.PARENTHESES_LEFT:
 					if (type.isPrimitive()) {
 						throw new ParseException("'[' expected", tokenizer.currentToken());
 					}
-					return visitNewObject(tokenizer, type, properties);
+					node = visitNewObject(tokenizer, type, properties);
+					break;
 
 				case Symbols.SQUARE_BRACES_LEFT:
-					return visitNewArray(tokenizer, type, properties);
+					node = visitNewArray(tokenizer, type, properties);
+					break;
 
 				case Symbols.MASSIVE:
-					return visitNewArrayValue(tokenizer, type, properties);
+					node = visitNewArrayValue(tokenizer, type, properties);
+					break;
+			}
+			if (node != null) {
+				node.setToken(tokenizer.getBlockToken(startToken));
+				return node;
 			}
 		}
 		return null;

@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.ValidationContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -16,8 +17,8 @@ public class NodeExpressionNoLS extends NodeExpression {
 	/**
 	 * <operations1> X1 <operations2> X2 ... <operations n> Xn <operations n+1>
 	 */
-	public NodeExpressionNoLS(Node[] operands, OperationsGroup[] operations, int codeLine) {
-		super("expression", TYPE_EXPRESSION, codeLine);
+	public NodeExpressionNoLS(Node[] operands, OperationsGroup[] operations) {
+		super("expression", TYPE_EXPRESSION);
 		compile(operands, operations);
 	}
 

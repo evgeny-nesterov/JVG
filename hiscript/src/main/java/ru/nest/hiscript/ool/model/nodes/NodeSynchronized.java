@@ -46,7 +46,7 @@ public class NodeSynchronized extends Node {
 		}
 
 		if (body != null) {
-			ctx.enter(RuntimeContext.TRY, line);
+			ctx.enter(RuntimeContext.TRY, token);
 			try {
 				synchronized (lockObject) {
 					body.execute(ctx);

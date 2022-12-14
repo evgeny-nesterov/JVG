@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+
+import java.io.IOException;
 
 public class NodeWhile extends Node {
 	public NodeWhile(Node condition, Node body) {
@@ -28,7 +28,7 @@ public class NodeWhile extends Node {
 				return;
 			}
 
-			ctx.enter(RuntimeContext.WHILE, line);
+			ctx.enter(RuntimeContext.WHILE, token);
 			try {
 				if (body != null) {
 					body.execute(ctx);

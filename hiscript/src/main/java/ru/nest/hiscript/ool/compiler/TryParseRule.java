@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeCatch;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -27,6 +28,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	@Override
 	public NodeTry visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
+			Token startToken = tokenizer.currentToken();
 			NodeDeclaration[] resources = null;
 			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.nextToken();
@@ -57,6 +59,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				List<Type> excTypes = new ArrayList<>(1);
 				String excName;
 				if (visitWord(Words.CATCH, tokenizer) != null) {
+					Token startCatchToken = tokenizer.currentToken();
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 					Type excType = visitObjectType(tokenizer);
 					// TODO check excType extends Exception
@@ -79,7 +82,10 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					if (catchNodes == null) {
 						catchNodes = new ArrayList<>(1);
 					}
-					catchNodes.add(new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName));
+
+					NodeCatch catchNode = new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName);
+					catchNode.setToken(tokenizer.getBlockToken(startCatchToken));
+					catchNodes.add(catchNode);
 				} else {
 					break;
 				}
@@ -92,8 +98,9 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			}
 
-			NodeTry node = new NodeTry(tryBody, catchNodes != null ? catchNodes.toArray(new NodeCatch[catchNodes.size()]) : null, finallyBody, resources);
-			return node;
+			NodeTry tryNode = new NodeTry(tryBody, catchNodes != null ? catchNodes.toArray(new NodeCatch[catchNodes.size()]) : null, finallyBody, resources);
+			tryNode.setToken(tokenizer.getBlockToken(startToken));
+			return tryNode;
 		}
 		return null;
 	}

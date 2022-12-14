@@ -23,7 +23,7 @@ public class NodeForIterator extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.FOR, line);
+		ctx.enter(RuntimeContext.FOR, token);
 		try {
 			declaration.execute(ctx);
 			if (ctx.exitFromBlock()) {

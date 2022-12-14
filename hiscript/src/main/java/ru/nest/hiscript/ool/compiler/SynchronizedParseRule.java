@@ -4,6 +4,7 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.NodeSynchronized;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -21,6 +22,7 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	@Override
 	public NodeSynchronized visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.SYNCHRONIZED, tokenizer) != null) {
+			Token startToken = tokenizer.currentToken();
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 			Node lock = expectExpression(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -29,7 +31,9 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 			Node body = BlockParseRule.getInstance().visit(tokenizer, properties);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
-			return new NodeSynchronized(lock, body);
+			NodeSynchronized node = new NodeSynchronized(lock, body);
+			node.setToken(tokenizer.getBlockToken(startToken));
+			return node;
 		}
 		return null;
 	}

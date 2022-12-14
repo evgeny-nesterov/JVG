@@ -37,7 +37,7 @@ public class NodeIf extends Node {
 		}
 
 		if (is) {
-			ctx.enter(RuntimeContext.IF, line);
+			ctx.enter(RuntimeContext.IF, token);
 			try {
 				if (body != null) {
 					body.execute(ctx);

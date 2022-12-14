@@ -191,6 +191,10 @@ public class Tokenizer {
 		return currentToken;
 	}
 
+	public Token getBlockToken(Token startToken) {
+		return currentToken != null ? new Token(startToken, currentToken) : null;
+	}
+
 	private Token searchToken() throws TokenizerException {
 		int offset = this.offset;
 		int line = this.line;

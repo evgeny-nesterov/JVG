@@ -169,7 +169,7 @@ public class HiObject {
 			return toStringNative();
 		}
 
-		ctx.enterMethod(method, this, -1);
+		ctx.enterMethod(method, this);
 		try {
 			method.invoke(ctx, clazz, this, null);
 		} finally {
@@ -205,7 +205,7 @@ public class HiObject {
 		}
 
 		// enter into method
-		ctx.enterMethod(equalsMethod, this, -1);
+		ctx.enterMethod(equalsMethod, this);
 		boolean result;
 		try {
 			// register variables in method
@@ -240,7 +240,7 @@ public class HiObject {
 			return System.identityHashCode(this);
 		}
 
-		ctx.enterMethod(method, this, -1);
+		ctx.enterMethod(method, this);
 		try {
 			method.invoke(ctx, clazz, this, null);
 		} finally {

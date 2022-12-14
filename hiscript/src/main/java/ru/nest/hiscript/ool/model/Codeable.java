@@ -5,5 +5,5 @@ import java.io.IOException;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 
 public interface Codeable {
-	public void code(CodeContext os) throws IOException;
+	void code(CodeContext os) throws IOException;
 }

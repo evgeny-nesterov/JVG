@@ -85,7 +85,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		if (enterObject != null) {
-			ctx.enterObject(enterObject, -1);
+			ctx.enterObject(enterObject, null);
 		}
 
 		Value oldValue = ctx.value;
@@ -338,7 +338,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// enter into method
-		ctx.enterMethod(method, obj, -1);
+		ctx.enterMethod(method, obj);
 		try {
 			// register variables in method
 			ctx.addVariables(arguments);

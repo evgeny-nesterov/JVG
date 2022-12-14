@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -24,6 +25,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	@Override
 	public NodeDeclarations visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = tokenizer.currentToken();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
@@ -65,6 +67,8 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 						field = declarations.add(type, varName, initializer, modifiers);
 						properties.addLocalVariable(field);
 					}
+
+					declarations.setToken(tokenizer.getBlockToken(startToken));
 					return declarations;
 				}
 			}
@@ -97,6 +101,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileContext properties, boolean initialized) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = tokenizer.currentToken();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
@@ -117,6 +122,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				checkModifiers(tokenizer, modifiers);
 
 				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, modifiers);
+				field.setToken(tokenizer.getBlockToken(startToken));
 				properties.addLocalVariable(field);
 				return field;
 			}

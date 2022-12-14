@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -249,6 +250,7 @@ public class ClassParseRule extends ParserUtil {
 
 	public HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties, int... allowed) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = tokenizer.currentToken();
 		HiClass clazz = properties.clazz;
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -313,7 +315,7 @@ public class ClassParseRule extends ParserUtil {
 					}
 
 					properties.exit();
-					return new HiMethod(clazz, modifiers, type, name, arguments, exceptionTypes, body);
+					return new HiMethod(clazz, modifiers, type, name, arguments, exceptionTypes, body, tokenizer.getBlockToken(startToken));
 				}
 			}
 		}

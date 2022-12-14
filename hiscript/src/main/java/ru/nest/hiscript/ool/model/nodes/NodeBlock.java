@@ -48,7 +48,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		if (enterType != RuntimeContext.SAME) {
-			ctx.enter(enterType, line);
+			ctx.enter(enterType, token);
 		}
 
 		try {

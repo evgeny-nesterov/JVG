@@ -61,7 +61,7 @@ public class NodeCatch extends Node {
 			if (exception.clazz.isInstanceof(excClass)) {
 				ctx.exception = null;
 				if (catchBody != null) {
-					ctx.enter(RuntimeContext.CATCH, line);
+					ctx.enter(RuntimeContext.CATCH, token);
 
 					HiFieldObject exc = (HiFieldObject) HiField.getField(excTypes[index], excName);
 					exc.set(exception);

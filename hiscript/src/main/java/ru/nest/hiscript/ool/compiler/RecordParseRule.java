@@ -83,7 +83,7 @@ public class RecordParseRule extends ParserUtil {
 					getMethodName += argument.getVariableName().substring(1);
 				}
 				Node getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName())));
-				HiMethod getMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
+				HiMethod getMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody, argument.getToken());
 				ctx.addMethod(getMethod);
 
 				String setMethodName = "set" + Character.toUpperCase(argument.getVariableName().charAt(0));
@@ -91,10 +91,11 @@ public class RecordParseRule extends ParserUtil {
 					setMethodName += argument.getVariableName().substring(1);
 				}
 				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(new Node[] {NodeThis.instance, new NodeIdentifier(argument.getVariableName()), new NodeIdentifier(argument.getVariableName())}, //
-						new OperationsGroup[] {new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)}, -1);
+						new OperationsGroup[] {new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)});
+				setExpression.setToken(argument.getToken());
 				// TODO support set methods?
 				Node setMethodBody = new NodeBlock(setExpression);
-				HiMethod setMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
+				HiMethod setMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody, argument.getToken());
 				ctx.addMethod(setMethod);
 
 				defaultConstructorBody.addStatement(setExpression);
