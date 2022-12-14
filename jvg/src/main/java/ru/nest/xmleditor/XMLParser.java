@@ -95,7 +95,7 @@ public class XMLParser {
 	private void readText() throws XMLParseException {
 		int offset = pos;
 		while (!end && current != '<') {
-			if (Character.isLetter(current) || Character.isDigit(current) || isSpace(current) || current == '~' || current == '!' || current == '@' || current == '#' || current == '$' || current == '%' || current == '^' || current == '*' || current == '(' || current == ')' || current == '_' || current == '+' || current == '-' || current == '=' || current == '\\' || current == '|' || current == '/' || current == ';' || current == ':' || current == ',' || current == '.' || current == '?' || current == '`' || current == '[' || current == ']' || current == '{' || current == '}' || current == '¹' || current == '$' || current == '>') {
+			if (Character.isLetter(current) || Character.isDigit(current) || isSpace(current) || current == '~' || current == '!' || current == '@' || current == '#' || current == '$' || current == '%' || current == '^' || current == '*' || current == '(' || current == ')' || current == '_' || current == '+' || current == '-' || current == '=' || current == '\\' || current == '|' || current == '/' || current == ';' || current == ':' || current == ',' || current == '.' || current == '?' || current == '`' || current == '[' || current == ']' || current == '{' || current == '}' || current == 'ï¿½' || current == '$' || current == '>') {
 			} else {
 				handler.error("Invalid symbol passed to text: '" + (char) current + "'", pos, 1);
 			}
@@ -456,12 +456,10 @@ public class XMLParser {
 
 				@Override
 				public void instructionTag(int offset, int length) {
-
 				}
 
 				@Override
 				public void error(String message, int offset, int length) {
-
 				}
 
 				@Override

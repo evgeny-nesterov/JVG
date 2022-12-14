@@ -11,7 +11,7 @@
 		+6. Native HashMap
 		+7. Iterable for(V v : array)
         +8. Add enum
-!9. Indicate code line number while throwing exceptions
+        +9. Indicate code line number while throwing exceptions
         +10. Add asserts
 *11. Add throws for methods, require catch or method throws for non-runtime exceptions
 12. Annotations

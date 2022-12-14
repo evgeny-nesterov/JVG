@@ -17,7 +17,6 @@ public class JVGImageFilterResourceManager<V extends JVGResource> extends JVGRes
 				}
 			}
 		}
-
 		return null;
 	}
 

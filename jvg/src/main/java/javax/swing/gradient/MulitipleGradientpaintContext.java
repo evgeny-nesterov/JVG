@@ -688,13 +688,10 @@ abstract class MultipleGradientPaintContext implements PaintContext {
 
 					// this is the interval we want.
 					int index = (int) ((delta / normalizedIntervals[i]) * (GRADIENT_SIZE_INDEX));
-
 					return gradients[i][index];
 				}
 			}
-
 		}
-
 		return gradientOverflow;
 	}
 
@@ -969,7 +966,6 @@ abstract class MultipleGradientPaintContext implements PaintContext {
 			rch = (rch + 0x08) >> 4;
 			gch = (gch + 0x08) >> 4;
 			bch = (bch + 0x08) >> 4;
-
 		} else {
 			int idx1 = 0, idx2 = 0;
 			int i1 = -1, i2 = -1;
@@ -1114,7 +1110,6 @@ abstract class MultipleGradientPaintContext implements PaintContext {
 						bch += (((pix << 4) & 0xFF0) * norm) >> 16;
 					}
 				}
-
 			}
 			ach = (ach + 0x08) >> 4;
 			rch = (rch + 0x08) >> 4;
@@ -1138,7 +1133,6 @@ abstract class MultipleGradientPaintContext implements PaintContext {
 			gch = ((gch * iw) + aveG) >> 16;
 			bch = ((bch * iw) + aveB) >> 16;
 		}
-
 		return ((ach << 24) | (rch << 16) | (gch << 8) | bch);
 	}
 

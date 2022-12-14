@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -482,9 +484,9 @@ public class ResourceManager extends JInternalFrame implements ActionListener, J
 		return index >= 0 ? panels.get(index) : null;
 	}
 
-	private ArrayList<ResourcePanel<?>> panels = new ArrayList<>();
+	private List<ResourcePanel<?>> panels = new ArrayList<>();
 
-	private HashMap<Class<?>, ResourcePanel<?>> panels_hash = new HashMap<>();
+	private Map<Class<?>, ResourcePanel<?>> panels_hash = new HashMap<>();
 
 	class ResourcePanel<V extends Resource> extends JList {
 		private Class<V> clazz;

@@ -361,7 +361,7 @@ public class HiClass implements Codeable {
 		return children;
 	}
 
-	private HashMap<String, HiClass> classes_map;
+	private Map<String, HiClass> classes_map;
 
 	public HiClass getClass(RuntimeContext ctx, String name) {
 		if (classes_map != null && classes_map.containsKey(name)) {
@@ -527,7 +527,7 @@ public class HiClass implements Codeable {
 		return field;
 	}
 
-	private HashMap<MethodSignature, HiMethod> methodsHash = new HashMap<>();
+	private Map<MethodSignature, HiMethod> methodsHash = new HashMap<>();
 
 	// name - interned
 	public HiMethod searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {

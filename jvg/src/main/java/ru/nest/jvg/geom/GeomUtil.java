@@ -115,7 +115,6 @@ public class GeomUtil {
 				result[c[i]] = 0;
 			}
 		}
-
 		return true;
 	}
 
@@ -137,7 +136,6 @@ public class GeomUtil {
 		double r2_r1_x = x2 - x1;
 		double r2_r1_y = y2 - y1;
 		double alfa = (a_r1_x * r2_r1_x + a_r1_y * r2_r1_y) / (r2_r1_x * r2_r1_x + r2_r1_y * r2_r1_y);
-
 		return alfa;
 	}
 
@@ -146,7 +144,6 @@ public class GeomUtil {
 		if (alfa > 0 && alfa < 1) {
 			return distanceToLineSq(x1, y1, x2, y2, alfa, clientX, clientY);
 		}
-
 		return Double.MAX_VALUE;
 	}
 
@@ -156,7 +153,6 @@ public class GeomUtil {
 		double a_b_x = clientX - bx;
 		double a_b_y = clientY - by;
 		double a_b_sq = a_b_x * a_b_x + a_b_y * a_b_y;
-
 		return a_b_sq;
 	}
 
@@ -215,7 +211,6 @@ public class GeomUtil {
 		if (!pi1.isDone() || !pi2.isDone()) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -352,7 +347,6 @@ public class GeomUtil {
 				koefYMax[i] = koefYOpt[i] + widthY / 2.0;
 			}
 		}
-
 		return distSqOpt;
 	}
 
@@ -384,7 +378,6 @@ public class GeomUtil {
 			double distSq = getDistanceSq(coordinates[i], coordinates[i + 1], koefX, koefY, t);
 			sum += distSq;
 		}
-
 		return sum / pointsCount;
 	}
 
@@ -449,7 +442,6 @@ public class GeomUtil {
 		if (t < minT || !found) {
 			t = minT;
 		}
-
 		return t;
 	}
 

@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
@@ -23,7 +24,7 @@ public class HiClassEnum extends HiClass {
 		super(Type.enumType, null, null, name, type);
 	}
 
-	private HashMap<String, HiField> enumsMap;
+	private Map<String, HiField> enumsMap;
 
 	public void initEnumValues(RuntimeContext ctx) {
 		enumsMap = new HashMap<>(enumValues.size());

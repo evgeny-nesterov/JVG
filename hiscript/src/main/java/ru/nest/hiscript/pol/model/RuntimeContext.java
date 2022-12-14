@@ -727,8 +727,7 @@ public class RuntimeContext {
 		methods.add(method);
 	}
 
-	// private HashMap<String, HashMap<Integer, ArrayList<Method>>> hash_methods
-	// = new HashMap();
+	// private Map<String, HashMap<Integer, ArrayList<Method>>> hash_methods = new HashMap();
 	// private Method getOwnMethod(String name, int[] argTypes, int[]
 	// argDimensions)
 	// {

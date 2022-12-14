@@ -1,11 +1,16 @@
 package ru.nest.toi.editcontroller;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
+import ru.nest.toi.MutablePath;
+import ru.nest.toi.SelectionRotater;
+import ru.nest.toi.TOIController;
+import ru.nest.toi.TOIObject;
+import ru.nest.toi.TOIObjectControl;
+import ru.nest.toi.TOIPane;
+import ru.nest.toi.TOIPane.PathCoord;
+import ru.nest.toi.objects.TOIPath;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,19 +20,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import ru.nest.toi.MutablePath;
-import ru.nest.toi.SelectionRotater;
-import ru.nest.toi.TOIController;
-import ru.nest.toi.TOIObject;
-import ru.nest.toi.TOIObjectControl;
-import ru.nest.toi.TOIPane;
-import ru.nest.toi.TOIPane.PathCoord;
-import ru.nest.toi.objects.TOIPath;
 
 public class TOIGeometryController implements TOIController {
 	private TOIPane pane;
@@ -40,9 +32,9 @@ public class TOIGeometryController implements TOIController {
 
 	private TOIObject sr;
 
-	private Stroke editedStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f, new float[] { 2f, 2f }, 0f);
+	private Stroke editedStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f, new float[] {2f, 2f}, 0f);
 
-	private Stroke selectedPointStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f, new float[] { 2f, 2f }, 0f);
+	private Stroke selectedPointStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1f, new float[] {2f, 2f}, 0f);
 
 	private boolean dragged;
 
@@ -227,7 +219,7 @@ public class TOIGeometryController implements TOIController {
 			if (o instanceof TOIPath) {
 				TOIPath path = (TOIPath) o;
 				int coordIndex = 0;
-				int[] curvesizes = { 2, 2, 4, 6, 0 };
+				int[] curvesizes = {2, 2, 4, 6, 0};
 				for (int i = 0; i < path.getPath().numTypes; i++) {
 					int curvesize = curvesizes[path.getPath().pointTypes[i]];
 					for (int j = 0; j < curvesize; j += 2) {
@@ -251,7 +243,7 @@ public class TOIGeometryController implements TOIController {
 				// draw path points
 				TOIPath path = (TOIPath) o;
 				int coordIndex = 0;
-				int[] curvesizes = { 2, 2, 4, 6, 0 };
+				int[] curvesizes = {2, 2, 4, 6, 0};
 				for (int i = 0; i < path.getPath().numTypes; i++) {
 					int curvesize = curvesizes[path.getPath().pointTypes[i]];
 					for (int j = 0; j < curvesize; j += 2) {
@@ -319,7 +311,7 @@ public class TOIGeometryController implements TOIController {
 					int coordIndex = path.getCoordIndex(segmentIndex);
 					double x = path.getCoord(coordIndex - 2);
 					double y = path.getCoord(coordIndex - 1);
-					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_LINETO, new double[] { x, y });
+					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_LINETO, new double[] {x, y});
 					pressedPoint.getPath().invalidate();
 					pane.repaint();
 				}
@@ -335,7 +327,7 @@ public class TOIGeometryController implements TOIController {
 					int coordIndex = path.getCoordIndex(segmentIndex);
 					double x = path.getCoord(coordIndex - 2);
 					double y = path.getCoord(coordIndex - 1);
-					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_QUADTO, new double[] { x, y, x, y });
+					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_QUADTO, new double[] {x, y, x, y});
 					pressedPoint.getPath().invalidate();
 					pane.repaint();
 				}
@@ -351,7 +343,7 @@ public class TOIGeometryController implements TOIController {
 					int coordIndex = path.getCoordIndex(segmentIndex);
 					double x = path.getCoord(coordIndex - 2);
 					double y = path.getCoord(coordIndex - 1);
-					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_CUBICTO, new double[] { x, y, x, y, x, y });
+					pressedPoint.getPath().getPath().addSegment(segmentIndex, PathIterator.SEG_CUBICTO, new double[] {x, y, x, y, x, y});
 					pressedPoint.getPath().invalidate();
 					pane.repaint();
 				}
@@ -370,7 +362,6 @@ public class TOIGeometryController implements TOIController {
 			});
 			popup.add(menuDeleteSegment);
 		} else if (pressedObject != null) {
-
 		}
 
 		if (popup.getComponentCount() > 0) {

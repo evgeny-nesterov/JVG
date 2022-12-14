@@ -63,7 +63,6 @@ public class JVGKeyEvent extends JVGInputEvent {
 
 		str.append(",keyCode=").append(keyCode);
 		str.append(",keyText=").append(getKeyText(keyCode));
-
 		return str.toString();
 	}
 }

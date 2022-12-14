@@ -168,7 +168,6 @@ public class JVGMouseEvent extends JVGInputEvent {
 		}
 
 		str.append(",clickCount=").append(clickCount);
-
 		return str.toString();
 	}
 

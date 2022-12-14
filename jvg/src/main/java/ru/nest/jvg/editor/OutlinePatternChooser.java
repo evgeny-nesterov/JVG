@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.ActionChooser;
@@ -27,7 +28,7 @@ public class OutlinePatternChooser extends ActionChooser {
 
 	private float[][] values = { {}, { 16f, 10f }, { 8f, 6f }, { 4f, 3f }, { 8f, 6f, 4f, 6f }, { 8f, 6f, 4f, 6f, 4f, 6f }, { 20f, 8f, 8f, 8f }, { 2, 4 }, { 2, 2 }, { 1, 3 }, { 1, 1 } };
 
-	private HashMap<float[], BasicStroke> strokes = new HashMap<>();
+	private Map<float[], BasicStroke> strokes = new HashMap<>();
 
 	public OutlinePatternChooser() {
 		JMenu menu = new JMenu();

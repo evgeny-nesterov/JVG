@@ -44,7 +44,6 @@ public class ConnectionManager {
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -76,7 +75,6 @@ public class ConnectionManager {
 				return container.accept(change);
 			}
 		}
-
 		return false;
 	}
 
@@ -91,7 +89,6 @@ public class ConnectionManager {
 				return container.postAdjust();
 			}
 		}
-
 		return false;
 	}
 
@@ -106,7 +103,6 @@ public class ConnectionManager {
 				return container.getRelations();
 			}
 		}
-
 		return null;
 	}
 
@@ -178,7 +174,6 @@ public class ConnectionManager {
 			if (c instanceof ConnectionServer) {
 				return servers.contains(c);
 			}
-
 			return false;
 		}
 
@@ -211,7 +206,6 @@ public class ConnectionManager {
 					relation.setAdjusted(true);
 				}
 			}
-
 			return isAdjusted;
 		}
 

@@ -43,7 +43,6 @@ public class PathOperationAction extends JVGAction {
 		doOperation(pane, focus, type, pathes);
 
 		appendMacrosCode(pane, "setPathOperation(ids, getFocus(), %s);", JVGMacrosCode.ARG_IDS, type);
-
 	}
 
 	public static void doOperation(JVGPane pane, JVGComponent focus, int type, JVGShape... pathes) {

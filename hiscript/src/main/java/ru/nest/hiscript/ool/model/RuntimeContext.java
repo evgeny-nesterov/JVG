@@ -83,16 +83,12 @@ public class RuntimeContext {
 
 			// copy local context
 			if (root.localClasses != null) {
-				if (localClasses == null) {
-					localClasses = new HashMap<>();
-				}
+				localClasses = new HashMap<>(root.localClasses.size());
 				localClasses.putAll(root.localClasses);
 			}
 
 			if (root.localVariables != null) {
-				if (localVariables == null) {
-					localVariables = new HashMap<>();
-				}
+				localVariables = new HashMap<>(root.localVariables.size());
 				localVariables.putAll(root.localVariables);
 			}
 		}
@@ -556,10 +552,7 @@ public class RuntimeContext {
 		public HiClass getClass(String name) {
 			if (classes != null) {
 				// поиск в контексте по имени
-				HiClass clazz = classes.get(name);
-				if (clazz != null) {
-					return clazz;
-				}
+				return classes.get(name);
 			}
 			return null;
 		}
@@ -592,7 +585,7 @@ public class RuntimeContext {
 		}
 	}
 
-	private HashMap<HiClass, HashMap<String, HiClass>> localClasses;
+	private Map<HiClass, HashMap<String, HiClass>> localClasses;
 
 	public HiClass getLocalClass(HiClass clazz, String name) {
 		if (localClasses != null) {
@@ -618,11 +611,11 @@ public class RuntimeContext {
 		classes.put(clazzLocal.fullName, clazzLocal);
 	}
 
-	private HashMap<HiClass, HashMap<String, HiField<?>>> localVariables;
+	private Map<HiClass, HashMap<String, HiField<?>>> localVariables;
 
 	public HiField<?> getLocalVariable(HiClass clazz, String name) {
 		if (localVariables != null) {
-			HashMap<String, HiField<?>> fields = localVariables.get(clazz);
+			Map<String, HiField<?>> fields = localVariables.get(clazz);
 			if (fields != null && fields.containsKey(name)) {
 				return fields.get(name);
 			}
@@ -637,7 +630,7 @@ public class RuntimeContext {
 
 		HashMap<String, HiField<?>> fields = localVariables.get(clazz);
 		if (fields == null) {
-			fields = new HashMap<>();
+			fields = new HashMap<>(1);
 			localVariables.put(clazz, fields);
 		}
 		fields.put(field.name, field);
@@ -684,7 +677,7 @@ public class RuntimeContext {
 	}
 
 	// buffer
-	private static List<RuntimeContext> cacheRC = new ArrayList<>();
+	private static final List<RuntimeContext> cacheRC = new ArrayList<>();
 
 	public static RuntimeContext get(HiCompiler compiler) {
 		RuntimeContext ctx;

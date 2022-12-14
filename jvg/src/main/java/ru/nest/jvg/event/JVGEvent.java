@@ -38,7 +38,6 @@ public class JVGEvent {
 			case JVGMouseEvent.MOUSE_WHEEL:
 				consumed = true;
 				break;
-
 			default:
 		}
 	}

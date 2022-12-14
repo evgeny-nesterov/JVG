@@ -1612,7 +1612,6 @@ public class SVGParser implements JVGParserInterface {
 				t.printStackTrace();
 			}
 		}
-
 	}
 
 	@Override

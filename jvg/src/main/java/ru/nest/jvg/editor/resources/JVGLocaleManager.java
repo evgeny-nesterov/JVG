@@ -1,6 +1,7 @@
 package ru.nest.jvg.editor.resources;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -21,7 +22,7 @@ public class JVGLocaleManager {
 	private JVGLocaleManager() {
 	}
 
-	private HashMap<String, LocaleContainer> locales = new HashMap<>();
+	private Map<String, LocaleContainer> locales = new HashMap<>();
 
 	public void setLanguage(String lang) {
 		current = locales.get(lang);

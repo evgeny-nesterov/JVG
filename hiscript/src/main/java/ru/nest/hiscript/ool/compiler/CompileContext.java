@@ -68,14 +68,14 @@ public class CompileContext {
 		return compiler;
 	}
 
-	public void addEnum(HiEnumValue enumValue) throws ParseException {
+	public void addEnum(HiEnumValue enumValue) {
 		if (enumValues == null) {
 			enumValues = new ArrayList<>(1);
 		}
 		enumValues.add(enumValue);
 	}
 
-	public void addMethod(HiMethod method) throws ParseException {
+	public void addMethod(HiMethod method) {
 		if (methods == null) {
 			methods = new ArrayList<>(1);
 		}
@@ -236,7 +236,7 @@ public class CompileContext {
 		return null;
 	}
 
-	class CompileLevel {
+	static class CompileLevel {
 		Map<String, HiClass> classes = null;
 
 		Map<String, NodeVariable> localVariables = null;

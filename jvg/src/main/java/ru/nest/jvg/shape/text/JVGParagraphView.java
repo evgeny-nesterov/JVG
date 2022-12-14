@@ -219,7 +219,6 @@ public class JVGParagraphView extends AdvancedParagraphView {
 				}
 			}
 		}
-
 		return numerationIndex;
 	}
 

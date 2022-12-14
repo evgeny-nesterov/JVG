@@ -126,7 +126,7 @@ public abstract class Node {
 		methods.add(method);
 	}
 
-	private HashMap<String, Class<?>> classes = null;
+	private Map<String, Class<?>> classes = null;
 
 	public Class<?> addClass(Class<?> clazz) throws ExecuteException {
 		if (getClass(clazz.getName()) != null) {

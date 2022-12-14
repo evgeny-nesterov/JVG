@@ -246,7 +246,6 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 
 			default:
 				throw new ExecuteException("operator '" + SymbolToken.getSymbol(operation) + "' can not be applied to " + WordToken.getWord(left.type) + ", " + WordToken.getWord(right.type));
-
 		}
 	}
 
@@ -320,7 +319,6 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 
 			default:
 				throw new ExecuteException("operator '" + SymbolToken.getSymbol(operation) + "' can not be applied to " + WordToken.getWord(left.type) + ", " + WordToken.getWord(right.type));
-
 		}
 	}
 
@@ -424,7 +422,6 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 
 			default:
 				throw new ExecuteException("operator '" + SymbolToken.getSymbol(operation) + "' can not be applied to " + WordToken.getWord(left.type) + ", " + WordToken.getWord(right.type));
-
 		}
 	}
 
@@ -533,7 +530,6 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 
 			default:
 				throw new ExecuteException("operator '" + SymbolToken.getSymbol(operation) + "' can not be applied to " + WordToken.getWord(left.type) + ", " + WordToken.getWord(right.type));
-
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.ActionChooser;
@@ -50,7 +51,7 @@ public class ChooseShadowButton extends ActionChooser {
 		return choosePanel.getPopupMenu();
 	}
 
-	private HashMap<Integer, ShadowButton> map = new HashMap<>();
+	private Map<Integer, ShadowButton> map = new HashMap<>();
 
 	class ShadowButton extends JMenuItem implements ActionListener {
 		protected Action action;

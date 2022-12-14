@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LocaleContainer {
 	public LocaleContainer(String lang) {
@@ -13,7 +14,7 @@ public class LocaleContainer {
 
 	private String lang;
 
-	private HashMap<String, String> items = new HashMap<>();
+	private Map<String, String> items = new HashMap<>();
 
 	public void load() {
 		try {

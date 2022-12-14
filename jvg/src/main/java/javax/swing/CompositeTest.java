@@ -61,7 +61,6 @@ class C implements Composite {
 class CC implements CompositeContext {
 	@Override
 	public void dispose() {
-
 	}
 
 	@Override

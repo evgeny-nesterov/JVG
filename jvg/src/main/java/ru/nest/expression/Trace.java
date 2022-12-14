@@ -1,6 +1,7 @@
 package ru.nest.expression;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Trace {
 	public double getValue(Value v) {
@@ -13,9 +14,9 @@ public class Trace {
 		}
 	}
 
-	private HashMap<Value, Double> values = new HashMap<>();
+	private Map<Value, Double> values = new HashMap<>();
 
-	public HashMap<Value, Double> getValues() {
+	public Map<Value, Double> getValues() {
 		return values;
 	}
 

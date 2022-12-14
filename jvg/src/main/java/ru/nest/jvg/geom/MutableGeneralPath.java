@@ -648,7 +648,6 @@ public class MutableGeneralPath implements Pathable<Double>, Cloneable {
 			double x0 = bounds.getX();
 			double y0 = bounds.getY();
 			return x + w > x0 && y + h > y0 && x < x0 + bounds.getWidth() && y < y0 + bounds.getHeight();
-
 		}
 
 		Crossings c = Crossings.findCrossings(getPathIterator(null), x, y, x + w, y + h);

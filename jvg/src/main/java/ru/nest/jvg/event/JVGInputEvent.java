@@ -121,7 +121,6 @@ public abstract class JVGInputEvent extends JVGEvent {
 				b = true;
 			}
 		}
-
 		return b;
 	}
 }

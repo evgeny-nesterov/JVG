@@ -901,7 +901,6 @@ public class JVGCaret extends Rectangle implements Caret, JVGFocusListener {
 		if (caretWidth > -1) {
 			return caretWidth;
 		}
-
 		return 1;
 	}
 

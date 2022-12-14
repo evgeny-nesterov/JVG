@@ -281,7 +281,6 @@ final class LinearGradientPaintContext extends MultipleGradientPaintContext {
 					preGradSteps = (int) Math.ceil(0 - g / step);
 					preVal = gradientUnderflow;
 					postVal = gradientOverflow;
-
 				} else { // dgdX < 0
 					gradSteps = (int) ((0 - g) / step);
 					preGradSteps = (int) Math.ceil((fastGradientArraySize - g) / step);
@@ -472,5 +471,4 @@ final class LinearGradientPaintContext extends MultipleGradientPaintContext {
 				fillSimpleReflect(pixels, off, adjust, x, y, w, h);
 		}
 	}
-
 }

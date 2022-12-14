@@ -596,7 +596,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case LOGICAL_OR_CHECK:
 				return OperationLogicalOrCheck.getInstance();
-
 		}
 		return null;
 	}

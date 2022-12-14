@@ -33,7 +33,7 @@ public class NodeSuper extends Node {
 		super.code(os);
 	}
 
-	public static NodeSuper decode(DecodeContext os) throws IOException {
+	public static NodeSuper decode(DecodeContext os) {
 		return instance;
 	}
 }

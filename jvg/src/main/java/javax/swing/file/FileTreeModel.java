@@ -1,17 +1,17 @@
 package javax.swing.file;
 
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashMap;
-
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
+import java.util.Map;
 
 public class FileTreeModel implements TreeModel {
 	private FilenameFilter filter;
@@ -23,7 +23,7 @@ public class FileTreeModel implements TreeModel {
 		this.fileComparator = fileComparator;
 	}
 
-	private HashMap<String, SoftReference<File[]>> cache = new HashMap<>();
+	private Map<String, SoftReference<File[]>> cache = new HashMap<>();
 
 	private File[] getFiles(Object node) {
 		if (root.equals(node)) {

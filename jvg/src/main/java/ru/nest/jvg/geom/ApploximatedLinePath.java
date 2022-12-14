@@ -17,7 +17,6 @@ public class ApploximatedLinePath extends MutableGeneralPath {
 			X.add(x);
 			Y.add(y);
 		}
-
 		return super.moveTo(x, y);
 	}
 

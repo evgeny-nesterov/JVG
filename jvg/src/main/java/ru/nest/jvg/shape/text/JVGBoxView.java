@@ -995,7 +995,6 @@ public class JVGBoxView extends CompositeView {
 			// a similar calculation is made for the maximum but we choose the smaller number.
 			r.maximum = Math.round(Math.min(totalAscent.maximum / r.alignment, totalDescent.maximum / (1.0f - r.alignment)));
 		}
-
 		return r;
 	}
 

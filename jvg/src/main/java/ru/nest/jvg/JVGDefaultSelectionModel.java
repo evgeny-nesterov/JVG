@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.nest.jvg.actionarea.JVGActionArea;
 import ru.nest.jvg.event.JVGSelectionEvent;
 import ru.nest.jvg.event.JVGSelectionListener;
 
 public class JVGDefaultSelectionModel implements JVGSelectionModel {
-	private HashMap<JVGComponent, Boolean> hash;
+	private Map<JVGComponent, Boolean> hash;
 
 	public JVGDefaultSelectionModel() {
 		hash = new HashMap<>();

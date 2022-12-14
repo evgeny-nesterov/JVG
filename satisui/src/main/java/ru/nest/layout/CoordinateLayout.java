@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager2;
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -80,7 +81,7 @@ public class CoordinateLayout implements LayoutManager2 {
 	}
 
 	// -------------
-	private HashMap<Component, CoordinateConstraints> map = new HashMap<>();
+	private Map<Component, CoordinateConstraints> map = new HashMap<>();
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {

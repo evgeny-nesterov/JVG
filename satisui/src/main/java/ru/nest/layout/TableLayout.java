@@ -8,6 +8,7 @@ import java.awt.LayoutManager2;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -406,7 +407,7 @@ public class TableLayout implements LayoutManager2 {
 	}
 
 	// -------------
-	private HashMap<Component, TableConstraints> map = new HashMap<>();
+	private Map<Component, TableConstraints> map = new HashMap<>();
 
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {

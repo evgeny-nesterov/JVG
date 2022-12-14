@@ -31,7 +31,6 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 			visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			return true;
 		}
-
 		return false;
 	}
 }
