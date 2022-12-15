@@ -18,7 +18,7 @@ public class ThrowParseRule extends ParseRule<NodeThrow> {
 	}
 
 	@Override
-	public NodeThrow visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeThrow visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.THROW, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			NodeThrow node = new NodeThrow(expectExpression(tokenizer, properties));

@@ -1,7 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +33,38 @@ public class NodeExpressionSwitch extends Node {
 	private List<Node[]> casesValues;
 
 	private List<Node> casesNodes;
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (size > 0) {
+			HiClass topType = casesNodes.get(0).getValueType(validationInfo, ctx);
+			for (int i = 1; i < size && topType != null; i++) {
+				HiClass caseValueType = casesNodes.get(i).getValueType(validationInfo, ctx);
+				if (caseValueType != null) {
+					topType = topType.getCommonClass(caseValueType);
+				} else {
+					topType = null;
+				}
+			}
+			return topType;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = valueNode.validate(validationInfo, ctx);
+		for (int i = 0; i < size; i++) {
+			Node[] caseValues = casesValues.get(i);
+			if (caseValues != null) {
+				for (Node caseValue : caseValues) {
+					valid &= caseValue.validate(validationInfo, ctx);
+				}
+			}
+			valid &= casesNodes.get(i).validate(validationInfo, ctx);
+		}
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

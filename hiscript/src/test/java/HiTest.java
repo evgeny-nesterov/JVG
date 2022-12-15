@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
@@ -71,7 +72,7 @@ public abstract class HiTest {
 		}
 	}
 
-	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException {
+	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
 		HiCompiler compiler = HiCompiler.getDefaultCompiler(script);
 		compiler.setAssertsActive(true);
 		Node node = compiler.build();
@@ -83,6 +84,7 @@ public abstract class HiTest {
 			node.execute(ctx);
 			ctx.throwExceptionIf(true);
 		}
+		// TODO create class loaders
 		// problems! HiClass.clearClassLoader();
 	}
 

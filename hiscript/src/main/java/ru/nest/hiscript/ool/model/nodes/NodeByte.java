@@ -1,8 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -31,6 +34,11 @@ public class NodeByte extends NodeNumber {
 	}
 
 	private byte value;
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return HiClassPrimitive.BYTE;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

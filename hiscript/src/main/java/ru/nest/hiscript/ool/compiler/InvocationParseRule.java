@@ -19,7 +19,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	}
 
 	@Override
-	public NodeInvocation visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public NodeInvocation visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		String name = visitWord(tokenizer, NOT_SERVICE);

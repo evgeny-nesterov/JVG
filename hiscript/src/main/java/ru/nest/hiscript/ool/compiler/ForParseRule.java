@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.compiler;
 
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
@@ -22,12 +23,12 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	}
 
 	@Override
-	public NodeFor visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeFor visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
-			properties.enter();
+			properties.enter(RuntimeContext.FOR);
 			Node initialization = DeclarationParseRule.getInstance().visit(tokenizer, properties);
 			if (initialization == null) {
 				initialization = visitExpressions(tokenizer, properties);
@@ -53,7 +54,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 		return null;
 	}
 
-	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		Node expression = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (expression != null) {
 			NodeBlock expressions = new NodeBlock("expressions");

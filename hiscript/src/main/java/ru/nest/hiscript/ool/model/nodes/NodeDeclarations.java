@@ -1,9 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +23,15 @@ public class NodeDeclarations extends Node {
 	}
 
 	private List<NodeDeclaration> declarations = new ArrayList<>();
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		for (NodeDeclaration declaration : declarations) {
+			valid &= declaration.validate(validationInfo, ctx);
+		}
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

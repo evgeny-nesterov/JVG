@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compiler.ClassFileParseRule;
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.compiler.ParserUtil;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
@@ -13,6 +14,7 @@ import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.IOException;
@@ -347,6 +349,26 @@ public class HiClass implements Codeable {
 
 	public HiClass[] classes;
 
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		if (initializers != null) {
+			for (NodeInitializer initializer : initializers) {
+				valid &= ((Node) initializer).validate(validationInfo, ctx);
+			}
+		}
+		if (constructors != null) {
+			for (HiConstructor constructor : constructors) {
+				constructor.validate(validationInfo, ctx);
+			}
+		}
+		if (methods != null) {
+			for (HiMethod method : methods) {
+				method.validate(validationInfo, ctx);
+			}
+		}
+		return valid;
+	}
+
 	public HiClass getChildren(RuntimeContext ctx, String name) {
 		HiClass children = null;
 		if (classes != null) {
@@ -425,6 +447,9 @@ public class HiClass implements Codeable {
 	}
 
 	public boolean isInstanceof(HiClass clazz) {
+		if (this == clazz) {
+			return true;
+		}
 		HiClass c = this;
 		while (c != null) {
 			if (c == clazz || c.fullName.equals(clazz.fullName)) {
@@ -1075,5 +1100,18 @@ public class HiClass implements Codeable {
 				return ArrayList.class;
 		}
 		return null;
+	}
+
+	public HiClass getCommonClass(HiClass c) {
+		if (c.isInstanceof(this)) {
+			return this;
+		}
+		while (c != null) {
+			if (isInstanceof(c)) {
+				return c;
+			}
+			c = c.superClass;
+		}
+		return loadedClasses.get("Object");
 	}
 }

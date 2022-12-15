@@ -26,7 +26,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	}
 
 	@Override
-	public NodeTry visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			NodeDeclaration[] resources = null;
@@ -34,11 +34,11 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				tokenizer.nextToken();
 
 				List<NodeDeclaration> resourcesList = new ArrayList<>(1);
-				NodeDeclaration resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, properties, true);
+				NodeDeclaration resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
 				resourcesList.add(resource);
 				while (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 					tokenizer.nextToken();
-					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, properties, true);
+					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
 					if (resource == null) {
 						throw new ParseException("declaration expected", tokenizer.currentToken());
 					}
@@ -50,7 +50,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
-			Node tryBody = BlockParseRule.getInstance().visit(tokenizer, properties);
+			Node tryBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
 			List<NodeCatch> catchNodes = null;
@@ -76,7 +76,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					expectSymbol(tokenizer, Symbols.BRACES_LEFT);
-					catchBody = BlockParseRule.getInstance().visit(tokenizer, properties);
+					catchBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
 					if (catchNodes == null) {
@@ -94,7 +94,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 			Node finallyBody = null;
 			if (visitWord(Words.FINALLY, tokenizer) != null) {
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
-				finallyBody = BlockParseRule.getInstance().visit(tokenizer, properties);
+				finallyBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			}
 

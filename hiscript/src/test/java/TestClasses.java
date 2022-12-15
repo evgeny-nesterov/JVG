@@ -8,6 +8,9 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class C{int c = 1;} assert new C().c == 1;");
 		assertSuccessSerialize("class C{static int c;} assert C.c == 0;");
 		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
+
+		// extends
+		// assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
 	}
 
 	@Test
@@ -17,7 +20,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
 		assertSuccessSerialize("class A{static class B{static class C{static class D{}}}} A.B.C.D d = new A.B.C.D(); assert d instanceof A.B.C.D;");
 		assertFailSerialize("class A{static class B{}} A a = new A(); A.B b = a.new B();");
-		assertFailSerialize("class A{static class B{}} B b;");
+		assertFailSerialize("class AA{static class BB{}} BB b;");
 		assertFailSerialize("class A{static class B{}} A.B b = new B();");
 		assertSuccessSerialize("class A {void get(){}} A a = new A(); a.get();");
 

@@ -29,7 +29,7 @@
 	}
 
 	NewClass.A a = new NewClass.A();
-	Class c1 = Class.forName("@root$0NewClass$A");
+	Class c1 = Class.forName("NewClass$A");
 	Class c2 = a.getClass();
 	System.println("NewClass.A class full name: " + c1.getFullName() + ", classes equals = " + (c1 == c2));
 }

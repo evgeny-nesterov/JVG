@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -8,6 +9,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -30,6 +32,24 @@ public class NodeArray extends Node {
 	public Type type;
 
 	private Node[] dimensions;
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		int size = dimensions.length;
+		for (int i = 0; i < size; i++) {
+			if (dimensions[i] != null) {
+				valid &= dimensions[i].validate(validationInfo, ctx);
+			}
+		}
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

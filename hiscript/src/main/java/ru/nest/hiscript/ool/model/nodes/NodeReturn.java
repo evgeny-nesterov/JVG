@@ -1,11 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeReturn extends Node {
 	public NodeReturn(Node value) {
@@ -14,6 +16,14 @@ public class NodeReturn extends Node {
 	}
 
 	private Node value;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (value != null) {
+			return value.validate(validationInfo, ctx);
+		}
+		return true;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

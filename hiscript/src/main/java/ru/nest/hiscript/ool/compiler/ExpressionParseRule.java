@@ -45,7 +45,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	@Override
-	public NodeExpression visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		List<Node> operands = new ArrayList<>();
 		List<OperationsGroup> allOperations = new ArrayList<>();
 		Token startToken = tokenizer.currentToken();
@@ -245,7 +245,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileContext properties) throws TokenizerException, ParseException {
+	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 			Token token = tokenizer.currentToken();
 
@@ -263,7 +263,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileContext properties) throws TokenizerException, ParseException {
+	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext properties) throws TokenizerException, ParseException {
 		boolean found = false;
 		while (visitArrayIndex(tokenizer, operations, operands, properties)) {
 			found = true;
@@ -271,7 +271,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return found;
 	}
 
-	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<Node> operands, CompileContext ctx) throws TokenizerException, ParseException {
+	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<Node> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
 		// visit number
 		NodeNumber numberNode = visitNumber(tokenizer);
 		if (numberNode != null) {

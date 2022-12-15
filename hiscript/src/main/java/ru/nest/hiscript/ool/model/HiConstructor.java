@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldInt;
@@ -9,6 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.List;
@@ -79,6 +81,34 @@ public class HiConstructor implements Codeable {
 	public BodyConstructorType bodyConstructorType;
 
 	public Node body;
+
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.CONSTRUCTOR);
+		boolean valid = true;
+		if (arguments != null) {
+			for (NodeArgument argument : arguments) {
+				valid &= argument.validate(validationInfo, ctx);
+			}
+		}
+
+		switch (bodyConstructorType) {
+			case THIS:
+				// TODO check
+				break;
+			case SUPER:
+				// TODO check
+				break;
+		}
+		if (bodyConstructor != null) {
+			bodyConstructor.validate(validationInfo, ctx);
+		}
+
+		if (body != null) {
+			body.validate(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	public HiObject newInstance(RuntimeContext ctx, HiField<?>[] arguments, HiObject outboundObject) {
 		return newInstance(ctx, arguments, null, outboundObject);

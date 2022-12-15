@@ -21,7 +21,7 @@ public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 	}
 
 	@Override
-	public NodeDoWhile visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeDoWhile visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.DO, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 

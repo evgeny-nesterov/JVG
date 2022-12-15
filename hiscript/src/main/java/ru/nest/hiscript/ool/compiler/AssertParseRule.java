@@ -19,7 +19,7 @@ public class AssertParseRule extends ParseRule<NodeAssert> {
 	}
 
 	@Override
-	public NodeAssert visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeAssert visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.ASSERT, tokenizer) != null) {
 			NodeExpression condition = expectExpression(tokenizer, properties);
 			// TODO check condition.getExpressionType() on boolean type

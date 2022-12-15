@@ -1,12 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
-import ru.nest.hiscript.ool.model.ValidationContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -35,6 +37,19 @@ public class NodeArgument extends Node implements NodeVariable {
 	public String name;
 
 	public Modifiers modifiers;
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO check
+		return null;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO check
+		ctx.addLocalVariable(this, validationInfo);
+		return true;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

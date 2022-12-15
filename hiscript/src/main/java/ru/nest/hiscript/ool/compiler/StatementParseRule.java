@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
 import ru.nest.hiscript.tokenizer.Symbols;
-import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -25,21 +24,21 @@ public class StatementParseRule extends ParseRule<Node> {
 	 * assignment, new object throw
 	 */
 	@Override
-	public Node visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 			return EmptyNode.getInstance();
 		}
 
 		// local class / interface
-		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
+		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		if (clazz == null) {
-			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {
-			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {
-			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
+			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz != null) {
 			// check modifiers

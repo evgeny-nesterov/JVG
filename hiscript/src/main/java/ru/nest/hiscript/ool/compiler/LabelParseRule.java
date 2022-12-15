@@ -20,7 +20,7 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 	}
 
 	@Override
-	public NodeLabel visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeLabel visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		String label;

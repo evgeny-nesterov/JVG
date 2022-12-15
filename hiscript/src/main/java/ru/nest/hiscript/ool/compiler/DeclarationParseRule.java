@@ -23,7 +23,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	}
 
 	@Override
-	public NodeDeclarations visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 		Token startToken = tokenizer.currentToken();
 
@@ -41,7 +41,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				if (checkSymbol(tokenizer, Symbols.SEMICOLON, Symbols.COMMA) != -1) {
 					isField = true;
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), properties);
+					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
 					isField = true;
 				}
 
@@ -51,7 +51,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 					NodeDeclarations declarations = new NodeDeclarations();
 					NodeDeclaration field = declarations.add(type, varName, initializer, modifiers);
-					properties.addLocalVariable(field);
+					ctx.addLocalVariable(field);
 
 					// Search new declarations with the base type
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
@@ -61,11 +61,11 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 						initializer = null;
 						if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), properties);
+							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), ctx);
 						}
 
 						field = declarations.add(type, varName, initializer, modifiers);
-						properties.addLocalVariable(field);
+						ctx.addLocalVariable(field);
 					}
 
 					declarations.setToken(tokenizer.getBlockToken(startToken));
@@ -78,7 +78,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return null;
 	}
 
-	public Node visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileContext properties) throws TokenizerException, ParseException {
+	public Node visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
 		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (initializer != null) {
 			return initializer;
@@ -91,7 +91,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return null;
 	}
 
-	public Node expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileContext properties) throws TokenizerException, ParseException {
+	public Node expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
 		Node initializer = visitInitializer(tokenizer, type, dimensions, properties);
 		if (initializer == null) {
 			throw new ParseException("initializer is expected", tokenizer.currentToken());
@@ -99,7 +99,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return initializer;
 	}
 
-	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileContext properties, boolean initialized) throws TokenizerException, ParseException {
+	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileClassContext ctx, boolean initialized) throws TokenizerException, ParseException {
 		tokenizer.start();
 		Token startToken = tokenizer.currentToken();
 
@@ -115,7 +115,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				Node initializer = null;
 				if (initialized) {
 					expectSymbol(tokenizer, Symbols.EQUATE);
-					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), properties);
+					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
 				}
 
 				tokenizer.commit();
@@ -123,7 +123,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, modifiers);
 				field.setToken(tokenizer.getBlockToken(startToken));
-				properties.addLocalVariable(field);
+				ctx.addLocalVariable(field);
 				return field;
 			}
 		}

@@ -1,8 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -20,6 +22,18 @@ public class NodeForIterator extends Node {
 	private Node iterable;
 
 	private Node body;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.FOR);
+		boolean valid = declaration.validate(validationInfo, ctx);
+		valid &= iterable.validate(validationInfo, ctx);
+		if (body != null) {
+			valid &= body.validateBlock(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

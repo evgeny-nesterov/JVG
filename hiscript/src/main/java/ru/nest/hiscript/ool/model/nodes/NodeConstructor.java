@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -9,6 +10,7 @@ import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -39,6 +41,21 @@ public class NodeConstructor extends Node {
 	public Node[] argValues;
 
 	public String name;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		if (argValues != null) {
+			for (Node argValue : argValues) {
+				valid &= argValue.validate(validationInfo, ctx);
+			}
+		}
+
+		// resolve class
+		// TODO clazz = type.getType().getClass(ctx);
+
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

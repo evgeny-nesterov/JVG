@@ -1,22 +1,26 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
 public class NodeTry extends Node {
 	public NodeTry(Node body, NodeCatch[] catches, Node finallyBody, NodeDeclaration[] resources) {
 		super("try", TYPE_TRY);
+		this.resources = resources;
 		this.body = body;
 		this.catches = catches;
 		this.finallyBody = finallyBody;
-		this.resources = resources;
 	}
+
+	private NodeDeclaration[] resources;
 
 	private Node body;
 
@@ -24,7 +28,27 @@ public class NodeTry extends Node {
 
 	private Node finallyBody;
 
-	private NodeDeclaration[] resources;
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		ctx.enter(RuntimeContext.TRY);
+		if (resources != null) {
+			for (NodeDeclaration resource : resources) {
+				valid &= resource.validate(validationInfo, ctx);
+			}
+		}
+		valid &= body.validateBlock(validationInfo, ctx);
+		if (catches != null) {
+			for (NodeCatch catchNode : catches) {
+				valid &= catchNode.validateBlock(validationInfo, ctx);
+			}
+		}
+		if (finallyBody != null) {
+			valid &= finallyBody.validateBlock(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+
+import java.io.IOException;
 
 /**
  * This type of node presents any empty statement, for example, statement ';'.

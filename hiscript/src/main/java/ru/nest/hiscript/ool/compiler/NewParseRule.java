@@ -28,7 +28,7 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	@Override
-	public Node visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			Type type = visitType(tokenizer, false);
@@ -63,13 +63,13 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new <type>(<arguments>) {<body>}
-	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileContext ctx) throws TokenizerException, ParseException {
+	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
 		Node[] arguments = visitArgumentsValues(tokenizer, ctx);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileContext innerProperties = new CompileContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
+			CompileClassContext innerProperties = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
 			innerProperties.clazz = new HiClass(type, ctx.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
@@ -85,7 +85,7 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new a.b.c.d[<index>]...[<index>] []...[]
-	private Node visitNewArray(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
+	private Node visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext properties) throws TokenizerException, ParseException {
 		List<Node> indexes = new ArrayList<>();
 
 		Node index = ExpressionParseRule.getInstance().visit(tokenizer, properties);
@@ -112,7 +112,7 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new a.b.c.d[]...[] {{...}, ... ,{...}}
-	private Node visitNewArrayValue(Tokenizer tokenizer, Type type, CompileContext properties) throws TokenizerException, ParseException {
+	private Node visitNewArrayValue(Tokenizer tokenizer, Type type, CompileClassContext properties) throws TokenizerException, ParseException {
 		int dimensions = visitDimension(tokenizer) + 1;
 
 		Node value = visitArrayValue(tokenizer, type, dimensions, properties);
@@ -122,7 +122,7 @@ public class NewParseRule extends ParseRule<Node> {
 		return value;
 	}
 
-	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			ArrayList<Node> list = new ArrayList<>(1);
 
@@ -147,7 +147,7 @@ public class NewParseRule extends ParseRule<Node> {
 		return null;
 	}
 
-	public Node visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileContext properties) throws TokenizerException, ParseException {
+	public Node visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
 		Node cell = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (cell != null) {
 			return cell;

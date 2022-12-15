@@ -1,7 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -15,6 +17,13 @@ public class NodeWhile extends Node {
 	private Node condition;
 
 	private Node body;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = condition.validate(validationInfo, ctx);
+		valid &= body.validateBlock(validationInfo, ctx);
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

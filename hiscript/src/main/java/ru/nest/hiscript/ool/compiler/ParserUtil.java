@@ -4,6 +4,7 @@ import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -262,7 +263,7 @@ public class ParserUtil implements Words {
 		return dimension;
 	}
 
-	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	protected NodeExpression expectCondition(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
@@ -274,10 +275,10 @@ public class ParserUtil implements Words {
 		return condition;
 	}
 
-	protected Node expectBody(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	protected Node expectBody(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		ctx.enter();
+		ctx.enter(RuntimeContext.BLOCK);
 		Node body = StatementParseRule.getInstance().visit(tokenizer, ctx);
 		ctx.exit();
 		if (body == null) {
@@ -290,7 +291,7 @@ public class ParserUtil implements Words {
 		return body;
 	}
 
-	protected NodeExpression expectExpression(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	protected NodeExpression expectExpression(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
 		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, properties);
@@ -414,7 +415,7 @@ public class ParserUtil implements Words {
 		}
 	}
 
-	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		List<Node> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
@@ -433,7 +434,7 @@ public class ParserUtil implements Words {
 		return argsArray;
 	}
 
-	protected void visitArgumentsDefinitions(Tokenizer tokenizer, List<NodeArgument> arguments, CompileContext properties) throws TokenizerException, ParseException {
+	protected void visitArgumentsDefinitions(Tokenizer tokenizer, List<NodeArgument> arguments, CompileClassContext properties) throws TokenizerException, ParseException {
 		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
 		if (arg != null) {
 			arguments.add(arg);

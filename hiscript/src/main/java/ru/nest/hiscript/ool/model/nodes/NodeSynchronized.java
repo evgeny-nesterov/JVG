@@ -1,10 +1,12 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeSynchronized extends Node {
 	public NodeSynchronized(Node lock, Node body) {
@@ -16,6 +18,17 @@ public class NodeSynchronized extends Node {
 	private Node lock;
 
 	private Node body;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.SYNCHRONIZED);
+		boolean valid = lock.validate(validationInfo, ctx);
+		if (body != null) {
+			valid &= body.validateBlock(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

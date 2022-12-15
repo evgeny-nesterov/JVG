@@ -1,10 +1,12 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -18,6 +20,20 @@ public class NodeIdentifier extends Node {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO
+		//		NodeVariable variable = ctx.getVariable(name);
+		//		return ((Node) variable).getValueType(validationInfo, ctx);
+		return null;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO check name
+		return true;
 	}
 
 	@Override

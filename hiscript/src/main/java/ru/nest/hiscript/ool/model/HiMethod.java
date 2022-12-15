@@ -1,9 +1,11 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeNative;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -61,6 +63,21 @@ public class HiMethod implements Codeable {
 		this.body = body;
 		this.argCount = arguments != null ? arguments.length : 0;
 		this.token = token;
+	}
+
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.METHOD);
+		boolean valid = true;
+		if (arguments != null) {
+			for (NodeArgument argument : arguments) {
+				valid &= argument.validate(validationInfo, ctx);
+			}
+		}
+		if (body != null) {
+			body.validate(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
 	}
 
 	public boolean hasVarargs() {

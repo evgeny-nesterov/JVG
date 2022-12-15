@@ -20,7 +20,7 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 	}
 
 	@Override
-	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			NodeExpression value = expectCondition(tokenizer, properties);
 			NodeExpressionSwitch node = new NodeExpressionSwitch(value);

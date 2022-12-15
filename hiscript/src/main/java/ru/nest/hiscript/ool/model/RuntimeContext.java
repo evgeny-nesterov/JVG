@@ -255,7 +255,7 @@ public class RuntimeContext {
 	public HiField<?> getVariable(String name) {
 		HiField<?> var = null;
 
-		// search in blocks upto method or constructor
+		// search in blocks up to method or constructor
 		StackLevel level = this.level;
 		WHILE:
 		while (level != null) {

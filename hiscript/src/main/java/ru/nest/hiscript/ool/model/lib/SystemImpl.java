@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.compiler.CompileContext;
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
@@ -123,11 +123,11 @@ public class SystemImpl extends ImplUtil {
 			String text = getString(ctx, code);
 			Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(text);
 
-			CompileContext compileCtx;
+			CompileClassContext compileCtx;
 			if (newInstance) {
-				compileCtx = new CompileContext(ctx.compiler, null, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx.compiler, null, HiClass.CLASS_TYPE_TOP);
 			} else {
-				compileCtx = new CompileContext(ctx.compiler, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx.compiler, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
 			}
 
 			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false).visit(tokenizer, compileCtx);

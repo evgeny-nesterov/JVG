@@ -37,7 +37,7 @@ public class RecordParseRule extends ParserUtil {
 	private RecordParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -107,7 +107,7 @@ public class RecordParseRule extends ParserUtil {
 			if (hasContent) {
 				ClassParseRule.getInstance().visitContent(tokenizer, ctx, new ParseVisitor() {
 					@Override
-					public boolean visit(Tokenizer tokenizer, CompileContext ctx) {
+					public boolean visit(Tokenizer tokenizer, CompileClassContext ctx) {
 						// TODO parse specific content
 						return false;
 					}

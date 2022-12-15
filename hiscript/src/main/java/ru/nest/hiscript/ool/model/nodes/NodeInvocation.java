@@ -1,14 +1,17 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeInvocation extends Node {
 	public NodeInvocation(String name, boolean innerInvocation, Node[] arguments) {
@@ -30,6 +33,25 @@ public class NodeInvocation extends Node {
 
 	public void setInner(boolean innerInvocation) {
 		this.innerInvocation = innerInvocation;
+	}
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		if (arguments != null) {
+			for (Node argument : arguments) {
+				valid &= argument.validate(validationInfo, ctx);
+			}
+		}
+
+		// TODO check name
+		return valid;
 	}
 
 	@Override

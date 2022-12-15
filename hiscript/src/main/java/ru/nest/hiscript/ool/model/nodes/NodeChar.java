@@ -2,10 +2,13 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import java.io.IOException;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class NodeChar extends Node {
 	private final static String name = "char";
@@ -28,6 +31,11 @@ public class NodeChar extends Node {
 	}
 
 	private char value;
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return HiClassPrimitive.CHAR;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

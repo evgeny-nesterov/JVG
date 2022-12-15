@@ -25,7 +25,7 @@ public class InterfaceParseRule extends ParserUtil {
 	private InterfaceParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -80,11 +80,11 @@ public class InterfaceParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		HiClass clazz = ctx.clazz;
 		while (true) {
 			// inner class / interface
-			CompileContext innerProperties = new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER);
+			CompileClassContext innerProperties = new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER);
 			HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, innerProperties);
 			if (innerClass == null) {
 				innerClass = InterfaceParseRule.getInstance().visit(tokenizer, innerProperties);
@@ -115,7 +115,7 @@ public class InterfaceParseRule extends ParserUtil {
 		ctx.initClass();
 	}
 
-	private boolean visitFields(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	private boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -151,7 +151,7 @@ public class InterfaceParseRule extends ParserUtil {
 		return false;
 	}
 
-	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileContext properties) throws TokenizerException, ParseException {
+	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext properties) throws TokenizerException, ParseException {
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 		expectSymbol(tokenizer, Symbols.EQUATE);

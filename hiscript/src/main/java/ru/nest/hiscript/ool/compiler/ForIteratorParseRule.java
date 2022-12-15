@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compiler;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
@@ -25,7 +26,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	}
 
 	@Override
-	public NodeForIterator visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
@@ -41,19 +42,19 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					tokenizer.commit();
 					tokenizer.nextToken();
 
-					properties.enter();
+					ctx.enter(RuntimeContext.FOR);
 
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers());
-					properties.addLocalVariable(declaration);
+					ctx.addLocalVariable(declaration);
 
-					Node iterable = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+					Node iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-					Node body = expectBody(tokenizer, properties);
+					Node body = expectBody(tokenizer, ctx);
 
 					NodeForIterator node = new NodeForIterator(declaration, iterable, body);
-					properties.exit();
+					ctx.exit();
 					return node;
 				}
 			}

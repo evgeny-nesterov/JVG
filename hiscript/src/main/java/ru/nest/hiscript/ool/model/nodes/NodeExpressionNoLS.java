@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
@@ -7,9 +8,8 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.ValidationContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.tokenizer.Token;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -125,7 +125,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 	private Operation[] operations;
 
 	@Override
-	public HiClass getValueType(ValidationContext ctx) {
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass[] values = new HiClass[operands.length];
 		int bufSize = 0;
 		int valuePos = 0;
@@ -133,20 +133,39 @@ public class NodeExpressionNoLS extends NodeExpression {
 			if (operations[i] == null) {
 				// get value
 				Node valueNode = operands[valuePos];
-				values[bufSize] = valueNode.getValueType(ctx);
+				HiClass valueType = valueNode.getValueType(validationInfo, ctx);
+				if (valueType == null) {
+					return null;
+				}
+				values[bufSize] = valueType;
 				bufSize++;
 				valuePos++;
 			} else {
 				// do operation
-				bufSize = operations[i].getOperationResultType(ctx, bufSize, values);
+				HiClass valueType = operations[i].getOperationResultType(validationInfo, bufSize, values);
+				bufSize = operations[i].getOperationBufIndex(bufSize);
+				if (valueType == null) {
+					return null;
+				}
+				values[bufSize] = valueType;
 			}
 		}
 		return values[0];
 	}
 
+	private HiClass resultClass;
+
 	@Override
-	public void validate(ValidationContext ctx) {
-		// TODO validate
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		for (int i = 0; i < operands.length; i++) {
+			valid &= operands[i].validate(validationInfo, ctx);
+		}
+		if (valid) {
+			resultClass = getValueType(validationInfo, ctx);
+			valid = resultClass != null;
+		}
+		return valid;
 	}
 
 	@Override
@@ -205,13 +224,13 @@ public class NodeExpressionNoLS extends NodeExpression {
 								valuePos++;
 							} else {
 								if (operations[i].getOperation() != OperationsIF.LOGICAL_AND_CHECK && operations[i].getOperation() != OperationsIF.LOGICAL_OR_CHECK) {
-									bufSize = operations[i].skipOperation(ctx, bufSize);
+									bufSize = operations[i].getOperationBufIndex(bufSize);
 								}
 							}
 							i++;
 						}
 						while (i < operations.length && operations[i].getOperation() == skipToOperation) {
-							bufSize = operations[i].skipOperation(ctx, bufSize);
+							bufSize = operations[i].getOperationBufIndex(bufSize);
 							i++;
 						}
 						continue;

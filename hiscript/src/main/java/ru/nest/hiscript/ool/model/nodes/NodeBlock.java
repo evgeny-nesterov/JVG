@@ -1,8 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +45,18 @@ public class NodeBlock extends Node implements NodeInitializer {
 
 	public void setEnterType(int enterType) {
 		this.enterType = enterType;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.BLOCK);
+		boolean valid = true;
+		// TODO check isStatic
+		for (Node statement : statements) {
+			valid &= statement.validate(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
 	}
 
 	@Override

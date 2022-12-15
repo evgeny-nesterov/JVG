@@ -1,11 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeType extends Node {
 	public NodeType(Type type) {
@@ -17,6 +20,11 @@ public class NodeType extends Node {
 
 	public Type getType() {
 		return type;
+	}
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return type.getClass(null);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -7,12 +8,14 @@ import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeVariable;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
-public abstract class HiField<T> extends Node implements NodeInitializer, Cloneable {
+public abstract class HiField<T> extends Node implements NodeInitializer, NodeVariable, Cloneable {
 	private final static String packageName = HiField.class.getPackage().getName() + ".fields";
 
 	private static HashMap<String, java.lang.reflect.Constructor<HiField<?>>> primitiveBuilders;
@@ -92,6 +95,12 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 	public String name;
 
 	public Node initializer;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.addLocalVariable(this, validationInfo);
+		return true;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {
@@ -254,5 +263,15 @@ public abstract class HiField<T> extends Node implements NodeInitializer, Clonea
 
 	public String getStringValue(RuntimeContext ctx) {
 		return ((HiObject) get()).getStringValue(ctx);
+	}
+
+	@Override
+	public String getVariableName() {
+		return name;
+	}
+
+	@Override
+	public String getVariableType() {
+		return type.fullName;
 	}
 }

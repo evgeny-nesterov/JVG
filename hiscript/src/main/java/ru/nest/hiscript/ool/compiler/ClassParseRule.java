@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
@@ -33,7 +34,7 @@ public class ClassParseRule extends ParserUtil {
 	private ClassParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -100,7 +101,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileContext properties, ParseVisitor visiter) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext properties, ParseVisitor visiter) throws TokenizerException, ParseException {
 		while (visitContentElement(tokenizer, properties, visiter)) {
 		}
 
@@ -112,7 +113,7 @@ public class ClassParseRule extends ParserUtil {
 		properties.initClass();
 	}
 
-	public boolean visitContentElement(Tokenizer tokenizer, CompileContext ctx, ParseVisitor visitor) throws TokenizerException, ParseException {
+	public boolean visitContentElement(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, ParseException {
 		HiClass clazz = ctx.clazz;
 
 		if (visitor != null && visitor.visit(tokenizer, ctx)) {
@@ -120,15 +121,15 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		// inner class / interface
-		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		if (innerClass == null) {
-			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass == null) {
-			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass == null) {
-			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass != null) {
 			if (!clazz.isTopLevel() && !clazz.isStatic()) {
@@ -175,9 +176,9 @@ public class ClassParseRule extends ParserUtil {
 		return false;
 	}
 
-	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
-		HiClass clazz = properties.clazz;
+		HiClass clazz = ctx.clazz;
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -189,13 +190,13 @@ public class ClassParseRule extends ParserUtil {
 
 				tokenizer.commit();
 				checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE);
-				properties.enter(); // before arguments
+				ctx.enter(RuntimeContext.CONSTRUCTOR); // before arguments
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
-				visitArgumentsDefinitions(tokenizer, arguments, properties);
+				visitArgumentsDefinitions(tokenizer, arguments, ctx);
 				for (NodeArgument argument : arguments) {
-					properties.addLocalVariable(argument);
+					ctx.addLocalVariable(argument);
 				}
 
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -210,7 +211,7 @@ public class ClassParseRule extends ParserUtil {
 					int constructorType = visitServiceWord(tokenizer, THIS, SUPER);
 					if (constructorType != -1) {
 						if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-							Node[] args = visitArgumentsValues(tokenizer, properties);
+							Node[] args = visitArgumentsValues(tokenizer, ctx);
 							expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 							expectSymbol(tokenizer, Symbols.SEMICOLON);
 
@@ -236,9 +237,9 @@ public class ClassParseRule extends ParserUtil {
 				}
 
 				// visit body
-				Node body = BlockParseRule.getInstance().visit(tokenizer, properties);
+				Node body = BlockParseRule.getInstance().visit(tokenizer, ctx);
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-				properties.exit();
+				ctx.exit();
 
 				return new HiConstructor(clazz, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
 			}
@@ -248,7 +249,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public HiMethod visitMethod(Tokenizer tokenizer, CompileContext properties, int... allowed) throws TokenizerException, ParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext properties, int... allowed) throws TokenizerException, ParseException {
 		tokenizer.start();
 		Token startToken = tokenizer.currentToken();
 		HiClass clazz = properties.clazz;
@@ -269,7 +270,7 @@ public class ClassParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
-					properties.enter();
+					properties.enter(RuntimeContext.METHOD);
 
 					checkModifiers(tokenizer, modifiers, allowed);
 
@@ -324,7 +325,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public boolean visitFields(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -366,7 +367,7 @@ public class ClassParseRule extends ParserUtil {
 		return false;
 	}
 
-	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileContext ctx) throws TokenizerException, ParseException {
+	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, ParseException {
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 
@@ -382,13 +383,13 @@ public class ClassParseRule extends ParserUtil {
 		ctx.addField(field);
 	}
 
-	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		boolean isStatic = visitWord(tokenizer, STATIC) != null;
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			tokenizer.commit();
-			ctx.enter();
+			ctx.enter(RuntimeContext.BLOCK);
 
 			NodeBlock block = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			if (block != null) {

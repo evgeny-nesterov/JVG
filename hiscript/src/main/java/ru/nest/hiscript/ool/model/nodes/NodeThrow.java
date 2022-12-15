@@ -1,9 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeThrow extends Node {
 	public NodeThrow(Node exception) {
@@ -12,6 +14,11 @@ public class NodeThrow extends Node {
 	}
 
 	private Node exception;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return exception.validate(validationInfo, ctx);
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

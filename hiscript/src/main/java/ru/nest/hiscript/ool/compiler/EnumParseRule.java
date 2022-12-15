@@ -21,7 +21,7 @@ public class EnumParseRule extends ParserUtil {
 	private EnumParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -51,7 +51,7 @@ public class EnumParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (enumName != null) {
 			int ordinal = 0;

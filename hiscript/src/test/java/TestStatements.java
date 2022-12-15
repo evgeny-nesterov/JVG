@@ -6,7 +6,7 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
 		assertSuccessSerialize("int i = 0; for(; i < 10; i++); assert i == 10;");
 		assertSuccessSerialize("for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {}");
-		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
+		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
 		assertSuccessSerialize("String[] x = {\"a\", \"b\", \"c\"}; for (String i : x) {i += i;};");
 
 		assertSuccessSerialize("for(;;) {break;}");

@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
@@ -9,6 +10,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +39,22 @@ public class NodeSwitch extends Node {
 	private List<Node[]> casesValues;
 
 	private List<Node> casesNodes;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.SWITCH);
+		boolean valid = valueNode.validate(validationInfo, ctx);
+		for (int i = 0; i < size; i++) {
+			if (casesValues.get(i) != null) { // not default
+				for (Node casesValue : casesValues.get(i)) {
+					valid &= casesValue.validate(validationInfo, ctx);
+				}
+			}
+			valid &= casesNodes.get(i).validate(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

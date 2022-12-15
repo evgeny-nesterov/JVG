@@ -1,9 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeIf extends Node {
 	public NodeIf(NodeExpression condition, Node body, NodeIf nextIf) {
@@ -18,6 +20,21 @@ public class NodeIf extends Node {
 	private Node body;
 
 	private NodeIf nextIf;
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
+		ctx.enter(RuntimeContext.IF);
+		if (condition != null) {
+			valid &= condition.validate(validationInfo, ctx);
+		}
+		valid &= body.validateBlock(validationInfo, ctx);
+		if (nextIf != null) {
+			valid &= nextIf.validate(validationInfo, ctx);
+		}
+		ctx.exit();
+		return valid;
+	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {

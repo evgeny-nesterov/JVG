@@ -20,7 +20,7 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	}
 
 	@Override
-	public NodeSynchronized visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeSynchronized visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.SYNCHRONIZED, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);

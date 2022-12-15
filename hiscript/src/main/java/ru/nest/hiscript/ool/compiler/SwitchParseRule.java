@@ -27,7 +27,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	}
 
 	@Override
-	public NodeSwitch visit(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			NodeExpression value = expectCondition(tokenizer, ctx);
@@ -63,7 +63,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 		return null;
 	}
 
-	protected Node[] visitCaseValue(Tokenizer tokenizer, CompileContext ctx) throws TokenizerException, ParseException {
+	protected Node[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		List<Node> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {

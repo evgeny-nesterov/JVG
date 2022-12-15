@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -45,6 +46,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeThrow;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -169,11 +171,23 @@ public abstract class Node implements Codeable {
 		this.token = token;
 	}
 
-	public HiClass getValueType(ValidationContext ctx) {
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return null;
 	}
 
-	public void validate(ValidationContext ctx) {
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return true;
+	}
+
+	public boolean validateBlock(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (this instanceof NodeBlock) {
+			validate(validationInfo, ctx);
+		} else {
+			ctx.enter(RuntimeContext.BLOCK);
+			validate(validationInfo, ctx);
+			ctx.exit();
+		}
+		return true;
 	}
 
 	public abstract void execute(RuntimeContext ctx);

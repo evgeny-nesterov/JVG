@@ -20,7 +20,7 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	}
 
 	@Override
-	public NodeIf visit(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeIf visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.IF, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			NodeExpression condition = expectCondition(tokenizer, properties);
@@ -34,7 +34,7 @@ public class IfParseRule extends ParseRule<NodeIf> {
 		return null;
 	}
 
-	public NodeIf visitNext(Tokenizer tokenizer, CompileContext properties) throws TokenizerException, ParseException {
+	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
 		if (visitWord(Words.ELSE, tokenizer) != null) {
 			Token startToken = tokenizer.currentToken();
 			if (visitWord(Words.IF, tokenizer) != null) {

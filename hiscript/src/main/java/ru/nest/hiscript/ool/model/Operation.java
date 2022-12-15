@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -48,8 +49,9 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return increment;
 	}
 
-	public void getOperationResultType(ValidationContext ctx, HiClass... types) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, HiClass... types) {
 		// TODO
+		return null;
 	}
 
 	public abstract void doOperation(RuntimeContext ctx, Value... values);
@@ -59,45 +61,29 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 			case 1:
 				doOperation(ctx, values[index - 1]);
 				return index;
-
 			case 2:
 				doOperation(ctx, values[index - 2], values[index - 1]);
 				return index - 1;
-
-			case 3:
-				doOperation(ctx, values[index - 3], values[index - 2], values[index - 1]);
-				return index - 3;
 		}
 		return index;
 	}
 
-	public int getOperationResultType(ValidationContext ctx, int index, HiClass... types) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, int index, HiClass... types) {
 		switch (operandsCount) {
 			case 1:
-				getOperationResultType(ctx, types[index - 1]);
-				return index;
-
+				return getOperationResultType(validationInfo, types[index - 1]);
 			case 2:
-				getOperationResultType(ctx, types[index - 2], types[index - 1]);
-				return index - 1;
-
-			case 3:
-				getOperationResultType(ctx, types[index - 3], types[index - 2], types[index - 1]);
-				return index - 3;
+				return getOperationResultType(validationInfo, types[index - 2], types[index - 1]);
 		}
-		return index;
+		return null;
 	}
 
-	public int skipOperation(RuntimeContext ctx, int index) {
+	public int getOperationBufIndex(int index) {
 		switch (operandsCount) {
 			case 1:
 				return index;
-
 			case 2:
 				return index - 1;
-
-			case 3:
-				return index - 3;
 		}
 		return index;
 	}
