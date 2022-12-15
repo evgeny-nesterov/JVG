@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -16,24 +17,28 @@ public class NodeByte extends NodeNumber {
 
 	private static NodeByte[] cache;
 
-	public static NodeByte getInstance(byte value, boolean hasSign) {
-		if (cache == null) {
-			cache = new NodeByte[256];
-		}
+	//	public static NodeByte getInstance(byte value, boolean hasSign) {
+	//		if (cache == null) {
+	//			cache = new NodeByte[256];
+	//		}
+	//
+	//		int index = value & 0xFF;
+	//		if (cache[index] == null) {
+	//			cache[index] = new NodeByte(value, hasSign);
+	//		}
+	//		return cache[index];
+	//	}
 
-		int index = value & 0xFF;
-		if (cache[index] == null) {
-			cache[index] = new NodeByte(value, hasSign);
-		}
-		return cache[index];
-	}
-
-	private NodeByte(byte value, boolean hasSign) {
-		super(name, TYPE_BYTE, hasSign);
+	public NodeByte(byte value, boolean hasSign, Token token) {
+		super(name, TYPE_BYTE, hasSign, token);
 		this.value = value;
 	}
 
 	private byte value;
+
+	public byte getValue() {
+		return value;
+	}
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -55,7 +60,9 @@ public class NodeByte extends NodeNumber {
 	}
 
 	public static NodeByte decode(DecodeContext os) throws IOException {
-		return getInstance(os.readByte(), os.readBoolean());
+		//		return getInstance(os.readByte(), os.readBoolean());
+		Token token = os.readToken();
+		return new NodeByte(os.readByte(), os.readBoolean(), token);
 	}
 
 	@Override

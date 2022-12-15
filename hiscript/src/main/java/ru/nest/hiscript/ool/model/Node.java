@@ -149,7 +149,7 @@ public abstract class Node implements Codeable {
 	public Node(String name, int type, Token token) {
 		this.name = name;
 		this.type = type;
-		this.token = token;
+		this.token = token != null ? token.bounds() : null;
 	}
 
 	protected Token token;
@@ -169,6 +169,10 @@ public abstract class Node implements Codeable {
 
 	public void setToken(Token token) {
 		this.token = token;
+	}
+
+	public boolean isValue() {
+		return false;
 	}
 
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {

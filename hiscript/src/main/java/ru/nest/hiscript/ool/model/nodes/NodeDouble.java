@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -16,12 +17,16 @@ public class NodeDouble extends NodeNumber {
 
 	// TODO NaN, Infinite
 
-	public NodeDouble(double value, boolean hasSign) {
-		super(name, TYPE_DOUBLE, hasSign);
+	public NodeDouble(double value, boolean hasSign, Token token) {
+		super(name, TYPE_DOUBLE, hasSign, token);
 		this.value = value;
 	}
 
 	private double value;
+
+	public double getValue() {
+		return value;
+	}
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -43,6 +48,7 @@ public class NodeDouble extends NodeNumber {
 	}
 
 	public static NodeDouble decode(DecodeContext os) throws IOException {
-		return new NodeDouble(os.readDouble(), os.readBoolean());
+		Token token = os.readToken();
+		return new NodeDouble(os.readDouble(), os.readBoolean(), token);
 	}
 }

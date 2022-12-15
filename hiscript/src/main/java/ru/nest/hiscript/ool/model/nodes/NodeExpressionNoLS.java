@@ -125,9 +125,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 	private Operation[] operations;
 
 	public static class NodeOperandType {
-		Node node;
+		public Node node;
 
-		HiClass type;
+		public HiClass type;
+
+		public boolean isValue;
 
 		NodeOperandType(Node node) {
 			this.node = node;
@@ -152,12 +154,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 				valuePos++;
 			} else {
 				// do operation
-				NodeOperandType valueType = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
-				bufSize = operations[i].getOperationBufIndex(bufSize);
-				if (valueType == null) {
+				bufSize = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
+				if (nodes[bufSize - 1].type == null) {
 					return null;
 				}
-				nodes[bufSize] = valueType;
 			}
 		}
 		return nodes[0].type;

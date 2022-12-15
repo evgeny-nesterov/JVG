@@ -309,7 +309,7 @@ public class RuntimeContext {
 	}
 
 	public HiClass getClass(String name) {
-		// search in blocks upto method or constructor
+		// search in blocks up to method or constructor
 		StackLevel level = this.level;
 		HiClass clazz = null;
 		HiObject levelObject = null;
@@ -756,7 +756,7 @@ public class RuntimeContext {
 			while (lineLevel != null && lineLevel.getLine() == -1) {
 				lineLevel = lineLevel.parent;
 			}
-			new NodeInt(lineLevel != null ? lineLevel.getLine() : -1, false).execute(this);
+			new NodeInt(lineLevel != null ? lineLevel.getLine() : -1, false, null).execute(this);
 			array[i].getField(this, "line").set(this, value);
 
 			// TODO: set codeLine for StackTraceElement in RuntimeContext, at the current moment codeLine=-1

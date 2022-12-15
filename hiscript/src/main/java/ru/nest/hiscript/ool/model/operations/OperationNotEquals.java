@@ -1,10 +1,14 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationNotEquals extends BinaryOperation {
 	private static Operation instance = new OperationNotEquals();
@@ -15,6 +19,18 @@ public class OperationNotEquals extends BinaryOperation {
 
 	private OperationNotEquals() {
 		super("!=", NOT_EQUALS);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		HiClass c1 = node1.type;
+		HiClass c2 = node2.type;
+		if (c1.isPrimitive() == c2.isPrimitive() && c1.isNumber() == c2.isNumber()) {
+			return HiClassPrimitive.BOOLEAN;
+		} else {
+			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			return null;
+		}
 	}
 
 	@Override

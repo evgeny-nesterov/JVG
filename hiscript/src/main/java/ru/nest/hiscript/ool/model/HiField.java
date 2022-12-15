@@ -97,6 +97,11 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 	public Node initializer;
 
 	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return ctx.getClass(type.fullName);
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = ctx.addLocalVariable(this, validationInfo);
 		return valid;

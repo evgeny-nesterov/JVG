@@ -27,8 +27,9 @@ public class NodeIdentifier extends Node {
 		Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
 		if (resolvedIdentifier instanceof NodeVariable) {
 			return ((Node) resolvedIdentifier).getValueType(validationInfo, ctx);
+		} else {
+			return (HiClass) resolvedIdentifier;
 		}
-		return null;
 	}
 
 	@Override

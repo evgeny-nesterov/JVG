@@ -3,6 +3,8 @@ import org.junit.jupiter.api.Test;
 public class TestExpression extends HiTest {
 	@Test
 	public void testSimpleNumberExpressions() {
+		assertSuccessSerialize("int x = 1 + 100_000_000;");
+
 		assertSuccessSerialize("int a = 1 + 2; assert a == 3;");
 		assertSuccessSerialize("int a = 10 - 1; assert a == 9;");
 		assertSuccessSerialize("int a = 5 * 6; assert a == 30;");

@@ -591,9 +591,9 @@ Util.header("EXPRESSION SWITCH");
 	int a = 1;
 	int b = 2;
 	int c = 1 + 2 * switch(1 + 2 * a) {
-	    case 1 ->           b;
-	    case 2, 3 ->        b + 1;
-	    case 3, c + 2 ->    b + 2;
+	    case 1 ->                   b;
+	    case 2, 3 ->                b + 1;
+	    case 3, a + 2, b + 1 ->     b + 2;
 	};
 	System.println("\tc=" + c + " (7)");
 	assert c == 7;

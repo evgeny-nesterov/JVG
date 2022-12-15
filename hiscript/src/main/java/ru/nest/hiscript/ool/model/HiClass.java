@@ -354,6 +354,8 @@ public class HiClass implements Codeable {
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.STATIC_CLASS);
+		HiClass outboundClass = ctx.clazz;
+		ctx.clazz = this;
 		boolean valid = true;
 
 		// check modifiers
@@ -402,21 +404,22 @@ public class HiClass implements Codeable {
 		ctx.exit();
 
 		ctx.addLocalClass(this, validationInfo);
+		ctx.clazz = outboundClass;
 		return valid;
 	}
 
-	public HiClass getChildren(RuntimeContext ctx, String name) {
-		HiClass children = null;
+	public HiClass getChild(RuntimeContext ctx, String name) {
+		HiClass child = null;
 		if (classes != null) {
 			for (HiClass c : classes) {
-				if (c.name == name || c.fullName == name) {
-					children = c;
-					children.init(ctx);
+				if (c.name.equals(name) || c.fullName.equals(name)) {
+					child = c;
+					child.init(ctx);
 					break;
 				}
 			}
 		}
-		return children;
+		return child;
 	}
 
 	private Map<String, HiClass> classesMap;
@@ -470,7 +473,7 @@ public class HiClass implements Codeable {
 			}
 
 			// check enclosing classes
-			c = clazz.getChildren(ctx, name);
+			c = clazz.getChild(ctx, name);
 			if (c != null) {
 				return c;
 			}
@@ -819,6 +822,10 @@ public class HiClass implements Codeable {
 	}
 
 	public boolean isPrimitive() {
+		return false;
+	}
+
+	public boolean isNumber() {
 		return false;
 	}
 

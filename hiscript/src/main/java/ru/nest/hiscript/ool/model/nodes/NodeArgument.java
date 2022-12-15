@@ -41,7 +41,7 @@ public class NodeArgument extends Node implements NodeVariable {
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check
-		return null;
+		return ctx.getClass(getTypeName());
 	}
 
 	@Override

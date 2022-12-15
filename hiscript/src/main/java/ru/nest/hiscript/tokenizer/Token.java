@@ -21,6 +21,10 @@ public class Token implements Codeable {
 		this.lineOffset = start.lineOffset;
 	}
 
+	public Token bounds() {
+		return getClass() == Token.class ? this : new Token(line, offset, length, lineOffset);
+	}
+
 	private int line;
 
 	public int getLine() {

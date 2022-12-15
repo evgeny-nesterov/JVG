@@ -31,6 +31,11 @@ public class NodeBoolean extends Node {
 	private boolean value;
 
 	@Override
+	public boolean isValue() {
+		return true;
+	}
+
+	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.BOOLEAN;
 	}

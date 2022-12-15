@@ -159,7 +159,7 @@ public class OperationInvocation extends BinaryOperation {
 
 				// find by pattern: <CLASS>.<CLASS>
 				if (field == null) {
-					clazz = clazz.getChildren(ctx, name);
+					clazz = clazz.getChild(ctx, name);
 				}
 			}
 		}

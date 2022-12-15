@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -223,6 +224,16 @@ public class CompileClassContext {
 	}
 
 	public HiClass getClass(String name) {
+		int dimension = 0;
+		while (name.charAt(dimension) == '0') {
+			dimension++;
+		}
+		String baseName = dimension == 0 ? name : name.substring(dimension);
+		HiClass baseClass = getBaseClass(baseName);
+		return dimension == 0 ? baseClass : HiClassArray.getArrayClass(baseClass, dimension);
+	}
+
+	private HiClass getBaseClass(String name) {
 		CompileClassLevel level = this.level;
 		while (level != null) {
 			HiClass clazz = level.getClass(name);
@@ -231,7 +242,7 @@ public class CompileClassContext {
 			}
 			level = level.parent;
 		}
-		return null;
+		return HiClass.forName(null, name);
 	}
 
 	public boolean addLocalVariable(NodeVariable localVariable, ValidationInfo validationInfo) {
@@ -284,7 +295,7 @@ public class CompileClassContext {
 			}
 			level = level.parent;
 		}
-		return null;
+		return HiClass.forName(null, name);
 	}
 
 	static class CompileClassLevel {
@@ -323,7 +334,19 @@ public class CompileClassContext {
 		}
 
 		public HiClass getClass(String name) {
-			return classes != null ? classes.get(name) : null;
+			if (classes != null) {
+				if (name.indexOf('.') != -1) {
+					String[] path = name.split("\\.");
+					HiClass clazz = classes.get(path[0]);
+					for (int i = 1; i < path.length && clazz != null; i++) {
+						clazz = clazz.getChild(null, path[i]);
+					}
+					return clazz;
+				} else {
+					return classes.get(name);
+				}
+			}
+			return null;
 		}
 
 		public void addField(NodeVariable localVariable) {

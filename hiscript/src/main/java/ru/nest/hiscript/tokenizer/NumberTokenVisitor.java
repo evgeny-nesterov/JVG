@@ -82,7 +82,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 		}
 
-		String text = tokenizer.getText(offset, tokenizer.getOffset() - (isLong || isFloat || isDouble ? 1 : 0));
+		String text = tokenizer.getText(offset, tokenizer.getOffset() - (isLong || isFloat || isDouble ? 1 : 0)).replace("_", "");
 
 		if (isLong) {
 			long number;
@@ -175,9 +175,20 @@ public class NumberTokenVisitor implements TokenVisitor {
 
 	private boolean visitInteger(Tokenizer tokenizer) {
 		boolean found = false;
-		while (tokenizer.hasNext() && tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') {
+		if (tokenizer.hasNext() && tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') {
 			found = true;
 			tokenizer.next();
+
+			boolean lastUnderscore = false;
+			while (tokenizer.hasNext() && ((tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') || tokenizer.getCurrent() == '_')) {
+				found = true;
+				lastUnderscore = tokenizer.getCurrent() == '_';
+				tokenizer.next();
+			}
+
+			if (lastUnderscore) {
+				return false;
+			}
 		}
 		return found;
 	}

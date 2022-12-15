@@ -1,10 +1,14 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquate extends BinaryOperation {
 	private static Operation instance = new OperationEquate();
@@ -19,6 +23,12 @@ public class OperationEquate extends BinaryOperation {
 
 	enum E {
 		a, b
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		// TODO check
+		return node1.type;
 	}
 
 	@Override

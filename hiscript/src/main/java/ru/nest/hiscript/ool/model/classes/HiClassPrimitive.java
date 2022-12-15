@@ -54,6 +54,11 @@ public class HiClassPrimitive extends HiClass {
 	}
 
 	@Override
+	public boolean isNumber() {
+		return this != BOOLEAN && this != VOID;
+	}
+
+	@Override
 	public boolean isObject() {
 		return false;
 	}

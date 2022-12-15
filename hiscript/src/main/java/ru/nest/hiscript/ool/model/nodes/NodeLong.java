@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -14,12 +15,16 @@ public class NodeLong extends NodeNumber {
 
 	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
-	public NodeLong(long value, boolean hasSign) {
-		super(name, TYPE_LONG, hasSign);
+	public NodeLong(long value, boolean hasSign, Token token) {
+		super(name, TYPE_LONG, hasSign, token);
 		this.value = value;
 	}
 
 	private long value;
+
+	public long getValue() {
+		return value;
+	}
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -41,6 +46,7 @@ public class NodeLong extends NodeNumber {
 	}
 
 	public static NodeLong decode(DecodeContext os) throws IOException {
-		return new NodeLong(os.readLong(), os.readBoolean());
+		Token token = os.readToken();
+		return new NodeLong(os.readLong(), os.readBoolean(), token);
 	}
 }

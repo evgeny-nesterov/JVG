@@ -51,9 +51,7 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return increment;
 	}
 
-	public NodeExpressionNoLS.NodeOperandType getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
-		// TODO
-		return null;
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
 	}
 
 	public abstract void doOperation(RuntimeContext ctx, Value... values);
@@ -70,14 +68,16 @@ public abstract class Operation implements PrimitiveTypes, OperationsIF {
 		return index;
 	}
 
-	public NodeExpressionNoLS.NodeOperandType getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, int index, NodeExpressionNoLS.NodeOperandType... nodes) {
+	public int getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, int index, NodeExpressionNoLS.NodeOperandType... nodes) {
 		switch (operandsCount) {
 			case 1:
-				return getOperationResultType(validationInfo, ctx, nodes[index - 1]);
+				getOperationResultType(validationInfo, ctx, nodes[index - 1]);
+				return index;
 			case 2:
-				return getOperationResultType(validationInfo, ctx, nodes[index - 2], nodes[index - 1]);
+				getOperationResultType(validationInfo, ctx, nodes[index - 2], nodes[index - 1]);
+				return index - 1;
 		}
-		return null;
+		return index;
 	}
 
 	public int getOperationBufIndex(int index) {

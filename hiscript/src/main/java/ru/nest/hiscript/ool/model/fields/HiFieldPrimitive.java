@@ -1,9 +1,12 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.util.HashMap;
 
@@ -36,6 +39,11 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 
 	public HiFieldPrimitive(Type type, String name) {
 		super(type, name);
+	}
+
+	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 
 	public static int getType(HiClass type) {

@@ -1,11 +1,20 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeByte;
+import ru.nest.hiscript.ool.model.nodes.NodeChar;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeInt;
+import ru.nest.hiscript.ool.model.nodes.NodeLong;
+import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPlus extends BinaryOperation {
 	private static Operation instance = new OperationPlus();
@@ -16,6 +25,190 @@ public class OperationPlus extends BinaryOperation {
 
 	private OperationPlus() {
 		super("+", PLUS);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		HiClass c1 = node1.type;
+		HiClass c2 = node2.type;
+
+		boolean isS1 = c1 != null && "String".equals(c1.fullName);
+		boolean isS2 = c2 != null && "String".equals(c2.fullName);
+		if (isS1 || isS2) {
+			return isS1 ? c1 : c2;
+		}
+
+		if (!c1.isNumber() || !c2.isNumber()) {
+			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			return null;
+		}
+
+		int t1 = HiFieldPrimitive.getType(c1);
+		int t2 = HiFieldPrimitive.getType(c2);
+		if (node1.isValue && node2.isValue) {
+			switch (t1) {
+				case CHAR:
+					switch (t2) {
+						case CHAR:
+							return autoCastInt(((NodeChar) node1.node).getValue() + ((NodeChar) node2.node).getValue());
+						case BYTE:
+							return autoCastInt(((NodeChar) node1.node).getValue() + ((NodeByte) node2.node).getValue());
+						case SHORT:
+							return autoCastInt(((NodeChar) node1.node).getValue() + ((NodeShort) node2.node).getValue());
+						case INT:
+							return autoCastInt(((NodeChar) node1.node).getValue() + ((NodeInt) node2.node).getValue());
+						case LONG:
+							return autoCastLong(((NodeChar) node1.node).getValue() + ((NodeLong) node2.node).getValue());
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case BYTE:
+					switch (t2) {
+						case CHAR:
+							return autoCastInt(((NodeByte) node1.node).getValue() + ((NodeChar) node2.node).getValue());
+						case BYTE:
+							return autoCastInt(((NodeByte) node1.node).getValue() + ((NodeByte) node2.node).getValue());
+						case SHORT:
+							return autoCastInt(((NodeByte) node1.node).getValue() + ((NodeShort) node2.node).getValue());
+						case INT:
+							return autoCastInt(((NodeByte) node1.node).getValue() + ((NodeInt) node2.node).getValue());
+						case LONG:
+							return autoCastLong(((NodeByte) node1.node).getValue() + ((NodeLong) node2.node).getValue());
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case SHORT:
+					switch (t2) {
+						case CHAR:
+							return autoCastInt(((NodeShort) node1.node).getValue() + ((NodeChar) node2.node).getValue());
+						case BYTE:
+							return autoCastInt(((NodeShort) node1.node).getValue() + ((NodeByte) node2.node).getValue());
+						case SHORT:
+							return autoCastInt(((NodeShort) node1.node).getValue() + ((NodeShort) node2.node).getValue());
+						case INT:
+							return autoCastInt(((NodeShort) node1.node).getValue() + ((NodeInt) node2.node).getValue());
+						case LONG:
+							return autoCastLong(((NodeShort) node1.node).getValue() + ((NodeLong) node2.node).getValue());
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case INT:
+					switch (t2) {
+						case CHAR:
+							return autoCastInt(((NodeInt) node1.node).getValue() + ((NodeChar) node2.node).getValue());
+						case BYTE:
+							return autoCastInt(((NodeInt) node1.node).getValue() + ((NodeByte) node2.node).getValue());
+						case SHORT:
+							return autoCastInt(((NodeInt) node1.node).getValue() + ((NodeShort) node2.node).getValue());
+						case INT:
+							return autoCastInt(((NodeInt) node1.node).getValue() + ((NodeInt) node2.node).getValue());
+						case LONG:
+							return autoCastLong(((NodeInt) node1.node).getValue() + ((NodeLong) node2.node).getValue());
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case LONG:
+					switch (t2) {
+						case CHAR:
+							return autoCastLong(((NodeLong) node1.node).getValue() + ((NodeChar) node2.node).getValue());
+						case BYTE:
+							return autoCastLong(((NodeLong) node1.node).getValue() + ((NodeByte) node2.node).getValue());
+						case SHORT:
+							return autoCastLong(((NodeLong) node1.node).getValue() + ((NodeShort) node2.node).getValue());
+						case INT:
+							return autoCastLong(((NodeLong) node1.node).getValue() + ((NodeInt) node2.node).getValue());
+						case LONG:
+							return autoCastLong(((NodeLong) node1.node).getValue() + ((NodeLong) node2.node).getValue());
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case FLOAT:
+					switch (t2) {
+						default:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+
+				case DOUBLE:
+					return HiClassPrimitive.DOUBLE;
+			}
+		} else {
+			switch (t1) {
+				case CHAR:
+				case BYTE:
+				case SHORT:
+				case INT:
+					switch (t2) {
+						case CHAR:
+						case BYTE:
+						case SHORT:
+						case INT:
+							return HiClassPrimitive.INT;
+						case LONG:
+							return HiClassPrimitive.LONG;
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+
+				case LONG:
+					switch (t2) {
+						case CHAR:
+						case BYTE:
+						case SHORT:
+						case INT:
+						case LONG:
+							return HiClassPrimitive.LONG;
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case FLOAT:
+					switch (t2) {
+						case CHAR:
+						case BYTE:
+						case SHORT:
+						case INT:
+						case LONG:
+						case FLOAT:
+							return HiClassPrimitive.FLOAT;
+						case DOUBLE:
+							return HiClassPrimitive.DOUBLE;
+					}
+					break;
+
+				case DOUBLE:
+					return HiClassPrimitive.DOUBLE;
+			}
+		}
+
+		errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+		return null;
 	}
 
 	@Override
@@ -44,9 +237,7 @@ public class OperationPlus extends BinaryOperation {
 			return;
 		}
 
-		boolean isP1 = c1.isPrimitive();
-		boolean isP2 = c2.isPrimitive();
-		if (!isP1 || !isP2) {
+		if (!c1.isNumber() || !c2.isNumber()) {
 			errorInvalidOperator(ctx, c1, c2);
 			return;
 		}
@@ -582,40 +773,5 @@ public class OperationPlus extends BinaryOperation {
 		}
 
 		errorInvalidOperator(ctx, c1, c2);
-	}
-
-	private void autoCastInt(Value v1, int value) {
-		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			v1.type = TYPE_BYTE;
-			v1.byteNumber = (byte) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
-		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			v1.type = TYPE_SHORT;
-			v1.shortNumber = (short) value;
-		} else {
-			v1.type = TYPE_INT;
-			v1.intNumber = value;
-		}
-	}
-
-	private void autoCastLong(Value v1, long value) {
-		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			v1.type = TYPE_BYTE;
-			v1.byteNumber = (byte) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
-		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			v1.type = TYPE_SHORT;
-			v1.shortNumber = (short) value;
-		} else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-			v1.type = TYPE_INT;
-			v1.intNumber = (int) value;
-		} else {
-			v1.type = TYPE_LONG;
-			v1.longNumber = value;
-		}
 	}
 }

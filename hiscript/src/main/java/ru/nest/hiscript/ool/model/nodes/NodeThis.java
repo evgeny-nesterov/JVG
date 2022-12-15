@@ -19,8 +19,7 @@ public class NodeThis extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return null;
+		return ctx.clazz;
 	}
 
 	@Override

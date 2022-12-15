@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -16,12 +17,16 @@ public class NodeFloat extends NodeNumber {
 
 	// TODO NaN, Infinite
 
-	public NodeFloat(float value, boolean hasSign) {
-		super(name, TYPE_FLOAT, hasSign);
+	public NodeFloat(float value, boolean hasSign, Token token) {
+		super(name, TYPE_FLOAT, hasSign, token);
 		this.value = value;
 	}
 
 	private float value;
+
+	public float getValue() {
+		return value;
+	}
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -43,6 +48,7 @@ public class NodeFloat extends NodeNumber {
 	}
 
 	public static NodeFloat decode(DecodeContext os) throws IOException {
-		return new NodeFloat(os.readFloat(), os.readBoolean());
+		Token token = os.readToken();
+		return new NodeFloat(os.readFloat(), os.readBoolean(), token);
 	}
 }

@@ -43,6 +43,15 @@ public class NodeConstructor extends Node {
 	public String name;
 
 	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (clazz == null) {
+			// init by type
+			clazz = ctx.getClass(type.getType().fullName);
+		}
+		return clazz;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (argValues != null) {
