@@ -170,7 +170,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		if (isArray()) {
 			HiClass cellClass = cellType.getClass(ctx);
 			if (cellClass == null) {
-				if (!ctx.exitFromBlock()) {
+				if (ctx != null && !ctx.exitFromBlock()) {
 					ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
 				}
 				return null;

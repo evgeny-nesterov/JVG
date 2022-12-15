@@ -24,9 +24,10 @@ public class NodeIdentifier extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		//		NodeVariable variable = ctx.getVariable(name);
-		//		return ((Node) variable).getValueType(validationInfo, ctx);
+		Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
+		if (resolvedIdentifier instanceof NodeVariable) {
+			return ((Node) resolvedIdentifier).getValueType(validationInfo, ctx);
+		}
 		return null;
 	}
 

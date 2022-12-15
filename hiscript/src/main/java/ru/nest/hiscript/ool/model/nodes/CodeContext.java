@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.Codeable;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -98,6 +99,18 @@ public class CodeContext {
 	}
 
 	// ============================================================================
+	public void writeToken(Token token) throws IOException {
+		if (token != null) {
+			token.code(this);
+			if (token.getLine() != -1) {
+				len_byte += 12;
+			}
+		} else {
+			dos.writeInt(-1);
+		}
+		len_byte += 4;
+	}
+
 	public void writeNullable(Codeable object) throws IOException {
 		writeBoolean(object != null);
 		if (object != null) {
@@ -294,21 +307,16 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private Map<String, Integer> classes = new HashMap<>();
+	private Map<Integer, Integer> classes = new HashMap<>();
 
-	private Map<Integer, HiClass> index_to_classes = new HashMap<>();
+	private Map<Integer, HiClass> indexToClasses = new HashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
 		CodeContext ctx = getRoot();
 
-		int index;
-		if (ctx.classes.containsKey(clazz.fullName)) {
-			index = ctx.classes.get(clazz.fullName);
-		} else {
-			index = ctx.classes.size();
-			ctx.classes.put(clazz.fullName, index);
-		}
-		ctx.index_to_classes.put(index, clazz);
+		Integer classId = System.identityHashCode(clazz); // classes may have identical names
+		int index = ctx.classes.computeIfAbsent(classId, k -> ctx.classes.size());
+		ctx.indexToClasses.put(index, clazz);
 
 		boolean isHasIndex = index != -1;
 		writeBoolean(isHasIndex);
@@ -337,7 +345,7 @@ public class CodeContext {
 
 	public ClassCodeContext getClassContext(int index) throws IOException {
 		ClassCodeContext classContext = new ClassCodeContext();
-		classContext.clazz = index_to_classes.get(index);
+		classContext.clazz = indexToClasses.get(index);
 		classContext.ctx = new CodeContext(this, classContext.clazz);
 		classContext.clazz.code(classContext.ctx);
 		classContext.code = classContext.ctx.code();

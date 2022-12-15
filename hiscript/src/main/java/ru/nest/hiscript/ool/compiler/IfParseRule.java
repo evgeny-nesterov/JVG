@@ -20,12 +20,12 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	}
 
 	@Override
-	public NodeIf visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.IF, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
-			NodeExpression condition = expectCondition(tokenizer, properties);
-			Node body = expectBody(tokenizer, properties);
-			NodeIf elseIfNode = visitNext(tokenizer, properties);
+			Token startToken = startToken(tokenizer);
+			NodeExpression condition = expectCondition(tokenizer, ctx);
+			Node body = expectBody(tokenizer, ctx);
+			NodeIf elseIfNode = visitNext(tokenizer, ctx);
 
 			NodeIf ifNode = new NodeIf(condition, body, elseIfNode);
 			ifNode.setToken(tokenizer.getBlockToken(startToken));
@@ -34,19 +34,19 @@ public class IfParseRule extends ParseRule<NodeIf> {
 		return null;
 	}
 
-	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.ELSE, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			if (visitWord(Words.IF, tokenizer) != null) {
-				NodeExpression condition = expectCondition(tokenizer, properties);
-				Node body = expectBody(tokenizer, properties);
-				NodeIf elseIfNode = visitNext(tokenizer, properties);
+				NodeExpression condition = expectCondition(tokenizer, ctx);
+				Node body = expectBody(tokenizer, ctx);
+				NodeIf elseIfNode = visitNext(tokenizer, ctx);
 
 				NodeIf ifNode = new NodeIf(condition, body, elseIfNode);
 				ifNode.setToken(tokenizer.getBlockToken(startToken));
 				return ifNode;
 			} else {
-				Node body = expectBody(tokenizer, properties);
+				Node body = expectBody(tokenizer, ctx);
 
 				NodeIf ifNode = new NodeIf(null, body, null);
 				ifNode.setToken(tokenizer.getBlockToken(startToken));

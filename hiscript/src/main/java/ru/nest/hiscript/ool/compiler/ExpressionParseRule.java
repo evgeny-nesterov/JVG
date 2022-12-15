@@ -45,10 +45,10 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	@Override
-	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		List<Node> operands = new ArrayList<>();
 		List<OperationsGroup> allOperations = new ArrayList<>();
-		Token startToken = tokenizer.currentToken();
+		Token startToken = startToken(tokenizer);
 
 		int operation;
 		OperationsGroup operations = new OperationsGroup();
@@ -58,8 +58,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			allOperations.add(operations);
 
 			operations = new OperationsGroup();
-			visitSimpleExpression(tokenizer, operations, allOperations, operands, properties);
-			visitArrayIndexes(tokenizer, operations, operands, properties);
+			visitSimpleExpression(tokenizer, operations, allOperations, operands, ctx);
+			visitArrayIndexes(tokenizer, operations, operands, ctx);
 			visitIncrement(tokenizer, operations, false);
 
 			// tokenizer.start();
@@ -94,14 +94,14 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray);
 			expressionNode.setToken(blockToken);
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
-				NodeExpression trueValueNode = visit(tokenizer, properties);
+				NodeExpression trueValueNode = visit(tokenizer, ctx);
 				if (trueValueNode == null) {
 					throw new ParseException("expression expected", tokenizer.currentToken());
 				}
 
 				expectSymbol(tokenizer, Symbols.COLON);
 
-				NodeExpression falseValueNode = visit(tokenizer, properties);
+				NodeExpression falseValueNode = visit(tokenizer, ctx);
 				if (falseValueNode == null) {
 					throw new ParseException("expression expected", tokenizer.currentToken());
 				}
@@ -245,11 +245,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext properties) throws TokenizerException, ParseException {
+	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 			Token token = tokenizer.currentToken();
 
-			Node indexNode = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			Node indexNode = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			if (indexNode == null) {
 				throw new ParseException("expression is expected", token);
 			}
@@ -263,9 +263,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext properties) throws TokenizerException, ParseException {
+	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<Node> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
 		boolean found = false;
-		while (visitArrayIndex(tokenizer, operations, operands, properties)) {
+		while (visitArrayIndex(tokenizer, operations, operands, ctx)) {
 			found = true;
 		}
 		return found;
@@ -376,19 +376,10 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 					visitArgumentsDefinitions(tokenizer, argumentsList, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 					if (argumentsList.size() > 0) {
-						for (NodeArgument argument : argumentsList) {
-							if (ctx.getLocalVariable(argument.name) != null) {
-								throw new ParseException("Duplicated local variable " + argument.name, tokenizer.currentToken());
-							}
-						}
 						castedRecordArguments = argumentsList.toArray(new NodeArgument[argumentsList.size()]);
 					}
 				}
-
 				castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
-				if (castedVariableName != null && ctx.getLocalVariable(castedVariableName) != null) {
-					throw new ParseException("Duplicated local variable " + castedVariableName, tokenizer.currentToken());
-				}
 			}
 
 			if (castedRecordArguments != null || castedVariableName != null) {

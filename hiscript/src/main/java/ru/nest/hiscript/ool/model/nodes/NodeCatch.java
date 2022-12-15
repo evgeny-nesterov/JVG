@@ -36,7 +36,7 @@ public class NodeCatch extends Node {
 				return -2;
 			}
 		}
-		initClasses();
+		initClasses(null, ctx);
 		for (int i = 0; i < excClasses.length; i++) {
 			if (exception.clazz.isInstanceof(excClasses[i])) {
 				return i;
@@ -45,12 +45,14 @@ public class NodeCatch extends Node {
 		return -1;
 	}
 
-	private void initClasses() {
+	private void initClasses(ValidationInfo validationInfo, RuntimeContext ctx) {
 		if (excClasses == null) {
 			excClasses = new HiClass[excTypes.length];
-			for (int i = 0; i < excTypes.length; i++) {
-				Type excType = excTypes[i];
-				excClasses[i] = excType.getClass(null);
+		}
+		for (int i = 0; i < excTypes.length; i++) {
+			Type excType = excTypes[i];
+			if (excClasses[i] == null) {
+				excClasses[i] = excType.getClass(ctx);
 			}
 		}
 	}
@@ -58,9 +60,9 @@ public class NodeCatch extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		initClasses();
+		initClasses(validationInfo, null);
 
-		ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, null), validationInfo);
+		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, null), validationInfo);
 
 		if (catchBody != null) {
 			valid &= catchBody.validateBlock(validationInfo, ctx);

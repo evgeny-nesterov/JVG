@@ -20,7 +20,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	}
 
 	@Override
-	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);

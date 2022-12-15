@@ -28,10 +28,7 @@ public class NodeClass extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.STATIC_CLASS);
-		boolean valid = clazz.validate(validationInfo, ctx);
-		ctx.exit();
-		return valid;
+		return clazz.validate(validationInfo, ctx);
 	}
 
 	@Override

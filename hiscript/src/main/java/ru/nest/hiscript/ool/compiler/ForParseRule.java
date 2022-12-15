@@ -23,45 +23,45 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	}
 
 	@Override
-	public NodeFor visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
-			properties.enter(RuntimeContext.FOR);
-			Node initialization = DeclarationParseRule.getInstance().visit(tokenizer, properties);
+			ctx.enter(RuntimeContext.FOR);
+			Node initialization = DeclarationParseRule.getInstance().visit(tokenizer, ctx);
 			if (initialization == null) {
-				initialization = visitExpressions(tokenizer, properties);
+				initialization = visitExpressions(tokenizer, ctx);
 			}
 
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 
-			NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 
-			Node assignment = visitExpressions(tokenizer, properties);
+			Node assignment = visitExpressions(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-			Node body = expectBody(tokenizer, properties);
+			Node body = expectBody(tokenizer, ctx);
 
 			NodeFor forNode = new NodeFor(initialization, condition, assignment, body);
 			forNode.setToken(tokenizer.getBlockToken(startToken));
-			properties.exit();
+			ctx.exit();
 			return forNode;
 		}
 		return null;
 	}
 
-	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
-		Node expression = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Node expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (expression != null) {
 			NodeBlock expressions = new NodeBlock("expressions");
 			expressions.addStatement(expression);
 
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				expression = expectExpression(tokenizer, properties);
+				expression = expectExpression(tokenizer, ctx);
 				expressions.addStatement(expression);
 			}
 			return expressions;

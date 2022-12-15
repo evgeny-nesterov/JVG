@@ -18,7 +18,7 @@ public class BreakParseRule extends ParseRule<NodeBreak> {
 	}
 
 	@Override
-	public NodeBreak visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeBreak visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.BREAK, tokenizer) != null) {
 			String label = visitWord(Words.NOT_SERVICE, tokenizer);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);

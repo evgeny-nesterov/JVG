@@ -47,8 +47,8 @@ public class NodeArgument extends Node implements NodeVariable {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check
-		ctx.addLocalVariable(this, validationInfo);
-		return true;
+		boolean valid = ctx.addLocalVariable(this, validationInfo);
+		return valid;
 	}
 
 	@Override

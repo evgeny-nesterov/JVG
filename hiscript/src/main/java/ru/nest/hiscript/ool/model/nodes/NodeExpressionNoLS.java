@@ -124,33 +124,43 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	private Operation[] operations;
 
+	public static class NodeOperandType {
+		Node node;
+
+		HiClass type;
+
+		NodeOperandType(Node node) {
+			this.node = node;
+		}
+
+		public HiClass getType(ValidationInfo validationInfo, CompileClassContext ctx) {
+			return node.getValueType(validationInfo, ctx);
+		}
+	}
+
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass[] values = new HiClass[operands.length];
+		NodeOperandType[] nodes = new NodeOperandType[operands.length];
 		int bufSize = 0;
 		int valuePos = 0;
 		for (int i = 0; i < operations.length; i++) {
 			if (operations[i] == null) {
 				// get value
 				Node valueNode = operands[valuePos];
-				HiClass valueType = valueNode.getValueType(validationInfo, ctx);
-				if (valueType == null) {
-					return null;
-				}
-				values[bufSize] = valueType;
+				nodes[bufSize] = new NodeOperandType(valueNode);
 				bufSize++;
 				valuePos++;
 			} else {
 				// do operation
-				HiClass valueType = operations[i].getOperationResultType(validationInfo, bufSize, values);
+				NodeOperandType valueType = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
 				bufSize = operations[i].getOperationBufIndex(bufSize);
 				if (valueType == null) {
 					return null;
 				}
-				values[bufSize] = valueType;
+				nodes[bufSize] = valueType;
 			}
 		}
-		return values[0];
+		return nodes[0].type;
 	}
 
 	private HiClass resultClass;

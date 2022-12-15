@@ -18,7 +18,7 @@ public class ContinueParseRule extends ParseRule<NodeContinue> {
 	}
 
 	@Override
-	public NodeContinue visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeContinue visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.CONTINUE, tokenizer) != null) {
 			String label = visitWord(Words.NOT_SERVICE, tokenizer);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);

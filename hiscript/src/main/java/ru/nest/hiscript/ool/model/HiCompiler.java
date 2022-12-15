@@ -16,6 +16,8 @@ public class HiCompiler {
 
 	private boolean assertsActive = false;
 
+	private boolean verbose = false;
+
 	private ParseRule<?> rule;
 
 	public HiCompiler(Tokenizer tokenizer) {
@@ -52,6 +54,14 @@ public class HiCompiler {
 
 	public void setAssertsActive(boolean assertsActive) {
 		this.assertsActive = assertsActive;
+	}
+
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	public Tokenizer getTokenizer() {

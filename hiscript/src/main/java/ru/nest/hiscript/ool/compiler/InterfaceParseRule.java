@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -25,8 +26,9 @@ public class InterfaceParseRule extends ParserUtil {
 	private InterfaceParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = startToken(tokenizer);
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.INTERFACE, tokenizer) != null) {
@@ -66,14 +68,15 @@ public class InterfaceParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			properties.clazz = new HiClass(null, properties.enclosingClass, interfaces, interfaceName, properties.classType);
-			properties.clazz.isInterface = true;
-			properties.clazz.modifiers = modifiers;
+			ctx.clazz = new HiClass(null, ctx.enclosingClass, interfaces, interfaceName, ctx.classType);
+			ctx.clazz.isInterface = true;
+			ctx.clazz.modifiers = modifiers;
 
-			visitContent(tokenizer, properties);
+			visitContent(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-			return properties.clazz;
+			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			return ctx.clazz;
 		}
 
 		tokenizer.rollback();
@@ -151,16 +154,16 @@ public class InterfaceParseRule extends ParserUtil {
 		return false;
 	}
 
-	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext properties) throws TokenizerException, ParseException {
+	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, ParseException {
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 		expectSymbol(tokenizer, Symbols.EQUATE);
-		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 		Type type = Type.getArrayType(baseType, addDimension);
 		HiField<?> field = HiField.getField(type, name, initializer);
 		field.setModifiers(modifiers);
 
-		properties.addField(field);
+		ctx.addField(field);
 	}
 }

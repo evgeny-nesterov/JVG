@@ -2,6 +2,16 @@ import org.junit.jupiter.api.Test;
 
 public class TestStatements extends HiTest {
 	@Test
+	public void testDeclaration() {
+		assertSuccessSerialize("int a;");
+		assertSuccessSerialize("int a = 1;");
+		assertSuccessSerialize("String a, b, c;");
+		assertSuccessSerialize("String a = \"a\", b, c = null;");
+		assertFailSerialize("int a = 1; String a = \"\";");
+		assertSuccessSerialize("{int a = 1;} int a = 2;");
+	}
+
+	@Test
 	public void testFor() {
 		assertSuccessSerialize("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
 		assertSuccessSerialize("int i = 0; for(; i < 10; i++); assert i == 10;");

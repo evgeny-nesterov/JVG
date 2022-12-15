@@ -21,15 +21,15 @@ public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 	}
 
 	@Override
-	public NodeDoWhile visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeDoWhile visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.DO, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
-			NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, properties);
+			NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			expectWord(Words.WHILE, tokenizer);
-			NodeExpression condition = expectCondition(tokenizer, properties);
+			NodeExpression condition = expectCondition(tokenizer, ctx);
 
 			NodeDoWhile node = new NodeDoWhile(body, condition);
 			node.setToken(tokenizer.getBlockToken(startToken));

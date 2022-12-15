@@ -75,6 +75,7 @@ public abstract class HiTest {
 	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
 		HiCompiler compiler = HiCompiler.getDefaultCompiler(script);
 		compiler.setAssertsActive(true);
+		compiler.setVerbose(true);
 		Node node = compiler.build();
 		if (node != null) {
 			if (serialize) {

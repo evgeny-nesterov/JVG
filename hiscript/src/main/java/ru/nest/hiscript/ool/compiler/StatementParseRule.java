@@ -41,12 +41,6 @@ public class StatementParseRule extends ParseRule<Node> {
 			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz != null) {
-			// check modifiers
-			if (ctx.enclosingClass != null && clazz.isStatic()) {
-				throw new ParseException("Illegal modifier for the local class " + clazz.fullName + "; only abstract or final is permitted", tokenizer.currentToken());
-			}
-
-			ctx.addLocalClass(clazz);
 			return new NodeClass(clazz);
 		}
 

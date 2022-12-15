@@ -1,11 +1,13 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
@@ -34,6 +36,12 @@ public class HiClassRecord extends HiClass {
 	@Override
 	public boolean isRecord() {
 		return true;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = super.validate(validationInfo, ctx);
+		return valid;
 	}
 
 	@Override

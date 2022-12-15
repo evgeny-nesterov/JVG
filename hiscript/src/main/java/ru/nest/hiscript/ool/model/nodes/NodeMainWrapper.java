@@ -13,18 +13,21 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeMainWrapper extends Node {
-	public NodeMainWrapper(NodeBlock body) {
+	public NodeMainWrapper(NodeBlock body, HiClass rootClass) {
 		super("main", MAIN_WRAPPER);
 		this.body = body;
+		this.rootClass = getRootClass(body);
 	}
 
 	private NodeBlock body;
 
 	private HiClass rootClass;
 
-	public HiClass getRootClass() {
+	public HiClass getRootClass(NodeBlock body) {
 		if (rootClass == null) {
 			rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP);
+		}
+		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
 			rootClass.methods[0] = new HiMethod(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body, body.getToken());
 		}
@@ -41,7 +44,6 @@ public class NodeMainWrapper extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		HiClass rootClass = getRootClass();
 		ctx.enterMethod(rootClass.methods[0], null);
 		try {
 			rootClass.methods[0].invoke(ctx, rootClass, null, null);
@@ -57,6 +59,6 @@ public class NodeMainWrapper extends Node {
 	}
 
 	public static NodeMainWrapper decode(DecodeContext os) throws IOException {
-		return new NodeMainWrapper(NodeBlock.decode(os));
+		return new NodeMainWrapper(NodeBlock.decode(os), null);
 	}
 }

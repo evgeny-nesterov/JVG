@@ -42,7 +42,7 @@ public class NodeCastedIdentifier extends Node {
 			}
 		}
 		if (castedVariableName != null) {
-			ctx.addLocalVariable(new NodeDeclaration(name, castedVariableName), validationInfo);
+			valid &= ctx.addLocalVariable(new NodeDeclaration(name, castedVariableName), validationInfo);
 		}
 		if (castedCondition != null) {
 			valid &= castedCondition.validate(validationInfo, ctx);

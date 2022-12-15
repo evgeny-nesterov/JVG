@@ -25,7 +25,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	@Override
 	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Token startToken = tokenizer.currentToken();
+		Token startToken = startToken(tokenizer);
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
@@ -50,8 +50,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					checkModifiers(tokenizer, modifiers, FINAL, STATIC);
 
 					NodeDeclarations declarations = new NodeDeclarations();
-					NodeDeclaration field = declarations.add(type, varName, initializer, modifiers);
-					ctx.addLocalVariable(field);
+					declarations.add(type, varName, initializer, modifiers);
 
 					// Search new declarations with the base type
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
@@ -64,8 +63,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), ctx);
 						}
 
-						field = declarations.add(type, varName, initializer, modifiers);
-						ctx.addLocalVariable(field);
+						declarations.add(type, varName, initializer, modifiers);
 					}
 
 					declarations.setToken(tokenizer.getBlockToken(startToken));
@@ -78,21 +76,21 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return null;
 	}
 
-	public Node visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
-		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+	public Node visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Node initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (initializer != null) {
 			return initializer;
 		}
 
-		initializer = NewParseRule.getInstance().visitArrayValue(tokenizer, type, dimensions, properties);
+		initializer = NewParseRule.getInstance().visitArrayValue(tokenizer, type, dimensions, ctx);
 		if (initializer != null) {
 			return initializer;
 		}
 		return null;
 	}
 
-	public Node expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
-		Node initializer = visitInitializer(tokenizer, type, dimensions, properties);
+	public Node expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Node initializer = visitInitializer(tokenizer, type, dimensions, ctx);
 		if (initializer == null) {
 			throw new ParseException("initializer is expected", tokenizer.currentToken());
 		}
@@ -101,7 +99,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileClassContext ctx, boolean initialized) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Token startToken = tokenizer.currentToken();
+		Token startToken = startToken(tokenizer);
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
@@ -123,7 +121,6 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, modifiers);
 				field.setToken(tokenizer.getBlockToken(startToken));
-				ctx.addLocalVariable(field);
 				return field;
 			}
 		}

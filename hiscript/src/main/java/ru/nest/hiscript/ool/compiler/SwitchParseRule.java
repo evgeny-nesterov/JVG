@@ -29,7 +29,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	@Override
 	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
 

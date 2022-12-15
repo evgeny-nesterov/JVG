@@ -39,6 +39,7 @@ public class RecordParseRule extends ParserUtil {
 
 	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = startToken(tokenizer);
 
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.RECORD, tokenizer) != null) {
@@ -116,6 +117,8 @@ public class RecordParseRule extends ParserUtil {
 			} else {
 				ctx.initClass();
 			}
+
+			ctx.clazz.token = tokenizer.getBlockToken(startToken);
 			return ctx.clazz;
 		}
 

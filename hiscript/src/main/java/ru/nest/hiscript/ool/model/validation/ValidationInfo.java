@@ -28,6 +28,15 @@ public class ValidationInfo {
 	}
 
 	public void throwExceptionIf() throws ValidationException {
+		if (compiler.isVerbose()) {
+			for (ValidationMessage message : messages) {
+				if (message.level == ValidationMessage.ValidationLevel.error) {
+					System.err.println("[" + message.level + "] " + message.message + (message.token != null ? " (" + message.token + ")" : ""));
+				} else {
+					System.out.println("[" + message.level + "] " + message.message + (message.token != null ? " (" + message.token + ")" : ""));
+				}
+			}
+		}
 		for (ValidationMessage message : messages) {
 			if (message.level == ValidationMessage.ValidationLevel.error) {
 				throw new ValidationException(message.message, message.token);

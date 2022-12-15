@@ -51,6 +51,11 @@ public class ParserUtil implements Words {
 		}
 	}
 
+	protected Token startToken(Tokenizer tokenizer) throws TokenizerException {
+		skipComments(tokenizer);
+		return tokenizer.currentToken();
+	}
+
 	protected String visitWord(int type, Tokenizer tokenizer) throws TokenizerException {
 		skipComments(tokenizer);
 
@@ -79,7 +84,6 @@ public class ParserUtil implements Words {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-
 			for (int type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
@@ -96,7 +100,6 @@ public class ParserUtil implements Words {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-
 			for (int type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
@@ -113,7 +116,6 @@ public class ParserUtil implements Words {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-
 			for (int type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
@@ -291,10 +293,10 @@ public class ParserUtil implements Words {
 		return body;
 	}
 
-	protected NodeExpression expectExpression(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	protected NodeExpression expectExpression(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (expression == null) {
 			throw new ParseException("expression is expected", tokenizer.currentToken());
 		}
@@ -415,13 +417,13 @@ public class ParserUtil implements Words {
 		}
 	}
 
-	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	protected Node[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		List<Node> args = new ArrayList<>(3);
-		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				arg = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg == null) {
 					throw new ParseException("expression is expected", tokenizer.currentToken());
 				}
@@ -434,13 +436,13 @@ public class ParserUtil implements Words {
 		return argsArray;
 	}
 
-	protected void visitArgumentsDefinitions(Tokenizer tokenizer, List<NodeArgument> arguments, CompileClassContext properties) throws TokenizerException, ParseException {
-		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
+	protected void visitArgumentsDefinitions(Tokenizer tokenizer, List<NodeArgument> arguments, CompileClassContext ctx) throws TokenizerException, ParseException {
+		NodeArgument arg = MethodArgumentParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {
 			arguments.add(arg);
 			boolean hasVarargs = arg.isVarargs();
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, properties);
+				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg == null) {
 					throw new ParseException("argument is expected", tokenizer.currentToken());
 				}

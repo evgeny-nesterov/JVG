@@ -28,7 +28,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	@Override
 	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			NodeDeclaration[] resources = null;
 			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.nextToken();
@@ -59,7 +59,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				List<Type> excTypes = new ArrayList<>(1);
 				String excName;
 				if (visitWord(Words.CATCH, tokenizer) != null) {
-					Token startCatchToken = tokenizer.currentToken();
+					Token startCatchToken = startToken(tokenizer);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 					Type excType = visitObjectType(tokenizer);
 					// TODO check excType extends Exception

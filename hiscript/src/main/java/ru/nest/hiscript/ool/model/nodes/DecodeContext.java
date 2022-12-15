@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -147,6 +148,10 @@ public class DecodeContext {
 				throw new RuntimeException("invalid string index " + index + " (max " + (strings != null ? (strings.length - 1) : 0) + ")");
 			}
 		}
+	}
+
+	public Token readToken() throws IOException {
+		return Token.decode(this);
 	}
 
 	private Type[] types;

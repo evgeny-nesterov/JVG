@@ -19,10 +19,10 @@ public class ReturnParseRule extends ParseRule<NodeReturn> {
 	}
 
 	@Override
-	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.RETURN, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
-			NodeExpression value = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			Token startToken = startToken(tokenizer);
+			NodeExpression value = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			NodeReturn node = new NodeReturn(value);
 			node.setToken(tokenizer.getBlockToken(startToken));
 			return node;

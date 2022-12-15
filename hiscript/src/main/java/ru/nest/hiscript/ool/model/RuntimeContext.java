@@ -585,33 +585,33 @@ public class RuntimeContext {
 		}
 	}
 
-	private Map<HiClass, HashMap<String, HiClass>> localClasses;
+	private Map<HiClass, Map<String, HiClass>> localClasses;
 
 	public HiClass getLocalClass(HiClass clazz, String name) {
 		if (localClasses != null) {
-			HashMap<String, HiClass> classes = localClasses.get(clazz);
-			if (classes != null && classes.containsKey(name)) {
+			Map<String, HiClass> classes = localClasses.get(clazz);
+			if (classes != null) {
 				return classes.get(name);
 			}
 		}
 		return null;
 	}
 
-	public void addLocalClass(HiClass clazz, HiClass clazzLocal) {
+	public void addLocalClass(HiClass clazz, HiClass localClass) {
 		if (localClasses == null) {
 			localClasses = new HashMap<>();
 		}
 
-		HashMap<String, HiClass> classes = localClasses.get(clazz);
+		Map<String, HiClass> classes = localClasses.get(clazz);
 		if (classes == null) {
 			classes = new HashMap<>();
 			localClasses.put(clazz, classes);
 		}
-		classes.put(clazzLocal.name, clazzLocal);
-		classes.put(clazzLocal.fullName, clazzLocal);
+		classes.put(localClass.name, localClass);
+		classes.put(localClass.fullName, localClass);
 	}
 
-	private Map<HiClass, HashMap<String, HiField<?>>> localVariables;
+	private Map<HiClass, Map<String, HiField<?>>> localVariables;
 
 	public HiField<?> getLocalVariable(HiClass clazz, String name) {
 		if (localVariables != null) {
@@ -628,7 +628,7 @@ public class RuntimeContext {
 			localVariables = new HashMap<>();
 		}
 
-		HashMap<String, HiField<?>> fields = localVariables.get(clazz);
+		Map<String, HiField<?>> fields = localVariables.get(clazz);
 		if (fields == null) {
 			fields = new HashMap<>(1);
 			localVariables.put(clazz, fields);

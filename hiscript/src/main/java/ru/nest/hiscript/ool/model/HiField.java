@@ -98,8 +98,8 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.addLocalVariable(this, validationInfo);
-		return true;
+		boolean valid = ctx.addLocalVariable(this, validationInfo);
+		return valid;
 	}
 
 	@Override

@@ -20,16 +20,16 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 	}
 
 	@Override
-	public NodeLabel visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeLabel visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		String label;
 		if ((label = visitWord(Words.NOT_SERVICE, tokenizer)) != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
 				tokenizer.commit();
 
-				Node body = expectBody(tokenizer, properties);
+				Node body = expectBody(tokenizer, ctx);
 
 				NodeLabel node = new NodeLabel(label, body);
 				node.setToken(tokenizer.getBlockToken(startToken));

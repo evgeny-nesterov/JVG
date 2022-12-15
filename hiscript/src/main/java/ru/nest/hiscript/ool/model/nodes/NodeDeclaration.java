@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
@@ -34,13 +35,22 @@ public class NodeDeclaration extends Node implements NodeVariable {
 	public Modifiers modifiers;
 
 	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass clazz = ctx.getClass(type.fullName);
+		if (clazz == null) {
+			clazz = type.getClass(null);
+		}
+		return clazz;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (initialization != null) {
 			valid = initialization.validate(validationInfo, ctx);
 		}
 		// TODO check type, name, modifiers
-		ctx.addLocalVariable(this, validationInfo);
+		valid &= ctx.addLocalVariable(this, validationInfo);
 		return valid;
 	}
 

@@ -122,10 +122,6 @@ public class CompileClassContext {
 			initializers = new ArrayList<>(1);
 		}
 
-		if (fieldsMap.containsKey(field.name)) {
-			throw new ParseException("Duplicate field " + field.type.fullName + " " + field.name, tokenizer.currentToken());
-		}
-
 		fields.add(field);
 		fieldsMap.put(field.name, field);
 		initializers.add(field);
@@ -201,14 +197,32 @@ public class CompileClassContext {
 		level = level.parent;
 	}
 
-	public void addLocalClass(HiClass clazz) throws ParseException {
+	public boolean addLocalClass(HiClass clazz, ValidationInfo validationInfo) {
+		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
-			throw new ParseException("Duplicated nested type " + clazz.fullName, tokenizer.currentToken());
+			validationInfo.error("Duplicated nested type " + clazz.fullName, clazz.token);
+			valid = false;
 		}
 		level.addClass(clazz);
+		return valid;
 	}
 
 	public HiClass getLocalClass(String name) {
+		CompileClassLevel level = this.level;
+		while (level != null) {
+			HiClass clazz = level.getClass(name);
+			if (clazz != null) {
+				return clazz;
+			}
+			if (level.type == RuntimeContext.STATIC_CLASS || level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR) {
+				break;
+			}
+			level = level.parent;
+		}
+		return null;
+	}
+
+	public HiClass getClass(String name) {
 		CompileClassLevel level = this.level;
 		while (level != null) {
 			HiClass clazz = level.getClass(name);
@@ -220,18 +234,14 @@ public class CompileClassContext {
 		return null;
 	}
 
-	public void addLocalVariable(NodeVariable localVariable) throws ParseException {
-		if (getLocalVariable(localVariable.getVariableName()) != null) {
-			throw new ParseException("Duplicated local variable " + localVariable.getVariableName(), tokenizer.currentToken());
-		}
-		level.addField(localVariable);
-	}
-
-	public void addLocalVariable(NodeVariable localVariable, ValidationInfo validationInfo) {
+	public boolean addLocalVariable(NodeVariable localVariable, ValidationInfo validationInfo) {
+		boolean valid = true;
 		if (getLocalVariable(localVariable.getVariableName()) != null) {
 			validationInfo.error("Duplicated local variable " + localVariable.getVariableName(), ((Node) localVariable).getToken());
+			valid = false;
 		}
 		level.addField(localVariable);
+		return valid;
 	}
 
 	public NodeVariable getLocalVariable(String name) {
@@ -255,6 +265,22 @@ public class CompileClassContext {
 			NodeVariable localVariable = level.getField(name);
 			if (localVariable != null) {
 				return localVariable;
+			}
+			level = level.parent;
+		}
+		return null;
+	}
+
+	public Object resolveIdentifier(String name) {
+		CompileClassLevel level = this.level;
+		while (level != null) {
+			NodeVariable localVariable = level.getField(name);
+			if (localVariable != null) {
+				return localVariable;
+			}
+			HiClass clazz = level.getClass(name);
+			if (clazz != null) {
+				return clazz;
 			}
 			level = level.parent;
 		}

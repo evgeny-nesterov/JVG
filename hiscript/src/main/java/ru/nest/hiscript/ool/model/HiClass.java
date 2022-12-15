@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.IOException;
@@ -56,6 +57,8 @@ public class HiClass implements Codeable {
 	public static HiClass OBJECT_CLASS;
 
 	public static String ROOT_CLASS_NAME = "@root";
+
+	public Token token;
 
 	static {
 		loadSystemClasses();
@@ -171,8 +174,8 @@ public class HiClass implements Codeable {
 
 		// register class by fullName
 		if (!ROOT_CLASS_NAME.equals(fullName)) {
-			if (loadedClasses.containsKey(fullName)) {
-				//throw new ClassLoadException("class '" + fullName + "' already loaded");
+			if ((type == CLASS_TYPE_TOP || isStatic()) && loadedClasses.containsKey(fullName)) {
+				throw new ClassLoadException("class '" + fullName + "' already loaded");
 			}
 			loadedClasses.put(fullName, this);
 		}
@@ -350,22 +353,55 @@ public class HiClass implements Codeable {
 	public HiClass[] classes;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.enter(RuntimeContext.STATIC_CLASS);
 		boolean valid = true;
+
+		// check modifiers
+		if (ctx.enclosingClass != null && isStatic()) {
+			validationInfo.error("Illegal modifier for the local class " + fullName + "; only abstract or final is permitted", token);
+			valid = false;
+		}
+
 		if (initializers != null) {
 			for (NodeInitializer initializer : initializers) {
 				valid &= ((Node) initializer).validate(validationInfo, ctx);
 			}
 		}
+
+		if (classes != null) {
+			for (HiClass innerClass : classes) {
+				if (innerClass.enclosingClass != null && !innerClass.enclosingClass.isTopLevel() && !innerClass.enclosingClass.isStatic()) {
+					if (innerClass.isInterface) {
+						validationInfo.error("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
+						valid = false;
+						continue;
+					}
+
+					// check on valid static modifier
+					if (innerClass.isStatic() && !(innerClass.topClass != null && innerClass.topClass.fullName.equals("@root"))) {
+						validationInfo.error("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
+						valid = false;
+						continue;
+					}
+				}
+				valid &= ctx.addLocalClass(innerClass, validationInfo);
+			}
+		}
+
 		if (constructors != null) {
 			for (HiConstructor constructor : constructors) {
-				constructor.validate(validationInfo, ctx);
+				valid &= constructor.validate(validationInfo, ctx);
 			}
 		}
+
 		if (methods != null) {
 			for (HiMethod method : methods) {
-				method.validate(validationInfo, ctx);
+				valid &= method.validate(validationInfo, ctx);
 			}
 		}
+		ctx.exit();
+
+		ctx.addLocalClass(this, validationInfo);
 		return valid;
 	}
 
@@ -383,19 +419,19 @@ public class HiClass implements Codeable {
 		return children;
 	}
 
-	private Map<String, HiClass> classes_map;
+	private Map<String, HiClass> classesMap;
 
 	public HiClass getClass(RuntimeContext ctx, String name) {
-		if (classes_map != null && classes_map.containsKey(name)) {
-			return classes_map.get(name);
+		if (classesMap != null && classesMap.containsKey(name)) {
+			return classesMap.get(name);
 		}
 
 		HiClass clazz = _getClass(ctx, name);
 		if (clazz != null) {
-			if (classes_map == null) {
-				classes_map = new HashMap<>(1);
+			if (classesMap == null) {
+				classesMap = new HashMap<>(1);
 			}
-			classes_map.put(name, clazz);
+			classesMap.put(name, clazz);
 		}
 		return clazz;
 	}
@@ -449,6 +485,9 @@ public class HiClass implements Codeable {
 	public boolean isInstanceof(HiClass clazz) {
 		if (this == clazz) {
 			return true;
+		}
+		if (clazz == null) {
+			return false;
 		}
 		HiClass c = this;
 		while (c != null) {
@@ -891,6 +930,7 @@ public class HiClass implements Codeable {
 	public void code(CodeContext os, int classType) throws IOException {
 		// write class type
 		os.writeByte(classType);
+		os.writeToken(token);
 
 		// constructor parameters
 		if (superClass != null) {
@@ -962,6 +1002,7 @@ public class HiClass implements Codeable {
 
 	public static HiClass decodeObject(DecodeContext os, int classType) throws IOException {
 		final HiClass[] classAccess = new HiClass[1];
+		Token token = os.readToken();
 
 		// constructor parameters
 		Type superClassType = null;
@@ -996,6 +1037,7 @@ public class HiClass implements Codeable {
 		} else {
 			clazz = new HiClass(superClassType, name, type);
 		}
+		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
 			clazz.init(outerClass, name, type);

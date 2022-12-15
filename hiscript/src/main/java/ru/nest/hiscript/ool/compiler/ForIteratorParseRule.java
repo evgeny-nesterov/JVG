@@ -45,12 +45,8 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					ctx.enter(RuntimeContext.FOR);
 
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers());
-					ctx.addLocalVariable(declaration);
-
 					Node iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-
 					Node body = expectBody(tokenizer, ctx);
 
 					NodeForIterator node = new NodeForIterator(declaration, iterable, body);

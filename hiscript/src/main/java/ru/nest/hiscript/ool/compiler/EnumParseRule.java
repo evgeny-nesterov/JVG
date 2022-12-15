@@ -51,17 +51,17 @@ public class EnumParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (enumName != null) {
 			int ordinal = 0;
 			while (true) {
 				Node[] args = null;
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-					args = visitArgumentsValues(tokenizer, properties);
+					args = visitArgumentsValues(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 				}
-				properties.addEnum(new HiEnumValue(enumName, ordinal++, args));
+				ctx.addEnum(new HiEnumValue(enumName, ordinal++, args));
 
 				if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
@@ -74,6 +74,6 @@ public class EnumParseRule extends ParserUtil {
 			}
 		}
 
-		ClassParseRule.getInstance().visitContent(tokenizer, properties, null);
+		ClassParseRule.getInstance().visitContent(tokenizer, ctx, null);
 	}
 }

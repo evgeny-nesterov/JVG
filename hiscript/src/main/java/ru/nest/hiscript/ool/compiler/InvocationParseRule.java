@@ -24,7 +24,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 
 		String name = visitWord(tokenizer, NOT_SERVICE);
 		if (name != null) {
-			Token startToken = tokenizer.currentToken();
+			Token startToken = startToken(tokenizer);
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				Node[] args = visitArgumentsValues(tokenizer, ctx);
 				if (checkSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) != -1) {

@@ -23,10 +23,10 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	}
 
 	@Override
-	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
-		Token startToken = tokenizer.currentToken();
+		Token startToken = startToken(tokenizer);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {

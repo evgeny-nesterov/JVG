@@ -20,18 +20,18 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 	}
 
 	@Override
-	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
-			NodeExpression value = expectCondition(tokenizer, properties);
+			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeExpressionSwitch node = new NodeExpressionSwitch(value);
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
-					Node[] caseValue = visitArgumentsValues(tokenizer, properties);
+					Node[] caseValue = visitArgumentsValues(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.REFERENCE);
-					NodeExpression caseBody = expectExpression(tokenizer, properties);
+					NodeExpression caseBody = expectExpression(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					node.add(caseValue, caseBody);
@@ -40,7 +40,7 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.REFERENCE);
-					NodeExpression caseBody = expectExpression(tokenizer, properties);
+					NodeExpression caseBody = expectExpression(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					node.add(null, caseBody);

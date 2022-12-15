@@ -28,9 +28,9 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	@Override
-	public Node visit(Tokenizer tokenizer, CompileClassContext properties) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Token startToken = startToken(tokenizer);
 		if (visitWord(Words.NEW, tokenizer) != null) {
-			Token startToken = tokenizer.currentToken();
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
 				throw new ParseException("identifier is expected", tokenizer.currentToken());
@@ -43,15 +43,15 @@ public class NewParseRule extends ParseRule<Node> {
 					if (type.isPrimitive()) {
 						throw new ParseException("'[' expected", tokenizer.currentToken());
 					}
-					node = visitNewObject(tokenizer, type, properties);
+					node = visitNewObject(tokenizer, type, ctx, startToken);
 					break;
 
 				case Symbols.SQUARE_BRACES_LEFT:
-					node = visitNewArray(tokenizer, type, properties);
+					node = visitNewArray(tokenizer, type, ctx);
 					break;
 
 				case Symbols.MASSIVE:
-					node = visitNewArrayValue(tokenizer, type, properties);
+					node = visitNewArrayValue(tokenizer, type, ctx);
 					break;
 			}
 			if (node != null) {
@@ -63,21 +63,22 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new <type>(<arguments>) {<body>}
-	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private Node visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		Node[] arguments = visitArgumentsValues(tokenizer, ctx);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileClassContext innerProperties = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerProperties.clazz = new HiClass(type, ctx.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
+			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
+			innerCtx.clazz = new HiClass(type, ctx.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
-			ClassParseRule.getInstance().visitContent(tokenizer, innerProperties, null);
+			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
-			return new NodeConstructor(innerProperties.clazz, arguments);
+			innerCtx.clazz.token = tokenizer.getBlockToken(startToken);
+			return new NodeConstructor(innerCtx.clazz, arguments);
 		} else {
 			NodeType nodeType = new NodeType(type);
 			return new NodeConstructor(nodeType, arguments);
@@ -85,10 +86,10 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new a.b.c.d[<index>]...[<index>] []...[]
-	private Node visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext properties) throws TokenizerException, ParseException {
+	private Node visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
 		List<Node> indexes = new ArrayList<>();
 
-		Node index = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+		Node index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (index == null) {
 			throw new ParseException("index is expected", tokenizer.currentToken());
 		}
@@ -96,7 +97,7 @@ public class NewParseRule extends ParseRule<Node> {
 		indexes.add(index);
 
 		while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
-			index = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+			index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			indexes.add(index);
 			expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
 		}
@@ -112,25 +113,25 @@ public class NewParseRule extends ParseRule<Node> {
 	}
 
 	// new a.b.c.d[]...[] {{...}, ... ,{...}}
-	private Node visitNewArrayValue(Tokenizer tokenizer, Type type, CompileClassContext properties) throws TokenizerException, ParseException {
+	private Node visitNewArrayValue(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
 		int dimensions = visitDimension(tokenizer) + 1;
 
-		Node value = visitArrayValue(tokenizer, type, dimensions, properties);
+		Node value = visitArrayValue(tokenizer, type, dimensions, ctx);
 		if (value == null) {
 			throw new ParseException("dimension is expected", tokenizer.currentToken());
 		}
 		return value;
 	}
 
-	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
+	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			ArrayList<Node> list = new ArrayList<>(1);
 
-			Node cell = visitCell(tokenizer, type, dimensions - 1, properties);
+			Node cell = visitCell(tokenizer, type, dimensions - 1, ctx);
 			if (cell != null) {
 				list.add(cell);
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-					cell = visitCell(tokenizer, type, dimensions - 1, properties);
+					cell = visitCell(tokenizer, type, dimensions - 1, ctx);
 					if (cell == null) {
 						throw new ParseException("expression is expected", tokenizer.currentToken());
 					}
@@ -147,11 +148,11 @@ public class NewParseRule extends ParseRule<Node> {
 		return null;
 	}
 
-	public Node visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext properties) throws TokenizerException, ParseException {
-		Node cell = ExpressionParseRule.getInstance().visit(tokenizer, properties);
+	public Node visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Node cell = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (cell != null) {
 			return cell;
 		}
-		return visitArrayValue(tokenizer, type, dimensions, properties);
+		return visitArrayValue(tokenizer, type, dimensions, ctx);
 	}
 }

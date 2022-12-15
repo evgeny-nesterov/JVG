@@ -10,7 +10,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
 
 		// extends
-		// assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
+		assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
 	}
 
 	@Test
