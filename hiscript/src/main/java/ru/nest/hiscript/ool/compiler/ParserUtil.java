@@ -19,6 +19,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.tokenizer.AnnotationWordToken;
 import ru.nest.hiscript.tokenizer.ByteToken;
 import ru.nest.hiscript.tokenizer.CharToken;
 import ru.nest.hiscript.tokenizer.CommentToken;
@@ -124,6 +125,26 @@ public class ParserUtil implements Words {
 			}
 		}
 		return -1;
+	}
+
+	protected String visitAnnotationWord(Tokenizer tokenizer) throws TokenizerException, ParseException {
+		skipComments(tokenizer);
+
+		Token currentToken = tokenizer.currentToken();
+		if (currentToken instanceof AnnotationWordToken) {
+			AnnotationWordToken wordToken = (AnnotationWordToken) currentToken;
+			if (!wordToken.isService()) {
+				tokenizer.nextToken();
+
+				String name = wordToken.getWord();
+				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+					name += ".";
+					name += expectWord(NOT_SERVICE, tokenizer);
+				}
+				return name;
+			}
+		}
+		return null;
 	}
 
 	protected Type visitType(Tokenizer tokenizer, boolean allowArray) throws TokenizerException, ParseException {

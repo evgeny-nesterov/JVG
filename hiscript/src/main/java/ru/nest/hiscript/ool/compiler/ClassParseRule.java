@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -36,8 +37,9 @@ public class ClassParseRule extends ParserUtil {
 
 	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
-
 		Token startToken = startToken(tokenizer);
+
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.CLASS, tokenizer) != null) {
 			tokenizer.commit();
@@ -96,6 +98,7 @@ public class ClassParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			ctx.clazz.annotations = annotations;
 			return ctx.clazz;
 		}
 
@@ -108,7 +111,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (ctx.constructors == null) {
-			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			ctx.addConstructor(defaultConstructor);
 		}
 
@@ -134,6 +137,7 @@ public class ClassParseRule extends ParserUtil {
 			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass != null) {
+			// TODO keep in class only runtime annotations
 			innerClass.enclosingClass = clazz;
 			ctx.addClass(innerClass);
 			return true;
@@ -149,6 +153,7 @@ public class ClassParseRule extends ParserUtil {
 		// method
 		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
 		if (method != null) {
+			// TODO keep in method only runtime annotations
 			ctx.addMethod(method);
 			return true;
 		}
@@ -171,6 +176,7 @@ public class ClassParseRule extends ParserUtil {
 		tokenizer.start();
 		HiClass clazz = ctx.clazz;
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
@@ -229,7 +235,7 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				ctx.exit();
 
-				return new HiConstructor(clazz, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
+				return new HiConstructor(clazz, annotations, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
 			}
 		}
 
@@ -242,6 +248,7 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type == null) {
@@ -301,7 +308,7 @@ public class ClassParseRule extends ParserUtil {
 					}
 
 					ctx.exit();
-					return new HiMethod(clazz, modifiers, type, name, arguments, exceptionTypes, body, tokenizer.getBlockToken(startToken));
+					return new HiMethod(clazz, annotations, modifiers, type, name, arguments, exceptionTypes, body, tokenizer.getBlockToken(startToken));
 				}
 			}
 		}
@@ -313,6 +320,7 @@ public class ClassParseRule extends ParserUtil {
 	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
@@ -336,6 +344,7 @@ public class ClassParseRule extends ParserUtil {
 					Type type = Type.getArrayType(baseType, addDimension);
 					HiField<?> field = HiField.getField(type, name, initializer);
 					field.setModifiers(modifiers);
+					field.setAnnotations(annotations);
 
 					ctx.addField(field);
 

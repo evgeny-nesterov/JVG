@@ -12,6 +12,7 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
@@ -41,6 +42,7 @@ public class RecordParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.RECORD, tokenizer) != null) {
 			tokenizer.commit();
@@ -70,7 +72,8 @@ public class RecordParseRule extends ParserUtil {
 			}
 
 			HiClassRecord record = new HiClassRecord(recordName, ctx.classType);
-			record.defaultConstructor = new HiConstructor(record, Modifiers.PUBLIC(), arguments, null, null, HiConstructor.BodyConstructorType.NONE);
+			record.annotations = annotations;
+			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();
 			record.defaultConstructor.body = defaultConstructorBody;
 
@@ -84,7 +87,7 @@ public class RecordParseRule extends ParserUtil {
 					getMethodName += argument.getVariableName().substring(1);
 				}
 				Node getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName())));
-				HiMethod getMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody, argument.getToken());
+				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody, argument.getToken());
 				ctx.addMethod(getMethod);
 
 				String setMethodName = "set" + Character.toUpperCase(argument.getVariableName().charAt(0));
@@ -96,7 +99,7 @@ public class RecordParseRule extends ParserUtil {
 				setExpression.setToken(argument.getToken());
 				// TODO support set methods?
 				Node setMethodBody = new NodeBlock(setExpression);
-				HiMethod setMethod = new HiMethod(record, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody, argument.getToken());
+				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody, argument.getToken());
 				ctx.addMethod(setMethod);
 
 				defaultConstructorBody.addStatement(setExpression);

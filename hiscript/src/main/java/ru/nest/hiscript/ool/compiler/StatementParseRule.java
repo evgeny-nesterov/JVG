@@ -40,6 +40,9 @@ public class StatementParseRule extends ParseRule<Node> {
 		if (clazz == null) {
 			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
+		if (clazz == null) {
+			clazz = AnnotationInterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
+		}
 		if (clazz != null) {
 			return new NodeClass(clazz);
 		}

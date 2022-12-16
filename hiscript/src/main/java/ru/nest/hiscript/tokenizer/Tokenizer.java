@@ -227,6 +227,7 @@ public class Tokenizer {
 		t.addVisitor(new StringTokenVisitor());
 		t.addVisitor(new CharTokenVisitor());
 		t.addVisitor(new CommentTokenVisitor());
+		t.addVisitor(new AnnotationTokenVisitor());
 		t.addVisitor(new WordTokenVisitor());
 		t.addVisitor(new NumberTokenVisitor());
 		t.addVisitor(new SymbolTokenVisitor());

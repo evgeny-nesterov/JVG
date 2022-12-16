@@ -44,7 +44,7 @@ public class HiClassArray extends HiClass {
 		constructors = new HiConstructor[1];
 		Modifiers constructorModifiers = new Modifiers();
 		constructorModifiers.setAccess(ModifiersIF.ACCESS_PUBLIC);
-		constructors[0] = new HiConstructor(this, constructorModifiers, (NodeArgument[]) null, null, null, BodyConstructorType.NONE);
+		constructors[0] = new HiConstructor(this, null, constructorModifiers, (NodeArgument[]) null, null, null, BodyConstructorType.NONE);
 
 		fields = new HiField[1];
 		fields[0] = HiField.getField(Type.getPrimitiveType("int"), "length");

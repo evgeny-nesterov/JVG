@@ -85,15 +85,18 @@ public class Value implements PrimitiveTypes {
 	public Node[] arguments;
 
 	public void clear() {
+		node = null;
 		type = null;
 		object = null;
 		array = null;
 		parentArray = null;
 		name = null;
+		castedVariableName = null;
+		castedCondition = null;
+		castedRecordArguments = null;
 		variableType = null;
 		variable = null;
 		arguments = null;
-		node = null;
 	}
 
 	/**

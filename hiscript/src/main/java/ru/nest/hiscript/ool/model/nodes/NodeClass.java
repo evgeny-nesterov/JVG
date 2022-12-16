@@ -28,6 +28,7 @@ public class NodeClass extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO check
 		return clazz.validate(validationInfo, ctx);
 	}
 

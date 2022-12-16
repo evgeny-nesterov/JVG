@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -25,8 +26,9 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	@Override
 	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
-
 		Token startToken = startToken(tokenizer);
+
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
@@ -51,7 +53,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 				typeArgument = type;
 			}
 
-			NodeArgument node = new NodeArgument(typeArgument, name, modifiers);
+			NodeArgument node = new NodeArgument(typeArgument, name, modifiers, annotations);
 			node.setToken(tokenizer.getBlockToken(startToken));
 			return node;
 		}

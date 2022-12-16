@@ -17,7 +17,6 @@ public class WordTokenVisitor implements TokenVisitor {
 			String word = tokenizer.getText(offset, tokenizer.getOffset());
 			return new WordToken(word, line, offset, tokenizer.getOffset() - offset, lineOffset);
 		}
-
 		return null;
 	}
 }

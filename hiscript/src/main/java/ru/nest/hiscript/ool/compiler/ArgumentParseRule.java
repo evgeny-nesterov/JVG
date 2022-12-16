@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compiler;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -23,6 +24,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
@@ -36,7 +38,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 
 			int addDimension = visitDimension(tokenizer);
 			type = Type.getArrayType(type, addDimension);
-			return new NodeArgument(type, name, modifiers);
+			return new NodeArgument(type, name, modifiers, annotations);
 		}
 
 		tokenizer.rollback();
