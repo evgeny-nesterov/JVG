@@ -1,98 +1,101 @@
 package ru.nest.hiscript.tokenizer;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class WordToken extends Token implements Words {
-	private final static HashMap<String, Integer> service_words = new HashMap<>();
+	private final static Map<String, Integer> serviceWords = new HashMap<>();
 
-	private final static HashMap<Integer, String> service_types = new HashMap<>();
+	private final static Map<Integer, String> serviceTypes = new HashMap<>();
 
 	static {
-		service_words.put("do", DO);
-		service_words.put("while", WHILE);
-		service_words.put("if", IF);
-		service_words.put("else", ELSE);
-		service_words.put("for", FOR);
-		service_words.put("break", BREAK);
-		service_words.put("continue", CONTINUE);
-		service_words.put("return", RETURN);
-		service_words.put("switch", SWITCH);
-		service_words.put("case", CASE);
-		service_words.put("when", WHEN);
-		service_words.put("true", TRUE);
-		service_words.put("false", FALSE);
-		service_words.put("char", CHAR);
-		service_words.put("string", STRING);
-		service_words.put("boolean", BOOLEAN);
-		service_words.put("byte", BYTE);
-		service_words.put("short", SHORT);
-		service_words.put("int", INT);
-		service_words.put("float", FLOAT);
-		service_words.put("long", LONG);
-		service_words.put("double", DOUBLE);
-		service_words.put("var", VAR);
-		service_words.put("void", VOID);
-		service_words.put("try", TRY);
-		service_words.put("catch", CATCH);
-		service_words.put("finally", FINALLY);
-		service_words.put("default", DEFAULT);
-		service_words.put("synchronized", SYNCHRONIZED);
-		service_words.put("assert", ASSERT);
+		serviceWords.put("do", DO);
+		serviceWords.put("while", WHILE);
+		serviceWords.put("if", IF);
+		serviceWords.put("else", ELSE);
+		serviceWords.put("for", FOR);
+		serviceWords.put("break", BREAK);
+		serviceWords.put("continue", CONTINUE);
+		serviceWords.put("return", RETURN);
+		serviceWords.put("switch", SWITCH);
+		serviceWords.put("case", CASE);
+		serviceWords.put("when", WHEN);
+		serviceWords.put("true", TRUE);
+		serviceWords.put("false", FALSE);
+		serviceWords.put("char", CHAR);
+		serviceWords.put("string", STRING);
+		serviceWords.put("boolean", BOOLEAN);
+		serviceWords.put("byte", BYTE);
+		serviceWords.put("short", SHORT);
+		serviceWords.put("int", INT);
+		serviceWords.put("float", FLOAT);
+		serviceWords.put("long", LONG);
+		serviceWords.put("double", DOUBLE);
+		serviceWords.put("var", VAR);
+		serviceWords.put("void", VOID);
+		serviceWords.put("try", TRY);
+		serviceWords.put("catch", CATCH);
+		serviceWords.put("finally", FINALLY);
+		serviceWords.put("default", DEFAULT);
+		serviceWords.put("synchronized", SYNCHRONIZED);
+		serviceWords.put("assert", ASSERT);
 
-		service_words.put("interface", INTERFACE);
-		service_words.put("class", CLASS);
-		service_words.put("enum", ENUM);
-		service_words.put("record", RECORD);
-		service_words.put("new", NEW);
+		serviceWords.put("interface", INTERFACE);
+		serviceWords.put("@interface", ANNOTATION_INTERFACE);
+		serviceWords.put("class", CLASS);
+		serviceWords.put("enum", ENUM);
+		serviceWords.put("record", RECORD);
+		serviceWords.put("new", NEW);
 
-		service_words.put("package", PACKAGE);
-		service_words.put("import", IMPORT);
+		serviceWords.put("package", PACKAGE);
+		serviceWords.put("import", IMPORT);
 
-		service_words.put("public", PUBLIC);
-		service_words.put("protected", PROTECTED);
-		service_words.put("private", PRIVATE);
-		service_words.put("static", STATIC);
-		service_words.put("final", FINAL);
-		service_words.put("native", NATIVE);
-		service_words.put("abstract", ABSTRACT);
-		service_words.put("volatile", ABSTRACT); // reserved
+		serviceWords.put("public", PUBLIC);
+		serviceWords.put("protected", PROTECTED);
+		serviceWords.put("private", PRIVATE);
+		serviceWords.put("static", STATIC);
+		serviceWords.put("final", FINAL);
+		serviceWords.put("native", NATIVE);
+		serviceWords.put("abstract", ABSTRACT);
+		serviceWords.put("volatile", ABSTRACT); // reserved
 
-		service_words.put("throw", THROW);
-		service_words.put("throws", THROWS);
+		serviceWords.put("throw", THROW);
+		serviceWords.put("throws", THROWS);
 
-		service_words.put("instanceof", INSTANCE_OF);
-		service_words.put("implements", IMPLEMENTS);
-		service_words.put("extends", EXTENDS);
+		serviceWords.put("instanceof", INSTANCE_OF);
+		serviceWords.put("implements", IMPLEMENTS);
+		serviceWords.put("extends", EXTENDS);
 
-		service_words.put("super", SUPER);
-		service_words.put("this", THIS);
-		service_words.put("null", NULL);
+		serviceWords.put("super", SUPER);
+		serviceWords.put("this", THIS);
+		serviceWords.put("null", NULL);
 
-		for (String word : service_words.keySet()) {
-			service_types.put(service_words.get(word), word);
+		for (String word : serviceWords.keySet()) {
+			serviceTypes.put(serviceWords.get(word), word);
 		}
 	}
 
 	public static String getWord(int type) {
-		return service_types.get(type);
+		return serviceTypes.get(type);
 	}
 
 	public static int getType(String word) {
-		return service_words.getOrDefault(word, NOT_SERVICE);
+		return serviceWords.getOrDefault(word, NOT_SERVICE);
 	}
+
+	protected int type;
+
+	private String word;
 
 	public WordToken(String word, int line, int offset, int length, int lineOffset) {
 		super(line, offset, length, lineOffset);
-
-		if (service_words.containsKey(word)) {
-			type = service_words.get(word);
+		if (serviceWords.containsKey(word)) {
+			this.type = serviceWords.get(word);
 		} else {
-			type = NOT_SERVICE;
+			this.type = NOT_SERVICE;
 			this.word = word;
 		}
 	}
-
-	private int type;
 
 	public int getType() {
 		return type;
@@ -102,11 +105,9 @@ public class WordToken extends Token implements Words {
 		return type != NOT_SERVICE;
 	}
 
-	private String word;
-
 	public String getWord() {
 		if (isService()) {
-			return service_types.get(type);
+			return serviceTypes.get(type);
 		} else {
 			return word;
 		}

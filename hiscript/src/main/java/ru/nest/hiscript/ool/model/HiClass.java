@@ -39,7 +39,9 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_RECORD = 4;
 
-	public final static int CLASS_NULL = 5;
+	public final static int CLASS_ANNOTATION = 5;
+
+	public final static int CLASS_NULL = 6;
 
 	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
 
@@ -823,6 +825,10 @@ public class HiClass implements Codeable {
 	}
 
 	public boolean isArray() {
+		return false;
+	}
+
+	public boolean isAnnotation() {
 		return false;
 	}
 

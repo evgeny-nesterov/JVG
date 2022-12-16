@@ -588,9 +588,6 @@ public class OperationPlus extends BinaryOperation {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
 			v1.type = TYPE_BYTE;
 			v1.byteNumber = (byte) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			v1.type = TYPE_SHORT;
 			v1.shortNumber = (short) value;
@@ -604,9 +601,6 @@ public class OperationPlus extends BinaryOperation {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
 			v1.type = TYPE_BYTE;
 			v1.byteNumber = (byte) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			v1.type = TYPE_SHORT;
 			v1.shortNumber = (short) value;

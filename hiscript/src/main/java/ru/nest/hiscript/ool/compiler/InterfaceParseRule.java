@@ -118,7 +118,7 @@ public class InterfaceParseRule extends ParserUtil {
 		ctx.initClass();
 	}
 
-	private boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	protected boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
 		Modifiers modifiers = visitModifiers(tokenizer);

@@ -9,6 +9,14 @@ public class TokenizerException extends Exception {
 		this.lineOffset = lineOffset;
 	}
 
+	public TokenizerException(String msg, Token token) {
+		super(msg);
+		this.line = token.getLine();
+		this.offset = token.getOffset();
+		this.length = token.getLength();
+		this.lineOffset = token.getLineOffset();
+	}
+
 	private int line;
 
 	public int getLine() {
