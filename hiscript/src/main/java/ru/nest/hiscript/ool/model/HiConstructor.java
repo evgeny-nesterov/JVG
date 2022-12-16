@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldInt;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
@@ -36,8 +37,9 @@ public class HiConstructor implements Codeable {
 		}
 	}
 
-	public HiConstructor(HiClass clazz, Modifiers modifiers, List<NodeArgument> arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
+		this.annotations = annotations;
 		this.modifiers = modifiers;
 
 		this.arguments = new NodeArgument[arguments != null ? arguments.size() : 0];
@@ -50,14 +52,17 @@ public class HiConstructor implements Codeable {
 		this.bodyConstructorType = bodyConstructorType;
 	}
 
-	public HiConstructor(HiClass clazz, Modifiers modifiers, NodeArgument[] arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
+		this.annotations = annotations;
 		this.modifiers = modifiers;
 		this.arguments = arguments;
 		this.body = body;
 		this.bodyConstructor = bodyConstructor;
 		this.bodyConstructorType = bodyConstructorType;
 	}
+
+	public NodeAnnotation[] annotations;
 
 	public Modifiers modifiers;
 
@@ -298,6 +303,8 @@ public class HiConstructor implements Codeable {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
+		os.writeShort(annotations != null ? annotations.length : 0);
+		os.write(annotations);
 		modifiers.code(os);
 
 		int count = arguments != null ? arguments.length : 0;
@@ -312,6 +319,7 @@ public class HiConstructor implements Codeable {
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
+		NodeAnnotation[] annotations = os.readNodeArray(NodeAnnotation.class, os.readShort());
 		Modifiers modifiers = Modifiers.decode(os);
 
 		int count = os.readByte();
@@ -319,7 +327,7 @@ public class HiConstructor implements Codeable {
 		for (int i = 0; i < count; i++) {
 			arguments[i] = (NodeArgument) Node.decode(os);
 		}
-		return new HiConstructor(os.getHiClass(), modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
+		return new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
 	}
 
 	public static void main(String[] a) {

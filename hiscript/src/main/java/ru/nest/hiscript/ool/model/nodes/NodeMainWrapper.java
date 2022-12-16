@@ -29,7 +29,7 @@ public class NodeMainWrapper extends Node {
 		}
 		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
-			rootClass.methods[0] = new HiMethod(rootClass, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body, body.getToken());
+			rootClass.methods[0] = new HiMethod(rootClass, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body, body.getToken());
 		}
 		return rootClass;
 	}

@@ -16,8 +16,8 @@ public class NodeDeclarations extends Node {
 		super("declarations", TYPE_DECLARATIONS);
 	}
 
-	public NodeDeclaration add(Type type, String name, Node initializer, Modifiers modifiers) {
-		NodeDeclaration field = new NodeDeclaration(type, name, initializer, modifiers);
+	public NodeDeclaration add(Type type, String name, Node initializer, Modifiers modifiers, NodeAnnotation[] annotations) {
+		NodeDeclaration field = new NodeDeclaration(type, name, initializer, modifiers, annotations);
 		declarations.add(field);
 		return field;
 	}

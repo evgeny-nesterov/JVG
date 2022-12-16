@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -29,6 +30,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
@@ -45,6 +47,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			ctx.clazz = new HiClassAnnotation(name, ctx.classType);
 			ctx.clazz.isInterface = true;
 			ctx.clazz.modifiers = modifiers;
+			ctx.clazz.annotations = annotations;
 
 			visitContent(tokenizer, ctx);
 
@@ -103,7 +106,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					ctx.exit();
-					return new HiMethod(clazz, modifiers, type, name, (NodeArgument[]) null, null, defaultValue, tokenizer.getBlockToken(startToken));
+					return new HiMethod(clazz, null, modifiers, type, name, (NodeArgument[]) null, null, defaultValue, tokenizer.getBlockToken(startToken));
 				}
 			}
 		}

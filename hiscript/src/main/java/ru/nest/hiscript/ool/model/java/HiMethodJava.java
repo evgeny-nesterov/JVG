@@ -17,7 +17,7 @@ public class HiMethodJava extends HiMethod {
 	public Method method;
 
 	public HiMethodJava(HiClassJava clazz, Method method, String name) {
-		super(clazz, null, null, name, (NodeArgument[]) null, null, null, null);
+		super(clazz, null, null, null, name, (NodeArgument[]) null, null, null, null);
 		this.method = method;
 
 		Class[] argJavaClasses = method.getParameterTypes();
@@ -33,7 +33,7 @@ public class HiMethodJava extends HiMethod {
 				argType = Type.getTopType("String");
 			}
 			String argName = "arg" + i;
-			arguments[i] = new NodeArgument(argType, argName, new Modifiers());
+			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);
 			argNames[i] = argName;
 		}
 	}

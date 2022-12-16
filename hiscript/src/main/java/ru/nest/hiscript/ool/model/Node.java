@@ -142,6 +142,10 @@ public abstract class Node implements Codeable {
 
 	public final static byte TYPE_CASTED_IDENTIFIER = 44;
 
+	public final static byte TYPE_ANNOTATION = 45;
+
+	public final static byte TYPE_ANNOTATION_ARGUMENT = 46;
+
 	public Node(String name, int type) {
 		this(name, type, null);
 	}

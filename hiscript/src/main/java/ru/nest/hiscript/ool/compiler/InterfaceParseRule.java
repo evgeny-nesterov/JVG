@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -30,6 +31,7 @@ public class InterfaceParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		if (visitWord(Words.INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
@@ -76,6 +78,7 @@ public class InterfaceParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			ctx.clazz.annotations = annotations;
 			return ctx.clazz;
 		}
 
@@ -121,6 +124,7 @@ public class InterfaceParseRule extends ParserUtil {
 	protected boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
+		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
@@ -139,6 +143,7 @@ public class InterfaceParseRule extends ParserUtil {
 				Type type = Type.getArrayType(baseType, addDimension);
 				HiField<?> field = HiField.getField(type, name, initializer);
 				field.setModifiers(modifiers);
+				field.setAnnotations(annotations);
 
 				ctx.addField(field);
 

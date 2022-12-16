@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -70,6 +71,16 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 	public abstract Object getJava(RuntimeContext ctx);
 
 	public abstract void set(RuntimeContext ctx, Value value);
+
+	private NodeAnnotation[] annotations;
+
+	public NodeAnnotation[] getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(NodeAnnotation[] annotations) {
+		this.annotations = annotations;
+	}
 
 	private Modifiers modifiers = new Modifiers();
 

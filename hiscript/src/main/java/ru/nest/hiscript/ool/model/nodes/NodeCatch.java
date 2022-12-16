@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
@@ -62,7 +63,7 @@ public class NodeCatch extends Node {
 		boolean valid = true;
 		initClasses(validationInfo, null);
 
-		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, null), validationInfo);
+		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, new Modifiers(), null), validationInfo);
 
 		if (catchBody != null) {
 			valid &= catchBody.validateBlock(validationInfo, ctx);

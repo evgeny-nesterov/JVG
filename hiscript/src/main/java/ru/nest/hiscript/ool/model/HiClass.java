@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -78,7 +79,7 @@ public class HiClass implements Codeable {
 
 			OBJECT_CLASS = forName(null, "Object");
 			OBJECT_CLASS.superClassType = null;
-			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
 			// TODO define classes initialization order automatically
@@ -344,6 +345,8 @@ public class HiClass implements Codeable {
 	public boolean isInterface = false;
 
 	// content
+	public NodeAnnotation[] annotations;
+
 	public HiField<?>[] fields;
 
 	public NodeInitializer[] initializers;
@@ -961,6 +964,8 @@ public class HiClass implements Codeable {
 
 		// content
 		os.writeBoolean(isInterface);
+		os.writeShort(annotations != null ? annotations.length : 0);
+		os.write(annotations);
 		os.writeNullable(modifiers);
 		os.writeTypes(interfaceTypes);
 
@@ -1054,6 +1059,7 @@ public class HiClass implements Codeable {
 
 		// content
 		clazz.isInterface = os.readBoolean();
+		clazz.annotations = os.readNodeArray(NodeAnnotation.class, os.readShort());
 		clazz.modifiers = os.readNullable(Modifiers.class);
 		clazz.interfaceTypes = os.readTypes();
 		int fieldsCount = os.readShort();

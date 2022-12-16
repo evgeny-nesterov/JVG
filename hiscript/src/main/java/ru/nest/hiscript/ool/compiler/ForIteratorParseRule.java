@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -31,6 +32,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
+			NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -44,7 +46,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 
 					ctx.enter(RuntimeContext.FOR);
 
-					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers());
+					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers(), annotations);
 					Node iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 					Node body = expectBody(tokenizer, ctx);
