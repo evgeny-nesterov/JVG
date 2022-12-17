@@ -1086,7 +1086,7 @@ Util.header("SYNCHRONIZATION, WAIT, NOTIFICATION");
 	for(int i = 0; i < 2; i++) {
   		synchronized(lock) {
     		System.println("start wait: ");
-    		lock.wait(10000);
+    		lock.wait(1000);
     		System.println("end wait: ");
   		}
 	}

@@ -134,6 +134,15 @@ public class NodeConstructor extends Node {
 			return;
 		}
 
+		RuntimeContext.StackLevel l = ctx.level;
+		while (l != null) {
+			if (l.type == RuntimeContext.CONSTRUCTOR && l.constructor == constructor) {
+				ctx.throwRuntimeException("recursive constructor invocation");
+				return;
+			}
+			l = l.parent;
+		}
+
 		// set names of arguments
 		if (!clazz.isJava() && arguments != null) {
 			int size = arguments.length;
