@@ -1,6 +1,8 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -275,8 +277,13 @@ public class OperationEquatePlus extends BinaryOperation {
 			System.arraycopy(chars2, 0, chars, chars1.length, chars2.length);
 			NodeString.createString(ctx, chars);
 
-			v1.variable.set(ctx, ctx.value);
-			return;
+			if (v1.valueType == Value.VARIABLE) {
+				v1.variable.set(ctx, ctx.value);
+				return;
+			} else if (v1.valueType == Value.ARRAY_INDEX) {
+				Arrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, ctx.value, v1);
+				return;
+			}
 		}
 
 		errorInvalidOperator(ctx, c1, c2);

@@ -224,7 +224,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public Object getArray() {
-		if (!type.isArray()) {
+		if (!type.isArray() && !type.isNull()) {
 			ctx.throwRuntimeException("array is expected: " + type.fullName);
 			return null;
 		}

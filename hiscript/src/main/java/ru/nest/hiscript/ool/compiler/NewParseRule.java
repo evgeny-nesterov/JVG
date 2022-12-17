@@ -125,7 +125,7 @@ public class NewParseRule extends ParseRule<Node> {
 
 	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			ArrayList<Node> list = new ArrayList<>(1);
+			List<Node> list = new ArrayList<>(1);
 
 			Node cell = visitCell(tokenizer, type, dimensions - 1, ctx);
 			if (cell != null) {
