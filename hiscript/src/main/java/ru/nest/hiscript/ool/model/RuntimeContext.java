@@ -133,7 +133,7 @@ public class RuntimeContext implements AutoCloseable {
 
 		if (excClass == null) {
 			excClass = HiClass.forName(this, exceptionClass);
-			excConstructor = excClass.getConstructor(this, HiClass.forName(this, "String"));
+			excConstructor = excClass.getConstructor(this, HiClass.forName(this, HiClass.STRING_CLASS_NAME));
 		}
 
 		HiField<?>[] args = new HiField<?>[1];

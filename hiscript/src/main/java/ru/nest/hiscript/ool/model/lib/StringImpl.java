@@ -74,7 +74,7 @@ public class StringImpl extends ImplUtil {
 		boolean isNull2 = o == null;
 		if (isNull1 || isNull2) {
 			equals = isNull1 == isNull2;
-		} else if (o.clazz.fullName.equals("String")) {
+		} else if (o.clazz.fullName.equals(HiClass.STRING_CLASS_NAME)) {
 			char[] chars1 = getChars(ctx, ctx.value.object);
 			char[] chars2 = getChars(ctx, o);
 			IF:

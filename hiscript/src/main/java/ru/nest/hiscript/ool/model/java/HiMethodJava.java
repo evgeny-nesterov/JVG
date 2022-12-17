@@ -14,7 +14,13 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import java.lang.reflect.Method;
 
 public class HiMethodJava extends HiMethod {
+	public final static HiMethodJava NULL = new HiMethodJava();
+
 	public Method method;
+
+	private HiMethodJava() {
+		super(null, null, null, null, "null", (NodeArgument[]) null, null, null, null);
+	}
 
 	public HiMethodJava(HiClassJava clazz, Method method, String name) {
 		super(clazz, null, null, null, name, (NodeArgument[]) null, null, null, null);
@@ -30,7 +36,7 @@ public class HiMethodJava extends HiMethod {
 			if (argJavaClass.isPrimitive()) {
 				argType = Type.getPrimitiveType(argJavaClass.getName());
 			} else if (argJavaClass == String.class) {
-				argType = Type.getTopType("String");
+				argType = Type.getTopType(HiClass.STRING_CLASS_NAME);
 			}
 			String argName = "arg" + i;
 			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);

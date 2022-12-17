@@ -36,9 +36,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			castPrimitive(ctx, v1, v2);
 		} else if (t1.isArray()) {
 			// cast array
-			HiClassArray at1 = (HiClassArray) t1;
-			HiClass t2 = v2.type;
-			if (!canCastArray(at1, t2)) {
+			if (!canCastArray((HiClassArray) t1, v2.type)) {
 				errorCast(ctx, v2.type, v1.type);
 				return;
 			}
@@ -67,6 +65,14 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		HiClassArray at1 = from;
 		HiClassArray at2 = (HiClassArray) to;
 		if (at1.dimension != at2.dimension) {
+			return false;
+		}
+
+		if (at1.cellClass.isPrimitive()) {
+			return at1.cellClass == at2.cellClass;
+		}
+
+		if (at2.cellClass.isPrimitive()) {
 			return false;
 		}
 

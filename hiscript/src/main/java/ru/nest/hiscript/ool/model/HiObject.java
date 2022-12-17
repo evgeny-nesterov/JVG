@@ -198,7 +198,7 @@ public class HiObject {
 			return true;
 		}
 
-		HiClass objectClass = HiClass.forName(ctx, "Object");
+		HiClass objectClass = HiClass.forName(ctx, HiClass.OBJECT_CLASS_NAME);
 		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
 		if (equalsMethod == null) {
 			return this == object;

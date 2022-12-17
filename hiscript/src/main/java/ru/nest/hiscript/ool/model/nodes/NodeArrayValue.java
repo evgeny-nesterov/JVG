@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class NodeArrayValue extends Node {
 	public void execute(RuntimeContext ctx) {
 		HiClass cellClass = type.getClass(ctx);
 		HiClass currentCellClass = dimensions > 1 ? HiClass.getArrayClass(cellClass, dimensions - 1) : cellClass;
-		HiClass clazz = HiClass.getArrayClass(currentCellClass, 1);
+		HiClassArray clazz = HiClass.getArrayClass(currentCellClass, 1);
 		Class<?> c = Arrays.getClass(cellClass, dimensions - 1);
 
 		int size = array.length;

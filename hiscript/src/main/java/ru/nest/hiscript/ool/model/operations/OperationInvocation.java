@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
@@ -304,8 +305,8 @@ public class OperationInvocation extends BinaryOperation {
 					Arrays.setArrayIndex(varargsClass, array, i, v1, v2);
 				}
 
-				ctx.value.array = array;
 				ctx.value.type = varargsArrayClass;
+				ctx.value.array = array;
 				varargsField.set(ctx, ctx.value);
 
 				arguments[mainSize] = varargsField;

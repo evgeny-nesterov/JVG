@@ -32,7 +32,7 @@ public class HiJava {
 	}
 
 	private static HiObject convertMapFromJava(RuntimeContext ctx, Map<?, ?> javaMap) {
-		HiClass type = HiClass.forName(ctx, "HashMap");
+		HiClass type = HiClass.forName(ctx, HiClass.HASHMAP_CLASS_NAME);
 		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null);
 		Map map = (Map) object.userObject;
 		for (Map.Entry e : javaMap.entrySet()) {
@@ -42,7 +42,7 @@ public class HiJava {
 	}
 
 	private static HiObject convertListFromJava(RuntimeContext ctx, List javaList) {
-		HiClass type = HiClass.forName(ctx, "ArrayList");
+		HiClass type = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
 		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null);
 		List list = (List) object.userObject;
 		for (Object o : javaList) {
@@ -135,11 +135,11 @@ public class HiJava {
 		} else if (javaClass == Character.class || javaClass == char.class) {
 			return Type.getPrimitiveType("char");
 		} else if (javaClass == String.class) {
-			return Type.getTopType("String");
+			return Type.getTopType(HiClass.STRING_CLASS_NAME);
 		} else if (Map.class.isAssignableFrom(javaClass)) {
-			return Type.getTopType("HashMap");
+			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
 		} else if (List.class.isAssignableFrom(javaClass)) {
-			return Type.getTopType("ArrayList");
+			return Type.getTopType(HiClass.ARRAYLIST_CLASS_NAME);
 		} else if (javaClass.isArray()) {
 			int dimension = 1;
 			Class elementClass = javaClass.getComponentType();

@@ -231,8 +231,6 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 	}
 
 	public static boolean autoCast(HiClass src, HiClass dst) {
-		// DEBUG
-		// System.out.println("auto cast: " + src + " -> " + dst);
 		if (src == dst) {
 			return true;
 		}
@@ -245,20 +243,26 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 			return true;
 		}
 
+		if (dst == HiClass.OBJECT_CLASS) {
+			return true;
+		}
+
 		if (src.isArray() || dst.isArray()) {
-			if (dst == HiClass.OBJECT_CLASS) {
-				return true;
-			}
 			if (!src.isArray() || !dst.isArray()) {
 				return false;
 			}
 
-			HiClassArray asrc = (HiClassArray) src;
-			HiClassArray adst = (HiClassArray) dst;
-			if (asrc.dimension != adst.dimension) {
+			HiClassArray arraySrc = (HiClassArray) src;
+			HiClassArray arrayDst = (HiClassArray) dst;
+			if (arraySrc.dimension != arrayDst.dimension) {
 				return false;
 			}
-			return autoCast(asrc.cellClass, adst.cellClass);
+
+			if (arraySrc.cellClass.isPrimitive()) {
+				return arraySrc.cellClass == arrayDst.cellClass;
+			} else {
+				return autoCast(arraySrc.cellClass, arrayDst.cellClass);
+			}
 		}
 		return src.isInstanceof(dst);
 	}

@@ -511,7 +511,7 @@ public class Value implements PrimitiveTypes {
 			return NULL;
 		}
 
-		boolean isString = object.clazz.fullName != null && "String".equals(object.clazz.fullName);
+		boolean isString = object.clazz.fullName != null && HiClass.STRING_CLASS_NAME.equals(object.clazz.fullName);
 		if (isString) {
 			return ImplUtil.getChars(ctx, object);
 		}

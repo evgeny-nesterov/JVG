@@ -6,10 +6,10 @@ public class TestJava extends HiTest {
 	@Test
 	public void testSingle() throws IOException {
 		assertSuccess("Java.importClass(\"JByte\", \"java.lang.Byte\"); assert new JByte(127).byteValue() == 127;");
-		assertSuccess("Java.importClass(\"JInteger\", \"java.lang.Integer\"); assert new JInteger((int)1).intValue() == 1;");
+		assertSuccess("Java.importClass(\"JInteger\", \"java.lang.Integer\"); assert new JInteger(1).intValue() == 1;");
 		assertSuccess("Java.importClass(\"JCharacter\", \"java.lang.Character\"); assert new JCharacter('x').charValue() == 'x';");
-		assertSuccess("Java.importClass(\"JString\", \"java.lang.String\"); assert new JString(\"abc\").charAt((int)1) == 'b';");
-		assertSuccess("assert new JString(new char[]{'a', 'b', 'c'}, (int)1, (int)1).charAt((int)0) == 'b';");
+		assertSuccess("Java.importClass(\"JString\", \"java.lang.String\"); assert new JString(\"abc\").charAt(1) == 'b';");
+		assertSuccess("assert new JString(new char[]{'a', 'b', 'c'}, 1, 1).charAt(0) == 'b';");
 		assertFail("Java.importClass(\"String\", \"java.lang.String\");");
 
 		// fields

@@ -25,7 +25,7 @@ public class NodeString extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return HiClass.loadedClasses.get("String");
+		return HiClass.loadedClasses.get(HiClass.STRING_CLASS_NAME);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class NodeString extends Node {
 
 	public static HiObject createString(RuntimeContext ctx, char[] text) {
 		if (clazz == null) {
-			clazz = HiClass.forName(ctx, "String");
+			clazz = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);
 			constructor = clazz.getConstructor(ctx);
 		}
 

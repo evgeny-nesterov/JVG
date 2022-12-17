@@ -59,6 +59,14 @@ public class HiClass implements Codeable {
 
 	public static String ROOT_CLASS_NAME = "@root";
 
+	public static String OBJECT_CLASS_NAME = "Object";
+
+	public static String STRING_CLASS_NAME = "String";
+
+	public static String HASHMAP_CLASS_NAME = "HashMap";
+
+	public static String ARRAYLIST_CLASS_NAME = "ArrayList";
+
 	public Token token;
 
 	static {
@@ -75,7 +83,7 @@ public class HiClass implements Codeable {
 			// object
 			load(HiCompiler.class.getResource("/hilibs/Object.hi"));
 
-			OBJECT_CLASS = forName(null, "Object");
+			OBJECT_CLASS = forName(null, HiClass.OBJECT_CLASS_NAME);
 			OBJECT_CLASS.superClassType = null;
 			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
@@ -1171,6 +1179,6 @@ public class HiClass implements Codeable {
 			}
 			c = c.superClass;
 		}
-		return loadedClasses.get("Object");
+		return loadedClasses.get(HiClass.OBJECT_CLASS_NAME);
 	}
 }

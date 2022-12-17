@@ -32,8 +32,8 @@ public class OperationPlus extends BinaryOperation {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 
-		boolean isS1 = c1 != null && "String".equals(c1.fullName);
-		boolean isS2 = c2 != null && "String".equals(c2.fullName);
+		boolean isS1 = c1 != null && HiClass.STRING_CLASS_NAME.equals(c1.fullName);
+		boolean isS2 = c2 != null && HiClass.STRING_CLASS_NAME.equals(c2.fullName);
 		if (isS1 || isS2) {
 			return isS1 ? c1 : c2;
 		}
@@ -222,8 +222,8 @@ public class OperationPlus extends BinaryOperation {
 			c2 = v2.object.clazz;
 		}
 
-		boolean isS1 = c1 != null && "String".equals(c1.fullName);
-		boolean isS2 = c2 != null && "String".equals(c2.fullName);
+		boolean isS1 = c1 != null && HiClass.STRING_CLASS_NAME.equals(c1.fullName);
+		boolean isS2 = c2 != null && HiClass.STRING_CLASS_NAME.equals(c2.fullName);
 		if (isS1 || isS2) {
 			char[] chars1 = v1.getString(ctx);
 			char[] chars2 = v2.getString(ctx);

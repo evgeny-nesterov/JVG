@@ -42,8 +42,8 @@ public class HiConstructor implements Codeable {
 		this.annotations = annotations;
 		this.modifiers = modifiers;
 
-		this.arguments = new NodeArgument[arguments != null ? arguments.size() : 0];
 		if (arguments != null) {
+			this.arguments = new NodeArgument[arguments.size()];
 			arguments.toArray(this.arguments);
 		}
 
@@ -167,7 +167,7 @@ public class HiConstructor implements Codeable {
 				} else {
 					// get default constructor from super classes
 					if (Type.enumType.name.equals(clazz.superClass.fullName)) {
-						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, "String"), HiClassPrimitive.getPrimitiveClass("int"));
+						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, HiClass.STRING_CLASS_NAME), HiClassPrimitive.getPrimitiveClass("int"));
 
 						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
 						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());

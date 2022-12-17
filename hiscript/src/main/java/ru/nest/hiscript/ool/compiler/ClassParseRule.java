@@ -57,7 +57,7 @@ public class ClassParseRule extends ParserUtil {
 				if (superClassType == null) {
 					throw new ParseException("illegal start of type", tokenizer.currentToken());
 				}
-			} else if (!"Object".equals(className)) {
+			} else if (!HiClass.OBJECT_CLASS_NAME.equals(className)) {
 				superClassType = Type.objectType;
 			} else {
 				superClassType = null;

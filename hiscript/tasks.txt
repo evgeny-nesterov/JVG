@@ -14,7 +14,7 @@
         +9. Indicate code line number while throwing exceptions
         +10. Add asserts
 *11. Add throws for methods, require catch or method throws for non-runtime exceptions
-12. Annotations
+*12. Annotations
 *13. Import native java classes, create instances, invoke methods and read fields
 !14. Allow Iterable for(:) (currently only arrays)
 *15. Add var
@@ -27,7 +27,7 @@
         -22. Volatile field modifier
         +23. Instanceof with auto casting (a instanceof B b)
         +24. Multi catches, multi exception (catch (Exc1 | Exc2 e))
-25. Generics (@Field int x)
-26. HiClassMulti for case of catch(Exc1 | Exc2 e)
+25. Generics
+26. HiClassMix for catch(Exc1 | Exc2 e)
         +27. try (auto closeable resources)
         +27. records, auto match if (r instanceof Rec(int a, in b) rec when <condition with rec, a and b>) {a = 1; ... and case Rec(int a) r

@@ -267,7 +267,7 @@ public class OperationEquatePlus extends BinaryOperation {
 				}
 				return;
 			}
-		} else if (c1.fullName.equals("String")) {
+		} else if (c1.fullName.equals(HiClass.STRING_CLASS_NAME)) {
 			char[] chars1 = v1.getString(ctx);
 			char[] chars2 = v2.getString(ctx);
 			char[] chars = new char[chars1.length + chars2.length];
