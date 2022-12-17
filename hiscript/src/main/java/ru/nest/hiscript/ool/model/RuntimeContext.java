@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.lib.ThreadImpl;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RuntimeContext {
+public class RuntimeContext implements AutoCloseable {
 	public final static int SAME = -1;
 
 	public final static int METHOD = 0;
@@ -221,6 +222,7 @@ public class RuntimeContext {
 					exit();
 				}
 			}
+			close();
 		}
 
 		if (isBroken) {
@@ -426,6 +428,11 @@ public class RuntimeContext {
 	public void putStack(StackLevel stack) {
 		level.clear();
 		stacks_cache.add(stack);
+	}
+
+	@Override
+	public void close() {
+		ImplUtil.removeThread(this);
 	}
 
 	public class StackLevel {
@@ -674,29 +681,6 @@ public class RuntimeContext {
 
 		value.clear();
 		exception = null;
-	}
-
-	// buffer
-	private static final List<RuntimeContext> cacheRC = new ArrayList<>();
-
-	public static RuntimeContext get(HiCompiler compiler) {
-		RuntimeContext ctx;
-		synchronized (cacheRC) {
-			int size = cacheRC.size();
-			if (size > 0) {
-				ctx = cacheRC.remove(size - 1);
-			} else {
-				ctx = new RuntimeContext(compiler, false);
-			}
-		}
-		return ctx;
-	}
-
-	public static void utilize(RuntimeContext ctx) {
-		ctx.clear();
-		synchronized (cacheRC) {
-			cacheRC.add(ctx);
-		}
 	}
 
 	public List<StackLevel> getStack() {

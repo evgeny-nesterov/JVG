@@ -149,8 +149,7 @@ public class HiMethod implements Codeable {
 		// do not write class as when method will being read the class will not
 		// be yet created
 		// os.writeClass(clazz);
-		os.writeShort(annotations != null ? annotations.length : 0);
-		os.write(annotations);
+		os.writeShortArray(annotations);
 		modifiers.code(os);
 		os.writeType(returnType);
 		os.writeUTF(name);
@@ -159,22 +158,18 @@ public class HiMethod implements Codeable {
 		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
 		os.writeNullable(throwsTypes);
 		os.writeNullable(body);
-		if (token != null) {
-			token.code(os);
-		} else {
-			os.writeInt(-1);
-		}
+		os.writeToken(token);
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
-		NodeAnnotation[] annotations = os.readNodeArray(NodeAnnotation.class, os.readShort());
+		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		Type returnType = os.readType();
 		String name = os.readUTF();
 		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
 		Node body = os.readNullable(Node.class);
-		Token token = Token.decode(os);
+		Token token = os.readToken();
 		return new HiMethod(os.getHiClass(), annotations, modifiers, returnType, name, arguments, throwsTypes, body, token);
 	}
 

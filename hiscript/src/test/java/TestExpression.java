@@ -192,4 +192,11 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert 1<0?1>0?1>0?false:false:false:true;");
 		assertSuccessSerialize("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
 	}
+
+	//	@Test
+	//	public void testLoad() {
+	//		for (int i = 0; i < 1_000_000; i++) {
+	//			assertSuccess("int i = 0;");
+	//		}
+	//	}
 }

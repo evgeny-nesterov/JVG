@@ -27,22 +27,31 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 		}
 
 		if (!primitiveBuilders.containsKey(name)) {
-			if (name.equals("char")) {
-				registerBuilder("char", packageName + ".HiFieldChar");
-			} else if (name.equals("boolean")) {
-				registerBuilder("boolean", packageName + ".HiFieldBoolean");
-			} else if (name.equals("byte")) {
-				registerBuilder("byte", packageName + ".HiFieldByte");
-			} else if (name.equals("short")) {
-				registerBuilder("short", packageName + ".HiFieldShort");
-			} else if (name.equals("int")) {
-				registerBuilder("int", packageName + ".HiFieldInt");
-			} else if (name.equals("long")) {
-				registerBuilder("long", packageName + ".HiFieldLong");
-			} else if (name.equals("float")) {
-				registerBuilder("float", packageName + ".HiFieldFloat");
-			} else if (name.equals("double")) {
-				registerBuilder("double", packageName + ".HiFieldDouble");
+			switch (name) {
+				case "char":
+					registerBuilder("char", packageName + ".HiFieldChar");
+					break;
+				case "boolean":
+					registerBuilder("boolean", packageName + ".HiFieldBoolean");
+					break;
+				case "byte":
+					registerBuilder("byte", packageName + ".HiFieldByte");
+					break;
+				case "short":
+					registerBuilder("short", packageName + ".HiFieldShort");
+					break;
+				case "int":
+					registerBuilder("int", packageName + ".HiFieldInt");
+					break;
+				case "long":
+					registerBuilder("long", packageName + ".HiFieldLong");
+					break;
+				case "float":
+					registerBuilder("float", packageName + ".HiFieldFloat");
+					break;
+				case "double":
+					registerBuilder("double", packageName + ".HiFieldDouble");
+					break;
 			}
 		}
 		return primitiveBuilders.get(name);
@@ -271,10 +280,11 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 
 	@Override
 	public String toString() {
-		RuntimeContext ctx = new RuntimeContext(null, true);
-		String value = getClass(ctx).fullName + " " + name + " = " + get();
-		ctx.throwExceptionIf(false);
-		return value;
+		try (RuntimeContext ctx = new RuntimeContext(null, true)) {
+			String value = getClass(ctx).fullName + " " + name + " = " + get();
+			ctx.throwExceptionIf(false);
+			return value;
+		}
 	}
 
 	public String getStringValue(RuntimeContext ctx) {

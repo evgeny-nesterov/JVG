@@ -11,6 +11,7 @@ public class TestComplex extends HiTest {
 	}
 
 	@Test
-	public void testSingle() throws IOException {
+	public void testSingle() {
+		assertSuccess("class a1 {static int s = 1; static class a2{int m(){return s;}}} assert new a1.a2().m() == 1;");
 	}
 }

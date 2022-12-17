@@ -35,6 +35,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
 			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
+			modifiers.setStatic(true);
 			modifiers.setAbstract(true);
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);

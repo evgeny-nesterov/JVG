@@ -32,12 +32,11 @@ public class NodeAnnotation extends Node {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeNullable(args);
-		os.writeShort(args != null ? args.length : 0);
-		os.write(args);
+		os.writeUTF(name);
+		os.writeShortArray(args);
 	}
 
 	public static NodeAnnotation decode(DecodeContext os) throws IOException {
-		return new NodeAnnotation(os.readNullableUTF(), os.readNullableNodeArray(NodeAnnotationArgument.class, os.readShort()));
+		return new NodeAnnotation(os.readUTF(), os.readShortNodeArray(NodeAnnotationArgument.class));
 	}
 }

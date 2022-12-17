@@ -134,38 +134,42 @@ public class SystemImpl extends ImplUtil {
 			node.setEnterType(RuntimeContext.SAME);
 
 			if (!separateThread) {
-				RuntimeContext new_ctx;
+				RuntimeContext newCtx;
 				StackLevel level = null;
 				if (newInstance) {
-					new_ctx = new RuntimeContext(ctx.compiler, true);
+					newCtx = new RuntimeContext(ctx.compiler, true);
 				} else {
-					new_ctx = ctx;
+					newCtx = ctx;
 
 					// go to upper level to get access to context from which exec method was invoked
 					level = ctx.exit(true);
 				}
 
-				node.execute(new_ctx);
+				node.execute(newCtx);
 
 				if (!newInstance) {
 					// enter to method as OperationInvocation after method invocation perform ctx.exit()
 					ctx.enter(level);
+				} else {
+					ctx.close();
 				}
 			} else {
-				final RuntimeContext new_ctx;
+				final RuntimeContext newCtx;
 				if (newInstance) {
-					new_ctx = new RuntimeContext(ctx.compiler, false);
+					newCtx = new RuntimeContext(ctx.compiler, false);
 				} else {
-					new_ctx = new RuntimeContext(ctx);
+					newCtx = new RuntimeContext(ctx);
 				}
 
 				new Thread() {
 					@Override
 					public void run() {
 						try {
-							node.execute(new_ctx);
+							node.execute(newCtx);
 						} catch (Exception exc) {
 							exc.printStackTrace();
+						} finally {
+							newCtx.close();
 						}
 					}
 				}.start();

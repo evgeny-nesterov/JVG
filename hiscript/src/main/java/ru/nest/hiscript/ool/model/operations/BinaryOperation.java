@@ -84,9 +84,6 @@ public abstract class BinaryOperation extends Operation {
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			v1.type = TYPE_SHORT;
 			v1.shortNumber = (short) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
 		} else {
 			v1.type = TYPE_INT;
 			v1.intNumber = value;
@@ -98,8 +95,6 @@ public abstract class BinaryOperation extends Operation {
 			return HiClassPrimitive.BYTE;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			return HiClassPrimitive.SHORT;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			return HiClassPrimitive.CHAR;
 		} else {
 			return HiClassPrimitive.INT;
 		}
@@ -112,9 +107,6 @@ public abstract class BinaryOperation extends Operation {
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			v1.type = TYPE_SHORT;
 			v1.shortNumber = (short) value;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			v1.type = TYPE_CHAR;
-			v1.character = (char) value;
 		} else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
 			v1.type = TYPE_INT;
 			v1.intNumber = (int) value;
@@ -129,8 +121,6 @@ public abstract class BinaryOperation extends Operation {
 			return HiClassPrimitive.BYTE;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
 			return HiClassPrimitive.SHORT;
-		} else if (value >= Character.MIN_VALUE && value <= Character.MAX_VALUE) {
-			return HiClassPrimitive.CHAR;
 		} else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
 			return HiClassPrimitive.INT;
 		} else {

@@ -9,15 +9,20 @@ import ru.nest.hiscript.ool.model.Value;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ImplUtil {
-	protected final static HashMap<RuntimeContext, HiObject> threads = new HashMap<>();
+	protected final static Map<RuntimeContext, HiObject> threads = new ConcurrentHashMap<>();
 
-	private final static Map<HiClass, HiObject> classes = new HashMap<>();
+	private final static Map<HiClass, HiObject> classes = new ConcurrentHashMap<>();
 
 	private static HiClass classClass;
 
 	private static HiConstructor classConstructor;
+
+	public static void removeThread(RuntimeContext ctx) {
+		threads.remove(ctx);
+	}
 
 	public static HiClass getClassClass(RuntimeContext ctx) {
 		if (classClass == null) {

@@ -151,6 +151,7 @@ public class DecodeContext {
 	}
 
 	public Token readToken() throws IOException {
+		// TODO write tokens optionally
 		return Token.decode(this);
 	}
 
@@ -304,12 +305,30 @@ public class DecodeContext {
 		return nodes;
 	}
 
+	public <N> N[] readShortArray(Class<N> type) throws IOException {
+		int size = readShort();
+		if (size > 0) {
+			return readArray(type, size);
+		} else {
+			return null;
+		}
+	}
+
 	public <N> N[] readNodeArray(Class<N> type, int size) throws IOException {
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
 			nodes[i] = (N) read(Node.class);
 		}
 		return nodes;
+	}
+
+	public <N> N[] readShortNodeArray(Class<N> type) throws IOException {
+		int size = readShort();
+		if (size > 0) {
+			return readNodeArray(type, size);
+		} else {
+			return null;
+		}
 	}
 
 	public <N> List<N> readNullableList(Class<N> type, int size) throws IOException {

@@ -157,7 +157,7 @@ public class NodeConstructor extends Node {
 		}
 
 		os.writeByte(argValues != null ? argValues.length : 0);
-		os.write(argValues);
+		os.writeArray(argValues);
 	}
 
 	public static NodeConstructor decode(DecodeContext os) throws IOException {

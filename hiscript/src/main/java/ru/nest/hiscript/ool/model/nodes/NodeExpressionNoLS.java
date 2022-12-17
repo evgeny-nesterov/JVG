@@ -160,6 +160,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 				}
 			}
 		}
+		if (nodes[0].isValue) {
+			// TODO simplify expression
+		}
 		return nodes[0].type;
 	}
 
@@ -271,8 +274,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeShort(operands.length);
-		os.write(operands);
+		os.writeShortArray(operands);
 
 		int operationsCount = operations.length;
 		os.writeShort(operationsCount);
@@ -282,7 +284,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 	}
 
 	public static NodeExpressionNoLS decode(DecodeContext os) throws IOException {
-		Node[] operands = os.readArray(Node.class, os.readShort());
+		Node[] operands = os.readShortArray(Node.class);
 
 		Operation[] operations = new Operation[os.readShort()];
 		for (int i = 0; i < operations.length; i++) {

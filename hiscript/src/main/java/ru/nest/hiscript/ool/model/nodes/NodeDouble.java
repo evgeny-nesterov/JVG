@@ -48,7 +48,6 @@ public class NodeDouble extends NodeNumber {
 	}
 
 	public static NodeDouble decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		return new NodeDouble(os.readDouble(), os.readBoolean(), token);
+		return new NodeDouble(os.readDouble(), os.readBoolean(), null);
 	}
 }

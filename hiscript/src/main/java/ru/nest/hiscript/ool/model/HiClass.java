@@ -44,16 +44,14 @@ public class HiClass implements Codeable {
 
 	public final static int CLASS_NULL = 6;
 
-	public final static int CLASS_TYPE_NONE = 0; // used for enclosing classes
+	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
-	public final static int CLASS_TYPE_TOP = 1; // No outbound class
-
-	public final static int CLASS_TYPE_INNER = 2; // static (NESTED) and not
+	public final static int CLASS_TYPE_INNER = 1; // static (NESTED) and not
 
 	// static (INNER)
-	public final static int CLASS_TYPE_LOCAL = 3; // in method, constructor
+	public final static int CLASS_TYPE_LOCAL = 2; // in method, constructor
 
-	public final static int CLASS_TYPE_ANONYMOUS = 4; // like new Object() {...}
+	public final static int CLASS_TYPE_ANONYMOUS = 3; // like new Object() {...}
 
 	public static Map<String, HiClass> loadedClasses;
 
@@ -229,6 +227,10 @@ public class HiClass implements Codeable {
 		if (!isInitialized) {
 			isInitialized = true;
 
+			if (enclosingClass != null) {
+				enclosingClass.init(currentCtx);
+			}
+
 			// resolve super class if needed
 			if (superClass == null && superClassType != null) {
 				superClass = superClassType.getClass(currentCtx);
@@ -288,7 +290,7 @@ public class HiClass implements Codeable {
 				}
 			}
 
-			RuntimeContext ctx = currentCtx != null ? currentCtx : RuntimeContext.get(null);
+			RuntimeContext ctx = currentCtx != null ? currentCtx : new RuntimeContext(null, false);
 			ctx.enterInitialization(this, null, null);
 			try {
 				if (initializers != null) {
@@ -313,7 +315,7 @@ public class HiClass implements Codeable {
 			} finally {
 				ctx.exit();
 				if (ctx != currentCtx) {
-					RuntimeContext.utilize(ctx);
+					ctx.close();
 				}
 			}
 		}
@@ -384,8 +386,8 @@ public class HiClass implements Codeable {
 						continue;
 					}
 
-					// check on valid static modifier
-					if (innerClass.isStatic() && !(innerClass.topClass != null && innerClass.topClass.fullName.equals("@root"))) {
+					// check on valid static modifier (includes annotations)
+					if (innerClass.isStatic() && !innerClass.isDeclaredInRootClass()) {
 						validationInfo.error("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
 						valid = false;
 						continue;
@@ -599,7 +601,7 @@ public class HiClass implements Codeable {
 		return field;
 	}
 
-	private Map<MethodSignature, HiMethod> methodsHash = new HashMap<>();
+	private final Map<MethodSignature, HiMethod> methodsHash = new HashMap<>();
 
 	// name - interned
 	public HiMethod searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
@@ -671,20 +673,18 @@ public class HiClass implements Codeable {
 		if (interfaces != null) {
 			HiClass id = null;
 			HiMethod md = null;
-			HiClass i = null;
 			HiMethod m = null;
-			for (HiClass _i : interfaces) {
-				HiMethod _m = _i.searchMethod(ctx, name, argTypes);
+			for (HiClass i : interfaces) {
+				HiMethod _m = i.searchMethod(ctx, name, argTypes);
 				if (_m != null) {
 					if (_m.modifiers.isDefault()) {
 						if (md != null) {
-							ctx.throwRuntimeException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + _i.fullName + ".");
+							ctx.throwRuntimeException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + i.fullName + ".");
 							return null;
 						}
-						id = _i;
+						id = i;
 						md = _m;
 					} else {
-						i = _i;
 						m = _m;
 					}
 				}
@@ -971,20 +971,14 @@ public class HiClass implements Codeable {
 
 		// content
 		os.writeBoolean(isInterface);
-		os.writeShort(annotations != null ? annotations.length : 0);
-		os.write(annotations);
+		os.writeShortArray(annotations);
 		os.writeNullable(modifiers);
 		os.writeTypes(interfaceTypes);
 
 		os.writeShort(fields != null ? fields.length : 0);
-		os.writeShort(initializers != null ? initializers.length : 0);
-		os.write(initializers); // contains ordered fields and blocks
-
-		os.writeShort(constructors != null ? constructors.length : 0);
-		os.write(constructors);
-
-		os.writeShort(methods != null ? methods.length : 0);
-		os.write(methods);
+		os.writeShortArray(initializers); // contains ordered fields and blocks
+		os.writeShortArray(constructors);
+		os.writeShortArray(methods);
 
 		os.writeShort(classes != null ? classes.length : 0);
 		if (classes != null) {
@@ -1066,13 +1060,13 @@ public class HiClass implements Codeable {
 
 		// content
 		clazz.isInterface = os.readBoolean();
-		clazz.annotations = os.readNodeArray(NodeAnnotation.class, os.readShort());
+		clazz.annotations = os.readShortNodeArray(NodeAnnotation.class);
 		clazz.modifiers = os.readNullable(Modifiers.class);
 		clazz.interfaceTypes = os.readTypes();
 		int fieldsCount = os.readShort();
-		clazz.initializers = os.readNodeArray(NodeInitializer.class, os.readShort()); // contains ordered fields and blocks
-		clazz.constructors = os.readArray(HiConstructor.class, os.readShort());
-		clazz.methods = os.readArray(HiMethod.class, os.readShort());
+		clazz.initializers = os.readShortNodeArray(NodeInitializer.class); // contains ordered fields and blocks
+		clazz.constructors = os.readShortArray(HiConstructor.class);
+		clazz.methods = os.readShortArray(HiMethod.class);
 
 		if (fieldsCount > 0) {
 			clazz.fields = new HiField[fieldsCount];
@@ -1148,7 +1142,11 @@ public class HiClass implements Codeable {
 	}
 
 	public boolean isTopLevel() {
-		return enclosingClass == null || enclosingClass.name == "@root";
+		return enclosingClass == null || enclosingClass.name.equals(HiClass.ROOT_CLASS_NAME);
+	}
+
+	public boolean isDeclaredInRootClass() {
+		return topClass != null && topClass.fullName.equals(HiClass.ROOT_CLASS_NAME);
 	}
 
 	public Class getJavaClass() {

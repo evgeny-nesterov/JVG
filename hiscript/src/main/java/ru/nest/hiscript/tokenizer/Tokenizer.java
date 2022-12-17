@@ -23,6 +23,17 @@ public class Tokenizer {
 		return s.substring(beginIndex, endIndex);
 	}
 
+	public String getText(int beginIndex, int endIndex, char except) {
+		StringBuilder text = new StringBuilder(endIndex - beginIndex);
+		for (int i = beginIndex; i < endIndex; i++) {
+			char c = s.charAt(i);
+			if (c != except) {
+				text.append(c);
+			}
+		}
+		return text.toString();
+	}
+
 	private boolean end = false;
 
 	public boolean hasNext() {

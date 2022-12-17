@@ -46,7 +46,6 @@ public class NodeShort extends NodeNumber {
 	}
 
 	public static NodeShort decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		return new NodeShort(os.readShort(), os.readBoolean(), token);
+		return new NodeShort(os.readShort(), os.readBoolean(), null);
 	}
 }

@@ -82,12 +82,11 @@ public class NodeDeclaration extends Node implements NodeVariable {
 		os.writeUTF(name);
 		os.writeNullable(initialization);
 		modifiers.code(os);
-		os.writeShort(annotations != null ? annotations.length : 0);
-		os.write(annotations);
+		os.writeShortArray(annotations);
 	}
 
 	public static NodeDeclaration decode(DecodeContext os) throws IOException {
-		return new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(Node.class), Modifiers.decode(os), os.readNodeArray(NodeAnnotation.class, os.readShort()));
+		return new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(Node.class), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
 	}
 
 	@Override

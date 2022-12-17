@@ -68,7 +68,7 @@ public class NodeArrayValue extends Node {
 		os.writeType(type);
 		os.writeByte(dimensions);
 		os.writeByte(array.length);
-		os.write(array);
+		os.writeArray(array);
 	}
 
 	public static NodeArrayValue decode(DecodeContext os) throws IOException {

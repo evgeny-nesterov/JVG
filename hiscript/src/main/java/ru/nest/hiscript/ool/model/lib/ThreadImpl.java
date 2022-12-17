@@ -1,56 +1,56 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 
 public class ThreadImpl extends ImplUtil {
-	public static void createThread(RuntimeContext ctx) {
-		synchronized (threads) {
-			if (threads.containsKey(ctx)) {
-				return;
-			}
+	private static HiClass threadClass;
 
-			// TODO: cache thread class and constructor
-			HiClass clazz = HiClass.forName(ctx, "Thread");
-			if (clazz == null) {
+	public synchronized static void createThread(RuntimeContext ctx) {
+		if (threads.containsKey(ctx)) {
+			return;
+		}
+
+		if (threadClass == null) {
+			threadClass = HiClass.forName(ctx, "Thread");
+			if (threadClass == null) {
 				throw new RuntimeException("can't find class Thread");
 			}
-			HiConstructor constructor = clazz.getConstructor(ctx);
-			HiObject obj = constructor.newInstance(ctx, null, null);
-			obj.userObject = Thread.currentThread();
-			threads.put(ctx, obj);
 		}
+
+		HiObject object = new HiObject(threadClass, null);
+		object.userObject = Thread.currentThread();
+
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = threadClass;
+		ctx.value.object = object;
+
+		threads.put(ctx, object);
 	}
 
 	public static class Run implements Runnable {
-		public Run(RuntimeContext ctx, HiObject o) {
-			this.o = o;
-			new_ctx = new RuntimeContext(ctx);
+		public Run(RuntimeContext ctx, HiObject object) {
+			this.object = object;
+			newCtx = new RuntimeContext(ctx);
 		}
 
-		private RuntimeContext new_ctx;
+		private RuntimeContext newCtx;
 
-		private HiObject o;
+		private HiObject object;
 
 		@Override
 		public void run() {
-			synchronized (threads) {
-				threads.put(new_ctx, o);
-			}
+			threads.put(newCtx, object);
 
-			new_ctx.enterStart(o);
+			newCtx.enterStart(object);
 			try {
-				NodeInvocation.invoke(new_ctx, o, "run");
+				NodeInvocation.invoke(newCtx, object, "run");
 			} finally {
-				new_ctx.exit();
-
-				synchronized (threads) {
-					threads.remove(new_ctx);
-				}
+				newCtx.exit();
+				newCtx.close();
 			}
 		}
 	}
@@ -170,9 +170,7 @@ public class ThreadImpl extends ImplUtil {
 	public static void Thread_Thread_currentThread(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.forName(ctx, "Thread");
-		synchronized (threads) {
-			ctx.value.object = threads.get(ctx);
-		}
+		ctx.value.object = threads.get(ctx);
 	}
 
 	public static void Thread_void_yield(RuntimeContext ctx) {

@@ -6,8 +6,6 @@ import java.awt.Stroke;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Icon;
-
 import org.jdom2.Element;
 
 import ru.nest.jvg.JVGContainer;

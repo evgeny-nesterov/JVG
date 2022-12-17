@@ -61,8 +61,7 @@ public class NodeByte extends NodeNumber {
 
 	public static NodeByte decode(DecodeContext os) throws IOException {
 		//		return getInstance(os.readByte(), os.readBoolean());
-		Token token = os.readToken();
-		return new NodeByte(os.readByte(), os.readBoolean(), token);
+		return new NodeByte(os.readByte(), os.readBoolean(), null);
 	}
 
 	@Override

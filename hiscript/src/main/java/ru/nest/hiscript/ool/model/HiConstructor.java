@@ -166,7 +166,7 @@ public class HiConstructor implements Codeable {
 					superObject = ctx.value.getObject();
 				} else {
 					// get default constructor from super classes
-					if ("Enum".equals(clazz.superClass.fullName)) {
+					if (Type.enumType.name.equals(clazz.superClass.fullName)) {
 						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, "String"), HiClassPrimitive.getPrimitiveClass("int"));
 
 						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
@@ -303,8 +303,7 @@ public class HiConstructor implements Codeable {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeShort(annotations != null ? annotations.length : 0);
-		os.write(annotations);
+		os.writeShortArray(annotations);
 		modifiers.code(os);
 
 		int count = arguments != null ? arguments.length : 0;
@@ -319,7 +318,7 @@ public class HiConstructor implements Codeable {
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
-		NodeAnnotation[] annotations = os.readNodeArray(NodeAnnotation.class, os.readShort());
+		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 
 		int count = os.readByte();

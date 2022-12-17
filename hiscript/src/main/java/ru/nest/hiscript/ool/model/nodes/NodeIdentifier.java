@@ -97,7 +97,6 @@ public class NodeIdentifier extends Node {
 	}
 
 	public static NodeIdentifier decode(DecodeContext os) throws IOException {
-		NodeIdentifier node = new NodeIdentifier(os.readUTF());
-		return node;
+		return new NodeIdentifier(os.readUTF());
 	}
 }

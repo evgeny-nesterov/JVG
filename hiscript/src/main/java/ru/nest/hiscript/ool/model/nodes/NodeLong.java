@@ -46,7 +46,6 @@ public class NodeLong extends NodeNumber {
 	}
 
 	public static NodeLong decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		return new NodeLong(os.readLong(), os.readBoolean(), token);
+		return new NodeLong(os.readLong(), os.readBoolean(), null);
 	}
 }

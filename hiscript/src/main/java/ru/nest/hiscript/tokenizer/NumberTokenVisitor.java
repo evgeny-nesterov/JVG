@@ -82,7 +82,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 		}
 
-		String text = tokenizer.getText(offset, tokenizer.getOffset() - (isLong || isFloat || isDouble ? 1 : 0)).replace("_", "");
+		String text = tokenizer.getText(offset, tokenizer.getOffset() - (isLong || isFloat || isDouble ? 1 : 0), '_');
 
 		if (isLong) {
 			long number;

@@ -46,7 +46,6 @@ public class NodeInt extends NodeNumber {
 	}
 
 	public static NodeInt decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		return new NodeInt(os.readInt(), os.readBoolean(), token);
+		return new NodeInt(os.readInt(), os.readBoolean(), null);
 	}
 }

@@ -37,6 +37,6 @@ public class NodeAnnotationArgument extends Node {
 	}
 
 	public static NodeAnnotationArgument decode(DecodeContext os) throws IOException {
-		return new NodeAnnotationArgument(os.readNullableUTF(), os.read(Node.class));
+		return new NodeAnnotationArgument(os.readUTF(), os.read(Node.class));
 	}
 }

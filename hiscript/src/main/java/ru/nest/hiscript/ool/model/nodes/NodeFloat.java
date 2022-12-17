@@ -48,7 +48,6 @@ public class NodeFloat extends NodeNumber {
 	}
 
 	public static NodeFloat decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		return new NodeFloat(os.readFloat(), os.readBoolean(), token);
+		return new NodeFloat(os.readFloat(), os.readBoolean(), null);
 	}
 }

@@ -81,9 +81,10 @@ public abstract class HiTest {
 			if (serialize) {
 				node = serialize(node);
 			}
-			RuntimeContext ctx = new RuntimeContext(compiler, true);
-			node.execute(ctx);
-			ctx.throwExceptionIf(true);
+			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
+				node.execute(ctx);
+				ctx.throwExceptionIf(true);
+			}
 		}
 		// TODO create class loaders
 		// problems! HiClass.clearClassLoader();

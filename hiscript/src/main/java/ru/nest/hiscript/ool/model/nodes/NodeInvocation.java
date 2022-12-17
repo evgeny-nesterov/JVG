@@ -119,7 +119,7 @@ public class NodeInvocation extends Node {
 		os.writeUTF(name);
 		os.writeBoolean(innerInvocation);
 		os.writeByte(arguments != null ? arguments.length : 0);
-		os.write(arguments);
+		os.writeArray(arguments);
 	}
 
 	public static NodeInvocation decode(DecodeContext os) throws IOException {

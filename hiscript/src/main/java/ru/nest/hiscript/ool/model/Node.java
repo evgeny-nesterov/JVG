@@ -203,16 +203,12 @@ public abstract class Node implements Codeable {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeByte(type);
-		if (token != null) {
-			token.code(os);
-		} else {
-			os.writeInt(-1);
-		}
+		os.writeToken(token);
 	}
 
 	public static Node decode(DecodeContext os) throws IOException {
 		int type = os.readByte();
-		Token token = Token.decode(os);
+		Token token = os.readToken();
 		Node node = null;
 		switch (type) {
 			case TYPE_EMPTY:

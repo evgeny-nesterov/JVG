@@ -100,15 +100,13 @@ public class CodeContext {
 
 	// ============================================================================
 	public void writeToken(Token token) throws IOException {
+		// TODO write tokens optionally
 		if (token != null) {
 			token.code(this);
-			if (token.getLine() != -1) {
-				len_byte += 12;
-			}
 		} else {
 			dos.writeInt(-1);
+			len_byte += 4;
 		}
-		len_byte += 4;
 	}
 
 	public void writeNullable(Codeable object) throws IOException {
@@ -118,12 +116,17 @@ public class CodeContext {
 		}
 	}
 
-	public <N extends Codeable> void write(N[] objects) throws IOException {
+	public <N extends Codeable> void writeArray(N[] objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				objects[i].code(this);
 			}
 		}
+	}
+
+	public <N extends Codeable> void writeShortArray(N[] objects) throws IOException {
+		writeShort(objects != null ? objects.length : 0);
+		writeArray(objects);
 	}
 
 	public <N extends Codeable> void write(List<N> objects) throws IOException {

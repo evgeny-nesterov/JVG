@@ -46,19 +46,19 @@ public class TestNodes extends HiTest {
 	}
 
 	private Node byteNode(int value) {
-		return NodeByte.getInstance((byte) value, false);
+		return new NodeByte((byte) value, false, null);
 	}
 
 	private Node shortNode(int value) {
-		return new NodeShort((short) value, false);
+		return new NodeShort((short) value, false, null);
 	}
 
 	private Node intNode(int value) {
-		return new NodeInt(value, false);
+		return new NodeInt(value, false, null);
 	}
 
 	private Node longNode(long value) {
-		return new NodeLong(value, false);
+		return new NodeLong(value, false, null);
 	}
 
 	private void assertByte(Value value, int n) {
