@@ -24,11 +24,11 @@ public class ForParseRule extends ParseRule<NodeFor> {
 
 	@Override
 	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Token startToken = startToken(tokenizer);
 		if (visitWord(Words.FOR, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
-			ctx.enter(RuntimeContext.FOR);
+			ctx.enter(RuntimeContext.FOR, startToken);
 			Node initialization = DeclarationParseRule.getInstance().visit(tokenizer, ctx);
 			if (initialization == null) {
 				initialization = visitExpressions(tokenizer, ctx);

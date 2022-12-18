@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import com.sun.istack.internal.NotNull;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
@@ -26,7 +27,7 @@ public class HiClassJava extends HiClass {
 	public Class javaClass;
 
 	public HiClassJava(String name, Class javaClass) {
-		super(null, null, name, CLASS_TYPE_TOP);
+		super(null, null, name, CLASS_TYPE_TOP, null);
 		this.javaClass = javaClass;
 	}
 
@@ -35,7 +36,7 @@ public class HiClassJava extends HiClass {
 	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null);
 
 	@Override
-	protected HiConstructor _searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
+	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];
@@ -44,7 +45,7 @@ public class HiClassJava extends HiClass {
 			}
 			Class argTypeJavaClass = argType.getJavaClass();
 			if (argTypeJavaClass == null) {
-				ctx.throwRuntimeException("Inconvertible java class argument: " + argType.fullName);
+				classResolver.processResolverException("Inconvertible java class argument: " + argType.fullName);
 				return null;
 			}
 			javaArgClasses[i] = argTypeJavaClass;
@@ -63,7 +64,7 @@ public class HiClassJava extends HiClass {
 						continue;
 					case NULL_MATCHED:
 						if (nullMatchedConstructor != null) {
-							ctx.throwRuntimeException("multiple java constructors of class " + javaClass.getName() + " matched to arguments (" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedConstructor + " and " + constructor);
+							classResolver.processResolverException("multiple java constructors of class " + javaClass.getName() + " matched to arguments (" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedConstructor + " and " + constructor);
 							return null;
 						}
 						nullMatchedConstructor = constructor;
@@ -80,7 +81,7 @@ public class HiClassJava extends HiClass {
 				javaConstructorsMap.put(argsId, noJavaConstructor);
 			}
 		} catch (Exception e) {
-			ctx.throwRuntimeException(e.getMessage());
+			classResolver.processResolverException(e.getMessage());
 		}
 		return null;
 	}
@@ -172,7 +173,7 @@ public class HiClassJava extends HiClass {
 	private Map<Integer, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
 
 	@Override
-	protected HiMethod _searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	protected HiMethod _searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];
@@ -181,7 +182,7 @@ public class HiClassJava extends HiClass {
 			}
 			Class argTypeJavaClass = argType.getJavaClass();
 			if (argTypeJavaClass == null) {
-				ctx.throwRuntimeException("Inconvertible java class argument: " + argType.fullName);
+				classResolver.processResolverException("Inconvertible java class argument: " + argType.fullName);
 				return null;
 			}
 			javaArgClasses[i] = argTypeJavaClass;
@@ -203,7 +204,7 @@ public class HiClassJava extends HiClass {
 						continue;
 					case NULL_MATCHED:
 						if (nullMatchedMethod != null) {
-							ctx.throwRuntimeException("multiple java methods of class " + javaClass.getName() + " matched to signature " + name + "(" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
+							classResolver.processResolverException("multiple java methods of class " + javaClass.getName() + " matched to signature " + name + "(" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
 							return null;
 						}
 						nullMatchedMethod = method;
@@ -220,20 +221,20 @@ public class HiClassJava extends HiClass {
 				javaMethodsMap.put(argsId, HiMethodJava.NULL);
 			}
 		} catch (Exception e) {
-			ctx.throwRuntimeException(e.getMessage());
+			classResolver.processResolverException(e.getMessage());
 		}
 		return null;
 	}
 
 	@Override
-	protected HiField<?> _searchField(RuntimeContext ctx, String name) {
+	protected HiField<?> _searchField(ClassResolver classResolver, String name) {
 		try {
 			Field field = javaClass.getDeclaredField(name);
 			//if (field.isAccessible()) {
 			return new HiFieldJava(field, name);
 			//}
 		} catch (NoSuchFieldException e) {
-			ctx.throwRuntimeException(e.getMessage());
+			classResolver.processResolverException(e.getMessage());
 		}
 		return null;
 	}

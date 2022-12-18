@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -14,8 +14,8 @@ import java.io.IOException;
 public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
 
-	public HiClassRecord(String name, int type) {
-		super(Type.recordType, null, null, name, type);
+	public HiClassRecord(String name, int type, ClassResolver classResolver) {
+		super(Type.recordType, null, null, name, type, classResolver);
 	}
 
 	@Override
@@ -45,10 +45,10 @@ public class HiClassRecord extends HiClass {
 	}
 
 	@Override
-	protected HiConstructor _searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
-		HiConstructor constructor = super._searchConstructor(ctx, argTypes);
+	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
+		HiConstructor constructor = super._searchConstructor(classResolver, argTypes);
 		if (constructor == null) {
-			if (matchConstructor(ctx, defaultConstructor, argTypes)) {
+			if (matchConstructor(classResolver, defaultConstructor, argTypes)) {
 				constructor = defaultConstructor;
 			}
 		}

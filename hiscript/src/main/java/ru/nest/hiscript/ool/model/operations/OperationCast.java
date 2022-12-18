@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
@@ -7,6 +8,8 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	private static Operation instance = new OperationCast();
@@ -20,40 +23,57 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		HiClass c1 = node1.type;
+		HiClass c2 = node2.type;
+		if (c1.isPrimitive()) {
+			int t1 = HiFieldPrimitive.getType(c1);
+			int t2 = HiFieldPrimitive.getType(c2);
+			if (t2 == BOOLEAN && t1 != BOOLEAN) {
+				errorCast(validationInfo, node1.node.getToken(), c2, c1);
+			}
+		} else if (c1.isArray()) {
+			// c1 and c2 has to be in one hierarchy path
+			if (!canCastArray((HiClassArray) c1, c2) && !canCastArray((HiClassArray) c2, c1)) {
+				errorCast(validationInfo, node1.node.getToken(), c2, c1);
+			}
+		} else {
+			// c1 and c2 has to be in one hierarchy path
+			if (!c2.isInstanceof(c1) && !c1.isInstanceof(c2)) {
+				errorCast(validationInfo, node1.node.getToken(), c2, c1);
+			}
+		}
+		return node1.type;
+	}
+
+	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		if (v1.valueType != Value.TYPE) {
 			ctx.throwRuntimeException("type is expected");
 			return;
 		}
 
-		HiClass t1 = v1.type = v1.variableType.getClass(ctx);
+		HiClass c1 = v1.type = v1.variableType.getClass(ctx);
 		if (ctx.exitFromBlock()) {
 			return;
 		}
 
-		if (t1.isPrimitive()) {
-			// cast primitive
+		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
-		} else if (t1.isArray()) {
-			// cast array
-			if (!canCastArray((HiClassArray) t1, v2.type)) {
+		} else if (c1.isArray()) {
+			if (!canCastArray((HiClassArray) c1, v2.type)) {
 				errorCast(ctx, v2.type, v1.type);
 				return;
 			}
-
 			v1.array = v2.array;
 		} else {
-			// cast object
-			HiClass t2 = v2.object.clazz;
-
-			if (!t2.isInstanceof(t1)) {
-				errorCast(ctx, t2, t1);
+			HiClass c2 = v2.object.clazz;
+			if (!c2.isInstanceof(c1)) {
+				errorCast(ctx, c2, c1);
 				return;
 			}
-
 			v1.object = v2.object;
 		}
-
 		v1.valueType = Value.VALUE;
 	}
 
@@ -67,19 +87,16 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		if (at1.dimension != at2.dimension) {
 			return false;
 		}
-
 		if (at1.cellClass.isPrimitive()) {
 			return at1.cellClass == at2.cellClass;
 		}
-
 		if (at2.cellClass.isPrimitive()) {
 			return false;
 		}
-
-		if (!at2.cellClass.isInstanceof(at1.cellClass)) {
-			return false;
+		if (at1.cellClass.isInterface || at2.cellClass.isInterface) {
+			return true;
 		}
-		return true;
+		return at2.cellClass.isInstanceof(at1.cellClass);
 	}
 
 	private void castPrimitive(RuntimeContext ctx, Value v1, Value v2) {

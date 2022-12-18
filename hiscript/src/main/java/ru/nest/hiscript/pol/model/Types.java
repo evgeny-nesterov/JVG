@@ -94,7 +94,6 @@ public class Types implements Words {
 				}
 				break;
 		}
-
 		return false;
 	}
 
@@ -213,7 +212,6 @@ public class Types implements Words {
 		} catch (ClassNotFoundException exc) {
 			exc.printStackTrace();
 		}
-
 		return null;
 	}
 

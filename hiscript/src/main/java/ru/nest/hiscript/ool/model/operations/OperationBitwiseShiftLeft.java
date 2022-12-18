@@ -1,10 +1,14 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationBitwiseShiftLeft extends BinaryOperation {
 	private static Operation instance = new OperationBitwiseShiftLeft();
@@ -15,6 +19,31 @@ public class OperationBitwiseShiftLeft extends BinaryOperation {
 
 	private OperationBitwiseShiftLeft() {
 		super("<<", BITWISE_SHIFT_LEFT);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		if (node1.type.isPrimitive()) {
+			int t1 = HiFieldPrimitive.getType(node1.type);
+			switch (t1) {
+				case CHAR:
+				case BYTE:
+				case SHORT:
+				case INT:
+				case LONG:
+					int t2 = HiFieldPrimitive.getType(node1.type);
+					switch (t2) {
+						case CHAR:
+						case BYTE:
+						case SHORT:
+						case INT:
+						case LONG:
+							return t1 == LONG ? node1.type : HiClassPrimitive.INT;
+					}
+			}
+		}
+		errorInvalidOperator(validationInfo, node1.node.getToken(), node1.type, node2.type);
+		return node1.type;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
@@ -37,7 +38,30 @@ public class NodeInvocation extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
+		HiClass invocationClass = ctx.consumeInvocationClass();
+
+		// args has to be evaluated without invocationClass context
+		HiClass[] argumentsClasses = new HiClass[arguments != null ? arguments.length : 0];
+		if (arguments != null) {
+			for (int i = 0; i < arguments.length; i++) {
+				argumentsClasses[i] = arguments[i].getValueType(validationInfo, ctx);
+			}
+		}
+
+		if (invocationClass != null) {
+			HiMethod method = invocationClass.searchMethod(ctx, name, argumentsClasses);
+			if (method != null) {
+				return method.returnClass;
+			}
+		} else {
+			while (ctx != null) {
+				HiMethod method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
+				if (method != null) {
+					return method.returnClass;
+				}
+				ctx = ctx.parent;
+			}
+		}
 		return null;
 	}
 

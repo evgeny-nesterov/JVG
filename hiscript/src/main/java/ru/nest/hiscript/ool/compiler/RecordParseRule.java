@@ -71,7 +71,7 @@ public class RecordParseRule extends ParserUtil {
 				hasContent = true;
 			}
 
-			HiClassRecord record = new HiClassRecord(recordName, ctx.classType);
+			HiClassRecord record = new HiClassRecord(recordName, ctx.classType, ctx);
 			record.annotations = annotations;
 			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();
@@ -87,7 +87,8 @@ public class RecordParseRule extends ParserUtil {
 					getMethodName += argument.getVariableName().substring(1);
 				}
 				Node getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName())));
-				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody, argument.getToken());
+				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
+				getMethod.token = argument.getToken();
 				ctx.addMethod(getMethod);
 
 				String setMethodName = "set" + Character.toUpperCase(argument.getVariableName().charAt(0));
@@ -99,7 +100,8 @@ public class RecordParseRule extends ParserUtil {
 				setExpression.setToken(argument.getToken());
 				// TODO support set methods?
 				Node setMethodBody = new NodeBlock(setExpression);
-				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody, argument.getToken());
+				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
+				setMethod.token = argument.getToken();
 				ctx.addMethod(setMethod);
 
 				defaultConstructorBody.addStatement(setExpression);

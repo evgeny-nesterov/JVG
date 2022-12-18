@@ -12,11 +12,12 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.util.List;
 
-public class HiConstructor implements Codeable {
+public class HiConstructor implements Codeable, TokenAccessible {
 	public enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
 
@@ -68,11 +69,13 @@ public class HiConstructor implements Codeable {
 
 	public HiClass[] argClasses;
 
-	public void resolve(RuntimeContext ctx) {
+	public Token token;
+
+	public void resolve(ClassResolver classResolver) {
 		if (argClasses == null) {
 			argClasses = new HiClass[arguments != null ? arguments.length : 0];
 			for (int i = 0; i < argClasses.length; i++) {
-				argClasses[i] = arguments[i].getType().getClass(ctx);
+				argClasses[i] = arguments[i].getType().getClass(classResolver);
 			}
 		}
 	}
@@ -88,7 +91,7 @@ public class HiConstructor implements Codeable {
 	public Node body;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.CONSTRUCTOR);
+		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
 		boolean valid = true;
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
@@ -304,6 +307,7 @@ public class HiConstructor implements Codeable {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeShortArray(annotations);
+		os.writeToken(token);
 		modifiers.code(os);
 
 		int count = arguments != null ? arguments.length : 0;
@@ -319,6 +323,7 @@ public class HiConstructor implements Codeable {
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
+		Token token = os.readToken();
 		Modifiers modifiers = Modifiers.decode(os);
 
 		int count = os.readByte();
@@ -326,7 +331,14 @@ public class HiConstructor implements Codeable {
 		for (int i = 0; i < count; i++) {
 			arguments[i] = (NodeArgument) Node.decode(os);
 		}
-		return new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
+		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
+		constructor.token = token;
+		return constructor;
+	}
+
+	@Override
+	public Token getToken() {
+		return token;
 	}
 
 	public static void main(String[] a) {

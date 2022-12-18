@@ -39,10 +39,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass clazz = ctx.getClass(type.fullName);
-		if (clazz == null) {
-			clazz = type.getClass(null);
-		}
+		HiClass clazz = type.getClass(ctx);
 		return clazz;
 	}
 
@@ -53,7 +50,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 			valid = initialization.validate(validationInfo, ctx);
 		}
 		// TODO check type, name, modifiers, annotations
-		valid &= ctx.addLocalVariable(this, validationInfo);
+		valid &= ctx.addLocalVariable(this);
 		return valid;
 	}
 
@@ -63,10 +60,9 @@ public class NodeDeclaration extends Node implements NodeVariable {
 		HiField<?> field = HiField.getField(type, name, initialization);
 		field.setModifiers(modifiers);
 
-		ctx.addVariable(field);
-
 		try {
 			field.execute(ctx);
+			ctx.addVariable(field);
 		} finally {
 			if (ctx.exitFromBlock()) {
 				return;

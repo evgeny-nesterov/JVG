@@ -24,7 +24,7 @@ public class NodeIf extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		ctx.enter(RuntimeContext.IF);
+		ctx.enter(RuntimeContext.IF, this);
 		if (condition != null) {
 			valid &= condition.validate(validationInfo, ctx);
 		}

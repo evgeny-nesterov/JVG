@@ -25,11 +25,13 @@ public class NodeMainWrapper extends Node {
 
 	public HiClass getRootClass(NodeBlock body) {
 		if (rootClass == null) {
-			rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP);
+			rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, null);
 		}
 		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
-			rootClass.methods[0] = new HiMethod(rootClass, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body, body.getToken());
+			HiMethod method = new HiMethod(rootClass, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body);
+			method.token = body.getToken();
+			rootClass.methods[0] = method;
 		}
 		return rootClass;
 	}

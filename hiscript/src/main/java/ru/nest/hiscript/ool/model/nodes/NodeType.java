@@ -24,7 +24,7 @@ public class NodeType extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return ctx.getClass(type.fullName);
+		return type.getClass(ctx);
 	}
 
 	@Override

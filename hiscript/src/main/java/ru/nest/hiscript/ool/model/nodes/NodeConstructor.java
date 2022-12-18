@@ -46,7 +46,7 @@ public class NodeConstructor extends Node {
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (clazz == null) {
 			// init by type
-			clazz = ctx.getClass(type.getType().fullName);
+			clazz = type.getType().getClass(ctx);
 		}
 		return clazz;
 	}
@@ -61,8 +61,18 @@ public class NodeConstructor extends Node {
 		}
 
 		// resolve class
-		// TODO clazz = type.getType().getClass(ctx);
-
+		if (clazz == null) {
+			clazz = type.getType().getClass(ctx);
+		}
+		if (clazz == null) {
+			validationInfo.error("class not found: " + name, type.getToken());
+			valid = false;
+		} else {
+			if (clazz.isInterface) {
+				validationInfo.error("cannot create object from interface '" + name + "'", type.getToken());
+				valid = false;
+			}
+		}
 		return valid;
 	}
 

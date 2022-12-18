@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive CHAR = new HiClassPrimitive("char");
@@ -27,10 +28,10 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive VOID = new HiClassPrimitive("void");
 
 	private HiClassPrimitive(String name) {
-		super(null, null, name, CLASS_TYPE_TOP);
+		super(null, null, name, CLASS_TYPE_TOP, null);
 	}
 
-	private static HashMap<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
+	private static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
 
 	static {
 		primitiveClasses.put("char", CHAR);

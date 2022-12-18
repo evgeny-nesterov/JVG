@@ -27,7 +27,7 @@ public class NodeFor extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		ctx.enter(RuntimeContext.FOR);
+		ctx.enter(RuntimeContext.FOR, this);
 		if (initialization != null) {
 			valid &= initialization.validate(validationInfo, ctx);
 		}

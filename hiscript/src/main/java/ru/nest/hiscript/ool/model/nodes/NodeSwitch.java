@@ -42,7 +42,7 @@ public class NodeSwitch extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.SWITCH);
+		ctx.enter(RuntimeContext.SWITCH, this);
 		boolean valid = valueNode.validate(validationInfo, ctx);
 		for (int i = 0; i < size; i++) {
 			if (casesValues.get(i) != null) { // not default

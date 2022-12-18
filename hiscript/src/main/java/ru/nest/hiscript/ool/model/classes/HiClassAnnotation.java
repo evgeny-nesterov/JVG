@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class HiClassAnnotation extends HiClass {
 	public HiClassAnnotation(String name, int type) {
-		super((HiClass) null, null, name, type);
+		super((HiClass) null, null, name, type, null);
 	}
 
 	@Override

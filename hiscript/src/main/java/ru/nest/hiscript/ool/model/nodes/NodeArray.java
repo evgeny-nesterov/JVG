@@ -35,8 +35,7 @@ public class NodeArray extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return null;
+		return type.getClass(ctx);
 	}
 
 	@Override

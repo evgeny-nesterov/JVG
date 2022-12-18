@@ -260,7 +260,7 @@ public class DecodeContext {
 			clazz = getClass(clazzIndex);
 		} else {
 			String classFullName = is.readUTF();
-			clazz = HiClass.forName(null, classFullName);
+			clazz = HiClass.forName(/*no context*/ null, classFullName);
 		}
 		return clazz;
 	}

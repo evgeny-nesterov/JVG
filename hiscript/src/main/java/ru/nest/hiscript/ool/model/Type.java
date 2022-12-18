@@ -156,22 +156,17 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return false;
 	}
 
-	public HiClass getClass(RuntimeContext ctx) {
+	public HiClass getClass(ClassResolver classResolver) {
 		// Нельзя кэшировать класс, т.к. имена разных классов могут совпадать в разных контекстах
-		HiClass clazz = resolveClass(ctx);
-		return clazz;
-	}
-
-	public HiClass resolveClass(RuntimeContext ctx) {
 		if (isPrimitive()) {
 			return HiClass.getPrimitiveClass(name);
 		}
 
 		if (isArray()) {
-			HiClass cellClass = cellType.getClass(ctx);
+			HiClass cellClass = cellType.getClass(classResolver);
 			if (cellClass == null) {
-				if (ctx != null && !ctx.exitFromBlock()) {
-					ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
+				if (classResolver != null) {
+					classResolver.processResolverException("Class '" + fullName + "' can not be resolved");
 				}
 				return null;
 			} else {
@@ -184,22 +179,22 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 
 		HiClass clazz;
-		if (ctx != null) {
+		if (classResolver != null) {
 			if (path != null) {
-				clazz = path[0].getClass(ctx);
+				clazz = path[0].getClass(classResolver);
 				for (int i = 1; i < path.length; i++) {
-					clazz = clazz.getClass(ctx, path[i].name);
+					clazz = clazz.getClass(classResolver, path[i].name);
 				}
-				clazz = clazz.getClass(ctx, name);
+				clazz = clazz.getClass(classResolver, name);
 			} else {
-				clazz = ctx.getClass(name);
+				clazz = classResolver.getClass(name);
 			}
 		} else {
-			clazz = HiClass.forName(null, fullName);
+			clazz = HiClass.forName(classResolver, fullName);
 		}
 
-		if (clazz == null && ctx != null) {
-			ctx.throwRuntimeException("Class '" + fullName + "' can not be resolved");
+		if (clazz == null && classResolver != null) {
+			classResolver.processResolverException("Class '" + fullName + "' can not be resolved");
 		}
 		return clazz;
 	}

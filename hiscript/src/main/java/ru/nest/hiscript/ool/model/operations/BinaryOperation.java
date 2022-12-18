@@ -24,16 +24,33 @@ public abstract class BinaryOperation extends Operation {
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
 		NodeExpressionNoLS.NodeOperandType node1 = nodes[0];
 		NodeExpressionNoLS.NodeOperandType node2 = nodes[1];
+		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
+			node1.type = getOperationResultType(validationInfo, ctx, node1, node2);
+			node1.isValue = node1.isValue && node2.isValue;
+		}
+	}
+
+	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		boolean valid = true;
 		if (node1.type == null) {
 			node1.type = node1.getType(validationInfo, ctx);
-			node1.isValue = node1.node.isValue();
+			if (node1.type != null) {
+				node1.isValue = node1.node.isValue();
+			} else {
+				validationInfo.error("cannot resolve expression type", node1.node.getToken());
+				valid = false;
+			}
 		}
 		if (node2.type == null && this != OperationInvocation.getInstance()) {
 			node2.type = node2.getType(validationInfo, ctx);
-			node2.isValue = node2.node.isValue();
+			if (node2.type != null) {
+				node2.isValue = node2.node.isValue();
+			} else {
+				validationInfo.error("cannot resolve expression type", node2.node.getToken());
+				valid = false;
+			}
 		}
-		node1.type = getOperationResultType(validationInfo, ctx, node1, node2);
-		node1.isValue = node1.isValue && node2.isValue;
+		return valid;
 	}
 
 	@Override
@@ -138,6 +155,11 @@ public abstract class BinaryOperation extends Operation {
 		validationInfo.error(text, token);
 	}
 
+	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type) {
+		String text = "operator '" + name + "' can not be applied to " + type.fullName;
+		validationInfo.error(text, token);
+	}
+
 	public void errorUnexpectedType(RuntimeContext ctx) {
 		String text = "unexpected type";
 		ctx.throwRuntimeException(text);
@@ -156,5 +178,10 @@ public abstract class BinaryOperation extends Operation {
 	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
 		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
 		ctx.throwRuntimeException(text);
+	}
+
+	public void errorCast(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
+		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
+		validationInfo.error(text, token);
 	}
 }

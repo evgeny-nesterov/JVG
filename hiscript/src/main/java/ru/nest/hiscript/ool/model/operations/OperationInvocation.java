@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Arrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -10,12 +11,13 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.lang.reflect.Array;
 
@@ -31,6 +33,20 @@ public class OperationInvocation extends BinaryOperation {
 
 	private OperationInvocation() {
 		super(".", INVOCATION);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		if (node1.type != null) {
+			ctx.enterObject(node1.type);
+			if (node2.type == null) {
+				node2.type = node2.getType(validationInfo, ctx);
+				node2.isValue = node2.node.isValue();
+			}
+			ctx.exit();
+			return node2.type;
+		}
+		return null;
 	}
 
 	@Override

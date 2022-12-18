@@ -1,12 +1,13 @@
 package ru.nest.hiscript.tokenizer;
 
 import ru.nest.hiscript.ool.model.Codeable;
+import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
 import java.io.IOException;
 
-public class Token implements Codeable {
+public class Token implements Codeable, TokenAccessible {
 	public Token(int line, int offset, int length, int lineOffset) {
 		this.offset = offset;
 		this.length = length;
@@ -67,5 +68,10 @@ public class Token implements Codeable {
 	public static Token decode(DecodeContext os) throws IOException {
 		int line = os.readInt();
 		return line != -1 ? new Token(line, os.readInt(), os.readInt(), os.readInt()) : null;
+	}
+
+	@Override
+	public Token getToken() {
+		return this;
 	}
 }

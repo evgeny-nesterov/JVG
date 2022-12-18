@@ -49,7 +49,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.BLOCK);
+		ctx.enter(RuntimeContext.BLOCK, this);
 		boolean valid = true;
 		// TODO check isStatic
 		for (Node statement : statements) {

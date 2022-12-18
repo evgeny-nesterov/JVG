@@ -22,7 +22,7 @@ public class HiClassArray extends HiClass {
 	public int dimension;
 
 	private HiClassArray(HiClass cellClass) {
-		super(OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP);
+		super(OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
 		init(cellClass);
 	}
 
@@ -62,7 +62,7 @@ public class HiClassArray extends HiClass {
 		return cellClass;
 	}
 
-	private static HashMap<HiClass, HiClassArray> arrayClasses = new HashMap<>();
+	private static Map<HiClass, HiClassArray> arrayClasses = new HashMap<>();
 
 	public static void clear() {
 		arrayClasses.clear();

@@ -91,7 +91,7 @@ public class ClassParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			ctx.clazz = new HiClass(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType);
+			ctx.clazz = new HiClass(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
 			ctx.clazz.modifiers = modifiers;
 
 			visitContent(tokenizer, ctx, null);
@@ -174,6 +174,7 @@ public class ClassParseRule extends ParserUtil {
 
 	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
+		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
 
 		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
@@ -187,7 +188,7 @@ public class ClassParseRule extends ParserUtil {
 
 				tokenizer.commit();
 				checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE);
-				ctx.enter(RuntimeContext.CONSTRUCTOR); // before arguments
+				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
@@ -235,7 +236,9 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				ctx.exit();
 
-				return new HiConstructor(clazz, annotations, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
+				HiConstructor constructor = new HiConstructor(clazz, annotations, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
+				constructor.token = tokenizer.getBlockToken(startToken);
+				return constructor;
 			}
 		}
 
@@ -265,7 +268,7 @@ public class ClassParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
-					ctx.enter(RuntimeContext.METHOD);
+					ctx.enter(RuntimeContext.METHOD, startToken);
 
 					checkModifiers(tokenizer, modifiers, allowed);
 
@@ -308,7 +311,10 @@ public class ClassParseRule extends ParserUtil {
 					}
 
 					ctx.exit();
-					return new HiMethod(clazz, annotations, modifiers, type, name, arguments, exceptionTypes, body, tokenizer.getBlockToken(startToken));
+
+					HiMethod method = new HiMethod(clazz, annotations, modifiers, type, name, arguments, exceptionTypes, body);
+					method.token = tokenizer.getBlockToken(startToken);
+					return method;
 				}
 			}
 		}
@@ -383,7 +389,7 @@ public class ClassParseRule extends ParserUtil {
 		boolean isStatic = visitWord(tokenizer, STATIC) != null;
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			tokenizer.commit();
-			ctx.enter(RuntimeContext.BLOCK);
+			ctx.enter(RuntimeContext.BLOCK, tokenizer.currentToken());
 
 			NodeBlock block = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			if (block != null) {

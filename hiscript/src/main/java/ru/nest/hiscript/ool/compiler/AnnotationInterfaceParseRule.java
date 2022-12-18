@@ -95,7 +95,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
-					ctx.enter(RuntimeContext.METHOD);
+					ctx.enter(RuntimeContext.METHOD, startToken);
 
 					checkModifiers(tokenizer, modifiers, allowed);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -107,7 +107,9 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					ctx.exit();
-					return new HiMethod(clazz, null, modifiers, type, name, (NodeArgument[]) null, null, defaultValue, tokenizer.getBlockToken(startToken));
+					HiMethod method = new HiMethod(clazz, null, modifiers, type, name, (NodeArgument[]) null, null, defaultValue);
+					method.token = tokenizer.getBlockToken(startToken);
+					return method;
 				}
 			}
 		}

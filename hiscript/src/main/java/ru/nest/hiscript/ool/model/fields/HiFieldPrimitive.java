@@ -9,11 +9,12 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
-	protected static HashMap<Type, Integer> types_hash_type = new HashMap<>();
+	protected static Map<Type, Integer> types_hash_type = new HashMap<>();
 
-	protected static HashMap<HiClass, Integer> types_hash_class = new HashMap<>();
+	protected static Map<HiClass, Integer> types_hash_class = new HashMap<>();
 
 	static {
 		types_hash_type.put(Type.getPrimitiveType("char"), CHAR);

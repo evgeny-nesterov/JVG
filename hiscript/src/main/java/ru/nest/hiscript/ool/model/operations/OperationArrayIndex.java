@@ -1,10 +1,15 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.lang.reflect.Array;
 
@@ -17,6 +22,31 @@ public class OperationArrayIndex extends BinaryOperation {
 
 	private OperationArrayIndex() {
 		super("[]", ARRAY_INDEX);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		HiClass type = node1.type;
+		boolean validIndex = false;
+		if (node2.type.isPrimitive()) {
+			switch (HiFieldPrimitive.getType(node2.type)) {
+				case CHAR:
+				case BYTE:
+				case SHORT:
+				case INT:
+				case LONG:
+					validIndex = true;
+			}
+		}
+		boolean validArray = false;
+		if (node1.type.isArray()) {
+			type = ((HiClassArray) type).cellClass;
+			validArray = true;
+		}
+		if (!validIndex || !validArray) {
+			errorInvalidOperator(validationInfo, node1.node.getToken(), node1.type, node2.type);
+		}
+		return type;
 	}
 
 	@Override

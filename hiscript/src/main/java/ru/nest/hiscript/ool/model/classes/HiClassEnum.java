@@ -21,7 +21,7 @@ public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
 
 	public HiClassEnum(String name, int type) {
-		super(Type.enumType, null, null, name, type);
+		super(Type.enumType, null, null, name, type, null);
 	}
 
 	private Map<String, HiField> enumsMap;

@@ -35,6 +35,7 @@ public class NodeIdentifier extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check name
+		Object resolvedIdentifier = ctx.resolveIdentifier(name);
 		return true;
 	}
 

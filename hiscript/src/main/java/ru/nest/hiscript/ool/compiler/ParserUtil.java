@@ -302,7 +302,7 @@ public class ParserUtil implements Words {
 	protected Node expectBody(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		skipComments(tokenizer);
 
-		ctx.enter(RuntimeContext.BLOCK);
+		ctx.enter(RuntimeContext.BLOCK, startToken(tokenizer));
 		Node body = StatementParseRule.getInstance().visit(tokenizer, ctx);
 		ctx.exit();
 		if (body == null) {

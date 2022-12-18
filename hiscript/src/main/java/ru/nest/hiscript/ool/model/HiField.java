@@ -15,11 +15,12 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class HiField<T> extends Node implements NodeInitializer, NodeVariable, Cloneable {
 	private final static String packageName = HiField.class.getPackage().getName() + ".fields";
 
-	private static HashMap<String, java.lang.reflect.Constructor<HiField<?>>> primitiveBuilders;
+	private static Map<String, Constructor<HiField<?>>> primitiveBuilders;
 
 	private static java.lang.reflect.Constructor<HiField<?>> getConstructor(String name) {
 		if (primitiveBuilders == null) {
@@ -105,9 +106,9 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 
 	protected HiClass clazz;
 
-	public HiClass getClass(RuntimeContext ctx) {
+	public HiClass getClass(ClassResolver classResolver) {
 		if (clazz == null) {
-			clazz = type.getClass(ctx);
+			clazz = type.getClass(classResolver);
 		}
 		return clazz;
 	}
@@ -118,12 +119,12 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return ctx.getClass(type.fullName);
+		return type.getClass(ctx);
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = ctx.addLocalVariable(this, validationInfo);
+		boolean valid = ctx.addLocalVariable(this);
 		return valid;
 	}
 
@@ -233,6 +234,10 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 	public static boolean autoCast(HiClass src, HiClass dst) {
 		if (src == dst) {
 			return true;
+		}
+
+		if (src == null || dst == null) {
+			return false;
 		}
 
 		if (src.isPrimitive() || dst.isPrimitive()) {

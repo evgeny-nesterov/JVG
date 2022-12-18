@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.lib;
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.compiler.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Native;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -182,6 +183,13 @@ public class SystemImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");
+	}
+
+	public static void System_Object_getVariable_String(RuntimeContext ctx, HiObject name) {
+		StackLevel level = ctx.exit(true);
+		HiField field = ctx.getVariable(name.getStringValue(ctx));
+		field.execute(ctx);
+		ctx.enter(level);
 	}
 
 	public static void System_void_arraycopy_Object_int_Object_int_int(RuntimeContext ctx, Object src, int srcOffset, Object dst, int dstOffset, int length) {

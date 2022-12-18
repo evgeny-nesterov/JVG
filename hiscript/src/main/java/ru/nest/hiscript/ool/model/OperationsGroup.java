@@ -10,7 +10,7 @@ import java.util.List;
  *  (operand) [postfix operations...] operation [prefix operations...] (operand)
  */
 public class OperationsGroup {
-	public static ArrayList<Operation> empty = new ArrayList<>(0);
+	public static List<Operation> empty = new ArrayList<>(0);
 
 	private Operation operation;
 

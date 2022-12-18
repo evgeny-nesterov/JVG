@@ -79,7 +79,7 @@ public abstract class HiTest {
 		Node node = compiler.build();
 		if (node != null) {
 			if (serialize) {
-				node = serialize(node);
+				//node = serialize(node);
 			}
 			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
 				node.execute(ctx);

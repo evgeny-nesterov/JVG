@@ -757,6 +757,11 @@ Util.header("FOR: check performance");
 ////////////
 Util.header("TRY CATCH FINALLY");
 {
+    class Exc1 extends Exception    {Exc1(){this("exc1");} Exc1(String msg){super(msg);}}
+    class Exc12 extends Exc1        {Exc12(){super("exc12");}}
+    class Exc2 extends Exception    {Exc2(){this("exc2");} Exc2(String msg){super(msg);}}
+    class Exc22 extends Exc2        {Exc22(){super("exc22");}}
+
 	class Try extends String {
   		public void hope1(int i) {
     		hope2(i);
@@ -799,10 +804,6 @@ Util.header("TRY CATCH FINALLY");
   		exc.printStackTrace();
 	}
 
-    class Exc1 extends Exception    {Exc1(){this("exc1");} Exc1(String msg){super(msg);}}
-    class Exc12 extends Exc1        {Exc12(){super("exc12");}}
-    class Exc2 extends Exception    {Exc2(){this("exc2");} Exc2(String msg){super(msg);}}
-    class Exc22 extends Exc2        {Exc22(){super("exc22");}}
     try {
         throw new Exc1();
     } catch(Exc12 | Exc22 exc) {
@@ -987,17 +988,19 @@ Util.header("NULL");
 ///////////////
 // Test script
 ///////////////
+// TODO can't check scriptVar type while compiling
 Util.header("SCRIPT");
 {
 	String topLevelVar = "HELLO FROM THE TOP!";
 	String script = "System.println(\"\t\ttest: topLevelVar=\" + topLevelVar); //throw new Exception(\"<script>\");";
 	System.println("\t" + script);
 	System.exec(script, false, false);
+
 	script = "for(int i = 0; i < 30; i++) {System.sleep(80); System.print(\"@\");};";
 	System.println("\t" + script);
 	System.exec(script, false, true);
 
-	int dimension = 20;
+	int dimension = 5;
 	script = "int scriptVar";
 	for(int i = 0; i < dimension; i++) script = script + "[]";
 	script = script + " = new int";
@@ -1005,6 +1008,7 @@ Util.header("SCRIPT");
 	script = script + ";";
 	System.println("\texec: " + script);
 	System.exec(script, false, false);
+	int[][][][][] scriptVar = System.getVariable("scriptVar");
 	System.println("\tscriptVar=" + scriptVar + ", length=" + scriptVar[0][1][0][1].length);
 }
 

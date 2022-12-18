@@ -142,6 +142,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
+			return operands[0].getValueType(validationInfo, ctx);
+		}
+
 		NodeOperandType[] nodes = new NodeOperandType[operands.length];
 		int bufSize = 0;
 		int valuePos = 0;
@@ -171,12 +175,12 @@ public class NodeExpressionNoLS extends NodeExpression {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		for (int i = 0; i < operands.length; i++) {
-			valid &= operands[i].validate(validationInfo, ctx);
-		}
 		if (valid) {
 			resultClass = getValueType(validationInfo, ctx);
 			valid = resultClass != null;
+		}
+		for (int i = 0; i < operands.length; i++) {
+			valid &= operands[i].validate(validationInfo, ctx);
 		}
 		return valid;
 	}

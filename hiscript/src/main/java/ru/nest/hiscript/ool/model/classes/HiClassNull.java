@@ -1,16 +1,16 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+
+import java.io.IOException;
 
 public class HiClassNull extends HiClass {
 	public final static HiClassNull NULL = new HiClassNull();
 
 	private HiClassNull() {
-		super((HiClass) null, null, "null", CLASS_TYPE_TOP);
+		super((HiClass) null, null, "null", CLASS_TYPE_TOP, null);
 	}
 
 	@Override

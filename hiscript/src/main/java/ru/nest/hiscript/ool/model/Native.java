@@ -2,13 +2,15 @@ package ru.nest.hiscript.ool.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Native {
-	private static HashMap<String, java.lang.reflect.Method> methods = new HashMap<>();
+	private static Map<String, java.lang.reflect.Method> methods = new HashMap<>();
 
-	private static HashMap<String, Object> objects = new HashMap<>();
+	private static Map<String, Object> objects = new HashMap<>();
 
-	private static HashSet<Class<?>> registered = new HashSet<>();
+	private static Set<Class<?>> registered = new HashSet<>();
 
 	public static void clear() {
 		methods.clear();

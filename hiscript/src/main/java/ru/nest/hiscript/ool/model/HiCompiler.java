@@ -20,6 +20,8 @@ public class HiCompiler {
 
 	private ParseRule<?> rule;
 
+	private ValidationInfo validationInfo;
+
 	public HiCompiler(Tokenizer tokenizer) {
 		this.tokenizer = tokenizer;
 		this.rule = new RootParseRule(this, true);
@@ -27,11 +29,15 @@ public class HiCompiler {
 
 	public Node build() throws TokenizerException, ParseException, ValidationException {
 		Node node = rule.visit(tokenizer, null);
-		ValidationInfo validationInfo = new ValidationInfo(this);
+		validationInfo = new ValidationInfo(this);
 		if (!node.validate(validationInfo, null)) {
 			validationInfo.throwExceptionIf();
 		}
 		return node;
+	}
+
+	public ValidationInfo getValidationInfo() {
+		return validationInfo;
 	}
 
 	public void setRule(ParseRule<?> rule) {

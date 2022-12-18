@@ -11,6 +11,8 @@ public class System {
 
   public static native void exec(String code, boolean newInstance, boolean separateThread);
 
+  public static native Object getVariable(String name);
+
   public static native void exit();
 
   public static native void arraycopy(Object src, int srcOffset, Object dst, int dstOffset, int length);

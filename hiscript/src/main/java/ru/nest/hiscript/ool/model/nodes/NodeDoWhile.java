@@ -20,7 +20,7 @@ public class NodeDoWhile extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.DO_WHILE);
+		ctx.enter(RuntimeContext.DO_WHILE, this);
 		boolean valid = true;
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);

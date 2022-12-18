@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HiClass implements Codeable {
+public class HiClass implements Codeable, TokenAccessible {
 	public final static int CLASS_OBJECT = 0;
 
 	public final static int CLASS_PRIMITIVE = 1;
@@ -82,27 +82,40 @@ public class HiClass implements Codeable {
 		try {
 			// object
 			load(HiCompiler.class.getResource("/hilibs/Object.hi"));
-
 			OBJECT_CLASS = forName(null, HiClass.OBJECT_CLASS_NAME);
 			OBJECT_CLASS.superClassType = null;
 			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
 			// TODO define classes initialization order automatically
-			load(HiCompiler.class.getResource("/hilibs/String.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Class.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Enum.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Record.hi"));
-			load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"));
-			load(HiCompiler.class.getResource("/hilibs/System.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Math.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Exception.hi"));
-			load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"));
-			load(HiCompiler.class.getResource("/hilibs/AssertException.hi"));
-			load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"));
-			load(HiCompiler.class.getResource("/hilibs/HashMap.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Thread.hi"));
-			load(HiCompiler.class.getResource("/hilibs/Java.hi"));
+			List<HiClass> classes = new ArrayList<>();
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Record.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/System.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Math.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Exception.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/AssertException.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/HashMap.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
+			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Java.hi"), false));
+
+			for (HiClass clazz : classes) {
+				clazz.register();
+			}
+
+			HiCompiler compiler = new HiCompiler(null);
+			ValidationInfo validationInfo = new ValidationInfo(compiler);
+			for (HiClass clazz : classes) {
+				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+				ctx.isRegisterClass = true;
+				clazz.validate(validationInfo, ctx);
+			}
+			validationInfo.throwExceptionIf();
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
@@ -110,43 +123,68 @@ public class HiClass implements Codeable {
 
 	public static void clearClassLoader() {
 		cellTypes.clear();
+		loadedClasses.clear();
 		HiClassArray.clear();
 		Native.clear();
 		loadSystemClasses();
 	}
 
 	// TODO: ClassLoader
-	public static void load(URL url) throws Exception {
-		load(url.openStream());
+	public static List<HiClass> load(URL url) throws Exception {
+		return load(url.openStream());
 	}
 
-	public static void load(InputStream is) throws Exception {
-		load(ParserUtil.readString(is));
+	public static List<HiClass> load(InputStream is) throws Exception {
+		return load(ParserUtil.readString(is));
 	}
 
-	public static void load(Reader r) throws Exception {
-		load(ParserUtil.readString(r));
+	public static List<HiClass> load(Reader r) throws Exception {
+		return load(ParserUtil.readString(r));
 	}
 
-	public static void load(String classCode) throws Exception {
+	public static List<HiClass> load(String classCode) throws Exception {
+		return _load(classCode, true);
+	}
+
+	private static List<HiClass> _load(URL url, boolean validate) throws Exception {
+		return _load(url.openStream(), validate);
+	}
+
+	private static List<HiClass> _load(InputStream is, boolean validate) throws Exception {
+		return _load(ParserUtil.readString(is), validate);
+	}
+
+	private static List<HiClass> _load(String classCode, boolean validate) throws Exception {
 		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
-		ClassFileParseRule.getInstance().visit(tokenizer, null);
+		HiCompiler compiler = new HiCompiler(tokenizer);
+		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
+		if (validate) {
+			ValidationInfo validationInfo = new ValidationInfo(compiler);
+			for (HiClass clazz : classes) {
+				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+				ctx.isRegisterClass = true;
+				clazz.validate(validationInfo, ctx);
+				clazz.register();
+			}
+			validationInfo.throwExceptionIf();
+		}
+		return classes;
 	}
 
 	// for ClassPrimitive, ClassArray and ClassNull
-	public HiClass(HiClass superClass, HiClass enclosingClass, String name, int type) {
+	public HiClass(HiClass superClass, HiClass enclosingClass, String name, int type, ClassResolver classResolver) {
 		this.superClass = superClass;
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(enclosingClass, name, type);
+		init(classResolver, enclosingClass, name, type);
 	}
 
 	// for ClassParseRule, InterfaceParseRule and NewParseRule
-	public HiClass(Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type) {
+	public HiClass(Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(enclosingClass, name, type);
+		init(classResolver, enclosingClass, name, type);
 	}
 
 	// for decode
@@ -157,7 +195,7 @@ public class HiClass implements Codeable {
 		// init(...) is in decode
 	}
 
-	private void init(HiClass enclosingClass, String name, int type) {
+	private void init(ClassResolver classResolver, HiClass enclosingClass, String name, int type) {
 		this.enclosingClass = enclosingClass;
 		this.type = type;
 
@@ -173,8 +211,8 @@ public class HiClass implements Codeable {
 		}
 
 		// try resolve super class if needed
-		if (superClass == null && superClassType != null) {
-			superClass = HiClass.forName(null, superClassType.fullName);
+		if (superClass == null && superClassType != null && classResolver instanceof RuntimeContext) {
+			superClass = superClassType.getClass(classResolver);
 		}
 
 		// intern name to optimize via a == b
@@ -182,6 +220,12 @@ public class HiClass implements Codeable {
 		this.fullName = getFullName();
 
 		// register class by fullName
+		if (classResolver != null && classResolver.isRegisterClass()) {
+			register();
+		}
+	}
+
+	public void register() {
 		if (!ROOT_CLASS_NAME.equals(fullName)) {
 			if ((type == CLASS_TYPE_TOP || isStatic()) && loadedClasses.containsKey(fullName)) {
 				throw new ClassLoadException("class '" + fullName + "' already loaded");
@@ -231,37 +275,39 @@ public class HiClass implements Codeable {
 
 	private boolean isInitialized = false;
 
-	public void init(RuntimeContext currentCtx) {
+	public void init(ClassResolver classResolver) {
 		if (!isInitialized) {
 			isInitialized = true;
 
 			if (enclosingClass != null) {
-				enclosingClass.init(currentCtx);
+				enclosingClass.init(classResolver);
 			}
 
 			// resolve super class if needed
 			if (superClass == null && superClassType != null) {
-				superClass = superClassType.getClass(currentCtx);
+				superClass = superClassType.getClass(classResolver);
 				if (superClass == null) {
-					currentCtx.throwRuntimeException("Can't resolve class '" + superClassType.fullName + "'");
+					classResolver.processResolverException("Can't resolve class '" + superClassType.fullName + "'");
 					return;
 				}
 			}
 
 			if (superClass != null) {
 				// init super class
-				superClass.init(currentCtx);
+				superClass.init(classResolver);
 
 				// TODO: move this logic to parser ???
 
 				// check super class on static
 				if (!superClass.isStatic() && !superClass.isTopLevel() && isStatic()) {
-					throw new IllegalStateException("Static class " + fullName + " can not extends not static and not top level class");
+					classResolver.processResolverException("Static class " + fullName + " can not extends not static and not top level class");
+					return;
 				}
 
 				// check super class on final
 				if (superClass.isFinal()) {
-					throw new IllegalStateException("The type " + fullName + " cannot subclass the final class " + superClass.fullName);
+					classResolver.processResolverException("The type " + fullName + " cannot subclass the final class " + superClass.fullName);
+					return;
 				}
 			}
 
@@ -269,14 +315,14 @@ public class HiClass implements Codeable {
 			if (interfaces == null && interfaceTypes != null) {
 				interfaces = new HiClass[interfaceTypes.length];
 				for (int i = 0; i < interfaceTypes.length; i++) {
-					interfaces[i] = interfaceTypes[i].getClass(currentCtx);
+					interfaces[i] = interfaceTypes[i].getClass(classResolver);
 				}
 			}
 
 			if (interfaces != null) {
 				for (HiClass classInterface : interfaces) {
 					// init interface
-					classInterface.init(currentCtx);
+					classInterface.init(classResolver);
 
 					// check interface on static
 					if (!classInterface.isStatic() && !classInterface.isTopLevel() && isStatic()) {
@@ -294,11 +340,11 @@ public class HiClass implements Codeable {
 			// init children classes
 			if (classes != null) {
 				for (HiClass clazz : classes) {
-					clazz.init(currentCtx);
+					clazz.init(classResolver);
 				}
 			}
 
-			RuntimeContext ctx = currentCtx != null ? currentCtx : new RuntimeContext(null, false);
+			RuntimeContext ctx = classResolver instanceof RuntimeContext ? (RuntimeContext) classResolver : new RuntimeContext(null, false);
 			ctx.enterInitialization(this, null, null);
 			try {
 				if (initializers != null) {
@@ -322,7 +368,7 @@ public class HiClass implements Codeable {
 				ctx.throwRuntimeException("Can not initialize class " + fullName + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
-				if (ctx != currentCtx) {
+				if (ctx != classResolver) {
 					ctx.close();
 				}
 			}
@@ -368,10 +414,14 @@ public class HiClass implements Codeable {
 	public HiClass[] classes;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.STATIC_CLASS);
+		ctx.enter(RuntimeContext.STATIC_CLASS, this);
 		HiClass outboundClass = ctx.clazz;
 		ctx.clazz = this;
 		boolean valid = true;
+
+		if (superClassType != null && superClass == null) {
+			superClass = superClassType.getClass(ctx);
+		}
 
 		// check modifiers
 		if (ctx.enclosingClass != null && isStatic()) {
@@ -401,7 +451,7 @@ public class HiClass implements Codeable {
 						continue;
 					}
 				}
-				valid &= ctx.addLocalClass(innerClass, validationInfo);
+				valid &= ctx.addLocalClass(innerClass);
 			}
 		}
 
@@ -418,18 +468,18 @@ public class HiClass implements Codeable {
 		}
 		ctx.exit();
 
-		ctx.addLocalClass(this, validationInfo);
+		ctx.addLocalClass(this);
 		ctx.clazz = outboundClass;
 		return valid;
 	}
 
-	public HiClass getChild(RuntimeContext ctx, String name) {
+	public HiClass getChild(ClassResolver classResolver, String name) {
 		HiClass child = null;
 		if (classes != null) {
 			for (HiClass c : classes) {
 				if (c.name.equals(name) || c.fullName.equals(name)) {
 					child = c;
-					child.init(ctx);
+					child.init(classResolver);
 					break;
 				}
 			}
@@ -439,12 +489,12 @@ public class HiClass implements Codeable {
 
 	private Map<String, HiClass> classesMap;
 
-	public HiClass getClass(RuntimeContext ctx, String name) {
+	public HiClass getClass(ClassResolver classResolver, String name) {
 		if (classesMap != null && classesMap.containsKey(name)) {
 			return classesMap.get(name);
 		}
 
-		HiClass clazz = _getClass(ctx, name);
+		HiClass clazz = _getClass(classResolver, name);
 		if (clazz != null) {
 			if (classesMap == null) {
 				classesMap = new HashMap<>(1);
@@ -457,12 +507,12 @@ public class HiClass implements Codeable {
 	/*
 	 * name - is String.intern value to optimize via s1 == s2
 	 */
-	private HiClass _getClass(RuntimeContext ctx, String name) {
+	private HiClass _getClass(ClassResolver classResolver, String name) {
 		// inner classes
 		if (classes != null) {
 			for (HiClass c : classes) {
-				if (c.name == name || c.fullName == name) {
-					c.init(ctx);
+				if (c.name.equals(name) || c.fullName.equals(name)) {
+					c.init(classResolver);
 					return c;
 				}
 			}
@@ -473,31 +523,33 @@ public class HiClass implements Codeable {
 			if (superClass == this) {
 				throw new RuntimeException("cyclic");
 			}
-			HiClass c = superClass.getClass(ctx, name);
+			HiClass c = superClass.getClass(classResolver, name);
 			if (c != null) {
 				return c;
 			}
 		}
 
-		HiClass clazz = this;
-		while (clazz != null) {
-			// check local enclosing classes
-			HiClass c = ctx.getLocalClass(clazz, name);
-			if (c != null) {
-				return c;
-			}
+		if (classResolver != null) {
+			HiClass clazz = this;
+			while (clazz != null) {
+				// check local enclosing classes
+				HiClass localClass = classResolver.getLocalClass(clazz, name);
+				if (localClass != null) {
+					return localClass;
+				}
 
-			// check enclosing classes
-			c = clazz.getChild(ctx, name);
-			if (c != null) {
-				return c;
-			}
+				// check enclosing classes
+				localClass = clazz.getChild(classResolver, name);
+				if (localClass != null) {
+					return localClass;
+				}
 
-			clazz = clazz.enclosingClass;
+				clazz = clazz.enclosingClass;
+			}
 		}
 
 		// registered classes
-		return forName(ctx, name);
+		return forName(classResolver, name);
 	}
 
 	public boolean isInstanceof(HiClass clazz) {
@@ -564,12 +616,12 @@ public class HiClass implements Codeable {
 
 	protected HashMap<String, HiField<?>> fieldsMap;
 
-	public HiField<?> getField(RuntimeContext ctx, String name) {
+	public HiField<?> getField(ClassResolver classResolver, String name) {
 		if (fieldsMap != null && fieldsMap.containsKey(name)) {
 			return fieldsMap.get(name);
 		}
 
-		HiField<?> field = _searchField(ctx, name);
+		HiField<?> field = _searchField(classResolver, name);
 		if (field != null) {
 			if (fieldsMap == null) {
 				fieldsMap = new HashMap<>();
@@ -579,7 +631,7 @@ public class HiClass implements Codeable {
 		return field;
 	}
 
-	protected HiField<?> _searchField(RuntimeContext ctx, String name) {
+	protected HiField<?> _searchField(ClassResolver classResolver, String name) {
 		HiField<?> field = null;
 
 		// this fields
@@ -595,7 +647,7 @@ public class HiClass implements Codeable {
 		// interfaces static fields
 		if (field == null && interfaces != null) {
 			for (HiClass i : interfaces) {
-				field = i.getField(ctx, name);
+				field = i.getField(classResolver, name);
 				if (field != null) {
 					break;
 				}
@@ -604,20 +656,19 @@ public class HiClass implements Codeable {
 
 		// super fields
 		if (field == null && superClass != null) {
-			field = superClass.getField(ctx, name);
+			field = superClass.getField(classResolver, name);
 		}
 		return field;
 	}
 
 	private final Map<MethodSignature, HiMethod> methodsHash = new HashMap<>();
 
-	// name - interned
-	public HiMethod searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
 		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
-			method = _searchMethod(ctx, name, argTypes);
+			method = _searchMethod(classResolver, name, argTypes);
 			if (method != null) {
 				methodsHash.put(new MethodSignature(signature), method);
 			}
@@ -625,20 +676,19 @@ public class HiClass implements Codeable {
 		return method;
 	}
 
-	// name - interned
-	protected HiMethod _searchMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	protected HiMethod _searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		// this methods
 		if (methods != null && methods.length > 0) {
 			for (HiMethod m : methods)
 				FOR:{
-					if (m.name == name) {
+					if (m.name.equals(name)) {
 						if (m.hasVarargs()) {
 							int mainArgCount = m.argCount - 1;
 							if (mainArgCount > argTypes.length) {
 								continue;
 							}
 
-							m.resolve(ctx);
+							m.resolve(classResolver);
 
 							for (int i = 0; i < mainArgCount; i++) {
 								if (!HiField.autoCast(argTypes[i], m.argClasses[i])) {
@@ -657,7 +707,7 @@ public class HiClass implements Codeable {
 								continue;
 							}
 
-							m.resolve(ctx);
+							m.resolve(classResolver);
 
 							for (int i = 0; i < argCount; i++) {
 								if (!HiField.autoCast(argTypes[i], m.argClasses[i])) {
@@ -672,7 +722,7 @@ public class HiClass implements Codeable {
 
 		// super methods
 		if (superClass != null) {
-			HiMethod m = superClass.searchMethod(ctx, name, argTypes);
+			HiMethod m = superClass.searchMethod(classResolver, name, argTypes);
 			if (m != null) {
 				return m;
 			}
@@ -683,11 +733,11 @@ public class HiClass implements Codeable {
 			HiMethod md = null;
 			HiMethod m = null;
 			for (HiClass i : interfaces) {
-				HiMethod _m = i.searchMethod(ctx, name, argTypes);
+				HiMethod _m = i.searchMethod(classResolver, name, argTypes);
 				if (_m != null) {
 					if (_m.modifiers.isDefault()) {
 						if (md != null) {
-							ctx.throwRuntimeException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + i.fullName + ".");
+							classResolver.processResolverException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + i.fullName + ".");
 							return null;
 						}
 						id = i;
@@ -706,7 +756,7 @@ public class HiClass implements Codeable {
 
 		// enclosing methods
 		if (!isTopLevel()) {
-			HiMethod m = enclosingClass.searchMethod(ctx, name, argTypes);
+			HiMethod m = enclosingClass.searchMethod(classResolver, name, argTypes);
 			if (m != null) {
 				return m;
 			}
@@ -716,12 +766,12 @@ public class HiClass implements Codeable {
 		return null;
 	}
 
-	public HiMethod getMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
 		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
-			method = _getMethod(ctx, name, argTypes);
+			method = _getMethod(classResolver, name, argTypes);
 			if (method != null) {
 				methodsHash.put(new MethodSignature(signature), method);
 			}
@@ -729,7 +779,7 @@ public class HiClass implements Codeable {
 		return method;
 	}
 
-	private HiMethod _getMethod(RuntimeContext ctx, String name, HiClass... argTypes) {
+	private HiMethod _getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		// this methods
 		if (methods != null) {
 			for (HiMethod m : methods)
@@ -740,7 +790,7 @@ public class HiClass implements Codeable {
 							continue;
 						}
 
-						m.resolve(ctx);
+						m.resolve(classResolver);
 
 						for (int i = 0; i < argCount; i++) {
 							if (argTypes[i] != m.argClasses[i]) {
@@ -754,7 +804,7 @@ public class HiClass implements Codeable {
 
 		// super methods
 		if (superClass != null) {
-			HiMethod m = superClass.getMethod(ctx, name, argTypes);
+			HiMethod m = superClass.getMethod(classResolver, name, argTypes);
 			if (m != null) {
 				return m;
 			}
@@ -762,7 +812,7 @@ public class HiClass implements Codeable {
 
 		// enclosing methods
 		if (!isTopLevel()) {
-			HiMethod m = enclosingClass.getMethod(ctx, name, argTypes);
+			HiMethod m = enclosingClass.getMethod(classResolver, name, argTypes);
 			if (m != null) {
 				return m;
 			}
@@ -774,12 +824,12 @@ public class HiClass implements Codeable {
 
 	private Map<MethodSignature, HiConstructor> constructorsHash = new HashMap<>();
 
-	public HiConstructor searchConstructor(RuntimeContext ctx, HiClass... argTypes) {
+	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set("", argTypes);
 		HiConstructor constructor = constructorsHash.get(signature);
 		if (constructor == null) {
-			constructor = _searchConstructor(ctx, argTypes);
+			constructor = _searchConstructor(classResolver, argTypes);
 			if (constructor != null) {
 				constructorsHash.put(new MethodSignature(signature), constructor);
 			}
@@ -787,10 +837,10 @@ public class HiClass implements Codeable {
 		return constructor;
 	}
 
-	protected HiConstructor _searchConstructor(RuntimeContext ctx, HiClass[] argTypes) {
+	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
 		if (constructors != null) {
 			for (HiConstructor constructor : constructors) {
-				if (matchConstructor(ctx, constructor, argTypes)) {
+				if (matchConstructor(classResolver, constructor, argTypes)) {
 					return constructor;
 				}
 			}
@@ -798,13 +848,13 @@ public class HiClass implements Codeable {
 		return null;
 	}
 
-	protected boolean matchConstructor(RuntimeContext ctx, HiConstructor constructor, HiClass[] argTypes) {
+	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes) {
 		int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
 		if (argCount != (argTypes != null ? argTypes.length : 0)) {
 			return false;
 		}
 
-		constructor.resolve(ctx);
+		constructor.resolve(classResolver);
 		for (int i = 0; i < argCount; i++) {
 			if (!HiField.autoCast(argTypes[i], constructor.argClasses[i])) {
 				return false;
@@ -813,7 +863,7 @@ public class HiClass implements Codeable {
 		return true;
 	}
 
-	public HiConstructor getConstructor(RuntimeContext ctx, HiClass... argTypes) {
+	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		if (constructors != null) {
 			for (HiConstructor c : constructors)
 				FOR:{
@@ -822,7 +872,7 @@ public class HiClass implements Codeable {
 						continue;
 					}
 
-					c.resolve(ctx);
+					c.resolve(classResolver);
 					for (int i = 0; i < argCount; i++) {
 						if (argTypes[i] != c.argClasses[i]) {
 							break FOR;
@@ -874,10 +924,10 @@ public class HiClass implements Codeable {
 		return null;
 	}
 
-	public static HiClass forName(RuntimeContext ctx, String name) {
+	public static HiClass forName(ClassResolver classResolver, String name) {
 		HiClass clazz = loadedClasses.get(name);
-		if (clazz != null && ctx != null) {
-			clazz.init(ctx);
+		if (clazz != null && classResolver != null) {
+			clazz.init(classResolver);
 		}
 		return clazz;
 	}
@@ -903,7 +953,7 @@ public class HiClass implements Codeable {
 		return fullName != null ? fullName : name;
 	}
 
-	private static HashMap<Class<?>, HiClass> cellTypes = new HashMap<>(9);
+	private static Map<Class<?>, HiClass> cellTypes = new HashMap<>(9);
 
 	public static HiClass getCellType(Class<?> clazz) {
 		if (cellTypes.containsKey(clazz)) {
@@ -1040,7 +1090,7 @@ public class HiClass implements Codeable {
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
 					public void classLoaded(HiClass clazz) {
-						classAccess[0].init(clazz, classAccess[0].name, classAccess[0].type);
+						classAccess[0].init(null, clazz, classAccess[0].name, classAccess[0].type);
 					}
 				}, exc.getIndex());
 			}
@@ -1053,14 +1103,14 @@ public class HiClass implements Codeable {
 		if (classType == CLASS_ENUM) {
 			clazz = new HiClassEnum(name, type);
 		} else if (classType == CLASS_RECORD) {
-			clazz = new HiClassRecord(name, type);
+			clazz = new HiClassRecord(name, type, null);
 		} else {
 			clazz = new HiClass(superClassType, name, type);
 		}
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(outerClass, name, type);
+			clazz.init(null, outerClass, name, type);
 		}
 
 		HiClass oldClass = os.getHiClass();
@@ -1105,7 +1155,7 @@ public class HiClass implements Codeable {
 
 		// try resolve super class
 		if (superClassType != null) {
-			clazz.superClass = superClassType.resolveClass(null);
+			clazz.superClass = superClassType.getClass(/*no context*/ null);
 		}
 		return clazz;
 	}
@@ -1180,5 +1230,10 @@ public class HiClass implements Codeable {
 			c = c.superClass;
 		}
 		return loadedClasses.get(HiClass.OBJECT_CLASS_NAME);
+	}
+
+	@Override
+	public Token getToken() {
+		return token;
 	}
 }

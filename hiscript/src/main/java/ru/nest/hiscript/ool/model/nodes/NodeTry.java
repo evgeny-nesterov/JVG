@@ -31,7 +31,7 @@ public class NodeTry extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		ctx.enter(RuntimeContext.TRY);
+		ctx.enter(RuntimeContext.TRY, this);
 		if (resources != null) {
 			for (NodeDeclaration resource : resources) {
 				valid &= resource.validate(validationInfo, ctx);

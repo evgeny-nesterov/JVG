@@ -63,7 +63,7 @@ public class NodeCatch extends Node {
 		boolean valid = true;
 		initClasses(validationInfo, null);
 
-		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, new Modifiers(), null), validationInfo);
+		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, new Modifiers(), null));
 
 		if (catchBody != null) {
 			valid &= catchBody.validateBlock(validationInfo, ctx);

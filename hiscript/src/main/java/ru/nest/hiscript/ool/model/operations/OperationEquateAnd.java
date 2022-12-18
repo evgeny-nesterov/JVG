@@ -1,10 +1,13 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquateAnd extends BinaryOperation {
 	private static Operation instance = new OperationEquateAnd();
@@ -15,6 +18,12 @@ public class OperationEquateAnd extends BinaryOperation {
 
 	private OperationEquateAnd() {
 		super("&=", EQUATE_AND);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+		// TODO check
+		return node1.type;
 	}
 
 	@Override

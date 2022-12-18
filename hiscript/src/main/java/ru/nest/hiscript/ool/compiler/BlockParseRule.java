@@ -23,8 +23,8 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 
 	@Override
 	public NodeBlock visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		ctx.enter(RuntimeContext.BLOCK);
 		Token startToken = startToken(tokenizer);
+		ctx.enter(RuntimeContext.BLOCK, startToken);
 
 		NodeBlock block = null;
 		Node statement;

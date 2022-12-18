@@ -44,13 +44,13 @@ public class NodeArgument extends Node implements NodeVariable {
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check
-		return ctx.getClass(getTypeName());
+		return getType().getClass(ctx);
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check type, name, modifiers, annotations
-		boolean valid = ctx.addLocalVariable(this, validationInfo);
+		boolean valid = ctx.addLocalVariable(this);
 		return valid;
 	}
 

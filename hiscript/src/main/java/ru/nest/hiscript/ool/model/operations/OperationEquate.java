@@ -21,10 +21,6 @@ public class OperationEquate extends BinaryOperation {
 		super("=", EQUATE);
 	}
 
-	enum E {
-		a, b
-	}
-
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
 		// TODO check

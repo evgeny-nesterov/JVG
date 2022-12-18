@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RuntimeContext implements AutoCloseable {
+public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
 
 	public final static int METHOD = 0;
@@ -112,6 +112,11 @@ public class RuntimeContext implements AutoCloseable {
 	private static HiClass excClass;
 
 	private static HiConstructor excConstructor;
+
+	@Override
+	public void processResolverException(String message) {
+		throwRuntimeException(message);
+	}
 
 	public void throwRuntimeException(String message) {
 		throwException("RuntimeException", message);
@@ -262,18 +267,15 @@ public class RuntimeContext implements AutoCloseable {
 		WHILE:
 		while (level != null) {
 			var = level.getVariable(name);
-
 			if (var != null) {
 				break;
 			}
-
 			switch (level.type) {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
 					break WHILE;
 			}
-
 			level = level.parent;
 		}
 
@@ -310,6 +312,12 @@ public class RuntimeContext implements AutoCloseable {
 		return var;
 	}
 
+	@Override
+	public boolean isRegisterClass() {
+		return true;
+	}
+
+	@Override
 	public HiClass getClass(String name) {
 		// search in blocks up to method or constructor
 		StackLevel level = this.level;
@@ -594,6 +602,7 @@ public class RuntimeContext implements AutoCloseable {
 
 	private Map<HiClass, Map<String, HiClass>> localClasses;
 
+	@Override
 	public HiClass getLocalClass(HiClass clazz, String name) {
 		if (localClasses != null) {
 			Map<String, HiClass> classes = localClasses.get(clazz);

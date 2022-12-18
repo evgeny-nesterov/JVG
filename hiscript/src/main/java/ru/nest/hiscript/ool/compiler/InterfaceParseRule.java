@@ -70,7 +70,7 @@ public class InterfaceParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			ctx.clazz = new HiClass(null, ctx.enclosingClass, interfaces, interfaceName, ctx.classType);
+			ctx.clazz = new HiClass(null, ctx.enclosingClass, interfaces, interfaceName, ctx.classType, ctx);
 			ctx.clazz.isInterface = true;
 			ctx.clazz.modifiers = modifiers;
 

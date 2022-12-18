@@ -51,7 +51,7 @@ import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
-public abstract class Node implements Codeable {
+public abstract class Node implements Codeable, TokenAccessible {
 	public final static byte TYPE_EMPTY = -1;
 
 	public final static byte TYPE_ARGUMENT = 1;
@@ -167,6 +167,7 @@ public abstract class Node implements Codeable {
 		return name;
 	}
 
+	@Override
 	public Token getToken() {
 		return token;
 	}
@@ -191,7 +192,7 @@ public abstract class Node implements Codeable {
 		if (this instanceof NodeBlock) {
 			validate(validationInfo, ctx);
 		} else {
-			ctx.enter(RuntimeContext.BLOCK);
+			ctx.enter(RuntimeContext.BLOCK, this);
 			validate(validationInfo, ctx);
 			ctx.exit();
 		}

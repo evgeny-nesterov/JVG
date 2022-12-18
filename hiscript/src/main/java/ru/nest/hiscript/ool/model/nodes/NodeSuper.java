@@ -19,7 +19,9 @@ public class NodeSuper extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
+		if (ctx.clazz != null) {
+			return ctx.clazz.superClass;
+		}
 		return null;
 	}
 

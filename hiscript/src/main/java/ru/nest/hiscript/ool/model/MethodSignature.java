@@ -56,7 +56,7 @@ public class MethodSignature implements Cloneable {
 	public int hashCode() {
 		int code = name.hashCode();
 		for (int i = 0; i < argCount; i++) {
-			code += 31 * argClasses[i].hashCode();
+			code += 31 * (argClasses[i] != null ? argClasses[i].hashCode() : 0);
 		}
 		return code;
 	}

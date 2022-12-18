@@ -30,8 +30,10 @@ public class NodeArrayValue extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return null;
+		HiClass cellClass = type.getClass(ctx);
+		HiClass currentCellClass = dimensions > 1 ? HiClass.getArrayClass(cellClass, dimensions - 1) : cellClass;
+		HiClassArray clazz = HiClass.getArrayClass(currentCellClass, 1);
+		return clazz;
 	}
 
 	@Override
