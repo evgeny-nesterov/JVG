@@ -39,7 +39,13 @@ public class NodeDeclaration extends Node implements NodeVariable {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass clazz = type.getClass(ctx);
+		HiClass clazz;
+		if (type == Type.varType) {
+			clazz = initialization.getValueType(validationInfo, ctx);
+			type = Type.getType(clazz);
+		} else {
+			clazz = type.getClass(ctx);
+		}
 		return clazz;
 	}
 

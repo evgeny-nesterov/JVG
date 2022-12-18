@@ -19,6 +19,9 @@ public class TestArrays extends HiTest {
 		assertFailSerialize("byte[] x = {}; int[] y = (int[])x;");
 		assertSuccessSerialize("class A{} class B extends A{} B[] x = {new B()}; A[] y = x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
 		assertSuccessSerialize("class A{} class B extends A{} A[] x = new B[]{new B()}; B[] y = (B[])x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
+		assertSuccessSerialize("int[] x = {}; int[] y = (int[])x;");
+		assertSuccessSerialize("String[] x = {\"a\", \"b\"}; assert x instanceof String[];");
+		assertSuccessSerialize("int[][] x = {{1}, {2}}; assert x instanceof int[][];");
 	}
 
 	@Test

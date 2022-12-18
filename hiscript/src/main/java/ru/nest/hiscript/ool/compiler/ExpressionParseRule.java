@@ -353,9 +353,15 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit identifier as word: package, class, method, field
-		String identifierName = visitWord(Words.NOT_SERVICE, tokenizer);
-		if (identifierName != null) {
+		String identifierName = visitWord(tokenizer, Words.NOT_SERVICE);
+		String primitiveTypeName = visitWord(tokenizer, Words.BYTE, Words.SHORT, Words.INT, Words.LONG, Words.FLOAT, Words.DOUBLE, Words.BOOLEAN, Words.CHAR);
+		if (identifierName != null || primitiveTypeName != null) {
 			Token identifierToken = tokenizer.currentToken();
+			int dimension = visitDimension(tokenizer);
+			if (primitiveTypeName != null) {
+				identifierName = primitiveTypeName;
+			}
+
 			boolean visitCastAfterIdentifier = false;
 			if (allOperations.size() > 0) {
 				int index = allOperations.size() - 1;
@@ -383,13 +389,13 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			}
 
 			if (castedRecordArguments != null || castedVariableName != null) {
-				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName);
+				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName, dimension);
 				identifier.setToken(identifierToken);
 				identifier.castedRecordArguments = castedRecordArguments;
 				identifier.castedVariableName = castedVariableName;
 				operands.add(identifier);
 			} else {
-				NodeIdentifier identifier = new NodeIdentifier(identifierName);
+				NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
 				operands.add(identifier);
 			}
 			return true;

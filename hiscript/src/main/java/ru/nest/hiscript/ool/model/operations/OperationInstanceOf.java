@@ -29,19 +29,23 @@ public class OperationInstanceOf extends BinaryOperation {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
-		if (!c1.isPrimitive()) {
-			return HiClassPrimitive.BOOLEAN;
-		} else {
+		if (c1.isPrimitive()) {
 			validationInfo.error("Inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
-			return null;
 		}
+		return HiClassPrimitive.BOOLEAN;
 	}
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c2 = v2.type;
 		if (!v1.type.isPrimitive()) {
-			HiClass c1 = v1.object != null ? v1.object.clazz : HiClassNull.NULL;
+			HiClass c1;
+			if (v1.type.isArray()) {
+				c1 = v1.type;
+			} else {
+				c1 = v1.object != null ? v1.object.clazz : HiClassNull.NULL;
+			}
+
 			boolean isInstanceof = c1.isInstanceof(c2);
 			if (isInstanceof) {
 				if (v2.castedVariableName != null) {

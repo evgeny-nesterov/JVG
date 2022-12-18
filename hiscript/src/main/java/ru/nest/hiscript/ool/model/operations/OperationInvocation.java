@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
@@ -118,10 +119,10 @@ public class OperationInvocation extends BinaryOperation {
 	}
 
 	public boolean invokeName(RuntimeContext ctx, Value v1, Value v2) {
-		return invokeName(ctx, v1, v2.name);
+		return invokeName(ctx, v1, v2.name, v2.nameDimensions);
 	}
 
-	public static boolean invokeName(RuntimeContext ctx, Value v1, String name) {
+	public static boolean invokeName(RuntimeContext ctx, Value v1, String name, int nameDimension) {
 		if (v1.type.isPrimitive()) {
 			ctx.throwRuntimeException("primitive type doesn't have a field " + name);
 			return false;
@@ -192,6 +193,9 @@ public class OperationInvocation extends BinaryOperation {
 			v1.variable = field;
 			return true;
 		} else if (clazz != null) {
+			if (nameDimension > 0) {
+				clazz = HiClassArray.getArrayClass(clazz, nameDimension);
+			}
 			v1.valueType = Value.CLASS;
 			v1.type = clazz;
 			return true;

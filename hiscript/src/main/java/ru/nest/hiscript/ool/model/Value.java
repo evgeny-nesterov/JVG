@@ -71,6 +71,8 @@ public class Value implements PrimitiveTypes {
 	// This is not a value, this is an intermediate condition.
 	public String name;
 
+	public int nameDimensions;
+
 	public String castedVariableName;
 
 	public Node castedCondition;
@@ -91,6 +93,7 @@ public class Value implements PrimitiveTypes {
 		array = null;
 		parentArray = null;
 		name = null;
+		nameDimensions = 0;
 		castedVariableName = null;
 		castedCondition = null;
 		castedRecordArguments = null;
@@ -394,6 +397,7 @@ public class Value implements PrimitiveTypes {
 		dst.valueType = valueType;
 		dst.type = type;
 		dst.name = name;
+		dst.nameDimensions = nameDimensions;
 
 		// VALUE
 		dst.array = array;
@@ -540,7 +544,7 @@ public class Value implements PrimitiveTypes {
 			case ARRAY_INDEX:
 				return "ARRAY INDEX: type=" + type + ", parent array=" + parentArray + ", ara index=" + arrayIndex;
 			case NAME:
-				return "NAME: name=" + name;
+				return "NAME: name=" + name + (nameDimensions > 0 ? "[]" : "");
 			case EXECUTE:
 				return "EXECUTE: node=" + node;
 		}

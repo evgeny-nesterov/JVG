@@ -86,7 +86,7 @@ public class RecordParseRule extends ParserUtil {
 				if (argument.getVariableName().length() > 1) {
 					getMethodName += argument.getVariableName().substring(1);
 				}
-				Node getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName())));
+				Node getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName(), 0)));
 				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
 				getMethod.token = argument.getToken();
 				ctx.addMethod(getMethod);
@@ -95,7 +95,7 @@ public class RecordParseRule extends ParserUtil {
 				if (argument.getVariableName().length() > 1) {
 					setMethodName += argument.getVariableName().substring(1);
 				}
-				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(new Node[] {NodeThis.instance, new NodeIdentifier(argument.getVariableName()), new NodeIdentifier(argument.getVariableName())}, //
+				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(new Node[] {NodeThis.instance, new NodeIdentifier(argument.getVariableName(), 0), new NodeIdentifier(argument.getVariableName(), 0)}, //
 						new OperationsGroup[] {new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)});
 				setExpression.setToken(argument.getToken());
 				// TODO support set methods?

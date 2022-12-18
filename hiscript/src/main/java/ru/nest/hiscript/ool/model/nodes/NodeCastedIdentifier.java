@@ -5,17 +5,21 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
 public class NodeCastedIdentifier extends Node {
-	public NodeCastedIdentifier(String name) {
+	public NodeCastedIdentifier(String name, int dimension) {
 		super("identifier", TYPE_CASTED_IDENTIFIER);
 		this.name = name.intern();
+		this.dimension = dimension;
 	}
 
 	public String name;
+
+	public int dimension;
 
 	public String getName() {
 		return name;
@@ -29,8 +33,11 @@ public class NodeCastedIdentifier extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return null;
+		HiClass clazz = ctx.getClass(name);
+		if (dimension > 0) {
+			clazz = HiClassArray.getArrayClass(clazz, dimension);
+		}
+		return clazz;
 	}
 
 	@Override
@@ -54,6 +61,7 @@ public class NodeCastedIdentifier extends Node {
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.NAME;
 		ctx.value.name = name;
+		ctx.value.nameDimensions = dimension;
 		ctx.value.castedRecordArguments = castedRecordArguments;
 		ctx.value.castedVariableName = castedVariableName;
 		ctx.value.castedCondition = castedCondition;
@@ -63,6 +71,7 @@ public class NodeCastedIdentifier extends Node {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);
+		os.writeByte(dimension);
 		os.writeByte(castedRecordArguments != null ? castedRecordArguments.length : 0);
 		os.writeNullable(castedRecordArguments);
 		os.writeNullableUTF(castedVariableName);
@@ -70,7 +79,7 @@ public class NodeCastedIdentifier extends Node {
 	}
 
 	public static NodeCastedIdentifier decode(DecodeContext os) throws IOException {
-		NodeCastedIdentifier node = new NodeCastedIdentifier(os.readUTF());
+		NodeCastedIdentifier node = new NodeCastedIdentifier(os.readUTF(), os.readByte());
 		node.castedRecordArguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		node.castedVariableName = os.readNullableUTF();
 		node.castedCondition = os.readNullable(Node.class);
