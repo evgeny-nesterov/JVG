@@ -170,7 +170,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 				}
 				return null;
 			} else {
-				return HiClassArray.getArrayClass(cellClass);
+				return cellClass.getArrayClass();
 			}
 		}
 

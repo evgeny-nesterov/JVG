@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -35,7 +34,7 @@ public class NodeCastedIdentifier extends Node {
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
-			clazz = HiClassArray.getArrayClass(clazz, dimension);
+			clazz = clazz.getArrayClass(dimension);
 		}
 		return clazz;
 	}

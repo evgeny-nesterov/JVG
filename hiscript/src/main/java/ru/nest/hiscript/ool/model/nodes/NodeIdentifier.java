@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -35,7 +34,7 @@ public class NodeIdentifier extends Node {
 				clazz = ctx.getClass(name);
 			}
 			if (dimension > 0) {
-				clazz = HiClassArray.getArrayClass(clazz, dimension);
+				clazz = clazz.getArrayClass(dimension);
 			}
 			return clazz;
 		} else {
@@ -108,7 +107,7 @@ public class NodeIdentifier extends Node {
 		}
 		if (clazz != null) {
 			if (v.nameDimensions > 0) {
-				clazz = HiClassArray.getArrayClass(clazz, v.nameDimensions);
+				clazz = clazz.getArrayClass(v.nameDimensions);
 			}
 			v.valueType = Value.CLASS;
 			v.type = clazz;

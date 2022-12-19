@@ -11,7 +11,6 @@ import ru.nest.hiscript.ool.model.Operation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
@@ -194,7 +193,7 @@ public class OperationInvocation extends BinaryOperation {
 			return true;
 		} else if (clazz != null) {
 			if (nameDimension > 0) {
-				clazz = HiClassArray.getArrayClass(clazz, nameDimension);
+				clazz = clazz.getArrayClass(nameDimension);
 			}
 			v1.valueType = Value.CLASS;
 			v1.type = clazz;

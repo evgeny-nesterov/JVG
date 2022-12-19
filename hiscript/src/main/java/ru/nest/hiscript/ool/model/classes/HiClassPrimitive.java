@@ -29,6 +29,7 @@ public class HiClassPrimitive extends HiClass {
 
 	private HiClassPrimitive(String name) {
 		super(null, null, name, CLASS_TYPE_TOP, null);
+		systemClassLoader.addClass(this);
 	}
 
 	private static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();

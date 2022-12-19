@@ -25,7 +25,7 @@ public class NodeString extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return HiClass.loadedClasses.get(HiClass.STRING_CLASS_NAME);
+		return HiClass.systemClassLoader.getClass(HiClass.STRING_CLASS_NAME);
 	}
 
 	@Override

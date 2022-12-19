@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClass implements Codeable, TokenAccessible {
 	public final static int CLASS_OBJECT = 0;
@@ -53,8 +52,6 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public final static int CLASS_TYPE_ANONYMOUS = 3; // like new Object() {...}
 
-	public static Map<String, HiClass> loadedClasses;
-
 	public static HiClass OBJECT_CLASS;
 
 	public static String ROOT_CLASS_NAME = "@root";
@@ -69,43 +66,52 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public Token token;
 
+	public final static HiClassLoader systemClassLoader = new HiClassLoader("system");
+
+	public static HiClassLoader userClassLoader = new HiClassLoader("user", systemClassLoader);
+
+	public static void setUserClassLoader(HiClassLoader classLoader) {
+		systemClassLoader.removeClassLoader(userClassLoader);
+		systemClassLoader.addClassLoader(classLoader);
+		userClassLoader = classLoader;
+	}
+
+	public HiClassLoader classLoader;
+
 	static {
 		loadSystemClasses();
 	}
 
 	private static void loadSystemClasses() {
-		loadedClasses = new ConcurrentHashMap<>();
-
 		Native.register(SystemImpl.class);
 		Native.register(ObjectImpl.class);
 
 		try {
 			// object
-			load(HiCompiler.class.getResource("/hilibs/Object.hi"));
-			OBJECT_CLASS = forName(null, HiClass.OBJECT_CLASS_NAME);
+			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi")).get(0);
 			OBJECT_CLASS.superClassType = null;
 			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
 			// TODO define classes initialization order automatically
 			List<HiClass> classes = new ArrayList<>();
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Record.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/System.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Math.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Exception.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/AssertException.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/HashMap.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
-			classes.addAll(_load(HiCompiler.class.getResource("/hilibs/Java.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Record.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/System.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Math.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Exception.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/AssertException.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/HashMap.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Java.hi"), false));
 
 			for (HiClass clazz : classes) {
-				clazz.register();
+				systemClassLoader.addClass(clazz);
 			}
 
 			HiCompiler compiler = new HiCompiler(null);
@@ -119,56 +125,6 @@ public class HiClass implements Codeable, TokenAccessible {
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
-	}
-
-	public static void clearClassLoader() {
-		cellTypes.clear();
-		loadedClasses.clear();
-		HiClassArray.clear();
-		Native.clear();
-		loadSystemClasses();
-	}
-
-	// TODO: ClassLoader
-	public static List<HiClass> load(URL url) throws Exception {
-		return load(url.openStream());
-	}
-
-	public static List<HiClass> load(InputStream is) throws Exception {
-		return load(ParserUtil.readString(is));
-	}
-
-	public static List<HiClass> load(Reader r) throws Exception {
-		return load(ParserUtil.readString(r));
-	}
-
-	public static List<HiClass> load(String classCode) throws Exception {
-		return _load(classCode, true);
-	}
-
-	private static List<HiClass> _load(URL url, boolean validate) throws Exception {
-		return _load(url.openStream(), validate);
-	}
-
-	private static List<HiClass> _load(InputStream is, boolean validate) throws Exception {
-		return _load(ParserUtil.readString(is), validate);
-	}
-
-	private static List<HiClass> _load(String classCode, boolean validate) throws Exception {
-		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
-		HiCompiler compiler = new HiCompiler(tokenizer);
-		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
-		if (validate) {
-			ValidationInfo validationInfo = new ValidationInfo(compiler);
-			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-				ctx.isRegisterClass = true;
-				clazz.validate(validationInfo, ctx);
-				clazz.register();
-			}
-			validationInfo.throwExceptionIf();
-		}
-		return classes;
 	}
 
 	// for ClassPrimitive, ClassArray and ClassNull
@@ -220,17 +176,8 @@ public class HiClass implements Codeable, TokenAccessible {
 		this.fullName = getFullName();
 
 		// register class by fullName
-		if (classResolver != null && classResolver.isRegisterClass()) {
-			register();
-		}
-	}
-
-	public void register() {
-		if (!ROOT_CLASS_NAME.equals(fullName)) {
-			if ((type == CLASS_TYPE_TOP || isStatic()) && loadedClasses.containsKey(fullName)) {
-				throw new ClassLoadException("class '" + fullName + "' already loaded");
-			}
-			loadedClasses.put(fullName, this);
+		if (classResolver != null && classResolver.isRegisterClass() && classLoader.getClass(fullName) != this) {
+			classLoader.addClass(this);
 		}
 	}
 
@@ -248,7 +195,7 @@ public class HiClass implements Codeable, TokenAccessible {
 						do {
 							fullName = enclosingClass.fullName + "$" + number + name;
 							number++;
-						} while (loadedClasses.containsKey(fullName));
+						} while (classLoader.getClass(fullName) != null);
 						break;
 
 					case CLASS_TYPE_ANONYMOUS:
@@ -257,7 +204,7 @@ public class HiClass implements Codeable, TokenAccessible {
 							name = Integer.toString(number);
 							fullName = enclosingClass.fullName + "$" + number + name;
 							number++;
-						} while (loadedClasses.containsKey(fullName));
+						} while (classLoader.getClass(fullName) != null);
 						break;
 
 					default:
@@ -485,6 +432,24 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 		}
 		return child;
+	}
+
+	private HiClassArray arrayClass;
+
+	public HiClassArray getArrayClass() {
+		if (arrayClass == null) {
+			arrayClass = new HiClassArray(this);
+			classLoader.addClass(arrayClass);
+		}
+		return arrayClass;
+	}
+
+	public HiClassArray getArrayClass(int dimensions) {
+		HiClassArray c = getArrayClass();
+		for (int i = 1; i < dimensions; i++) {
+			c = c.getArrayClass();
+		}
+		return c;
 	}
 
 	private Map<String, HiClass> classesMap;
@@ -925,7 +890,7 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public static HiClass forName(ClassResolver classResolver, String name) {
-		HiClass clazz = loadedClasses.get(name);
+		HiClass clazz = systemClassLoader.getClass(name);
 		if (clazz != null && classResolver != null) {
 			clazz.init(classResolver);
 		}
@@ -940,47 +905,32 @@ public class HiClass implements Codeable, TokenAccessible {
 		return HiClassPrimitive.getPrimitiveClass(name);
 	}
 
-	public static HiClass getArrayClass(HiClass cellClass) {
-		return HiClassArray.getArrayClass(cellClass);
-	}
-
-	public static HiClassArray getArrayClass(HiClass cellClass, int dimensions) {
-		return HiClassArray.getArrayClass(cellClass, dimensions);
-	}
-
 	@Override
 	public String toString() {
 		return fullName != null ? fullName : name;
 	}
 
-	private static Map<Class<?>, HiClass> cellTypes = new HashMap<>(9);
-
 	public static HiClass getCellType(Class<?> clazz) {
-		if (cellTypes.containsKey(clazz)) {
-			return cellTypes.get(clazz);
-		}
-
 		HiClass cellType = null;
 		if (clazz == HiObject.class || clazz == Object.class) {
 			cellType = HiClass.OBJECT_CLASS;
 		} else if (clazz == Boolean.class || clazz == boolean.class) {
-			cellType = HiClass.getPrimitiveClass("boolean");
+			cellType = HiClassPrimitive.BOOLEAN;
 		} else if (clazz == Character.class || clazz == char.class) {
-			cellType = HiClass.getPrimitiveClass("char");
+			cellType = HiClassPrimitive.CHAR;
 		} else if (clazz == Byte.class || clazz == byte.class) {
-			cellType = HiClass.getPrimitiveClass("byte");
+			cellType = HiClassPrimitive.BYTE;
 		} else if (clazz == Short.class || clazz == short.class) {
-			cellType = HiClass.getPrimitiveClass("short");
+			cellType = HiClassPrimitive.SHORT;
 		} else if (clazz == Integer.class || clazz == int.class) {
-			cellType = HiClass.getPrimitiveClass("int");
+			cellType = HiClassPrimitive.INT;
 		} else if (clazz == Float.class || clazz == float.class) {
-			cellType = HiClass.getPrimitiveClass("float");
+			cellType = HiClassPrimitive.FLOAT;
 		} else if (clazz == Long.class || clazz == long.class) {
-			cellType = HiClass.getPrimitiveClass("long");
+			cellType = HiClassPrimitive.LONG;
 		} else if (clazz == Double.class || clazz == double.class) {
-			cellType = HiClass.getPrimitiveClass("double");
+			cellType = HiClassPrimitive.DOUBLE;
 		}
-		cellTypes.put(clazz, cellType);
 		return cellType;
 	}
 
@@ -993,7 +943,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		HiClass cellType = getCellType(cellClass);
-		return getArrayClass(cellType, dimension);
+		return cellType.getArrayClass(dimension);
 	}
 
 	@Override
@@ -1229,7 +1179,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 			c = c.superClass;
 		}
-		return loadedClasses.get(HiClass.OBJECT_CLASS_NAME);
+		return OBJECT_CLASS;
 	}
 
 	@Override

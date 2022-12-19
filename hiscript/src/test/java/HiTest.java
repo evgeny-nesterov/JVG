@@ -1,4 +1,6 @@
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -73,6 +75,7 @@ public abstract class HiTest {
 	}
 
 	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
+		HiClass.setUserClassLoader(new HiClassLoader("test"));
 		HiCompiler compiler = HiCompiler.getDefaultCompiler(script);
 		compiler.setAssertsActive(true);
 		compiler.setVerbose(true);

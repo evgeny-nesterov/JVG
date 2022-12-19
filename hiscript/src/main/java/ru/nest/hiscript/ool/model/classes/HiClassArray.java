@@ -12,7 +12,6 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +20,7 @@ public class HiClassArray extends HiClass {
 
 	public int dimension;
 
-	private HiClassArray(HiClass cellClass) {
+	public HiClassArray(HiClass cellClass) {
 		super(OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
 		init(cellClass);
 	}
@@ -62,30 +61,6 @@ public class HiClassArray extends HiClass {
 		return cellClass;
 	}
 
-	private static Map<HiClass, HiClassArray> arrayClasses = new HashMap<>();
-
-	public static void clear() {
-		arrayClasses.clear();
-	}
-
-	public static HiClassArray getArrayClass(HiClass cellClass) {
-		HiClassArray c = arrayClasses.get(cellClass);
-		if (c == null) {
-			c = new HiClassArray(cellClass);
-			arrayClasses.put(cellClass, c);
-		}
-		return c;
-	}
-
-	public static HiClassArray getArrayClass(HiClass cellClass, int dimensions) {
-		HiClassArray c = null;
-		for (int i = 0; i < dimensions; i++) {
-			c = getArrayClass(cellClass);
-			cellClass = c;
-		}
-		return c;
-	}
-
 	// name for array generation from java
 	public String className;
 
@@ -99,7 +74,7 @@ public class HiClassArray extends HiClass {
 	public static HiClass decode(DecodeContext os) throws IOException {
 		// assumed cell class is already read
 		HiClass cellClass = os.readClass();
-		return getArrayClass(cellClass);
+		return cellClass.getArrayClass();
 	}
 
 	private static Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();

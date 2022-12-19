@@ -258,7 +258,7 @@ public class CompileClassContext implements ClassResolver {
 		}
 		String baseName = dimension == 0 ? name : name.substring(dimension);
 		HiClass baseClass = getBaseClass(baseName);
-		return dimension == 0 ? baseClass : HiClassArray.getArrayClass(baseClass, dimension);
+		return dimension == 0 ? baseClass : baseClass.getArrayClass(dimension);
 	}
 
 	@Override

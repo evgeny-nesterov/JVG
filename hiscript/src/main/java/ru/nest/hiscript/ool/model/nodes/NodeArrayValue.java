@@ -31,8 +31,8 @@ public class NodeArrayValue extends Node {
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass cellClass = type.getClass(ctx);
-		HiClass currentCellClass = dimensions > 1 ? HiClass.getArrayClass(cellClass, dimensions - 1) : cellClass;
-		HiClassArray clazz = HiClass.getArrayClass(currentCellClass, 1);
+		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
+		HiClassArray clazz = currentCellClass.getArrayClass(1);
 		return clazz;
 	}
 
@@ -49,8 +49,8 @@ public class NodeArrayValue extends Node {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		HiClass cellClass = type.getClass(ctx);
-		HiClass currentCellClass = dimensions > 1 ? HiClass.getArrayClass(cellClass, dimensions - 1) : cellClass;
-		HiClassArray clazz = HiClass.getArrayClass(currentCellClass, 1);
+		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
+		HiClassArray clazz = currentCellClass.getArrayClass(1);
 		Class<?> c = Arrays.getClass(cellClass, dimensions - 1);
 
 		int size = array.length;
