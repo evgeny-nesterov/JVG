@@ -26,7 +26,7 @@ public class NodeConstructor extends Node {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.clazz = clazz;
 		this.argValues = argValues;
-		name = clazz.getFullName().intern();
+		name = clazz.getFullName(clazz.getClassLoader()).intern();
 	}
 
 	private NodeConstructor(Node[] argValues) {

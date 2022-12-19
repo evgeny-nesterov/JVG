@@ -76,7 +76,11 @@ public class HiClass implements Codeable, TokenAccessible {
 		userClassLoader = classLoader;
 	}
 
-	public HiClassLoader classLoader;
+	protected HiClassLoader classLoader;
+
+	public HiClassLoader getClassLoader() {
+		return classLoader;
+	}
 
 	static {
 		loadSystemClasses();
@@ -110,15 +114,10 @@ public class HiClass implements Codeable, TokenAccessible {
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Java.hi"), false));
 
-			for (HiClass clazz : classes) {
-				systemClassLoader.addClass(clazz);
-			}
-
 			HiCompiler compiler = new HiCompiler(null);
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
 				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-				ctx.isRegisterClass = true;
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();
@@ -128,19 +127,19 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	// for ClassPrimitive, ClassArray and ClassNull
-	public HiClass(HiClass superClass, HiClass enclosingClass, String name, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, HiClass superClass, HiClass enclosingClass, String name, int type, ClassResolver classResolver) {
 		this.superClass = superClass;
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(classResolver, enclosingClass, name, type);
+		init(classLoader, classResolver, enclosingClass, name, type);
 	}
 
 	// for ClassParseRule, InterfaceParseRule and NewParseRule
-	public HiClass(Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(classResolver, enclosingClass, name, type);
+		init(classLoader, classResolver, enclosingClass, name, type);
 	}
 
 	// for decode
@@ -151,7 +150,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		// init(...) is in decode
 	}
 
-	private void init(ClassResolver classResolver, HiClass enclosingClass, String name, int type) {
+	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, int type) {
 		this.enclosingClass = enclosingClass;
 		this.type = type;
 
@@ -173,15 +172,11 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// intern name to optimize via a == b
 		this.name = name.intern();
-		this.fullName = getFullName();
-
-		// register class by fullName
-		if (classResolver != null && classResolver.isRegisterClass() && classLoader.getClass(fullName) != this) {
-			classLoader.addClass(this);
-		}
+		this.fullName = getFullName(classLoader);
+		this.classLoader = classLoader;
 	}
 
-	public String getFullName() {
+	public String getFullName(HiClassLoader classLoader) {
 		if (this.fullName == null) {
 			if (enclosingClass != null) {
 				switch (type) {
@@ -438,8 +433,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiClassArray getArrayClass() {
 		if (arrayClass == null) {
-			arrayClass = new HiClassArray(this);
-			classLoader.addClass(arrayClass);
+			arrayClass = new HiClassArray(classLoader, this);
 		}
 		return arrayClass;
 	}
@@ -1040,7 +1034,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
 					public void classLoaded(HiClass clazz) {
-						classAccess[0].init(null, clazz, classAccess[0].name, classAccess[0].type);
+						classAccess[0].init(userClassLoader, null, clazz, classAccess[0].name, classAccess[0].type);
 					}
 				}, exc.getIndex());
 			}
@@ -1060,7 +1054,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(null, outerClass, name, type);
+			clazz.init(userClassLoader, null, outerClass, name, type);
 		}
 
 		HiClass oldClass = os.getHiClass();

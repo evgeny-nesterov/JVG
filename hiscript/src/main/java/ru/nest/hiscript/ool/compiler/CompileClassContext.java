@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compiler;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
@@ -12,7 +13,6 @@ import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Token;
@@ -30,6 +30,7 @@ public class CompileClassContext implements ClassResolver {
 		this.parent = null;
 		this.enclosingClass = enclosingClass;
 		this.classType = classType;
+		this.classLoader = new HiClassLoader("compile");
 	}
 
 	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, int classType) {
@@ -38,7 +39,10 @@ public class CompileClassContext implements ClassResolver {
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
 		this.classType = classType;
+		this.classLoader = parent.classLoader;
 	}
+
+	private HiClassLoader classLoader;
 
 	private HiCompiler compiler;
 
@@ -72,6 +76,10 @@ public class CompileClassContext implements ClassResolver {
 
 	public HiCompiler getCompiler() {
 		return compiler;
+	}
+
+	public HiClassLoader getClassLoader() {
+		return classLoader;
 	}
 
 	public void addEnum(HiEnumValue enumValue) {
@@ -241,13 +249,6 @@ public class CompileClassContext implements ClassResolver {
 			level = level.parent;
 		}
 		return null;
-	}
-
-	public boolean isRegisterClass = true;
-
-	@Override
-	public boolean isRegisterClass() {
-		return isRegisterClass;
 	}
 
 	@Override

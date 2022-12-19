@@ -313,11 +313,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	@Override
-	public boolean isRegisterClass() {
-		return true;
-	}
-
-	@Override
 	public HiClass getClass(String name) {
 		// search in blocks up to method or constructor
 		StackLevel level = this.level;

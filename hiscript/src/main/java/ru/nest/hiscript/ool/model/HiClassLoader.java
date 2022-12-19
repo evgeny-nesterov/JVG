@@ -34,17 +34,6 @@ public class HiClassLoader {
 		}
 	}
 
-	public synchronized void addClass(HiClass clazz) {
-		if (clazz.classLoader != null) {
-			throw new RuntimeException("can't add loaded class to class loader '" + name + "': " + clazz.fullName);
-		}
-		if (classes.containsKey(clazz.fullName)) {
-			throw new RuntimeException("can't add class to class loader '" + name + "': another class with name " + clazz.fullName + " already loaded");
-		}
-		clazz.classLoader = this;
-		classes.put(clazz.fullName, clazz);
-	}
-
 	public synchronized boolean removeClass(HiClass clazz) {
 		if (classes.get(clazz.name) == clazz) {
 			classes.remove(clazz.name);
@@ -127,13 +116,14 @@ public class HiClassLoader {
 		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
 		HiCompiler compiler = new HiCompiler(tokenizer);
 		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
+		for (HiClass clazz : classes) {
+			clazz.classLoader = this;
+		}
 		if (validate) {
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
 				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-				ctx.isRegisterClass = true;
 				clazz.validate(validationInfo, ctx);
-				addClass(clazz);
 			}
 			validationInfo.throwExceptionIf();
 		}
