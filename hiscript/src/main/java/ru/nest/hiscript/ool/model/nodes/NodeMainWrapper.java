@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
@@ -13,19 +14,23 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeMainWrapper extends Node {
-	public NodeMainWrapper(NodeBlock body, HiClass rootClass) {
+	public NodeMainWrapper(HiClassLoader classLoader, NodeBlock body, HiClass rootClass) {
 		super("main", MAIN_WRAPPER);
+		this.classLoader = classLoader;
 		this.body = body;
+		this.rootClass = rootClass;
 		this.rootClass = getRootClass(body);
 	}
+
+	private HiClassLoader classLoader;
 
 	private NodeBlock body;
 
 	private HiClass rootClass;
 
-	public HiClass getRootClass(NodeBlock body) {
+	private HiClass getRootClass(NodeBlock body) {
 		if (rootClass == null) {
-			rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, null);
+			rootClass = new HiClass(classLoader, null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, null);
 		}
 		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
@@ -61,6 +66,6 @@ public class NodeMainWrapper extends Node {
 	}
 
 	public static NodeMainWrapper decode(DecodeContext os) throws IOException {
-		return new NodeMainWrapper(NodeBlock.decode(os), null);
+		return new NodeMainWrapper(os.getClassLoader(), NodeBlock.decode(os), null);
 	}
 }

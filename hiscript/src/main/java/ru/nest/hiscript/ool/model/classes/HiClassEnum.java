@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
@@ -20,8 +21,8 @@ import java.util.Map;
 public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
 
-	public HiClassEnum(String name, int type) {
-		super(Type.enumType, null, null, name, type, null);
+	public HiClassEnum(HiClassLoader classLoader, String name, int type) {
+		super(classLoader, Type.enumType, null, null, name, type, null);
 	}
 
 	private Map<String, HiField> enumsMap;

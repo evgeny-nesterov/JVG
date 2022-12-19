@@ -22,7 +22,10 @@ public class HiCompiler {
 
 	private ValidationInfo validationInfo;
 
-	public HiCompiler(Tokenizer tokenizer) {
+	private HiClassLoader classLoader;
+
+	public HiCompiler(HiClassLoader classLoader, Tokenizer tokenizer) {
+		this.classLoader = classLoader;
 		this.tokenizer = tokenizer;
 		this.rule = new RootParseRule(this, true);
 	}
@@ -44,14 +47,14 @@ public class HiCompiler {
 		this.rule = rule;
 	}
 
-	public static HiCompiler getDefaultCompiler(String s) {
+	public static HiCompiler getDefaultCompiler(HiClassLoader classLoader, String s) {
 		Tokenizer t = Tokenizer.getDefaultTokenizer(s);
-		return new HiCompiler(t);
+		return new HiCompiler(classLoader, t);
 	}
 
 	public static HiCompiler getDefaultCompiler(InputStream is) throws IOException {
 		Tokenizer t = Tokenizer.getDefaultTokenizer(is);
-		return new HiCompiler(t);
+		return new HiCompiler(null, t);
 	}
 
 	public boolean isAssertsActive() {
@@ -72,5 +75,9 @@ public class HiCompiler {
 
 	public Tokenizer getTokenizer() {
 		return tokenizer;
+	}
+
+	public HiClassLoader getClassLoader() {
+		return classLoader;
 	}
 }

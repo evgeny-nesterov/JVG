@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,9 +35,39 @@ public class HiClassLoader {
 		}
 	}
 
+	public synchronized void addClass(HiClass clazz) {
+		HiClass currentClass = classes.get(clazz.fullName);
+		if (currentClass != null) {
+			if (currentClass != clazz) {
+				throw new RuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+			} else {
+				return;
+			}
+		}
+		classes.put(clazz.fullName, clazz);
+		clazz.classLoader = this;
+	}
+
+	public synchronized void addClasses(Collection<HiClass> classes) {
+		for (HiClass clazz : classes) {
+			HiClass currentClass = this.classes.get(clazz.fullName);
+			if (currentClass != null) {
+				if (currentClass != clazz) {
+					throw new RuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+				} else {
+					return;
+				}
+			}
+		}
+		for (HiClass clazz : classes) {
+			this.classes.put(clazz.fullName, clazz);
+			clazz.classLoader = this;
+		}
+	}
+
 	public synchronized boolean removeClass(HiClass clazz) {
-		if (classes.get(clazz.name) == clazz) {
-			classes.remove(clazz.name);
+		if (classes.get(clazz.fullName) == clazz) {
+			classes.remove(clazz.fullName);
 			clazz.classLoader = null;
 			return true;
 		}
@@ -46,6 +77,9 @@ public class HiClassLoader {
 	public synchronized void addClassLoader(HiClassLoader classLoader) {
 		if (classLoader.parent != null) {
 			throw new RuntimeException("can't add class loader");
+		}
+		if (classLoader == HiClass.systemClassLoader) {
+			throw new RuntimeException("can't add system class loader");
 		}
 
 		HiClassLoader parent = this;
@@ -72,6 +106,26 @@ public class HiClassLoader {
 	}
 
 	public synchronized HiClass getClass(String name) {
+		HiClassLoader parent = this.parent;
+		boolean hasSystem = false;
+		while (parent != null) {
+			if (parent == HiClass.systemClassLoader) {
+				hasSystem = true;
+			}
+			HiClass clazz = parent.classes.get(name);
+			if (clazz != null) {
+				return clazz;
+			}
+			parent = parent.parent;
+		}
+
+		if (!hasSystem && this != HiClass.systemClassLoader) {
+			HiClass clazz = HiClass.systemClassLoader.classes.get(name);
+			if (clazz != null) {
+				return clazz;
+			}
+		}
+
 		HiClass clazz = classes.get(name);
 		if (clazz == null && classLoaders != null) {
 			for (HiClassLoader classLoader : classLoaders) {
@@ -114,11 +168,9 @@ public class HiClassLoader {
 
 	public List<HiClass> load(String classCode, boolean validate) throws Exception {
 		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
-		HiCompiler compiler = new HiCompiler(tokenizer);
+		HiCompiler compiler = new HiCompiler(this, tokenizer);
 		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
-		for (HiClass clazz : classes) {
-			clazz.classLoader = this;
-		}
+		addClasses(classes);
 		if (validate) {
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {

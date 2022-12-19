@@ -10,7 +10,7 @@ public class HiClassNull extends HiClass {
 	public final static HiClassNull NULL = new HiClassNull();
 
 	private HiClassNull() {
-		super((HiClass) null, null, "null", CLASS_TYPE_TOP, null);
+		super(HiClass.systemClassLoader, null, null, "null", CLASS_TYPE_TOP, null);
 	}
 
 	@Override

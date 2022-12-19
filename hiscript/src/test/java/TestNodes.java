@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Operation;
@@ -86,7 +87,7 @@ public class TestNodes extends HiTest {
 	}
 
 	private Value doBinaryOperation(Operation operation, Node n1, Node n2) {
-		RuntimeContext ctx = new RuntimeContext(new HiCompiler(null), true);
+		RuntimeContext ctx = new RuntimeContext(new HiCompiler(new HiClassLoader("test"), null), true);
 		Value v1 = getValue(ctx, n1);
 		Value v2 = getValue(ctx, n2);
 		operation.doOperation(ctx, v1, v2);

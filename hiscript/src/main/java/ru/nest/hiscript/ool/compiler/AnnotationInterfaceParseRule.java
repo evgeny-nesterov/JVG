@@ -45,7 +45,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
-			ctx.clazz = new HiClassAnnotation(name, ctx.classType);
+			ctx.clazz = new HiClassAnnotation(ctx.getClassLoader(), name, ctx.classType);
 			ctx.clazz.isInterface = true;
 			ctx.clazz.modifiers = modifiers;
 			ctx.clazz.annotations = annotations;

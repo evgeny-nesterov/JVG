@@ -1,8 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.ClassFileParseRule;
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.compiler.ParserUtil;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -17,12 +15,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
-import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +108,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Java.hi"), false));
 
-			HiCompiler compiler = new HiCompiler(null);
+			HiCompiler compiler = new HiCompiler(systemClassLoader, null);
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
 				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
@@ -173,7 +167,11 @@ public class HiClass implements Codeable, TokenAccessible {
 		// intern name to optimize via a == b
 		this.name = name.intern();
 		this.fullName = getFullName(classLoader);
-		this.classLoader = classLoader;
+
+		if (classLoader == null) {
+			classLoader = userClassLoader;
+		}
+		classLoader.addClass(this);
 	}
 
 	public String getFullName(HiClassLoader classLoader) {
@@ -286,7 +284,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				}
 			}
 
-			RuntimeContext ctx = classResolver instanceof RuntimeContext ? (RuntimeContext) classResolver : new RuntimeContext(null, false);
+			RuntimeContext ctx = classResolver instanceof RuntimeContext ? (RuntimeContext) classResolver : new RuntimeContext(classResolver.getCompiler(), false);
 			ctx.enterInitialization(this, null, null);
 			try {
 				if (initializers != null) {
@@ -884,7 +882,8 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public static HiClass forName(ClassResolver classResolver, String name) {
-		HiClass clazz = systemClassLoader.getClass(name);
+		HiClassLoader classLoader = classResolver != null ? classResolver.getClassLoader() : HiClass.userClassLoader;
+		HiClass clazz = classLoader.getClass(name);
 		if (clazz != null && classResolver != null) {
 			clazz.init(classResolver);
 		}
@@ -1034,7 +1033,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
 					public void classLoaded(HiClass clazz) {
-						classAccess[0].init(userClassLoader, null, clazz, classAccess[0].name, classAccess[0].type);
+						classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].type);
 					}
 				}, exc.getIndex());
 			}
@@ -1045,16 +1044,16 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		HiClass clazz;
 		if (classType == CLASS_ENUM) {
-			clazz = new HiClassEnum(name, type);
+			clazz = new HiClassEnum(os.getClassLoader(), name, type);
 		} else if (classType == CLASS_RECORD) {
-			clazz = new HiClassRecord(name, type, null);
+			clazz = new HiClassRecord(os.getClassLoader(), name, type, null);
 		} else {
 			clazz = new HiClass(superClassType, name, type);
 		}
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(userClassLoader, null, outerClass, name, type);
+			clazz.init(os.getClassLoader(), null, outerClass, name, type);
 		}
 
 		HiClass oldClass = os.getHiClass();

@@ -1,5 +1,4 @@
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.Node;
@@ -75,22 +74,19 @@ public abstract class HiTest {
 	}
 
 	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
-		HiClass.setUserClassLoader(new HiClassLoader("test"));
-		HiCompiler compiler = HiCompiler.getDefaultCompiler(script);
+		HiCompiler compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
 		compiler.setAssertsActive(true);
 		compiler.setVerbose(true);
 		Node node = compiler.build();
 		if (node != null) {
 			if (serialize) {
-				//node = serialize(node);
+				node = serialize(node);
 			}
 			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
 				node.execute(ctx);
 				ctx.throwExceptionIf(true);
 			}
 		}
-		// TODO create class loaders
-		// problems! HiClass.clearClassLoader();
 	}
 
 	private void onFail(String script, String message) {
@@ -115,7 +111,8 @@ public abstract class HiTest {
 		//		System.out.println("\n" + new String(bytes));
 		//		System.out.println("======================");
 
-		DecodeContext ctxDecode = new DecodeContext(bytes);
+		HiClassLoader classLoader = new HiClassLoader("test-decoded");
+		DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
 		return ctxDecode.load();
 	}
 }

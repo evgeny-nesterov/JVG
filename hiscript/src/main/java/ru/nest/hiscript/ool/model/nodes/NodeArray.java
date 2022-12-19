@@ -18,8 +18,9 @@ public class NodeArray extends Node {
 	public NodeArray(Type cellType, Node[] dimensions) {
 		super("array", TYPE_ARRAY);
 
+		this.cellType = cellType;
 		this.dimensions = dimensions;
-		dimensionsCount = dimensions.length;
+		this.dimensionsCount = dimensions.length;
 		this.type = Type.getArrayType(cellType, dimensionsCount);
 	}
 
@@ -28,6 +29,8 @@ public class NodeArray extends Node {
 	private int dimensionsCountActive;
 
 	private int[] dim;
+
+	public Type cellType;
 
 	public Type type;
 
@@ -93,7 +96,7 @@ public class NodeArray extends Node {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeType(type);
+		os.writeType(cellType);
 		os.writeByte(dimensionsCount);
 		os.writeNullable(dimensions);
 	}

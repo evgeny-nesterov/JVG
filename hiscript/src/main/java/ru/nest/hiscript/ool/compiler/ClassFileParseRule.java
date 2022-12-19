@@ -22,7 +22,7 @@ public class ClassFileParseRule extends ParseRule<Node> {
 
 	@Override
 	public Node visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		HiCompiler compiler = ctx != null ? ctx.getCompiler() : new HiCompiler(tokenizer);
+		HiCompiler compiler = ctx != null ? ctx.getCompiler() : new HiCompiler(ctx.getClassLoader(), tokenizer);
 		visit(tokenizer, compiler);
 		return null;
 	}
@@ -67,8 +67,6 @@ public class ClassFileParseRule extends ParseRule<Node> {
 	}
 
 	private CompileClassContext getContext(HiCompiler compiler) {
-		CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-		ctx.isRegisterClass = false;
-		return ctx;
+		return new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
 	}
 }

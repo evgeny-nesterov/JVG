@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.Type;
@@ -32,20 +33,27 @@ public class DecodeContext {
 		return clazz;
 	}
 
-	public DecodeContext(byte[] data) {
-		this(new DataInputStream(new ByteArrayInputStream(data)));
+	public DecodeContext(HiClassLoader classLoader, byte[] data) {
+		this(classLoader, new DataInputStream(new ByteArrayInputStream(data)));
 	}
 
-	public DecodeContext(DataInputStream is) {
-		this(is, null);
+	public DecodeContext(HiClassLoader classLoader, DataInputStream is) {
+		this(classLoader, is, null);
 	}
 
-	public DecodeContext(DataInputStream is, DecodeContext parent) {
+	public DecodeContext(HiClassLoader classLoader, DataInputStream is, DecodeContext parent) {
+		this.classLoader = classLoader;
 		this.is = is;
 		this.parent = parent;
 	}
 
 	private DecodeContext parent;
+
+	private HiClassLoader classLoader;
+
+	public HiClassLoader getClassLoader() {
+		return classLoader;
+	}
 
 	public DecodeContext getRoot() {
 		DecodeContext ctx = this;
@@ -237,7 +245,7 @@ public class DecodeContext {
 		int count = is.readShort();
 		classes = new HiClass[count];
 		for (int index = 0; index < count; index++) {
-			DecodeContext ctx = new DecodeContext(is, this);
+			DecodeContext ctx = new DecodeContext(classLoader, is, this);
 			classes[index] = HiClass.decode(ctx);
 
 			// DEBUG

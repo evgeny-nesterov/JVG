@@ -22,7 +22,7 @@ public class HiClassArray extends HiClass {
 	public int dimension;
 
 	public HiClassArray(HiClassLoader classLoader, HiClass cellClass) {
-		super(userClassLoader, OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
+		super(classLoader, OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
 		init(cellClass);
 	}
 

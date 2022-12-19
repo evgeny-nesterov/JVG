@@ -40,10 +40,10 @@ public class EnumParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
-			ctx.clazz = new HiClassEnum(enumName, ctx.classType);
+			ctx.clazz = new HiClassEnum(ctx.getClassLoader(), enumName, ctx.classType);
 			ctx.clazz.modifiers = modifiers;
 			ctx.clazz.annotations = annotations;
-				
+
 			visitContent(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);

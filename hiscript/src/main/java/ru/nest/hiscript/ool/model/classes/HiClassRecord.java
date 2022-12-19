@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -14,8 +15,8 @@ import java.io.IOException;
 public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
 
-	public HiClassRecord(String name, int type, ClassResolver classResolver) {
-		super(Type.recordType, null, null, name, type, classResolver);
+	public HiClassRecord(HiClassLoader classLoader, String name, int type, ClassResolver classResolver) {
+		super(classLoader, Type.recordType, null, null, name, type, classResolver);
 	}
 
 	@Override

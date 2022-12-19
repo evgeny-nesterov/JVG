@@ -251,7 +251,7 @@ Util.header("INNER CLASSES");
 	T1.T2 t22 = t1.new T2(22);
 
 	t1 = new T1(3);
-	T1.T2[] t23 = t1.new T2[1];
+	T1.T2[] t23 = new T1.T2[1];
 	t23[0] = t1.new T2(33);
 }
 
@@ -598,9 +598,9 @@ Util.header("EXPRESSION SWITCH");
 	System.println("\tc=" + c + " (7)");
 	assert c == 7;
 
-	assert switch(1) {case 1->  1; default-> 2;} == 1;
-	assert switch(2) {case 1->  1; default-> 2;} == 2;
-	assert switch(3) {case 1, 2, 3, 4->  1; case 1, 2, 3, 4-> 2;} == 1;
+	assert switch(1) {case 1 -> 1; default -> 2;} == 1;
+	assert switch(2) {case 1 -> 1; default -> 2;} == 2;
+	assert switch(3) {case 1, 2, 3, 4 -> 1; case 1, 2, 3, 4 -> 2;} == 1;
 }
 
 ///////////

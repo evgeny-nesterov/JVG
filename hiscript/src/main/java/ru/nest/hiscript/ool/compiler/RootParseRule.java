@@ -27,10 +27,9 @@ public class RootParseRule extends ParseRule<Node> {
 		boolean createMainMethod = false;
 		HiClass rootClass = null;
 		if (ctx == null) {
-			rootClass = new HiClass(null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
+			rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
 
 			ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-			ctx.isRegisterClass = false;
 			ctx.clazz = rootClass;
 			createMainMethod = wrapped;
 		}
@@ -39,7 +38,7 @@ public class RootParseRule extends ParseRule<Node> {
 
 		Node node;
 		if (createMainMethod) {
-			NodeMainWrapper mainWrapperNode = new NodeMainWrapper(body, rootClass);
+			NodeMainWrapper mainWrapperNode = new NodeMainWrapper(ctx.getClassLoader(), body, rootClass);
 			node = mainWrapperNode;
 		} else {
 			if (body != null) {

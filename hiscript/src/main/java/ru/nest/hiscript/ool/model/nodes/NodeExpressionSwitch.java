@@ -12,7 +12,7 @@ import java.util.List;
 
 public class NodeExpressionSwitch extends Node {
 	public NodeExpressionSwitch(Node valueNode) {
-		super("switch", TYPE_SWITCH);
+		super("switch", TYPE_EXPRESSION_SWITCH);
 		this.valueNode = valueNode;
 	}
 
@@ -97,9 +97,9 @@ public class NodeExpressionSwitch extends Node {
 
 	public static NodeExpressionSwitch decode(DecodeContext os) throws IOException {
 		NodeExpressionSwitch node = new NodeExpressionSwitch(os.read(Node.class));
-		int size = os.readShort();
-		node.casesValues = os.readNullableListArray(Node.class, size);
-		node.casesNodes = os.readNullableList(Node.class, size);
+		node.size = os.readShort();
+		node.casesValues = os.readNullableListArray(Node.class, node.size);
+		node.casesNodes = os.readNullableList(Node.class, node.size);
 		return node;
 	}
 }

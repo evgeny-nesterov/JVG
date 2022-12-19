@@ -23,6 +23,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
 import ru.nest.hiscript.ool.model.nodes.NodeDoWhile;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
@@ -145,6 +146,8 @@ public abstract class Node implements Codeable, TokenAccessible {
 	public final static byte TYPE_ANNOTATION = 45;
 
 	public final static byte TYPE_ANNOTATION_ARGUMENT = 46;
+
+	public final static byte TYPE_EXPRESSION_SWITCH = 47;
 
 	public Node(String name, int type) {
 		this(name, type, null);
@@ -310,6 +313,9 @@ public abstract class Node implements Codeable, TokenAccessible {
 				break;
 			case TYPE_SWITCH:
 				node = NodeSwitch.decode(os);
+				break;
+			case TYPE_EXPRESSION_SWITCH:
+				node = NodeExpressionSwitch.decode(os);
 				break;
 			case TYPE_THROW:
 				node = NodeThrow.decode(os);

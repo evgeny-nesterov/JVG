@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.classes;
 import com.sun.istack.internal.NotNull;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -26,8 +27,8 @@ import java.util.stream.Collectors;
 public class HiClassJava extends HiClass {
 	public Class javaClass;
 
-	public HiClassJava(String name, Class javaClass) {
-		super(null, null, name, CLASS_TYPE_TOP, null);
+	public HiClassJava(HiClassLoader classLoader, String name, Class javaClass) {
+		super(classLoader, null, null, name, CLASS_TYPE_TOP, null);
 		this.javaClass = javaClass;
 	}
 

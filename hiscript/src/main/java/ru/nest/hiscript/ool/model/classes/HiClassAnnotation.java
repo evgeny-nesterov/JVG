@@ -1,14 +1,15 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
 import java.io.IOException;
 
 public class HiClassAnnotation extends HiClass {
-	public HiClassAnnotation(String name, int type) {
-		super((HiClass) null, null, name, type, null);
+	public HiClassAnnotation(HiClassLoader classLoader, String name, int type) {
+		super(classLoader, null, null, name, type, null);
 	}
 
 	@Override

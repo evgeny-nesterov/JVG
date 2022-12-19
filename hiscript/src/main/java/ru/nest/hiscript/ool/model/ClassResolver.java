@@ -6,4 +6,8 @@ public interface ClassResolver {
 	HiClass getLocalClass(HiClass clazz, String name);
 
 	void processResolverException(String message);
+
+	HiClassLoader getClassLoader();
+
+	HiCompiler getCompiler();
 }

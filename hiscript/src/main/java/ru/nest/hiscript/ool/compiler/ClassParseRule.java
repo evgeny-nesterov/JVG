@@ -91,7 +91,7 @@ public class ClassParseRule extends ParserUtil {
 				interfacesList.toArray(interfaces);
 			}
 
-			ctx.clazz = new HiClass(superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+			ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
 			ctx.clazz.modifiers = modifiers;
 
 			visitContent(tokenizer, ctx, null);

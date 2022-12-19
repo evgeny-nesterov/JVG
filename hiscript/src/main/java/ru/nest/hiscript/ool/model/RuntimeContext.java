@@ -95,6 +95,16 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 	}
 
+	@Override
+	public HiCompiler getCompiler() {
+		return compiler;
+	}
+
+	@Override
+	public HiClassLoader getClassLoader() {
+		return compiler.getClassLoader();
+	}
+
 	public boolean isCurrentLabel() {
 		if (label == null && level.label == null) {
 			return true;

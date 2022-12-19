@@ -30,7 +30,6 @@ public class CompileClassContext implements ClassResolver {
 		this.parent = null;
 		this.enclosingClass = enclosingClass;
 		this.classType = classType;
-		this.classLoader = new HiClassLoader("compile");
 	}
 
 	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, int classType) {
@@ -39,10 +38,7 @@ public class CompileClassContext implements ClassResolver {
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
 		this.classType = classType;
-		this.classLoader = parent.classLoader;
 	}
-
-	private HiClassLoader classLoader;
 
 	private HiCompiler compiler;
 
@@ -74,12 +70,14 @@ public class CompileClassContext implements ClassResolver {
 
 	public CompileClassContext parent;
 
+	@Override
 	public HiCompiler getCompiler() {
 		return compiler;
 	}
 
+	@Override
 	public HiClassLoader getClassLoader() {
-		return classLoader;
+		return compiler.getClassLoader();
 	}
 
 	public void addEnum(HiEnumValue enumValue) {

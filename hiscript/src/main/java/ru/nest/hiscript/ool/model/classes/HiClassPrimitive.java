@@ -28,8 +28,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive VOID = new HiClassPrimitive("void");
 
 	private HiClassPrimitive(String name) {
-		super(null, null, name, CLASS_TYPE_TOP, null);
-		systemClassLoader.addClass(this);
+		super(HiClass.systemClassLoader, null, null, name, CLASS_TYPE_TOP, null);
 	}
 
 	private static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();

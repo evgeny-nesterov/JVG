@@ -1,6 +1,6 @@
 		+1. Add variable arguments (void method(Object... array), method("arg1", "arg2", "arg3"))
 ?2. Autoboxing/unboxing (add classes Integer etc., Integer a = 1; int b = a;)
-!3. Add class loader
+        +3. Add class loader
 4. Add import of file with classes (import <packages.className>), add packages
 		+5. Class implementation
             class A implements If1, If2 {
@@ -22,7 +22,7 @@
         +17. Multiple case in statement switch (case <expr1>, <expr2>, ..., <exprN>: <statementBody>)
         +18. Assert (assert condition, or assert condition : message)
         +19. RuntimeException, AssertException, catch only declared exceptions
-20. Implement NodeExpression.getExpressionType() and check assert on boolean etc.
+*20. Precompile validation
         +21. Text blocks ("""\n...""")
         -22. Volatile field modifier
         +23. Instanceof with auto casting (a instanceof B b)

@@ -8,11 +8,10 @@ import ru.nest.hiscript.ool.model.classes.HiClassJava;
 public class JavaImpl extends ImplUtil {
 	public static void Java_void_importClass_String_String(RuntimeContext ctx, HiObject className, HiObject javaClassName) throws ClassNotFoundException, NoSuchMethodException {
 		String name = getString(ctx, className);
-		HiClass clazz = HiClass.userClassLoader.getClass(name);
+		HiClass clazz = ctx.getClassLoader().getClass(name);
 		if (clazz == null) {
 			Class javaClass = Class.forName(getString(ctx, javaClassName));
-			clazz = new HiClassJava(name, javaClass);
-			HiClass.userClassLoader.addClass(clazz);
+			clazz = new HiClassJava(ctx.getClassLoader(), name, javaClass);
 		} else if (!(clazz instanceof HiClassJava)) {
 			ctx.throwRuntimeException("Can't import java class with name " + className);
 		}

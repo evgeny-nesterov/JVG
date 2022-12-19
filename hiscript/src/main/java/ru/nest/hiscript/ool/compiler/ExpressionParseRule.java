@@ -354,12 +354,22 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		// visit identifier as word: package, class, method, field
 		String identifierName = visitWord(tokenizer, Words.NOT_SERVICE);
-		String primitiveTypeName = visitWord(tokenizer, Words.BYTE, Words.SHORT, Words.INT, Words.LONG, Words.FLOAT, Words.DOUBLE, Words.BOOLEAN, Words.CHAR);
+		String primitiveTypeName = null;
+		if (identifierName == null) {
+			tokenizer.start();
+			primitiveTypeName = visitWord(tokenizer, Words.BYTE, Words.SHORT, Words.INT, Words.LONG, Words.FLOAT, Words.DOUBLE, Words.BOOLEAN, Words.CHAR);
+		}
 		if (identifierName != null || primitiveTypeName != null) {
 			Token identifierToken = tokenizer.currentToken();
 			int dimension = visitDimension(tokenizer);
 			if (primitiveTypeName != null) {
-				identifierName = primitiveTypeName;
+				if (dimension > 0) {
+					tokenizer.commit();
+					identifierName = primitiveTypeName;
+				} else {
+					tokenizer.rollback();
+					return false;
+				}
 			}
 
 			boolean visitCastAfterIdentifier = false;
