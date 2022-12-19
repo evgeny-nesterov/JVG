@@ -2,8 +2,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
-import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -46,19 +46,19 @@ public class TestNodes extends HiTest {
 		assertLong(doBinaryOperation(OperationPlus.getInstance(), longNode(1), longNode(Integer.MAX_VALUE)), Integer.MAX_VALUE + 1L);
 	}
 
-	private Node byteNode(int value) {
+	private HiNode byteNode(int value) {
 		return NodeByte.getInstance((byte) value, false, null);
 	}
 
-	private Node shortNode(int value) {
+	private HiNode shortNode(int value) {
 		return new NodeShort((short) value, false, null);
 	}
 
-	private Node intNode(int value) {
+	private HiNode intNode(int value) {
 		return new NodeInt(value, false, null);
 	}
 
-	private Node longNode(long value) {
+	private HiNode longNode(long value) {
 		return new NodeLong(value, false, null);
 	}
 
@@ -86,7 +86,7 @@ public class TestNodes extends HiTest {
 		Assertions.assertTrue(value.longNumber == n);
 	}
 
-	private Value doBinaryOperation(Operation operation, Node n1, Node n2) {
+	private Value doBinaryOperation(HiOperation operation, HiNode n1, HiNode n2) {
 		RuntimeContext ctx = new RuntimeContext(new HiCompiler(new HiClassLoader("test"), null), true);
 		Value v1 = getValue(ctx, n1);
 		Value v2 = getValue(ctx, n2);
@@ -94,7 +94,7 @@ public class TestNodes extends HiTest {
 		return v1;
 	}
 
-	private Value getValue(RuntimeContext ctx, Node valueNode) {
+	private Value getValue(RuntimeContext ctx, HiNode valueNode) {
 		valueNode.execute(ctx);
 		Value value = new Value(ctx);
 		ctx.value.copyTo(value);

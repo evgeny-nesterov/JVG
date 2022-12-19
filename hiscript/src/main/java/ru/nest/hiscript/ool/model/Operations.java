@@ -458,7 +458,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 		return "<No such operation: " + operation + ">";
 	}
 
-	public static Operation getOperation(int operation) {
+	public static HiOperation getOperation(int operation) {
 		switch (operation) {
 			// Unary operations
 			case PREFIX_INCREMENT:

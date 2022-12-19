@@ -1,22 +1,22 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeWhile extends Node {
-	public NodeWhile(Node condition, Node body) {
+public class NodeWhile extends HiNode {
+	public NodeWhile(HiNode condition, HiNode body) {
 		super("while", TYPE_WHILE);
 		this.condition = condition;
 		this.body = body;
 	}
 
-	private Node condition;
+	private HiNode condition;
 
-	private Node body;
+	private HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -69,6 +69,6 @@ public class NodeWhile extends Node {
 	}
 
 	public static NodeWhile decode(DecodeContext os) throws IOException {
-		return new NodeWhile(os.read(Node.class), os.readNullable(Node.class));
+		return new NodeWhile(os.read(HiNode.class), os.readNullable(HiNode.class));
 	}
 }

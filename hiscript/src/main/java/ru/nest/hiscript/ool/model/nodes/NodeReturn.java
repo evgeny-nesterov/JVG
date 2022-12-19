@@ -1,21 +1,21 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeReturn extends Node {
-	public NodeReturn(Node value) {
+public class NodeReturn extends HiNode {
+	public NodeReturn(HiNode value) {
 		super("return", TYPE_RETURN);
 		this.value = value;
 	}
 
-	private Node value;
+	private HiNode value;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -62,6 +62,6 @@ public class NodeReturn extends Node {
 	}
 
 	public static NodeReturn decode(DecodeContext os) throws IOException {
-		return new NodeReturn(os.readNullable(Node.class));
+		return new NodeReturn(os.readNullable(HiNode.class));
 	}
 }

@@ -1,16 +1,16 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Native;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNative;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeNative extends Node {
+public class NodeNative extends HiNode {
 	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
 		super("native", TYPE_NATIVE);
 
@@ -60,7 +60,7 @@ public class NodeNative extends Node {
 			HiField<?> f = ctx.getVariable(argNames[i]);
 			args[i + 1] = f.get();
 		}
-		Native.invoke(ctx, id, args);
+		HiNative.invoke(ctx, id, args);
 	}
 
 	@Override

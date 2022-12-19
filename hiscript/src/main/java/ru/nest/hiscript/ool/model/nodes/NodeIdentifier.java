@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeIdentifier extends Node {
+public class NodeIdentifier extends HiNode {
 	public NodeIdentifier(String name, int dimension) {
 		super("identifier", TYPE_IDENTIFIER);
 		this.name = name.intern();
@@ -40,7 +40,7 @@ public class NodeIdentifier extends Node {
 		} else {
 			Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
 			if (resolvedIdentifier instanceof NodeVariable) {
-				return ((Node) resolvedIdentifier).getValueType(validationInfo, ctx);
+				return ((HiNode) resolvedIdentifier).getValueType(validationInfo, ctx);
 			} else if (resolvedIdentifier instanceof HiClass) {
 				return (HiClass) resolvedIdentifier;
 			}

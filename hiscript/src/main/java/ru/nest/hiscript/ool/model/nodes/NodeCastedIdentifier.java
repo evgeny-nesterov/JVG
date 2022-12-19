@@ -1,15 +1,15 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeCastedIdentifier extends Node {
+public class NodeCastedIdentifier extends HiNode {
 	public NodeCastedIdentifier(String name, int dimension) {
 		super("identifier", TYPE_CASTED_IDENTIFIER);
 		this.name = name.intern();
@@ -28,7 +28,7 @@ public class NodeCastedIdentifier extends Node {
 
 	public String castedVariableName;
 
-	public Node castedCondition;
+	public HiNode castedCondition;
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -81,7 +81,7 @@ public class NodeCastedIdentifier extends Node {
 		NodeCastedIdentifier node = new NodeCastedIdentifier(os.readUTF(), os.readByte());
 		node.castedRecordArguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		node.castedVariableName = os.readNullableUTF();
-		node.castedCondition = os.readNullable(Node.class);
+		node.castedCondition = os.readNullable(HiNode.class);
 		return node;
 	}
 }

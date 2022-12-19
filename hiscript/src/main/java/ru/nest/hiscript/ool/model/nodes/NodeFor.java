@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeFor extends Node {
-	public NodeFor(Node initialization, NodeExpression condition, Node assignment, Node body) {
+public class NodeFor extends HiNode {
+	public NodeFor(HiNode initialization, NodeExpression condition, HiNode assignment, HiNode body) {
 		super("for", TYPE_FOR);
 		this.initialization = initialization;
 		this.condition = condition;
@@ -16,13 +16,13 @@ public class NodeFor extends Node {
 		this.body = body;
 	}
 
-	private Node initialization;
+	private HiNode initialization;
 
 	private NodeExpression condition;
 
-	private Node assignment;
+	private HiNode assignment;
 
-	private Node body;
+	private HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -105,6 +105,6 @@ public class NodeFor extends Node {
 	}
 
 	public static NodeFor decode(DecodeContext os) throws IOException {
-		return new NodeFor(os.readNullable(Node.class), (NodeExpression) os.readNullable(Node.class), os.readNullable(Node.class), os.readNullable(Node.class));
+		return new NodeFor(os.readNullable(HiNode.class), (NodeExpression) os.readNullable(HiNode.class), os.readNullable(HiNode.class), os.readNullable(HiNode.class));
 	}
 }

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -17,7 +17,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class HiField<T> extends Node implements NodeInitializer, NodeVariable, Cloneable {
+public abstract class HiField<T> extends HiNode implements NodeInitializer, NodeVariable, Cloneable {
 	private final static String packageName = HiField.class.getPackage().getName() + ".fields";
 
 	private static Map<String, Constructor<HiField<?>>> primitiveBuilders;
@@ -115,7 +115,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 
 	public String name;
 
-	public Node initializer;
+	public HiNode initializer;
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -208,7 +208,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 		return null;
 	}
 
-	public static HiField<?> getField(Type type, String name, Node initializer) {
+	public static HiField<?> getField(Type type, String name, HiNode initializer) {
 		HiField<?> field = null;
 		if (type.isArray()) {
 			field = new HiFieldArray(type, name);
@@ -282,7 +282,7 @@ public abstract class HiField<T> extends Node implements NodeInitializer, NodeVa
 	}
 
 	public static HiField<?> decode(DecodeContext os) throws IOException {
-		HiField<?> field = HiField.getField(os.readType(), os.readUTF(), os.readNullable(Node.class));
+		HiField<?> field = HiField.getField(os.readType(), os.readUTF(), os.readNullable(HiNode.class));
 		field.modifiers = Modifiers.decode(os);
 		return field;
 	}

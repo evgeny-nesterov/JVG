@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.tokenizer.Token;
 
-public abstract class NodeNumber extends Node {
+public abstract class NodeNumber extends HiNode {
 	protected boolean hasSign;
 
 	public boolean hasSign() {

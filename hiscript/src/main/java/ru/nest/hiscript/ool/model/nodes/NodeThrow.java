@@ -1,19 +1,19 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeThrow extends Node {
-	public NodeThrow(Node exception) {
+public class NodeThrow extends HiNode {
+	public NodeThrow(HiNode exception) {
 		super("throw", TYPE_THROW);
 		this.exception = exception;
 	}
 
-	private Node exception;
+	private HiNode exception;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -33,6 +33,6 @@ public class NodeThrow extends Node {
 	}
 
 	public static NodeThrow decode(DecodeContext os) throws IOException {
-		return new NodeThrow(os.read(Node.class));
+		return new NodeThrow(os.read(HiNode.class));
 	}
 }

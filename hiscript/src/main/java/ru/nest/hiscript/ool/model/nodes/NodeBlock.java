@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeBlock extends Node implements NodeInitializer {
+public class NodeBlock extends HiNode implements NodeInitializer {
 	public NodeBlock() {
 		this("block");
 	}
@@ -19,14 +19,14 @@ public class NodeBlock extends Node implements NodeInitializer {
 		super(name, TYPE_BLOCK);
 	}
 
-	public NodeBlock(Node statement) {
+	public NodeBlock(HiNode statement) {
 		this();
 		addStatement(statement);
 	}
 
-	private List<Node> statements = new ArrayList<>(0);
+	private List<HiNode> statements = new ArrayList<>(0);
 
-	public void addStatement(Node statement) {
+	public void addStatement(HiNode statement) {
 		statements.add(statement);
 	}
 
@@ -52,7 +52,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		ctx.enter(RuntimeContext.BLOCK, this);
 		boolean valid = true;
 		// TODO check isStatic
-		for (Node statement : statements) {
+		for (HiNode statement : statements) {
 			valid &= statement.validate(validationInfo, ctx);
 		}
 		ctx.exit();
@@ -68,7 +68,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		try {
 			int size = statements.size();
 			for (int i = 0; i < size; i++) {
-				Node statement = statements.get(i);
+				HiNode statement = statements.get(i);
 				statement.execute(ctx);
 
 				if (ctx.exitFromBlock()) {
@@ -99,7 +99,7 @@ public class NodeBlock extends Node implements NodeInitializer {
 		NodeBlock node = new NodeBlock();
 		node.setStatic(os.readBoolean());
 		node.setEnterType(os.readByte());
-		node.statements = os.readList(Node.class, os.readShort());
+		node.statements = os.readList(HiNode.class, os.readShort());
 		return node;
 	}
 }

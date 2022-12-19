@@ -1,7 +1,7 @@
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -77,7 +77,7 @@ public abstract class HiTest {
 		HiCompiler compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
 		compiler.setAssertsActive(true);
 		compiler.setVerbose(true);
-		Node node = compiler.build();
+		HiNode node = compiler.build();
 		if (node != null) {
 			if (serialize) {
 				node = serialize(node);
@@ -96,7 +96,7 @@ public abstract class HiTest {
 		fail(message);
 	}
 
-	public Node serialize(Node node) throws IOException {
+	public HiNode serialize(HiNode node) throws IOException {
 		CodeContext ctxCode = new CodeContext();
 		node.code(ctxCode);
 

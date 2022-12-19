@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -13,8 +13,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.lang.reflect.Array;
 
-public class NodeArrayValue extends Node {
-	public NodeArrayValue(Type type, int dimensions, Node[] array) {
+public class NodeArrayValue extends HiNode {
+	public NodeArrayValue(Type type, int dimensions, HiNode[] array) {
 		super("array-value", TYPE_ARRAY_VALUE);
 
 		this.type = type;
@@ -26,7 +26,7 @@ public class NodeArrayValue extends Node {
 
 	private int dimensions;
 
-	private Node[] array;
+	private HiNode[] array;
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -48,13 +48,13 @@ public class NodeArrayValue extends Node {
 		HiClass cellClass = type.getClass(ctx);
 		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
 		HiClassArray clazz = currentCellClass.getArrayClass(1);
-		Class<?> javaClass = Arrays.getClass(cellClass, dimensions - 1);
+		Class<?> javaClass = HiArrays.getClass(cellClass, dimensions - 1);
 
 		int size = array.length;
 		Object value = Array.newInstance(javaClass, array.length);
 		for (int i = 0; i < size; i++) {
 			array[i].execute(ctx);
-			Arrays.setArray(currentCellClass, value, i, ctx.value);
+			HiArrays.setArray(currentCellClass, value, i, ctx.value);
 		}
 
 		ctx.value.valueType = Value.VALUE;
@@ -72,6 +72,6 @@ public class NodeArrayValue extends Node {
 	}
 
 	public static NodeArrayValue decode(DecodeContext os) throws IOException {
-		return new NodeArrayValue(os.readType(), os.readByte(), os.readArray(Node.class, os.readByte()));
+		return new NodeArrayValue(os.readType(), os.readByte(), os.readArray(HiNode.class, os.readByte()));
 	}
 }

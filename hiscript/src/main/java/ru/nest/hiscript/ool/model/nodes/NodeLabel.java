@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeLabel extends Node {
-	public NodeLabel(String label, Node statement) {
+public class NodeLabel extends HiNode {
+	public NodeLabel(String label, HiNode statement) {
 		super("label", TYPE_LABEL);
 		this.label = label.intern();
 		this.statement = statement;
@@ -16,7 +16,7 @@ public class NodeLabel extends Node {
 
 	private String label;
 
-	private Node statement;
+	private HiNode statement;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -65,6 +65,6 @@ public class NodeLabel extends Node {
 	}
 
 	public static NodeLabel decode(DecodeContext os) throws IOException {
-		return new NodeLabel(os.readNullableUTF(), os.readNullable(Node.class));
+		return new NodeLabel(os.readNullableUTF(), os.readNullable(HiNode.class));
 	}
 }

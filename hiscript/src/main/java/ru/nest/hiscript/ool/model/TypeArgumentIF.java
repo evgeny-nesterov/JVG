@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model;
 
 public interface TypeArgumentIF {
-	public Type getType();
+	Type getType();
 
-	public boolean isArray();
+	boolean isArray();
 
-	public boolean isVarargs();
+	boolean isVarargs();
 
-	public String getName();
+	String getName();
 }

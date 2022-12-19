@@ -10,13 +10,13 @@ import java.util.List;
  *  (operand) [postfix operations...] operation [prefix operations...] (operand)
  */
 public class OperationsGroup {
-	public static List<Operation> empty = new ArrayList<>(0);
+	public static List<HiOperation> empty = new ArrayList<>(0);
 
-	private Operation operation;
+	private HiOperation operation;
 
-	private List<Operation> prefix;
+	private List<HiOperation> prefix;
 
-	public List<Operation> postfix;
+	public List<HiOperation> postfix;
 
 	public OperationsGroup() {
 	}
@@ -29,7 +29,7 @@ public class OperationsGroup {
 	//		setOperation(operation);
 	//	}
 
-	public int appendPrefix(Operation[] stack, int index) {
+	public int appendPrefix(HiOperation[] stack, int index) {
 		if (prefix != null) {
 			for (int i = 0; i < prefix.size(); i++) {
 				stack[index++] = prefix.get(i);
@@ -47,7 +47,7 @@ public class OperationsGroup {
 	//		return index;
 	//	}
 
-	public int append(Operation[] stack, int index) {
+	public int append(HiOperation[] stack, int index) {
 		if (operation != null) {
 			stack[index++] = operation;
 		}
@@ -96,7 +96,7 @@ public class OperationsGroup {
 		operation = Operations.getOperation(o);
 	}
 
-	public Operation getOperation() {
+	public HiOperation getOperation() {
 		return operation;
 	}
 
@@ -145,7 +145,7 @@ public class OperationsGroup {
 		if (postfix != null) {
 			int size = postfix.size();
 			for (int i = 0; i < size; i++) {
-				Operation o = postfix.get(i);
+				HiOperation o = postfix.get(i);
 				priority = Math.min(priority, o.getPriority());
 			}
 		}
@@ -183,7 +183,7 @@ public class OperationsGroup {
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
 		if (postfix != null) {
-			for (Operation o : postfix) {
+			for (HiOperation o : postfix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}
@@ -196,7 +196,7 @@ public class OperationsGroup {
 		}
 
 		if (prefix != null) {
-			for (Operation o : prefix) {
+			for (HiOperation o : prefix) {
 				buf.append(o.getName());
 				buf.append(' ');
 			}

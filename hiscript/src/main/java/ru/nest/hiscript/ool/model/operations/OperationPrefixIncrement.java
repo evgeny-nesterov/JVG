@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
@@ -12,9 +12,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPrefixIncrement extends UnaryOperation {
-	private static Operation instance = new OperationPrefixIncrement();
+	private static HiOperation instance = new OperationPrefixIncrement();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 
@@ -78,7 +78,7 @@ public class OperationPrefixIncrement extends UnaryOperation {
 
 		HiField<?> var = v.variable;
 		if (v.valueType == Value.ARRAY_INDEX) {
-			Arrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
+			HiArrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
 		} else {
 			var.set(ctx, v);
 		}

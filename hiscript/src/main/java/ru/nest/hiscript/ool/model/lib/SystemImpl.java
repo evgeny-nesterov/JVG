@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.compiler.RootParseRule;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.Native;
+import ru.nest.hiscript.ool.model.HiNative;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
@@ -62,7 +62,7 @@ public class SystemImpl extends ImplUtil {
 
 			Class<?> clazz = cl.loadClass(url.getFile());
 			if (clazz != null) {
-				Native.register(clazz);
+				HiNative.register(clazz);
 			} else {
 				ctx.throwRuntimeException("can't load library: " + error[0].toString());
 			}

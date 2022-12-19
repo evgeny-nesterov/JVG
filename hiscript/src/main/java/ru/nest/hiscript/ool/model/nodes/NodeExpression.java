@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.tokenizer.Token;
 
-public abstract class NodeExpression extends Node {
+public abstract class NodeExpression extends HiNode {
 	public NodeExpression(String name, int type) {
 		super(name, type);
 	}

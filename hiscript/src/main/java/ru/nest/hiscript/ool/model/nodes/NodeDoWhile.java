@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeDoWhile extends Node {
+public class NodeDoWhile extends HiNode {
 	public NodeDoWhile(NodeBlock body, NodeExpression condition) {
 		super("do-while", TYPE_DO_WHILE);
 		this.body = body;
@@ -70,6 +70,6 @@ public class NodeDoWhile extends Node {
 	}
 
 	public static NodeDoWhile decode(DecodeContext os) throws IOException {
-		return new NodeDoWhile((NodeBlock) os.readNullable(Node.class), (NodeExpression) os.read(Node.class));
+		return new NodeDoWhile((NodeBlock) os.readNullable(HiNode.class), (NodeExpression) os.read(HiNode.class));
 	}
 }

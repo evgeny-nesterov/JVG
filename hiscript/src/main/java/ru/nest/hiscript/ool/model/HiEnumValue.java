@@ -10,9 +10,9 @@ public class HiEnumValue implements Codeable {
 
 	private int ordinal;
 
-	private Node[] arguments;
+	private HiNode[] arguments;
 
-	public HiEnumValue(String name, int ordinal, Node[] arguments) {
+	public HiEnumValue(String name, int ordinal, HiNode[] arguments) {
 		this.name = name;
 		this.ordinal = ordinal;
 		this.arguments = arguments;
@@ -26,7 +26,7 @@ public class HiEnumValue implements Codeable {
 		return ordinal;
 	}
 
-	public Node[] getArguments() {
+	public HiNode[] getArguments() {
 		return arguments;
 	}
 
@@ -39,6 +39,6 @@ public class HiEnumValue implements Codeable {
 	}
 
 	public static HiEnumValue decode(DecodeContext os) throws IOException {
-		return new HiEnumValue(os.readUTF(), os.readShort(), os.readNullableNodeArray(Node.class, os.readShort()));
+		return new HiEnumValue(os.readUTF(), os.readShort(), os.readNullableNodeArray(HiNode.class, os.readShort()));
 	}
 }

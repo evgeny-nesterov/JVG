@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
@@ -17,18 +17,18 @@ public class NodeExpressionNoLS extends NodeExpression {
 	/**
 	 * <operations1> X1 <operations2> X2 ... <operations n> Xn <operations n+1>
 	 */
-	public NodeExpressionNoLS(Node[] operands, OperationsGroup[] operations) {
+	public NodeExpressionNoLS(HiNode[] operands, OperationsGroup[] operations) {
 		super("expression", TYPE_EXPRESSION);
 		compile(operands, operations);
 	}
 
-	private NodeExpressionNoLS(Node[] operands, Operation[] operations) {
+	private NodeExpressionNoLS(HiNode[] operands, HiOperation[] operations) {
 		super("expression", TYPE_EXPRESSION);
 		this.operands = operands;
 		this.operations = operations;
 	}
 
-	private void compile(Node[] operands, OperationsGroup[] o) {
+	private void compile(HiNode[] operands, OperationsGroup[] o) {
 		this.operands = operands;
 		int operandsCount = operands.length;
 
@@ -36,9 +36,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 		for (int i = 0; i < o.length; i++) {
 			operationsCount += o[i].getCount();
 		}
-		operations = new Operation[operandsCount + operationsCount];
+		operations = new HiOperation[operandsCount + operationsCount];
 
-		Operation[] stack = new Operation[operationsCount];
+		HiOperation[] stack = new HiOperation[operationsCount];
 		int stackSize = 0;
 		int pos = 1;
 		for (int i = 0; i < o.length; i++) {
@@ -46,7 +46,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 			// check after appending prefixes
 			if (stackSize > 0) {
-				Operation lastStackOperation = stack[stackSize - 1];
+				HiOperation lastStackOperation = stack[stackSize - 1];
 				if (lastStackOperation != null) {
 					int currentGroupMinPriority = og.getMinPriority();
 					while (lastStackOperation.getPriority() <= currentGroupMinPriority) {
@@ -65,11 +65,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 			if (og.postfix != null) {
 				int l = og.postfix.size();
 				for (int j = 0; j < l; j++) {
-					Operation postOperation = og.postfix.get(j);
+					HiOperation postOperation = og.postfix.get(j);
 
 					// prev operation may has same priority (for example, object.getArray()[index])
 					if (stackSize > 0) {
-						Operation lastStackOperation = stack[stackSize - 1];
+						HiOperation lastStackOperation = stack[stackSize - 1];
 						if (lastStackOperation != null) {
 							while (lastStackOperation.getPriority() <= postOperation.getPriority()) { // < is the error!
 								operations[pos++] = lastStackOperation; // operation
@@ -120,18 +120,18 @@ public class NodeExpressionNoLS extends NodeExpression {
 		System.out.println();
 	}
 
-	private Node[] operands;
+	private HiNode[] operands;
 
-	private Operation[] operations;
+	private HiOperation[] operations;
 
 	public static class NodeOperandType {
-		public Node node;
+		public HiNode node;
 
 		public HiClass type;
 
 		public boolean isValue;
 
-		NodeOperandType(Node node) {
+		NodeOperandType(HiNode node) {
 			this.node = node;
 		}
 
@@ -152,7 +152,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		for (int i = 0; i < operations.length; i++) {
 			if (operations[i] == null) {
 				// get value
-				Node valueNode = operands[valuePos];
+				HiNode valueNode = operands[valuePos];
 				nodes[bufSize] = new NodeOperandType(valueNode);
 				bufSize++;
 				valuePos++;
@@ -197,7 +197,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 					// get value
 					try {
 						ctx.value = values[bufSize];
-						Node valueNode = operands[valuePos];
+						HiNode valueNode = operands[valuePos];
 
 						// Check for a.new B()
 						boolean executeLater = false;
@@ -292,9 +292,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 	}
 
 	public static NodeExpressionNoLS decode(DecodeContext os) throws IOException {
-		Node[] operands = os.readShortArray(Node.class);
+		HiNode[] operands = os.readShortArray(HiNode.class);
 
-		Operation[] operations = new Operation[os.readShort()];
+		HiOperation[] operations = new HiOperation[os.readShort()];
 		for (int i = 0; i < operations.length; i++) {
 			int operationType = os.readByte();
 			if (operationType != -1) {

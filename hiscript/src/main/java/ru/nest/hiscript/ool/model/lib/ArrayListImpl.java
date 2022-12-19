@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
@@ -17,7 +18,7 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_void_init_ArrayList(RuntimeContext ctx, HiObject list) {
-		ArrayList<?> a = (ArrayList<?>) list.userObject;
+		List<?> a = (List<?>) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
 		o.userObject = new ArrayList<>(a);
@@ -28,7 +29,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_boolean_add_Object(RuntimeContext ctx, Object element) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<Object> a = (ArrayList<Object>) o.userObject;
+		List<Object> a = (List<Object>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -37,17 +38,15 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_Object_get_int(RuntimeContext ctx, int index) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 		Object element = a.get(index);
-
 		ctx.value.set(element);
 	}
 
 	public static void ArrayList_Object_set_int_Object(RuntimeContext ctx, int index, Object value) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<Object> a = (ArrayList<Object>) o.userObject;
+		List<Object> a = (List<Object>) o.userObject;
 		Object element = a.set(index, value);
-
 		ctx.value.set(element);
 	}
 
@@ -62,15 +61,14 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_Object_remove_Object(RuntimeContext ctx, Object element) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 		element = a.remove(element);
-
 		ctx.value.set(element);
 	}
 
 	public static void ArrayList_void_remove_int(RuntimeContext ctx, int index) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 		a.remove(index);
 
 		ctx.value.valueType = Value.VALUE;
@@ -79,7 +77,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_int_size(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("int");
@@ -88,7 +86,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_int_indexOf_Object(RuntimeContext ctx, Object element) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("int");
@@ -97,7 +95,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_int_lastIndexOf_Object(RuntimeContext ctx, Object element) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("int");
@@ -106,7 +104,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_boolean_contains_Object(RuntimeContext ctx, Object element) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -115,17 +113,15 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_0Object_toArray(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (List<?>) o.userObject;
 		Object[] array = a.toArray();
-
 		ctx.value.set(array);
 	}
 
 	public static void ArrayList_void_clear(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a = (ArrayList<?>) o.userObject;
+		List<?> a = (ArrayList<?>) o.userObject;
 		a.clear();
-
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("void");
 	}
@@ -139,10 +135,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_boolean_addAll_ArrayList(RuntimeContext ctx, HiObject list) {
-		ArrayList a1 = (ArrayList) list.userObject;
+		List a1 = (List) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a2 = (ArrayList<?>) o.userObject;
+		List<?> a2 = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -150,10 +146,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_boolean_addAll_int_ArrayList(RuntimeContext ctx, int index, HiObject list) {
-		ArrayList a1 = (ArrayList) list.userObject;
+		List a1 = (List) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a2 = (ArrayList<?>) o.userObject;
+		List<?> a2 = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -161,10 +157,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_boolean_removeAll_ArrayList(RuntimeContext ctx, HiObject list) {
-		ArrayList<?> a1 = (ArrayList<?>) list.userObject;
+		List<?> a1 = (List<?>) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a2 = (ArrayList<?>) o.userObject;
+		List<?> a2 = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -172,10 +168,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_boolean_retainAll_ArrayList(RuntimeContext ctx, HiObject list) {
-		ArrayList<?> a1 = (ArrayList<?>) list.userObject;
+		List<?> a1 = (List<?>) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a2 = (ArrayList<?>) o.userObject;
+		List<?> a2 = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");
@@ -183,10 +179,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_boolean_containsAll_ArrayList(RuntimeContext ctx, HiObject list) {
-		ArrayList<?> a1 = (ArrayList<?>) list.userObject;
+		List<?> a1 = (List<?>) list.userObject;
 
 		HiObject o = ctx.getCurrentObject();
-		ArrayList<?> a2 = (ArrayList<?>) o.userObject;
+		List<?> a2 = (List<?>) o.userObject;
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.getPrimitiveClass("boolean");

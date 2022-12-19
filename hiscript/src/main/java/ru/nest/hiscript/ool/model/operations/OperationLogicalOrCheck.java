@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 
 public class OperationLogicalOrCheck extends UnaryOperation {
-	private static Operation instance = new OperationLogicalOrCheck();
+	private static HiOperation instance = new OperationLogicalOrCheck();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 

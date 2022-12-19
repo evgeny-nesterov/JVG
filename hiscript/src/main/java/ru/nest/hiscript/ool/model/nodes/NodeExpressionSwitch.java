@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeExpressionSwitch extends Node {
-	public NodeExpressionSwitch(Node valueNode) {
+public class NodeExpressionSwitch extends HiNode {
+	public NodeExpressionSwitch(HiNode valueNode) {
 		super("switch", TYPE_EXPRESSION_SWITCH);
 		this.valueNode = valueNode;
 	}
 
-	public void add(Node[] caseValue, NodeExpression caseBody) {
+	public void add(HiNode[] caseValue, NodeExpression caseBody) {
 		if (casesValues == null) {
 			casesValues = new ArrayList<>();
 			casesNodes = new ArrayList<>();
@@ -26,13 +26,13 @@ public class NodeExpressionSwitch extends Node {
 		size++;
 	}
 
-	private Node valueNode;
+	private HiNode valueNode;
 
 	private int size;
 
-	private List<Node[]> casesValues;
+	private List<HiNode[]> casesValues;
 
-	private List<Node> casesNodes;
+	private List<HiNode> casesNodes;
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -55,9 +55,9 @@ public class NodeExpressionSwitch extends Node {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		for (int i = 0; i < size; i++) {
-			Node[] caseValues = casesValues.get(i);
+			HiNode[] caseValues = casesValues.get(i);
 			if (caseValues != null) {
-				for (Node caseValue : caseValues) {
+				for (HiNode caseValue : caseValues) {
 					valid &= caseValue.validate(validationInfo, ctx) && caseValue.expectValue(validationInfo, ctx);
 				}
 			}
@@ -73,7 +73,7 @@ public class NodeExpressionSwitch extends Node {
 			ctx.enter(RuntimeContext.SWITCH, token);
 			try {
 				for (int i = index; i < size; i++) {
-					Node caseBody = casesNodes.get(i);
+					HiNode caseBody = casesNodes.get(i);
 					if (caseBody != null) {
 						caseBody.execute(ctx);
 						return;
@@ -96,10 +96,10 @@ public class NodeExpressionSwitch extends Node {
 	}
 
 	public static NodeExpressionSwitch decode(DecodeContext os) throws IOException {
-		NodeExpressionSwitch node = new NodeExpressionSwitch(os.read(Node.class));
+		NodeExpressionSwitch node = new NodeExpressionSwitch(os.read(HiNode.class));
 		node.size = os.readShort();
-		node.casesValues = os.readNullableListArray(Node.class, node.size);
-		node.casesNodes = os.readNullableList(Node.class, node.size);
+		node.casesValues = os.readNullableListArray(HiNode.class, node.size);
+		node.casesNodes = os.readNullableList(HiNode.class, node.size);
 		return node;
 	}
 }

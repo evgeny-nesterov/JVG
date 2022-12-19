@@ -1,93 +1,93 @@
 package ru.nest.hiscript.ool.model;
 
 public interface OperationsIF {
-	public final static int ARRAY_INDEX = 0;
+	int ARRAY_INDEX = 0;
 
-	public final static int INVOCATION = 1;
+	int INVOCATION = 1;
 
-	public final static int POST_INCREMENT = 2;
+	int POST_INCREMENT = 2;
 
-	public final static int POST_DECREMENT = 3;
+	int POST_DECREMENT = 3;
 
-	public final static int PREFIX_INCREMENT = 4;
+	int PREFIX_INCREMENT = 4;
 
-	public final static int PREFIX_DECREMENT = 5;
+	int PREFIX_DECREMENT = 5;
 
-	public final static int PREFIX_PLUS = 6;
+	int PREFIX_PLUS = 6;
 
-	public final static int PREFIX_MINUS = 7;
+	int PREFIX_MINUS = 7;
 
-	public final static int PREFIX_EXCLAMATION = 8;
+	int PREFIX_EXCLAMATION = 8;
 
-	public final static int PREFIX_BITWISE_REVERSE = 9;
+	int PREFIX_BITWISE_REVERSE = 9;
 
-	public final static int CAST = 10;
+	int CAST = 10;
 
-	public final static int MULTIPLY = 11;
+	int MULTIPLY = 11;
 
-	public final static int DIVIDE = 12;
+	int DIVIDE = 12;
 
-	public final static int PERCENT = 13;
+	int PERCENT = 13;
 
-	public final static int PLUS = 14;
+	int PLUS = 14;
 
-	public final static int MINUS = 15;
+	int MINUS = 15;
 
-	public final static int BITWISE_SHIFT_LEFT = 16;
+	int BITWISE_SHIFT_LEFT = 16;
 
-	public final static int BITWISE_SHIFT_RIGHT = 17;
+	int BITWISE_SHIFT_RIGHT = 17;
 
-	public final static int BITWISE_SHIFT_RIGHT_CYCLIC = 18;
+	int BITWISE_SHIFT_RIGHT_CYCLIC = 18;
 
-	public final static int LOWER = 19;
+	int LOWER = 19;
 
-	public final static int LOWER_OR_EQUALS = 20;
+	int LOWER_OR_EQUALS = 20;
 
-	public final static int GREATER = 21;
+	int GREATER = 21;
 
-	public final static int GREATER_OR_EQUALS = 22;
+	int GREATER_OR_EQUALS = 22;
 
-	public final static int INSTANCE_OF = 23;
+	int INSTANCE_OF = 23;
 
-	public final static int EQUALS = 24;
+	int EQUALS = 24;
 
-	public final static int NOT_EQUALS = 25;
+	int NOT_EQUALS = 25;
 
-	public final static int AND = 26;
+	int AND = 26;
 
-	public final static int XOR = 27;
+	int XOR = 27;
 
-	public final static int OR = 28;
+	int OR = 28;
 
-	public final static int LOGICAL_AND = 29;
+	int LOGICAL_AND = 29;
 
-	public final static int LOGICAL_OR = 30;
+	int LOGICAL_OR = 30;
 
-	public final static int EQUATE = 31;
+	int EQUATE = 31;
 
-	public final static int EQUATE_PLUS = 32;
+	int EQUATE_PLUS = 32;
 
-	public final static int EQUATE_MINUS = 33;
+	int EQUATE_MINUS = 33;
 
-	public final static int EQUATE_MULTIPLY = 34;
+	int EQUATE_MULTIPLY = 34;
 
-	public final static int EQUATE_DIVIDE = 35;
+	int EQUATE_DIVIDE = 35;
 
-	public final static int EQUATE_PERCENT = 36;
+	int EQUATE_PERCENT = 36;
 
-	public final static int EQUATE_BITWISE_SHIFT_LEFT = 37;
+	int EQUATE_BITWISE_SHIFT_LEFT = 37;
 
-	public final static int EQUATE_BITWISE_SHIFT_RIGHT = 38;
+	int EQUATE_BITWISE_SHIFT_RIGHT = 38;
 
-	public final static int EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC = 39;
+	int EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC = 39;
 
-	public final static int EQUATE_AND = 40;
+	int EQUATE_AND = 40;
 
-	public final static int EQUATE_XOR = 41;
+	int EQUATE_XOR = 41;
 
-	public final static int EQUATE_OR = 42;
+	int EQUATE_OR = 42;
 
-	public final static int LOGICAL_OR_CHECK = 43;
+	int LOGICAL_OR_CHECK = 43;
 
-	public final static int LOGICAL_AND_CHECK = 44;
+	int LOGICAL_AND_CHECK = 44;
 }

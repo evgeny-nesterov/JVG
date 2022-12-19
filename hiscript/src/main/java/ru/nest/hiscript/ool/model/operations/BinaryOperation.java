@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
-public abstract class BinaryOperation extends Operation {
+public abstract class BinaryOperation extends HiOperation {
 	BinaryOperation(String name, int operation) {
 		super(name, 2, operation);
 	}
@@ -109,11 +109,11 @@ public abstract class BinaryOperation extends Operation {
 
 	protected HiClassPrimitive autoCastInt(int value) {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			return HiClassPrimitive.BYTE;
+			return TYPE_BYTE;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			return HiClassPrimitive.SHORT;
+			return TYPE_SHORT;
 		} else {
-			return HiClassPrimitive.INT;
+			return TYPE_INT;
 		}
 	}
 
@@ -135,13 +135,13 @@ public abstract class BinaryOperation extends Operation {
 
 	protected HiClassPrimitive autoCastLong(long value) {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			return HiClassPrimitive.BYTE;
+			return TYPE_BYTE;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			return HiClassPrimitive.SHORT;
+			return TYPE_SHORT;
 		} else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-			return HiClassPrimitive.INT;
+			return TYPE_INT;
 		} else {
-			return HiClassPrimitive.LONG;
+			return TYPE_LONG;
 		}
 	}
 

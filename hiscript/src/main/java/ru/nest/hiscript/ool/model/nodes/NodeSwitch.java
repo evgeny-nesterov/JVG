@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeSwitch extends Node {
-	public NodeSwitch(Node valueNode) {
+public class NodeSwitch extends HiNode {
+	public NodeSwitch(HiNode valueNode) {
 		super("switch", TYPE_SWITCH);
 		this.valueNode = valueNode;
 	}
 
-	public void add(Node[] caseValue, NodeBlock caseBody) {
+	public void add(HiNode[] caseValue, NodeBlock caseBody) {
 		if (casesValues == null) {
 			casesValues = new ArrayList<>();
 			casesNodes = new ArrayList<>();
@@ -32,13 +32,13 @@ public class NodeSwitch extends Node {
 		size++;
 	}
 
-	private Node valueNode;
+	private HiNode valueNode;
 
 	private int size;
 
-	private List<Node[]> casesValues;
+	private List<HiNode[]> casesValues;
 
-	private List<Node> casesNodes;
+	private List<HiNode> casesNodes;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -46,7 +46,7 @@ public class NodeSwitch extends Node {
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		for (int i = 0; i < size; i++) {
 			if (casesValues.get(i) != null) { // not default
-				for (Node casesValue : casesValues.get(i)) {
+				for (HiNode casesValue : casesValues.get(i)) {
 					valid &= casesValue.validate(validationInfo, ctx) && casesValue.expectValue(validationInfo, ctx);
 				}
 			}
@@ -63,7 +63,7 @@ public class NodeSwitch extends Node {
 			ctx.enter(RuntimeContext.SWITCH, token);
 			try {
 				for (int i = index; i < size; i++) {
-					Node caseBody = casesNodes.get(i);
+					HiNode caseBody = casesNodes.get(i);
 					if (caseBody != null) {
 						caseBody.execute(ctx);
 						if (ctx.exitFromBlock()) {
@@ -81,7 +81,7 @@ public class NodeSwitch extends Node {
 		}
 	}
 
-	public static int getCaseIndex(RuntimeContext ctx, Node valueNode, int size, List<Node[]> casesValues) {
+	public static int getCaseIndex(RuntimeContext ctx, HiNode valueNode, int size, List<HiNode[]> casesValues) {
 		valueNode.execute(ctx);
 		if (ctx.exitFromBlock()) {
 			return -2;
@@ -95,10 +95,10 @@ public class NodeSwitch extends Node {
 			}
 			FOR:
 			for (int i = 0; i < size; i++) {
-				Node[] caseValueNodes = casesValues.get(i);
+				HiNode[] caseValueNodes = casesValues.get(i);
 				if (caseValueNodes != null && caseValueNodes.length > 0) {
 					for (int j = 0; j < caseValueNodes.length; j++) {
-						Node caseValueNode = caseValueNodes[j];
+						HiNode caseValueNode = caseValueNodes[j];
 						caseValueNode.execute(ctx);
 						if (ctx.exitFromBlock()) {
 							return -2;
@@ -124,10 +124,10 @@ public class NodeSwitch extends Node {
 				HiClassEnum enumClass = (HiClassEnum) object.clazz;
 				FOR:
 				for (int i = 0; i < size; i++) {
-					Node[] caseValueNodes = casesValues.get(i);
+					HiNode[] caseValueNodes = casesValues.get(i);
 					if (caseValueNodes != null && caseValueNodes.length > 0) {
 						for (int j = 0; j < caseValueNodes.length; j++) {
-							Node caseValueNode = caseValueNodes[j];
+							HiNode caseValueNode = caseValueNodes[j];
 							if (caseValueNode instanceof NodeExpressionNoLS) {
 								NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
 								NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
@@ -156,10 +156,10 @@ public class NodeSwitch extends Node {
 			} else {
 				FOR:
 				for (int i = 0; i < size; i++) {
-					Node[] caseValueNodes = casesValues.get(i);
+					HiNode[] caseValueNodes = casesValues.get(i);
 					if (caseValueNodes != null && caseValueNodes.length > 0) {
 						for (int j = 0; j < caseValueNodes.length; j++) {
-							Node caseValueNode = caseValueNodes[j];
+							HiNode caseValueNode = caseValueNodes[j];
 							caseValueNode.execute(ctx);
 							if (ctx.exitFromBlock()) {
 								return -2;
@@ -231,10 +231,10 @@ public class NodeSwitch extends Node {
 	}
 
 	public static NodeSwitch decode(DecodeContext os) throws IOException {
-		NodeSwitch node = new NodeSwitch(os.read(Node.class));
+		NodeSwitch node = new NodeSwitch(os.read(HiNode.class));
 		node.size = os.readShort();
-		node.casesValues = os.readNullableListArray(Node.class, node.size);
-		node.casesNodes = os.readNullableList(Node.class, node.size);
+		node.casesValues = os.readNullableListArray(HiNode.class, node.size);
+		node.casesNodes = os.readNullableList(HiNode.class, node.size);
 		return node;
 	}
 }

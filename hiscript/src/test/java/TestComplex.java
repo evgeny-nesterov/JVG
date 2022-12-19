@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import ru.nest.hiscript.ool.compiler.ParserUtil;
+import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.HiCompiler;
 
 import java.io.IOException;

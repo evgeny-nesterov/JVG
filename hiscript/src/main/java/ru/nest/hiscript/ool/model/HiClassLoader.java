@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.ClassFileParseRule;
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.compiler.ParserUtil;
+import ru.nest.hiscript.ool.compile.ClassFileParseRule;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 

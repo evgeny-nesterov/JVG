@@ -1,16 +1,16 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 
-public class NodeForIterator extends Node {
-	public NodeForIterator(NodeDeclaration declaration, Node iterable, Node body) {
+public class NodeForIterator extends HiNode {
+	public NodeForIterator(NodeDeclaration declaration, HiNode iterable, HiNode body) {
 		super("for", TYPE_FOR_ITERATOR);
 		this.declaration = declaration;
 		this.iterable = iterable;
@@ -19,9 +19,9 @@ public class NodeForIterator extends Node {
 
 	private NodeDeclaration declaration;
 
-	private Node iterable;
+	private HiNode iterable;
 
-	private Node body;
+	private HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -86,6 +86,6 @@ public class NodeForIterator extends Node {
 	}
 
 	public static NodeForIterator decode(DecodeContext os) throws IOException {
-		return new NodeForIterator((NodeDeclaration) os.readNullable(Node.class), os.readNullable(Node.class), os.readNullable(Node.class));
+		return new NodeForIterator((NodeDeclaration) os.readNullable(HiNode.class), os.readNullable(HiNode.class), os.readNullable(HiNode.class));
 	}
 }

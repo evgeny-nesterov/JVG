@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -14,13 +14,13 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeInvocation extends Node {
-	public NodeInvocation(String name, boolean innerInvocation, Node[] arguments) {
+public class NodeInvocation extends HiNode {
+	public NodeInvocation(String name, boolean innerInvocation, HiNode[] arguments) {
 		this(name, arguments);
 		setInner(innerInvocation);
 	}
 
-	public NodeInvocation(String name, Node[] arguments) {
+	public NodeInvocation(String name, HiNode[] arguments) {
 		super("invocation", TYPE_INVOCATION);
 		this.name = name.intern();
 		this.arguments = arguments;
@@ -28,7 +28,7 @@ public class NodeInvocation extends Node {
 
 	private String name;
 
-	private Node[] arguments;
+	private HiNode[] arguments;
 
 	private boolean innerInvocation;
 
@@ -69,7 +69,7 @@ public class NodeInvocation extends Node {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (arguments != null) {
-			for (Node argument : arguments) {
+			for (HiNode argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);
 			}
 		}
@@ -107,7 +107,7 @@ public class NodeInvocation extends Node {
 				v.name = name;
 				v.arguments = arguments;
 
-				Operation o = Operations.getOperation(OperationsIF.INVOCATION);
+				HiOperation o = Operations.getOperation(OperationsIF.INVOCATION);
 				o.doOperation(ctx, ctx.value, v);
 			} finally {
 				ctx.putValues(vs);
@@ -116,7 +116,7 @@ public class NodeInvocation extends Node {
 	}
 
 	// TODO: do more usable
-	public static void invoke(RuntimeContext ctx, HiObject object, String methodName, Node... arguments) {
+	public static void invoke(RuntimeContext ctx, HiObject object, String methodName, HiNode... arguments) {
 		Value[] vs = ctx.getValues(1);
 		try {
 			// v1 - contains value as object
@@ -130,7 +130,7 @@ public class NodeInvocation extends Node {
 			v.name = methodName;
 			v.arguments = arguments;
 
-			Operation o = Operations.getOperation(OperationsIF.INVOCATION);
+			HiOperation o = Operations.getOperation(OperationsIF.INVOCATION);
 			o.doOperation(ctx, ctx.value, v);
 		} finally {
 			ctx.putValues(vs);
@@ -147,6 +147,6 @@ public class NodeInvocation extends Node {
 	}
 
 	public static NodeInvocation decode(DecodeContext os) throws IOException {
-		return new NodeInvocation(os.readUTF(), os.readBoolean(), os.readArray(Node.class, os.readByte()));
+		return new NodeInvocation(os.readUTF(), os.readBoolean(), os.readArray(HiNode.class, os.readByte()));
 	}
 }

@@ -1,18 +1,18 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeDeclaration extends Node implements NodeVariable {
-	public NodeDeclaration(Type type, String name, Node initialization, Modifiers modifiers, NodeAnnotation[] annotations) {
+public class NodeDeclaration extends HiNode implements NodeVariable {
+	public NodeDeclaration(Type type, String name, HiNode initialization, Modifiers modifiers, NodeAnnotation[] annotations) {
 		super("declaration", TYPE_DECLARATION);
 		this.type = type;
 		this.name = name.intern();
@@ -31,7 +31,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 
 	public String name;
 
-	public Node initialization;
+	public HiNode initialization;
 
 	public Modifiers modifiers;
 
@@ -88,7 +88,7 @@ public class NodeDeclaration extends Node implements NodeVariable {
 	}
 
 	public static NodeDeclaration decode(DecodeContext os) throws IOException {
-		return new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(Node.class), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		return new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(HiNode.class), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
 	}
 
 	@Override

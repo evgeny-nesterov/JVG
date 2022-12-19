@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeDeclarations extends Node {
+public class NodeDeclarations extends HiNode {
 	public NodeDeclarations() {
 		super("declarations", TYPE_DECLARATIONS);
 	}
 
-	public NodeDeclaration add(Type type, String name, Node initializer, Modifiers modifiers, NodeAnnotation[] annotations) {
+	public NodeDeclaration add(Type type, String name, HiNode initializer, Modifiers modifiers, NodeAnnotation[] annotations) {
 		NodeDeclaration field = new NodeDeclaration(type, name, initializer, modifiers, annotations);
 		declarations.add(field);
 		return field;

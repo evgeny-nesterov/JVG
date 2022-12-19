@@ -4,7 +4,7 @@ import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.NoClassException;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
@@ -297,10 +297,10 @@ public class DecodeContext {
 		return list;
 	}
 
-	public <N extends Node> List<N> readNodesList(Class<N> type, int size) throws IOException {
+	public <N extends HiNode> List<N> readNodesList(Class<N> type, int size) throws IOException {
 		List<N> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
-			list.add((N) read(Node.class));
+			list.add((N) read(HiNode.class));
 		}
 		return list;
 	}
@@ -325,7 +325,7 @@ public class DecodeContext {
 	public <N> N[] readNodeArray(Class<N> type, int size) throws IOException {
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
-			nodes[i] = (N) read(Node.class);
+			nodes[i] = (N) read(HiNode.class);
 		}
 		return nodes;
 	}
@@ -347,7 +347,7 @@ public class DecodeContext {
 		return list;
 	}
 
-	public <N extends Node> List<N[]> readNullableListArray(Class<N> type, int size) throws IOException {
+	public <N extends HiNode> List<N[]> readNullableListArray(Class<N> type, int size) throws IOException {
 		List<N[]> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			int arraySize = readShort();
@@ -367,13 +367,13 @@ public class DecodeContext {
 		return nodes;
 	}
 
-	public <N extends Node> N[] readNullableNodeArray(Class<N> type, int size) throws IOException {
+	public <N extends HiNode> N[] readNullableNodeArray(Class<N> type, int size) throws IOException {
 		if (size == 0) {
 			return null;
 		}
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
-			nodes[i] = (N) readNullable(Node.class);
+			nodes[i] = (N) readNullable(HiNode.class);
 		}
 		return nodes;
 	}
@@ -396,10 +396,10 @@ public class DecodeContext {
 		}
 	}
 
-	public Node load() throws IOException {
+	public HiNode load() throws IOException {
 		loadUTF();
 		loadTypes();
 		loadClasses();
-		return read(Node.class);
+		return read(HiNode.class);
 	}
 }

@@ -1,37 +1,41 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+
 public interface PrimitiveTypes {
-	public final static int CHAR = 0;
+	int CHAR = 0;
 
-	public final static int BYTE = 1;
+	int BYTE = 1;
 
-	public final static int SHORT = 2;
+	int SHORT = 2;
 
-	public final static int INT = 3;
+	int INT = 3;
 
-	public final static int FLOAT = 4;
+	int LONG = 4;
 
-	public final static int LONG = 5;
+	int FLOAT = 5;
 
-	public final static int DOUBLE = 6;
+	int DOUBLE = 6;
 
-	public final static int BOOLEAN = 7;
+	int BOOLEAN = 7;
 
-	public final static int VOID = 8;
+	int VOID = 8;
 
-	public final static HiClass TYPE_BOOLEAN = HiClass.getPrimitiveClass("boolean");
+	HiClassPrimitive TYPE_CHAR = HiClassPrimitive.CHAR;
 
-	public final static HiClass TYPE_CHAR = HiClass.getPrimitiveClass("char");
+	HiClassPrimitive TYPE_BYTE = HiClassPrimitive.BYTE;
 
-	public final static HiClass TYPE_BYTE = HiClass.getPrimitiveClass("byte");
+	HiClassPrimitive TYPE_SHORT = HiClassPrimitive.SHORT;
 
-	public final static HiClass TYPE_SHORT = HiClass.getPrimitiveClass("short");
+	HiClassPrimitive TYPE_INT = HiClassPrimitive.INT;
 
-	public final static HiClass TYPE_INT = HiClass.getPrimitiveClass("int");
+	HiClassPrimitive TYPE_LONG = HiClassPrimitive.LONG;
 
-	public final static HiClass TYPE_LONG = HiClass.getPrimitiveClass("long");
+	HiClassPrimitive TYPE_FLOAT = HiClassPrimitive.FLOAT;
 
-	public final static HiClass TYPE_FLOAT = HiClass.getPrimitiveClass("float");
+	HiClassPrimitive TYPE_DOUBLE = HiClassPrimitive.DOUBLE;
 
-	public final static HiClass TYPE_DOUBLE = HiClass.getPrimitiveClass("double");
+	HiClassPrimitive TYPE_BOOLEAN = HiClassPrimitive.BOOLEAN;
+
+	HiClassPrimitive TYPE_VOID = HiClassPrimitive.VOID;
 }

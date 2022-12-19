@@ -1,18 +1,18 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeTry extends Node {
-	public NodeTry(Node body, NodeCatch[] catches, Node finallyBody, NodeDeclaration[] resources) {
+public class NodeTry extends HiNode {
+	public NodeTry(HiNode body, NodeCatch[] catches, HiNode finallyBody, NodeDeclaration[] resources) {
 		super("try", TYPE_TRY);
 		this.resources = resources;
 		this.body = body;
@@ -22,11 +22,11 @@ public class NodeTry extends Node {
 
 	private NodeDeclaration[] resources;
 
-	private Node body;
+	private HiNode body;
 
 	private NodeCatch[] catches;
 
-	private Node finallyBody;
+	private HiNode finallyBody;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -160,6 +160,6 @@ public class NodeTry extends Node {
 	}
 
 	public static NodeTry decode(DecodeContext os) throws IOException {
-		return new NodeTry(os.readNullable(Node.class), os.readNullableNodeArray(NodeCatch.class, os.readShort()), os.readNullable(Node.class), os.readNullableNodeArray(NodeDeclaration.class, os.readShort()));
+		return new NodeTry(os.readNullable(HiNode.class), os.readNullableNodeArray(NodeCatch.class, os.readShort()), os.readNullable(HiNode.class), os.readNullableNodeArray(NodeDeclaration.class, os.readShort()));
 	}
 }

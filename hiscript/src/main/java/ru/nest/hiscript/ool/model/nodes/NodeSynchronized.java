@@ -1,23 +1,23 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeSynchronized extends Node {
-	public NodeSynchronized(Node lock, Node body) {
+public class NodeSynchronized extends HiNode {
+	public NodeSynchronized(HiNode lock, HiNode body) {
 		super("synchronized", TYPE_SYNCHRONIZED);
 		this.lock = lock;
 		this.body = body;
 	}
 
-	private Node lock;
+	private HiNode lock;
 
-	private Node body;
+	private HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -78,6 +78,6 @@ public class NodeSynchronized extends Node {
 	}
 
 	public static NodeSynchronized decode(DecodeContext os) throws IOException {
-		return new NodeSynchronized(os.read(Node.class), os.readNullable(Node.class));
+		return new NodeSynchronized(os.read(HiNode.class), os.readNullable(HiNode.class));
 	}
 }

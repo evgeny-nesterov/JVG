@@ -5,10 +5,10 @@ import java.io.IOException;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 
 public interface NodeInitializer extends Codeable {
-	public boolean isStatic();
+	boolean isStatic();
 
-	public void execute(RuntimeContext ctx);
+	void execute(RuntimeContext ctx);
 
 	@Override
-	public void code(CodeContext os) throws IOException;
+	void code(CodeContext os) throws IOException;
 }

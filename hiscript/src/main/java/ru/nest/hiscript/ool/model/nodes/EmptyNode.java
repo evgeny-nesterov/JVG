@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * This type of node presents any empty statement, for example, statement ';'.
  */
-public class EmptyNode extends Node {
+public class EmptyNode extends HiNode {
 	private final static EmptyNode instance = new EmptyNode();
 
 	public static EmptyNode getInstance() {

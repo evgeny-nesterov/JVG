@@ -1,17 +1,17 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 public class OperationPrefixDecrement extends UnaryOperation {
-	private static Operation instance = new OperationPrefixDecrement();
+	private static HiOperation instance = new OperationPrefixDecrement();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 
@@ -67,7 +67,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 
 		HiField<?> var = v.variable;
 		if (v.valueType == Value.ARRAY_INDEX) {
-			Arrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
+			HiArrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
 		} else {
 			var.set(ctx, v);
 		}

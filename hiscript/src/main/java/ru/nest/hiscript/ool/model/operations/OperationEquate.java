@@ -1,19 +1,19 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquate extends BinaryOperation {
-	private static Operation instance = new OperationEquate();
+	private static HiOperation instance = new OperationEquate();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 
@@ -63,7 +63,7 @@ public class OperationEquate extends BinaryOperation {
 				ctx.throwRuntimeException("incompatible types; found " + v2.type + ", required " + v1.type);
 				return;
 			}
-			Arrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, v2, v1);
+			HiArrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, v2, v1);
 		} else {
 			errorUnexpectedType(ctx);
 		}

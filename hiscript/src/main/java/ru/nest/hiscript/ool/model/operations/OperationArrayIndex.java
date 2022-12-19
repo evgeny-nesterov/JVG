@@ -1,9 +1,9 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
@@ -14,9 +14,9 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.lang.reflect.Array;
 
 public class OperationArrayIndex extends BinaryOperation {
-	private static Operation instance = new OperationArrayIndex();
+	private static HiOperation instance = new OperationArrayIndex();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 
@@ -76,7 +76,7 @@ public class OperationArrayIndex extends BinaryOperation {
 			return;
 		}
 
-		Arrays.getArrayIndex(v1, array, index);
+		HiArrays.getArrayIndex(v1, array, index);
 
 		v1.valueType = Value.ARRAY_INDEX;
 		v1.type = type.cellClass;

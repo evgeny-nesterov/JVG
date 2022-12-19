@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
@@ -29,7 +29,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 
 	public Type[] throwsTypes;
 
-	public Node body;
+	public HiNode body;
 
 	public HiClass[] argClasses;
 
@@ -43,7 +43,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 
 	private String descr;
 
-	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, Node body) {
+	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
 		NodeArgument[] _arguments = null;
 		if (arguments != null) {
 			_arguments = new NodeArgument[arguments.size()];
@@ -52,11 +52,11 @@ public class HiMethod implements Codeable, TokenAccessible {
 		set(clazz, annotations, modifiers, returnType, name, _arguments, throwsTypes, body);
 	}
 
-	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, Node body) {
+	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
 		set(clazz, annotations, modifiers, returnType, name, arguments, throwsTypes, body);
 	}
 
-	private void set(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, Node body) {
+	private void set(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers != null ? modifiers : new Modifiers();
@@ -168,7 +168,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 		String name = os.readUTF();
 		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
-		Node body = os.readNullable(Node.class);
+		HiNode body = os.readNullable(HiNode.class);
 
 		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, returnType, name, arguments, throwsTypes, body);
 		method.token = token;

@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeAnnotationArgument extends Node {
-	public NodeAnnotationArgument(String name, Node value) {
+public class NodeAnnotationArgument extends HiNode {
+	public NodeAnnotationArgument(String name, HiNode value) {
 		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT);
 		this.name = name;
 		this.value = value;
@@ -16,7 +16,7 @@ public class NodeAnnotationArgument extends Node {
 
 	private String name;
 
-	private Node value;
+	private HiNode value;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -37,6 +37,6 @@ public class NodeAnnotationArgument extends Node {
 	}
 
 	public static NodeAnnotationArgument decode(DecodeContext os) throws IOException {
-		return new NodeAnnotationArgument(os.readUTF(), os.read(Node.class));
+		return new NodeAnnotationArgument(os.readUTF(), os.read(HiNode.class));
 	}
 }

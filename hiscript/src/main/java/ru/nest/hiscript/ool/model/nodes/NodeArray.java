@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -14,8 +14,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.lang.reflect.Array;
 
-public class NodeArray extends Node {
-	public NodeArray(Type cellType, Node[] dimensions) {
+public class NodeArray extends HiNode {
+	public NodeArray(Type cellType, HiNode[] dimensions) {
 		super("array", TYPE_ARRAY);
 
 		this.cellType = cellType;
@@ -34,7 +34,7 @@ public class NodeArray extends Node {
 
 	public Type type;
 
-	private Node[] dimensions;
+	private HiNode[] dimensions;
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -83,7 +83,7 @@ public class NodeArray extends Node {
 
 		HiClass cellClass = clazz.cellClass;
 		int dimension = dimensionsCount - dimensionsCountActive;
-		Class<?> c = Arrays.getClass(cellClass, dimension);
+		Class<?> c = HiArrays.getClass(cellClass, dimension);
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = clazz;
@@ -99,6 +99,6 @@ public class NodeArray extends Node {
 	}
 
 	public static NodeArray decode(DecodeContext os) throws IOException {
-		return new NodeArray(os.readType(), os.readNullableNodeArray(Node.class, os.readByte()));
+		return new NodeArray(os.readType(), os.readNullableNodeArray(HiNode.class, os.readByte()));
 	}
 }

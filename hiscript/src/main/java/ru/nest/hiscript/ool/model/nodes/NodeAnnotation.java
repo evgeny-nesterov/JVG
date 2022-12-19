@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeAnnotation extends Node {
+public class NodeAnnotation extends HiNode {
 	public NodeAnnotation(String name, NodeAnnotationArgument[] args) {
 		super("annotation", TYPE_ANNOTATION);
 		this.name = name;

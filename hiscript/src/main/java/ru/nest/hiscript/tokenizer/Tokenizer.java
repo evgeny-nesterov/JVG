@@ -1,6 +1,6 @@
 package ru.nest.hiscript.tokenizer;
 
-import ru.nest.hiscript.ool.compiler.ParserUtil;
+import ru.nest.hiscript.ool.compile.ParserUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

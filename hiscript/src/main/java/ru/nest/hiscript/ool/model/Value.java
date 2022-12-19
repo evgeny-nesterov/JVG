@@ -35,7 +35,7 @@ public class Value implements PrimitiveTypes {
 		this.ctx = ctx;
 	}
 
-	public Node node;
+	public HiNode node;
 
 	public int valueType;
 
@@ -75,7 +75,7 @@ public class Value implements PrimitiveTypes {
 
 	public String castedVariableName;
 
-	public Node castedCondition;
+	public HiNode castedCondition;
 
 	public NodeArgument[] castedRecordArguments;
 
@@ -84,7 +84,7 @@ public class Value implements PrimitiveTypes {
 	public HiField<?> variable;
 
 	// Method arguments
-	public Node[] arguments;
+	public HiNode[] arguments;
 
 	public void clear() {
 		node = null;

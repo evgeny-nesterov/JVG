@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeIf extends Node {
-	public NodeIf(NodeExpression condition, Node body, NodeIf nextIf) {
+public class NodeIf extends HiNode {
+	public NodeIf(NodeExpression condition, HiNode body, NodeIf nextIf) {
 		super("if", TYPE_IF);
 		this.condition = condition;
 		this.body = body;
@@ -17,7 +17,7 @@ public class NodeIf extends Node {
 
 	private NodeExpression condition;
 
-	private Node body;
+	private HiNode body;
 
 	private NodeIf nextIf;
 
@@ -76,6 +76,6 @@ public class NodeIf extends Node {
 	}
 
 	public static NodeIf decode(DecodeContext os) throws IOException {
-		return new NodeIf((NodeExpression) os.readNullable(Node.class), os.readNullable(Node.class), (NodeIf) os.readNullable(Node.class));
+		return new NodeIf((NodeExpression) os.readNullable(HiNode.class), os.readNullable(HiNode.class), (NodeIf) os.readNullable(HiNode.class));
 	}
 }

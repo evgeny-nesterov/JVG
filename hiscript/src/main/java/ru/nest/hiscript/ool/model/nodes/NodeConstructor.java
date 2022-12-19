@@ -1,35 +1,35 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.NoClassException;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeConstructor extends Node {
-	public NodeConstructor(NodeType type, Node[] argValues) {
+public class NodeConstructor extends HiNode {
+	public NodeConstructor(NodeType type, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.type = type;
 		this.argValues = argValues;
 		name = type.getType().fullName.intern();
 	}
 
-	public NodeConstructor(HiClass clazz, Node[] argValues) {
+	public NodeConstructor(HiClass clazz, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.clazz = clazz;
 		this.argValues = argValues;
 		name = clazz.getFullName(clazz.getClassLoader()).intern();
 	}
 
-	private NodeConstructor(Node[] argValues) {
+	private NodeConstructor(HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.argValues = argValues;
 	}
@@ -38,7 +38,7 @@ public class NodeConstructor extends Node {
 
 	public HiClass clazz;
 
-	public Node[] argValues;
+	public HiNode[] argValues;
 
 	public String name;
 
@@ -55,7 +55,7 @@ public class NodeConstructor extends Node {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (argValues != null) {
-			for (Node argValue : argValues) {
+			for (HiNode argValue : argValues) {
 				valid &= argValue.validate(validationInfo, ctx);
 			}
 		}
@@ -106,7 +106,7 @@ public class NodeConstructor extends Node {
 		invokeConstructor(ctx, clazz, argValues, null, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Node[] argValues, HiObject object, HiObject outboundObject) {
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, HiNode[] argValues, HiObject object, HiObject outboundObject) {
 		// build argument class array and
 		// evaluate method arguments
 		HiClass[] types = null;
@@ -182,16 +182,16 @@ public class NodeConstructor extends Node {
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
 		boolean isType = os.readBoolean();
 		if (isType) {
-			NodeType type = (NodeType) os.read(Node.class);
-			Node[] argValues = os.readArray(Node.class, os.readByte());
+			NodeType type = (NodeType) os.read(HiNode.class);
+			HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 			return new NodeConstructor(type, argValues);
 		} else {
 			try {
 				HiClass clazz = os.readClass();
-				Node[] argValues = os.readArray(Node.class, os.readByte());
+				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 				return new NodeConstructor(clazz, argValues);
 			} catch (NoClassException exc) {
-				Node[] argValues = os.readArray(Node.class, os.readByte());
+				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 				final NodeConstructor node = new NodeConstructor(argValues);
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override

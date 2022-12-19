@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 public interface NodeVariable {
-	public String getVariableName();
+	String getVariableName();
 
-	public String getVariableType();
+	String getVariableType();
 }

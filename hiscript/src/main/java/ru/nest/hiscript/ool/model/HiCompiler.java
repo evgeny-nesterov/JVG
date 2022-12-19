@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.compiler.ParseRule;
-import ru.nest.hiscript.ool.compiler.RootParseRule;
+import ru.nest.hiscript.ool.compile.ParseRule;
+import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.validation.ValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -30,8 +30,8 @@ public class HiCompiler {
 		this.rule = new RootParseRule(this, true);
 	}
 
-	public Node build() throws TokenizerException, ParseException, ValidationException {
-		Node node = rule.visit(tokenizer, null);
+	public HiNode build() throws TokenizerException, ParseException, ValidationException {
+		HiNode node = rule.visit(tokenizer, null);
 		validationInfo = new ValidationInfo(this);
 		if (!node.validate(validationInfo, null)) {
 			validationInfo.throwExceptionIf();

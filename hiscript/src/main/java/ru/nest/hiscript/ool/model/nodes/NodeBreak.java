@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Node;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeBreak extends Node {
+public class NodeBreak extends HiNode {
 	public NodeBreak(String label) {
 		super("break", TYPE_BREAK);
 		this.label = label != null ? label.intern() : null;

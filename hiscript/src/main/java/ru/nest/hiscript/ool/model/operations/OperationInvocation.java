@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.Node;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -22,9 +22,9 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.lang.reflect.Array;
 
 public class OperationInvocation extends BinaryOperation {
-	private static Operation instance;
+	private static HiOperation instance;
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		if (instance == null) {
 			instance = new OperationInvocation();
 		}
@@ -76,7 +76,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// a.new B(), where v1=a, v2=new B()
-		Node valueNode = v2.node;
+		HiNode valueNode = v2.node;
 
 		HiObject enterObject = null;
 		if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {
@@ -216,7 +216,7 @@ public class OperationInvocation extends BinaryOperation {
 			return;
 		}
 
-		Node[] argValues = v2.arguments;
+		HiNode[] argValues = v2.arguments;
 		int v1ValueType = v1.valueType;
 		HiClass v1Clazz = v1.type;
 		HiClass clazz = v1Clazz;
@@ -316,12 +316,12 @@ public class OperationInvocation extends BinaryOperation {
 				HiClass varargsArrayClass = varargsArrayType.getClass(ctx);
 				HiField<?> varargsField = HiField.getField(varargsArrayType, null);
 
-				Class<?> _varargClass = Arrays.getClass(varargsClass, 0);
+				Class<?> _varargClass = HiArrays.getClass(varargsClass, 0);
 				Object array = Array.newInstance(_varargClass, varargsSize);
 				for (int i = 0; i < varargsSize; i++) {
 					v1.type = types[mainSize + i];
 					arguments[mainSize + i].get(ctx, v1);
-					Arrays.setArrayIndex(varargsClass, array, i, v1, v2);
+					HiArrays.setArrayIndex(varargsClass, array, i, v1, v2);
 				}
 
 				ctx.value.type = varargsArrayClass;

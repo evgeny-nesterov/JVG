@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldInt;
@@ -38,7 +38,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		}
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
@@ -53,7 +53,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		this.bodyConstructorType = bodyConstructorType;
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, Node body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
@@ -88,7 +88,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 	public BodyConstructorType bodyConstructorType;
 
-	public Node body;
+	public HiNode body;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
@@ -329,9 +329,9 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		int count = os.readByte();
 		NodeArgument[] arguments = count > 0 ? new NodeArgument[count] : null;
 		for (int i = 0; i < count; i++) {
-			arguments[i] = (NodeArgument) Node.decode(os);
+			arguments[i] = (NodeArgument) HiNode.decode(os);
 		}
-		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(Node.class), (NodeConstructor) os.readNullable(Node.class), BodyConstructorType.get(os.readByte()));
+		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(HiNode.class), (NodeConstructor) os.readNullable(HiNode.class), BodyConstructorType.get(os.readByte()));
 		constructor.token = token;
 		return constructor;
 	}

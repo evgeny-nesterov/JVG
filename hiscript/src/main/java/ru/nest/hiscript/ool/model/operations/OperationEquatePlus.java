@@ -1,10 +1,9 @@
 package ru.nest.hiscript.ool.model.operations;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
-import ru.nest.hiscript.ool.model.Arrays;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Operation;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
@@ -13,9 +12,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquatePlus extends BinaryOperation {
-	private static Operation instance = new OperationEquatePlus();
+	private static HiOperation instance = new OperationEquatePlus();
 
-	public static Operation getInstance() {
+	public static HiOperation getInstance() {
 		return instance;
 	}
 
@@ -290,7 +289,7 @@ public class OperationEquatePlus extends BinaryOperation {
 				v1.variable.set(ctx, ctx.value);
 				return;
 			} else if (v1.valueType == Value.ARRAY_INDEX) {
-				Arrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, ctx.value, v1);
+				HiArrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, ctx.value, v1);
 				return;
 			}
 		}

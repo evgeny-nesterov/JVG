@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -81,8 +81,8 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	private static void loadSystemClasses() {
-		Native.register(SystemImpl.class);
-		Native.register(ObjectImpl.class);
+		HiNative.register(SystemImpl.class);
+		HiNative.register(ObjectImpl.class);
 
 		try {
 			// object
@@ -371,7 +371,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		if (initializers != null) {
 			for (NodeInitializer initializer : initializers) {
-				valid &= ((Node) initializer).validate(validationInfo, ctx);
+				valid &= ((HiNode) initializer).validate(validationInfo, ctx);
 			}
 		}
 
