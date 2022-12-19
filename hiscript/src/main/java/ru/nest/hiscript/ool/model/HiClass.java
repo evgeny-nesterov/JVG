@@ -849,6 +849,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		return false;
 	}
 
+	public boolean isIntNumber() {
+		return false;
+	}
+
 	public boolean isArray() {
 		return false;
 	}

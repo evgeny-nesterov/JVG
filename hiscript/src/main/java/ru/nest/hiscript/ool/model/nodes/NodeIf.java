@@ -26,7 +26,7 @@ public class NodeIf extends Node {
 		boolean valid = true;
 		ctx.enter(RuntimeContext.IF, this);
 		if (condition != null) {
-			valid &= condition.validate(validationInfo, ctx);
+			valid &= condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		}
 		valid &= body.validateBlock(validationInfo, ctx);
 		if (nextIf != null) {

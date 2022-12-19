@@ -30,10 +30,7 @@ public class NodeArrayValue extends Node {
 
 	@Override
 	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass cellClass = type.getClass(ctx);
-		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
-		HiClassArray clazz = currentCellClass.getArrayClass(1);
-		return clazz;
+		return type.getArrayClass(ctx, dimensions);
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class NodeArrayValue extends Node {
 		boolean valid = true;
 		int size = array.length;
 		for (int i = 0; i < size; i++) {
-			valid &= array[i].validate(validationInfo, ctx);
+			valid &= array[i].validate(validationInfo, ctx) && array[i].expectValue(validationInfo, ctx);
 		}
 		return valid;
 	}
@@ -51,10 +48,10 @@ public class NodeArrayValue extends Node {
 		HiClass cellClass = type.getClass(ctx);
 		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
 		HiClassArray clazz = currentCellClass.getArrayClass(1);
-		Class<?> c = Arrays.getClass(cellClass, dimensions - 1);
+		Class<?> javaClass = Arrays.getClass(cellClass, dimensions - 1);
 
 		int size = array.length;
-		Object value = Array.newInstance(c, array.length);
+		Object value = Array.newInstance(javaClass, array.length);
 		for (int i = 0; i < size; i++) {
 			array[i].execute(ctx);
 			Arrays.setArray(currentCellClass, value, i, ctx.value);

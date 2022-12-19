@@ -87,6 +87,12 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 	}
 
+	public HiClassArray getArrayClass(ClassResolver classResolver, int dimensions) {
+		HiClass cellClass = getClass(classResolver);
+		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
+		return currentCellClass.getArrayClass(1);
+	}
+
 	public Type parent;
 
 	public Type[] path;

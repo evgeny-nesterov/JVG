@@ -20,7 +20,7 @@ public class NodeWhile extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = condition.validate(validationInfo, ctx);
+		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		valid &= body.validateBlock(validationInfo, ctx);
 		return valid;
 	}

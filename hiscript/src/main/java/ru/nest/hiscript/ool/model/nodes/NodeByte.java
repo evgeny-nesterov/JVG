@@ -17,19 +17,23 @@ public class NodeByte extends NodeNumber {
 
 	private static NodeByte[] cache;
 
-	//	public static NodeByte getInstance(byte value, boolean hasSign) {
-	//		if (cache == null) {
-	//			cache = new NodeByte[256];
-	//		}
-	//
-	//		int index = value & 0xFF;
-	//		if (cache[index] == null) {
-	//			cache[index] = new NodeByte(value, hasSign);
-	//		}
-	//		return cache[index];
-	//	}
+	public static NodeByte getInstance(byte value, boolean hasSign, Token token) {
+		if (token != null) {
+			return new NodeByte(value, hasSign, token);
+		}
 
-	public NodeByte(byte value, boolean hasSign, Token token) {
+		if (cache == null) {
+			cache = new NodeByte[256];
+		}
+
+		int index = value & 0xFF;
+		if (cache[index] == null) {
+			cache[index] = new NodeByte(value, hasSign, null);
+		}
+		return cache[index];
+	}
+
+	private NodeByte(byte value, boolean hasSign, Token token) {
 		super(name, TYPE_BYTE, hasSign, token);
 		this.value = value;
 	}
@@ -59,9 +63,8 @@ public class NodeByte extends NodeNumber {
 		os.writeBoolean(hasSign);
 	}
 
-	public static NodeByte decode(DecodeContext os) throws IOException {
-		//		return getInstance(os.readByte(), os.readBoolean());
-		return new NodeByte(os.readByte(), os.readBoolean(), null);
+	public static NodeByte decode(DecodeContext os, Token token) throws IOException {
+		return getInstance(os.readByte(), os.readBoolean(), token);
 	}
 
 	@Override

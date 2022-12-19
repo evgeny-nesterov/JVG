@@ -20,7 +20,7 @@ public class NodeAssert extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = conditionNode.validate(validationInfo, ctx);
+		boolean valid = conditionNode.validate(validationInfo, ctx) && conditionNode.expectBooleanValue(validationInfo, ctx);
 		if (messageNode != null) {
 			valid &= messageNode.validate(validationInfo, ctx);
 		}

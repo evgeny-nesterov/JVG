@@ -22,7 +22,7 @@ public class NodeSynchronized extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.SYNCHRONIZED, this);
-		boolean valid = lock.validate(validationInfo, ctx);
+		boolean valid = lock.validate(validationInfo, ctx) && lock.expectObjectValue(validationInfo, ctx);
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}

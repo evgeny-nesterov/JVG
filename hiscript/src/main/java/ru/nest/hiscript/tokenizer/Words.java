@@ -110,4 +110,6 @@ public interface Words {
 	public final static int WHEN = 53;
 
 	public final static int ANNOTATION_INTERFACE = 54;
+
+	public final static int SEALED = 55;
 }

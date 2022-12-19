@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -237,10 +238,10 @@ public abstract class Node implements Codeable, TokenAccessible {
 				node = NodeBreak.decode(os);
 				break;
 			case TYPE_BYTE:
-				node = NodeByte.decode(os);
+				node = NodeByte.decode(os, token);
 				break;
 			case TYPE_CHAR:
-				node = NodeChar.decode(os);
+				node = NodeChar.decode(os, token);
 				break;
 			case TYPE_CLASS:
 				node = NodeClass.decode(os);
@@ -357,5 +358,51 @@ public abstract class Node implements Codeable, TokenAccessible {
 		} else {
 			throw new RuntimeException("Node can't be decoded: undefined type " + type);
 		}
+	}
+
+	public boolean expectIntValue(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		if (castedConditionClass == null || !castedConditionClass.isIntNumber()) {
+			validationInfo.error("int is expected", getToken());
+			return false;
+		}
+		return true;
+	}
+
+	public boolean expectBooleanValue(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		if (castedConditionClass == null || castedConditionClass != HiClassPrimitive.BOOLEAN) {
+			validationInfo.error("boolean is expected", getToken());
+			return false;
+		}
+		return true;
+	}
+
+	public boolean expectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		if (castedConditionClass == null || castedConditionClass == HiClassPrimitive.VOID) {
+			validationInfo.error("value is expected", getToken());
+			return false;
+		}
+		return true;
+	}
+
+	public boolean expectObjectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		if (castedConditionClass == null || !castedConditionClass.isObject()) {
+			validationInfo.error("object is expected", getToken());
+			return false;
+		}
+		return true;
+	}
+
+	// TODO
+	public boolean expectIterableValue(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		if (castedConditionClass == null || castedConditionClass == HiClassPrimitive.VOID) {
+			validationInfo.error("iterable is expected", getToken());
+			return false;
+		}
+		return true;
 	}
 }

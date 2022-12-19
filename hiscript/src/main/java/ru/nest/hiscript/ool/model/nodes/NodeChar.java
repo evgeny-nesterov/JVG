@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -17,7 +18,13 @@ public class NodeChar extends Node {
 
 	private static NodeChar[] cache = new NodeChar[256];
 
-	public static NodeChar getInstance(char value) {
+	public static NodeChar getInstance(char value, Token token) {
+		if (token != null) {
+			NodeChar node = new NodeChar(value);
+			node.token = token;
+			return node;
+		}
+
 		int index = value & 0xFF;
 		if (cache[index] == null) {
 			cache[index] = new NodeChar(value);
@@ -59,7 +66,7 @@ public class NodeChar extends Node {
 		os.writeChar(value);
 	}
 
-	public static NodeChar decode(DecodeContext os) throws IOException {
-		return getInstance(os.readChar());
+	public static NodeChar decode(DecodeContext os, Token token) throws IOException {
+		return getInstance(os.readChar(), token);
 	}
 }

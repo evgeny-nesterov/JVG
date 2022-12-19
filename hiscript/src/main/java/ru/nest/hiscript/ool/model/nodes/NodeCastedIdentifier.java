@@ -51,7 +51,7 @@ public class NodeCastedIdentifier extends Node {
 			valid &= ctx.addLocalVariable(new NodeDeclaration(name, castedVariableName));
 		}
 		if (castedCondition != null) {
-			valid &= castedCondition.validate(validationInfo, ctx);
+			valid &= castedCondition.validate(validationInfo, ctx) && castedCondition.expectBooleanValue(validationInfo, ctx);
 		}
 		return valid;
 	}

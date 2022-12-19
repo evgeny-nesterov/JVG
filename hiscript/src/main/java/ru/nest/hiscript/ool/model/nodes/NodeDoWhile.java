@@ -25,7 +25,7 @@ public class NodeDoWhile extends Node {
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}
-		valid &= condition.validate(validationInfo, ctx);
+		valid &= condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		ctx.exit();
 		return valid;
 	}

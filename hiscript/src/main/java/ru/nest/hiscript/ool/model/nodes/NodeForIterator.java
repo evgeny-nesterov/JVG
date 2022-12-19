@@ -27,7 +27,7 @@ public class NodeForIterator extends Node {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.FOR, this);
 		boolean valid = declaration.validate(validationInfo, ctx);
-		valid &= iterable.validate(validationInfo, ctx);
+		valid &= iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx);
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}

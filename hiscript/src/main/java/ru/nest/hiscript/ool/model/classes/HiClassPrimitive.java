@@ -60,6 +60,11 @@ public class HiClassPrimitive extends HiClass {
 	}
 
 	@Override
+	public boolean isIntNumber() {
+		return this == INT || this == LONG || this == BYTE || this == SHORT || this == CHAR;
+	}
+
+	@Override
 	public boolean isObject() {
 		return false;
 	}

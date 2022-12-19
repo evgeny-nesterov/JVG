@@ -44,11 +44,8 @@ public class NodeArray extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		int size = dimensions.length;
-		for (int i = 0; i < size; i++) {
-			if (dimensions[i] != null) {
-				valid &= dimensions[i].validate(validationInfo, ctx);
-			}
+		for (int i = 0; i < dimensionsCountActive; i++) {
+			valid &= dimensions[i].validate(validationInfo, ctx) && dimensions[i].expectIntValue(validationInfo, ctx);
 		}
 		return valid;
 	}

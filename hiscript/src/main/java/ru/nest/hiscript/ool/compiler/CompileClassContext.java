@@ -202,6 +202,11 @@ public class CompileClassContext implements ClassResolver {
 		level = new CompileClassLevel(type, node, level);
 	}
 
+	public void enterLabel(String label, TokenAccessible node) {
+		level = new CompileClassLevel(RuntimeContext.LABEL, node, level);
+		level.label = label;
+	}
+
 	public void enterObject(HiClass objectClass) {
 		level = new CompileClassLevel(RuntimeContext.OBJECT, objectClass, level);
 		level.objectClass = objectClass;
@@ -393,6 +398,8 @@ public class CompileClassContext implements ClassResolver {
 
 		TokenAccessible node;
 
+		String label;
+
 		public CompileClassLevel(int type, TokenAccessible node, CompileClassLevel parent) {
 			this.type = type;
 			this.node = node;
@@ -414,6 +421,10 @@ public class CompileClassContext implements ClassResolver {
 				classes = new HashMap<>(1);
 			}
 			classes.put(clazz.name, clazz);
+		}
+
+		public boolean isLabel(String label) {
+			return type == RuntimeContext.LABEL && label.equals(this.label);
 		}
 
 		public HiClass getClass(String name) {

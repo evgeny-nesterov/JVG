@@ -20,7 +20,7 @@ public class NodeReturn extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (value != null) {
-			return value.validate(validationInfo, ctx);
+			return value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx);
 		}
 		return true;
 	}

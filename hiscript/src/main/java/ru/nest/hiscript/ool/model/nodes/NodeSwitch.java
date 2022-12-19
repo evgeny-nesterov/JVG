@@ -43,11 +43,11 @@ public class NodeSwitch extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.SWITCH, this);
-		boolean valid = valueNode.validate(validationInfo, ctx);
+		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		for (int i = 0; i < size; i++) {
 			if (casesValues.get(i) != null) { // not default
 				for (Node casesValue : casesValues.get(i)) {
-					valid &= casesValue.validate(validationInfo, ctx);
+					valid &= casesValue.validate(validationInfo, ctx) && casesValue.expectValue(validationInfo, ctx);
 				}
 			}
 			valid &= casesNodes.get(i).validate(validationInfo, ctx);

@@ -70,7 +70,7 @@ public class NodeInvocation extends Node {
 		boolean valid = true;
 		if (arguments != null) {
 			for (Node argument : arguments) {
-				valid &= argument.validate(validationInfo, ctx);
+				valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);
 			}
 		}
 

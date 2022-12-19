@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -34,19 +33,9 @@ public class NodeLogicalSwitch extends NodeExpression {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
-		if (condition.validate(validationInfo, ctx)) {
-			HiClass conditionType = condition.getValueType(validationInfo, ctx);
-			if (conditionType != HiClassPrimitive.BOOLEAN) {
-				validationInfo.error("boolean expression expected", condition.getToken());
-			}
-		} else {
-			valid = false;
-		}
-
-		valid &= trueValueNode.validate(validationInfo, ctx);
-		valid &= falseValueNode.validate(validationInfo, ctx);
-
+		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
+		valid &= trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
+		valid &= falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
 		if (valid) {
 			HiClass type1 = trueValueNode.getValueType(validationInfo, ctx);
 			HiClass type2 = falseValueNode.getValueType(validationInfo, ctx);

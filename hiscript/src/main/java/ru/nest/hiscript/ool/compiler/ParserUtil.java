@@ -212,8 +212,7 @@ public class ParserUtil implements Words {
 		} else if (currentToken instanceof ByteToken) {
 			ByteToken token = (ByteToken) currentToken;
 			tokenizer.nextToken();
-			// return NodeByte.getInstance(token.getNumber(), token.hasSign(), token);
-			return new NodeByte(token.getNumber(), token.hasSign(), token);
+			return NodeByte.getInstance(token.getNumber(), token.hasSign(), token);
 		}
 		return null;
 	}
@@ -225,7 +224,7 @@ public class ParserUtil implements Words {
 		if (currentToken instanceof CharToken) {
 			CharToken token = (CharToken) currentToken;
 			tokenizer.nextToken();
-			return NodeChar.getInstance(token.getChar());
+			return NodeChar.getInstance(token.getChar(), token);
 		}
 		return null;
 	}

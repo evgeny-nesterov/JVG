@@ -53,15 +53,15 @@ public class NodeExpressionSwitch extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = valueNode.validate(validationInfo, ctx);
+		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		for (int i = 0; i < size; i++) {
 			Node[] caseValues = casesValues.get(i);
 			if (caseValues != null) {
 				for (Node caseValue : caseValues) {
-					valid &= caseValue.validate(validationInfo, ctx);
+					valid &= caseValue.validate(validationInfo, ctx) && caseValue.expectValue(validationInfo, ctx);
 				}
 			}
-			valid &= casesNodes.get(i).validate(validationInfo, ctx);
+			valid &= casesNodes.get(i).validate(validationInfo, ctx) && casesNodes.get(i).expectValue(validationInfo, ctx);
 		}
 		return valid;
 	}

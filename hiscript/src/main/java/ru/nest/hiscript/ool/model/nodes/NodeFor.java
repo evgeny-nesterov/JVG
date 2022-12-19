@@ -32,7 +32,7 @@ public class NodeFor extends Node {
 			valid &= initialization.validate(validationInfo, ctx);
 		}
 		if (condition != null) {
-			valid &= condition.validate(validationInfo, ctx);
+			valid &= condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		}
 		if (assignment != null) {
 			valid &= assignment.validate(validationInfo, ctx);

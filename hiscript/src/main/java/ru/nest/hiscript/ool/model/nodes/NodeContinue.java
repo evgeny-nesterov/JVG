@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.compiler.CompileClassContext;
 import ru.nest.hiscript.ool.model.Node;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class NodeContinue extends Node {
 	public NodeContinue(String label) {
@@ -17,7 +17,21 @@ public class NodeContinue extends Node {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO label
+		if (label != null) {
+			CompileClassContext.CompileClassLevel level = ctx.level;
+			boolean found = false;
+			while (level != null) {
+				if (level.isLabel(label)) {
+					found = true;
+					break;
+				}
+				level = level.parent;
+			}
+			if (!found) {
+				validationInfo.error("undefined label '" + label + "'", token);
+				return false;
+			}
+		}
 		return true;
 	}
 

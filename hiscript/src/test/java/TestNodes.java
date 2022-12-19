@@ -47,7 +47,7 @@ public class TestNodes extends HiTest {
 	}
 
 	private Node byteNode(int value) {
-		return new NodeByte((byte) value, false, null);
+		return NodeByte.getInstance((byte) value, false, null);
 	}
 
 	private Node shortNode(int value) {

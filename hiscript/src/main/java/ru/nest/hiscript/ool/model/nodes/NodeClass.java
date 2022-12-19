@@ -27,8 +27,13 @@ public class NodeClass extends Node {
 	private HiClass clazz;
 
 	@Override
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// Node hasn't value!
+		return null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO check
 		return clazz.validate(validationInfo, ctx);
 	}
 

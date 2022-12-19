@@ -21,7 +21,26 @@ public class NodeLabel extends Node {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (statement != null) {
-			return statement.validate(validationInfo, ctx);
+			CompileClassContext.CompileClassLevel level = ctx.level;
+			boolean found = false;
+			while (level != null) {
+				if (level.isLabel(label)) {
+					found = true;
+					break;
+				}
+				level = level.parent;
+			}
+			if (found) {
+				validationInfo.error("label '" + label + "' already in use", token);
+				return false;
+			}
+
+			ctx.enterLabel(label, token);
+			try {
+				return statement.validate(validationInfo, ctx);
+			} finally {
+				ctx.exit();
+			}
 		}
 		return true;
 	}
