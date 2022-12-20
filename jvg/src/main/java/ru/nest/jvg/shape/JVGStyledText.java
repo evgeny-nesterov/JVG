@@ -936,13 +936,12 @@ public class JVGStyledText extends JVGShape {
 		return path;
 	}
 
-	static ArrayList<Painter> defaultPainters = null;
+	static List<Painter> defaultPainters = null;
 
-	public static ArrayList<Painter> getDefaultPainters() {
+	public static List<Painter> getDefaultPainters() {
 		if (defaultPainters == null) {
 			defaultPainters = new ArrayList<>();
 		}
-
 		return defaultPainters;
 	}
 

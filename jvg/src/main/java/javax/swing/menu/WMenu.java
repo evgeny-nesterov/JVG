@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ButtonModel;
 import javax.swing.Constants;
@@ -39,7 +40,7 @@ public class WMenu extends JMenu {
 		final JPopupMenu popup = getPopupMenu();
 		popup.setBackground(new Color(249, 248, 247));
 		popup.setBorder(new Border() {
-			private HashSet<Integer> positions = new HashSet<>();
+			private Set<Integer> positions = new HashSet<>();
 
 			@Override
 			public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

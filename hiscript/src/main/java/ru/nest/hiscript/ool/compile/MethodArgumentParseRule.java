@@ -24,9 +24,8 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	}
 
 	@Override
-	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Token startToken = startToken(tokenizer);
 
 		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -52,10 +51,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 			} else {
 				typeArgument = type;
 			}
-
-			NodeArgument node = new NodeArgument(typeArgument, name, modifiers, annotations);
-			node.setToken(tokenizer.getBlockToken(startToken));
-			return node;
+			return new NodeArgument(typeArgument, name, modifiers, annotations);
 		}
 
 		tokenizer.rollback();

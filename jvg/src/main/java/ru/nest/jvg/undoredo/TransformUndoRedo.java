@@ -1,17 +1,15 @@
 package ru.nest.jvg.undoredo;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGUtil;
 import ru.nest.jvg.shape.JVGShape;
+
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.util.Map;
 
 public class TransformUndoRedo extends JVGUndoRedo {
 	private JVGComponent[] shapes;
@@ -22,7 +20,7 @@ public class TransformUndoRedo extends JVGUndoRedo {
 
 	public TransformUndoRedo(String name, JVGPane pane, JVGComponent shape, AffineTransform transform) {
 		super(name, pane);
-		this.shapes = new JVGComponent[] { shape };
+		this.shapes = new JVGComponent[] {shape};
 		this.transform = transform;
 	}
 
@@ -38,15 +36,14 @@ public class TransformUndoRedo extends JVGUndoRedo {
 		this.transforms = transforms;
 	}
 
-	public TransformUndoRedo(String name, JVGPane pane, HashMap<JVGComponent, AffineTransform> transforms) {
+	public TransformUndoRedo(String name, JVGPane pane, Map<JVGComponent, AffineTransform> transforms) {
 		super(name, pane);
 		this.shapes = new JVGComponent[transforms.size()];
 		this.transforms = new AffineTransform[transforms.size()];
 
 		int i = 0;
-		Iterator<JVGComponent> iter = transforms.keySet().iterator();
-		while (iter.hasNext()) {
-			this.shapes[i] = iter.next();
+		for (JVGComponent jvgComponent : transforms.keySet()) {
+			this.shapes[i] = jvgComponent;
 			this.transforms[i] = transforms.get(this.shapes[i]);
 			i++;
 		}

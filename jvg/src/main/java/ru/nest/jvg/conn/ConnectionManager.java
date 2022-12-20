@@ -1,14 +1,17 @@
 package ru.nest.jvg.conn;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class ConnectionManager {
-	private static HashMap<JVGPane, ConnectionContainer> containers = new HashMap<>();
+	private static Map<JVGPane, ConnectionContainer> containers = new HashMap<>();
 
 	public static void register(Connection c) {
 		if (c != null) {
@@ -92,7 +95,7 @@ public class ConnectionManager {
 		return false;
 	}
 
-	public static ArrayList<Relation> getRelations(JVGPane pane) {
+	public static List<Relation> getRelations(JVGPane pane) {
 		if (pane != null) {
 			ConnectionContainer container = null;
 			synchronized (pane) {
@@ -120,19 +123,19 @@ public class ConnectionManager {
 	}
 
 	static class ConnectionContainer {
-		private HashSet<ConnectionClient> clients = new HashSet<>();
+		private Set<ConnectionClient> clients = new HashSet<>();
 
-		private ArrayList<ConnectionClient> clients_list = new ArrayList<>();
+		private List<ConnectionClient> clients_list = new ArrayList<>();
 
-		public ArrayList<ConnectionClient> getClients() {
+		public List<ConnectionClient> getClients() {
 			return clients_list;
 		}
 
-		private HashSet<ConnectionServer> servers = new HashSet<>();
+		private Set<ConnectionServer> servers = new HashSet<>();
 
-		private ArrayList<ConnectionServer> servers_list = new ArrayList<>();
+		private List<ConnectionServer> servers_list = new ArrayList<>();
 
-		public ArrayList<ConnectionServer> getServers() {
+		public List<ConnectionServer> getServers() {
 			return servers_list;
 		}
 
@@ -177,11 +180,11 @@ public class ConnectionManager {
 			return false;
 		}
 
-		private HashSet<Relation> relations = new HashSet<>();
+		private Set<Relation> relations = new HashSet<>();
 
-		private ArrayList<Relation> relations_list = new ArrayList<>();
+		private List<Relation> relations_list = new ArrayList<>();
 
-		public ArrayList<Relation> getRelations() {
+		public List<Relation> getRelations() {
 			return relations_list;
 		}
 
@@ -222,7 +225,7 @@ public class ConnectionManager {
 			}
 		}
 
-		private HashSet<JVGComponent> adjusted = new HashSet<>();
+		private Set<JVGComponent> adjusted = new HashSet<>();
 
 		public boolean accept(JVGComponent change) {
 			int size = relations_list.size();

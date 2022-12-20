@@ -108,11 +108,11 @@ public class HiConstructor implements Codeable, TokenAccessible {
 				break;
 		}
 		if (bodyConstructor != null) {
-			bodyConstructor.validate(validationInfo, ctx);
+			valid &= bodyConstructor.validate(validationInfo, ctx);
 		}
 
 		if (body != null) {
-			body.validate(validationInfo, ctx);
+			valid &= body.validate(validationInfo, ctx);
 		}
 		ctx.exit();
 		return valid;

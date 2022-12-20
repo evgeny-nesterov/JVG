@@ -7,7 +7,6 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -244,7 +243,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 	}
 
 	private void setProperties(JVGComponent component, Element componentElement) {
-		Map<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
+		Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 		if (hash != null && hash.size() > 0) {
 			for (Map.Entry<String, String> entry : hash.entrySet()) {
 				// TODO

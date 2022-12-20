@@ -231,47 +231,6 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		return field;
 	}
 
-	public static boolean autoCast(HiClass src, HiClass dst) {
-		if (src == dst) {
-			return true;
-		}
-
-		if (src == null || dst == null) {
-			return false;
-		}
-
-		if (src.isPrimitive() || dst.isPrimitive()) {
-			return src.isPrimitive() && dst.isPrimitive() && HiFieldPrimitive.autoCast(src, dst);
-		}
-
-		if (src.isNull()) {
-			return true;
-		}
-
-		if (dst == HiClass.OBJECT_CLASS) {
-			return true;
-		}
-
-		if (src.isArray() || dst.isArray()) {
-			if (!src.isArray() || !dst.isArray()) {
-				return false;
-			}
-
-			HiClassArray arraySrc = (HiClassArray) src;
-			HiClassArray arrayDst = (HiClassArray) dst;
-			if (arraySrc.dimension != arrayDst.dimension) {
-				return false;
-			}
-
-			if (arraySrc.cellClass.isPrimitive()) {
-				return arraySrc.cellClass == arrayDst.cellClass;
-			} else {
-				return autoCast(arraySrc.cellClass, arrayDst.cellClass);
-			}
-		}
-		return src.isInstanceof(dst);
-	}
-
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);

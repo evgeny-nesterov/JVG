@@ -458,7 +458,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 
 	private void setProperties(JVGComponent component, Element propertiesElement) {
 		if (propertiesElement != null) {
-			Map<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
+			Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 			if (hash == null) {
 				hash = new HashMap<>();
 				component.setClientProperty("component-properties", hash);

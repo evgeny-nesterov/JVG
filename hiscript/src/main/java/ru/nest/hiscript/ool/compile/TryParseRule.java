@@ -26,9 +26,8 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	}
 
 	@Override
-	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			NodeDeclaration[] resources = null;
 			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.nextToken();
@@ -97,10 +96,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				finallyBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			}
-
-			NodeTry tryNode = new NodeTry(tryBody, catchNodes != null ? catchNodes.toArray(new NodeCatch[catchNodes.size()]) : null, finallyBody, resources);
-			tryNode.setToken(tokenizer.getBlockToken(startToken));
-			return tryNode;
+			return new NodeTry(tryBody, catchNodes != null ? catchNodes.toArray(new NodeCatch[catchNodes.size()]) : null, finallyBody, resources);
 		}
 		return null;
 	}

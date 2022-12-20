@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.IconButton;
@@ -266,7 +267,7 @@ public abstract class GradientChooser<G extends Gradient> extends AbstractChoose
 		return pnlManage;
 	}
 
-	private ArrayList<GradPos> positions;
+	private List<GradPos> positions;
 
 	public Resource<Color>[] getColors() {
 		Resource<Color>[] colors = new Resource[positions.size()];

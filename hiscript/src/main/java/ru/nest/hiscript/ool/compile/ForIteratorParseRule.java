@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
@@ -28,9 +28,8 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	}
 
 	@Override
-	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Token startToken = startToken(tokenizer);
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
@@ -54,10 +53,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					HiNode body = expectBody(tokenizer, ctx);
 
 					ctx.exit();
-
-					NodeForIterator node = new NodeForIterator(declaration, iterable, body);
-					node.setToken(tokenizer.getBlockToken(startToken));
-					return node;
+					return new NodeForIterator(declaration, iterable, body);
 				}
 			}
 		}

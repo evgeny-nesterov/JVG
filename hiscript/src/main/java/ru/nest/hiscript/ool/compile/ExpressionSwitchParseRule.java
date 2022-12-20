@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -20,7 +21,7 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 	}
 
 	@Override
-	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeExpressionSwitch visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeExpressionSwitch node = new NodeExpressionSwitch(value);

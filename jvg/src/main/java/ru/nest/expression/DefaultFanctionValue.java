@@ -1,6 +1,6 @@
 package ru.nest.expression;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultFanctionValue extends FunctionValue {
 	public DefaultFanctionValue(Function function, Value[] arguments) {
@@ -13,7 +13,7 @@ public class DefaultFanctionValue extends FunctionValue {
 		this.function = function;
 	}
 
-	public DefaultFanctionValue(Function function, ArrayList<Value> arguments) {
+	public DefaultFanctionValue(Function function, List<Value> arguments) {
 		super(arguments);
 		this.function = function;
 	}

@@ -54,8 +54,6 @@ public class CompileClassContext implements ClassResolver {
 
 	public List<HiField<?>> fields = null;
 
-	public Map<String, HiField<?>> fieldsMap = null;
-
 	public List<HiClass> classes = null;
 
 	public Map<String, HiClass> classesMap = null;
@@ -124,7 +122,6 @@ public class CompileClassContext implements ClassResolver {
 	public void addField(HiField<?> field) throws ParseException {
 		if (fields == null) {
 			fields = new ArrayList<>(1);
-			fieldsMap = new HashMap<>(1);
 		}
 
 		if (initializers == null) {
@@ -132,7 +129,6 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		fields.add(field);
-		fieldsMap.put(field.name, field);
 		initializers.add(field);
 	}
 
@@ -396,7 +392,7 @@ public class CompileClassContext implements ClassResolver {
 
 		HiClass objectClass;
 
-		TokenAccessible node;
+		public TokenAccessible node;
 
 		String label;
 

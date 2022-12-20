@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 
 import java.lang.reflect.Array;
 
@@ -28,7 +27,7 @@ public class HiFieldArray extends HiField<Object> {
 		}
 
 		HiClass type = getClass(ctx);
-		if (!autoCast(value.type, type)) {
+		if (!HiClass.autoCast(value.type, type)) {
 			ctx.throwRuntimeException("incompatible types; found " + type.getClassName() + ", required " + value.type.getClassName());
 			return;
 		}
@@ -49,7 +48,7 @@ public class HiFieldArray extends HiField<Object> {
 		} else {
 			// check cast
 			HiClass type = getClass(ctx);
-			if (!autoCast(value.type, type)) {
+			if (!HiClass.autoCast(value.type, type)) {
 				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + type.getClassName());
 				return;
 			}

@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IfNode extends Node {
 	public IfNode(Node condition, Node body) {
@@ -29,7 +30,7 @@ public class IfNode extends Node {
 		return body;
 	}
 
-	private ArrayList<IfNode> elseIf = new ArrayList<>();
+	private List<IfNode> elseIf = new ArrayList<>();
 
 	public void addElseIf(IfNode node) {
 		elseIf.add(node);

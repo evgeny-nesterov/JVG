@@ -297,7 +297,7 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 	}
 
 	private void setProperties(JVGComponent component, Element componentElement) {
-		Map<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
+		Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 		if (hash != null && hash.size() > 0) {
 			Element propertiesElement = new Element("properties");
 			componentElement.addContent(propertiesElement);

@@ -20,9 +20,8 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 	}
 
 	@Override
-	public NodeSynchronized visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeSynchronized visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.SYNCHRONIZED, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 			HiNode lock = expectExpression(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -31,9 +30,7 @@ public class SynchronizedParseRule extends ParseRule<NodeSynchronized> {
 			HiNode body = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
-			NodeSynchronized node = new NodeSynchronized(lock, body);
-			node.setToken(tokenizer.getBlockToken(startToken));
-			return node;
+			return new NodeSynchronized(lock, body);
 		}
 		return null;
 	}

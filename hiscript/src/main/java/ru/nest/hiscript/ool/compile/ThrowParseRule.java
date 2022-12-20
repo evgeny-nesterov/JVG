@@ -1,7 +1,9 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeThrow;
+import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -18,12 +20,11 @@ public class ThrowParseRule extends ParseRule<NodeThrow> {
 	}
 
 	@Override
-	public NodeThrow visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeThrow visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.THROW, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
-			NodeThrow node = new NodeThrow(expectExpression(tokenizer, ctx));
-			node.setToken(tokenizer.getBlockToken(startToken));
-			return node;
+			NodeExpression exception = expectExpression(tokenizer, ctx);
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			return new NodeThrow(exception);
 		}
 		return null;
 	}

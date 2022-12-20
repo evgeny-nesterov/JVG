@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArgumentsNode extends Node {
 	public ArgumentsNode() {
@@ -13,7 +14,7 @@ public class ArgumentsNode extends Node {
 		return value;
 	}
 
-	private ArrayList<ArgumentNode> arguments = new ArrayList<>();
+	private List<ArgumentNode> arguments = new ArrayList<>();
 
 	public void addArgument(ArgumentNode argument) {
 		arguments.add(argument);

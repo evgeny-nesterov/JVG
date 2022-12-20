@@ -1,13 +1,14 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PrefixNode extends Node {
 	public PrefixNode() {
 		super("prefix");
 	}
 
-	private ArrayList<Object> prefixes = new ArrayList<>();
+	private List<Object> prefixes = new ArrayList<>();
 
 	public void addPrefix(int operation) {
 		prefixes.add(operation);

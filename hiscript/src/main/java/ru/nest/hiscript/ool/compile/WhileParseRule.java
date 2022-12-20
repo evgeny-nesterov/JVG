@@ -20,15 +20,11 @@ public class WhileParseRule extends ParseRule<NodeWhile> {
 	}
 
 	@Override
-	public NodeWhile visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeWhile visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.WHILE, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			HiNode body = expectBody(tokenizer, ctx);
-
-			NodeWhile node = new NodeWhile(condition, body);
-			node.setToken(tokenizer.getBlockToken(startToken));
-			return node;
+			return new NodeWhile(condition, body);
 		}
 		return null;
 	}

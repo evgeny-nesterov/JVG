@@ -35,4 +35,9 @@ public class NodeThrow extends HiNode {
 	public static NodeThrow decode(DecodeContext os) throws IOException {
 		return new NodeThrow(os.read(HiNode.class));
 	}
+
+	@Override
+	public boolean isTerminal() {
+		return true;
+	}
 }

@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
+import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -648,13 +649,13 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < mainArgCount; i++) {
-								if (!HiField.autoCast(argTypes[i], m.argClasses[i])) {
+								if (!HiClass.autoCast(argTypes[i], m.argClasses[i])) {
 									break FOR;
 								}
 							}
 							HiClass varargsType = m.argClasses[mainArgCount].getArrayType();
 							for (int i = mainArgCount; i < argTypes.length; i++) {
-								if (!HiField.autoCast(argTypes[i], varargsType)) {
+								if (!HiClass.autoCast(argTypes[i], varargsType)) {
 									break FOR;
 								}
 							}
@@ -667,7 +668,7 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < argCount; i++) {
-								if (!HiField.autoCast(argTypes[i], m.argClasses[i])) {
+								if (!HiClass.autoCast(argTypes[i], m.argClasses[i])) {
 									break FOR;
 								}
 							}
@@ -813,7 +814,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		constructor.resolve(classResolver);
 		for (int i = 0; i < argCount; i++) {
-			if (!HiField.autoCast(argTypes[i], constructor.argClasses[i])) {
+			if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i])) {
 				return false;
 			}
 		}
@@ -1182,5 +1183,46 @@ public class HiClass implements Codeable, TokenAccessible {
 	@Override
 	public Token getToken() {
 		return token;
+	}
+
+	public static boolean autoCast(HiClass src, HiClass dst) {
+		if (src == dst) {
+			return true;
+		}
+
+		if (src == null || dst == null) {
+			return false;
+		}
+
+		if (src.isPrimitive() || dst.isPrimitive()) {
+			return src.isPrimitive() && dst.isPrimitive() && HiFieldPrimitive.autoCast(src, dst);
+		}
+
+		if (src.isNull()) {
+			return true;
+		}
+
+		if (dst == HiClass.OBJECT_CLASS) {
+			return true;
+		}
+
+		if (src.isArray() || dst.isArray()) {
+			if (!src.isArray() || !dst.isArray()) {
+				return false;
+			}
+
+			HiClassArray arraySrc = (HiClassArray) src;
+			HiClassArray arrayDst = (HiClassArray) dst;
+			if (arraySrc.dimension != arrayDst.dimension) {
+				return false;
+			}
+
+			if (arraySrc.cellClass.isPrimitive()) {
+				return arraySrc.cellClass == arrayDst.cellClass;
+			} else {
+				return autoCast(arraySrc.cellClass, arrayDst.cellClass);
+			}
+		}
+		return src.isInstanceof(dst);
 	}
 }

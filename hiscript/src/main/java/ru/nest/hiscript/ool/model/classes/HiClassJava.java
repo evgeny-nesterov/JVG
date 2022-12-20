@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.java.HiConstructorJava;
 import ru.nest.hiscript.ool.model.java.HiFieldJava;
 import ru.nest.hiscript.ool.model.java.HiMethodJava;

@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.event.UndoableEditEvent;
@@ -40,7 +41,7 @@ public class SameSpacesAction extends JVGAction {
 			if (selectionModel != null) {
 				JVGComponent[] selection = selectionModel.getSelection();
 				if (selection != null && selection.length > 0) {
-					HashMap<JVGShape, JVGShape> shapes = new HashMap<>();
+					Map<JVGShape, JVGShape> shapes = new HashMap<>();
 					for (int i = 0; i < selection.length; i++) {
 						JVGComponent c = selection[i];
 						if (c instanceof JVGShape) {
@@ -54,9 +55,9 @@ public class SameSpacesAction extends JVGAction {
 						boolean first = true;
 						double minX = 0, minY = 0, maxX = 0, maxY = 0, sumW = 0, sumH = 0;
 
-						TreeMap<Double, JVGShape> sortedShapesX = new TreeMap<>();
-						TreeMap<Double, JVGShape> sortedShapesY = new TreeMap<>();
-						HashMap<JVGComponent, AffineTransform> transforms = new HashMap<>();
+						Map<Double, JVGShape> sortedShapesX = new TreeMap<>();
+						Map<Double, JVGShape> sortedShapesY = new TreeMap<>();
+						Map<JVGComponent, AffineTransform> transforms = new HashMap<>();
 						for (int i = 0; i < selection.length; i++) {
 							JVGComponent c = selection[i];
 							if (shapes.containsKey(c)) {
@@ -109,9 +110,7 @@ public class SameSpacesAction extends JVGAction {
 
 						if (type == HORIZONTAL || type == BOTH) {
 							double x = minX;
-							Iterator<JVGShape> iter = sortedShapesX.values().iterator();
-							while (iter.hasNext()) {
-								JVGShape s = iter.next();
+							for (JVGShape s : sortedShapesX.values()) {
 								Rectangle2D r = s.getRectangleBounds();
 								AffineTransform t = transforms.get(s);
 								t.translate(x - r.getX(), 0);
@@ -121,9 +120,7 @@ public class SameSpacesAction extends JVGAction {
 
 						if (type == VERTICAL || type == BOTH) {
 							double y = minY;
-							Iterator<JVGShape> iter = sortedShapesY.values().iterator();
-							while (iter.hasNext()) {
-								JVGShape s = iter.next();
+							for (JVGShape s : sortedShapesY.values()) {
 								Rectangle2D r = s.getRectangleBounds();
 								AffineTransform t = transforms.get(s);
 								t.translate(0, y - r.getY());

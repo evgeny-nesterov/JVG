@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -24,8 +25,12 @@ public class StatementParseRule extends ParseRule<HiNode> {
 	 * assignment, new object throw
 	 */
 	@Override
-	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+		int emptyCount = 0;
+		while (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+			emptyCount++;
+		}
+		if (emptyCount > 0) {
 			return EmptyNode.getInstance();
 		}
 
@@ -107,7 +112,6 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		}
 
 		if ((node = AssertParseRule.getInstance().visit(tokenizer, ctx)) != null) {
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 

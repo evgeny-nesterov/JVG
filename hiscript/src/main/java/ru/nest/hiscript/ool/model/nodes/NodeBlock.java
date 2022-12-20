@@ -52,8 +52,18 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		ctx.enter(RuntimeContext.BLOCK, this);
 		boolean valid = true;
 		// TODO check isStatic
+		boolean terminated = false;
+		boolean isUnreachable = false;
 		for (HiNode statement : statements) {
 			valid &= statement.validate(validationInfo, ctx);
+			if (terminated && !isUnreachable) {
+				validationInfo.error("unreachable statement", statement.getToken());
+				isUnreachable = true;
+				valid = false;
+			}
+			if (statement.isTerminal()) {
+				terminated = true;
+			}
 		}
 		ctx.exit();
 		return valid;

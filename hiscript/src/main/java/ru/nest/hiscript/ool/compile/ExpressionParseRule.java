@@ -45,10 +45,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	@Override
-	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		List<HiNode> operands = new ArrayList<>();
 		List<OperationsGroup> allOperations = new ArrayList<>();
-		Token startToken = startToken(tokenizer);
 
 		int operation;
 		OperationsGroup operations = new OperationsGroup();
@@ -83,7 +82,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// DEBUG
 		// System.out.println(allOperations);
 
-		Token blockToken = tokenizer.getBlockToken(startToken);
 		if (operands.size() > 0) {
 			HiNode[] operandsArray = new HiNode[operands.size()];
 			operands.toArray(operandsArray);
@@ -92,7 +90,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			allOperations.toArray(operationsArray);
 
 			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray);
-			expressionNode.setToken(blockToken);
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				NodeExpression trueValueNode = visit(tokenizer, ctx);
 				if (trueValueNode == null) {
@@ -105,16 +102,13 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				if (falseValueNode == null) {
 					throw new ParseException("expression expected", tokenizer.currentToken());
 				}
-
-				NodeLogicalSwitch logicalSwitchNode = new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
-				logicalSwitchNode.setToken(tokenizer.getBlockToken(startToken));
-				return logicalSwitchNode;
+				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
 			}
 			return expressionNode;
 		}
 
 		if (operations.hasOperations()) {
-			throw new ParseException("invalid expression", blockToken);
+			throw new ParseException("invalid expression", tokenizer.getBlockToken(startToken));
 		}
 		return null;
 	}

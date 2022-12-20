@@ -27,9 +27,8 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	}
 
 	@Override
-	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
 
@@ -56,8 +55,6 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-
-			node.setToken(tokenizer.getBlockToken(startToken));
 			return node;
 		}
 		return null;

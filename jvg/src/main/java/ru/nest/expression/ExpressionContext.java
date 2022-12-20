@@ -1,7 +1,7 @@
 package ru.nest.expression;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExpressionContext {
@@ -35,7 +35,7 @@ public class ExpressionContext {
 		}
 	}
 
-	public FunctionValue getFunction(String id, ArrayList<Value> arguments) {
+	public FunctionValue getFunction(String id, List<Value> arguments) {
 		Function function = functions.get(id);
 		if (function != null) {
 			return new DefaultFanctionValue(function, arguments);

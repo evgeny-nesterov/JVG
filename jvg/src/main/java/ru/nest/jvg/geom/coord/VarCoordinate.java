@@ -1,6 +1,5 @@
 package ru.nest.jvg.geom.coord;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.nest.expression.NumberValue;
@@ -23,7 +22,7 @@ public class VarCoordinate extends AbstractCoordinate {
 		setNumber = this.get instanceof NumberValue;
 	}
 
-	public VarCoordinate(Value get, List<NumberValue> set, ArrayList<Value> function, NumberValue argument, boolean transformable) {
+	public VarCoordinate(Value get, List<NumberValue> set, List<Value> function, NumberValue argument, boolean transformable) {
 		this.get = get;
 		if (set != null && function != null && argument != null) {
 			this.set = new NumberValue[set.size()];

@@ -1,7 +1,7 @@
 package ru.nest.expression;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class StandardFunctionValue extends FunctionValue {
 	public final static int SIN = 0;
@@ -51,6 +51,7 @@ public class StandardFunctionValue extends FunctionValue {
 	public final static int SIGN = 22;
 
 	private static HashMap<String, Integer> standardFunctions = new HashMap<>();
+
 	static {
 		standardFunctions.put("sin", SIN);
 		standardFunctions.put("cos", COS);
@@ -93,7 +94,7 @@ public class StandardFunctionValue extends FunctionValue {
 		this.type = func;
 	}
 
-	public StandardFunctionValue(int func, ArrayList<Value> arguments) {
+	public StandardFunctionValue(int func, List<Value> arguments) {
 		super(arguments);
 		this.type = func;
 	}

@@ -405,4 +405,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		}
 		return true;
 	}
+
+	public boolean isTerminal() {
+		return false;
+	}
 }

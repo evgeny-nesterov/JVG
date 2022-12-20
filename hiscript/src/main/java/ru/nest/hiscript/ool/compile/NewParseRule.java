@@ -28,8 +28,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	@Override
-	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		Token startToken = startToken(tokenizer);
+	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
@@ -54,10 +53,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 					node = visitNewArrayValue(tokenizer, type, ctx);
 					break;
 			}
-			if (node != null) {
-				node.setToken(tokenizer.getBlockToken(startToken));
-				return node;
-			}
+			return node;
 		}
 		return null;
 	}

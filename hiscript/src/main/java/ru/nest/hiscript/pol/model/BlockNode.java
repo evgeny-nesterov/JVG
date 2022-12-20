@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.nest.hiscript.Breakable;
 
@@ -10,7 +11,7 @@ public class BlockNode extends Node implements Breakable {
 		isBlock = true;
 	}
 
-	private ArrayList<Node> statements = new ArrayList<>();
+	private List<Node> statements = new ArrayList<>();
 
 	public void addStatement(Node statement) {
 		statements.add(statement);
@@ -58,7 +59,6 @@ public class BlockNode extends Node implements Breakable {
 				break;
 			}
 		}
-
 		removeVariables();
 	}
 }

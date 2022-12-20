@@ -77,7 +77,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 			}
 		}
 		if (body != null) {
-			body.validate(validationInfo, ctx);
+			valid &= body.validate(validationInfo, ctx);
 		}
 		ctx.exit();
 		return valid;

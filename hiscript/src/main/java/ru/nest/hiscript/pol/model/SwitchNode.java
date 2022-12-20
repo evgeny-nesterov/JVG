@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.nest.hiscript.Breakable;
 
@@ -19,7 +20,7 @@ public class SwitchNode extends Node implements Breakable {
 		return value;
 	}
 
-	private ArrayList<CaseNode> cases = new ArrayList<>();
+	private List<CaseNode> cases = new ArrayList<>();
 
 	public void addCase(CaseNode node) {
 		cases.add(node);

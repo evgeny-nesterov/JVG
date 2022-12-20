@@ -23,8 +23,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	}
 
 	@Override
-	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		Token startToken = startToken(tokenizer);
+	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
@@ -35,21 +34,14 @@ public class ForParseRule extends ParseRule<NodeFor> {
 			}
 
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
-
 			NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
-
 			HiNode assignment = visitExpressions(tokenizer, ctx);
-
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-
 			HiNode body = expectBody(tokenizer, ctx);
 
-			NodeFor forNode = new NodeFor(initialization, condition, assignment, body);
-			forNode.setToken(tokenizer.getBlockToken(startToken));
 			ctx.exit();
-			return forNode;
+			return new NodeFor(initialization, condition, assignment, body);
 		}
 		return null;
 	}

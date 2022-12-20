@@ -23,9 +23,8 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	private DeclarationParseRule() {
 	}
 
-	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		tokenizer.start();
-		Token startToken = startToken(tokenizer);
 
 		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 		Modifiers modifiers = visitModifiers(tokenizer);
@@ -66,8 +65,6 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 						declarations.add(type, varName, initializer, modifiers, annotations);
 					}
-
-					declarations.setToken(tokenizer.getBlockToken(startToken));
 					return declarations;
 				}
 			}

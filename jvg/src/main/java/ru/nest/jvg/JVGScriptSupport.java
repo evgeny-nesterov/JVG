@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ru.nest.hiscript.pol.model.ExecuteException;
@@ -452,7 +453,7 @@ public class JVGScriptSupport {
 				JVGComponent component = getComponent(arguments);
 				if (component != null) {
 					String parameter = (String) arguments[1];
-					HashMap<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
+					Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 					if (hash != null) {
 						ctx.value.bool = hash.containsKey(parameter);
 						return;
@@ -469,7 +470,7 @@ public class JVGScriptSupport {
 				JVGComponent component = getComponent(arguments);
 				if (component != null) {
 					String parameter = (String) arguments[1];
-					Map<String, String> hash = (HashMap<String, String>) component.getClientProperty("component-properties");
+					Map<String, String> hash = (Map<String, String>) component.getClientProperty("component-properties");
 					if (hash != null) {
 						hash.remove(parameter);
 					}
@@ -1736,7 +1737,7 @@ public class JVGScriptSupport {
 	}
 
 	public static JVGShape[] getShapes(JVGPane pane, long[] ids) {
-		ArrayList<JVGShape> shapesList = new ArrayList<>();
+		List<JVGShape> shapesList = new ArrayList<>();
 		for (int i = 0; i < ids.length; i++) {
 			JVGComponent component = pane.getComponent(ids[i]);
 			if (component instanceof JVGShape) {

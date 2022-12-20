@@ -23,8 +23,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 	}
 
 	@Override
-	public NodeAnnotation visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		Token startToken = startToken(tokenizer);
+	public NodeAnnotation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		String name = visitAnnotationWord(tokenizer);
 		if (name != null) {
 			List<NodeAnnotationArgument> args = new ArrayList<>();
@@ -58,10 +57,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 					}
 				}
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-
-				NodeAnnotation node = new NodeAnnotation(name, args.toArray(new NodeAnnotationArgument[args.size()]));
-				node.setToken(tokenizer.getBlockToken(startToken));
-				return node;
+				return new NodeAnnotation(name, args.toArray(new NodeAnnotationArgument[args.size()]));
 			}
 		}
 		return null;

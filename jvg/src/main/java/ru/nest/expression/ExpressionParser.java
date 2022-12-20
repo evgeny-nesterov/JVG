@@ -304,7 +304,7 @@ public class ExpressionParser {
 		return null;
 	}
 
-	private boolean getArguments(ArrayList<Value> arguments) throws Exception {
+	private boolean getArguments(List<Value> arguments) throws Exception {
 		Value value = getValue();
 		if (value == null) {
 			return false;
@@ -324,7 +324,7 @@ public class ExpressionParser {
 		return true;
 	}
 
-	private void doOperations(ArrayList<Value> values, ArrayList<Integer> operations) throws Exception {
+	private void doOperations(List<Value> values, List<Integer> operations) throws Exception {
 		if (values.size() == 0) {
 			throw new RuntimeException("Value is expected");
 		}

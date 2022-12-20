@@ -95,4 +95,38 @@ public class TestStatements extends HiTest {
 		// TODO
 		// assertSuccess("var a = 1;");
 	}
+
+	@Test
+	public void testReturn() {
+		// methods
+		assertSuccessSerialize("class A{int m(){return 1;}} assert new A().m() == 1;");
+		assertSuccessSerialize("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
+		assertFailSerialize("class A{int m(){return \"\";}}");
+		assertFailSerialize("class A{int m(){return;}}");
+		assertFailSerialize("class A{void m(){return; int x = 1;}}");
+		assertFailSerialize("class A{void m(){return; return;}}");
+
+		assertSuccessSerialize("class A{void m(){return;}} new A().m();");
+		assertFailSerialize("class A{void m(){return;}} Object x = new A().m();");
+		assertFailSerialize("class A{void m(){return 1;}}");
+
+		assertSuccessSerialize("class A{int m(){ if(true) {{{return 1;}}} else return 2; }} assert new A().m() == 1;");
+
+		// constructors
+		assertSuccessSerialize("class A{A(){return;}}");
+		assertFailSerialize("class A{A(){return \"\";}}");
+		assertFailSerialize("class A{A(){return; int x = 1;}}");
+		assertFailSerialize("class A{A(){return; return;}}");
+
+		assertSuccessSerialize("class A{int x = 0; A(){if(true) return; x = 1;}} assert new A().x == 0;");
+
+		// initializers
+		assertSuccessSerialize("class A{{int x = 0; return;}}");
+		assertSuccessSerialize("class A{static{int x = 0; return;}}");
+		assertFailSerialize("class A{{return \"\";}}");
+		assertFailSerialize("class A{{return; int x = 0;}}");
+		assertFailSerialize("class A{static{return; return;}}");
+
+		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
+	}
 }

@@ -2,9 +2,11 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -19,10 +21,25 @@ public class NodeReturn extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (value != null) {
-			return value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx);
+		HiClass returnType = value != null ? value.getValueType(validationInfo, ctx) : HiClassPrimitive.VOID;
+		boolean valid = value != null ? value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx) : true;
+
+		CompileClassContext.CompileClassLevel level = ctx.level;
+		HiClass expectedType = HiClassPrimitive.VOID;
+		while (level != null) {
+			if (level.type == RuntimeContext.METHOD) {
+				HiMethod method = (HiMethod) level.node;
+				method.resolve(ctx);
+				expectedType = method.returnClass;
+				break;
+			}
+			level = level.parent;
 		}
-		return true;
+		if (returnType == null || !HiClass.autoCast(returnType, expectedType)) {
+			validationInfo.error("incompatible types; found " + returnType + ", required " + expectedType, value != null ? value.getToken() : getToken());
+			valid = false;
+		}
+		return valid;
 	}
 
 	@Override
@@ -63,5 +80,10 @@ public class NodeReturn extends HiNode {
 
 	public static NodeReturn decode(DecodeContext os) throws IOException {
 		return new NodeReturn(os.readNullable(HiNode.class));
+	}
+
+	@Override
+	public boolean isTerminal() {
+		return true;
 	}
 }

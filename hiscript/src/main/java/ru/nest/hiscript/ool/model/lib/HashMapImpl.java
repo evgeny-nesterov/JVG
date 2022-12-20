@@ -4,12 +4,12 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class HashMapImpl extends ImplUtil {
 	private static HashMap<Object, Object> getMap(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
-		HashMap<Object, Object> map = (HashMap<Object, Object>) o.userObject;
-		return map;
+		return (HashMap<Object, Object>) o.userObject;
 	}
 
 	private static void setCtx(RuntimeContext ctx, Object object) {
@@ -26,60 +26,60 @@ public class HashMapImpl extends ImplUtil {
 	}
 
 	public static void HashMap_Object_get_Object(RuntimeContext ctx, Object key) {
-		HashMap<?, ?> map = getMap(ctx);
+		Map<?, ?> map = getMap(ctx);
 		setCtx(ctx, key);
 		Object value = map.get(key);
 		ctx.value.set(value);
 	}
 
 	public static void HashMap_Object_put_Object_Object(RuntimeContext ctx, Object key, Object value) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, key);
 		value = map.put(key, value);
 		ctx.value.set(value);
 	}
 
 	public static void HashMap_boolean_containsKey_Object(RuntimeContext ctx, Object key) {
-		HashMap<?, ?> map = getMap(ctx);
+		Map<?, ?> map = getMap(ctx);
 		setCtx(ctx, key);
 		returnBoolean(ctx, map.containsKey(key));
 	}
 
 	public static void HashMap_boolean_containsValue_Object(RuntimeContext ctx, Object value) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, value);
 		returnBoolean(ctx, map.containsValue(value));
 	}
 
 	public static void HashMap_int_size(RuntimeContext ctx) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		returnInt(ctx, map.size());
 	}
 
 	public static void HashMap_Object_remove_Object(RuntimeContext ctx, Object key) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, key);
 		Object value = map.remove(key);
 		ctx.value.set(value);
 	}
 
 	public static void HashMap_ArrayList_keys(RuntimeContext ctx) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		// TODO: realize
 	}
 
 	public static void HashMap_ArrayList_values(RuntimeContext ctx) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		// TODO: realize
 	}
 
 	public static void HashMap_void_putAll_HashMap(RuntimeContext ctx, HiObject map) {
-		HashMap<Object, Object> currentMap = getMap(ctx);
+		Map<Object, Object> currentMap = getMap(ctx);
 		// TODO: realize
 	}
 
 	public static void HashMap_void_clear(RuntimeContext ctx) {
-		HashMap<Object, Object> map = getMap(ctx);
+		Map<Object, Object> map = getMap(ctx);
 		map.clear();
 		returnVoid(ctx);
 	}

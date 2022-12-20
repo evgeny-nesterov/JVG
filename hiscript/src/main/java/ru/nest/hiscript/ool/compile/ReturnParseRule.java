@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
+import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -19,13 +20,11 @@ public class ReturnParseRule extends ParseRule<NodeReturn> {
 	}
 
 	@Override
-	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.RETURN, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			NodeExpression value = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-			NodeReturn node = new NodeReturn(value);
-			node.setToken(tokenizer.getBlockToken(startToken));
-			return node;
+			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			return new NodeReturn(value);
 		}
 		return null;
 	}

@@ -1,13 +1,14 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArrayIndexesNode extends Node {
 	public ArrayIndexesNode() {
 		super("array-indexes");
 	}
 
-	private ArrayList<ExpressionNode> indexes = new ArrayList<>();
+	private List<ExpressionNode> indexes = new ArrayList<>();
 
 	public void addIndex(ExpressionNode index) {
 		indexes.add(index);

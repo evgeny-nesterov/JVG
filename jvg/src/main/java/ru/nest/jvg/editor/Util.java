@@ -115,8 +115,8 @@ public class Util {
 		defaults.put("DesktopPane.font", defaultFont);
 	}
 
-	public static HashMap<String, String> getArguments(String[] args) {
-		HashMap<String, String> map = new HashMap<>();
+	public static Map<String, String> getArguments(String[] args) {
+		Map<String, String> map = new HashMap<>();
 		if (args != null) {
 			for (int i = 0; i < args.length; i += 2) {
 				map.put(args[i], args[i + 1]);

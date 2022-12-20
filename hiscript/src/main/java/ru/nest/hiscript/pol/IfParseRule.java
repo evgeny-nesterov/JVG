@@ -45,10 +45,8 @@ public class IfParseRule extends ParseRule<IfNode> {
 			if (elseNode != null) {
 				ifNode.addElseIf(elseNode);
 			}
-
 			return ifNode;
 		}
-
 		return null;
 	}
 
@@ -71,10 +69,8 @@ public class IfParseRule extends ParseRule<IfNode> {
 			}
 
 			ElseParseRule.getInstance().visit(tokenizer, handler);
-
 			return true;
 		}
-
 		return false;
 	}
 }

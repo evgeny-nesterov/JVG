@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.nest.hiscript.Breakable;
 
@@ -34,9 +35,9 @@ public class ContinueNode extends Node {
 		return mark;
 	}
 
-	private ArrayList<Breakable> breakableNodes = new ArrayList<>();
+	private List<Breakable> breakableNodes = new ArrayList<>();
 
-	public ArrayList<Breakable> getBreakableNodes() {
+	public List<Breakable> getBreakableNodes() {
 		return breakableNodes;
 	}
 

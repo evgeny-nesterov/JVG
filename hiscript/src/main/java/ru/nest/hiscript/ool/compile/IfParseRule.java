@@ -20,34 +20,28 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	}
 
 	@Override
-	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		if (visitWord(Words.IF, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			HiNode body = expectBody(tokenizer, ctx);
 			NodeIf elseIfNode = visitNext(tokenizer, ctx);
-
-			NodeIf ifNode = new NodeIf(condition, body, elseIfNode);
-			ifNode.setToken(tokenizer.getBlockToken(startToken));
-			return ifNode;
+			return new NodeIf(condition, body, elseIfNode);
 		}
 		return null;
 	}
 
 	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Token startToken = startToken(tokenizer);
 		if (visitWord(Words.ELSE, tokenizer) != null) {
-			Token startToken = startToken(tokenizer);
 			if (visitWord(Words.IF, tokenizer) != null) {
 				NodeExpression condition = expectCondition(tokenizer, ctx);
 				HiNode body = expectBody(tokenizer, ctx);
 				NodeIf elseIfNode = visitNext(tokenizer, ctx);
-
 				NodeIf ifNode = new NodeIf(condition, body, elseIfNode);
 				ifNode.setToken(tokenizer.getBlockToken(startToken));
 				return ifNode;
 			} else {
 				HiNode body = expectBody(tokenizer, ctx);
-
 				NodeIf ifNode = new NodeIf(null, body, null);
 				ifNode.setToken(tokenizer.getBlockToken(startToken));
 				return ifNode;

@@ -50,4 +50,9 @@ public class NodeBreak extends HiNode {
 	public static NodeBreak decode(DecodeContext os) throws IOException {
 		return new NodeBreak(os.readNullableUTF());
 	}
+
+	@Override
+	public boolean isTerminal() {
+		return true;
+	}
 }

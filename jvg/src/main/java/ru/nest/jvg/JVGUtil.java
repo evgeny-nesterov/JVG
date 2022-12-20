@@ -23,19 +23,19 @@ import ru.nest.jvg.shape.JVGShape;
 public class JVGUtil {
 	public static void transform(JVGComponent[] components, AffineTransform transform) {
 		if (components != null) {
-			HashSet<JVGShape> shapes = new HashSet<>();
+			Set<JVGShape> shapes = new HashSet<>();
 			getShapes(components, shapes);
 			transform(shapes, transform);
 		}
 	}
 
-	public static void transform(HashSet<JVGShape> shapes, AffineTransform transform) {
-		HashSet<JVGShape> locked = new HashSet<>();
+	public static void transform(Set<JVGShape> shapes, AffineTransform transform) {
+		Set<JVGShape> locked = new HashSet<>();
 		transform(shapes, transform, locked);
 		unlock(locked);
 	}
 
-	public static void transform(HashSet<JVGShape> shapes, AffineTransform transform, HashSet<JVGShape> locked) {
+	public static void transform(Set<JVGShape> shapes, AffineTransform transform, Set<JVGShape> locked) {
 		if (shapes.size() > 0 && !transform.isIdentity()) {
 			getRoots(shapes);
 
@@ -47,7 +47,7 @@ public class JVGUtil {
 
 	public static void transform(JVGComponent[] components, AffineTransform[] transforms) {
 		if (components != null) {
-			HashMap<JVGComponent, AffineTransform> map = new HashMap<>();
+			Map<JVGComponent, AffineTransform> map = new HashMap<>();
 			for (int i = 0; i < components.length; i++) {
 				map.put(components[i], transforms[i]);
 			}
@@ -55,10 +55,10 @@ public class JVGUtil {
 		}
 	}
 
-	public static void transform(HashMap<JVGComponent, AffineTransform> components) {
+	public static void transform(Map<JVGComponent, AffineTransform> components) {
 		// transform components
-		HashSet<JVGShape> shapes = new HashSet<>();
-		HashSet<JVGShape> locked = new HashSet<>();
+		Set<JVGShape> shapes = new HashSet<>();
+		Set<JVGShape> locked = new HashSet<>();
 		for (JVGComponent component : components.keySet()) {
 			if (component instanceof JVGShape) {
 				JVGShape shapeComponent = (JVGShape) component;
@@ -154,19 +154,19 @@ public class JVGUtil {
 	}
 
 	public static JVGComponent[] getRoots(JVGComponent[] components) {
-		HashSet<JVGComponent> roots = toSet(components);
+		Set<JVGComponent> roots = toSet(components);
 		getRoots(roots);
 		return toArray(roots);
 	}
 
 	public static JVGComponent[] getRootsSaveOrder(JVGComponent[] components) {
-		ArrayList<JVGComponent> roots = toArrayList(components);
+		List<JVGComponent> roots = toArrayList(components);
 		getRoots(roots);
 		return toArray(roots);
 	}
 
-	public static HashMap<JVGComponent, JVGComponent> toMap(JVGComponent[] components) {
-		HashMap<JVGComponent, JVGComponent> map = new HashMap<>();
+	public static Map<JVGComponent, JVGComponent> toMap(JVGComponent[] components) {
+		Map<JVGComponent, JVGComponent> map = new HashMap<>();
 		for (int i = 0; i < components.length; i++) {
 			JVGComponent component = components[i];
 			map.put(component, component);
@@ -174,8 +174,8 @@ public class JVGUtil {
 		return map;
 	}
 
-	public static <V> HashSet<V> toSet(V[] components) {
-		HashSet<V> set = new HashSet<>();
+	public static <V> Set<V> toSet(V[] components) {
+		Set<V> set = new HashSet<>();
 		for (int i = 0; i < components.length; i++) {
 			V component = components[i];
 			set.add(component);
@@ -183,8 +183,8 @@ public class JVGUtil {
 		return set;
 	}
 
-	public static <V> ArrayList<V> toArrayList(V[] components) {
-		ArrayList<V> list = new ArrayList<>();
+	public static <V> List<V> toArrayList(V[] components) {
+		List<V> list = new ArrayList<>();
 		for (int i = 0; i < components.length; i++) {
 			V component = components[i];
 			list.add(component);

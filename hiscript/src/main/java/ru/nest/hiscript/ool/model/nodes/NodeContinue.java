@@ -50,4 +50,9 @@ public class NodeContinue extends HiNode {
 	public static NodeContinue decode(DecodeContext os) throws IOException {
 		return new NodeContinue(os.readNullableUTF());
 	}
+
+	@Override
+	public boolean isTerminal() {
+		return true;
+	}
 }

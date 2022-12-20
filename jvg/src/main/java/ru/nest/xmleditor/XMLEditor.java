@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.CharacterIterator;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BasicTextEditor;
 import javax.swing.JFrame;
@@ -162,7 +163,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 	public void stopParseXML() {
 	}
 
-	private ArrayList<Request> requests = new ArrayList<>();
+	private List<Request> requests = new ArrayList<>();
 
 	private void addRequest(int offset, int length, AttributeSet attr, boolean replace) {
 		Request request = getRequest();
@@ -213,7 +214,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 		}
 	}
 
-	private void putRequests(ArrayList<Request> requests) {
+	private void putRequests(List<Request> requests) {
 		synchronized (cache) {
 			cache.addAll(requests);
 		}
