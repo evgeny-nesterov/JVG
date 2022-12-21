@@ -47,6 +47,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeThrow;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -168,6 +169,10 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	private HiClass valueClass = null;
 
+	private boolean valid;
+
+	private boolean isValue;
+
 	@Override
 	public String toString() {
 		return name;
@@ -178,16 +183,21 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return token;
 	}
 
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	public void getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valueClass == null) {
-			valueClass = computeValueType(validationInfo, ctx);
+			computeValueType(validationInfo, ctx);
+			valueClass = ctx.nodeValueType.type;
+			valid = ctx.nodeValueType.valid;
+			isValue = ctx.nodeValueType.isValue;
+
 			if (valueClass != null) {
 				valueClass.init(ctx);
 			} else {
 				valueClass = HiClassPrimitive.VOID;
 			}
+		} else {
+			ctx.nodeValueType.get(valueClass);
 		}
-		return valueClass;
 	}
 
 	public HiClass getValueType() {
@@ -202,8 +212,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return false;
 	}
 
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return HiClassPrimitive.VOID;
+	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.get(HiClassPrimitive.VOID);
 	}
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

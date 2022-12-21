@@ -21,7 +21,7 @@ public class OperationEquateXOR extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node1, NodeExpressionNoLS.NodeValueType node2) {
 		// TODO check
 		return node1.type;
 	}

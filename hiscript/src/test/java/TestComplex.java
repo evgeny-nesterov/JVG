@@ -12,6 +12,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() {
-		assertSuccessSerialize("long a = 1l + 2;");
+		assertSuccessSerialize("byte a = 128;");
 	}
 }

@@ -1,14 +1,13 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -118,7 +117,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	public HiNode initializer;
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return type.getClass(ctx);
 	}
 

@@ -6,8 +6,8 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
@@ -16,43 +16,38 @@ public abstract class BinaryOperation extends HiOperation {
 		super(name, 2, operation);
 	}
 
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
-		return null;
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 	}
 
 	@Override
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
-		NodeExpressionNoLS.NodeOperandType node1 = nodes[0];
-		NodeExpressionNoLS.NodeOperandType node2 = nodes[1];
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
+		NodeValueType node1 = nodes[0];
+		NodeValueType node2 = nodes[1];
 		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
-			node1.type = getOperationResultType(validationInfo, ctx, node1, node2);
-			node1.valid = node1.type != null && node1.valid && node2.valid;
-			node1.isValue = node1.valid && node1.isValue && node2.isValue;
+			getOperationResultType(validationInfo, ctx, node1, node2);
+			ctx.nodeValueType.apply(node2);
 		} else {
-			node1.valid = false;
-			node1.isValue = false;
+			ctx.nodeValueType.invalid();
 		}
 	}
 
-	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
+	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		boolean valid = true;
 		if (node1.type == null) {
-			node1.type = node1.getType(validationInfo, ctx);
+			node1.get(validationInfo, ctx);
 			if (node1.type != null) {
-				node1.isValue = node1.node.isValue();
 				valid = node1.valid;
 			} else {
-				validationInfo.error("cannot resolve expression type", node1.node.getToken());
+				validationInfo.error("can't resolve expression type", node1.node.getToken());
 				valid = false;
 			}
 		}
 		if (node2.type == null && this != OperationInvocation.getInstance()) {
-			node2.type = node2.getType(validationInfo, ctx);
+			node2.get(validationInfo, ctx);
 			if (node2.type != null) {
-				node2.isValue = node2.node.isValue();
 				valid &= node2.valid;
 			} else {
-				validationInfo.error("cannot resolve expression type", node2.node.getToken());
+				validationInfo.error("can't resolve expression type", node2.node.getToken());
 				valid = false;
 			}
 		}

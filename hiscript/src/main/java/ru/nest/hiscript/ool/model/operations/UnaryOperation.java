@@ -14,20 +14,20 @@ public abstract class UnaryOperation extends HiOperation {
 		super(name, 1, operation);
 	}
 
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node) {
 		return null;
 	}
 
 	@Override
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
-		NodeExpressionNoLS.NodeOperandType node = nodes[0];
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType... nodes) {
+		NodeExpressionNoLS.NodeValueType node = nodes[0];
 		if (prepareOperationResultType(validationInfo, ctx, node)) {
 			node.type = getOperationResultType(validationInfo, ctx, node);
 			node.isValue = node.isValue && node.isValue;
 		}
 	}
 
-	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node) {
+	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node) {
 		if (node.type == null) {
 			node.type = node.getType(validationInfo, ctx);
 			if (node.type != null) {

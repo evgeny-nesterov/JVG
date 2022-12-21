@@ -125,40 +125,20 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	private HiOperation[] operations;
 
-	public static class NodeOperandType {
-		public HiNode node;
-
-		public HiClass type;
-
-		public boolean isValue;
-
-		public boolean valid;
-
-		NodeOperandType(HiNode node) {
-			this.node = node;
-		}
-
-		public HiClass getType(ValidationInfo validationInfo, CompileClassContext ctx) {
-			HiClass type = node.getValueType(validationInfo, ctx);
-			valid = node.validate(validationInfo, ctx);
-			return type;
-		}
-	}
-
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
-			return operands[0].getValueType(validationInfo, ctx);
+			return ctx.nodeValueType.get(validationInfo, ctx, operands[0]);
 		}
 
-		NodeOperandType[] nodes = new NodeOperandType[operands.length];
+		NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
 		int bufSize = 0;
 		int valuePos = 0;
 		for (int i = 0; i < operations.length; i++) {
 			if (operations[i] == null) {
 				// get value
 				HiNode valueNode = operands[valuePos];
-				nodes[bufSize] = new NodeOperandType(valueNode);
+				nodes[bufSize].init(valueNode);
 				bufSize++;
 				valuePos++;
 			} else {
@@ -170,7 +150,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 			// TODO simplify expression
 		}
 		if (nodes[0].valid) {
-			return nodes[0].type;
+			return nodes[0];
 		} else {
 			return null;
 		}

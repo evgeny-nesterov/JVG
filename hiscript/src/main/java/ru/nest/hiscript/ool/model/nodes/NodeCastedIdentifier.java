@@ -31,7 +31,7 @@ public class NodeCastedIdentifier extends HiNode {
 	public HiNode castedCondition;
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);

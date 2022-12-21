@@ -14,6 +14,7 @@ import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -71,6 +72,24 @@ public class CompileClassContext implements ClassResolver {
 	public CompileClassContext parent;
 
 	public Set<HiNode> initializedNodes = new HashSet<>();
+
+	public NodeValueType nodeValueType = new NodeValueType();
+
+	private NodeValueType[] nodesValueTypesCache;
+
+	public NodeValueType[] getNodesValueTypesCache(int size) {
+		if (nodesValueTypesCache == null || size > nodesValueTypesCache.length) {
+			NodeValueType[] newNodesValueTypesCache = new NodeValueType[size];
+			int currentSize = nodesValueTypesCache != null ? nodesValueTypesCache.length : 0;
+			if (nodesValueTypesCache != null) {
+				System.arraycopy(nodesValueTypesCache, 0, newNodesValueTypesCache, 0, currentSize);
+			}
+			for (int i = currentSize; i < size; i++) {
+				newNodesValueTypesCache[i] = new NodeValueType();
+			}
+		}
+		return nodesValueTypesCache;
+	}
 
 	@Override
 	public HiCompiler getCompiler() {

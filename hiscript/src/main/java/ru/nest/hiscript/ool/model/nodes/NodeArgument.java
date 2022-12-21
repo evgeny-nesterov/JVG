@@ -42,8 +42,9 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public NodeAnnotation[] annotations;
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return getType().getClass(ctx);
+	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass clazz = getType().getClass(ctx);
+		ctx.nodeValueType.get(clazz, clazz != null, false);
 	}
 
 	@Override

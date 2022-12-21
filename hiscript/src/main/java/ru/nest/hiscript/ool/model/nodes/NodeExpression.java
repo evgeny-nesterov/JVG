@@ -11,7 +11,4 @@ public abstract class NodeExpression extends HiNode {
 	public NodeExpression(String name, int type, Token token) {
 		super(name, type, token);
 	}
-
-	// TODO
-	// public Type getExpressionType();
 }

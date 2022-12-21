@@ -43,7 +43,7 @@ public class NodeConstructor extends HiNode {
 	private HiClass clazz;
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (clazz == null) {
 			clazz = type.getType().getClass(ctx);
 		}

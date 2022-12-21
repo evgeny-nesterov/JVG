@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	}
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 
@@ -65,54 +66,33 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		}
 	}
 
-	public static boolean autoCast(HiClass src, HiClass dst) {
+	/**
+	 * src is value
+	 */
+	public static boolean autoCastValue(HiClass src, HiClass dst) {
 		int srcType = getType(src);
 		int dstType = getType(dst);
 		switch (srcType) {
+			case BYTE:
 			case CHAR:
+			case SHORT:
+			case INT:
 				switch (dstType) {
+					case BYTE:
 					case CHAR:
 					case SHORT:
 					case INT:
-					case FLOAT:
 					case LONG:
+					case FLOAT:
 					case DOUBLE:
 						return true;
 				}
 				break;
 
-			case BOOLEAN:
-			case DOUBLE:
-				return srcType == dstType;
-
-			case BYTE:
+			case LONG:
 				switch (dstType) {
-					case BYTE:
-					case SHORT:
-					case INT:
-					case FLOAT:
 					case LONG:
-					case DOUBLE:
-						return true;
-				}
-				break;
-
-			case SHORT:
-				switch (dstType) {
-					case SHORT:
-					case INT:
 					case FLOAT:
-					case LONG:
-					case DOUBLE:
-						return true;
-				}
-				break;
-
-			case INT:
-				switch (dstType) {
-					case INT:
-					case FLOAT:
-					case LONG:
 					case DOUBLE:
 						return true;
 				}
@@ -126,14 +106,86 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 				}
 				break;
 
-			case LONG:
+			case DOUBLE:
+				return true;
+
+			case BOOLEAN:
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean autoCast(HiClass src, HiClass dst) {
+		int srcType = getType(src);
+		int dstType = getType(dst);
+		switch (srcType) {
+			case CHAR:
 				switch (dstType) {
-					case FLOAT:
+					case CHAR:
+					case SHORT:
+					case INT:
 					case LONG:
+					case FLOAT:
 					case DOUBLE:
 						return true;
 				}
 				break;
+
+			case BYTE:
+				switch (dstType) {
+					case BYTE:
+					case SHORT:
+					case INT:
+					case LONG:
+					case FLOAT:
+					case DOUBLE:
+						return true;
+				}
+				break;
+
+			case SHORT:
+				switch (dstType) {
+					case SHORT:
+					case INT:
+					case LONG:
+					case FLOAT:
+					case DOUBLE:
+						return true;
+				}
+				break;
+
+			case INT:
+				switch (dstType) {
+					case INT:
+					case LONG:
+					case FLOAT:
+					case DOUBLE:
+						return true;
+				}
+				break;
+
+			case LONG:
+				switch (dstType) {
+					case LONG:
+					case FLOAT:
+					case DOUBLE:
+						return true;
+				}
+				break;
+
+			case FLOAT:
+				switch (dstType) {
+					case FLOAT:
+					case DOUBLE:
+						return true;
+				}
+				break;
+
+			case DOUBLE:
+				return dstType == DOUBLE;
+
+			case BOOLEAN:
+				return dstType == BOOLEAN;
 		}
 		return false;
 	}

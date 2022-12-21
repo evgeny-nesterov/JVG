@@ -40,7 +40,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public NodeAnnotation[] annotations;
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz;
 		if (type == Type.varType) {
 			clazz = initialization.getValueType(validationInfo, ctx);
@@ -56,53 +56,16 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = true;
 		if (initialization != null) {
 			HiClass variableType = type.getClass(ctx);
+			HiClass initializationType = initialization.getValueType(validationInfo, ctx);
 			valid = initialization.validate(validationInfo, ctx);
 			if (valid) {
-				HiClass initializationType = initialization.getValueType(validationInfo, ctx);
 				boolean canCast = false;
 				if (initializationType.isPrimitive() || variableType.isPrimitive()) {
 					if (initializationType.isPrimitive() && variableType.isPrimitive()) {
 						int srcType = HiFieldPrimitive.getType(initializationType);
 						int dstType = HiFieldPrimitive.getType(variableType);
-						switch (srcType) {
-							case BYTE:
-							case CHAR:
-							case SHORT:
-							case INT:
-								switch (dstType) {
-									case BYTE:
-									case CHAR:
-									case SHORT:
-									case INT:
-										canCast = true;
-										break;
-								}
-								break;
-
-							case LONG:
-								switch (dstType) {
-									case FLOAT:
-									case LONG:
-									case DOUBLE:
-										canCast = true;
-										break;
-								}
-								break;
-
-							case FLOAT:
-								switch (dstType) {
-									case FLOAT:
-									case DOUBLE:
-										canCast = true;
-										break;
-								}
-								break;
-
-							case BOOLEAN:
-							case DOUBLE:
-								canCast = srcType == dstType;
-								break;
-						}
+						// if srcType.isValue()
+						canCast = HiFieldPrimitive.autoCastValue(initializationType, variableType);
 					}
 				} else {
 					canCast = HiClass.autoCast(initializationType, variableType);

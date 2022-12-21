@@ -29,7 +29,7 @@ public class NodeFloat extends NodeNumber {
 	}
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.FLOAT;
 	}
 

@@ -27,7 +27,7 @@ public class NodeIdentifier extends HiNode {
 	}
 
 	@Override
-	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (dimension > 0) {
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 			if (clazz == null) {
