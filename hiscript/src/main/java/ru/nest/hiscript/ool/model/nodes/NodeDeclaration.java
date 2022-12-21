@@ -3,8 +3,8 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -38,7 +38,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable {
 	public NodeAnnotation[] annotations;
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz;
 		if (type == Type.varType) {
 			clazz = initialization.getValueType(validationInfo, ctx);
@@ -53,9 +53,18 @@ public class NodeDeclaration extends HiNode implements NodeVariable {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (initialization != null) {
+			HiClass variableType = type.getClass(ctx);
 			valid = initialization.validate(validationInfo, ctx);
+			if (valid) {
+				HiClass initializationType = initialization.getValueType(validationInfo, ctx);
+				if (!HiClass.autoCast(initializationType, variableType)) {
+					validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
+					valid = false;
+				}
+			}
+			ctx.initializedNodes.add(this);
 		}
-		// TODO check type, name, modifiers, annotations
+		// TODO check name, modifiers, annotations
 		valid &= ctx.addLocalVariable(this);
 		return valid;
 	}

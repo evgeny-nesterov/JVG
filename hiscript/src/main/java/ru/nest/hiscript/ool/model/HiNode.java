@@ -166,6 +166,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	protected int type;
 
+	private HiClass valueClass = null;
+
 	@Override
 	public String toString() {
 		return name;
@@ -176,6 +178,22 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return token;
 	}
 
+	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (valueClass == null) {
+			valueClass = computeValueType(validationInfo, ctx);
+			if (valueClass != null) {
+				valueClass.init(ctx);
+			} else {
+				valueClass = HiClassPrimitive.VOID;
+			}
+		}
+		return valueClass;
+	}
+
+	public HiClass getValueType() {
+		return valueClass;
+	}
+
 	public void setToken(Token token) {
 		this.token = token;
 	}
@@ -184,8 +202,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return false;
 	}
 
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return null;
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return HiClassPrimitive.VOID;
 	}
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

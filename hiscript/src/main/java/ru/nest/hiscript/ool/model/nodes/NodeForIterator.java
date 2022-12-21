@@ -27,6 +27,7 @@ public class NodeForIterator extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.FOR, this);
 		boolean valid = declaration.validate(validationInfo, ctx);
+		ctx.initializedNodes.add(declaration);
 		valid &= iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx);
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);

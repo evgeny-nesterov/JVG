@@ -32,7 +32,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			if (t2 == BOOLEAN && t1 != BOOLEAN) {
 				errorCast(validationInfo, node1.node.getToken(), c2, c1);
 			}
-		} else if (c1.isArray()) {
+		} else if (c1.isArray() && c2.isArray()) {
 			// c1 and c2 has to be in one hierarchy path
 			if (!canCastArray((HiClassArray) c1, c2) && !canCastArray((HiClassArray) c2, c1)) {
 				errorCast(validationInfo, node1.node.getToken(), c2, c1);

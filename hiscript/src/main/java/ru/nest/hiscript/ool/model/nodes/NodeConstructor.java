@@ -5,9 +5,9 @@ import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.NoClassException;
-import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -36,16 +36,15 @@ public class NodeConstructor extends HiNode {
 
 	public NodeType type;
 
-	public HiClass clazz;
-
 	public HiNode[] argValues;
 
 	public String name;
 
+	private HiClass clazz;
+
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (clazz == null) {
-			// init by type
 			clazz = type.getType().getClass(ctx);
 		}
 		return clazz;
@@ -61,9 +60,7 @@ public class NodeConstructor extends HiNode {
 		}
 
 		// resolve class
-		if (clazz == null) {
-			clazz = type.getType().getClass(ctx);
-		}
+		clazz = getValueType(validationInfo, ctx);
 		if (clazz == null) {
 			validationInfo.error("class not found: " + name, type.getToken());
 			valid = false;
@@ -101,6 +98,10 @@ public class NodeConstructor extends HiNode {
 			clazz.init(ctx);
 			ctx.addClass(clazz);
 		}
+
+		// init by class
+		clazz.init(ctx);
+		ctx.addClass(clazz);
 
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
 		invokeConstructor(ctx, clazz, argValues, null, outboundObject);

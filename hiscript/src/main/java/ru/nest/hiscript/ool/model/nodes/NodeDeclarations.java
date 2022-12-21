@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +17,9 @@ public class NodeDeclarations extends HiNode {
 		super("declarations", TYPE_DECLARATIONS);
 	}
 
-	public NodeDeclaration add(Type type, String name, HiNode initializer, Modifiers modifiers, NodeAnnotation[] annotations) {
+	public NodeDeclaration add(Type type, String name, HiNode initializer, Modifiers modifiers, NodeAnnotation[] annotations, Token token) {
 		NodeDeclaration field = new NodeDeclaration(type, name, initializer, modifiers, annotations);
+		field.setToken(token);
 		declarations.add(field);
 		return field;
 	}

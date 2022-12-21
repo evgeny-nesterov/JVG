@@ -31,7 +31,7 @@ public class NodeCastedIdentifier extends HiNode {
 	public HiNode castedCondition;
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
@@ -48,7 +48,9 @@ public class NodeCastedIdentifier extends HiNode {
 			}
 		}
 		if (castedVariableName != null) {
-			valid &= ctx.addLocalVariable(new NodeDeclaration(name, castedVariableName));
+			NodeDeclaration declarationNode = new NodeDeclaration(name, castedVariableName);
+			declarationNode.setToken(token);
+			valid &= ctx.addLocalVariable(declarationNode);
 		}
 		if (castedCondition != null) {
 			valid &= castedCondition.validate(validationInfo, ctx) && castedCondition.expectBooleanValue(validationInfo, ctx);

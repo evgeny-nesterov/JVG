@@ -23,6 +23,25 @@ public class Tokenizer {
 		return s.substring(beginIndex, endIndex);
 	}
 
+	public String getText(Token token) {
+		if (token == null) {
+			return null;
+		}
+		return s.substring(token.getOffset(), token.getOffset() + token.getLength());
+	}
+
+	public String getTokenLineText(Token token) {
+		if (token == null) {
+			return null;
+		}
+		int startOffset = token.getOffset() - token.getLineOffset();
+		int endOffset = s.indexOf('\n', token.getOffset());
+		if (endOffset == -1) {
+			endOffset = s.length();
+		}
+		return getText(startOffset, endOffset);
+	}
+
 	public String getText(int beginIndex, int endIndex, char except) {
 		StringBuilder text = new StringBuilder(endIndex - beginIndex);
 		for (int i = beginIndex; i < endIndex; i++) {

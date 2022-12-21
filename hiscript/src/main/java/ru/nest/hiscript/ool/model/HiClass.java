@@ -360,7 +360,9 @@ public class HiClass implements Codeable, TokenAccessible {
 		ctx.clazz = this;
 		boolean valid = true;
 
-		if (superClassType != null && superClass == null) {
+		init(ctx);
+
+		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
 			superClass = superClassType.getClass(ctx);
 		}
 
@@ -373,6 +375,9 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (initializers != null) {
 			for (NodeInitializer initializer : initializers) {
 				valid &= ((HiNode) initializer).validate(validationInfo, ctx);
+				if (initializer instanceof HiField) {
+					ctx.initializedNodes.add((HiNode) initializer);
+				}
 			}
 		}
 
@@ -624,9 +629,13 @@ public class HiClass implements Codeable, TokenAccessible {
 	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
+		return searchMethod(classResolver, signature);
+	}
+
+	public HiMethod searchMethod(ClassResolver classResolver, MethodSignature signature) {
 		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
-			method = _searchMethod(classResolver, name, argTypes);
+			method = _searchMethod(classResolver, signature);
 			if (method != null) {
 				methodsHash.put(new MethodSignature(signature), method);
 			}
@@ -634,7 +643,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		return method;
 	}
 
-	protected HiMethod _searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
+	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {
+		String name = signature.name;
+		HiClass[] argTypes = signature.argClasses;
+
 		// this methods
 		if (methods != null && methods.length > 0) {
 			for (HiMethod m : methods)
@@ -680,7 +692,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// super methods
 		if (superClass != null) {
-			HiMethod m = superClass.searchMethod(classResolver, name, argTypes);
+			HiMethod m = superClass.searchMethod(classResolver, signature);
 			if (m != null) {
 				return m;
 			}
@@ -691,7 +703,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			HiMethod md = null;
 			HiMethod m = null;
 			for (HiClass i : interfaces) {
-				HiMethod _m = i.searchMethod(classResolver, name, argTypes);
+				HiMethod _m = i.searchMethod(classResolver, signature);
 				if (_m != null) {
 					if (_m.modifiers.isDefault()) {
 						if (md != null) {
@@ -714,7 +726,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// enclosing methods
 		if (!isTopLevel()) {
-			HiMethod m = enclosingClass.searchMethod(classResolver, name, argTypes);
+			HiMethod m = enclosingClass.searchMethod(classResolver, signature);
 			if (m != null) {
 				return m;
 			}
@@ -727,9 +739,13 @@ public class HiClass implements Codeable, TokenAccessible {
 	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
+		return getMethod(classResolver, signature);
+	}
+
+	public HiMethod getMethod(ClassResolver classResolver, MethodSignature signature) {
 		HiMethod method = methodsHash.get(signature);
 		if (method == null) {
-			method = _getMethod(classResolver, name, argTypes);
+			method = _getMethod(classResolver, signature);
 			if (method != null) {
 				methodsHash.put(new MethodSignature(signature), method);
 			}
@@ -737,7 +753,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		return method;
 	}
 
-	private HiMethod _getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
+	private HiMethod _getMethod(ClassResolver classResolver, MethodSignature signature) {
+		String name = signature.name;
+		HiClass[] argTypes = signature.argClasses;
+
 		// this methods
 		if (methods != null) {
 			for (HiMethod m : methods)
@@ -762,7 +781,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// super methods
 		if (superClass != null) {
-			HiMethod m = superClass.getMethod(classResolver, name, argTypes);
+			HiMethod m = superClass.getMethod(classResolver, signature);
 			if (m != null) {
 				return m;
 			}
@@ -770,7 +789,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// enclosing methods
 		if (!isTopLevel()) {
-			HiMethod m = enclosingClass.getMethod(classResolver, name, argTypes);
+			HiMethod m = enclosingClass.getMethod(classResolver, signature);
 			if (m != null) {
 				return m;
 			}

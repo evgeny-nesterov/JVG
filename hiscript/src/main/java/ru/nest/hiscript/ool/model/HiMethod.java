@@ -74,6 +74,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);
+				ctx.initializedNodes.add(argument);
 			}
 		}
 		if (body != null) {

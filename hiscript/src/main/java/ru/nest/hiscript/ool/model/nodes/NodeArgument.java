@@ -3,8 +3,8 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
@@ -42,7 +42,7 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public NodeAnnotation[] annotations;
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return getType().getClass(ctx);
 	}
 
@@ -50,6 +50,7 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check type, name, modifiers, annotations
 		boolean valid = ctx.addLocalVariable(this);
+		ctx.initializedNodes.add(this);
 		return valid;
 	}
 

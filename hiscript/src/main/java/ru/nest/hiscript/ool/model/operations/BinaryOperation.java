@@ -26,7 +26,11 @@ public abstract class BinaryOperation extends HiOperation {
 		NodeExpressionNoLS.NodeOperandType node2 = nodes[1];
 		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
 			node1.type = getOperationResultType(validationInfo, ctx, node1, node2);
-			node1.isValue = node1.isValue && node2.isValue;
+			node1.valid = node1.type != null && node1.valid && node2.valid;
+			node1.isValue = node1.valid && node1.isValue && node2.isValue;
+		} else {
+			node1.valid = false;
+			node1.isValue = false;
 		}
 	}
 
@@ -36,6 +40,7 @@ public abstract class BinaryOperation extends HiOperation {
 			node1.type = node1.getType(validationInfo, ctx);
 			if (node1.type != null) {
 				node1.isValue = node1.node.isValue();
+				valid = node1.valid;
 			} else {
 				validationInfo.error("cannot resolve expression type", node1.node.getToken());
 				valid = false;
@@ -45,6 +50,7 @@ public abstract class BinaryOperation extends HiOperation {
 			node2.type = node2.getType(validationInfo, ctx);
 			if (node2.type != null) {
 				node2.isValue = node2.node.isValue();
+				valid &= node2.valid;
 			} else {
 				validationInfo.error("cannot resolve expression type", node2.node.getToken());
 				valid = false;

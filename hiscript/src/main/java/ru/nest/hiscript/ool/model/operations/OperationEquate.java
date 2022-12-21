@@ -4,10 +4,12 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquate extends BinaryOperation {
@@ -22,9 +24,16 @@ public class OperationEquate extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType node1, NodeExpressionNoLS.NodeOperandType node2) {
-		// TODO check
-		return node1.type;
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeOperandType... nodes) {
+		NodeExpressionNoLS.NodeOperandType node1 = nodes[0];
+		if (node1.node instanceof NodeIdentifier) {
+			NodeIdentifier identifierNode = (NodeIdentifier) node1.node;
+			Object resolvedIdentifier = ctx.resolveIdentifier(identifierNode.getName());
+			if (resolvedIdentifier instanceof HiNode) {
+				ctx.initializedNodes.add((HiNode) resolvedIdentifier);
+			}
+		}
+		super.getOperationResultType(validationInfo, ctx, nodes);
 	}
 
 	@Override

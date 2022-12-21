@@ -27,7 +27,7 @@ public class NodeIdentifier extends HiNode {
 	}
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (dimension > 0) {
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 			if (clazz == null) {
@@ -50,7 +50,16 @@ public class NodeIdentifier extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO check name
+		Object resolvedIdentifier = ctx.resolveIdentifier(name);
+		if (resolvedIdentifier == null) {
+			validationInfo.error("Can't resolve symbol '" + name + "'", token);
+			return false;
+		} else if (resolvedIdentifier instanceof NodeArgument) {
+			// arguments are always initialized
+		} else if (resolvedIdentifier instanceof HiNode && ctx.level.objectClass == null && !ctx.initializedNodes.contains(resolvedIdentifier)) {
+			validationInfo.error("Variable '" + name + "' is not initialized", token);
+			return false;
+		}
 		return true;
 	}
 

@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.MethodSignature;
 import ru.nest.hiscript.ool.model.java.HiConstructorJava;
 import ru.nest.hiscript.ool.model.java.HiFieldJava;
 import ru.nest.hiscript.ool.model.java.HiMethodJava;
@@ -173,7 +174,10 @@ public class HiClassJava extends HiClass {
 	private Map<Integer, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
 
 	@Override
-	protected HiMethod _searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
+	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {
+		String name = signature.name;
+		HiClass[] argTypes = signature.argClasses;
+
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];

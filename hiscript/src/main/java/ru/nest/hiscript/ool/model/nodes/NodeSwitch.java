@@ -3,8 +3,8 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -32,7 +32,7 @@ public class NodeSwitch extends HiNode {
 		size++;
 	}
 
-	private HiNode valueNode;
+	public HiNode valueNode;
 
 	private int size;
 
@@ -42,14 +42,42 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.SWITCH, this);
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
-		for (int i = 0; i < size; i++) {
-			if (casesValues.get(i) != null) { // not default
-				for (HiNode casesValue : casesValues.get(i)) {
-					valid &= casesValue.validate(validationInfo, ctx) && casesValue.expectValue(validationInfo, ctx);
+		HiClass valueClass = valueNode.getValueType(validationInfo, ctx);
+		ctx.enter(RuntimeContext.SWITCH, this);
+		if (valueClass.isEnum()) {
+			HiClassEnum enumClass = (HiClassEnum) valueClass;
+			for (int i = 0; i < size; i++) {
+				HiNode[] caseValueNodes = casesValues.get(i);
+				if (caseValueNodes != null) { // not default
+					for (int j = 0; j < caseValueNodes.length; j++) {
+						HiNode caseValueNode = caseValueNodes[j];
+						if (caseValueNode instanceof NodeExpressionNoLS) {
+							NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
+							NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
+							if (identifier != null) {
+								int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
+								if (enumOrdinal == -1) {
+									validationInfo.error("Cannot resolve symbol '" + identifier.getName() + "'", caseValueNode.getToken());
+									valid = false;
+								}
+							}
+						}
+					}
 				}
 			}
+		} else {
+			for (int i = 0; i < size; i++) {
+				HiNode[] caseValueNodes = casesValues.get(i);
+				if (caseValueNodes != null) { // not default
+					for (int j = 0; j < caseValueNodes.length; j++) {
+						HiNode caseValueNode = caseValueNodes[j];
+						valid &= caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < size; i++) {
 			valid &= casesNodes.get(i).validate(validationInfo, ctx);
 		}
 		ctx.exit();
@@ -87,7 +115,6 @@ public class NodeSwitch extends HiNode {
 			return -2;
 		}
 
-		int index = -1;
 		if (ctx.value.type.isPrimitive()) {
 			int value = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {

@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.validation.ValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -17,6 +18,8 @@ public class HiCompiler {
 	private boolean assertsActive = false;
 
 	private boolean verbose = false;
+
+	private boolean printInvalidCode = false;
 
 	private ParseRule<?> rule;
 
@@ -34,7 +37,11 @@ public class HiCompiler {
 		HiNode node = rule.visit(tokenizer, null);
 		validationInfo = new ValidationInfo(this);
 		if (!node.validate(validationInfo, null)) {
-			validationInfo.throwExceptionIf();
+			if (validationInfo.messages.size() > 0) {
+				validationInfo.throwExceptionIf();
+			} else {
+				throw new ValidationException("Validation error", null);
+			}
 		}
 		return node;
 	}
@@ -79,5 +86,21 @@ public class HiCompiler {
 
 	public HiClassLoader getClassLoader() {
 		return classLoader;
+	}
+
+	public String getTokenText(Token token) {
+		return tokenizer.getText(token);
+	}
+
+	public String getTokenLineText(Token token) {
+		return tokenizer.getTokenLineText(token);
+	}
+
+	public boolean isPrintInvalidCode() {
+		return printInvalidCode;
+	}
+
+	public void setPrintInvalidCode(boolean printInvalidCode) {
+		this.printInvalidCode = printInvalidCode;
 	}
 }

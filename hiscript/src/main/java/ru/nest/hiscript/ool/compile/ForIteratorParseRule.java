@@ -33,6 +33,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
+			startToken = startToken(tokenizer);
 			NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
@@ -48,6 +49,8 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					ctx.enter(RuntimeContext.FOR, startToken);
 
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers(), annotations);
+					declaration.setToken(tokenizer.getBlockToken(startToken));
+
 					HiNode iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 					HiNode body = expectBody(tokenizer, ctx);

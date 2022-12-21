@@ -266,6 +266,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
+		Token startToken = startToken(tokenizer);
+
 		// visit number
 		NodeNumber numberNode = visitNumber(tokenizer);
 		if (numberNode != null) {
@@ -276,7 +278,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// visit boolean
 		int boolType = visitWordType(tokenizer, Words.TRUE, Words.FALSE);
 		if (boolType != -1) {
-			operands.add(NodeBoolean.getInstance(boolType == Words.TRUE));
+			operands.add(NodeBoolean.getInstance(boolType == Words.TRUE, startToken));
 			return true;
 		}
 
@@ -347,6 +349,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit identifier as word: package, class, method, field
+		Token identifierToken = startToken(tokenizer);
 		String identifierName = visitWord(tokenizer, Words.NOT_SERVICE);
 		String primitiveTypeName = null;
 		if (identifierName == null) {
@@ -354,7 +357,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			primitiveTypeName = visitWord(tokenizer, Words.BYTE, Words.SHORT, Words.INT, Words.LONG, Words.FLOAT, Words.DOUBLE, Words.BOOLEAN, Words.CHAR);
 		}
 		if (identifierName != null || primitiveTypeName != null) {
-			Token identifierToken = tokenizer.currentToken();
 			int dimension = visitDimension(tokenizer);
 			if (primitiveTypeName != null) {
 				if (dimension > 0) {
@@ -397,9 +399,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				identifier.setToken(identifierToken);
 				identifier.castedRecordArguments = castedRecordArguments;
 				identifier.castedVariableName = castedVariableName;
+				identifier.setToken(tokenizer.getBlockToken(identifierToken));
 				operands.add(identifier);
 			} else {
 				NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
+				identifier.setToken(tokenizer.getBlockToken(identifierToken));
 				operands.add(identifier);
 			}
 			return true;

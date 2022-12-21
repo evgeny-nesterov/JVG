@@ -34,7 +34,7 @@ public class ClassImpl extends ImplUtil {
 
 	public static void Class_boolean_isArray(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isArray()).execute(ctx);
+		NodeBoolean.getInstance(clazz.isArray(), null).execute(ctx);
 	}
 
 	public static void Class_Class_getComponentType(RuntimeContext ctx) {

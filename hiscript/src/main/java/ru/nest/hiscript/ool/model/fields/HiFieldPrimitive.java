@@ -43,7 +43,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	}
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 

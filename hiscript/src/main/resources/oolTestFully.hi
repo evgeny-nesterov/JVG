@@ -977,12 +977,6 @@ Util.header("NULL");
 	System.println("\ta=" + a + ", isNull=" + (a == null));
 	a = null;
 	System.println("\ta=" + a + ", isNull=" + (a == null));
-	try {
-  		System.println("\tint x = null; // generate exception");
-  		int x = null;
-	} catch(Exception exc) {
-  		exc.printStackTrace();
-	}
 }
 
 ///////////////
@@ -1008,7 +1002,7 @@ Util.header("SCRIPT");
 	script = script + ";";
 	System.println("\texec: " + script);
 	System.exec(script, false, false);
-	int[][][][][] scriptVar = System.getVariable("scriptVar");
+	int[][][][][] scriptVar = (int[][][][][])System.getVariable("scriptVar");
 	System.println("\tscriptVar=" + scriptVar + ", length=" + scriptVar[0][1][0][1].length);
 }
 

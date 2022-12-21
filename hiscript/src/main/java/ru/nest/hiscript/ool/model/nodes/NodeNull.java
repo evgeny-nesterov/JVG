@@ -18,7 +18,7 @@ public class NodeNull extends HiNode {
 	}
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassNull.NULL;
 	}
 

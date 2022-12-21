@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
@@ -50,10 +50,11 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					checkModifiers(tokenizer, modifiers, FINAL, STATIC);
 
 					NodeDeclarations declarations = new NodeDeclarations();
-					declarations.add(type, varName, initializer, modifiers, annotations);
+					declarations.add(type, varName, initializer, modifiers, annotations, tokenizer.getBlockToken(startToken));
 
 					// Search new declarations with the base type
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+						startToken = startToken(tokenizer);
 						varName = expectWord(Words.NOT_SERVICE, tokenizer);
 						addDimension = visitDimension(tokenizer);
 						type = Type.getArrayType(baseType, addDimension);
@@ -63,7 +64,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), ctx);
 						}
 
-						declarations.add(type, varName, initializer, modifiers, annotations);
+						declarations.add(type, varName, initializer, modifiers, annotations, tokenizer.getBlockToken(startToken));
 					}
 					return declarations;
 				}

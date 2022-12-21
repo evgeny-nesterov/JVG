@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.validation;
 import ru.nest.hiscript.tokenizer.Token;
 
 public class ValidationMessage {
-	enum ValidationLevel {
+	public enum ValidationLevel {
 		info, warning, error
 	}
 

@@ -20,8 +20,10 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CompileClassContext implements ClassResolver {
 	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, int classType) {
@@ -67,6 +69,8 @@ public class CompileClassContext implements ClassResolver {
 	public List<HiEnumValue> enumValues = null;
 
 	public CompileClassContext parent;
+
+	public Set<HiNode> initializedNodes = new HashSet<>();
 
 	@Override
 	public HiCompiler getCompiler() {
@@ -390,7 +394,7 @@ public class CompileClassContext implements ClassResolver {
 
 		CompileClassLevel child;
 
-		HiClass objectClass;
+		public HiClass objectClass;
 
 		public TokenAccessible node;
 
@@ -501,5 +505,9 @@ public class CompileClassContext implements ClassResolver {
 				localVariables.clear();
 			}
 		}
+	}
+
+	public String getTokenText(Token token) {
+		return token != null ? tokenizer.getText(token) : null;
 	}
 }

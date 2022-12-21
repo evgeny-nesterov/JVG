@@ -63,7 +63,9 @@ public class NodeCatch extends HiNode {
 		boolean valid = true;
 		initClasses(validationInfo, null);
 
-		valid &= ctx.addLocalVariable(new NodeArgument(excTypes[0], excName, new Modifiers(), null));
+		NodeArgument field = new NodeArgument(excTypes[0], excName, new Modifiers(), null);
+		// TODO field.setToken();
+		valid &= field.validate(validationInfo, ctx);
 
 		if (catchBody != null) {
 			valid &= catchBody.validateBlock(validationInfo, ctx);

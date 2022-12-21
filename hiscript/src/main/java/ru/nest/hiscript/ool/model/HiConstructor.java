@@ -96,6 +96,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);
+				ctx.initializedNodes.add(argument);
 			}
 		}
 

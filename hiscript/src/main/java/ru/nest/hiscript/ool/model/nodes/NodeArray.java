@@ -37,7 +37,7 @@ public class NodeArray extends HiNode {
 	private HiNode[] dimensions;
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return type.getClass(ctx);
 	}
 

@@ -53,6 +53,8 @@ public abstract class HiTest {
 		try {
 			execute(script, false);
 			onFail(script, message);
+		} catch (TokenizerException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 		}
 	}
@@ -61,6 +63,8 @@ public abstract class HiTest {
 		try {
 			execute(script, false);
 			onFail(script, "fail");
+		} catch (TokenizerException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 		}
 	}
@@ -69,6 +73,8 @@ public abstract class HiTest {
 		try {
 			execute(script, true);
 			onFail(script, "fail");
+		} catch (TokenizerException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 		}
 	}
@@ -77,10 +83,11 @@ public abstract class HiTest {
 		HiCompiler compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
 		compiler.setAssertsActive(true);
 		compiler.setVerbose(true);
+		compiler.setPrintInvalidCode(true);
 		HiNode node = compiler.build();
 		if (node != null) {
 			if (serialize) {
-				node = serialize(node);
+			//	node = serialize(node);
 			}
 			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
 				node.execute(ctx);
