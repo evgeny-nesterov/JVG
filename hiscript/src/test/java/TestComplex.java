@@ -12,7 +12,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() {
-		//assertFail("int x; int y = x;");
-		assertFail("int x = 1; int y = true || x;");
+		assertSuccessSerialize("long a = 1l + 2;");
 	}
 }

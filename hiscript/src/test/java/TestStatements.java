@@ -7,8 +7,11 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int a = 1;");
 		assertSuccessSerialize("String a, b, c;");
 		assertSuccessSerialize("String a = \"a\", b, c = null;");
-		assertFailSerialize("int a = 1; String a = \"\";");
 		assertSuccessSerialize("{int a = 1;} int a = 2;");
+
+		assertFailSerialize("int a = 1; String a = \"\";");
+		assertFailSerialize("int x; int y = x;");
+		assertFailSerialize("int x = 1; int y = true || x;");
 	}
 
 	@Test
