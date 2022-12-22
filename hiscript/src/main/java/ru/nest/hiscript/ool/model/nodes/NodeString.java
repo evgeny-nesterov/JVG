@@ -24,7 +24,7 @@ public class NodeString extends HiNode {
 	private static HiConstructor constructor;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return ctx.getClassLoader().getClass(HiClass.STRING_CLASS_NAME);
 	}
 

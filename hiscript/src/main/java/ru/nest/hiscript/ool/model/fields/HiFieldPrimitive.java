@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	}
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 

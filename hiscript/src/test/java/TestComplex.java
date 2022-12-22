@@ -12,6 +12,11 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() {
-		assertSuccessSerialize("byte a = 128;");
+		// byte a = 128;
+		// short a = 123121;
+		//int a = 2323323220;
+		// byte a = 1000 / 3 / 2;
+		// assertSuccess("byte a = 64*2 - 101 + 200/2;");
+		//assertFail("byte a = 1000 / 3 / 2;");
 	}
 }

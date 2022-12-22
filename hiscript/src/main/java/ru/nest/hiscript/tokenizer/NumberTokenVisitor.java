@@ -95,7 +95,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				return null;
+				throw new TokenizerException("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -118,7 +118,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				return null;
+				throw new TokenizerException("Float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -141,7 +141,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				return null;
+				throw new TokenizerException("Double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -158,7 +158,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				return null;
+				throw new TokenizerException("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 			if (hasSign) {
 				tokenizer.commit();

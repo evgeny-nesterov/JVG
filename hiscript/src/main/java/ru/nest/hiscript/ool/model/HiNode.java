@@ -183,7 +183,12 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return token;
 	}
 
-	public void getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	public HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		getValueType(validationInfo, ctx);
+		return valueClass;
+	}
+
+	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valueClass == null) {
 			computeValueType(validationInfo, ctx);
 			valueClass = ctx.nodeValueType.type;
@@ -196,8 +201,9 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(valueClass);
+			ctx.nodeValueType.get(this, valueClass, valid, isValue);
 		}
+		return ctx.nodeValueType;
 	}
 
 	public HiClass getValueType() {
@@ -213,7 +219,13 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.nodeValueType.get(HiClassPrimitive.VOID);
+		HiClass clazz = computeValueClass(validationInfo, ctx);
+		boolean isValue = isValue() && (clazz != null ? clazz != HiClassPrimitive.VOID : false);
+		ctx.nodeValueType.get(this, clazz, clazz != null, isValue);
+	}
+
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return HiClassPrimitive.VOID;
 	}
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -389,7 +401,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectIntValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
 		if (castedConditionClass == null || !castedConditionClass.isIntNumber()) {
 			validationInfo.error("int is expected", getToken());
 			return false;
@@ -398,7 +410,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectBooleanValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
 		if (castedConditionClass == null || castedConditionClass != HiClassPrimitive.BOOLEAN) {
 			validationInfo.error("boolean is expected", getToken());
 			return false;
@@ -407,7 +419,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
 		if (castedConditionClass == null || castedConditionClass == HiClassPrimitive.VOID) {
 			validationInfo.error("value is expected", getToken());
 			return false;
@@ -416,7 +428,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectObjectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
 		if (castedConditionClass == null || !castedConditionClass.isObject()) {
 			validationInfo.error("object is expected", getToken());
 			return false;
@@ -426,7 +438,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	// TODO
 	public boolean expectIterableValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueType(validationInfo, ctx);
+		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
 		if (castedConditionClass == null || castedConditionClass == HiClassPrimitive.VOID) {
 			validationInfo.error("iterable is expected", getToken());
 			return false;
@@ -436,5 +448,64 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	public boolean isTerminal() {
 		return false;
+	}
+
+	public RuntimeContext computeValue(CompileClassContext ctx) {
+		RuntimeContext rctx = new RuntimeContext(ctx.getCompiler(), true);
+		execute(rctx);
+		return rctx;
+	}
+
+	public byte byteValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.BYTE) {
+			return ((NodeByte) this).getValue();
+		}
+		return computeValue(ctx).value.getByte();
+	}
+
+	public short shortValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.SHORT) {
+			return ((NodeShort) this).getValue();
+		}
+		return computeValue(ctx).value.getShort();
+	}
+
+	public int intValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.INT) {
+			return ((NodeInt) this).getValue();
+		}
+		return computeValue(ctx).value.getInt();
+	}
+
+	public long longValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.LONG) {
+			return ((NodeLong) this).getValue();
+		}
+		return computeValue(ctx).value.getLong();
+	}
+
+	public float floatValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.FLOAT) {
+			return ((NodeFloat) this).getValue();
+		}
+		return computeValue(ctx).value.getFloat();
+	}
+
+	public double doubleValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.DOUBLE) {
+			return ((NodeDouble) this).getValue();
+		}
+		return computeValue(ctx).value.getDouble();
+	}
+
+	public char charValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.CHAR) {
+			return ((NodeChar) this).getValue();
+		}
+		return computeValue(ctx).value.getChar();
+	}
+
+	public boolean computeBooleanValue(CompileClassContext ctx) {
+		return computeValue(ctx).value.getBoolean();
 	}
 }

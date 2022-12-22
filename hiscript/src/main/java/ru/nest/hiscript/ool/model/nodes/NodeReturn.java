@@ -21,7 +21,6 @@ public class NodeReturn extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass returnType = value != null ? value.getValueType(validationInfo, ctx) : HiClassPrimitive.VOID;
 		boolean valid = value != null ? value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx) : true;
 
 		CompileClassContext.CompileClassLevel level = ctx.level;
@@ -35,9 +34,13 @@ public class NodeReturn extends HiNode {
 			}
 			level = level.parent;
 		}
-		if (returnType == null || !HiClass.autoCast(returnType, expectedType)) {
-			validationInfo.error("incompatible types; found " + returnType + ", required " + expectedType, value != null ? value.getToken() : getToken());
-			valid = false;
+
+		if (value != null) {
+			NodeValueType returnValueType = value.getValueType(validationInfo, ctx);
+			if (returnValueType.valid && !HiClass.autoCast(returnValueType.type, expectedType, returnValueType.isValue)) {
+				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : getToken());
+				valid = false;
+			}
 		}
 		return valid;
 	}

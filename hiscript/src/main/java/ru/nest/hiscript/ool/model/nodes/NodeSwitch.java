@@ -43,9 +43,9 @@ public class NodeSwitch extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
-		HiClass valueClass = valueNode.getValueType(validationInfo, ctx);
+		HiClass valueClass = valueNode.getValueClass(validationInfo, ctx);
 		ctx.enter(RuntimeContext.SWITCH, this);
-		if (valueClass.isEnum()) {
+		if (valueClass != null && valueClass.isEnum()) {
 			HiClassEnum enumClass = (HiClassEnum) valueClass;
 			for (int i = 0; i < size; i++) {
 				HiNode[] caseValueNodes = casesValues.get(i);

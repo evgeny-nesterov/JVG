@@ -68,7 +68,7 @@ public class OperationEquate extends BinaryOperation {
 			// System.out.println(v1.variable.name + " (" + v1.variable.getClazz(ctx)+ ") = " + v1.variable.get() + ", " + v1.get() + ", " +
 			// v1.type);
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
-			if (!HiClass.autoCast(v2.type, v1.type)) {
+			if (!HiClass.autoCast(v2.type, v1.type, false)) {
 				ctx.throwRuntimeException("incompatible types; found " + v2.type + ", required " + v1.type);
 				return;
 			}

@@ -27,7 +27,7 @@ public class NodeIdentifier extends HiNode {
 	}
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (dimension > 0) {
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 			if (clazz == null) {
@@ -40,7 +40,7 @@ public class NodeIdentifier extends HiNode {
 		} else {
 			Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
 			if (resolvedIdentifier instanceof NodeVariable) {
-				return ((HiNode) resolvedIdentifier).getValueType(validationInfo, ctx);
+				return ((HiNode) resolvedIdentifier).getValueClass(validationInfo, ctx);
 			} else if (resolvedIdentifier instanceof HiClass) {
 				return (HiClass) resolvedIdentifier;
 			}

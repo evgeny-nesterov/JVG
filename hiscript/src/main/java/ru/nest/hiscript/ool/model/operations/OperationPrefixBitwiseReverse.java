@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPrefixBitwiseReverse extends UnaryOperation {
@@ -22,7 +23,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		if (node.type.isPrimitive()) {
 			int t = HiFieldPrimitive.getType(node.type);
 			switch (t) {

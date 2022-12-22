@@ -661,13 +661,13 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < mainArgCount; i++) {
-								if (!HiClass.autoCast(argTypes[i], m.argClasses[i])) {
+								if (!HiClass.autoCast(argTypes[i], m.argClasses[i], false)) {
 									break FOR;
 								}
 							}
 							HiClass varargsType = m.argClasses[mainArgCount].getArrayType();
 							for (int i = mainArgCount; i < argTypes.length; i++) {
-								if (!HiClass.autoCast(argTypes[i], varargsType)) {
+								if (!HiClass.autoCast(argTypes[i], varargsType, false)) {
 									break FOR;
 								}
 							}
@@ -680,7 +680,7 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < argCount; i++) {
-								if (!HiClass.autoCast(argTypes[i], m.argClasses[i])) {
+								if (!HiClass.autoCast(argTypes[i], m.argClasses[i], false)) {
 									break FOR;
 								}
 							}
@@ -833,7 +833,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		constructor.resolve(classResolver);
 		for (int i = 0; i < argCount; i++) {
-			if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i])) {
+			if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
 				return false;
 			}
 		}
@@ -1204,7 +1204,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		return token;
 	}
 
-	public static boolean autoCast(HiClass src, HiClass dst) {
+	public static boolean autoCast(HiClass src, HiClass dst, boolean isValue) {
 		if (src == dst) {
 			return true;
 		}
@@ -1214,7 +1214,15 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		if (src.isPrimitive() || dst.isPrimitive()) {
-			return src.isPrimitive() && dst.isPrimitive() && HiFieldPrimitive.autoCast(src, dst);
+			if (src.isPrimitive() && dst.isPrimitive()) {
+				if (isValue) {
+					return HiFieldPrimitive.autoCastValue(src, dst);
+				} else {
+					return HiFieldPrimitive.autoCast(src, dst);
+				}
+			} else {
+				return false;
+			}
 		}
 
 		if (src.isNull()) {
@@ -1239,7 +1247,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			if (arraySrc.cellClass.isPrimitive()) {
 				return arraySrc.cellClass == arrayDst.cellClass;
 			} else {
-				return autoCast(arraySrc.cellClass, arrayDst.cellClass);
+				return autoCast(arraySrc.cellClass, arrayDst.cellClass, false);
 			}
 		}
 		return src.isInstanceof(dst);

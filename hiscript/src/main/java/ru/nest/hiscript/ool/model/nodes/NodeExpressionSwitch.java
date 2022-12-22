@@ -35,11 +35,11 @@ public class NodeExpressionSwitch extends HiNode {
 	private List<HiNode> casesNodes;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (size > 0) {
-			HiClass topType = casesNodes.get(0).getValueType(validationInfo, ctx);
+			HiClass topType = casesNodes.get(0).getValueClass(validationInfo, ctx);
 			for (int i = 1; i < size && topType != null; i++) {
-				HiClass caseValueType = casesNodes.get(i).getValueType(validationInfo, ctx);
+				HiClass caseValueType = casesNodes.get(i).getValueClass(validationInfo, ctx);
 				if (caseValueType != null) {
 					topType = topType.getCommonClass(caseValueType);
 				} else {

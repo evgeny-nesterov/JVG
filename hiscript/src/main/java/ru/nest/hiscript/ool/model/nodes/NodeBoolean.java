@@ -37,13 +37,17 @@ public class NodeBoolean extends HiNode {
 
 	private boolean value;
 
+	public boolean getValue() {
+		return value;
+	}
+
 	@Override
 	public boolean isValue() {
 		return true;
 	}
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.BOOLEAN;
 	}
 

@@ -29,7 +29,7 @@ public class NodeDouble extends NodeNumber {
 	}
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.DOUBLE;
 	}
 

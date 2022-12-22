@@ -9,10 +9,10 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeByte;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeShort;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationOR extends BinaryOperation {
@@ -27,7 +27,7 @@ public class OperationOR extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node1, NodeExpressionNoLS.NodeValueType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 		if (!c1.isPrimitive() || !c2.isPrimitive()) {
@@ -46,77 +46,93 @@ public class OperationOR extends BinaryOperation {
 				case CHAR:
 					switch (t2) {
 						case CHAR:
-							return autoCastInt(((NodeChar) node1.node).getValue() | ((NodeChar) node2.node).getValue());
+							node1.intValue = node1.charValue | node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							return autoCastInt(((NodeChar) node1.node).getValue() | ((NodeByte) node2.node).getValue());
+							node1.intValue = node1.charValue | node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							return autoCastInt(((NodeChar) node1.node).getValue() | ((NodeShort) node2.node).getValue());
+							node1.intValue = node1.charValue | node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							return autoCastInt(((NodeChar) node1.node).getValue() | ((NodeInt) node2.node).getValue());
+							node1.intValue = node1.charValue | node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							return autoCastLong(((NodeChar) node1.node).getValue() | ((NodeLong) node2.node).getValue());
+							node1.longValue = node1.charValue | node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case BYTE:
 					switch (t2) {
 						case CHAR:
-							return autoCastInt(((NodeByte) node1.node).getValue() | ((NodeChar) node2.node).getValue());
+							node1.intValue = node1.byteValue | node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							return autoCastInt(((NodeByte) node1.node).getValue() | ((NodeByte) node2.node).getValue());
+							node1.intValue = node1.byteValue | node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							return autoCastInt(((NodeByte) node1.node).getValue() | ((NodeShort) node2.node).getValue());
+							node1.intValue = node1.byteValue | node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							return autoCastInt(((NodeByte) node1.node).getValue() | ((NodeInt) node2.node).getValue());
+							node1.intValue = node1.byteValue | node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							return autoCastLong(((NodeByte) node1.node).getValue() | ((NodeLong) node2.node).getValue());
+							node1.longValue = node1.byteValue | node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case SHORT:
 					switch (t2) {
 						case CHAR:
-							return autoCastInt(((NodeShort) node1.node).getValue() | ((NodeChar) node2.node).getValue());
+							node1.intValue = node1.shortValue | node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							return autoCastInt(((NodeShort) node1.node).getValue() | ((NodeByte) node2.node).getValue());
+							node1.intValue = node1.shortValue | node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							return autoCastInt(((NodeShort) node1.node).getValue() | ((NodeShort) node2.node).getValue());
+							node1.intValue = node1.shortValue | node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							return autoCastInt(((NodeShort) node1.node).getValue() | ((NodeInt) node2.node).getValue());
+							node1.intValue = node1.shortValue | node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							return autoCastLong(((NodeShort) node1.node).getValue() | ((NodeLong) node2.node).getValue());
+							node1.longValue = node1.shortValue | node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case INT:
 					switch (t2) {
 						case CHAR:
-							return autoCastInt(((NodeInt) node1.node).getValue() | ((NodeChar) node2.node).getValue());
+							node1.intValue = node1.intValue | node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							return autoCastInt(((NodeInt) node1.node).getValue() | ((NodeByte) node2.node).getValue());
+							node1.intValue = node1.intValue | node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							return autoCastInt(((NodeInt) node1.node).getValue() | ((NodeShort) node2.node).getValue());
+							node1.intValue = node1.intValue | node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							return autoCastInt(((NodeInt) node1.node).getValue() | ((NodeInt) node2.node).getValue());
+							node1.intValue = node1.intValue | node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							return autoCastLong(((NodeInt) node1.node).getValue() | ((NodeLong) node2.node).getValue());
+							node1.longValue = node1.intValue | node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case LONG:
 					switch (t2) {
 						case CHAR:
-							return autoCastLong(((NodeLong) node1.node).getValue() | ((NodeChar) node2.node).getValue());
+							node1.longValue = node1.longValue | node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							return autoCastLong(((NodeLong) node1.node).getValue() | ((NodeByte) node2.node).getValue());
+							node1.longValue = node1.longValue | node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							return autoCastLong(((NodeLong) node1.node).getValue() | ((NodeShort) node2.node).getValue());
+							node1.longValue = node1.longValue | node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							return autoCastLong(((NodeLong) node1.node).getValue() | ((NodeInt) node2.node).getValue());
+							node1.longValue = node1.longValue | node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							return autoCastLong(((NodeLong) node1.node).getValue() | ((NodeLong) node2.node).getValue());
+							node1.longValue = node1.longValue | node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
 			}
 		} else {
 			switch (t1) {

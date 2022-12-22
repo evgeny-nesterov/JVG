@@ -17,6 +17,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.lang.reflect.Array;
@@ -36,12 +37,14 @@ public class OperationInvocation extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node1, NodeExpressionNoLS.NodeValueType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		if (node1.type != null) {
 			ctx.enterObject(node1.type);
 			if (node2.type == null) {
-				node2.type = node2.getType(validationInfo, ctx);
-				node2.isValue = node2.node.isValue();
+				node2.get(validationInfo, ctx);
+				if (node2.type == null) {
+					validationInfo.error("can't resolve expression type", node2.node.getToken());
+				}
 			}
 			ctx.exit();
 			return node2.type;
@@ -66,6 +69,7 @@ public class OperationInvocation extends BinaryOperation {
 
 			default:
 				ctx.throwRuntimeException("identifier is expected");
+				break;
 		}
 	}
 

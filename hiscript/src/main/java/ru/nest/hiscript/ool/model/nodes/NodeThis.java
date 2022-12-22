@@ -18,7 +18,7 @@ public class NodeThis extends HiNode {
 	}
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return ctx.clazz;
 	}
 

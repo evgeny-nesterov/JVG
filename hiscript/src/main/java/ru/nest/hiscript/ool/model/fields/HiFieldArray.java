@@ -27,7 +27,7 @@ public class HiFieldArray extends HiField<Object> {
 		}
 
 		HiClass type = getClass(ctx);
-		if (!HiClass.autoCast(value.type, type)) {
+		if (!HiClass.autoCast(value.type, type, false)) {
 			ctx.throwRuntimeException("incompatible types; found " + type.getClassName() + ", required " + value.type.getClassName());
 			return;
 		}
@@ -48,7 +48,7 @@ public class HiFieldArray extends HiField<Object> {
 		} else {
 			// check cast
 			HiClass type = getClass(ctx);
-			if (!HiClass.autoCast(value.type, type)) {
+			if (!HiClass.autoCast(value.type, type, false)) {
 				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + type.getClassName());
 				return;
 			}

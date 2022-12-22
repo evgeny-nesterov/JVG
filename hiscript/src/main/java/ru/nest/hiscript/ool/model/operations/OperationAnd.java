@@ -27,123 +27,112 @@ public class OperationAnd extends BinaryOperation {
 	}
 
 	@Override
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 		if (!c1.isPrimitive() || !c2.isPrimitive()) {
 			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
-			ctx.nodeValueType.invalid();
-			return;
+			return null;
 		}
 
 		int t1 = HiFieldPrimitive.getType(c1);
 		int t2 = HiFieldPrimitive.getType(c2);
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {
 			if (t1 == BOOLEAN && t2 == BOOLEAN) {
-				ctx.nodeValueType.get(HiClassPrimitive.BOOLEAN);
-				return;
+				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (node1.isValue && node2.isValue) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {
 						case CHAR:
-							ctx.nodeValueType.get(autoCastInt(((NodeChar) node1.node).getValue() & ((NodeChar) node2.node).getValue()));
-							return;
+							node1.intValue = node1.charValue & node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							ctx.nodeValueType.get(autoCastInt(((NodeChar) node1.node).getValue() & ((NodeByte) node2.node).getValue()));
-							return;
+							node1.intValue = node1.charValue & node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							ctx.nodeValueType.get(autoCastInt(((NodeChar) node1.node).getValue() & ((NodeShort) node2.node).getValue()));
-							return;
+							node1.intValue = node1.charValue & node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							ctx.nodeValueType.get(autoCastInt(((NodeChar) node1.node).getValue() & ((NodeInt) node2.node).getValue()));
-							return;
+							node1.intValue = node1.charValue & node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(autoCastLong(((NodeChar) node1.node).getValue() & ((NodeLong) node2.node).getValue()));
-							return;
+							node1.longValue = node1.charValue & node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case BYTE:
 					switch (t2) {
 						case CHAR:
-							ctx.nodeValueType.get(autoCastInt(((NodeByte) node1.node).getValue() & ((NodeChar) node2.node).getValue()));
-							return;
+							node1.intValue = node1.byteValue & node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							ctx.nodeValueType.get(autoCastInt(((NodeByte) node1.node).getValue() & ((NodeByte) node2.node).getValue()));
-							return;
+							node1.intValue = node1.byteValue & node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							ctx.nodeValueType.get(autoCastInt(((NodeByte) node1.node).getValue() & ((NodeShort) node2.node).getValue()));
-							return;
+							node1.intValue = node1.byteValue & node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							ctx.nodeValueType.get(autoCastInt(((NodeByte) node1.node).getValue() & ((NodeInt) node2.node).getValue()));
-							return;
+							node1.intValue = node1.byteValue & node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(autoCastLong(((NodeByte) node1.node).getValue() & ((NodeLong) node2.node).getValue()));
-							return;
+							node1.longValue = node1.byteValue & node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case SHORT:
 					switch (t2) {
 						case CHAR:
-							ctx.nodeValueType.get(autoCastInt(((NodeShort) node1.node).getValue() & ((NodeChar) node2.node).getValue()));
-							return;
+							node1.intValue = node1.shortValue & node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							ctx.nodeValueType.get(autoCastInt(((NodeShort) node1.node).getValue() & ((NodeByte) node2.node).getValue()));
-							return;
+							node1.intValue = node1.shortValue & node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							ctx.nodeValueType.get(autoCastInt(((NodeShort) node1.node).getValue() & ((NodeShort) node2.node).getValue()));
-							return;
+							node1.intValue = node1.shortValue & node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							ctx.nodeValueType.get(autoCastInt(((NodeShort) node1.node).getValue() & ((NodeInt) node2.node).getValue()));
-							return;
+							node1.intValue = node1.shortValue & node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(autoCastLong(((NodeShort) node1.node).getValue() & ((NodeLong) node2.node).getValue()));
-							return;
+							node1.longValue = node1.shortValue & node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case INT:
 					switch (t2) {
 						case CHAR:
-							ctx.nodeValueType.get(autoCastInt(((NodeInt) node1.node).getValue() & ((NodeChar) node2.node).getValue()));
-							return;
+							node1.intValue = node1.intValue & node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							ctx.nodeValueType.get(autoCastInt(((NodeInt) node1.node).getValue() & ((NodeByte) node2.node).getValue()));
-							return;
+							node1.intValue = node1.intValue & node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							ctx.nodeValueType.get(autoCastInt(((NodeInt) node1.node).getValue() & ((NodeShort) node2.node).getValue()));
-							return;
+							node1.intValue = node1.intValue & node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							ctx.nodeValueType.get(autoCastInt(((NodeInt) node1.node).getValue() & ((NodeInt) node2.node).getValue()));
-							return;
+							node1.intValue = node1.intValue & node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(autoCastLong(((NodeInt) node1.node).getValue() & ((NodeLong) node2.node).getValue()));
-							return;
+							node1.longValue = node1.intValue & node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
-
 				case LONG:
 					switch (t2) {
 						case CHAR:
-							ctx.nodeValueType.get(autoCastLong(((NodeLong) node1.node).getValue() & ((NodeChar) node2.node).getValue()));
-							return;
+							node1.longValue = node1.longValue & node2.charValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case BYTE:
-							ctx.nodeValueType.get(autoCastLong(((NodeLong) node1.node).getValue() & ((NodeByte) node2.node).getValue()));
-							return;
+							node1.longValue = node1.longValue & node2.byteValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case SHORT:
-							ctx.nodeValueType.get(autoCastLong(((NodeLong) node1.node).getValue() & ((NodeShort) node2.node).getValue()));
-							return;
+							node1.longValue = node1.longValue & node2.shortValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case INT:
-							ctx.nodeValueType.get(autoCastLong(((NodeLong) node1.node).getValue() & ((NodeInt) node2.node).getValue()));
-							return;
+							node1.longValue = node1.longValue & node2.intValue;
+							return node1.valueType = HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(autoCastLong(((NodeLong) node1.node).getValue() & ((NodeLong) node2.node).getValue()));
-							return;
+							node1.longValue = node1.longValue & node2.longValue;
+							return node1.valueType = HiClassPrimitive.INT;
 					}
-					break;
 			}
 		} else {
 			switch (t1) {
@@ -156,17 +145,13 @@ public class OperationAnd extends BinaryOperation {
 						case BYTE:
 						case SHORT:
 						case INT:
-							ctx.nodeValueType.get(HiClassPrimitive.INT);
-							return;
+							return HiClassPrimitive.INT;
 						case LONG:
-							ctx.nodeValueType.get(HiClassPrimitive.LONG);
-							return;
+							return HiClassPrimitive.LONG;
 						case FLOAT:
-							ctx.nodeValueType.get(HiClassPrimitive.FLOAT);
-							return;
+							return HiClassPrimitive.FLOAT;
 						case DOUBLE:
-							ctx.nodeValueType.get(HiClassPrimitive.DOUBLE);
-							return;
+							return HiClassPrimitive.DOUBLE;
 					}
 
 				case LONG:
@@ -176,14 +161,11 @@ public class OperationAnd extends BinaryOperation {
 						case SHORT:
 						case INT:
 						case LONG:
-							ctx.nodeValueType.get(HiClassPrimitive.LONG);
-							return;
+							return HiClassPrimitive.LONG;
 						case FLOAT:
-							ctx.nodeValueType.get(HiClassPrimitive.FLOAT);
-							return;
+							return HiClassPrimitive.FLOAT;
 						case DOUBLE:
-							ctx.nodeValueType.get(HiClassPrimitive.DOUBLE);
-							return;
+							return HiClassPrimitive.DOUBLE;
 					}
 					break;
 
@@ -195,21 +177,19 @@ public class OperationAnd extends BinaryOperation {
 						case INT:
 						case LONG:
 						case FLOAT:
-							ctx.nodeValueType.get(HiClassPrimitive.FLOAT);
-							return;
+							return HiClassPrimitive.FLOAT;
 						case DOUBLE:
-							ctx.nodeValueType.get(HiClassPrimitive.DOUBLE);
-							return;
+							return HiClassPrimitive.DOUBLE;
 					}
 					break;
 
 				case DOUBLE:
-					ctx.nodeValueType.get(HiClassPrimitive.DOUBLE);
-					return;
+					return HiClassPrimitive.DOUBLE;
 			}
 		}
 
 		errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+		return null;
 	}
 
 	@Override

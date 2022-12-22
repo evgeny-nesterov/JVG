@@ -75,20 +75,34 @@ public class CompileClassContext implements ClassResolver {
 
 	public NodeValueType nodeValueType = new NodeValueType();
 
-	private NodeValueType[] nodesValueTypesCache;
+	private List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
-		if (nodesValueTypesCache == null || size > nodesValueTypesCache.length) {
-			NodeValueType[] newNodesValueTypesCache = new NodeValueType[size];
-			int currentSize = nodesValueTypesCache != null ? nodesValueTypesCache.length : 0;
-			if (nodesValueTypesCache != null) {
-				System.arraycopy(nodesValueTypesCache, 0, newNodesValueTypesCache, 0, currentSize);
-			}
-			for (int i = currentSize; i < size; i++) {
-				newNodesValueTypesCache[i] = new NodeValueType();
+		if (nodesValueTypesCache.size() > 0) {
+			NodeValueType[] nodesValueTypesCache = this.nodesValueTypesCache.get(this.nodesValueTypesCache.size() - 1);
+			if (size > nodesValueTypesCache.length) {
+				NodeValueType[] newNodesValueTypesCache = new NodeValueType[size];
+				int currentSize = nodesValueTypesCache != null ? nodesValueTypesCache.length : 0;
+				if (nodesValueTypesCache != null) {
+					System.arraycopy(nodesValueTypesCache, 0, newNodesValueTypesCache, 0, currentSize);
+				}
+				for (int i = currentSize; i < size; i++) {
+					newNodesValueTypesCache[i] = new NodeValueType();
+				}
+				return newNodesValueTypesCache;
+			} else {
+				return nodesValueTypesCache;
 			}
 		}
+		NodeValueType[] nodesValueTypesCache = new NodeValueType[size];
+		for (int i = 0; i < size; i++) {
+			nodesValueTypesCache[i] = new NodeValueType();
+		}
 		return nodesValueTypesCache;
+	}
+
+	public void putNodesValueTypesCache(NodeValueType[] nodesValueTypesCache) {
+		this.nodesValueTypesCache.add(nodesValueTypesCache);
 	}
 
 	@Override

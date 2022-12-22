@@ -37,14 +37,15 @@ public class NodeInvocation extends HiNode {
 	}
 
 	@Override
-	public HiClass getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass invocationClass = ctx.consumeInvocationClass();
 
 		// args has to be evaluated without invocationClass context
 		HiClass[] argumentsClasses = new HiClass[arguments != null ? arguments.length : 0];
 		if (arguments != null) {
 			for (int i = 0; i < arguments.length; i++) {
-				argumentsClasses[i] = arguments[i].getValueType(validationInfo, ctx);
+				// set null for not valid argument
+				argumentsClasses[i] = arguments[i].getValueClass(validationInfo, ctx);
 			}
 		}
 

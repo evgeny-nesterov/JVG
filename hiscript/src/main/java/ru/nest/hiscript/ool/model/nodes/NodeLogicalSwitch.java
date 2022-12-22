@@ -22,9 +22,14 @@ public class NodeLogicalSwitch extends NodeExpression {
 	private NodeExpression falseValueNode;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass type1 = trueValueNode.getValueType(validationInfo, ctx);
-		HiClass type2 = falseValueNode.getValueType(validationInfo, ctx);
+	public boolean isValue() {
+		return true;
+	}
+
+	@Override
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
+		HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
 		if (type1 != null && type2 != null) {
 			return type1.getCommonClass(type2);
 		}
@@ -37,8 +42,8 @@ public class NodeLogicalSwitch extends NodeExpression {
 		valid &= trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
 		valid &= falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
 		if (valid) {
-			HiClass type1 = trueValueNode.getValueType(validationInfo, ctx);
-			HiClass type2 = falseValueNode.getValueType(validationInfo, ctx);
+			HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
+			HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
 			if (type1 != null && type2 != null) {
 				if (!type1.isInstanceof(type2) && !type2.isInstanceof(type1)) {
 					validationInfo.error(type1.fullName + " expected", falseValueNode.getToken());

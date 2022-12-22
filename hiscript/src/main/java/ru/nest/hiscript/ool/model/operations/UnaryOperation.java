@@ -5,8 +5,8 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public abstract class UnaryOperation extends HiOperation {
@@ -14,22 +14,22 @@ public abstract class UnaryOperation extends HiOperation {
 		super(name, 1, operation);
 	}
 
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		return null;
 	}
 
 	@Override
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType... nodes) {
-		NodeExpressionNoLS.NodeValueType node = nodes[0];
+	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
+		NodeValueType node = nodes[0];
 		if (prepareOperationResultType(validationInfo, ctx, node)) {
 			node.type = getOperationResultType(validationInfo, ctx, node);
 			node.isValue = node.isValue && node.isValue;
 		}
 	}
 
-	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeExpressionNoLS.NodeValueType node) {
+	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		if (node.type == null) {
-			node.type = node.getType(validationInfo, ctx);
+			node.type = node.get(validationInfo, ctx).type;
 			if (node.type != null) {
 				node.isValue = node.node.isValue();
 				return true;

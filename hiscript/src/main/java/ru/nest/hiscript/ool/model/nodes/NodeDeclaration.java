@@ -8,7 +8,6 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -40,11 +39,11 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public NodeAnnotation[] annotations;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz;
 		if (type == Type.varType) {
-			clazz = initialization.getValueType(validationInfo, ctx);
-			type = Type.getType(clazz);
+			// assume initialization is not null
+			clazz = initialization.getValueClass(validationInfo, ctx);
 		} else {
 			clazz = type.getClass(ctx);
 		}
@@ -55,24 +54,25 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (initialization != null) {
-			HiClass variableType = type.getClass(ctx);
-			HiClass initializationType = initialization.getValueType(validationInfo, ctx);
-			valid = initialization.validate(validationInfo, ctx);
-			if (valid) {
-				boolean canCast = false;
-				if (initializationType.isPrimitive() || variableType.isPrimitive()) {
-					if (initializationType.isPrimitive() && variableType.isPrimitive()) {
-						int srcType = HiFieldPrimitive.getType(initializationType);
-						int dstType = HiFieldPrimitive.getType(variableType);
-						// if srcType.isValue()
-						canCast = HiFieldPrimitive.autoCastValue(initializationType, variableType);
+			HiClass variableType = getValueClass(validationInfo, ctx);
+			if (type == Type.varType) {
+				type = Type.getType(variableType);
+				// do not check cast
+			} else {
+				valid = initialization.validate(validationInfo, ctx);
+				if (valid) {
+					NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
+					HiClass initializationType = initializationValueType.type;
+					boolean canBeCasted = true;
+					if (initializationValueType.isValue) {
+						canBeCasted = initializationValueType.autoCastValue(variableType);
+					} else {
+						canBeCasted = HiClass.autoCast(initializationType, variableType, false);
 					}
-				} else {
-					canCast = HiClass.autoCast(initializationType, variableType);
-				}
-				if (!canCast) {
-					validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
-					valid = false;
+					if (!canBeCasted) {
+						validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
+						valid = false;
+					}
 				}
 			}
 			ctx.initializedNodes.add(this);

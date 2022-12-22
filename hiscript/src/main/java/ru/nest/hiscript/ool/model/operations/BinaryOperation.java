@@ -16,16 +16,21 @@ public abstract class BinaryOperation extends HiOperation {
 		super(name, 2, operation);
 	}
 
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		return null;
 	}
 
+	/**
+	 * node1 <operation> node2 => node1
+	 */
 	@Override
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 		NodeValueType node1 = nodes[0];
 		NodeValueType node2 = nodes[1];
 		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
-			getOperationResultType(validationInfo, ctx, node1, node2);
-			ctx.nodeValueType.apply(node2);
+			HiClass clazz = getOperationResultType(validationInfo, ctx, node1, node2);
+			node1.get(node1.node, clazz, clazz != null, clazz != null && node1.isValue);
+			node1.apply(node2);
 		} else {
 			ctx.nodeValueType.invalid();
 		}

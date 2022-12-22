@@ -29,7 +29,7 @@ public class NodeArrayValue extends HiNode {
 	private HiNode[] array;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return type.getArrayClass(ctx, dimensions);
 	}
 

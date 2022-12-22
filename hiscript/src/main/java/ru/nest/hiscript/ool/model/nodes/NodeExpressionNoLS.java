@@ -1,7 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
@@ -10,7 +9,6 @@ import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
-import ru.nest.hiscript.ool.model.validation.ValidationMessage;
 
 import java.io.IOException;
 
@@ -126,9 +124,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 	private HiOperation[] operations;
 
 	@Override
-	protected NodeValueType computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
-			return ctx.nodeValueType.get(validationInfo, ctx, operands[0]);
+			ctx.nodeValueType.get(validationInfo, ctx, operands[0]);
+			return;
 		}
 
 		NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
@@ -142,36 +141,21 @@ public class NodeExpressionNoLS extends NodeExpression {
 				bufSize++;
 				valuePos++;
 			} else {
-				// do operation
+				// do operation and write result to first node
 				bufSize = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
 			}
 		}
-		if (nodes[0].isValue) {
-			// TODO simplify expression
-		}
-		if (nodes[0].valid) {
-			return nodes[0];
-		} else {
-			return null;
-		}
+		nodes[0].copyTo(ctx.nodeValueType);
+		ctx.putNodesValueTypesCache(nodes);
 	}
-
-	private HiClass resultClass;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
-		int index = validationInfo.messages.size();
-		resultClass = getValueType(validationInfo, ctx);
-		for (int i = index; i < validationInfo.messages.size(); i++) {
-			if (validationInfo.messages.get(i).level == ValidationMessage.ValidationLevel.error) {
-				valid = false;
-			}
+		NodeValueType resultValueType = getValueType(validationInfo, ctx);
+		if (resultValueType.isValue) {
+			// TODO simplify expression
 		}
-		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
-			valid &= operands[0].validate(validationInfo, ctx);
-		}
-		return valid;
+		return resultValueType.valid;
 	}
 
 	@Override

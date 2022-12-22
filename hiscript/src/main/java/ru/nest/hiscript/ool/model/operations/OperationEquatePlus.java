@@ -23,9 +23,9 @@ public class OperationEquatePlus extends BinaryOperation {
 	}
 
 	@Override
-	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		// TODO check
-		node1.copyTo(ctx.nodeValueType);
+		return node1.type;
 	}
 
 	@Override
