@@ -246,7 +246,22 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public void exit() {
+		Set<String> throwExceptions = level.throwExceptions;
 		level = level.parent;
+		switch (level.type) {
+			case RuntimeContext.METHOD:
+			case RuntimeContext.CONSTRUCTOR:
+				break;
+			default:
+				if (throwExceptions != null) {
+					if (level.throwExceptions != null) {
+						level.throwExceptions.addAll(throwExceptions);
+					} else {
+						level.throwExceptions = throwExceptions;
+					}
+				}
+				break;
+		}
 	}
 
 	public boolean addLocalClass(HiClass clazz) {
@@ -428,6 +443,13 @@ public class CompileClassContext implements ClassResolver {
 		return HiClass.forName(this, name);
 	}
 
+	public void throwException(String exception) {
+		if (level.throwExceptions == null) {
+			level.throwExceptions = new HashSet<>(1);
+		}
+		level.throwExceptions.add(exception);
+	}
+
 	public class CompileClassLevel {
 		public int type;
 
@@ -446,6 +468,8 @@ public class CompileClassContext implements ClassResolver {
 		public TokenAccessible node;
 
 		String label;
+
+		public Set<String> throwExceptions;
 
 		public CompileClassLevel(int type, TokenAccessible node, CompileClassLevel parent) {
 			this.type = type;
