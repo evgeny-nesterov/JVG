@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -32,6 +32,12 @@ public class OperationInstanceOf extends BinaryOperation {
 		HiClass c2 = node2.type;
 		if (c1.isPrimitive()) {
 			validationInfo.error("Inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
+		}
+		if (node2.node instanceof NodeCastedIdentifier) {
+			NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) node2.node;
+			if (castedIdentifier.declarationNode != null) {
+				ctx.initializedNodes.add(castedIdentifier.declarationNode);
+			}
 		}
 		return HiClassPrimitive.BOOLEAN;
 	}

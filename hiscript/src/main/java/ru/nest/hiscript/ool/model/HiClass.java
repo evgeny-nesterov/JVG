@@ -450,19 +450,20 @@ public class HiClass implements Codeable, TokenAccessible {
 		return c;
 	}
 
-	private Map<String, HiClass> classesMap;
+	//	private Map<String, HiClass> classesMap;
 
+	// TODO optimize
 	public HiClass getClass(ClassResolver classResolver, String name) {
-		if (classesMap != null && classesMap.containsKey(name)) {
-			return classesMap.get(name);
-		}
+		//		if (classesMap != null && classesMap.containsKey(name)) {
+		//			return classesMap.get(name);
+		//		}
 
 		HiClass clazz = _getClass(classResolver, name);
 		if (clazz != null) {
-			if (classesMap == null) {
-				classesMap = new HashMap<>(1);
-			}
-			classesMap.put(name, clazz);
+			//			if (classesMap == null) {
+			//				classesMap = new HashMap<>(1);
+			//			}
+			//			classesMap.put(name, clazz);
 		}
 		return clazz;
 	}

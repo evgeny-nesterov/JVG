@@ -24,6 +24,11 @@ public class OperationEquate extends BinaryOperation {
 	}
 
 	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		return node1.type;
+	}
+
+	@Override
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 		NodeValueType node1 = nodes[0];
 		if (node1.node instanceof NodeIdentifier) {

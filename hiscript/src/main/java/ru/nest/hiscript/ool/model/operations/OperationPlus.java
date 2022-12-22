@@ -34,7 +34,7 @@ public class OperationPlus extends BinaryOperation {
 		}
 
 		if (!c1.isNumber() || !c2.isNumber()) {
-			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, c1, c2);
 			return null;
 		}
 
@@ -265,7 +265,7 @@ public class OperationPlus extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+		errorInvalidOperator(validationInfo, node1.token, c1, c2);
 		return null;
 	}
 

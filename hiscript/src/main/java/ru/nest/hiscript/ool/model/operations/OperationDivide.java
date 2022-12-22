@@ -26,7 +26,7 @@ public class OperationDivide extends BinaryOperation {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 		if (!c1.isNumber() || !c2.isNumber()) {
-			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, c1, c2);
 			return null;
 		}
 
@@ -298,7 +298,7 @@ public class OperationDivide extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+		errorInvalidOperator(validationInfo, node1.token, c1, c2);
 		return null;
 	}
 

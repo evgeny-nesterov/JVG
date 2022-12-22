@@ -11,9 +11,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeThis extends HiNode {
-	public final static NodeThis instance = new NodeThis();
-
-	private NodeThis() {
+	public NodeThis() {
 		super("this", THIS);
 	}
 
@@ -41,6 +39,6 @@ public class NodeThis extends HiNode {
 	}
 
 	public static NodeThis decode(DecodeContext os) throws IOException {
-		return instance;
+		return new NodeThis();
 	}
 }

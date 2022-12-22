@@ -63,7 +63,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 				if (valid) {
 					NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
 					HiClass initializationType = initializationValueType.type;
-					boolean canBeCasted = true;
+					boolean canBeCasted;
 					if (initializationValueType.isValue) {
 						canBeCasted = initializationValueType.autoCastValue(variableType);
 					} else {

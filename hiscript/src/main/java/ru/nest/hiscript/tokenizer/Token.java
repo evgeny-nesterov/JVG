@@ -15,11 +15,25 @@ public class Token implements Codeable, TokenAccessible {
 		this.lineOffset = lineOffset;
 	}
 
+	public Token(Token token) {
+		this(token.line, token.offset, token.length, token.lineOffset);
+	}
+
 	public Token(Token start, Token end) {
-		this.offset = start.offset;
-		this.length = end.offset + end.length - start.offset;
-		this.line = start.line;
-		this.lineOffset = start.lineOffset;
+		this(start);
+		extend(end);
+	}
+
+	public void extend(Token token) {
+		if (token == null) {
+			return;
+		}
+		offset = Math.min(offset, token.offset);
+		length = Math.max(offset + length, token.offset + token.length) - offset;
+		if (offset > token.getOffset()) {
+			line = token.line;
+			lineOffset = token.lineOffset;
+		}
 	}
 
 	public Token bounds() {

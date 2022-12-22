@@ -44,7 +44,7 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return type.getType().getClass(ctx);
+		return clazz != null ? clazz : type.getType().getClass(ctx);
 	}
 
 	@Override
@@ -57,7 +57,9 @@ public class NodeConstructor extends HiNode {
 		}
 
 		// resolve class
-		clazz = getValueClass(validationInfo, ctx);
+		if (clazz == null) {
+			clazz = getValueClass(validationInfo, ctx);
+		}
 		if (clazz == null) {
 			validationInfo.error("class not found: " + name, type.getToken());
 			valid = false;

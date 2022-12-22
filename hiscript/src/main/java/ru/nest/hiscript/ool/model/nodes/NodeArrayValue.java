@@ -37,6 +37,7 @@ public class NodeArrayValue extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		int size = array.length;
+		// TODO check value
 		for (int i = 0; i < size; i++) {
 			valid &= array[i].validate(validationInfo, ctx) && array[i].expectValue(validationInfo, ctx);
 		}

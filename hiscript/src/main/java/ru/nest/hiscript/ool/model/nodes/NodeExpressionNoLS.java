@@ -143,6 +143,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 			} else {
 				// do operation and write result to first node
 				bufSize = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
+				nodes[bufSize - 1].node = null;
 			}
 		}
 		nodes[0].copyTo(ctx.nodeValueType);

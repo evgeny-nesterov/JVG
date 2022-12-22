@@ -41,6 +41,9 @@ public class NodeReturn extends HiNode {
 				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : getToken());
 				valid = false;
 			}
+		} else if (expectedType != HiClassPrimitive.VOID) {
+			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType, value != null ? value.getToken() : getToken());
+			valid = false;
 		}
 		return valid;
 	}

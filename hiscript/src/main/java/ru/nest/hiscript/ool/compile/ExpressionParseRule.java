@@ -290,13 +290,13 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		// visit this
 		if (visitWordType(tokenizer, Words.THIS) != -1) {
-			operands.add(NodeThis.instance);
+			operands.add(new NodeThis());
 			return true;
 		}
 
 		// visit super
 		if (visitWordType(tokenizer, Words.SUPER) != -1) {
-			operands.add(NodeSuper.instance);
+			operands.add(new NodeSuper());
 			return true;
 		}
 

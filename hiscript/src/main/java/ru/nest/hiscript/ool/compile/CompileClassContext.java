@@ -79,7 +79,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (nodesValueTypesCache.size() > 0) {
-			NodeValueType[] nodesValueTypesCache = this.nodesValueTypesCache.get(this.nodesValueTypesCache.size() - 1);
+			NodeValueType[] nodesValueTypesCache = this.nodesValueTypesCache.remove(this.nodesValueTypesCache.size() - 1);
 			if (size > nodesValueTypesCache.length) {
 				NodeValueType[] newNodesValueTypesCache = new NodeValueType[size];
 				int currentSize = nodesValueTypesCache != null ? nodesValueTypesCache.length : 0;

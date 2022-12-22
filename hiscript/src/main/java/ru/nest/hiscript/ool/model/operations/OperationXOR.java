@@ -7,12 +7,6 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeByte;
-import ru.nest.hiscript.ool.model.nodes.NodeChar;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
-import ru.nest.hiscript.ool.model.nodes.NodeInt;
-import ru.nest.hiscript.ool.model.nodes.NodeLong;
-import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -32,7 +26,7 @@ public class OperationXOR extends BinaryOperation {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 		if (!c1.isPrimitive() || !c2.isPrimitive()) {
-			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, c1, c2);
 			return null;
 		}
 
@@ -189,7 +183,7 @@ public class OperationXOR extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+		errorInvalidOperator(validationInfo, node1.token, c1, c2);
 		return null;
 	}
 

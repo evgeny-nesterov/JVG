@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 public class NodeValueType implements PrimitiveTypes {
 	public HiNode node;
@@ -35,16 +36,25 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public boolean booleanValue;
 
+	public Token token;
+
 	public void init(HiNode node) {
 		this.node = node;
 		this.isValue = node.isValue();
 		this.type = null;
 		this.valid = false;
+		this.valueType = null;
+		this.token = node.getToken() != null ? new Token(node.getToken()) : null;
 	}
 
 	public NodeValueType apply(NodeValueType node) {
 		this.valid &= node.valid;
-		this.isValue &= this.valid && node.isValue && node.node.isValue();
+		this.isValue &= this.valid && node.isValue;
+		if (this.token != null) {
+			this.token.extend(node.token);
+		} else if (node.token != null) {
+			this.token = new Token(node.token);
+		}
 		return this;
 	}
 
@@ -93,17 +103,18 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public NodeValueType get(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiNode node = this.node;
-		node.getValueType(validationInfo, ctx);
-		this.type = ctx.nodeValueType.type;
-		this.valid = node.validate(validationInfo, ctx);
-		this.isValue = ctx.nodeValueType.isValue;
+		boolean valid = node.validate(validationInfo, ctx);
+		node.getValueType(validationInfo, ctx); // after validation
 		this.node = node;
+		this.type = ctx.nodeValueType.type;
+		this.valid = valid;
+		this.isValue = ctx.nodeValueType.isValue;
 		getValue();
 		return this;
 	}
 
 	private void getValue() {
-		if (valid && node.isValue()) {
+		if (valid && node != null && node.isValue()) {
 			valueType = type;
 			if (node instanceof NodeInt) {
 				intValue = ((NodeInt) node).getValue();
@@ -125,10 +136,10 @@ public class NodeValueType implements PrimitiveTypes {
 		}
 	}
 
-	/**
-	 * assumed type is primitive
-	 */
 	public boolean autoCastValue(HiClass type) {
+		if (!type.isPrimitive()) {
+			return false;
+		}
 		int t1 = HiFieldPrimitive.getType(valueType);
 		int t2 = HiFieldPrimitive.getType(type);
 		switch (t1) {

@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -28,7 +27,7 @@ public class OperationLogicalAnd extends BinaryOperation {
 		if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {
-			errorInvalidOperator(validationInfo, node1.node.getToken(), c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, c1, c2);
 			return null;
 		}
 	}
