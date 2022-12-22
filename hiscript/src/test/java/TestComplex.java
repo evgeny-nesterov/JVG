@@ -12,7 +12,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws Exception {
-		assertSuccess("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
-		assertSuccess("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
 	}
 }

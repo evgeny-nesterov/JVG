@@ -44,8 +44,55 @@ public class HiClassLoader {
 				return;
 			}
 		}
+
 		classes.put(clazz.fullName, clazz);
 		clazz.classLoader = this;
+	}
+
+	public boolean validate(ValidationInfo validationInfo) {
+		boolean valid = true;
+		for (HiClass clazz : classes.values()) {
+			valid &= checkCyclicDependencies(clazz, clazz, validationInfo);
+		}
+		return valid;
+	}
+
+	private boolean checkCyclicDependencies(HiClass origClazz, HiClass clazz, ValidationInfo validationInfo) {
+		boolean valid = true;
+		HiClass superClass = clazz.superClass != null ? clazz.superClass : clazz.superClassType != null ? getClass(clazz.superClassType.fullName) : null;
+		if (superClass != null) {
+			if (superClass != origClazz) {
+				valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
+			} else {
+				validationInfo.error("cyclic inheritance involving " + superClass, superClass.getToken());
+				valid = false;
+			}
+		}
+
+		if (clazz.interfaces != null) {
+			for (HiClass i : clazz.interfaces) {
+				if (i != origClazz) {
+					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
+				} else {
+					validationInfo.error("cyclic inheritance involving " + i.fullName, i.getToken());
+					valid = false;
+				}
+			}
+		} else if (clazz.interfaceTypes != null) {
+			for (Type it : clazz.interfaceTypes) {
+				HiClass i = getClass(it.fullName);
+				if (i == null) {
+					continue;
+				}
+				if (i != origClazz) {
+					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
+				} else {
+					validationInfo.error("cyclic inheritance involving " + i.fullName, null);
+					valid = false;
+				}
+			}
+		}
+		return valid;
 	}
 
 	public synchronized void addClasses(Collection<HiClass> classes) {

@@ -272,7 +272,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 				node = NodeBlock.decode(os);
 				break;
 			case TYPE_BOOLEAN:
-				node = NodeBoolean.decode(os);
+				node = NodeBoolean.decode(os, token);
 				break;
 			case TYPE_BREAK:
 				node = NodeBreak.decode(os);

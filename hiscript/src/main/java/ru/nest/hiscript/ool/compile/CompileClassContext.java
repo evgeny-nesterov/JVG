@@ -334,13 +334,27 @@ public class CompileClassContext implements ClassResolver {
 			}
 			level = level.parent;
 		}
+
 		if (this.clazz != null && (this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
 			return this.clazz;
 		}
+
 		if (parent != null) {
 			HiClass clazz = parent.getBaseClass(name);
 			if (clazz != null) {
 				return clazz;
+			}
+		}
+
+		if (name.indexOf('$') == -1) {
+			int index = this.clazz.fullName.lastIndexOf('$');
+			if (index != -1) {
+				String outboundClassName = this.clazz.fullName.substring(0, index + 1);
+				String extendedName = outboundClassName + '0' + name;
+				HiClass clazz = HiClass.forName(this, extendedName);
+				if (clazz != null) {
+					return clazz;
+				}
 			}
 		}
 		return HiClass.forName(this, name);

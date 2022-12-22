@@ -4,14 +4,28 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testDeclaration() {
 		assertSuccessSerialize("int a;");
-		assertSuccessSerialize("int a = 1;");
-		assertSuccessSerialize("String a, b, c;");
-		assertSuccessSerialize("String a = \"a\", b, c = null;");
-		assertSuccessSerialize("{int a = 1;} int a = 2;");
+		assertSuccessSerialize("int a123;");
+		assertSuccessSerialize("int _a;");
+		assertSuccessSerialize("int _;");
+		assertSuccessSerialize("int _0123;");
+		assertSuccessSerialize("int _a;");
+		assertSuccessSerialize("int $;");
+		assertSuccessSerialize("int _$;");
+		assertSuccessSerialize("int $a__;");
+		assertSuccessSerialize("int ____$a_$b_$c___;");
+		assertSuccessSerialize("int переменная;");
 
+		assertSuccessSerialize("int a = 1; assert a == 1;");
+		assertSuccessSerialize("String a, b, c;");
+		assertSuccessSerialize("String a = \"a\", b, c = null; assert \"a\".equals(a); assert c == null;");
+		assertSuccessSerialize("{int a = 1;} int a = 2; assert a == 2;");
+
+		assertFailSerialize("String 0var;");
+		assertFailSerialize("String a, a;");
 		assertFailSerialize("int a = 1; String a = \"\";");
 		assertFailSerialize("int x; int y = x;");
 		assertFailSerialize("int x = 1; int y = true || x;");
+		assertFailSerialize("int x = 1, y = 0.0;");
 	}
 
 	@Test
@@ -19,8 +33,12 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
 		assertSuccessSerialize("int i = 0; for(; i < 10; i++); assert i == 10;");
 		assertSuccessSerialize("for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {}");
+
+		// iterable for
 		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
 		assertSuccessSerialize("String[] x = {\"a\", \"b\", \"c\"}; for (String i : x) {i += i;};");
+		assertSuccessSerialize("int[] arr = {1, 2, 3}; int i = 0; for (int x : arr) assert x == arr[i++];");
+		assertSuccessSerialize("ArrayList l = new ArrayList(); l.add(\"a\"); l.add(\"b\"); l.add(\"c\"); int i = 0; for (String s : l) {assert s.equals(l.get(i++));}");
 
 		assertSuccessSerialize("for(;;) {break;}");
 		assertSuccessSerialize("for(int i = 0;;) {break;}");
@@ -61,18 +79,18 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testExceptions() {
-		//		assertSuccessSerialize("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
-		//		assertSuccessSerialize("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
-		//		assertFailSerialize("throw new Exception(\"error\");");
-		//		assertFailSerialize("throw new Object();");
-		//				assertFailSerialize("class E extends Exception{} throw new E();");
+		assertSuccessSerialize("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
+		assertSuccessSerialize("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
+		assertFailSerialize("throw new Exception(\"error\");");
+		assertFailSerialize("throw new Object();");
+		assertFailSerialize("class E extends Exception{} throw new E();");
 		assertSuccessSerialize("try {throw new Exception(\"error\");} catch(Exception e) {assert e.getMessage().equals(\"error\");} ");
 		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
-		//		assertFailSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {}");
-		//		assertSuccessSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {assert false;} catch(RuntimeException e) {assert false;} catch(Exception e){}");
-		//		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} " + //
-		//				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
-		//				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
+		assertFailSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {}");
+		assertSuccessSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {assert false;} catch(RuntimeException e) {assert false;} catch(Exception e){}");
+		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} " + //
+				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
+				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
 	}
 
 	@Test
@@ -82,21 +100,15 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("assert (new int[]{1})[0] == 1;");
 		assertSuccessSerialize("class A{} new A();");
 		assertSuccessSerialize("class A{A(int x){}} new A(1);");
-		// FAIL assertSuccessSerialize("assert (new int[1])[0] == 0;");
+		assertSuccessSerialize("assert (new int[1])[0] == 0;");
 	}
 
 	@Test
 	public void testBreakContinue() {
-		assertSuccess("A:{if(true) break A; assert false;};");
-		assertSuccess("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
-		assertSuccess("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
-		assertSuccess("for (int i = 0; i < 10; i++) BLOCK: {if(i<10) continue BLOCK; assert false;}");
-	}
-
-	@Test
-	public void testVar() {
-		// TODO
-		// assertSuccess("var a = 1;");
+		assertSuccessSerialize("A:{if(true) break A; assert false;};");
+		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
+		assertSuccessSerialize("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
+		assertSuccessSerialize("for (int i = 0; i < 10; i++) BLOCK: {if(i<10) continue BLOCK; assert false;}");
 	}
 
 	@Test

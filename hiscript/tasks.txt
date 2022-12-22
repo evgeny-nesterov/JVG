@@ -16,8 +16,8 @@
 *11. Add throws for methods, require catch or method throws for non-runtime exceptions
 *12. Annotations
 *13. Import native java classes, create instances, invoke methods and read fields
-!14. Allow Iterable for(:) (currently only arrays)
-*15. Add var
+        +14. Iterable for(:) (arrays and ArrayList)
+        +15. Add var
 		+16. Switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN> -> <bodyExpr>)
         +17. Multiple case in statement switch (case <expr1>, <expr2>, ..., <exprN>: <statementBody>)
         +18. Assert (assert condition, or assert condition : message)
@@ -31,3 +31,4 @@
 26. HiClassMix for catch(Exc1 | Exc2 e)
         +27. try (auto closeable resources)
         +27. records, auto match if (r instanceof Rec(int a, in b) rec when <condition with rec, a and b>) {a = 1; ... and case Rec(int a) r
+*27. Precompile validation

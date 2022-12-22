@@ -111,13 +111,13 @@ public class TestNumbers extends HiTest {
 		assertCondition("byte a = (byte)1;", "a == 1l", "byte");
 		assertCondition("byte a = (short)1;", "a == 1", "byte");
 		assertCondition("byte a = (char)1;", "a == 1", "byte");
-		assertSuccess("byte a = 'a'; assert a == 'a';");
+		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
 	}
 
 	@Test
 	public void testNumbersLimits() {
-		assertSuccess("byte a = " + Byte.MAX_VALUE + ";");
-		assertSuccess("byte a = " + Byte.MIN_VALUE + ";");
+		assertSuccessSerialize("byte a = " + Byte.MAX_VALUE + ";");
+		assertSuccessSerialize("byte a = " + Byte.MIN_VALUE + ";");
 		assertFail("byte a = " + (Byte.MAX_VALUE + 1) + ";");
 		assertFail("byte a = " + (Byte.MIN_VALUE - 1) + ";");
 
@@ -136,12 +136,12 @@ public class TestNumbers extends HiTest {
 
 	@Test
 	public void testNumbersComparison() {
-		assertSuccess("assert 1>0;");
-		assertSuccess("assert 0<1;");
-		assertSuccess("assert 0<=0;");
-		assertSuccess("assert 1>=1;");
-		assertSuccess("assert 1==1;");
-		assertSuccess("assert 1+1>0+0;");
-		assertSuccess("assert 1+1<2*2;");
+		assertSuccessSerialize("assert 1>0;");
+		assertSuccessSerialize("assert 0<1;");
+		assertSuccessSerialize("assert 0<=0;");
+		assertSuccessSerialize("assert 1>=1;");
+		assertSuccessSerialize("assert 1==1;");
+		assertSuccessSerialize("assert 1+1>0+0;");
+		assertSuccessSerialize("assert 1+1<2*2;");
 	}
 }

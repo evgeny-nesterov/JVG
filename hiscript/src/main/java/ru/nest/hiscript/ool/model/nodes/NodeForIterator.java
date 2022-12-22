@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -8,6 +9,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.List;
 
 public class NodeForIterator extends HiNode {
 	public NodeForIterator(NodeDeclaration declaration, HiNode iterable, HiNode body) {
@@ -50,32 +52,47 @@ public class NodeForIterator extends HiNode {
 				return;
 			}
 
-			if (!ctx.value.type.isArray()) {
-				ctx.throwRuntimeException("not iterable argument");
-			}
-
-			if (body != null) {
+			if (ctx.value.type.isArray()) {
 				HiField<?> forVariable = ctx.getVariable(declaration.name);
 				int size = Array.getLength(ctx.value.array);
 				for (int i = 0; i < size; i++) {
 					Object value = Array.get(ctx.value.array, i); // TODO primitives
-					ctx.value.set(value);
-					forVariable.set(ctx, ctx.value);
-					forVariable.initialized = true;
-
-					body.execute(ctx);
-					if (ctx.exitFromBlock()) {
-						return;
-					}
-
-					if (ctx.isBreak || (ctx.isContinue && !ctx.isCurrentLabel())) {
+					if (!executeValue(ctx, forVariable, value)) {
 						break;
 					}
 				}
+			} else if (ctx.value.type.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME)) { // TODO isInstanceof Iterable
+				HiField<?> forVariable = ctx.getVariable(declaration.name);
+				List list = (List) ctx.value.object.userObject;
+				for (Object value : list) {
+					if (!executeValue(ctx, forVariable, value)) {
+						break;
+					}
+				}
+			} else {
+				ctx.throwRuntimeException("not iterable argument");
 			}
 		} finally {
 			ctx.exit();
 		}
+	}
+
+	private boolean executeValue(RuntimeContext ctx, HiField<?> forVariable, Object value) {
+		ctx.value.set(value);
+		forVariable.set(ctx, ctx.value);
+		forVariable.initialized = true;
+
+		if (body != null) {
+			body.execute(ctx);
+			if (ctx.exitFromBlock()) {
+				return false;
+			}
+		}
+
+		if (ctx.isBreak || (ctx.isContinue && !ctx.isCurrentLabel())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

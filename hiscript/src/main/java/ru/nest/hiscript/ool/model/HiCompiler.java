@@ -36,12 +36,12 @@ public class HiCompiler {
 	public HiNode build() throws TokenizerException, ParseException, ValidationException {
 		HiNode node = rule.visit(tokenizer, null);
 		validationInfo = new ValidationInfo(this);
-		if (!node.validate(validationInfo, null)) {
-			if (validationInfo.messages.size() > 0) {
-				validationInfo.throwExceptionIf();
-			} else {
-				throw new ValidationException("Validation error", null);
-			}
+		boolean valid = node.validate(validationInfo, null);
+		valid &= classLoader.validate(validationInfo);
+		if (validationInfo.messages.size() > 0) {
+			validationInfo.throwExceptionIf();
+		} else if (!valid) {
+			throw new ValidationException("Validation error", null);
 		}
 		return node;
 	}

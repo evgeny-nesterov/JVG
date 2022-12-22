@@ -222,7 +222,7 @@ public class Tokenizer {
 	}
 
 	public Token getBlockToken(Token startToken) {
-		return currentToken != null ? new Token(startToken, currentToken) : null;
+		return currentToken != null ? new Token(startToken, currentToken) : new Token(startToken.getLine(), startToken.getOffset(), len - startToken.getOffset(), startToken.getLineOffset());
 	}
 
 	private Token searchToken() throws TokenizerException {

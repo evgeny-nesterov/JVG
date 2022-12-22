@@ -11,9 +11,10 @@ public class TestClasses extends HiTest {
 
 		// extends
 		assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
-		// assertFailSerialize("class A extends B{} class B extends A{}");
 		assertFailSerialize("class A {A(boolean x){this(x ? 1 : 0);} A(int y){this(y == 1);}} new A(true);");
 		assertFailSerialize("class A{A(int x){this(x);}} new A(1);");
+		assertFailSerialize("class A extends B{} class B extends A{}");
+		assertFailSerialize("class A extends B{} class B extends C{} class C extends A{}");
 	}
 
 	@Test
