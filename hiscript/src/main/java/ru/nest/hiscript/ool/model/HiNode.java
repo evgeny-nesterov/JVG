@@ -428,8 +428,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectValueClass(ValidationInfo validationInfo, CompileClassContext ctx, HiClass valueClass) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || !castedConditionClass.isInstanceof(valueClass)) {
+		NodeValueType castedConditionValueType = getValueType(validationInfo, ctx);
+		if (!HiClass.autoCast(castedConditionValueType.type, valueClass, castedConditionValueType.isValue)) {
 			validationInfo.error(valueClass.fullName + " is expected", getToken());
 			return false;
 		}
@@ -448,7 +448,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	// TODO +Iterable
 	public boolean expectIterableValue(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || castedConditionClass.isArray() || castedConditionClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME)) {
+		if (castedConditionClass == null || !(castedConditionClass.isArray() || castedConditionClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME))) {
 			validationInfo.error("iterable is expected", getToken());
 			return false;
 		}

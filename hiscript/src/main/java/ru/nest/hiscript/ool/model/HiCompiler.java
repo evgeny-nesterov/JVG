@@ -34,7 +34,7 @@ public class HiCompiler {
 
 	public HiNode build() throws TokenizerException, ParseException, ValidationException {
 		if (rule == null) {
-			rule = new RootParseRule(this, true);
+			rule = new RootParseRule(this, true, true);
 		}
 		HiNode node = rule.visit(tokenizer, null);
 		validationInfo = new ValidationInfo(this);

@@ -169,7 +169,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		return isReturn || isExit || exception != null;
 	}
 
-	public StackLevel level = null;
+	public StackLevel level;
 
 	// inside method, constructor and initializers
 	public void enter(int type, Token token) {

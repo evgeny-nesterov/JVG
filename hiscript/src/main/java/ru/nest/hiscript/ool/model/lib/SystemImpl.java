@@ -131,7 +131,7 @@ public class SystemImpl extends ImplUtil {
 				compileCtx = new CompileClassContext(ctx.compiler, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
 			}
 
-			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false).visit(tokenizer, compileCtx);
+			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false, false).visit(tokenizer, compileCtx);
 			node.setEnterType(RuntimeContext.SAME);
 
 			if (!separateThread) {

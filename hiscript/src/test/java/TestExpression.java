@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import ru.nest.hiscript.ool.HiScript;
 
 public class TestExpression extends HiTest {
 	@Test
@@ -196,13 +197,13 @@ public class TestExpression extends HiTest {
 	@Test
 	public void testLoad() throws Exception {
 		long t = System.currentTimeMillis();
-		CompiledNode compiler = new CompiledNode();
-		compiler.open().compile("int x = 0;", false).execute(true);
-		CompiledNode result = compiler.compile("x = x + 1;", false);
+		HiScript script = new HiScript();
+		script.open().compile("int x = 0;").throwException().execute();
+		HiScript result = script.compile("x = x + 1;");
 		for (int i = 0; i < 1_000_000; i++) {
-			result.execute(true);
+			result.execute();
 		}
-		compiler.compile("assert x == 1_000_000;", false).execute(true).close();
+		script.compile("System.println(\"x=\" + x); assert x == 1_000_000;").execute().close();
 		System.out.println("hiscript: " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
 	}
 }

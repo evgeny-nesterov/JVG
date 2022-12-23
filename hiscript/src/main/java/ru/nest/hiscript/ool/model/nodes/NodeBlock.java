@@ -49,7 +49,10 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.BLOCK, this);
+		if (enterType != RuntimeContext.SAME) {
+			ctx.enter(RuntimeContext.BLOCK, this);
+		}
+
 		boolean valid = true;
 		// TODO check isStatic
 		boolean terminated = false;
@@ -65,7 +68,10 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 				terminated = true;
 			}
 		}
-		ctx.exit();
+
+		if (enterType != RuntimeContext.SAME) {
+			ctx.exit();
+		}
 		return valid;
 	}
 

@@ -17,9 +17,16 @@ public class RootParseRule extends ParseRule<HiNode> {
 
 	private CompileClassContext ctx;
 
-	public RootParseRule(HiCompiler compiler, boolean wrapped) {
+	private HiClass rootClass;
+
+	private NodeMainWrapper mainWrapperNode;
+
+	private boolean outerContext;
+
+	public RootParseRule(HiCompiler compiler, boolean wrapped, boolean outerContext) {
 		this.wrapped = wrapped;
 		this.compiler = compiler;
+		this.outerContext = outerContext;
 	}
 
 	@Override
@@ -27,29 +34,35 @@ public class RootParseRule extends ParseRule<HiNode> {
 		tokenizer.nextToken();
 
 		boolean createMainMethod = false;
-		HiClass rootClass = null;
-		if (ctx == null) {
+		if (ctx == null && this.ctx != null) {
 			ctx = this.ctx;
 			createMainMethod = wrapped;
 		}
 		if (ctx == null) {
 			ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-			ctx.clazz = rootClass;
 
 			rootClass = compiler.getClassLoader().getClass(HiClass.ROOT_CLASS_NAME);
 			if (rootClass == null) {
 				rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
 			}
+			ctx.clazz = rootClass;
 
 			createMainMethod = wrapped;
 		}
 		this.ctx = ctx;
 
 		NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
+		if (outerContext) {
+			body.setEnterType(RuntimeContext.SAME);
+		}
 
 		HiNode node;
 		if (createMainMethod) {
-			NodeMainWrapper mainWrapperNode = new NodeMainWrapper(ctx.getClassLoader(), body, rootClass);
+			if (mainWrapperNode == null) {
+				mainWrapperNode = new NodeMainWrapper(ctx.getClassLoader(), body, rootClass);
+			} else {
+				mainWrapperNode.setBody(body);
+			}
 			node = mainWrapperNode;
 		} else {
 			if (body != null) {
