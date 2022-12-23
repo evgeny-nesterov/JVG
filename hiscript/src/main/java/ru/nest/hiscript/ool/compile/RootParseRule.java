@@ -15,6 +15,8 @@ public class RootParseRule extends ParseRule<HiNode> {
 
 	private HiCompiler compiler;
 
+	private CompileClassContext ctx;
+
 	public RootParseRule(HiCompiler compiler, boolean wrapped) {
 		this.wrapped = wrapped;
 		this.compiler = compiler;
@@ -27,12 +29,21 @@ public class RootParseRule extends ParseRule<HiNode> {
 		boolean createMainMethod = false;
 		HiClass rootClass = null;
 		if (ctx == null) {
-			rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
-
-			ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
-			ctx.clazz = rootClass;
+			ctx = this.ctx;
 			createMainMethod = wrapped;
 		}
+		if (ctx == null) {
+			ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+			ctx.clazz = rootClass;
+
+			rootClass = compiler.getClassLoader().getClass(HiClass.ROOT_CLASS_NAME);
+			if (rootClass == null) {
+				rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
+			}
+
+			createMainMethod = wrapped;
+		}
+		this.ctx = ctx;
 
 		NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
 

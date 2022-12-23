@@ -30,10 +30,12 @@ public class HiCompiler {
 	public HiCompiler(HiClassLoader classLoader, Tokenizer tokenizer) {
 		this.classLoader = classLoader;
 		this.tokenizer = tokenizer;
-		this.rule = new RootParseRule(this, true);
 	}
 
 	public HiNode build() throws TokenizerException, ParseException, ValidationException {
+		if (rule == null) {
+			rule = new RootParseRule(this, true);
+		}
 		HiNode node = rule.visit(tokenizer, null);
 		validationInfo = new ValidationInfo(this);
 		boolean valid = node.validate(validationInfo, null);

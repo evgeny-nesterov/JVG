@@ -196,10 +196,13 @@ public class TestExpression extends HiTest {
 	@Test
 	public void testLoad() throws Exception {
 		long t = System.currentTimeMillis();
-		CompiledNode result = new CompiledNode().compile("int i = 1 + 1;", false);
-		for (int i = 0; i < 10_000_000; i++) {
-			result.execute();
+		CompiledNode compiler = new CompiledNode();
+		compiler.open().compile("int x = 0;", false).execute(true);
+		CompiledNode result = compiler.compile("x = x + 1;", false);
+		for (int i = 0; i < 1_000_000; i++) {
+			result.execute(true);
 		}
-		System.out.println("t: " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
+		compiler.compile("assert x == 1_000_000;", false).execute(true).close();
+		System.out.println("hiscript: " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
 	}
 }

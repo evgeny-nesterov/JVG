@@ -1,4 +1,5 @@
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
@@ -80,35 +81,71 @@ public abstract class HiTest {
 		}
 	}
 
-	class CompiledNode {
+	class CompiledNode implements AutoCloseable {
+		HiClassLoader classLoader;
+
 		HiCompiler compiler;
 
 		HiNode node;
 
+		RootParseRule parseRule;
+
+		RuntimeContext ctx;
+
 		CompiledNode compile(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
-			compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
+			compiler = HiCompiler.getDefaultCompiler(classLoader, script);
 			compiler.setAssertsActive(true);
 			compiler.setVerbose(true);
 			compiler.setPrintInvalidCode(true);
+			if (parseRule == null) {
+				parseRule = new RootParseRule(compiler, true);
+			}
+			compiler.setRule(parseRule);
 			node = compiler.build();
 			if (serialize) {
 				// node = serialize(node);
 			}
-			HiClass.systemClassLoader.removeClassLoader(compiler.getClassLoader());
 			return this;
 		}
 
-		void execute() throws TokenizerException, ParseException, IOException, ValidationException {
-			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
-				node.execute(ctx);
+		CompiledNode open() {
+			classLoader = new HiClassLoader("test");
+			return this;
+		}
+
+		@Override
+		public void close() {
+			ctx.close();
+			node = null;
+			parseRule = null;
+			ctx = null;
+			HiClass.systemClassLoader.removeClassLoader(compiler.getClassLoader());
+		}
+
+		CompiledNode execute(boolean throwException) throws TokenizerException, ParseException, IOException, ValidationException {
+			if (ctx == null) {
+				ctx = new RuntimeContext(compiler, true);
+			}
+			node.execute(ctx);
+			if (throwException) {
 				ctx.throwExceptionIf(true);
 			}
+			return this;
 		}
 	}
 
-	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
-		CompiledNode result = new CompiledNode().compile(script, serialize);
-		result.execute();
+	public CompiledNode execute(String script) throws TokenizerException, ParseException, IOException, ValidationException {
+		return execute(script, false);
+	}
+
+	public CompiledNode execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
+		CompiledNode result = new CompiledNode().open().compile(script, serialize).execute(true);
+		result.close();
+		return result;
+	}
+
+	public CompiledNode compile(String script) throws TokenizerException, ParseException, IOException, ValidationException {
+		return new CompiledNode().compile(script, false);
 	}
 
 	private void onFail(String script, String message) {

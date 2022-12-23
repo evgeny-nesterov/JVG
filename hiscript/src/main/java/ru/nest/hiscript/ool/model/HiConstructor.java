@@ -223,9 +223,9 @@ public class HiConstructor implements Codeable, TokenAccessible {
 			try {
 				// init object: copy not static fields from class
 				if (clazz.fields != null) {
-					int fields_count = clazz.fields.length;
+					int fieldsCount = clazz.fields.length;
 					int count = 0;
-					for (int i = 0; i < fields_count; i++) {
+					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
 							count++;
 						}
@@ -233,30 +233,30 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 					object.fields = new HiField[count];
 					int index = 0;
-					for (int i = 0; i < fields_count; i++) {
+					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
 							object.fields[index++] = (HiField<?>) clazz.fields[i].clone();
 						}
 					}
 
-					if (clazz.initializers != null) {
-						// add fields
-						ctx.addVariables(object.fields);
+					// add fields
+					ctx.addVariables(object.fields);
+				}
 
-						// init fields and execute initializers blocks
-						int size = clazz.initializers.length;
-						for (int i = 0; i < size; i++) {
-							NodeInitializer initializer = clazz.initializers[i];
-							if (!initializer.isStatic()) {
-								if (initializer instanceof HiField<?>) {
-									HiField<?> field = (HiField<?>) initializer;
-									initializer = object.getField(ctx, field.name);
-								}
+				if (clazz.initializers != null) {
+					// init fields and execute initializers blocks
+					int size = clazz.initializers.length;
+					for (int i = 0; i < size; i++) {
+						NodeInitializer initializer = clazz.initializers[i];
+						if (!initializer.isStatic()) {
+							if (initializer instanceof HiField<?>) {
+								HiField<?> field = (HiField<?>) initializer;
+								initializer = object.getField(ctx, field.name);
+							}
 
-								initializer.execute(ctx);
-								if (ctx.exitFromBlock()) {
-									break;
-								}
+							initializer.execute(ctx);
+							if (ctx.exitFromBlock()) {
+								break;
 							}
 						}
 					}
