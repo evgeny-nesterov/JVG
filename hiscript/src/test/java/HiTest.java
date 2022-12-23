@@ -75,19 +75,19 @@ public abstract class HiTest {
 	}
 
 	public HiScript execute(String script) throws TokenizerException, ParseException, ValidationException {
-		HiScript result = new HiScript().open().compile(script).throwException().execute();
+		HiScript result = HiScript.create().compile(script).throwException().execute();
 		result.close();
 		return result;
 	}
 
 	public HiScript executeSerialized(String script) throws TokenizerException, ParseException, IOException, ValidationException {
-		HiScript result = new HiScript().open().compile(script).serialize().throwException().execute();
+		HiScript result = HiScript.create().compile(script).serialize().throwException().execute();
 		result.close();
 		return result;
 	}
 
 	public HiScript compile(String script) throws TokenizerException, ParseException, IOException, ValidationException {
-		return new HiScript().compile(script);
+		return HiScript.create().compile(script);
 	}
 
 	private void onFail(String script, String message) {

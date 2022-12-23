@@ -196,14 +196,11 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testLoad() throws Exception {
-		long t = System.currentTimeMillis();
-		HiScript script = new HiScript();
-		script.open().compile("int x = 0;").throwException().execute();
-		HiScript result = script.compile("x = x + 1;");
+		HiScript script = HiScript.create().compile("int x = 0;").throwException().execute().compile("x = x + 1;");
 		for (int i = 0; i < 1_000_000; i++) {
-			result.execute();
+			script.execute();
 		}
 		script.compile("System.println(\"x=\" + x); assert x == 1_000_000;").execute().close();
-		System.out.println("hiscript: " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
+		System.out.println("load test duration: " + script.duration() / 1000.0 + "sec");
 	}
 }

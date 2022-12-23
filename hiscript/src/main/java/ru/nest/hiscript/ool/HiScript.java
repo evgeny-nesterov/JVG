@@ -27,6 +27,16 @@ public class HiScript implements AutoCloseable {
 
 	private boolean throwException = false;
 
+	private long startTime;
+
+	private HiScript() {
+		startTime = System.currentTimeMillis();
+	}
+
+	public long duration() {
+		return System.currentTimeMillis() - startTime;
+	}
+
 	public HiScript compile(String script) throws TokenizerException, ParseException, ValidationException {
 		compiler = HiCompiler.getDefaultCompiler(classLoader, script);
 		compiler.setAssertsActive(true);
@@ -59,6 +69,10 @@ public class HiScript implements AutoCloseable {
 		DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
 		node = ctxDecode.load();
 		return this;
+	}
+
+	public static HiScript create() {
+		return new HiScript().open();
 	}
 
 	public HiScript open() {
