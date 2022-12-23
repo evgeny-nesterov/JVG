@@ -10,7 +10,7 @@ import java.io.IOException;
 public class NodeBreak extends HiNode {
 	public NodeBreak(String label) {
 		super("break", TYPE_BREAK);
-		this.label = label != null ? label.intern() : null;
+		this.label = label; // != null ? label.intern() : null;
 	}
 
 	private String label;

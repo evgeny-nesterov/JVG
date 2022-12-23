@@ -86,6 +86,8 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	private static void loadSystemClasses() {
+		systemClassLoader.clear();
+
 		HiNative.register(SystemImpl.class);
 		HiNative.register(ObjectImpl.class);
 
@@ -144,7 +146,7 @@ public class HiClass implements Codeable, TokenAccessible {
 	// for decode
 	private HiClass(Type superClassType, String name, int type) {
 		this.superClassType = superClassType;
-		this.name = name.intern();
+		this.name = name; // .intern();
 		this.type = type;
 		// init(...) is in decode
 	}
@@ -170,7 +172,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		// intern name to optimize via a == b
-		this.name = name.intern();
+		this.name = name; // .intern();
 		this.fullName = getFullName(classLoader);
 
 		if (classLoader == null) {
@@ -213,7 +215,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				fullName = name;
 			}
 			// intern name to optimize via a == b
-			this.fullName = fullName.intern();
+			this.fullName = fullName; // .intern();
 		}
 		return this.fullName;
 	}
@@ -359,12 +361,14 @@ public class HiClass implements Codeable, TokenAccessible {
 	public HiClass[] innerClasses;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.STATIC_CLASS, this);
 		HiClass outboundClass = ctx.clazz;
+
+		// init before enter
+		init(ctx);
+
+		ctx.enter(RuntimeContext.STATIC_CLASS, this);
 		ctx.clazz = this;
 		boolean valid = true;
-
-		init(ctx);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
 			superClass = superClassType.getClass(ctx);
@@ -620,7 +624,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		// this fields
 		if (fields != null && fields.length > 0) {
 			for (HiField<?> f : fields) {
-				if (f.name == name) {
+				if (f.name.equals(name)) {
 					field = f;
 					break;
 				}
@@ -781,7 +785,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (methods != null) {
 			for (HiMethod m : methods)
 				FOR:{
-					if (m.name == name) {
+					if (m.name.equals(name)) {
 						int argCount = m.argCount;
 						if (argCount != argTypes.length) {
 							continue;

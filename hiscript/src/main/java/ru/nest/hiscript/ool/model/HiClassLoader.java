@@ -229,6 +229,21 @@ public class HiClassLoader {
 		return classes;
 	}
 
+	public void clear() {
+		clearClassLoaders();
+		clearClasses();
+	}
+
+	public void clearClassLoaders() {
+		if (classLoaders != null) {
+			classLoaders.clear();
+		}
+	}
+
+	public void clearClasses() {
+		classes.clear();
+	}
+
 	@Override
 	public String toString() {
 		return getName();

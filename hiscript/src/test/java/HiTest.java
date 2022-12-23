@@ -1,4 +1,5 @@
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -79,21 +80,35 @@ public abstract class HiTest {
 		}
 	}
 
-	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
-		HiCompiler compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
-		compiler.setAssertsActive(true);
-		compiler.setVerbose(true);
-		compiler.setPrintInvalidCode(true);
-		HiNode node = compiler.build();
-		if (node != null) {
+	class CompiledNode {
+		HiCompiler compiler;
+
+		HiNode node;
+
+		CompiledNode compile(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
+			compiler = HiCompiler.getDefaultCompiler(new HiClassLoader("test"), script);
+			compiler.setAssertsActive(true);
+			compiler.setVerbose(true);
+			compiler.setPrintInvalidCode(true);
+			node = compiler.build();
 			if (serialize) {
 				// node = serialize(node);
 			}
+			HiClass.systemClassLoader.removeClassLoader(compiler.getClassLoader());
+			return this;
+		}
+
+		void execute() throws TokenizerException, ParseException, IOException, ValidationException {
 			try (RuntimeContext ctx = new RuntimeContext(compiler, true)) {
 				node.execute(ctx);
 				ctx.throwExceptionIf(true);
 			}
 		}
+	}
+
+	public void execute(String script, boolean serialize) throws TokenizerException, ParseException, IOException, ValidationException {
+		CompiledNode result = new CompiledNode().compile(script, serialize);
+		result.execute();
 	}
 
 	private void onFail(String script, String message) {

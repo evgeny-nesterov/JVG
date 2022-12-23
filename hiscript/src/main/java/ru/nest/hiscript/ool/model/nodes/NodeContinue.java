@@ -10,7 +10,7 @@ import java.io.IOException;
 public class NodeContinue extends HiNode {
 	public NodeContinue(String label) {
 		super("continue", TYPE_CONTINUE);
-		this.label = label != null ? label.intern() : null;
+		this.label = label; // != null ? label.intern() : null;
 	}
 
 	private String label;

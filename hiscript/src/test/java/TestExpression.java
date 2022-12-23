@@ -194,9 +194,12 @@ public class TestExpression extends HiTest {
 	}
 
 	@Test
-	public void testLoad() {
-		for (int i = 0; i < 1_000_000; i++) {
-			assertSuccess("int i = 0;");
+	public void testLoad() throws Exception {
+		long t = System.currentTimeMillis();
+		CompiledNode result = new CompiledNode().compile("int i = 1 + 1;", false);
+		for (int i = 0; i < 10_000_000; i++) {
+			result.execute();
 		}
+		System.out.println("t: " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
 	}
 }

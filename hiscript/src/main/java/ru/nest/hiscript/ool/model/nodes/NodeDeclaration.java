@@ -16,7 +16,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public NodeDeclaration(Type type, String name, HiNode initialization, Modifiers modifiers, NodeAnnotation[] annotations) {
 		super("declaration", TYPE_DECLARATION);
 		this.type = type;
-		this.name = name.intern();
+		this.name = name; // .intern();
 		this.initialization = initialization;
 		this.modifiers = modifiers;
 		this.annotations = annotations;
@@ -25,7 +25,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public NodeDeclaration(String typeName, String name) {
 		super("declaration", TYPE_DECLARATION);
 		this.type = Type.getTypeByFullName(typeName);
-		this.name = name.intern();
+		this.name = name; // .intern();
 	}
 
 	public Type type;

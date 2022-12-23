@@ -10,10 +10,6 @@ public class ThreadImpl extends ImplUtil {
 	private static HiClass threadClass;
 
 	public synchronized static void createThread(RuntimeContext ctx) {
-		if (threads.containsKey(ctx)) {
-			return;
-		}
-
 		if (threadClass == null) {
 			threadClass = HiClass.forName(ctx, "Thread");
 			if (threadClass == null) {
@@ -27,8 +23,7 @@ public class ThreadImpl extends ImplUtil {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = threadClass;
 		ctx.value.object = object;
-
-		threads.put(ctx, object);
+		ctx.currentThread = object;
 	}
 
 	public static class Run implements Runnable {
@@ -43,8 +38,7 @@ public class ThreadImpl extends ImplUtil {
 
 		@Override
 		public void run() {
-			threads.put(newCtx, object);
-
+			newCtx.currentThread = object;
 			newCtx.enterStart(object);
 			try {
 				NodeInvocation.invoke(newCtx, object, "run");
@@ -170,7 +164,7 @@ public class ThreadImpl extends ImplUtil {
 	public static void Thread_Thread_currentThread(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.forName(ctx, "Thread");
-		ctx.value.object = threads.get(ctx);
+		ctx.value.object = ctx.currentThread;
 	}
 
 	public static void Thread_void_yield(RuntimeContext ctx) {

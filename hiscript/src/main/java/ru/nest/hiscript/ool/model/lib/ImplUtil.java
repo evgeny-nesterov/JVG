@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ImplUtil {
-	protected final static Map<RuntimeContext, HiObject> threads = new ConcurrentHashMap<>();
-
 	private final static Map<HiClass, HiObject> classes = new ConcurrentHashMap<>();
 
 	private static HiClass classClass;
@@ -20,7 +18,7 @@ public class ImplUtil {
 	private static HiConstructor classConstructor;
 
 	public static void removeThread(RuntimeContext ctx) {
-		threads.remove(ctx);
+		ctx.currentThread = null;
 	}
 
 	public static HiClass getClassClass(RuntimeContext ctx) {

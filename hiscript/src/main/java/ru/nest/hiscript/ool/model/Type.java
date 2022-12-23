@@ -39,7 +39,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	private Type(Type parent, String name) {
 		this.parent = parent;
 		this.cellType = null;
-		this.name = name.intern();
+		this.name = name; // .intern();
 		this.dimension = 0;
 		this.primitive = false;
 

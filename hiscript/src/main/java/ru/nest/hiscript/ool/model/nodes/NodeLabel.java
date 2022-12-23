@@ -10,7 +10,7 @@ import java.io.IOException;
 public class NodeLabel extends HiNode {
 	public NodeLabel(String label, HiNode statement) {
 		super("label", TYPE_LABEL);
-		this.label = label.intern();
+		this.label = label; // .intern();
 		this.statement = statement;
 	}
 

@@ -19,14 +19,14 @@ public class NodeConstructor extends HiNode {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.type = type;
 		this.argValues = argValues;
-		name = type.getType().fullName.intern();
+		name = type.getType().fullName; // .intern();
 	}
 
 	public NodeConstructor(HiClass clazz, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.clazz = clazz;
 		this.argValues = argValues;
-		name = clazz.getFullName(clazz.getClassLoader()).intern();
+		name = clazz.getFullName(clazz.getClassLoader()); // .intern();
 	}
 
 	private NodeConstructor(HiNode[] argValues) {
@@ -197,7 +197,7 @@ public class NodeConstructor extends HiNode {
 					@Override
 					public void classLoaded(HiClass clazz) {
 						node.clazz = clazz;
-						node.name = clazz.fullName.intern();
+						node.name = clazz.fullName; // .intern();
 					}
 				}, exc.getIndex());
 				return node;

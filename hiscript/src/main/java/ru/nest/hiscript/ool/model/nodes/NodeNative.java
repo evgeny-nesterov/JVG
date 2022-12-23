@@ -29,7 +29,7 @@ public class NodeNative extends HiNode {
 			}
 		}
 
-		this.id = id.toString().intern();
+		this.id = id.toString(); // .intern();
 		argCount = argNames != null ? argNames.length : 0;
 	}
 

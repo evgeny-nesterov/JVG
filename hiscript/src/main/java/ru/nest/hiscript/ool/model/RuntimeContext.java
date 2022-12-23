@@ -68,6 +68,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public HiCompiler compiler;
 
+	public HiObject currentThread;
+
 	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;
 		this.compiler = compiler;
@@ -419,13 +421,13 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		level.putClass(clazz);
 	}
 
-	private List<StackLevel> stacks_cache = new ArrayList<>();
+	private List<StackLevel> stacksCache = new ArrayList<>();
 
 	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, Token token) {
 		StackLevel stack;
-		int cache_size = stacks_cache.size();
+		int cache_size = stacksCache.size();
 		if (cache_size > 0) {
-			stack = stacks_cache.remove(cache_size - 1);
+			stack = stacksCache.remove(cache_size - 1);
 		} else {
 			stack = new StackLevel();
 		}
@@ -440,7 +442,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public void putStack(StackLevel stack) {
 		level.clear();
-		stacks_cache.add(stack);
+		stacksCache.add(stack);
 	}
 
 	@Override
@@ -467,6 +469,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		public Token token;
 
+		// TODO use fast map
 		private Map<String, HiField<?>> variables;
 
 		public StackLevel() {

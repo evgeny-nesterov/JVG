@@ -19,7 +19,7 @@ public class NodeCatch extends HiNode {
 		super("catch", TYPE_CATCH);
 		this.excTypes = excTypes;
 		this.catchBody = catchBody;
-		this.excName = excName.intern();
+		this.excName = excName; // .intern();
 	}
 
 	public Type[] excTypes;
