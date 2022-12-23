@@ -487,8 +487,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				variables.clear();
 			}
 
-			if (classes != null) {
-				classes.clear();
+			if (levelClasses != null) {
+				levelClasses.clear();
 			}
 			return this;
 		}
@@ -525,29 +525,29 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			return null;
 		}
 
-		private Map<String, HiClass> classes;
+		private Map<String, HiClass> levelClasses;
 
-		public void putClass(HiClass clazz) {
-			if (classes == null) {
-				classes = new HashMap<>();
+		public void putClass(HiClass putClass) {
+			if (levelClasses == null) {
+				levelClasses = new HashMap<>();
 			}
-			classes.put(clazz.fullName, clazz);
-			classes.put(clazz.name, clazz);
+			levelClasses.put(putClass.fullName, putClass);
+			levelClasses.put(putClass.name, putClass);
 
 			// store final variables and classes
 			StackLevel level = this;
 			WHILE:
 			while (level != null) {
-				if (level.classes != null) {
-					for (HiClass c : level.classes.values()) {
-						addLocalClass(clazz, c);
+				if (level.levelClasses != null) {
+					for (HiClass levelClass : level.levelClasses.values()) {
+						addLocalClass(putClass, levelClass);
 					}
 				}
 
 				if (level.variables != null) {
 					for (HiField<?> f : level.variables.values()) {
 						if (f.getModifiers().isFinal()) {
-							addLocalField(clazz, f);
+							addLocalField(putClass, f);
 						}
 					}
 				}
@@ -570,9 +570,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		 * @return найденный класс
 		 */
 		public HiClass getClass(String name) {
-			if (classes != null) {
+			if (levelClasses != null) {
 				// поиск в контексте по имени
-				return classes.get(name);
+				return levelClasses.get(name);
 			}
 			return null;
 		}
@@ -588,14 +588,14 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			}
 
 			// clear from classes info about local final classes
-			if (classes != null) {
-				for (HiClass c : classes.values()) {
+			if (levelClasses != null) {
+				for (HiClass c : levelClasses.values()) {
 					localClasses.remove(c);
 					if (localVariables != null) {
 						localVariables.remove(c);
 					}
 				}
-				classes.clear();
+				levelClasses.clear();
 			}
 		}
 

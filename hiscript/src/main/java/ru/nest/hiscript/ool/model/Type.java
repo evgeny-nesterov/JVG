@@ -171,9 +171,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		if (isArray()) {
 			HiClass cellClass = cellType.getClass(classResolver);
 			if (cellClass == null) {
-				if (classResolver != null) {
-					classResolver.processResolverException("Class '" + fullName + "' can not be resolved");
-				}
+				classResolver.processResolverException("Class '" + fullName + "' can not be resolved");
 				return null;
 			} else {
 				return cellClass.getArrayClass();
@@ -185,21 +183,17 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 
 		HiClass clazz;
-		if (classResolver != null) {
-			if (path != null) {
-				clazz = path[0].getClass(classResolver);
-				for (int i = 1; i < path.length; i++) {
-					clazz = clazz.getClass(classResolver, path[i].name);
-				}
-				clazz = clazz.getClass(classResolver, name);
-			} else {
-				clazz = classResolver.getClass(name);
+		if (path != null) {
+			clazz = path[0].getClass(classResolver);
+			for (int i = 1; i < path.length; i++) {
+				clazz = clazz.getClass(classResolver, path[i].name);
 			}
+			clazz = clazz.getClass(classResolver, name);
 		} else {
-			clazz = HiClass.forName(classResolver, fullName);
+			clazz = classResolver.getClass(name);
 		}
 
-		if (clazz == null && classResolver != null) {
+		if (clazz == null) {
 			classResolver.processResolverException("Class '" + fullName + "' can not be resolved");
 		}
 		return clazz;

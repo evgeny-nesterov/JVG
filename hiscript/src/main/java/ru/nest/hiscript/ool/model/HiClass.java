@@ -283,8 +283,8 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 
 			// init children classes
-			if (classes != null) {
-				for (HiClass clazz : classes) {
+			if (innerClasses != null) {
+				for (HiClass clazz : innerClasses) {
 					clazz.init(classResolver);
 				}
 			}
@@ -356,7 +356,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiMethod[] methods;
 
-	public HiClass[] classes;
+	public HiClass[] innerClasses;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.STATIC_CLASS, this);
@@ -385,8 +385,8 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 		}
 
-		if (classes != null) {
-			for (HiClass innerClass : classes) {
+		if (innerClasses != null) {
+			for (HiClass innerClass : innerClasses) {
 				if (innerClass.enclosingClass != null && !innerClass.enclosingClass.isTopLevel() && !innerClass.enclosingClass.isStatic()) {
 					if (innerClass.isInterface) {
 						validationInfo.error("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
@@ -421,20 +421,6 @@ public class HiClass implements Codeable, TokenAccessible {
 		ctx.addLocalClass(this);
 		ctx.clazz = outboundClass;
 		return valid;
-	}
-
-	public HiClass getChild(ClassResolver classResolver, String name) {
-		HiClass child = null;
-		if (classes != null) {
-			for (HiClass c : classes) {
-				if (c.name.equals(name) || c.fullName.equals(name)) {
-					child = c;
-					child.init(classResolver);
-					break;
-				}
-			}
-		}
-		return child;
 	}
 
 	private HiClassArray arrayClass;
@@ -472,52 +458,58 @@ public class HiClass implements Codeable, TokenAccessible {
 		return clazz;
 	}
 
-	/*
-	 * name - is String.intern value to optimize via s1 == s2
-	 */
 	private HiClass _getClass(ClassResolver classResolver, String name) {
 		// inner classes
-		if (classes != null) {
-			for (HiClass c : classes) {
+		HiClass innerClass = getInnerClass(classResolver, name);
+		if (innerClass != null) {
+			return innerClass;
+		}
+
+		HiClass clazz = this;
+		while (clazz != null) {
+			// check local enclosing classes
+			HiClass localClass = classResolver.getLocalClass(clazz, name);
+			if (localClass != null) {
+				return localClass;
+			}
+
+			// check enclosing classes
+			localClass = clazz.getInnerClass(classResolver, name);
+			if (localClass != null) {
+				return localClass;
+			}
+
+			clazz = clazz.enclosingClass;
+		}
+
+		// registered classes
+		return forName(classResolver, name);
+	}
+
+	public HiClass getInnerClass(ClassResolver classResolver, String name) {
+		if (innerClasses != null) {
+			for (HiClass c : innerClasses) {
 				if (c.name.equals(name) || c.fullName.equals(name)) {
 					c.init(classResolver);
 					return c;
 				}
 			}
 		}
-
-		// parent class
 		if (superClass != null) {
-			if (superClass == this) {
-				throw new RuntimeException("cyclic");
-			}
-			HiClass c = superClass.getClass(classResolver, name);
-			if (c != null) {
-				return c;
+			HiClass innerClass = superClass.getInnerClass(classResolver, name);
+			if (innerClass != null) {
+				return innerClass;
 			}
 		}
-
-		if (classResolver != null) {
-			HiClass clazz = this;
-			while (clazz != null) {
-				// check local enclosing classes
-				HiClass localClass = classResolver.getLocalClass(clazz, name);
-				if (localClass != null) {
-					return localClass;
+		if (interfaces != null) {
+			for (HiClass i : interfaces) {
+				HiClass innerClass = i.getInnerClass(classResolver, name);
+				if (innerClass != null) {
+					return innerClass;
 				}
-
-				// check enclosing classes
-				localClass = clazz.getChild(classResolver, name);
-				if (localClass != null) {
-					return localClass;
-				}
-
-				clazz = clazz.enclosingClass;
 			}
 		}
-
-		// registered classes
-		return forName(classResolver, name);
+		return null;
 	}
 
 	public boolean isInstanceofAny(HiClass[] classes) {
@@ -934,9 +926,9 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public static HiClass forName(ClassResolver classResolver, String name) {
-		HiClassLoader classLoader = classResolver != null ? classResolver.getClassLoader() : HiClass.userClassLoader;
+		HiClassLoader classLoader = classResolver.getClassLoader();
 		HiClass clazz = classLoader.getClass(name);
-		if (clazz != null && classResolver != null) {
+		if (clazz != null) {
 			clazz.init(classResolver);
 		}
 		return clazz;
@@ -1033,10 +1025,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		os.writeShortArray(constructors);
 		os.writeShortArray(methods);
 
-		os.writeShort(classes != null ? classes.length : 0);
-		if (classes != null) {
-			for (int i = 0; i < classes.length; i++) {
-				os.writeClass(classes[i]);
+		os.writeShort(innerClasses != null ? innerClasses.length : 0);
+		if (innerClasses != null) {
+			for (int i = 0; i < innerClasses.length; i++) {
+				os.writeClass(innerClasses[i]);
 			}
 		}
 	}
@@ -1131,16 +1123,16 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 		}
 
-		clazz.classes = new HiClass[os.readShort()];
-		for (int i = 0; i < clazz.classes.length; i++) {
+		clazz.innerClasses = new HiClass[os.readShort()];
+		for (int i = 0; i < clazz.innerClasses.length; i++) {
 			final int index = i;
 			try {
-				clazz.classes[i] = os.readClass();
+				clazz.innerClasses[i] = os.readClass();
 			} catch (NoClassException exc) {
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
 					public void classLoaded(HiClass clazz) {
-						classAccess[0].classes[index] = clazz;
+						classAccess[0].innerClasses[index] = clazz;
 					}
 				}, exc.getIndex());
 			}

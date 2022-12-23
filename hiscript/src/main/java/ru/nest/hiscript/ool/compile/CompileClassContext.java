@@ -221,7 +221,7 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public void initClass() {
-		clazz.classes = getClasses();
+		clazz.innerClasses = getClasses();
 		clazz.constructors = getConstructors();
 		clazz.methods = getMethods();
 		clazz.fields = getFields();
@@ -336,8 +336,14 @@ public class CompileClassContext implements ClassResolver {
 			level = level.parent;
 		}
 
-		if (this.clazz != null && (this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
-			return this.clazz;
+		if (this.clazz != null) {
+			if ((this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
+				return this.clazz;
+			}
+			HiClass innerClass = this.clazz.getInnerClass(this, name);
+			if (innerClass != null) {
+				return innerClass;
+			}
 		}
 
 		if (parent != null) {
@@ -496,7 +502,7 @@ public class CompileClassContext implements ClassResolver {
 					String[] path = name.split("\\.");
 					HiClass clazz = classes.get(path[0]);
 					for (int i = 1; i < path.length && clazz != null; i++) {
-						clazz = clazz.getChild(null, path[i]);
+						clazz = clazz.getInnerClass(CompileClassContext.this, path[i]);
 					}
 					return clazz;
 				} else {
@@ -513,7 +519,7 @@ public class CompileClassContext implements ClassResolver {
 					String[] path = name.split("\\.");
 					clazz = classes.get(path[0]);
 					for (int i = 1; i < path.length && clazz != null; i++) {
-						clazz = clazz.getChild(null, path[i]);
+						clazz = clazz.getInnerClass(CompileClassContext.this, path[i]);
 					}
 				} else {
 					clazz = classes.get(name);

@@ -34,6 +34,9 @@ public class TestClasses extends HiTest {
 		assertFailSerialize("class A{class B{}} A.B b = new A.B();");
 		assertSuccessSerialize("class A{class B{class C{int get(){return 123;}} C c = new C();} B b = new B();} A a = new A(); assert a.b != null; assert a.b.c != null; assert a.b.c.get() == 123;");
 		assertSuccessSerialize("class A{class B{} B b = new B();} A a = new A(); assert a.b instanceof A.B;");
+
+		// interfaces
+		assertSuccessSerialize("interface I{interface I1{}} class X implements I {void m() {I1 i = new I1(){};}}");
 	}
 
 	@Test

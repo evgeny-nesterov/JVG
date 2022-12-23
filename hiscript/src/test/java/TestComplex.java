@@ -12,5 +12,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws Exception {
+		assertFailSerialize("interface I{interface I1{}} class C implements I{I1 i = new I.I1(){};}");
 	}
 }
