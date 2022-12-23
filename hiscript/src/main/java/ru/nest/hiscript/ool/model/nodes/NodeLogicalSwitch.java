@@ -41,15 +41,6 @@ public class NodeLogicalSwitch extends NodeExpression {
 		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		valid &= trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
 		valid &= falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
-		if (valid) {
-			HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
-			HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
-			if (type1 != null && type2 != null) {
-				if (!type1.isInstanceof(type2) && !type2.isInstanceof(type1)) {
-					validationInfo.error(type1.fullName + " expected", falseValueNode.getToken());
-				}
-			}
-		}
 		return valid;
 	}
 

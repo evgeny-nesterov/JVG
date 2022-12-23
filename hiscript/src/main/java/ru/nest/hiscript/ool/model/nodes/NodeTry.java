@@ -3,8 +3,8 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -35,6 +35,11 @@ public class NodeTry extends HiNode {
 		if (resources != null) {
 			for (NodeDeclaration resource : resources) {
 				valid &= resource.validate(validationInfo, ctx);
+				HiClass resourceClass = resource.getValueClass(validationInfo, ctx);
+				if (!resourceClass.isInstanceof("AutoCloseable")) {
+					validationInfo.error("incompatible types: try-with-resources not applicable to variable type", resource.getToken());
+					valid = false;
+				}
 			}
 		}
 		valid &= body.validateBlock(validationInfo, ctx);

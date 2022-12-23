@@ -52,7 +52,7 @@ public class NodeConstructor extends HiNode {
 		boolean valid = true;
 		if (argValues != null) {
 			for (HiNode argValue : argValues) {
-				valid &= argValue.validate(validationInfo, ctx);
+				valid &= argValue.validate(validationInfo, ctx) && argValue.expectValue(validationInfo, ctx);
 			}
 		}
 

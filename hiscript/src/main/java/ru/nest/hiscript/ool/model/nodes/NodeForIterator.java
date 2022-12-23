@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -30,7 +31,21 @@ public class NodeForIterator extends HiNode {
 		ctx.enter(RuntimeContext.FOR, this);
 		boolean valid = declaration.validate(validationInfo, ctx);
 		ctx.initializedNodes.add(declaration);
-		valid &= iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx);
+		if (iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx)) {
+			HiClass declarationClass = declaration.getValueClass(validationInfo, ctx);
+			HiClass iterableClass = iterable.getValueClass(validationInfo, ctx);
+			if (iterableClass.isArray()) {
+				HiClass cellClass = ((HiClassArray) iterableClass).cellClass;
+				if (!HiClass.autoCast(cellClass, declarationClass, false)) {
+					validationInfo.error("incompatible types: " + cellClass + " cannot be converted to " + declarationClass, token);
+					valid = false;
+				}
+			} else {
+				// TODO ArrayList
+			}
+		} else {
+			valid = false;
+		}
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}

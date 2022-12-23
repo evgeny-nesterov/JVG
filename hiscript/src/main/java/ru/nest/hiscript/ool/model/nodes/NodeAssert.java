@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -22,7 +23,8 @@ public class NodeAssert extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = conditionNode.validate(validationInfo, ctx) && conditionNode.expectBooleanValue(validationInfo, ctx);
 		if (messageNode != null) {
-			valid &= messageNode.validate(validationInfo, ctx);
+			HiClass stringClass = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);
+			valid &= messageNode.validate(validationInfo, ctx) && messageNode.expectValueClass(validationInfo, ctx, stringClass);
 		}
 		return valid;
 	}

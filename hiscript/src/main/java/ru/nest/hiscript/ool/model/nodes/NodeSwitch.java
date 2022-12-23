@@ -52,6 +52,7 @@ public class NodeSwitch extends HiNode {
 				if (caseValueNodes != null) { // not default
 					for (int j = 0; j < caseValueNodes.length; j++) {
 						HiNode caseValueNode = caseValueNodes[j];
+						valid &= caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx);
 						if (caseValueNode instanceof NodeExpressionNoLS) {
 							NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
 							NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
