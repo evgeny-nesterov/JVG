@@ -59,6 +59,10 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public static String ARRAYLIST_CLASS_NAME = "ArrayList";
 
+	public static String EXCEPTION_CLASS_NAME = "Exception";
+
+	public static String RUNTIME_EXCEPTION_CLASS_NAME = "RuntimeException";
+
 	public Token token;
 
 	public final static HiClassLoader systemClassLoader = new HiClassLoader("system");
@@ -89,7 +93,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			// object
 			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi")).get(0);
 			OBJECT_CLASS.superClassType = null;
-			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 
 			// TODO define classes initialization order automatically
@@ -514,6 +518,29 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// registered classes
 		return forName(classResolver, name);
+	}
+
+	public boolean isInstanceofAny(HiClass[] classes) {
+		if (classes != null) {
+			for (HiClass clazz : classes) {
+				if (isInstanceof(clazz)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isInstanceofAny(ClassResolver classResolver, Type[] types) {
+		if (types != null) {
+			for (Type type : types) {
+				HiClass clazz = type.getClass(classResolver);
+				if (isInstanceof(clazz)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean isInstanceof(HiClass clazz) {

@@ -1,11 +1,12 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -21,13 +22,13 @@ public class NodeCatch extends HiNode {
 		this.excName = excName.intern();
 	}
 
-	private Type[] excTypes;
+	public Type[] excTypes;
 
 	private HiNode catchBody;
 
 	private String excName;
 
-	private HiClass[] excClasses; // TODO HiClassMixed
+	public HiClass[] excClasses; // TODO HiClassMixed
 
 	public int getMatchedExceptionClass(RuntimeContext ctx) {
 		HiObject exception = ctx.exception;
@@ -37,7 +38,7 @@ public class NodeCatch extends HiNode {
 				return -2;
 			}
 		}
-		initClasses(null, ctx);
+		initClasses(ctx);
 		for (int i = 0; i < excClasses.length; i++) {
 			if (exception.clazz.isInstanceof(excClasses[i])) {
 				return i;
@@ -46,14 +47,14 @@ public class NodeCatch extends HiNode {
 		return -1;
 	}
 
-	private void initClasses(ValidationInfo validationInfo, RuntimeContext ctx) {
+	private void initClasses(ClassResolver classResolver) {
 		if (excClasses == null) {
 			excClasses = new HiClass[excTypes.length];
 		}
 		for (int i = 0; i < excTypes.length; i++) {
 			Type excType = excTypes[i];
 			if (excClasses[i] == null) {
-				excClasses[i] = excType.getClass(ctx);
+				excClasses[i] = excType.getClass(classResolver);
 			}
 		}
 	}
@@ -61,10 +62,17 @@ public class NodeCatch extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		initClasses(validationInfo, null);
+		initClasses(ctx);
+
+		for (int i = 0; i < excClasses.length; i++) {
+			if (!excClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+				validationInfo.error("incompatible types: " + excClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+				valid = false;
+			}
+		}
 
 		NodeArgument field = new NodeArgument(excTypes[0], excName, new Modifiers(), null);
-		// TODO field.setToken();
+		field.setToken(token);
 		valid &= field.validate(validationInfo, ctx);
 
 		if (catchBody != null) {

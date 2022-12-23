@@ -73,7 +73,7 @@ public class RecordParseRule extends ParserUtil {
 
 			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, ctx.classType, ctx);
 			record.annotations = annotations;
-			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, HiConstructor.BodyConstructorType.NONE);
+			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();
 			record.defaultConstructor.body = defaultConstructorBody;
 

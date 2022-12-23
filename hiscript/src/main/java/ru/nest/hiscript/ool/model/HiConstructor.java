@@ -38,7 +38,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		}
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
@@ -48,16 +48,18 @@ public class HiConstructor implements Codeable, TokenAccessible {
 			arguments.toArray(this.arguments);
 		}
 
+		this.throwsTypes = throwsTypes;
 		this.body = body;
 		this.bodyConstructor = bodyConstructor;
 		this.bodyConstructorType = bodyConstructorType;
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
 		this.arguments = arguments;
+		this.throwsTypes = throwsTypes;
 		this.body = body;
 		this.bodyConstructor = bodyConstructor;
 		this.bodyConstructorType = bodyConstructorType;
@@ -88,6 +90,10 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 	public BodyConstructorType bodyConstructorType;
 
+	public Type[] throwsTypes;
+
+	public HiClass[] throwsClasses;
+
 	public HiNode body;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -99,7 +105,16 @@ public class HiConstructor implements Codeable, TokenAccessible {
 				ctx.initializedNodes.add(argument);
 			}
 		}
-
+		if (throwsTypes != null) {
+			throwsClasses = new HiClass[throwsTypes.length];
+			for (int i = 0; i < throwsTypes.length; i++) {
+				throwsClasses[i] = throwsTypes[i].getClass(ctx);
+				if (throwsClasses[i] != null && !throwsClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+					validationInfo.error("incompatible types: " + throwsClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					valid = false;
+				}
+			}
+		}
 		switch (bodyConstructorType) {
 			case THIS:
 				// TODO check
@@ -310,13 +325,10 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		os.writeShortArray(annotations);
 		os.writeToken(token);
 		modifiers.code(os);
-
-		int count = arguments != null ? arguments.length : 0;
-		os.writeByte(count);
-		for (int i = 0; i < count; i++) {
-			arguments[i].code(os);
-		}
-
+		os.writeByte(arguments != null ? arguments.length : 0);
+		os.writeNullable(arguments);
+		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
+		os.writeNullable(throwsTypes);
 		os.writeNullable(body);
 		os.writeNullable(bodyConstructor);
 		os.writeByte(bodyConstructorType.getType());
@@ -326,13 +338,13 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Token token = os.readToken();
 		Modifiers modifiers = Modifiers.decode(os);
+		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
+		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
+		HiNode body = os.readNullable(HiNode.class);
+		NodeConstructor bodyConstructor = (NodeConstructor) os.readNullable(HiNode.class);
+		BodyConstructorType constructorType = BodyConstructorType.get(os.readByte());
 
-		int count = os.readByte();
-		NodeArgument[] arguments = count > 0 ? new NodeArgument[count] : null;
-		for (int i = 0; i < count; i++) {
-			arguments[i] = (NodeArgument) HiNode.decode(os);
-		}
-		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, os.readNullable(HiNode.class), (NodeConstructor) os.readNullable(HiNode.class), BodyConstructorType.get(os.readByte()));
+		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, throwsTypes, body, bodyConstructor, constructorType);
 		constructor.token = token;
 		return constructor;
 	}

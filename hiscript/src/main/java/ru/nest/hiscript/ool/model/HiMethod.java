@@ -29,6 +29,8 @@ public class HiMethod implements Codeable, TokenAccessible {
 
 	public Type[] throwsTypes;
 
+	public HiClass[] throwsClasses;
+
 	public HiNode body;
 
 	public HiClass[] argClasses;
@@ -75,6 +77,16 @@ public class HiMethod implements Codeable, TokenAccessible {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);
 				ctx.initializedNodes.add(argument);
+			}
+		}
+		if (throwsTypes != null) {
+			throwsClasses = new HiClass[throwsTypes.length];
+			for (int i = 0; i < throwsTypes.length; i++) {
+				throwsClasses[i] = throwsTypes[i].getClass(ctx);
+				if (throwsClasses[i] != null && !throwsClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+					validationInfo.error("incompatible types: " + throwsClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					valid = false;
+				}
 			}
 		}
 		if (body != null) {

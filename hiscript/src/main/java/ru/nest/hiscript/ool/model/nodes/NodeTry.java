@@ -24,7 +24,7 @@ public class NodeTry extends HiNode {
 
 	private HiNode body;
 
-	private NodeCatch[] catches;
+	public NodeCatch[] catches;
 
 	private HiNode finallyBody;
 

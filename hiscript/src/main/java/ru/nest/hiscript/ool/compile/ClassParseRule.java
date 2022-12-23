@@ -6,8 +6,8 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
@@ -111,7 +111,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (ctx.constructors == null) {
-			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), (List<NodeArgument>) null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
 			ctx.addConstructor(defaultConstructor);
 		}
 
@@ -195,6 +195,9 @@ public class ClassParseRule extends ParserUtil {
 				visitArgumentsDefinitions(tokenizer, arguments, ctx);
 
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+
+				Type[] exceptionTypes = visitExceptionTypes(tokenizer);
+
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
 				NodeConstructor enclosingConstructor = null;
@@ -236,7 +239,7 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				ctx.exit();
 
-				HiConstructor constructor = new HiConstructor(clazz, annotations, modifiers, arguments, body, enclosingConstructor, bodyConstructorType);
+				HiConstructor constructor = new HiConstructor(clazz, annotations, modifiers, arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
 				constructor.token = tokenizer.getBlockToken(startToken);
 				return constructor;
 			}
@@ -277,24 +280,7 @@ public class ClassParseRule extends ParserUtil {
 
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-					Type[] exceptionTypes = null;
-					if (visitWordType(tokenizer, Words.THROWS) != -1) {
-						Type exceptionType = visitType(tokenizer, true);
-						if (exceptionType == null) {
-							throw new ParseException("identifier expected", tokenizer.currentToken());
-						}
-						List<Type> exceptionTypesList = new ArrayList<>(1);
-						exceptionTypesList.add(exceptionType);
-						if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
-							tokenizer.nextToken();
-							exceptionType = visitType(tokenizer, true);
-							if (exceptionType == null) {
-								throw new ParseException("identifier expected", tokenizer.currentToken());
-							}
-							exceptionTypesList.add(exceptionType);
-						}
-						exceptionTypes = exceptionTypesList.toArray(new Type[exceptionTypesList.size()]);
-					}
+					Type[] exceptionTypes = visitExceptionTypes(tokenizer);
 
 					HiNode body = null;
 					if (modifiers.isNative() || modifiers.isAbstract()) {
@@ -321,6 +307,28 @@ public class ClassParseRule extends ParserUtil {
 
 		tokenizer.rollback();
 		return null;
+	}
+
+	public Type[] visitExceptionTypes(Tokenizer tokenizer) throws TokenizerException, ParseException {
+		Type[] exceptionTypes = null;
+		if (visitWordType(tokenizer, Words.THROWS) != -1) {
+			Type exceptionType = visitType(tokenizer, true);
+			if (exceptionType == null) {
+				throw new ParseException("identifier expected", tokenizer.currentToken());
+			}
+			List<Type> exceptionTypesList = new ArrayList<>(1);
+			exceptionTypesList.add(exceptionType);
+			if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
+				tokenizer.nextToken();
+				exceptionType = visitType(tokenizer, true);
+				if (exceptionType == null) {
+					throw new ParseException("identifier expected", tokenizer.currentToken());
+				}
+				exceptionTypesList.add(exceptionType);
+			}
+			exceptionTypes = exceptionTypesList.toArray(new Type[exceptionTypesList.size()]);
+		}
+		return exceptionTypes;
 	}
 
 	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
