@@ -46,7 +46,7 @@ public class AssignmentNode extends Node {
 		return varName;
 	}
 
-	private List<ExpressionNode> indexes = new ArrayList<>();
+	private List<ExpressionNode> indexes;
 
 	private Node value;
 

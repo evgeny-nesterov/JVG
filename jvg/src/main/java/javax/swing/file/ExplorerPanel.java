@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -279,7 +280,7 @@ public class ExplorerPanel extends JPanel {
 	}
 
 	// listeners
-	private ArrayList<Listener> listeners = new ArrayList<>();
+	private List<Listener> listeners = new ArrayList<>();
 
 	public void addListener(Listener listener) {
 		synchronized (listeners) {

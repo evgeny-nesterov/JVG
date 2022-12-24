@@ -79,10 +79,10 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 		if (type != -1) {
 			int commonDimension = visitDimension(tokenizer, handler);
 
-			String namespace = null;
+			// TODO String namespace = null;
 			String variableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			if (visitSymbol(tokenizer, handler, Symbols.POINT) != -1) {
-				namespace = variableName;
+				// TODO namespace = variableName;
 				variableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			}
 
@@ -108,7 +108,6 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 						}
 					}
 				}
-
 				return true;
 			}
 		}

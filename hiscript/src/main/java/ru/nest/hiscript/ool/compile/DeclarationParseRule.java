@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
@@ -26,8 +27,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		tokenizer.start();
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -47,10 +47,11 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 				if (isField) {
 					tokenizer.commit();
+					Modifiers modifiers = annotatedModifiers.getModifiers();
 					checkModifiers(tokenizer, modifiers, FINAL, STATIC);
 
 					NodeDeclarations declarations = new NodeDeclarations();
-					declarations.add(type, varName, initializer, modifiers, annotations, tokenizer.getBlockToken(startToken));
+					declarations.add(type, varName, initializer, modifiers, annotatedModifiers.getAnnotations(), tokenizer.getBlockToken(startToken));
 
 					// Search new declarations with the base type
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
@@ -64,7 +65,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), ctx);
 						}
 
-						declarations.add(type, varName, initializer, modifiers, annotations, tokenizer.getBlockToken(startToken));
+						declarations.add(type, varName, initializer, modifiers, annotatedModifiers.getAnnotations(), tokenizer.getBlockToken(startToken));
 					}
 					return declarations;
 				}
@@ -100,8 +101,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -117,9 +117,9 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				}
 
 				tokenizer.commit();
-				checkModifiers(tokenizer, modifiers);
+				checkModifiers(tokenizer, annotatedModifiers.getModifiers());
 
-				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, modifiers, annotations);
+				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 				field.setToken(tokenizer.getBlockToken(startToken));
 				return field;
 			}

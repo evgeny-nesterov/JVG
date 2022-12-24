@@ -29,6 +29,8 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 			List<NodeAnnotationArgument> args = new ArrayList<>();
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.start();
+
+				startToken = startToken(tokenizer);
 				String argName = visitWord(NOT_SERVICE, tokenizer);
 				if (argName != null && visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					tokenizer.commit();
@@ -37,23 +39,24 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 					if (argValue == null) {
 						throw new ParseException("argument value expected", tokenizer.currentToken());
 					}
-					args.add(new NodeAnnotationArgument(argName, argValue));
+					args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+						startToken = startToken(tokenizer);
 						argName = expectWord(NOT_SERVICE, tokenizer);
 						expectSymbol(tokenizer, Symbols.EQUATE);
 						argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 						if (argValue == null) {
 							throw new ParseException("argument value expected", tokenizer.currentToken());
 						}
-						args.add(new NodeAnnotationArgument(argName, argValue));
+						args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 					}
 				} else {
 					tokenizer.rollback();
 
 					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					if (argValue != null) {
-						args.add(new NodeAnnotationArgument("value", argValue));
+						args.add(new NodeAnnotationArgument("value", argValue, argValue.getToken()));
 					}
 				}
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -63,16 +66,17 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 		return null;
 	}
 
-	public NodeAnnotation[] visitAnnotations(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
-		List<NodeAnnotation> annotations = null;
+	public List<NodeAnnotation> visitAnnotations(Tokenizer tokenizer, CompileClassContext ctx, List<NodeAnnotation> annotations) throws TokenizerException, ParseException {
 		NodeAnnotation annotation = visit(tokenizer, ctx);
 		if (annotation != null) {
-			annotations = new ArrayList<>(1);
+			if (annotations == null) {
+				annotations = new ArrayList<>(1);
+			}
 			annotations.add(annotation);
 			while ((annotation = visit(tokenizer, ctx)) != null) {
 				annotations.add(annotation);
 			}
-			return annotations.toArray(new NodeAnnotation[annotations.size()]);
+			return annotations;
 		}
 		return null;
 	}

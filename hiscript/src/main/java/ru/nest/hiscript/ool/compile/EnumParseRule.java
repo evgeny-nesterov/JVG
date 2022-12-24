@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiEnumValue;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -25,10 +25,10 @@ public class EnumParseRule extends ParserUtil {
 	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.ENUM, tokenizer) != null) {
 			tokenizer.commit();
+			Modifiers modifiers = annotatedModifiers.getModifiers();
 			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC);
 			modifiers.setFinal(true);
 			modifiers.setStatic(true);
@@ -42,7 +42,7 @@ public class EnumParseRule extends ParserUtil {
 
 			ctx.clazz = new HiClassEnum(ctx.getClassLoader(), enumName, ctx.classType);
 			ctx.clazz.modifiers = modifiers;
-			ctx.clazz.annotations = annotations;
+			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 
 			visitContent(tokenizer, ctx);
 

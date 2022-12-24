@@ -23,7 +23,6 @@ public class NodeThrow extends HiNode {
 		boolean valid = exception.validate(validationInfo, ctx);
 		HiClass excClass = exception.getValueClass(validationInfo, ctx);
 		if (excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-			ctx.throwException(excClass);
 			if (!excClass.isInstanceof(HiClass.RUNTIME_EXCEPTION_CLASS_NAME)) {
 				CompileClassContext.CompileClassLevel level = ctx.level;
 				boolean checked = false;

@@ -1,9 +1,8 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
-import ru.nest.hiscript.ool.model.Modifiers;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -25,8 +24,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
 		tokenizer.start();
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -35,11 +33,11 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 			}
 
 			tokenizer.commit();
-			checkModifiers(tokenizer, modifiers, FINAL);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), FINAL);
 
 			int addDimension = visitDimension(tokenizer);
 			type = Type.getArrayType(type, addDimension);
-			return new NodeArgument(type, name, modifiers, annotations);
+			return new NodeArgument(type, name, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 		}
 
 		tokenizer.rollback();

@@ -1,11 +1,10 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -34,7 +33,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 			startToken = startToken(tokenizer);
-			NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
+			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -48,7 +47,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 
 					ctx.enter(RuntimeContext.FOR, startToken);
 
-					NodeDeclaration declaration = new NodeDeclaration(type, name, null, new Modifiers(), annotations);
+					NodeDeclaration declaration = new NodeDeclaration(type, name, null, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 					declaration.setToken(tokenizer.getBlockToken(startToken));
 
 					HiNode iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);

@@ -196,7 +196,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 		}
 	}
 
-	private ArrayList<Request> cache = new ArrayList<>();
+	private List<Request> cache = new ArrayList<>();
 
 	private Request getRequest() {
 		synchronized (cache) {
@@ -238,7 +238,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 	}
 
 	// ---
-	private ArrayList<Boolean> update = new ArrayList<>();
+	private List<Boolean> update = new ArrayList<>();
 
 	private Updater updater = null;
 
@@ -385,7 +385,7 @@ public class XMLEditor extends BasicTextEditor implements DocumentListener, XMLH
 	public static void main(String[] srgs) {
 		try {
 			XMLEditor e = new XMLEditor();
-			e.setText(XMLParser.class.getResourceAsStream("/ru/nest/jvg/xml/test.xml"));
+			//e.setText(XMLParser.class.getResourceAsStream("/ru/nest/jvg/xml/test.xml"));
 			e.activateUndoRedo();
 
 			JFrame f = new JFrame();

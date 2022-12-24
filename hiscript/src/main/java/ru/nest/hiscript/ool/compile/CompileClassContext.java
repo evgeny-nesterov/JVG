@@ -78,14 +78,12 @@ public class CompileClassContext implements ClassResolver {
 	private List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
-		if (nodesValueTypesCache.size() > 0) {
+		if (this.nodesValueTypesCache.size() > 0) {
 			NodeValueType[] nodesValueTypesCache = this.nodesValueTypesCache.remove(this.nodesValueTypesCache.size() - 1);
 			if (size > nodesValueTypesCache.length) {
 				NodeValueType[] newNodesValueTypesCache = new NodeValueType[size];
-				int currentSize = nodesValueTypesCache != null ? nodesValueTypesCache.length : 0;
-				if (nodesValueTypesCache != null) {
-					System.arraycopy(nodesValueTypesCache, 0, newNodesValueTypesCache, 0, currentSize);
-				}
+				int currentSize = nodesValueTypesCache.length;
+				System.arraycopy(nodesValueTypesCache, 0, newNodesValueTypesCache, 0, currentSize);
 				for (int i = currentSize; i < size; i++) {
 					newNodesValueTypesCache[i] = new NodeValueType();
 				}
@@ -139,7 +137,7 @@ public class CompileClassContext implements ClassResolver {
 		return methodsArray;
 	}
 
-	public void addConstructor(HiConstructor constructor) throws ParseException {
+	public void addConstructor(HiConstructor constructor) {
 		if (constructors == null) {
 			constructors = new ArrayList<>(1);
 		}
@@ -156,7 +154,7 @@ public class CompileClassContext implements ClassResolver {
 		return constructorsArray;
 	}
 
-	public void addField(HiField<?> field) throws ParseException {
+	public void addField(HiField<?> field) {
 		if (fields == null) {
 			fields = new ArrayList<>(1);
 		}
@@ -246,7 +244,6 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public void exit() {
-		Set<HiClass> throwExceptions = level.throwExceptions;
 		level = level.parent;
 	}
 
@@ -309,17 +306,6 @@ public class CompileClassContext implements ClassResolver {
 		while (l != null) {
 			if (l.node != null && l.node.getToken() != null) {
 				return l.node.getToken();
-			}
-			l = l.parent;
-		}
-		return null;
-	}
-
-	public TokenAccessible getCurrentNode() {
-		CompileClassLevel l = level;
-		while (l != null) {
-			if (l.node != null) {
-				return l.node;
 			}
 			l = l.parent;
 		}
@@ -435,13 +421,6 @@ public class CompileClassContext implements ClassResolver {
 		return HiClass.forName(this, name);
 	}
 
-	public void throwException(HiClass exception) {
-		if (level.throwExceptions == null) {
-			level.throwExceptions = new HashSet<>(1);
-		}
-		level.throwExceptions.add(exception);
-	}
-
 	public class CompileClassLevel {
 		public int type;
 
@@ -460,8 +439,6 @@ public class CompileClassContext implements ClassResolver {
 		public TokenAccessible node;
 
 		String label;
-
-		public Set<HiClass> throwExceptions;
 
 		public CompileClassLevel(int type, TokenAccessible node, CompileClassLevel parent) {
 			this.type = type;
@@ -514,7 +491,7 @@ public class CompileClassContext implements ClassResolver {
 
 		public HiClass getLocalClass(HiClass enclosingClass, String name) {
 			if (classes != null) {
-				HiClass clazz = null;
+				HiClass clazz;
 				if (name.indexOf('.') != -1) {
 					String[] path = name.split("\\.");
 					clazz = classes.get(path[0]);

@@ -52,7 +52,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 		this.ctx = ctx;
 
 		NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
-		if (outerContext) {
+		if (outerContext && body != null) {
 			body.setEnterType(RuntimeContext.SAME);
 		}
 

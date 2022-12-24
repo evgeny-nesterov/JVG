@@ -30,6 +30,10 @@ public class NodeForIterator extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.FOR, this);
 		boolean valid = declaration.validate(validationInfo, ctx);
+		if (declaration.modifiers.hasModifiers()) {
+			validationInfo.error("modifiers not allowed", declaration.getToken());
+			valid = false;
+		}
 		ctx.initializedNodes.add(declaration);
 		if (iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx)) {
 			HiClass declarationClass = declaration.getValueClass(validationInfo, ctx);

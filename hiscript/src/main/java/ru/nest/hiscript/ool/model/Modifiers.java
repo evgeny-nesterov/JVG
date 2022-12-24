@@ -49,6 +49,10 @@ public class Modifiers implements ModifiersIF, Codeable {
 		setModifiers(modifiers);
 	}
 
+	public boolean hasModifiers() {
+		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative;
+	}
+
 	private int access = ACCESS_DEFAULT;
 
 	public int getAccess() {
@@ -125,19 +129,15 @@ public class Modifiers implements ModifiersIF, Codeable {
 				sb.append("private ");
 				break;
 		}
-
 		if (isFinal) {
 			sb.append("final ");
 		}
-
 		if (isStatic) {
 			sb.append("static ");
 		}
-
 		if (isAbstract) {
 			sb.append("abstract ");
 		}
-
 		if (isNative) {
 			sb.append("native ");
 		}

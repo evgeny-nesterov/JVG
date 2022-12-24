@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
@@ -42,11 +43,10 @@ public class RecordParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.RECORD, tokenizer) != null) {
 			tokenizer.commit();
-			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE, STATIC);
 
 			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (recordName == null) {
@@ -72,7 +72,7 @@ public class RecordParseRule extends ParserUtil {
 			}
 
 			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, ctx.classType, ctx);
-			record.annotations = annotations;
+			record.annotations = annotatedModifiers.getAnnotations();
 			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();
 			record.defaultConstructor.body = defaultConstructorBody;
@@ -108,7 +108,7 @@ public class RecordParseRule extends ParserUtil {
 			}
 
 			ctx.clazz = record;
-			ctx.clazz.modifiers = modifiers;
+			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
 
 			if (hasContent) {
 				ClassParseRule.getInstance().visitContent(tokenizer, ctx, new ParseVisitor() {

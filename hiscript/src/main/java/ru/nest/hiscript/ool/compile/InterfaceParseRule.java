@@ -1,13 +1,13 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -31,11 +31,10 @@ public class InterfaceParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
-			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
 
 			String interfaceName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (interfaceName == null) {
@@ -72,13 +71,13 @@ public class InterfaceParseRule extends ParserUtil {
 
 			ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, interfaceName, ctx.classType, ctx);
 			ctx.clazz.isInterface = true;
-			ctx.clazz.modifiers = modifiers;
+			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
 
 			visitContent(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			ctx.clazz.token = tokenizer.getBlockToken(startToken);
-			ctx.clazz.annotations = annotations;
+			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 			return ctx.clazz;
 		}
 
@@ -124,14 +123,14 @@ public class InterfaceParseRule extends ParserUtil {
 	protected boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
 		tokenizer.start();
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
 				tokenizer.commit();
 
+				Modifiers modifiers = annotatedModifiers.getModifiers();
 				checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
 				modifiers.setFinal(true);
 				modifiers.setStatic(true);
@@ -143,7 +142,7 @@ public class InterfaceParseRule extends ParserUtil {
 				Type type = Type.getArrayType(baseType, addDimension);
 				HiField<?> field = HiField.getField(type, name, initializer);
 				field.setModifiers(modifiers);
-				field.setAnnotations(annotations);
+				field.setAnnotations(annotatedModifiers.getAnnotations());
 
 				ctx.addField(field);
 

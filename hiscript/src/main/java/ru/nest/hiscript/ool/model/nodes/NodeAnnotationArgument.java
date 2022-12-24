@@ -4,12 +4,13 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeAnnotationArgument extends HiNode {
-	public NodeAnnotationArgument(String name, HiNode value) {
-		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT);
+	public NodeAnnotationArgument(String name, HiNode value, Token token) {
+		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT, token);
 		this.name = name;
 		this.value = value;
 	}
@@ -37,6 +38,6 @@ public class NodeAnnotationArgument extends HiNode {
 	}
 
 	public static NodeAnnotationArgument decode(DecodeContext os) throws IOException {
-		return new NodeAnnotationArgument(os.readUTF(), os.read(HiNode.class));
+		return new NodeAnnotationArgument(os.readUTF(), os.read(HiNode.class), null);
 	}
 }

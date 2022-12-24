@@ -51,23 +51,23 @@ public class HiScript implements AutoCloseable {
 	}
 
 	public HiScript serialize() throws IOException {
-		CodeContext ctxCode = new CodeContext();
-		node.code(ctxCode);
-
-		byte[] bytes = ctxCode.code();
-
-		// DEBUG
-		//		System.out.println("======================");
-		//		ctxCode.statistics();
-		//		System.out.println("total: " + bytes.length + " bytes");
-		//		System.out.println("======================");
-		//
-		//		System.out.println("\n" + new String(bytes));
-		//		System.out.println("======================");
-
-		HiClassLoader classLoader = new HiClassLoader("test-decoded");
-		DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
-		node = ctxDecode.load();
+//		CodeContext ctxCode = new CodeContext();
+//		node.code(ctxCode);
+//
+//		byte[] bytes = ctxCode.code();
+//
+//		// DEBUG
+//		//		System.out.println("======================");
+//		//		ctxCode.statistics();
+//		//		System.out.println("total: " + bytes.length + " bytes");
+//		//		System.out.println("======================");
+//		//
+//		//		System.out.println("\n" + new String(bytes));
+//		//		System.out.println("======================");
+//
+//		HiClassLoader classLoader = new HiClassLoader("test-decoded");
+//		DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
+//		node = ctxDecode.load();
 		return this;
 	}
 

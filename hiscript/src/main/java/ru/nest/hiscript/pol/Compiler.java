@@ -1,30 +1,22 @@
 package ru.nest.hiscript.pol;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import ru.nest.hiscript.ParseException;
 import ru.nest.hiscript.pol.model.ExecuteException;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.RuntimeContext;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+
+import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Compiler {
 	private Tokenizer tokenizer;
@@ -104,7 +96,7 @@ public class Compiler {
 				d.setCharacterAttributes(0, d.getLength(), defaultAttr, true);
 
 				// precompile
-				final ArrayList<String> errors = new ArrayList<>();
+				final List<String> errors = new ArrayList<>();
 				Compiler p = getDefaultCompiler(script);
 				try {
 					p.compile(new CompileHandler() {

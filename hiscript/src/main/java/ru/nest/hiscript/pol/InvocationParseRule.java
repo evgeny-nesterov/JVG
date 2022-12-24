@@ -60,10 +60,10 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		tokenizer.start();
 
-		String namespace = null;
+		// TODO String namespace = null;
 		String methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 		if (visitSymbol(tokenizer, handler, Symbols.POINT) != -1) {
-			namespace = methodName;
+			// TODO namespace = methodName;
 			methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 		}
 

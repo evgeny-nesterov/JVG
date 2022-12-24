@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -30,10 +30,10 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		NodeAnnotation[] annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx);
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
+			Modifiers modifiers = annotatedModifiers.getModifiers();
 			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
 			modifiers.setStatic(true);
 			modifiers.setAbstract(true);
@@ -48,7 +48,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			ctx.clazz = new HiClassAnnotation(ctx.getClassLoader(), name, ctx.classType);
 			ctx.clazz.isInterface = true;
 			ctx.clazz.modifiers = modifiers;
-			ctx.clazz.annotations = annotations;
+			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 
 			visitContent(tokenizer, ctx);
 
@@ -85,7 +85,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
 
-		Modifiers modifiers = visitModifiers(tokenizer);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			int dimension = visitDimension(tokenizer);
@@ -97,7 +97,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					tokenizer.commit();
 					ctx.enter(RuntimeContext.METHOD, startToken);
 
-					checkModifiers(tokenizer, modifiers, allowed);
+					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), allowed);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					HiNode defaultValue = null;
@@ -107,7 +107,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					ctx.exit();
-					HiMethod method = new HiMethod(clazz, null, modifiers, type, name, (NodeArgument[]) null, null, defaultValue);
+					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), type, name, (NodeArgument[]) null, null, defaultValue);
 					method.token = tokenizer.getBlockToken(startToken);
 					return method;
 				}

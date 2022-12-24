@@ -67,7 +67,7 @@ public class NodeMainWrapper extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		try {
 			if (ctx.level == null) {
-				ctx.enter(RuntimeContext.METHOD, null);
+				ctx.enterMethod(rootClass.methods[0], null);
 			}
 			rootClass.methods[0].invoke(ctx, rootClass, null, null);
 		} finally {
