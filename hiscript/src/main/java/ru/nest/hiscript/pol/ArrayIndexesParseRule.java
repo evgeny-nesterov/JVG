@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArrayIndexesNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -18,13 +18,13 @@ public class ArrayIndexesParseRule extends ParseRule<ArrayIndexesNode> {
 	}
 
 	@Override
-	public ArrayIndexesNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ArrayIndexesNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		ArrayIndexesNode indexes = null;
 
 		while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 			ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (index == null) {
-				throw new ParseException("expression expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
 

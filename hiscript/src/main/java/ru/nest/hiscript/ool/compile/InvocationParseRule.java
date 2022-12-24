@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	}
 
 	@Override
-	public NodeInvocation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeInvocation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		String name = visitWord(tokenizer, NOT_SERVICE);

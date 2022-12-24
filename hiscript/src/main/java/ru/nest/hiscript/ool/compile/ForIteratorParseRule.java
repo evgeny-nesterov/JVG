@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -27,7 +27,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	}
 
 	@Override
-	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
@@ -38,7 +38,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {
-					throw new ParseException("variable name is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("variable name is expected", tokenizer.currentToken());
 				}
 
 				if (checkSymbol(tokenizer, Symbols.COLON) != -1) {

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArgumentsNode;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.MethodNode;
@@ -20,7 +20,7 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 	}
 
 	@Override
-	public MethodNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public MethodNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		int type = visitType(tokenizer);

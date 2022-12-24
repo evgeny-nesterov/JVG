@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.TryCatchNode;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 	}
 
 	@Override
-	public TryCatchNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public TryCatchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
 			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
 			BlockNode tryBody = BlockParseRule.getInstance().visit(tokenizer);
@@ -33,11 +33,11 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 
 				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 				if (visitWord(Words.STRING, tokenizer) == null) {
-					throw new ParseException("'string' expected", tokenizer.currentToken());
+					throw new HiScriptParseException("'string' expected", tokenizer.currentToken());
 				}
 				errorVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (errorVariableName == null) {
-					throw new ParseException("variable expected", tokenizer.currentToken());
+					throw new HiScriptParseException("variable expected", tokenizer.currentToken());
 				}
 				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
@@ -56,7 +56,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			}
 
 			if (!thereIsCatch && !thereIsFinally) {
-				throw new ParseException("'catch' or 'finally' expected", tokenizer.currentToken());
+				throw new HiScriptParseException("'catch' or 'finally' expected", tokenizer.currentToken());
 			}
 
 			return new TryCatchNode(tryBody, catchBody, finallyBody, errorVariableName);

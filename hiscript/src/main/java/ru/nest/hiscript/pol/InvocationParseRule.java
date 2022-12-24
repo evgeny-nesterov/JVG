@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.InvocationNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 	}
 
 	@Override
-	public InvocationNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public InvocationNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		String namespace = null;
@@ -41,7 +41,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 						argument = ExpressionParseRule.getInstance().visit(tokenizer);
 						if (argument == null) {
-							throw new ParseException("Argument is expected", tokenizer.currentToken());
+							throw new HiScriptParseException("Argument is expected", tokenizer.currentToken());
 						}
 						node.addArgument(argument);
 					}

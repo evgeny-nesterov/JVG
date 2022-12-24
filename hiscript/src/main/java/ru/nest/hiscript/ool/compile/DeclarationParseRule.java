@@ -1,11 +1,10 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -24,7 +23,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	private DeclarationParseRule() {
 	}
 
-	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
@@ -76,7 +75,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return null;
 	}
 
-	public HiNode visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiNode visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		HiNode initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (initializer != null) {
 			return initializer;
@@ -89,15 +88,15 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		return null;
 	}
 
-	public HiNode expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiNode expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		HiNode initializer = visitInitializer(tokenizer, type, dimensions, ctx);
 		if (initializer == null) {
-			throw new ParseException("initializer is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("initializer is expected", tokenizer.currentToken());
 		}
 		return initializer;
 	}
 
-	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileClassContext ctx, boolean initialized) throws TokenizerException, ParseException {
+	public NodeDeclaration visitSingle(Tokenizer tokenizer, CompileClassContext ctx, boolean initialized) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 

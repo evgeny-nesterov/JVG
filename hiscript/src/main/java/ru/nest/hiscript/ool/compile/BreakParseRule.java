@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.nodes.NodeBreak;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -19,7 +19,7 @@ public class BreakParseRule extends ParseRule<NodeBreak> {
 	}
 
 	@Override
-	public NodeBreak visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeBreak visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.BREAK, tokenizer) != null) {
 			String label = visitWord(Words.NOT_SERVICE, tokenizer);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);

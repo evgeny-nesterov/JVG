@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeLabel;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -20,7 +20,7 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 	}
 
 	@Override
-	public NodeLabel visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeLabel visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		String label;

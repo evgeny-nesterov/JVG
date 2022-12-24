@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
@@ -23,7 +23,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	}
 
 	@Override
-	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
@@ -33,7 +33,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
-				throw new ParseException("variable name is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("variable name is expected", tokenizer.currentToken());
 			}
 
 			tokenizer.commit();

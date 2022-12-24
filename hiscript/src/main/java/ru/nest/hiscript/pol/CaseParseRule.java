@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.CaseNode;
 import ru.nest.hiscript.pol.model.Node;
@@ -20,11 +20,11 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 	}
 
 	@Override
-	public CaseNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public CaseNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.CASE, tokenizer) != null) {
 			Node value;
 			if ((value = ExpressionParseRule.getInstance().visit(tokenizer)) == null) {
-				throw new ParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.COLON, tokenizer);
 			BlockNode body = BlockParseRule.getInstance().visit(tokenizer);

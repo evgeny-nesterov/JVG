@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.DeclarationsNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 	}
 
 	@Override
-	public DeclarationsNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public DeclarationsNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		int type = visitType(tokenizer);
@@ -43,14 +43,14 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					value = ExpressionParseRule.getInstance().visit(tokenizer);
 					if (value == null) {
-						throw new ParseException("expression is expected", tokenizer.currentToken());
+						throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 					}
 				}
 				node.addVariable(namespace, variableName, dimension, value);
 
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					if ((variableName = visitWord(Words.NOT_SERVICE, tokenizer)) == null) {
-						throw new ParseException("<identifier> is expected", tokenizer.currentToken());
+						throw new HiScriptParseException("<identifier> is expected", tokenizer.currentToken());
 					}
 					dimension = commonDimension + visitDimension(tokenizer);
 
@@ -58,7 +58,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 					if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 						value = ExpressionParseRule.getInstance().visit(tokenizer);
 						if (value == null) {
-							throw new ParseException("expression is expected", tokenizer.currentToken());
+							throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 						}
 					}
 					node.addVariable(namespace, variableName, dimension, value);

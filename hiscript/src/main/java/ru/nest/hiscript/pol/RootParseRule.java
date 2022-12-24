@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.Variable;
@@ -19,13 +19,13 @@ public class RootParseRule extends ParseRule<Node> {
 	}
 
 	@Override
-	public Node visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.nextToken();
 		BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
 
 		skipComments(tokenizer);
 		if (tokenizer.hasNext()) {
-			throw new ParseException("unexpected token", tokenizer.currentToken());
+			throw new HiScriptParseException("unexpected token", tokenizer.currentToken());
 		}
 
 		if (body != null) {

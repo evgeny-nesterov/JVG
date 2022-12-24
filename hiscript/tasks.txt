@@ -1,5 +1,5 @@
 		+1. Add varargs (void method(Object... array), method("arg1", "arg2", "arg3"))
-?2. Autoboxing/unboxing (add classes Integer etc., Integer a = 1; int b = a;)
+!2. Autoboxing/unboxing (add classes Integer etc., Integer a = 1; int b = a;)
         +3. Add class loader
 4. Add import of file with classes (import <packages.className>), add packages
 		+5. Class implementation
@@ -31,3 +31,7 @@
 26. HiClassMix for catch(Exc1 | Exc2 e)
         +27. try (auto closeable resources)
         +27. records, auto match if (r instanceof Rec(int a, in b) rec when <condition with rec, a and b>) {a = 1; ... and case Rec(int a) r
+27. Java.hi: HiObjectJava newInstance(javaClassName, Object... args), do after Autoboxing
+28. Iterable: ArrayList implements Iterable, for (var x : <Iterable>)
+29. Simple console
+30. Get variable value from script context to java

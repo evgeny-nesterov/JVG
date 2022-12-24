@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -30,7 +30,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 	}
 
 	@Override
-	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.nextToken();
 
 		boolean createMainMethod = false;
@@ -73,7 +73,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 
 		skipComments(tokenizer);
 		if (tokenizer.hasNext()) {
-			throw new ParseException("unexpected token", tokenizer.currentToken());
+			throw new HiScriptParseException("unexpected token", tokenizer.currentToken());
 		}
 		return node;
 	}

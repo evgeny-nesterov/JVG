@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -25,7 +25,7 @@ public class StatementParseRule extends ParseRule<HiNode> {
 	 * assignment, new object throw
 	 */
 	@Override
-	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		int emptyCount = 0;
 		while (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 			emptyCount++;

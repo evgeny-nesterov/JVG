@@ -28,7 +28,7 @@ public class ValidationInfo {
 		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.info, message, token));
 	}
 
-	public void throwExceptionIf() throws ValidationException {
+	public void throwExceptionIf() throws HiScriptValidationException {
 		if (compiler.isVerbose()) {
 			for (ValidationMessage message : messages) {
 				PrintStream os = message.level == ValidationMessage.ValidationLevel.error ? System.err : System.out;
@@ -51,7 +51,7 @@ public class ValidationInfo {
 		}
 		for (ValidationMessage message : messages) {
 			if (message.level == ValidationMessage.ValidationLevel.error) {
-				throw new ValidationException(message.message, message.token);
+				throw new HiScriptValidationException(message.message, message.token);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeCatch;
@@ -26,7 +26,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	}
 
 	@Override
-	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
 			NodeDeclaration[] resources = null;
 			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
@@ -39,7 +39,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					tokenizer.nextToken();
 					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
 					if (resource == null) {
-						throw new ParseException("declaration expected", tokenizer.currentToken());
+						throw new HiScriptParseException("declaration expected", tokenizer.currentToken());
 					}
 					resourcesList.add(resource);
 				}
@@ -70,7 +70,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					}
 					excName = visitWord(NOT_SERVICE, tokenizer);
 					if (excName == null) {
-						throw new ParseException("identifier is expected", tokenizer.currentToken());
+						throw new HiScriptParseException("identifier is expected", tokenizer.currentToken());
 					}
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 

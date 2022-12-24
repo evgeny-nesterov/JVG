@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
@@ -177,14 +177,14 @@ public class CompileClassContext implements ClassResolver {
 		return fieldsArray;
 	}
 
-	public void addClass(HiClass clazz) throws ParseException {
+	public void addClass(HiClass clazz) throws HiScriptParseException {
 		if (classes == null) {
 			classes = new ArrayList<>(1);
 			classesMap = new HashMap<>(1);
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
-			throw new ParseException("Duplicate nested type " + clazz.name, tokenizer.currentToken());
+			throw new HiScriptParseException("Duplicate nested type " + clazz.name, tokenizer.currentToken());
 		}
 
 		classes.add(clazz);

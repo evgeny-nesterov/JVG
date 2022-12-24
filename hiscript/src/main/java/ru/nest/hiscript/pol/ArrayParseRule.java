@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArrayNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -21,13 +21,13 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 	 * Patterns: 1. {a1, ..., an} 2. <type>[size]...[]
 	 */
 	@Override
-	public ArrayNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ArrayNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		int type = visitType(tokenizer);
 		if (type != -1) {
 			expectSymbol(Symbols.SQUARE_BRACES_LEFT, tokenizer);
 			ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (index == null) {
-				throw new ParseException("array dimension missing", tokenizer.currentToken());
+				throw new HiScriptParseException("array dimension missing", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
 

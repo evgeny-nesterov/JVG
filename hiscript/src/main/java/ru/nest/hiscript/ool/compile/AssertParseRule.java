@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -20,7 +20,7 @@ public class AssertParseRule extends ParseRule<NodeAssert> {
 	}
 
 	@Override
-	public NodeAssert visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeAssert visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.ASSERT, tokenizer) != null) {
 			NodeExpression condition = expectExpression(tokenizer, ctx);
 			// TODO check condition.getExpressionType() on boolean type

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -26,7 +26,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 	private AnnotationInterfaceParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
@@ -40,7 +40,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
-				throw new ParseException("annotation class name is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("annotation class name is expected", tokenizer.currentToken());
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
@@ -61,7 +61,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		while (true) {
 			// method
 			HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT);
@@ -80,7 +80,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		ctx.initClass();
 	}
 
-	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, ParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;

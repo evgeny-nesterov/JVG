@@ -1,6 +1,6 @@
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScript;
-import ru.nest.hiscript.ool.model.validation.ValidationException;
+import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
@@ -74,19 +74,19 @@ public abstract class HiTest {
 		}
 	}
 
-	public HiScript execute(String script) throws TokenizerException, ParseException, ValidationException {
-		HiScript result = HiScript.create().compile(script).throwException().execute();
+	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
+		HiScript result = HiScript.create().compile(script).execute().printError();
 		result.close();
 		return result;
 	}
 
-	public HiScript executeSerialized(String script) throws TokenizerException, ParseException, IOException, ValidationException {
-		HiScript result = HiScript.create().compile(script).serialize().throwException().execute();
+	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
+		HiScript result = HiScript.create().compile(script).serialize().execute().printError();
 		result.close();
 		return result;
 	}
 
-	public HiScript compile(String script) throws TokenizerException, ParseException, IOException, ValidationException {
+	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
 		return HiScript.create().compile(script);
 	}
 

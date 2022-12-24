@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.lib.ThreadImpl;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
@@ -375,6 +376,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		// search by class full name
 		if (clazz == null) {
 			// try restore class full name
+			// occurred only while validating
 			if (levelClass != null && name.indexOf('$') == -1) {
 				int index = levelClass.fullName.lastIndexOf('$');
 				if (index != -1) {
@@ -796,24 +798,38 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			if (!exception.clazz.isInstanceof("Exception")) {
 				throw new RuntimeException("Bad exception value");
 			}
-			String message = getExceptionMessage();
+			String message;
 			if (printStackTrace) {
-				HiField<?> stackTraceField = exception.getMainObject().getField(this, "stackTrace");
-				HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
-				System.out.println("hiscript error: " + message);
-				for (HiObject stackTraceElement : stackTraceElements) {
-					String className = stackTraceElement.getField(this, "className").getStringValue(this);
-					String methodName = stackTraceElement.getField(this, "methodName").getStringValue(this);
-					Integer line = (Integer) stackTraceElement.getField(this, "line").get();
-					System.out.print("\t" + className + "." + methodName);
-					if (line >= 0) {
-						System.out.print(":" + line);
-					}
-					System.out.println();
-				}
+				message = printException();
+			} else {
+				message = getExceptionMessage();
 			}
-			throw new RuntimeException("HiScript error: " + message);
+			throw new HiScriptRuntimeException(message);
 		}
+	}
+
+	public String printException() {
+		if (exception != null) {
+			if (!exception.clazz.isInstanceof("Exception")) {
+				throw new RuntimeException("Bad exception value");
+			}
+			String message = getExceptionMessage();
+			System.out.println(message);
+			HiField<?> stackTraceField = exception.getMainObject().getField(this, "stackTrace");
+			HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
+			for (HiObject stackTraceElement : stackTraceElements) {
+				String className = stackTraceElement.getField(this, "className").getStringValue(this);
+				String methodName = stackTraceElement.getField(this, "methodName").getStringValue(this);
+				Integer line = (Integer) stackTraceElement.getField(this, "line").get();
+				System.out.print("\t" + className + "." + methodName);
+				if (line >= 0) {
+					System.out.print(":" + line);
+				}
+				System.out.println();
+			}
+			return message;
+		}
+		return null;
 	}
 
 	public String getExceptionMessage() {

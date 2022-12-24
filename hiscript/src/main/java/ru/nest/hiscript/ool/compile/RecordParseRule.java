@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -13,7 +13,6 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
@@ -39,7 +38,7 @@ public class RecordParseRule extends ParserUtil {
 	private RecordParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
@@ -50,7 +49,7 @@ public class RecordParseRule extends ParserUtil {
 
 			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (recordName == null) {
-				throw new ParseException("record name is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("record name is expected", tokenizer.currentToken());
 			}
 
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
@@ -59,7 +58,7 @@ public class RecordParseRule extends ParserUtil {
 			Token token = tokenizer.currentToken();
 			visitArgumentsDefinitions(tokenizer, arguments, ctx);
 			if (arguments.size() == 0) {
-				throw new ParseException("record argument expected", token);
+				throw new HiScriptParseException("record argument expected", token);
 			}
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 

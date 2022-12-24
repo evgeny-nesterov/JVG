@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -21,7 +21,7 @@ public class BlockParseRule extends ParseRule<NodeBlock> {
 	}
 
 	@Override
-	public NodeBlock visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeBlock visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		ctx.enter(RuntimeContext.BLOCK, startToken);
 
 		NodeBlock block = null;

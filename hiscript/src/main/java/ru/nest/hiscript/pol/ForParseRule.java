@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.AssignmentsNode;
 import ru.nest.hiscript.pol.model.DeclarationsNode;
 import ru.nest.hiscript.pol.model.ForNode;
@@ -21,7 +21,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 	}
 
 	@Override
-	public ForNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ForNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 
@@ -39,7 +39,7 @@ public class ForParseRule extends ParseRule<ForNode> {
 
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) {
-				throw new ParseException("statement is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("statement is expected", tokenizer.currentToken());
 			}
 
 			if (initialization1 != null) {

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotationArgument;
@@ -23,7 +23,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 	}
 
 	@Override
-	public NodeAnnotation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeAnnotation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		String name = visitAnnotationWord(tokenizer);
 		if (name != null) {
 			List<NodeAnnotationArgument> args = new ArrayList<>();
@@ -37,7 +37,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 
 					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					if (argValue == null) {
-						throw new ParseException("argument value expected", tokenizer.currentToken());
+						throw new HiScriptParseException("argument value expected", tokenizer.currentToken());
 					}
 					args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 
@@ -47,7 +47,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 						expectSymbol(tokenizer, Symbols.EQUATE);
 						argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 						if (argValue == null) {
-							throw new ParseException("argument value expected", tokenizer.currentToken());
+							throw new HiScriptParseException("argument value expected", tokenizer.currentToken());
 						}
 						args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 					}
@@ -66,7 +66,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 		return null;
 	}
 
-	public List<NodeAnnotation> visitAnnotations(Tokenizer tokenizer, CompileClassContext ctx, List<NodeAnnotation> annotations) throws TokenizerException, ParseException {
+	public List<NodeAnnotation> visitAnnotations(Tokenizer tokenizer, CompileClassContext ctx, List<NodeAnnotation> annotations) throws TokenizerException, HiScriptParseException {
 		NodeAnnotation annotation = visit(tokenizer, ctx);
 		if (annotation != null) {
 			if (annotations == null) {

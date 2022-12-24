@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ContinueNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -17,7 +17,7 @@ public class ContinueParseRule extends ParseRule<ContinueNode> {
 	}
 
 	@Override
-	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.CONTINUE, tokenizer) != null) {
 			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new ContinueNode(mark);

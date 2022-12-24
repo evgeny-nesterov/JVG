@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.IfNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class ElseIfParseRule extends ParseRule<IfNode> {
 	}
 
 	@Override
-	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitWord(Words.ELSE, tokenizer) != null) {
 			if (visitWord(Words.IF, tokenizer) != null) {
@@ -28,13 +28,13 @@ public class ElseIfParseRule extends ParseRule<IfNode> {
 				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 				Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (condition == null) {
-					throw new ParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 				}
 				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
 				Node body = StatementParseRule.getInstance().visit(tokenizer);
 				if (body == null) {
-					throw new ParseException("statement is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("statement is expected", tokenizer.currentToken());
 				}
 
 				return new IfNode(condition, body);

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -35,7 +35,7 @@ public class ClassParseRule extends ParserUtil {
 	private ClassParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
@@ -46,7 +46,7 @@ public class ClassParseRule extends ParserUtil {
 
 			String className = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (className == null) {
-				throw new ParseException("class name is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("class name is expected", tokenizer.currentToken());
 			}
 
 			// parse 'extends'
@@ -54,7 +54,7 @@ public class ClassParseRule extends ParserUtil {
 			if (visitWord(Words.EXTENDS, tokenizer) != null) {
 				superClassType = visitType(tokenizer, false);
 				if (superClassType == null) {
-					throw new ParseException("illegal start of type", tokenizer.currentToken());
+					throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
 				}
 			} else if (!HiClass.OBJECT_CLASS_NAME.equals(className)) {
 				superClassType = Type.objectType;
@@ -67,7 +67,7 @@ public class ClassParseRule extends ParserUtil {
 			if (visitWord(Words.IMPLEMENTS, tokenizer) != null) {
 				Type interfaceType = visitType(tokenizer, false);
 				if (interfaceType == null) {
-					throw new ParseException("illegal start of type", tokenizer.currentToken());
+					throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
 				}
 
 				interfacesList = new ArrayList<>(1);
@@ -76,7 +76,7 @@ public class ClassParseRule extends ParserUtil {
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					interfaceType = visitType(tokenizer, false);
 					if (interfaceType == null) {
-						throw new ParseException("illegal start of type", tokenizer.currentToken());
+						throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
 					}
 					interfacesList.add(interfaceType);
 				}
@@ -105,7 +105,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, HiScriptParseException {
 		while (visitContentElement(tokenizer, ctx, visitor)) {
 		}
 
@@ -117,7 +117,7 @@ public class ClassParseRule extends ParserUtil {
 		ctx.initClass();
 	}
 
-	public boolean visitContentElement(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, ParseException {
+	public boolean visitContentElement(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, HiScriptParseException {
 		HiClass clazz = ctx.clazz;
 
 		if (visitor != null && visitor.visit(tokenizer, ctx)) {
@@ -171,7 +171,7 @@ public class ClassParseRule extends ParserUtil {
 		return false;
 	}
 
-	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private HiConstructor visitConstructor(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
@@ -181,7 +181,7 @@ public class ClassParseRule extends ParserUtil {
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
-					throw new ParseException("invalid method declaration; return type is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("invalid method declaration; return type is expected", tokenizer.currentToken());
 				}
 
 				tokenizer.commit();
@@ -247,7 +247,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, ParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
@@ -307,12 +307,12 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public Type[] visitExceptionTypes(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public Type[] visitExceptionTypes(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		Type[] exceptionTypes = null;
 		if (visitWordType(tokenizer, Words.THROWS) != -1) {
 			Type exceptionType = visitType(tokenizer, true);
 			if (exceptionType == null) {
-				throw new ParseException("identifier expected", tokenizer.currentToken());
+				throw new HiScriptParseException("identifier expected", tokenizer.currentToken());
 			}
 			List<Type> exceptionTypesList = new ArrayList<>(1);
 			exceptionTypesList.add(exceptionType);
@@ -320,7 +320,7 @@ public class ClassParseRule extends ParserUtil {
 				tokenizer.nextToken();
 				exceptionType = visitType(tokenizer, true);
 				if (exceptionType == null) {
-					throw new ParseException("identifier expected", tokenizer.currentToken());
+					throw new HiScriptParseException("identifier expected", tokenizer.currentToken());
 				}
 				exceptionTypesList.add(exceptionType);
 			}
@@ -329,7 +329,7 @@ public class ClassParseRule extends ParserUtil {
 		return exceptionTypes;
 	}
 
-	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
@@ -373,7 +373,7 @@ public class ClassParseRule extends ParserUtil {
 		return false;
 	}
 
-	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 
@@ -389,7 +389,7 @@ public class ClassParseRule extends ParserUtil {
 		ctx.addField(field);
 	}
 
-	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		boolean isStatic = visitWord(tokenizer, STATIC) != null;

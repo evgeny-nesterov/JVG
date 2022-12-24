@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.DoWhileNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 	}
 
 	@Override
-	public DoWhileNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public DoWhileNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.DO, tokenizer) != null) {
 			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
 			Node body = BlockParseRule.getInstance().visit(tokenizer); // may be
@@ -27,13 +27,13 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
 
 			if (visitWord(Words.WHILE, tokenizer) == null) {
-				throw new ParseException("while expected", tokenizer.currentToken());
+				throw new HiScriptParseException("while expected", tokenizer.currentToken());
 			}
 
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
-				throw new ParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 			expectSymbol(Symbols.SEMICOLON, tokenizer);

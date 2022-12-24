@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ByteNode;
 import ru.nest.hiscript.pol.model.CharacterNode;
 import ru.nest.hiscript.pol.model.DoubleNode;
@@ -296,9 +296,9 @@ public abstract class ParseRule<N extends Node> {
 		return -1;
 	}
 
-	protected void expectSymbol(int type, Tokenizer tokenizer) throws TokenizerException, ParseException {
+	protected void expectSymbol(int type, Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, type) == -1) {
-			throw new ParseException("'" + SymbolToken.getSymbol(type) + "' is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("'" + SymbolToken.getSymbol(type) + "' is expected", tokenizer.currentToken());
 		}
 	}
 
@@ -418,7 +418,7 @@ public abstract class ParseRule<N extends Node> {
 		}
 	}
 
-	public abstract N visit(Tokenizer tokenizer) throws TokenizerException, ParseException;
+	public abstract N visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException;
 
 	public abstract boolean visit(Tokenizer tokenizer, CompileHandler handler);
 }

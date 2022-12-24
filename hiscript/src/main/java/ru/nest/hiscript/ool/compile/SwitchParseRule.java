@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
@@ -27,7 +27,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 	}
 
 	@Override
-	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
@@ -60,7 +60,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 		return null;
 	}
 
-	protected HiNode[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	protected HiNode[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		List<HiNode> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {
@@ -75,7 +75,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg == null) {
-					throw new ParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 				}
 				args.add(arg);
 			}

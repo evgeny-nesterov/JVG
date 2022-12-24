@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BreakNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -17,7 +17,7 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 	}
 
 	@Override
-	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.BREAK, tokenizer) != null) {
 			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new BreakNode(mark);

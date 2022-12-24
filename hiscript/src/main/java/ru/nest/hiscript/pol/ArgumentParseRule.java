@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArgumentNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -17,14 +17,14 @@ public class ArgumentParseRule extends ParseRule<ArgumentNode> {
 	}
 
 	@Override
-	public ArgumentNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ArgumentNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		int type = visitType(tokenizer);
 		if (type != -1) {
 			int commonDimension = visitDimension(tokenizer);
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
-				throw new ParseException("argument expected", tokenizer.currentToken());
+				throw new HiScriptParseException("argument expected", tokenizer.currentToken());
 			}
 
 			int dimension = commonDimension + visitDimension(tokenizer);

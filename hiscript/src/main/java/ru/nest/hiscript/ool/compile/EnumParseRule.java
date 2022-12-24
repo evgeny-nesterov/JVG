@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiEnumValue;
@@ -22,7 +22,7 @@ public class EnumParseRule extends ParserUtil {
 	private EnumParseRule() {
 	}
 
-	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
@@ -35,7 +35,7 @@ public class EnumParseRule extends ParserUtil {
 
 			String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (enumName == null) {
-				throw new ParseException("enum name is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("enum name is expected", tokenizer.currentToken());
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
@@ -54,7 +54,7 @@ public class EnumParseRule extends ParserUtil {
 		return null;
 	}
 
-	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (enumName != null) {
 			int ordinal = 0;
@@ -70,7 +70,7 @@ public class EnumParseRule extends ParserUtil {
 				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
 					break;
 				} else {
-					throw new ParseException("expected ',', '(' or ';'", tokenizer.currentToken());
+					throw new HiScriptParseException("expected ',', '(' or ';'", tokenizer.currentToken());
 				}
 
 				enumName = expectWord(Words.NOT_SERVICE, tokenizer);

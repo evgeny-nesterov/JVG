@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
@@ -45,7 +45,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	@Override
-	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		List<HiNode> operands = new ArrayList<>();
 		List<OperationsGroup> allOperations = new ArrayList<>();
 
@@ -93,14 +93,14 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				NodeExpression trueValueNode = visit(tokenizer, ctx);
 				if (trueValueNode == null) {
-					throw new ParseException("expression expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 
 				expectSymbol(tokenizer, Symbols.COLON);
 
 				NodeExpression falseValueNode = visit(tokenizer, ctx);
 				if (falseValueNode == null) {
-					throw new ParseException("expression expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
 			}
@@ -108,12 +108,12 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		if (operations.hasOperations()) {
-			throw new ParseException("invalid expression", tokenizer.getBlockToken(startToken));
+			throw new HiScriptParseException("invalid expression", tokenizer.getBlockToken(startToken));
 		}
 		return null;
 	}
 
-	public boolean visitPrefixes(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands) throws TokenizerException, ParseException {
+	public boolean visitPrefixes(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands) throws TokenizerException, HiScriptParseException {
 		boolean found = false;
 		boolean isBoolean = false;
 		boolean isNumber = false;
@@ -184,7 +184,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitCast(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands) throws TokenizerException, ParseException {
+	public boolean visitCast(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			Type type = visitType(tokenizer, true);
@@ -239,13 +239,13 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public boolean visitArrayIndex(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
 			Token token = tokenizer.currentToken();
 
 			HiNode indexNode = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			if (indexNode == null) {
-				throw new ParseException("expression is expected", token);
+				throw new HiScriptParseException("expression is expected", token);
 			}
 
 			expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
@@ -257,7 +257,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public boolean visitArrayIndexes(Tokenizer tokenizer, OperationsGroup operations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		boolean found = false;
 		while (visitArrayIndex(tokenizer, operations, operands, ctx)) {
 			found = true;
@@ -265,7 +265,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return found;
 	}
 
-	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, ParseException {
+	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNode> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
 
 		// visit number
@@ -329,7 +329,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			node = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			if (node == null) {
-				throw new ParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 			}
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 			operands.add(node);

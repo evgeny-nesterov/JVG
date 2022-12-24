@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.IfNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -18,11 +18,11 @@ public class ElseParseRule extends ParseRule<IfNode> {
 	}
 
 	@Override
-	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.ELSE, tokenizer) != null) {
 			Node body = StatementParseRule.getInstance().visit(tokenizer);
 			if (body == null) {
-				throw new ParseException("Statement is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("Statement is expected", tokenizer.currentToken());
 			}
 
 			return new IfNode(null, body);

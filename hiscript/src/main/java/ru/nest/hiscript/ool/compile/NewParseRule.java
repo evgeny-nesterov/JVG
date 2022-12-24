@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
@@ -28,11 +28,11 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	@Override
-	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
-				throw new ParseException("identifier is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("identifier is expected", tokenizer.currentToken());
 			}
 
 			int brace_type = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
@@ -40,7 +40,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 			switch (brace_type) {
 				case Symbols.PARENTHESES_LEFT:
 					if (type.isPrimitive()) {
-						throw new ParseException("'[' expected", tokenizer.currentToken());
+						throw new HiScriptParseException("'[' expected", tokenizer.currentToken());
 					}
 					node = visitNewObject(tokenizer, type, ctx, startToken);
 					break;
@@ -59,7 +59,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	// new <type>(<arguments>) {<body>}
-	private HiNode visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	private HiNode visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		HiNode[] arguments = visitArgumentsValues(tokenizer, ctx);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -82,12 +82,12 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	// new a.b.c.d[<index>]...[<index>] []...[]
-	private HiNode visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private HiNode visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		List<HiNode> indexes = new ArrayList<>();
 
 		HiNode index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (index == null) {
-			throw new ParseException("index is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("index is expected", tokenizer.currentToken());
 		}
 		expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
 		indexes.add(index);
@@ -108,17 +108,17 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	// new a.b.c.d[]...[] {{...}, ... ,{...}}
-	private HiNode visitNewArrayValue(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, ParseException {
+	private HiNode visitNewArrayValue(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		int dimensions = visitDimension(tokenizer) + 1;
 
 		HiNode value = visitArrayValue(tokenizer, type, dimensions, ctx);
 		if (value == null) {
-			throw new ParseException("dimension is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("dimension is expected", tokenizer.currentToken());
 		}
 		return value;
 	}
 
-	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			List<HiNode> list = new ArrayList<>(1);
 
@@ -128,7 +128,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					cell = visitCell(tokenizer, type, dimensions - 1, ctx);
 					if (cell == null) {
-						throw new ParseException("expression is expected", tokenizer.currentToken());
+						throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 					}
 					list.add(cell);
 				}
@@ -143,7 +143,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 		return null;
 	}
 
-	public HiNode visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public HiNode visitCell(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		HiNode cell = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (cell != null) {
 			return cell;

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeIf;
@@ -20,7 +20,7 @@ public class IfParseRule extends ParseRule<NodeIf> {
 	}
 
 	@Override
-	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, ParseException {
+	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.IF, tokenizer) != null) {
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			HiNode body = expectBody(tokenizer, ctx);
@@ -30,7 +30,7 @@ public class IfParseRule extends ParseRule<NodeIf> {
 		return null;
 	}
 
-	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, ParseException {
+	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
 		if (visitWord(Words.ELSE, tokenizer) != null) {
 			if (visitWord(Words.IF, tokenizer) != null) {

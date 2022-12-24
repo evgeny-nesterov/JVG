@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArrayIndexesNode;
 import ru.nest.hiscript.pol.model.BooleanNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
@@ -26,11 +26,11 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 	}
 
 	@Override
-	public ExpressionNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public ExpressionNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		PrefixNode prefix = PrefixParseRule.getInstance().visit(tokenizer);
 		Node value = visitSimpleExpression(tokenizer);
 		if (value == null && prefix != null) {
-			throw new ParseException("expression is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 		}
 
 		if (value != null) {
@@ -42,7 +42,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				prefix = PrefixParseRule.getInstance().visit(tokenizer);
 				value = visitSimpleExpression(tokenizer);
 				if (value == null) {
-					throw new ParseException("illegal start of expression", tokenizer.currentToken());
+					throw new HiScriptParseException("illegal start of expression", tokenizer.currentToken());
 				}
 				index = ArrayIndexesParseRule.getInstance().visit(tokenizer);
 				node.doOperation(operation, prefix, value, index);
@@ -52,14 +52,14 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				Node trueValue = visit(tokenizer);
 				if (trueValue == null) {
-					throw new ParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 				}
 
 				expectSymbol(Symbols.COLON, tokenizer);
 
 				Node falseValue = visit(tokenizer);
 				if (falseValue == null) {
-					throw new ParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 				}
 
 				TriggerNode trigger = new TriggerNode(node, trueValue, falseValue);
@@ -113,7 +113,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		return false;
 	}
 
-	protected Node visitSimpleExpression(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	protected Node visitSimpleExpression(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		// visit number
 		Node node;
 		if ((node = visitNumber(tokenizer)) != null) {
@@ -160,7 +160,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			ExpressionNode enode = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (enode == null) {
-				throw new ParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 			}
 
 			if (enode.getValues().size() == 1) {

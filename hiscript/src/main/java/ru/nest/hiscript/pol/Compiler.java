@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ExecuteException;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.RuntimeContext;
@@ -25,7 +25,7 @@ public class Compiler {
 		this.tokenizer = tokenizer;
 	}
 
-	public Node build() throws TokenizerException, ParseException, ExecuteException {
+	public Node build() throws TokenizerException, HiScriptParseException, ExecuteException {
 		Node node = rule.visit(tokenizer);
 		return node;
 	}
@@ -127,7 +127,7 @@ public class Compiler {
 						}
 					} catch (TokenizerException exc) {
 						exc.printStackTrace();
-					} catch (ParseException exc) {
+					} catch (HiScriptParseException exc) {
 						exc.printStackTrace();
 					} catch (ExecuteException exc) {
 						exc.printStackTrace();

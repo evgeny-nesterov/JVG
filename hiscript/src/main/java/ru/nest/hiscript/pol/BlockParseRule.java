@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.EmptyNode;
 import ru.nest.hiscript.pol.model.Node;
@@ -18,7 +18,7 @@ public class BlockParseRule extends ParseRule<BlockNode> {
 	}
 
 	@Override
-	public BlockNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public BlockNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		BlockNode block = null;
 		Node statement;
 		while ((statement = StatementParseRule.getInstance().visit(tokenizer)) != null) {

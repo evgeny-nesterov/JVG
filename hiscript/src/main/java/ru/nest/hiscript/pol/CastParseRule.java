@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.CastNode;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -17,7 +17,7 @@ public class CastParseRule extends ParseRule<CastNode> {
 	}
 
 	@Override
-	public CastNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public CastNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			int type = visitType(tokenizer);

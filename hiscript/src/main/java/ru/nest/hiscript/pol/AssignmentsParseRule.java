@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.AssignmentsNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -18,7 +18,7 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 	}
 
 	@Override
-	public AssignmentsNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public AssignmentsNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		Node assignment = visitStatement(tokenizer);
 		if (assignment != null) {
 			AssignmentsNode node = new AssignmentsNode();
@@ -27,7 +27,7 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				assignment = visitStatement(tokenizer);
 				if (assignment == null) {
-					throw new ParseException("statement is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("statement is expected", tokenizer.currentToken());
 				}
 				node.addAssignment(assignment);
 			}
@@ -57,7 +57,7 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 		return false;
 	}
 
-	private Node visitStatement(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	private Node visitStatement(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		Node node = AssignmentParseRule.getInstance().visit(tokenizer);
 		if (node != null) {
 			return node;

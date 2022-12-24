@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.EmptyNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolToken;
@@ -26,7 +26,7 @@ public class StatementParseRule extends ParseRule<Node> {
 	 * declarations of variables + semicolon assignment + semicolon method invocation + semicolon block
 	 */
 	@Override
-	public Node visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public Node visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 			return EmptyNode.getInstance();
 		}

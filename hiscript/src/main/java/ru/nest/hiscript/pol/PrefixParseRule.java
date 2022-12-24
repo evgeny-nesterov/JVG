@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.CastNode;
 import ru.nest.hiscript.pol.model.PrefixNode;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -18,7 +18,7 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 	}
 
 	@Override
-	public PrefixNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public PrefixNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		PrefixNode prefix = null;
 		while (true) {
 			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);

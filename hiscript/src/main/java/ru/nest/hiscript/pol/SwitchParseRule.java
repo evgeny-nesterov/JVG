@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.CaseNode;
 import ru.nest.hiscript.pol.model.Node;
@@ -22,13 +22,13 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	}
 
 	@Override
-	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (value == null) {
-				throw new ParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
@@ -46,7 +46,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
 					expectSymbol(Symbols.COLON, tokenizer);
 					if (defaultFound) {
-						throw new ParseException("duplicate default label", tokenizer.currentToken());
+						throw new HiScriptParseException("duplicate default label", tokenizer.currentToken());
 					}
 
 					BlockNode defaultBody = BlockParseRule.getInstance().visit(tokenizer);

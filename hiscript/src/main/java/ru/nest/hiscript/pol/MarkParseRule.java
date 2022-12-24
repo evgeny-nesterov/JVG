@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.MarkNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -19,7 +19,7 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 	}
 
 	@Override
-	public MarkNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public MarkNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
 		String markName = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -29,7 +29,7 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 
 				Node body = StatementParseRule.getInstance().visit(tokenizer);
 				if (body == null) {
-					throw new ParseException("Statement is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("Statement is expected", tokenizer.currentToken());
 				}
 
 				return new MarkNode(markName, body);

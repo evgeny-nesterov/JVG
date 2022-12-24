@@ -2,8 +2,8 @@ package ru.nest.hiscript.ool.model.validation;
 
 import ru.nest.hiscript.tokenizer.Token;
 
-public class ValidationException extends Exception {
-	public ValidationException(String msg, Token token) {
+public class HiScriptValidationException extends Exception {
+	public HiScriptValidationException(String msg, Token token) {
 		super(msg + ": " + (token != null ? token : "EOF"));
 		this.token = token;
 	}

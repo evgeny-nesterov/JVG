@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.ParseException;
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.IncrementNode;
 import ru.nest.hiscript.pol.model.VariableNode;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -18,14 +18,14 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 	}
 
 	@Override
-	public IncrementNode visit(Tokenizer tokenizer) throws TokenizerException, ParseException {
+	public IncrementNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		int operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
 
 		tokenizer.start();
 		if (operation != -1) {
 			VariableNode variable = visitVariable(tokenizer);
 			if (variable == null) {
-				throw new ParseException("variable is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("variable is expected", tokenizer.currentToken());
 			}
 			tokenizer.commit();
 			return new IncrementNode(variable, IncrementNode.INCREMENT_PREFIX, operation);
