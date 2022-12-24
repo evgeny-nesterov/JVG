@@ -45,6 +45,13 @@ public class HiMethod implements Codeable, TokenAccessible {
 
 	private String descr;
 
+	public boolean isAnnotationArgument = false;
+
+	/**
+	 * HiFieldObject for variables
+	 */
+	public Object annotationDefaultValue;
+
 	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
 		NodeArgument[] _arguments = null;
 		if (arguments != null) {
@@ -72,7 +79,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.METHOD, this);
-		boolean valid = true;
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);

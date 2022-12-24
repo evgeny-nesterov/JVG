@@ -16,6 +16,8 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public boolean isValue;
 
+	public boolean isConstant;
+
 	public boolean valid;
 
 	public HiClass valueType;
@@ -50,6 +52,7 @@ public class NodeValueType implements PrimitiveTypes {
 	public NodeValueType apply(NodeValueType node) {
 		this.valid &= node.valid;
 		this.isValue &= this.valid && node.isValue;
+		this.isConstant &= this.valid && node.isConstant;
 		if (this.token != null) {
 			this.token.extend(node.token);
 		} else if (node.token != null) {
@@ -84,7 +87,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = false;
 	}
 
-	public void get(HiNode node, HiClass type, boolean valid, boolean isValue) {
+	public void get(HiNode node, HiClass type, boolean valid, boolean isValue, boolean isConstant) {
 		if (type == null) {
 			type = HiClassPrimitive.VOID;
 			isValue = false;
@@ -93,6 +96,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.type = type;
 		this.valid = valid;
 		this.isValue = isValue;
+		this.isConstant = isConstant;
 		getValue();
 	}
 
@@ -109,6 +113,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.type = ctx.nodeValueType.type;
 		this.valid = valid;
 		this.isValue = ctx.nodeValueType.isValue;
+		this.isConstant = ctx.nodeValueType.isConstant;
 		getValue();
 		return this;
 	}

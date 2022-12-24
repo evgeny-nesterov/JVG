@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
@@ -53,6 +54,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class HiNode implements Codeable, TokenAccessible {
 	public final static byte TYPE_EMPTY = -1;
@@ -173,6 +176,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	private boolean isValue;
 
+	private boolean isConstant;
+
 	@Override
 	public String toString() {
 		return name;
@@ -194,6 +199,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 			valueClass = ctx.nodeValueType.type;
 			valid = ctx.nodeValueType.valid;
 			isValue = ctx.nodeValueType.isValue;
+			isConstant = ctx.nodeValueType.isConstant;
 
 			if (valueClass != null) {
 				valueClass.init(ctx);
@@ -201,7 +207,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(this, valueClass, valid, isValue);
+			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant);
 		}
 		return ctx.nodeValueType;
 	}
@@ -218,10 +224,20 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return false;
 	}
 
+	public boolean isConstant(CompileClassContext ctx) {
+		return false;
+	}
+
+	public Object getConstantValue() {
+		return null;
+	}
+
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz = computeValueClass(validationInfo, ctx);
-		boolean isValue = isValue() && (clazz != null ? clazz != HiClassPrimitive.VOID : false);
-		ctx.nodeValueType.get(this, clazz, clazz != null, isValue);
+		boolean valid = clazz != null;
+		boolean isValue = isValue() && (valid ? clazz != HiClassPrimitive.VOID : false);
+		boolean isConstant = (valid ? clazz != HiClassPrimitive.VOID : false) && isConstant(ctx);
+		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant);
 	}
 
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -241,6 +257,23 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 			ctx.exit();
 		}
 		return true;
+	}
+
+	public static boolean validateAnnotations(ValidationInfo validationInfo, CompileClassContext ctx, NodeAnnotation[] annotations) {
+		boolean valid = true;
+		if (annotations != null) {
+			List<String> names = new ArrayList<>(annotations.length);
+			for (NodeAnnotation annotation : annotations) {
+				valid &= annotation.validate(validationInfo, ctx);
+				if (names.contains(annotation.name)) {
+					validationInfo.error("Duplicate annotation", annotation.getToken());
+					valid = false;
+				} else {
+					names.add(annotation.name);
+				}
+			}
+		}
+		return valid;
 	}
 
 	public abstract void execute(RuntimeContext ctx);
@@ -401,8 +434,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectIntValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || !castedConditionClass.isIntNumber()) {
+		HiClass valueClass = getValueClass(validationInfo, ctx);
+		if (valueClass == null || !valueClass.isIntNumber()) {
 			validationInfo.error("int is expected", getToken());
 			return false;
 		}
@@ -410,8 +443,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectBooleanValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || castedConditionClass != HiClassPrimitive.BOOLEAN) {
+		HiClass valueClass = getValueClass(validationInfo, ctx);
+		if (valueClass == null || valueClass != HiClassPrimitive.BOOLEAN) {
 			validationInfo.error("boolean is expected", getToken());
 			return false;
 		}
@@ -419,9 +452,18 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || castedConditionClass == HiClassPrimitive.VOID) {
+		HiClass valueClass = getValueClass(validationInfo, ctx);
+		if (valueClass == null || valueClass == HiClassPrimitive.VOID) {
 			validationInfo.error("value is expected", getToken());
+			return false;
+		}
+		return true;
+	}
+
+	public boolean expectConstant(ValidationInfo validationInfo, CompileClassContext ctx) {
+		NodeValueType valueType = getValueType(validationInfo, ctx);
+		if (valueType == null || !valueType.isConstant) {
+			validationInfo.error("constant expected", getToken());
 			return false;
 		}
 		return true;
@@ -437,18 +479,18 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	public boolean expectObjectValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || !castedConditionClass.isObject()) {
+		HiClass valueClass = getValueClass(validationInfo, ctx);
+		if (valueClass == null || !valueClass.isObject()) {
 			validationInfo.error("object is expected", getToken());
 			return false;
 		}
 		return true;
 	}
 
-	// TODO +Iterable
 	public boolean expectIterableValue(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass castedConditionClass = getValueClass(validationInfo, ctx);
-		if (castedConditionClass == null || !(castedConditionClass.isArray() || castedConditionClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME))) {
+		HiClass valueClass = getValueClass(validationInfo, ctx);
+		// TODO +Iterable
+		if (valueClass == null || !(valueClass.isArray() || valueClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME))) {
 			validationInfo.error("iterable is expected", getToken());
 			return false;
 		}
@@ -459,10 +501,35 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return false;
 	}
 
-	public RuntimeContext computeValue(CompileClassContext ctx) {
+	private RuntimeContext computeValue(CompileClassContext ctx) {
 		RuntimeContext rctx = new RuntimeContext(ctx.getCompiler(), true);
+		rctx.enterStart(null);
+		rctx.level.clazz = ctx.clazz;
+
 		execute(rctx);
+
+		HiObject exception = rctx.exception;
+		rctx.exit();
+		rctx.exception = exception;
 		return rctx;
+	}
+
+	public Object getObjectValue(ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
+		if (isConstant(ctx)) {
+			return getConstantValue();
+		}
+		RuntimeContext rctx = computeValue(ctx);
+		if (rctx.exception == null) {
+			if (rctx.value.valueType == Value.VALUE) {
+				return rctx.value.get();
+			} else if (rctx.value.valueType == Value.VARIABLE) {
+				return rctx.value.variable;
+			}
+			return null;
+		} else {
+			validationInfo.error(rctx.getExceptionMessage(), token);
+			return null;
+		}
 	}
 
 	public byte byteValue(CompileClassContext ctx) {

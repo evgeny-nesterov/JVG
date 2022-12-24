@@ -27,6 +27,11 @@ public class NodeShort extends NodeNumber {
 	}
 
 	@Override
+	public Object getConstantValue() {
+		return value;
+	}
+
+		@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.SHORT;
 	}

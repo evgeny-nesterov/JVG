@@ -106,6 +106,10 @@ public class Value implements PrimitiveTypes {
 	 * Возвращает текущее значение в виде объекта в зависимости от типа.
 	 */
 	public Object get() {
+		if (valueType == VARIABLE) {
+			return variable.get();
+		}
+
 		// array
 		if (type.isArray()) {
 			return array;

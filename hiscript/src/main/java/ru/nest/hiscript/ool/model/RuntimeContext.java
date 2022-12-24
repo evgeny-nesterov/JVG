@@ -327,10 +327,10 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	@Override
 	public HiClass getClass(String name) {
 		// search in blocks up to method or constructor
-		StackLevel level = this.level;
 		HiClass clazz = null;
 		HiObject levelObject = null;
 		HiClass levelClass = null;
+		StackLevel level = this.level;
 		WHILE:
 		while (level != null) {
 			clazz = level.getClass(name);
@@ -344,7 +344,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			}
 
 			if (clazz != null) {
-				clazz.init(this);
 				break;
 			}
 
@@ -369,12 +368,24 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		// search in enclosing class
-		if (clazz == null && level != null && level.clazz != null && !level.clazz.isTopLevel()) {
-			clazz = level.clazz.enclosingClass.getClass(this, name);
+		if (clazz == null && levelClass != null && !levelClass.isTopLevel()) {
+			clazz = levelClass.enclosingClass.getClass(this, name);
 		}
 
 		// search by class full name
 		if (clazz == null) {
+			// try restore class full name
+			if (levelClass != null && name.indexOf('$') == -1) {
+				int index = levelClass.fullName.lastIndexOf('$');
+				if (index != -1) {
+					String outboundClassName = levelClass.fullName.substring(0, index + 1);
+					String extendedName = outboundClassName + '0' + name;
+					clazz = HiClass.forName(this, extendedName);
+					if (clazz != null) {
+						return clazz;
+					}
+				}
+			}
 			clazz = HiClass.forName(this, name);
 		}
 
@@ -785,8 +796,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			if (!exception.clazz.isInstanceof("Exception")) {
 				throw new RuntimeException("Bad exception value");
 			}
-			HiField<?> messageField = exception.getMainObject().getField(this, "message");
-			String message = messageField.getStringValue(this);
+			String message = getExceptionMessage();
 			if (printStackTrace) {
 				HiField<?> stackTraceField = exception.getMainObject().getField(this, "stackTrace");
 				HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
@@ -804,5 +814,13 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			}
 			throw new RuntimeException("HiScript error: " + message);
 		}
+	}
+
+	public String getExceptionMessage() {
+		if (exception != null) {
+			HiField<?> messageField = exception.getMainObject().getField(this, "message");
+			return messageField.getStringValue(this);
+		}
+		return null;
 	}
 }

@@ -48,8 +48,9 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO check modifiers, annotations
-		boolean valid = ctx.addLocalVariable(this);
+		// TODO check modifiers
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		valid &= ctx.addLocalVariable(this);
 		ctx.initializedNodes.add(this);
 		return valid;
 	}

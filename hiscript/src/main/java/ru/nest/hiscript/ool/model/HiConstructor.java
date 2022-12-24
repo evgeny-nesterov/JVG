@@ -98,7 +98,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
-		boolean valid = true;
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);

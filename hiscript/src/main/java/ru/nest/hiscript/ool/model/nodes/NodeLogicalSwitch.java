@@ -22,11 +22,6 @@ public class NodeLogicalSwitch extends NodeExpression {
 	private NodeExpression falseValueNode;
 
 	@Override
-	public boolean isValue() {
-		return true;
-	}
-
-	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
 		HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);

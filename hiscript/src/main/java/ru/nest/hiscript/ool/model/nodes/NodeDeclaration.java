@@ -52,7 +52,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initialization != null) {
 			HiClass variableType = getValueClass(validationInfo, ctx);
 			if (type == Type.varType) {

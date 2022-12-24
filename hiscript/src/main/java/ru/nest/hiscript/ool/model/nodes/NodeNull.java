@@ -18,6 +18,16 @@ public class NodeNull extends HiNode {
 	}
 
 	@Override
+	public boolean isConstant(CompileClassContext ctx) {
+		return true;
+	}
+
+	@Override
+	public Object getConstantValue() {
+		return null;
+	}
+
+	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassNull.NULL;
 	}

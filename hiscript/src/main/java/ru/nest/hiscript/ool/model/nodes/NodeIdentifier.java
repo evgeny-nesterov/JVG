@@ -27,6 +27,15 @@ public class NodeIdentifier extends HiNode {
 	}
 
 	@Override
+	public boolean isConstant(CompileClassContext ctx) {
+		Object resolvedIdentifier = ctx.resolveIdentifier(name);
+		if (resolvedIdentifier instanceof HiNode) {
+			return ((HiNode) resolvedIdentifier).isConstant(ctx);
+		}
+		return false;
+	}
+
+	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (dimension > 0) {
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);

@@ -12,29 +12,39 @@ public class NodeAnnotationArgument extends HiNode {
 	public NodeAnnotationArgument(String name, HiNode value, Token token) {
 		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT, token);
 		this.name = name;
-		this.value = value;
+		this.valueNode = value;
 	}
 
-	private String name;
+	public String name;
 
-	private HiNode value;
+	private HiNode valueNode;
+
+	public Object value;
+
+	@Override
+	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return valueNode.getValueType(validationInfo, ctx);
+	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return true;
+		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectConstant(validationInfo, ctx);
+		if (valid) {
+			value = valueNode.getObjectValue(validationInfo, ctx, getToken());
+		}
+		return valid;
 	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		// TODO
+		throw new RuntimeException("Can't execute annotation");
 	}
 
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeUTF(name);
-		os.write(value);
+		os.write(valueNode);
 	}
 
 	public static NodeAnnotationArgument decode(DecodeContext os) throws IOException {

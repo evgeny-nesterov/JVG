@@ -29,7 +29,7 @@ public abstract class BinaryOperation extends HiOperation {
 		NodeValueType node2 = nodes[1];
 		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
 			HiClass clazz = getOperationResultType(validationInfo, ctx, node1, node2);
-			node1.get(node1.node, clazz, clazz != null, clazz != null && node1.isValue);
+			node1.get(node1.node, clazz, clazz != null, clazz != null && node1.isValue, clazz != null && node1.isConstant);
 			node1.apply(node2);
 		} else {
 			ctx.nodeValueType.invalid();

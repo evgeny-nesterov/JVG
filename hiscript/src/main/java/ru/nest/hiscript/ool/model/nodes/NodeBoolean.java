@@ -42,7 +42,17 @@ public class NodeBoolean extends HiNode {
 	}
 
 	@Override
+	public Object getConstantValue() {
+		return value;
+	}
+
+	@Override
 	public boolean isValue() {
+		return true;
+	}
+
+	@Override
+	public boolean isConstant(CompileClassContext ctx) {
 		return true;
 	}
 

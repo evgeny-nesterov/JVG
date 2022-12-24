@@ -27,6 +27,11 @@ public class NodeInt extends NodeNumber {
 	}
 
 	@Override
+	public Object getConstantValue() {
+		return value;
+	}
+
+	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return HiClassPrimitive.INT;
 	}

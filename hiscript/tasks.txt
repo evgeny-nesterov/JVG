@@ -14,15 +14,15 @@
         +9. Indicate code line number while throwing exceptions
         +10. Add asserts
         +11. Add throws for methods, require catch or method throws for non-runtime exceptions
-*12. Annotations
-*13. Import native java classes, create instances, invoke methods and read fields
+        +12. Annotations
+        +13. Import native java classes, create instances, invoke methods and read fields
         +14. Iterable for(:) (arrays and ArrayList)
         +15. Add var
 		+16. Switch in the expression, multiple case (case <expr1>, <expr2>, ..., <exprN> -> <bodyExpr>)
         +17. Multiple case in statement switch (case <expr1>, <expr2>, ..., <exprN>: <statementBody>)
         +18. Assert (assert condition, or assert condition : message)
         +19. RuntimeException, AssertException, catch only declared exceptions
-*20. Precompile validation
+        +20. Precompile validation
         +21. Text blocks ("""\n...""")
         -22. Volatile field modifier
         +23. Instanceof with auto casting (a instanceof B b)

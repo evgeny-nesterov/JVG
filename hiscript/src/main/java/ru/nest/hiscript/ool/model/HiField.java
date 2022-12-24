@@ -116,13 +116,19 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	public HiNode initializer;
 
 	@Override
+	public boolean isConstant(CompileClassContext ctx) {
+		return modifiers.isStatic() && modifiers.isFinal();
+	}
+
+	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return type.getClass(ctx);
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = ctx.addLocalVariable(this);
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		valid &= ctx.addLocalVariable(this);
 		return valid;
 	}
 

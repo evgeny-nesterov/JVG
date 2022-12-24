@@ -368,7 +368,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		ctx.enter(RuntimeContext.STATIC_CLASS, this);
 		ctx.clazz = this;
-		boolean valid = true;
+		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
 			superClass = superClassType.getClass(ctx);
@@ -927,6 +927,10 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiClass getArrayType() {
 		return null;
+	}
+
+	public boolean isConstant() {
+		return isPrimitive() || isEnum() || fullName.equals(STRING_CLASS_NAME) || (isArray() && ((HiClassArray) this).cellClass.isConstant());
 	}
 
 	public static HiClass forName(ClassResolver classResolver, String name) {
