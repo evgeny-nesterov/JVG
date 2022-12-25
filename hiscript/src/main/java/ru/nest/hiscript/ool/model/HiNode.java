@@ -505,6 +505,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		RuntimeContext rctx = new RuntimeContext(ctx.getCompiler(), true);
 		rctx.enterStart(null);
 		rctx.level.clazz = ctx.clazz;
+		rctx.validating = true;
 
 		execute(rctx);
 

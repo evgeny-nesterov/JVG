@@ -141,6 +141,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (isNative) {
 			sb.append("native ");
 		}
+		if (isDefault) {
+			sb.append("default ");
+		}
 		return sb.toString();
 	}
 

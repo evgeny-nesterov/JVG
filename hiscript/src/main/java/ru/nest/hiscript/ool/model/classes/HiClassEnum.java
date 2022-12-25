@@ -36,17 +36,34 @@ public class HiClassEnum extends HiClass {
 			if (ctx.exitFromBlock()) {
 				return;
 			}
-
-			HiFieldObject enumField = new HiFieldObject(Type.getType(this), enumValue.getName(), ctx.value.getObject());
-			enumField.getModifiers().setFinal(true);
-			enumField.getModifiers().setStatic(true);
-			enumField.getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
-			enumsMap.put(enumValue.getName(), enumField);
+			enumsMap.put(enumValue.getName(), createField(enumValue.getName(), ctx.value.getObject()));
 		}
 	}
 
+	private HiFieldObject createField(String name, HiObject value) {
+		HiFieldObject enumField = new HiFieldObject(Type.getType(this), name, value);
+		enumField.getModifiers().setFinal(true);
+		enumField.getModifiers().setStatic(true);
+		enumField.getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
+		return enumField;
+	}
+
 	public HiField getEnumValue(String name) {
-		return enumsMap.get(name);
+		if (enumsMap != null) {
+			HiField enumField = enumsMap.get(name);
+			if (enumField != null) {
+				return enumField;
+			}
+		}
+
+		// emulate for validation
+		for (HiEnumValue enumValue : enumValues) {
+			if (enumValue.getName().equals(name)) {
+				HiField enumField = createField(enumValue.getName(), null);
+				return enumField;
+			}
+		}
+		return null;
 	}
 
 	public int getEnumOrdinal(String name) {

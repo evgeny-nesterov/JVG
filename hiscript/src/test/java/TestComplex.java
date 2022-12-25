@@ -12,5 +12,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws Exception {
+		assertSuccess("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
 	}
 }

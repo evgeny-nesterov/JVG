@@ -291,9 +291,7 @@ public class OperationInvocation extends BinaryOperation {
 		// find method
 		HiMethod method = clazz.searchMethod(ctx, name, types);
 		if (method == null) {
-			if (ctx.exception == null) {
-				ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
-			}
+			ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
 			return;
 		}
 
@@ -305,6 +303,7 @@ public class OperationInvocation extends BinaryOperation {
 
 			if (method.modifiers.isAbstract()) {
 				ctx.throwRuntimeException("can't invoke abstract method");
+				return;
 			}
 		}
 

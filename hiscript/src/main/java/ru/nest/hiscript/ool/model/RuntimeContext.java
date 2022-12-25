@@ -71,6 +71,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public HiObject currentThread;
 
+	public boolean validating;
+
 	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;
 		this.compiler = compiler;
@@ -135,11 +137,14 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		throwException("RuntimeException", message);
 	}
 
+	boolean hasException = false;
+
 	// TODO cause exception
 	public void throwException(String exceptionClass, String message) {
-		if (exception != null) {
+		if (hasException) {
 			return;
 		}
+		hasException = true;
 
 		if (message == null) {
 			message = "";
@@ -313,14 +318,16 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		// check local enclosing classes
-		HiClass clazz = this.level.clazz;
-		while (clazz != null) {
-			HiField<?> field = getLocalVariable(clazz, name);
-			if (field != null) {
-				var = field;
-				break;
+		if (var == null) {
+			HiClass clazz = this.level.clazz;
+			while (clazz != null) {
+				HiField<?> field = getLocalVariable(clazz, name);
+				if (field != null) {
+					var = field;
+					break;
+				}
+				clazz = clazz.enclosingClass;
 			}
-			clazz = clazz.enclosingClass;
 		}
 		return var;
 	}
@@ -795,7 +802,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public void throwExceptionIf(boolean printStackTrace) {
 		if (exception != null) {
-			if (!exception.clazz.isInstanceof("Exception")) {
+			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
 				throw new RuntimeException("Bad exception value");
 			}
 			String message;
@@ -810,7 +817,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public String printException() {
 		if (exception != null) {
-			if (!exception.clazz.isInstanceof("Exception")) {
+			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
 				throw new RuntimeException("Bad exception value");
 			}
 			String message = getExceptionMessage();

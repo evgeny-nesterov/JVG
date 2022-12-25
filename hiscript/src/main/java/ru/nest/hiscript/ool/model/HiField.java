@@ -137,27 +137,32 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		declared = true;
 
 		// do initialization work
-		if (!initialized) {
-			// initialized = true; ???
-
+		if (!initialized && !initializing) {
 			// if there is no initializer then do default initialization,
 			// ie initialization will be done in any case
 			if (initializer != null) {
+				// return default field value on cyclic fields references
+				initializing = true;
 				initializer.execute(ctx);
+				initializing = false;
+
 				if (ctx.exitFromBlock()) {
 					return;
 				}
 
 				set(ctx, ctx.value);
+
+				// after set to check field on final
 				initialized = true;
 
 				if (ctx.exitFromBlock()) {
 					return;
 				}
+			}
 
-				// DEBUG
-				// System.out.println(type.name + " " + name + " = " +
-				// ctx.value.get());
+			// initialize static field by default value without initializer
+			if (modifiers.isStatic()) {
+				initialized = true;
 			}
 		}
 
@@ -174,6 +179,15 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	public boolean declared = false;
 
 	public boolean initialized = false;
+
+	public boolean initializing = false;
+
+	public boolean isInitialized(RuntimeContext ctx) {
+		if (ctx.validating) {
+			execute(ctx);
+		}
+		return initialized || initializing;
+	}
 
 	@Override
 	public Object clone() {

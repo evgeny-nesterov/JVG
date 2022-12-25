@@ -279,7 +279,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 
 			// set super class to Object by default
-			if (superClass == null && this != OBJECT_CLASS && !isPrimitive() && !isNull()) {
+			if (superClass == null && this != OBJECT_CLASS && !isPrimitive() && !isNull() && !isInterface) {
 				superClass = OBJECT_CLASS;
 				superClassType = Type.objectType;
 			}
@@ -288,6 +288,28 @@ public class HiClass implements Codeable, TokenAccessible {
 			if (innerClasses != null) {
 				for (HiClass clazz : innerClasses) {
 					clazz.init(classResolver);
+				}
+			}
+		}
+
+		initStaticInitializers(classResolver);
+	}
+
+	private boolean staticInitialized = false;
+
+	/**
+	 * Init static initializers only on runtime on first class reference
+	 */
+	private void initStaticInitializers(ClassResolver classResolver) {
+		if (isInitialized && !staticInitialized && classResolver instanceof RuntimeContext) {
+			staticInitialized = true;
+
+			if (superClass != null) {
+				superClass.initStaticInitializers(classResolver);
+			}
+			if (interfaces != null) {
+				for (HiClass classInterface : interfaces) {
+					classInterface.initStaticInitializers(classResolver);
 				}
 			}
 
@@ -644,6 +666,11 @@ public class HiClass implements Codeable, TokenAccessible {
 		// super fields
 		if (field == null && superClass != null) {
 			field = superClass.getField(classResolver, name);
+		}
+
+		// enclosing fields
+		if (field == null && enclosingClass != null) {
+			field = enclosingClass.getField(classResolver, name);
 		}
 		return field;
 	}

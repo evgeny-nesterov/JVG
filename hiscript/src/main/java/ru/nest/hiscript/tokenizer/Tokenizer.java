@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Tokenizer {
 	public Tokenizer(String s) {
@@ -268,7 +269,7 @@ public class Tokenizer {
 		return t;
 	}
 
-	public static HashMap<?, ?> properties = new HashMap<>();
+	public static Map<?, ?> properties = new HashMap<>();
 
 	public static void main(String[] args) {
 		String s = "'\\333'\n\n \"12\\\"3\"";

@@ -39,8 +39,7 @@ public abstract class HiTest {
 		try {
 			executeSerialized(script);
 		} catch (Exception e) {
-			e.printStackTrace();
-			onFail(script, "fail");
+			onFail(script, e.toString());
 		}
 	}
 
@@ -91,7 +90,7 @@ public abstract class HiTest {
 	}
 
 	private void onFail(String script, String message) {
-		System.out.println("================================================");
+		System.out.println("==================== FAIL ======================");
 		System.out.println(script);
 		System.out.println("================================================");
 		fail(message);
