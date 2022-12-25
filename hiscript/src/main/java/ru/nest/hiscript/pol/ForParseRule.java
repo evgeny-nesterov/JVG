@@ -50,7 +50,6 @@ public class ForParseRule extends ParseRule<ForNode> {
 				return new ForNode(condition, assignments, body);
 			}
 		}
-
 		return null;
 	}
 

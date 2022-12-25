@@ -35,6 +35,7 @@ public class HashMapImpl extends ImplUtil {
 	public static void HashMap_Object_put_Object_Object(RuntimeContext ctx, Object key, Object value) {
 		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, key);
+		setCtx(ctx, value);
 		value = map.put(key, value);
 		ctx.value.set(value);
 	}

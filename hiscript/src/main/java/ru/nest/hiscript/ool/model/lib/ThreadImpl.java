@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 
 public class ThreadImpl extends ImplUtil {
@@ -54,7 +55,7 @@ public class ThreadImpl extends ImplUtil {
 		o.userObject = new Thread(new Run(ctx, o));
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 	}
 
 	public static void Thread_void_start(RuntimeContext ctx) {
@@ -64,7 +65,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.start();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (Exception exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -77,7 +78,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.interrupt();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (Exception exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -90,7 +91,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.join();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -103,7 +104,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.join(timeMillis);
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -113,7 +114,7 @@ public class ThreadImpl extends ImplUtil {
 		try {
 			Thread.sleep(timeMillis);
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.toString());
 		}
@@ -124,13 +125,13 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isInterrupted();
 	}
 
 	public static void Thread_boolean_interrupted(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = Thread.interrupted();
 	}
 
@@ -139,7 +140,7 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isAlive();
 	}
 
@@ -149,7 +150,7 @@ public class ThreadImpl extends ImplUtil {
 		thread.setDaemon(on);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 	}
 
 	public static void Thread_boolean_isDaemon(RuntimeContext ctx) {
@@ -157,7 +158,7 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isDaemon();
 	}
 
@@ -171,7 +172,7 @@ public class ThreadImpl extends ImplUtil {
 		try {
 			Thread.yield();
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClass.getPrimitiveClass("void");
+			ctx.value.type = HiClassPrimitive.VOID;
 		} catch (Throwable exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -179,7 +180,7 @@ public class ThreadImpl extends ImplUtil {
 
 	public static void Thread_boolean_holdsLock_Object(RuntimeContext ctx, Object obj) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = Thread.holdsLock(obj);
 	}
 }

@@ -71,7 +71,7 @@ public class NodeReturn extends HiNode {
 				// TODO: check on void return value
 			} else {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.type = HiClass.getPrimitiveClass("void");
+				ctx.value.type = HiClassPrimitive.VOID;
 			}
 		} finally {
 			ctx.isReturn = true;

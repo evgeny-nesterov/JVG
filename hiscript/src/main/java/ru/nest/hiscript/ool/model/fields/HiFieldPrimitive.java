@@ -27,15 +27,15 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		types_hash_type.put(Type.getPrimitiveType("boolean"), BOOLEAN);
 		types_hash_type.put(Type.getPrimitiveType("void"), VOID);
 
-		types_hash_class.put(HiClass.getPrimitiveClass("char"), CHAR);
-		types_hash_class.put(HiClass.getPrimitiveClass("byte"), BYTE);
-		types_hash_class.put(HiClass.getPrimitiveClass("short"), SHORT);
-		types_hash_class.put(HiClass.getPrimitiveClass("int"), INT);
-		types_hash_class.put(HiClass.getPrimitiveClass("float"), FLOAT);
-		types_hash_class.put(HiClass.getPrimitiveClass("long"), LONG);
-		types_hash_class.put(HiClass.getPrimitiveClass("double"), DOUBLE);
-		types_hash_class.put(HiClass.getPrimitiveClass("boolean"), BOOLEAN);
-		types_hash_class.put(HiClass.getPrimitiveClass("void"), VOID);
+		types_hash_class.put(HiClassPrimitive.CHAR, CHAR);
+		types_hash_class.put(HiClassPrimitive.BYTE, BYTE);
+		types_hash_class.put(HiClassPrimitive.SHORT, SHORT);
+		types_hash_class.put(HiClassPrimitive.INT, INT);
+		types_hash_class.put(HiClassPrimitive.FLOAT, FLOAT);
+		types_hash_class.put(HiClassPrimitive.LONG, LONG);
+		types_hash_class.put(HiClassPrimitive.DOUBLE, DOUBLE);
+		types_hash_class.put(HiClassPrimitive.BOOLEAN, BOOLEAN);
+		types_hash_class.put(HiClassPrimitive.VOID, VOID);
 	}
 
 	public HiFieldPrimitive(Type type, String name) {

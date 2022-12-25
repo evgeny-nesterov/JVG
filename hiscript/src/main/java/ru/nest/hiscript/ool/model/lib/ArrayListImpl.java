@@ -54,6 +54,10 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_Object_remove_Object(RuntimeContext ctx, Object element) {
+		if (element instanceof HiObject) {
+			// for HiObject.equals(Object)
+			((HiObject) element).ctx = ctx;
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).remove(element);
@@ -71,18 +75,30 @@ public class ArrayListImpl extends ImplUtil {
 	}
 
 	public static void ArrayList_int_indexOf_Object(RuntimeContext ctx, Object element) {
+		if (element instanceof HiObject) {
+			// for HiObject.equals(Object)
+			((HiObject) element).ctx = ctx;
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = getArrayList(ctx).indexOf(element);
 	}
 
 	public static void ArrayList_int_lastIndexOf_Object(RuntimeContext ctx, Object element) {
+		if (element instanceof HiObject) {
+			// for HiObject.equals(Object)
+			((HiObject) element).ctx = ctx;
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = getArrayList(ctx).lastIndexOf(element);
 	}
 
 	public static void ArrayList_boolean_contains_Object(RuntimeContext ctx, Object element) {
+		if (element instanceof HiObject) {
+			// for HiObject.equals(Object)
+			((HiObject) element).ctx = ctx;
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).contains(element);
@@ -120,6 +136,12 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_boolean_removeAll_ArrayList(RuntimeContext ctx, HiObject list) {
 		List<?> a = (List<?>) list.userObject;
+		for (Object element : a) {
+			if (element instanceof HiObject) {
+				// for HiObject.equals(Object)
+				((HiObject) element).ctx = ctx;
+			}
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).removeAll(a);
@@ -127,6 +149,12 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_boolean_retainAll_ArrayList(RuntimeContext ctx, HiObject list) {
 		List<?> a = (List<?>) list.userObject;
+		for (Object element : a) {
+			if (element instanceof HiObject) {
+				// for HiObject.equals(Object)
+				((HiObject) element).ctx = ctx;
+			}
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).retainAll(a);
@@ -134,6 +162,12 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_boolean_containsAll_ArrayList(RuntimeContext ctx, HiObject list) {
 		List<?> a = (List<?>) list.userObject;
+		for (Object element : a) {
+			if (element instanceof HiObject) {
+				// for HiObject.equals(Object)
+				((HiObject) element).ctx = ctx;
+			}
+		}
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).containsAll(a);

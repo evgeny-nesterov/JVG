@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.HiNative;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -73,7 +74,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_print_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.print(chars);
@@ -82,7 +83,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_println_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.println(chars);
@@ -91,7 +92,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_sleep_long(RuntimeContext ctx, long time) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException exc) {
@@ -101,7 +102,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_long_time(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("long");
+		ctx.value.type = HiClassPrimitive.LONG;
 		ctx.value.longNumber = System.currentTimeMillis();
 	}
 
@@ -109,7 +110,7 @@ public class SystemImpl extends ImplUtil {
 		ctx.isExit = true;
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 	}
 
 	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {
@@ -182,7 +183,7 @@ public class SystemImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 	}
 
 	public static void System_Object_getVariable_String(RuntimeContext ctx, HiObject name) {

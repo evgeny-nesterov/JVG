@@ -32,7 +32,7 @@ public class TestStatements extends HiTest {
 	public void testFor() {
 		assertSuccessSerialize("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
 		assertSuccessSerialize("int i = 0; for(; i < 10; i++); assert i == 10;");
-		assertSuccessSerialize("for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {}");
+		assertSuccessSerialize("int x = 0; for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {x++;} assert x == 10;");
 
 		// iterable for
 		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
@@ -42,8 +42,9 @@ public class TestStatements extends HiTest {
 
 		assertSuccessSerialize("for(;;) {break;}");
 		assertSuccessSerialize("for(int i = 0;;) {break;}");
-		assertSuccessSerialize("int i = 0; for(;i < 0;);");
-		assertSuccessSerialize("int i = 0; for(;;i++, i++) {break;}");
+		assertSuccessSerialize("int i = 0; for(;i < 0;); assert i == 0;");
+		assertSuccessSerialize("int i = 0; for(;;i++, i++) {break;} assert i == 0;");
+		assertSuccessSerialize("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
 	}
 
 	@Test
@@ -53,6 +54,11 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int x = 3; do {x--;} while(x != 0); assert x == 0;");
 		assertSuccessSerialize("int x = 3; do {x--; if(x == 1) break;} while(x != 0); assert x == 1;");
 		assertSuccessSerialize("int x = 3; do {x--; if(x >= 1) continue; break;} while(true); assert x == 0;");
+	}
+
+	@Test
+	public void testDoWhile() {
+		assertSuccessSerialize("int x = 3; do{x--;} while(x != 0); assert x == 0;");
 	}
 
 	@Test
@@ -98,13 +104,16 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("new Object().toString();");
 		assertSuccessSerialize("assert new Object(){String toString(){return \"a\";}}.toString().equals(\"a\");");
 		assertSuccessSerialize("assert (new int[]{1})[0] == 1;");
-		assertSuccessSerialize("class A{} new A();");
+		assertSuccessSerialize("class A{} A a = new A(); assert a instanceof A;");
 		assertSuccessSerialize("class A{A(int x){}} new A(1);");
 		assertSuccessSerialize("assert (new int[1])[0] == 0;");
+		assertSuccessSerialize("assert (new int[]{1,2,3})[2] == 3;");
+		assertSuccessSerialize("assert (new int[1][1])[0][0] == 0;");
+		assertSuccessSerialize("assert new int[][]{{1,2},{3,4}}[1][1] == 4;");
 	}
 
 	@Test
-	public void testBreakContinue() {
+	public void testBreakContinueLabel() {
 		assertSuccessSerialize("A:{if(true) break A; assert false;};");
 		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
 		assertSuccessSerialize("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");

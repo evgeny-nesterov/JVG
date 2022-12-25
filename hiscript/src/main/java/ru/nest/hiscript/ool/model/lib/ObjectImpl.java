@@ -7,12 +7,13 @@ import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ObjectImpl extends ImplUtil {
 	public static void Object_int_hashCode(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
+		ctx.value.type = HiClassPrimitive.INT;
 		if (ctx.value.type.isArray()) {
 			ctx.value.intNumber = ctx.value.array.hashCode();
 		} else {
@@ -74,7 +75,7 @@ public class ObjectImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 	}
 
 	public static void Object_void_wait(RuntimeContext ctx) {

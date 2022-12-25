@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -100,7 +101,7 @@ public class NodeTry extends HiNode {
 
 						ctx.enterMethod(closeMethod, resourceObject);
 						try {
-							closeMethod.invoke(ctx, HiClass.getPrimitiveClass("void"), resourceObject, null);
+							closeMethod.invoke(ctx, HiClassPrimitive.VOID, resourceObject, null);
 						} finally {
 							ctx.exit();
 							ctx.isReturn = false;

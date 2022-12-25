@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -144,7 +145,7 @@ public class OperationInvocation extends BinaryOperation {
 					}
 
 					v1.valueType = Value.VALUE;
-					v1.type = HiClass.getPrimitiveClass("int");
+					v1.type = HiClassPrimitive.INT;
 					v1.intNumber = Array.getLength(v1.array);
 					return true;
 				}

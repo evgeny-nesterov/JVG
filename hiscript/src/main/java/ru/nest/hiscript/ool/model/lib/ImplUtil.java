@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,18 +64,18 @@ public class ImplUtil {
 
 	protected static void returnVoid(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("void");
+		ctx.value.type = HiClassPrimitive.VOID;
 	}
 
 	protected static void returnInt(RuntimeContext ctx, int value) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
+		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = value;
 	}
 
 	protected static void returnBoolean(RuntimeContext ctx, boolean value) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = value;
 	}
 }

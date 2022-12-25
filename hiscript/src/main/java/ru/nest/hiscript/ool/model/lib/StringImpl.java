@@ -4,13 +4,14 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class StringImpl extends ImplUtil {
 	public static void String_int_length(RuntimeContext ctx) {
 		char[] chars = getChars(ctx, ctx.value.object);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
+		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = chars.length;
 	}
 
@@ -18,7 +19,7 @@ public class StringImpl extends ImplUtil {
 		String s1 = getString(ctx, ctx.value.object);
 		String s2 = getString(ctx, string);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
+		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = s1.indexOf(s2, fromIndex);
 	}
 
@@ -26,7 +27,7 @@ public class StringImpl extends ImplUtil {
 		String s1 = getString(ctx, ctx.value.object);
 		String s2 = getString(ctx, string);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("int");
+		ctx.value.type = HiClassPrimitive.INT;
 		ctx.value.intNumber = s1.lastIndexOf(s2, fromIndex);
 	}
 
@@ -89,7 +90,15 @@ public class StringImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.getPrimitiveClass("boolean");
+		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = equals;
+	}
+
+
+	public static void String_int_hashCode(RuntimeContext ctx) {
+		String s = getString(ctx, ctx.value.object);
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = HiClassPrimitive.INT;
+		ctx.value.intNumber = s.hashCode();
 	}
 }

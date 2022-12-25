@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -172,42 +173,42 @@ public class Value implements PrimitiveTypes {
 			else if (value instanceof Double) {
 				valueType = VALUE;
 				doubleNumber = (Double) value;
-				type = HiClass.getPrimitiveClass("double");
+				type = HiClassPrimitive.DOUBLE;
 				return true;
 			} else if (value instanceof Float) {
 				valueType = VALUE;
 				floatNumber = (Float) value;
-				type = HiClass.getPrimitiveClass("float");
+				type = HiClassPrimitive.FLOAT;
 				return true;
 			} else if (value instanceof Long) {
 				valueType = VALUE;
 				longNumber = (Long) value;
-				type = HiClass.getPrimitiveClass("long");
+				type = HiClassPrimitive.LONG;
 				return true;
 			} else if (value instanceof Integer) {
 				valueType = VALUE;
 				intNumber = (Integer) value;
-				type = HiClass.getPrimitiveClass("int");
+				type = HiClassPrimitive.INT;
 				return true;
 			} else if (value instanceof Short) {
 				valueType = VALUE;
 				shortNumber = (Short) value;
-				type = HiClass.getPrimitiveClass("short");
+				type = HiClassPrimitive.SHORT;
 				return true;
 			} else if (value instanceof Byte) {
 				valueType = VALUE;
 				byteNumber = (Byte) value;
-				type = HiClass.getPrimitiveClass("byte");
+				type = HiClassPrimitive.BYTE;
 				return true;
 			} else if (value instanceof Character) {
 				valueType = VALUE;
 				character = (Character) value;
-				type = HiClass.getPrimitiveClass("char");
+				type = HiClassPrimitive.CHAR;
 				return true;
 			} else if (value instanceof Boolean) {
 				valueType = VALUE;
 				bool = (Boolean) value;
-				type = HiClass.getPrimitiveClass("boolean");
+				type = HiClassPrimitive.BOOLEAN;
 				return true;
 			}
 			return false;
