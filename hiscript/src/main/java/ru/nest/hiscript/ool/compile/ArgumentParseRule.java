@@ -29,7 +29,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 		if (type != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
-				throw new HiScriptParseException("variable name is expected", tokenizer.currentToken());
+				tokenizer.error("variable name is expected");
 			}
 
 			tokenizer.commit();

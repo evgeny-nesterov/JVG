@@ -38,7 +38,7 @@ public class InterfaceParseRule extends ParserUtil {
 
 			String interfaceName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (interfaceName == null) {
-				throw new HiScriptParseException("interface name is expected", tokenizer.currentToken());
+				tokenizer.error("interface name is expected");
 			}
 
 			// parse 'extends'
@@ -46,7 +46,7 @@ public class InterfaceParseRule extends ParserUtil {
 			if (visitWord(Words.EXTENDS, tokenizer) != null) {
 				Type interfaceType = visitType(tokenizer, false);
 				if (interfaceType == null) {
-					throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
+					tokenizer.error("illegal start of type");
 				}
 
 				interfacesList = new ArrayList<>(1);
@@ -55,7 +55,7 @@ public class InterfaceParseRule extends ParserUtil {
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					interfaceType = visitType(tokenizer, false);
 					if (interfaceType == null) {
-						throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
+						tokenizer.error("illegal start of type");
 					}
 					interfacesList.add(interfaceType);
 				}

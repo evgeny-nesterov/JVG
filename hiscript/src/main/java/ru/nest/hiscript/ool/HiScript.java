@@ -93,11 +93,22 @@ public class HiScript implements AutoCloseable {
 		return this;
 	}
 
+	public boolean hasValidationException() {
+		return !compiler.getValidationInfo().isValid();
+	}
+
 	public boolean hasRuntimeException() {
 		return ctx.exception != null;
 	}
 
-	public HiScript printError() {
+	public HiScript throwExceptionIf() throws HiScriptValidationException {
+		compiler.getValidationInfo().throwExceptionIf();
+		ctx.throwExceptionIf(compiler.isVerbose());
+		return this;
+	}
+
+	public HiScript printError() throws HiScriptValidationException {
+		compiler.getValidationInfo().printError();
 		ctx.printException();
 		return this;
 	}

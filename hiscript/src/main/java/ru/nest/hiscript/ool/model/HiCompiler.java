@@ -36,13 +36,20 @@ public class HiCompiler {
 		if (rule == null) {
 			rule = new RootParseRule(this, true, true);
 		}
-		HiNode node = rule.visit(tokenizer, null);
+
 		validationInfo = new ValidationInfo(this);
-		boolean valid = node.validate(validationInfo, null);
-		valid &= classLoader.validate(validationInfo);
+		tokenizer.setValidationInfo(verbose ? validationInfo : null);
+
+		HiNode node = rule.visit(tokenizer, null);
+		boolean valid = node != null && validationInfo.isValid();
+		if (node != null) {
+			valid &= node.validate(validationInfo, null);
+			valid &= classLoader.validate(validationInfo);
+		}
+
 		if (validationInfo.messages.size() > 0) {
 			validationInfo.throwExceptionIf();
-		} else if (!valid) {
+		} else if (!valid && !verbose) {
 			throw new HiScriptValidationException("Validation error", null);
 		}
 		return node;
@@ -80,6 +87,7 @@ public class HiCompiler {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+		tokenizer.setValidationInfo(verbose ? validationInfo : null);
 	}
 
 	public Tokenizer getTokenizer() {

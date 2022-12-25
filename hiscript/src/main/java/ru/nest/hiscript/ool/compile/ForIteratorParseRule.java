@@ -38,7 +38,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {
-					throw new HiScriptParseException("variable name is expected", tokenizer.currentToken());
+					tokenizer.error("variable name is expected");
 				}
 
 				if (checkSymbol(tokenizer, Symbols.COLON) != -1) {

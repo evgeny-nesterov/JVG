@@ -3,8 +3,10 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
+import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -15,6 +17,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeByte;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
@@ -76,7 +79,12 @@ public class ParserUtil implements Words {
 	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		String word = visitWord(type, tokenizer);
 		if (word == null) {
-			throw new HiScriptParseException("'" + WordToken.getWord(type) + "' is expected", tokenizer.currentToken());
+			if (type != NOT_SERVICE) {
+				word = WordToken.getWord(type);
+				tokenizer.error("'" + word + "' is expected");
+			} else {
+				tokenizer.error("identifier is expected");
+			}
 		}
 		return word;
 	}
@@ -179,7 +187,7 @@ public class ParserUtil implements Words {
 			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
 				name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {
-					throw new HiScriptParseException("identifier is expected", tokenizer.currentToken());
+					tokenizer.error("identifier is expected");
 				}
 				type = Type.getType(type, name);
 			}
@@ -276,7 +284,7 @@ public class ParserUtil implements Words {
 
 	protected static void expectSymbol(Tokenizer tokenizer, int type) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, type) == -1) {
-			throw new HiScriptParseException("'" + SymbolToken.getSymbol(type) + "' is expected", tokenizer.currentToken());
+			tokenizer.error("'" + SymbolToken.getSymbol(type) + "' is expected");
 		}
 	}
 
@@ -294,7 +302,7 @@ public class ParserUtil implements Words {
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (condition == null) {
-			throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+			tokenizer.error("expression is expected");
 		}
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 		return condition;
@@ -307,7 +315,8 @@ public class ParserUtil implements Words {
 		HiNode body = StatementParseRule.getInstance().visit(tokenizer, ctx);
 		ctx.exit();
 		if (body == null) {
-			throw new HiScriptParseException("statement is expected", tokenizer.currentToken());
+			tokenizer.error("statement is expected");
+			body = EmptyNode.getInstance();
 		}
 
 		if (!ctx.getCompiler().isAssertsActive() && body instanceof NodeAssert) {
@@ -321,7 +330,8 @@ public class ParserUtil implements Words {
 
 		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (expression == null) {
-			throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+			tokenizer.error("expression is expected");
+			expression = new NodeExpressionNoLS(new HiNode[0], new OperationsGroup[0]);
 		}
 		return expression;
 	}
@@ -335,7 +345,7 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWord(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != null) {
 				if (modifiers != null && modifiers.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'public' and 'public'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'public' and 'public'");
 				}
 
 				if (modifiers == null) {
@@ -348,7 +358,7 @@ public class ParserUtil implements Words {
 
 			if (visitWord(tokenizer, FINAL) != null) {
 				if (modifiers != null && modifiers.isFinal()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'final' and 'final'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'final' and 'final'");
 				}
 
 				if (modifiers == null) {
@@ -361,11 +371,11 @@ public class ParserUtil implements Words {
 
 			if (visitWord(tokenizer, STATIC) != null) {
 				if (modifiers != null && modifiers.isStatic()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'static' and 'static'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'static' and 'static'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'static' and 'abstract'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'static' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'static' and 'default'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'static' and 'default'");
 				}
 
 				if (modifiers == null) {
@@ -378,9 +388,9 @@ public class ParserUtil implements Words {
 
 			if (visitWord(tokenizer, NATIVE) != null) {
 				if (modifiers != null && modifiers.isNative()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'native' and 'native'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'native' and 'native'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'native' and 'default'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'native' and 'default'");
 				}
 
 				if (modifiers == null) {
@@ -393,11 +403,11 @@ public class ParserUtil implements Words {
 
 			if (visitWord(tokenizer, ABSTRACT) != null) {
 				if (modifiers != null && modifiers.isAbstract()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'abstract' and 'abstract'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'abstract' and 'default'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'default'");
 				} else if (modifiers != null && modifiers.isStatic()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'abstract' and 'static'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'static'");
 				}
 
 				if (modifiers == null) {
@@ -410,13 +420,13 @@ public class ParserUtil implements Words {
 
 			if (visitWord(tokenizer, DEFAULT) != null) {
 				if (modifiers != null && modifiers.isDefault()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'default' and 'default'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'default' and 'default'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'default' and 'abstract'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'default' and 'abstract'");
 				} else if (modifiers != null && modifiers.isStatic()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'default' and 'static'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'default' and 'static'");
 				} else if (modifiers != null && modifiers.isNative()) {
-					throw new HiScriptParseException("Illegal combination of modifiers: 'default' and 'native'", tokenizer.currentToken());
+					tokenizer.error("Illegal combination of modifiers: 'default' and 'native'");
 				}
 
 				if (modifiers == null) {
@@ -434,7 +444,7 @@ public class ParserUtil implements Words {
 	public static void checkModifiers(Tokenizer tokenizer, Modifiers m, int... allowed) throws HiScriptParseException {
 		int notAllowedModifier = m.check(allowed);
 		if (notAllowedModifier != -1) {
-			throw new HiScriptParseException("modifier '" + Modifiers.getName(notAllowedModifier) + "' is not allowed", tokenizer.currentToken());
+			tokenizer.error("modifier '" + Modifiers.getName(notAllowedModifier) + "' is not allowed");
 		}
 	}
 
@@ -444,9 +454,10 @@ public class ParserUtil implements Words {
 		if (arg != null) {
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				Token token = tokenizer.currentToken();
 				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg == null) {
-					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+					tokenizer.error("expression is expected", token);
 				}
 				args.add(arg);
 			}
@@ -464,16 +475,17 @@ public class ParserUtil implements Words {
 			boolean hasVarargs = arg.isVarargs();
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, ctx);
-				if (arg == null) {
-					throw new HiScriptParseException("argument is expected", tokenizer.currentToken());
-				}
-				if (arg.isVarargs()) {
-					if (hasVarargs) {
-						throw new HiScriptParseException("Varargs parameter must be the last in the list", tokenizer.currentToken());
+				if (arg != null) {
+					if (arg.isVarargs()) {
+						if (hasVarargs) {
+							tokenizer.error("Varargs parameter must be the last in the list");
+						}
+						hasVarargs = true;
 					}
-					hasVarargs = true;
+					arguments.add(arg);
+				} else {
+					tokenizer.error("argument is expected");
 				}
-				arguments.add(arg);
 			}
 		}
 	}

@@ -17,8 +17,19 @@ public class HiScriptConsole extends JFrame {
 
 	public HiScriptConsole() {
 		JTextArea textArea = new JTextArea();
+		textArea.setFont(new Font("monospaced", Font.PLAIN, 10));
+		textArea.setEditable(false);
+		textArea.setBorder(null);
+
 		JTextArea enterText = new JTextArea();
+		enterText.setFont(new Font("monospaced", Font.PLAIN, 12));
+		enterText.setBorder(null);
+
 		JTextArea logsText = new JTextArea();
+		logsText.setFont(new Font("monospaced", Font.PLAIN, 10));
+		logsText.setEditable(false);
+		logsText.setBorder(null);
+
 		enterText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -26,15 +37,14 @@ public class HiScriptConsole extends JFrame {
 					try {
 						String text = enterText.getText();
 						script.compile(text).execute();
-						if (!script.hasRuntimeException()) {
-							textArea.append(text + "\n\n");
+						if (!script.hasValidationException() && !script.hasRuntimeException()) {
+							textArea.append(text + "\n");
 							enterText.setText("");
-						} else {
+						} else if (script.hasRuntimeException()) {
 							System.err.print("[runtime] ");
 							script.printError();
 						}
 					} catch (HiScriptParseException exc) {
-						System.err.println("[parse] " + exc.getMessage());
 					} catch (HiScriptRuntimeException exc) {
 					} catch (HiScriptValidationException exc) {
 					} catch (Throwable exc) {
@@ -44,16 +54,27 @@ public class HiScriptConsole extends JFrame {
 			}
 		});
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(textArea), new JScrollPane(enterText));
+		JScrollPane textAreaScroll = new JScrollPane(textArea);
+		textAreaScroll.setBorder(null);
 
-		JSplitPane rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPane, new JScrollPane(logsText));
+		JScrollPane enterTextScroll = new JScrollPane(enterText);
+		enterTextScroll.setBorder(null);
+
+		JScrollPane logsTextScroll = new JScrollPane(logsText);
+		logsTextScroll.setBorder(null);
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, textAreaScroll, enterTextScroll);
+		splitPane.setBorder(null);
+
+		JSplitPane rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPane, logsTextScroll);
+		rightSplitPane.setBorder(null);
 		getContentPane().add(rightSplitPane, BorderLayout.CENTER);
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentShown(ComponentEvent e) {
-				splitPane.setDividerLocation(getHeight() - 200);
-				rightSplitPane.setDividerLocation(0.5);
+				splitPane.setDividerLocation(0.7);
+				rightSplitPane.setDividerLocation(0.6);
 
 				PrintStream printStream = new PrintStream(new OutputStream() {
 					@Override

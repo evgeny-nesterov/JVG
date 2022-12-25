@@ -39,7 +39,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					tokenizer.nextToken();
 					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
 					if (resource == null) {
-						throw new HiScriptParseException("declaration expected", tokenizer.currentToken());
+						tokenizer.error("declaration expected");
 					}
 					resourcesList.add(resource);
 				}
@@ -70,7 +70,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					}
 					excName = visitWord(NOT_SERVICE, tokenizer);
 					if (excName == null) {
-						throw new HiScriptParseException("identifier is expected", tokenizer.currentToken());
+						tokenizer.error("identifier is expected");
 					}
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 

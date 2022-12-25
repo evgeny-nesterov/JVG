@@ -10,6 +10,8 @@ import java.util.List;
 public class ValidationInfo {
 	private HiCompiler compiler;
 
+	private boolean valid;
+
 	public ValidationInfo(HiCompiler compiler) {
 		this.compiler = compiler;
 	}
@@ -18,6 +20,7 @@ public class ValidationInfo {
 
 	public void error(String message, Token token) {
 		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token));
+		valid = false;
 	}
 
 	public void warning(String message, Token token) {
@@ -28,26 +31,30 @@ public class ValidationInfo {
 		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.info, message, token));
 	}
 
+	public void printError() {
+		for (ValidationMessage message : messages) {
+			PrintStream os = message.level == ValidationMessage.ValidationLevel.error ? System.err : System.out;
+			os.println("[" + message.level + "] " + message.message + (message.token != null ? " (" + message.token.getLine() + ":" + message.token.getLineOffset() + ")" : ""));
+			if (message.token != null && compiler.isPrintInvalidCode()) {
+				String codeText = compiler.getTokenLineText(message.token);
+				os.println(codeText);
+				StringBuilder pointer = new StringBuilder();
+				for (int i = 0; i < message.token.getLineOffset(); i++) {
+					if (Character.isWhitespace(codeText.charAt(i))) {
+						pointer.append(codeText.charAt(i));
+					} else {
+						pointer.append(" ");
+					}
+				}
+				pointer.append("^");
+				os.println(pointer);
+			}
+		}
+	}
+
 	public void throwExceptionIf() throws HiScriptValidationException {
 		if (compiler.isVerbose()) {
-			for (ValidationMessage message : messages) {
-				PrintStream os = message.level == ValidationMessage.ValidationLevel.error ? System.err : System.out;
-				os.println("[" + message.level + "] " + message.message + (message.token != null ? " (" + message.token.getLine() + ":" + message.token.getLineOffset() + ")" : ""));
-				if (message.token != null && compiler.isPrintInvalidCode()) {
-					String codeText = compiler.getTokenLineText(message.token);
-					os.println(codeText);
-					StringBuilder pointer = new StringBuilder();
-					for (int i = 0; i < message.token.getLineOffset(); i++) {
-						if (Character.isWhitespace(codeText.charAt(i))) {
-							pointer.append(codeText.charAt(i));
-						} else {
-							pointer.append(" ");
-						}
-					}
-					pointer.append("^");
-					os.println(pointer);
-				}
-			}
+			printError();
 		}
 		for (ValidationMessage message : messages) {
 			if (message.level == ValidationMessage.ValidationLevel.error) {
@@ -58,5 +65,9 @@ public class ValidationInfo {
 
 	public HiCompiler getCompiler() {
 		return compiler;
+	}
+
+	public boolean isValid() {
+		return valid;
 	}
 }

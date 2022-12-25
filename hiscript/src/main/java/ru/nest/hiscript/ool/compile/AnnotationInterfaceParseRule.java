@@ -40,7 +40,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
-				throw new HiScriptParseException("annotation class name is expected", tokenizer.currentToken());
+				tokenizer.error("annotation class name is expected");
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);

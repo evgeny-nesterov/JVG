@@ -46,7 +46,8 @@ public class ClassParseRule extends ParserUtil {
 
 			String className = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (className == null) {
-				throw new HiScriptParseException("class name is expected", tokenizer.currentToken());
+				tokenizer.error("class name is expected");
+				className = "";
 			}
 
 			// parse 'extends'
@@ -54,7 +55,8 @@ public class ClassParseRule extends ParserUtil {
 			if (visitWord(Words.EXTENDS, tokenizer) != null) {
 				superClassType = visitType(tokenizer, false);
 				if (superClassType == null) {
-					throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
+					tokenizer.error("illegal start of type");
+					superClassType = Type.objectType;
 				}
 			} else if (!HiClass.OBJECT_CLASS_NAME.equals(className)) {
 				superClassType = Type.objectType;
@@ -66,19 +68,19 @@ public class ClassParseRule extends ParserUtil {
 			List<Type> interfacesList = null;
 			if (visitWord(Words.IMPLEMENTS, tokenizer) != null) {
 				Type interfaceType = visitType(tokenizer, false);
-				if (interfaceType == null) {
-					throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
-				}
-
-				interfacesList = new ArrayList<>(1);
-				interfacesList.add(interfaceType);
-
-				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-					interfaceType = visitType(tokenizer, false);
-					if (interfaceType == null) {
-						throw new HiScriptParseException("illegal start of type", tokenizer.currentToken());
-					}
+				if (interfaceType != null) {
+					interfacesList = new ArrayList<>(1);
 					interfacesList.add(interfaceType);
+					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+						interfaceType = visitType(tokenizer, false);
+						if (interfaceType != null) {
+							interfacesList.add(interfaceType);
+						} else {
+							tokenizer.error("illegal start of type");
+						}
+					}
+				} else {
+					tokenizer.error("illegal start of type");
 				}
 			}
 
@@ -181,7 +183,7 @@ public class ClassParseRule extends ParserUtil {
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
-					throw new HiScriptParseException("invalid method declaration; return type is expected", tokenizer.currentToken());
+					tokenizer.error("invalid method declaration; return type is expected");
 				}
 
 				tokenizer.commit();
@@ -312,7 +314,8 @@ public class ClassParseRule extends ParserUtil {
 		if (visitWordType(tokenizer, Words.THROWS) != -1) {
 			Type exceptionType = visitType(tokenizer, true);
 			if (exceptionType == null) {
-				throw new HiScriptParseException("identifier expected", tokenizer.currentToken());
+				tokenizer.error("identifier expected");
+				return null;
 			}
 			List<Type> exceptionTypesList = new ArrayList<>(1);
 			exceptionTypesList.add(exceptionType);
@@ -320,9 +323,10 @@ public class ClassParseRule extends ParserUtil {
 				tokenizer.nextToken();
 				exceptionType = visitType(tokenizer, true);
 				if (exceptionType == null) {
-					throw new HiScriptParseException("identifier expected", tokenizer.currentToken());
+					exceptionTypesList.add(exceptionType);
+				} else {
+					tokenizer.error("identifier expected");
 				}
-				exceptionTypesList.add(exceptionType);
 			}
 			exceptionTypes = exceptionTypesList.toArray(new Type[exceptionTypesList.size()]);
 		}

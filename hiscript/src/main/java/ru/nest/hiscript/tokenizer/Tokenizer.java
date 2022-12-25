@@ -1,6 +1,8 @@
 package ru.nest.hiscript.tokenizer;
 
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.ParserUtil;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +20,8 @@ public class Tokenizer {
 	private int len;
 
 	private String s;
+
+	private ValidationInfo validationInfo;
 
 	public String getText(int beginIndex, int endIndex) {
 		return s.substring(beginIndex, endIndex);
@@ -277,6 +281,29 @@ public class Tokenizer {
 			}
 		} catch (TokenizerException exc) {
 			exc.printStackTrace();
+		}
+	}
+
+	public ValidationInfo getValidationInfo() {
+		return validationInfo;
+	}
+
+	public void setValidationInfo(ValidationInfo validationInfo) {
+		this.validationInfo = validationInfo;
+	}
+
+	public void error(String message) throws HiScriptParseException {
+		error(message, currentToken());
+	}
+
+	public void error(String message, Token token) throws HiScriptParseException {
+		if (token == null && offset == len) {
+			token = new Token(line, offset - 1, 1, lineOffset);
+		}
+		if (validationInfo != null) {
+			validationInfo.error(message, token);
+		} else {
+			throw new HiScriptParseException(message, token);
 		}
 	}
 }

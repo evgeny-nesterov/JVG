@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
+import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -41,6 +42,9 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					isField = true;
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
+					isField = true;
+				} else if (tokenizer.currentToken() == null || checkSymbol(tokenizer, SymbolToken.BRACES_RIGHT) != -1) {
+					expectSymbol(tokenizer, Symbols.SEMICOLON);
 					isField = true;
 				}
 
@@ -91,7 +95,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	public HiNode expectInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		HiNode initializer = visitInitializer(tokenizer, type, dimensions, ctx);
 		if (initializer == null) {
-			throw new HiScriptParseException("initializer is expected", tokenizer.currentToken());
+			tokenizer.error("initializer is expected");
 		}
 		return initializer;
 	}

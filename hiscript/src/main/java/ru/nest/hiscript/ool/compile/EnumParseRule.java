@@ -35,7 +35,7 @@ public class EnumParseRule extends ParserUtil {
 
 			String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (enumName == null) {
-				throw new HiScriptParseException("enum name is expected", tokenizer.currentToken());
+				tokenizer.error("enum name is expected");
 			}
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
@@ -70,7 +70,7 @@ public class EnumParseRule extends ParserUtil {
 				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
 					break;
 				} else {
-					throw new HiScriptParseException("expected ',', '(' or ';'", tokenizer.currentToken());
+					tokenizer.error("expected ',', '(' or ';'");
 				}
 
 				enumName = expectWord(Words.NOT_SERVICE, tokenizer);

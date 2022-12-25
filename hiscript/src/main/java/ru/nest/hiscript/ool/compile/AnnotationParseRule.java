@@ -37,7 +37,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 
 					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					if (argValue == null) {
-						throw new HiScriptParseException("argument value expected", tokenizer.currentToken());
+						tokenizer.error("argument value expected");
 					}
 					args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 
@@ -47,7 +47,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 						expectSymbol(tokenizer, Symbols.EQUATE);
 						argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 						if (argValue == null) {
-							throw new HiScriptParseException("argument value expected", tokenizer.currentToken());
+							tokenizer.error("argument value expected");
 						}
 						args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 					}

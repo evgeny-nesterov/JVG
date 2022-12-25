@@ -184,7 +184,7 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
-			throw new HiScriptParseException("Duplicate nested type " + clazz.name, tokenizer.currentToken());
+			tokenizer.error("Duplicate nested type " + clazz.name);
 		}
 
 		classes.add(clazz);

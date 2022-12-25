@@ -81,7 +81,7 @@ public abstract class HiTest {
 	}
 
 	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
-		HiScript result = HiScript.create().compile(script).serialize().execute().printError();
+		HiScript result = HiScript.create().compile(script).serialize().execute().throwExceptionIf();
 		result.close();
 		return result;
 	}

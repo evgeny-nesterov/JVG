@@ -32,7 +32,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 		if (visitWord(Words.NEW, tokenizer) != null) {
 			Type type = visitType(tokenizer, false);
 			if (type == null) {
-				throw new HiScriptParseException("identifier is expected", tokenizer.currentToken());
+				tokenizer.error("identifier is expected");
 			}
 
 			int brace_type = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
@@ -40,7 +40,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 			switch (brace_type) {
 				case Symbols.PARENTHESES_LEFT:
 					if (type.isPrimitive()) {
-						throw new HiScriptParseException("'[' expected", tokenizer.currentToken());
+						tokenizer.error("'[' expected");
 					}
 					node = visitNewObject(tokenizer, type, ctx, startToken);
 					break;
@@ -87,7 +87,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 		HiNode index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (index == null) {
-			throw new HiScriptParseException("index is expected", tokenizer.currentToken());
+			tokenizer.error("index is expected");
 		}
 		expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
 		indexes.add(index);
@@ -113,7 +113,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 		HiNode value = visitArrayValue(tokenizer, type, dimensions, ctx);
 		if (value == null) {
-			throw new HiScriptParseException("dimension is expected", tokenizer.currentToken());
+			tokenizer.error("dimension is expected");
 		}
 		return value;
 	}
@@ -128,7 +128,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 					cell = visitCell(tokenizer, type, dimensions - 1, ctx);
 					if (cell == null) {
-						throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+						tokenizer.error("expression is expected");
 					}
 					list.add(cell);
 				}

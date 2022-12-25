@@ -61,7 +61,7 @@ public class ClassFileParseRule extends ParseRule<HiNode> {
 		}
 
 		if (tokenizer.hasNext()) {
-			throw new HiScriptParseException("unexpected token", tokenizer.currentToken());
+			tokenizer.error("unexpected token");
 		}
 		return classes;
 	}

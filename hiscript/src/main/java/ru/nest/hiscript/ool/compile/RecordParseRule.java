@@ -49,7 +49,7 @@ public class RecordParseRule extends ParserUtil {
 
 			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (recordName == null) {
-				throw new HiScriptParseException("record name is expected", tokenizer.currentToken());
+				tokenizer.error("record name is expected");
 			}
 
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
@@ -58,7 +58,7 @@ public class RecordParseRule extends ParserUtil {
 			Token token = tokenizer.currentToken();
 			visitArgumentsDefinitions(tokenizer, arguments, ctx);
 			if (arguments.size() == 0) {
-				throw new HiScriptParseException("record argument expected", token);
+				tokenizer.error("record argument expected", token);
 			}
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 

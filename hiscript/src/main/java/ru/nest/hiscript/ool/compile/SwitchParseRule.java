@@ -74,10 +74,11 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-				if (arg == null) {
-					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				if (arg != null) {
+					args.add(arg);
+				} else {
+					tokenizer.error("expression is expected");
 				}
-				args.add(arg);
 			}
 		}
 

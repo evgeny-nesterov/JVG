@@ -60,7 +60,7 @@ public class NodeMainWrapper extends HiNode {
 			}
 		}
 		this.ctx = ctx;
-		return body.validate(validationInfo, ctx);
+		return body != null ? body.validate(validationInfo, ctx) : false;
 	}
 
 	@Override
