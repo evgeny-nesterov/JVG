@@ -88,4 +88,13 @@ public class Token implements Codeable, TokenAccessible {
 	public Token getToken() {
 		return this;
 	}
+
+	public Token getInnerToken(Tokenizer tokenizer, String text) {
+		int innerOffset = tokenizer.indexOf(this, text);
+		if (innerOffset != -1) {
+			int line = this.line + tokenizer.getLinesCount(this.offset, innerOffset) - 1;
+			return new Token(line, innerOffset, text.length(), tokenizer.getLineOffset(innerOffset));
+		}
+		return null;
+	}
 }

@@ -51,7 +51,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				if (isField) {
 					tokenizer.commit();
 					Modifiers modifiers = annotatedModifiers.getModifiers();
-					checkModifiers(tokenizer, modifiers, FINAL, STATIC);
+					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), FINAL);
 
 					NodeDeclarations declarations = new NodeDeclarations();
 					declarations.add(type, varName, initializer, modifiers, annotatedModifiers.getAnnotations(), tokenizer.getBlockToken(startToken));
@@ -120,7 +120,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				}
 
 				tokenizer.commit();
-				checkModifiers(tokenizer, annotatedModifiers.getModifiers());
+				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken());
 
 				NodeDeclaration field = new NodeDeclaration(type, varName, initializer, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 				field.setToken(tokenizer.getBlockToken(startToken));

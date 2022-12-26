@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.OperationsGroup;
@@ -337,6 +336,7 @@ public class ParserUtil implements Words {
 	}
 
 	protected static AnnotatedModifiers visitAnnotatedModifiers(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		Token startToken = startToken(tokenizer);
 		Modifiers modifiers = null;
 		List<NodeAnnotation> annotations = null;
 		String word;
@@ -438,14 +438,11 @@ public class ParserUtil implements Words {
 			}
 			break;
 		}
-		return new AnnotatedModifiers(annotations != null ? annotations.toArray(new NodeAnnotation[annotations.size()]) : null, modifiers);
+		return new AnnotatedModifiers(annotations != null ? annotations.toArray(new NodeAnnotation[annotations.size()]) : null, modifiers, tokenizer.getBlockToken(startToken));
 	}
 
-	public static void checkModifiers(Tokenizer tokenizer, Modifiers m, int... allowed) throws HiScriptParseException {
-		int notAllowedModifier = m.check(allowed);
-		if (notAllowedModifier != -1) {
-			tokenizer.error("modifier '" + Modifiers.getName(notAllowedModifier) + "' is not allowed");
-		}
+	public static boolean checkModifiers(Tokenizer tokenizer, Modifiers m, Token modifiersToken, int... allowed) throws HiScriptParseException {
+		return m.check(tokenizer, modifiersToken, allowed);
 	}
 
 	protected static HiNode[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {

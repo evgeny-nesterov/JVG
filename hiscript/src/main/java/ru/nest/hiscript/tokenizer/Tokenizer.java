@@ -227,7 +227,13 @@ public class Tokenizer {
 	}
 
 	public Token getBlockToken(Token startToken) {
-		return currentToken != null ? new Token(startToken, currentToken) : new Token(startToken.getLine(), startToken.getOffset(), len - startToken.getOffset(), startToken.getLineOffset());
+		if (startToken == null) {
+			return null;
+		} else if (currentToken != null) {
+			return new Token(startToken, currentToken);
+		} else {
+			return new Token(startToken.getLine(), startToken.getOffset(), len - startToken.getOffset(), startToken.getLineOffset());
+		}
 	}
 
 	private Token searchToken() throws TokenizerException {
@@ -306,5 +312,32 @@ public class Tokenizer {
 		} else {
 			throw new HiScriptParseException(message, token);
 		}
+	}
+
+	public int indexOf(Token bounds, String text) {
+		int index = s.indexOf(text, bounds.getOffset());
+		return index < bounds.getOffset() + bounds.getLength() ? index : -1;
+	}
+
+	public int getLinesCount(int start, int end) {
+		int linesCount = 1;
+		for (int i = start; i < s.length() && i < end; i++) {
+			if (s.charAt(i) == '\n') {
+				linesCount++;
+			}
+		}
+		return linesCount;
+	}
+
+	public int getLineOffset(int offset) {
+		int lineOffset = 0;
+		for (int i = offset; i > 0; i--) {
+			if (s.charAt(i) == '\n') {
+				break;
+			} else {
+				lineOffset++;
+			}
+		}
+		return lineOffset;
 	}
 }

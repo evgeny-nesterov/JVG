@@ -45,7 +45,7 @@ public class RecordParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.RECORD, tokenizer) != null) {
 			tokenizer.commit();
-			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE, STATIC);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC);
 
 			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (recordName == null) {

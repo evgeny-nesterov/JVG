@@ -43,6 +43,14 @@ public abstract class HiTest {
 		}
 	}
 
+	public void assertSuccessCompile(String script) {
+		try {
+			compile(script);
+		} catch (Exception e) {
+			onFail(script, e.toString());
+		}
+	}
+
 	public void assertFail(String script, String message) {
 		try {
 			execute(script);

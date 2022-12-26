@@ -29,7 +29,7 @@ public class EnumParseRule extends ParserUtil {
 		if (visitWord(Words.ENUM, tokenizer) != null) {
 			tokenizer.commit();
 			Modifiers modifiers = annotatedModifiers.getModifiers();
-			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC);
+			checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC);
 			modifiers.setFinal(true);
 			modifiers.setStatic(true);
 

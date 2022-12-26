@@ -34,7 +34,7 @@ public class InterfaceParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
-			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
 
 			String interfaceName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (interfaceName == null) {
@@ -132,7 +132,7 @@ public class InterfaceParseRule extends ParserUtil {
 				tokenizer.commit();
 
 				Modifiers modifiers = annotatedModifiers.getModifiers();
-				checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
+				checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
 				modifiers.setFinal(true);
 				modifiers.setStatic(true);
 

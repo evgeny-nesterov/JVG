@@ -42,7 +42,7 @@ public class ClassParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.CLASS, tokenizer) != null) {
 			tokenizer.commit();
-			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT);
 
 			String className = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (className == null) {
@@ -187,7 +187,7 @@ public class ClassParseRule extends ParserUtil {
 				}
 
 				tokenizer.commit();
-				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), PUBLIC, PROTECTED, PRIVATE);
+				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE);
 				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
 
 				// visit arguments
@@ -273,7 +273,7 @@ public class ClassParseRule extends ParserUtil {
 					ctx.enter(RuntimeContext.METHOD, startToken);
 
 					Modifiers modifiers = annotatedModifiers.getModifiers();
-					checkModifiers(tokenizer, modifiers, allowed);
+					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), allowed);
 
 					List<NodeArgument> arguments = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, arguments, ctx);
@@ -356,7 +356,7 @@ public class ClassParseRule extends ParserUtil {
 				if (isField) {
 					tokenizer.commit();
 					Modifiers modifiers = annotatedModifiers.getModifiers();
-					checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
+					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
 
 					Type type = Type.getArrayType(baseType, addDimension);
 					HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));

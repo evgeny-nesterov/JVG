@@ -33,7 +33,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 			}
 
 			tokenizer.commit();
-			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), FINAL);
+			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
 			int addDimension = visitDimension(tokenizer);
 			type = Type.getArrayType(type, addDimension);

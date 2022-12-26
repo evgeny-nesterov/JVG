@@ -58,12 +58,12 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				HiNode catchBody;
 				List<Type> excTypes = new ArrayList<>(1);
 				String excName;
+				Token startCatchToken = startToken(tokenizer);
 				if (visitWord(Words.CATCH, tokenizer) != null) {
-					Token startCatchToken = startToken(tokenizer);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
-					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), FINAL);
+					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
 					Type excType = visitObjectType(tokenizer);
 					// TODO check excType extends Exception

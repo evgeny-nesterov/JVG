@@ -33,8 +33,9 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
+
 			Modifiers modifiers = annotatedModifiers.getModifiers();
-			checkModifiers(tokenizer, modifiers, PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
+			checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC, ABSTRACT);
 			modifiers.setStatic(true);
 			modifiers.setAbstract(true);
 
@@ -97,7 +98,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					tokenizer.commit();
 					ctx.enter(RuntimeContext.METHOD, startToken);
 
-					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), allowed);
+					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), allowed);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					HiNode defaultValue = null;

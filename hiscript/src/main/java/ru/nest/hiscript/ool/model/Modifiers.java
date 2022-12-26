@@ -1,7 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.tokenizer.Token;
+import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.Words;
 
 import java.io.IOException;
@@ -220,6 +223,51 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return modifiers;
 	}
 
+	public boolean check(Tokenizer tokenizer, Token modifiersToken, int... allowed) throws HiScriptParseException {
+		int allowedMask = ACCESS_DEFAULT;
+		for (int word : allowed) {
+			allowedMask |= mapWordsToModification(word);
+		}
+
+		boolean valid = true;
+		if ((allowedMask & access) == 0) {
+			Token token = Modifiers.getToken(tokenizer, access, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(access) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isFinal && (allowedMask & FINAL) == 0) {
+			Token token = Modifiers.getToken(tokenizer, FINAL, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(FINAL) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isStatic && (allowedMask & STATIC) == 0) {
+			Token token = Modifiers.getToken(tokenizer, STATIC, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(STATIC) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isAbstract && (allowedMask & ABSTRACT) == 0) {
+			Token token = Modifiers.getToken(tokenizer, ABSTRACT, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(ABSTRACT) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isNative && (allowedMask & NATIVE) == 0) {
+			Token token = Modifiers.getToken(tokenizer, NATIVE, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(NATIVE) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isDefault && (allowedMask & DEFAULT) == 0) {
+			Token token = Modifiers.getToken(tokenizer, DEFAULT, modifiersToken);
+			tokenizer.error("modifier '" + Modifiers.getName(DEFAULT) + "' is not allowed", token);
+			valid = false;
+		}
+		return valid;
+	}
+
 	public int check(int... allowed) {
 		int allowedMask = ACCESS_DEFAULT;
 		for (int word : allowed) {
@@ -250,5 +298,13 @@ public class Modifiers implements ModifiersIF, Codeable {
 			return DEFAULT;
 		}
 		return -1;
+	}
+
+	public static Token getToken(Tokenizer tokenizer, int modifier, Token modifiersToken) {
+		if (modifiersToken == null) {
+			return null;
+		}
+		String modifierName = Modifiers.getName(modifier);
+		return modifiersToken.getInnerToken(tokenizer, modifierName);
 	}
 }
