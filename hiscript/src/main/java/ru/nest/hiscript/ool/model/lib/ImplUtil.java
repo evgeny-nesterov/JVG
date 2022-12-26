@@ -49,8 +49,8 @@ public class ImplUtil {
 	}
 
 	public static String getString(RuntimeContext ctx, HiObject string) {
-		HiField<?> field = string.getField(ctx, "chars");
-		return new String((char[]) field.get());
+		char[] chars = getChars(ctx, string);
+		return chars != null ? new String(chars) : null;
 	}
 
 	public static char[] getChars(RuntimeContext ctx, HiObject string) {

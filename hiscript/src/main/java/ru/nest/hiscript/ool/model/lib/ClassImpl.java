@@ -11,12 +11,12 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 public class ClassImpl extends ImplUtil {
 	public static void Class_String_getName(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeString.createString(ctx, clazz.name.toCharArray());
+		NodeString.createString(ctx, clazz.name);
 	}
 
 	public static void Class_String_getFullName(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeString.createString(ctx, clazz.fullName.toCharArray());
+		NodeString.createString(ctx, clazz.fullName);
 	}
 
 	public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {

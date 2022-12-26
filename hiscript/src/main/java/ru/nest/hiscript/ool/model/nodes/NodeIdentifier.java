@@ -92,6 +92,10 @@ public class NodeIdentifier extends HiNode {
 		if (resolveClass(ctx, value)) {
 			return true;
 		}
+
+		if (ctx.root != null) {
+			return resolve(ctx.root, value, checkInitialization);
+		}
 		return false;
 	}
 

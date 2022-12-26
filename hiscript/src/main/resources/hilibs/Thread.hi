@@ -4,13 +4,17 @@ public class Thread {
   }
 
   public Thread() {
-    init();
+    init(null);
+  }
+
+  public Thread(String name) {
+    init(name);
   }
 
   public void run() {
   }
 
-  private native void init();
+  private native void init(String name);
 
   public native void start();
 

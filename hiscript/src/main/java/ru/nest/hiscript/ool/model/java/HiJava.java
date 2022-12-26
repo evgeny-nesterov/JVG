@@ -19,7 +19,7 @@ public class HiJava {
 		} else if (javaObject instanceof Number || javaObject instanceof Boolean || javaObject instanceof Character) {
 			return javaObject;
 		} else if (javaObject instanceof String) {
-			return NodeString.createString(ctx, ((String) javaObject).toCharArray());
+			return NodeString.createString(ctx, (String) javaObject);
 		} else if (javaObject instanceof Map) {
 			return convertMapFromJava(ctx, (Map) javaObject);
 		} else if (javaObject instanceof List) {

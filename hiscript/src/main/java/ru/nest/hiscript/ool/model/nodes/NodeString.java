@@ -46,6 +46,10 @@ public class NodeString extends HiNode {
 		createString(ctx, chars);
 	}
 
+	public static HiObject createString(RuntimeContext ctx, String text) {
+		return createString(ctx, text.toCharArray());
+	}
+
 	public static HiObject createString(RuntimeContext ctx, char[] text) {
 		if (clazz == null) {
 			clazz = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);

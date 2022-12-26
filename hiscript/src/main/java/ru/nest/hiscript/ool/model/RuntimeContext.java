@@ -161,7 +161,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		HiField<?>[] args = new HiField<?>[1];
 		args[0] = HiField.getField(Type.stringType, "msg", null);
-		NodeString.createString(this, message.toCharArray());
+		NodeString.createString(this, message);
 		args[0].set(this, value);
 		args[0].initialized = true;
 
@@ -319,6 +319,17 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		// check local enclosing classes
 		if (var == null) {
+			while (level != null) {
+				var = level.getVariable(name);
+				if (var != null) {
+					break;
+				}
+				level = level.parent;
+			}
+		}
+
+		// TODO remove?
+		if (var == null) {
 			HiClass clazz = this.level.clazz;
 			while (clazz != null) {
 				HiField<?> field = getLocalVariable(clazz, name);
@@ -405,7 +416,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public HiObject getCurrentObject() {
-		return level != null ? level.object : null;
+		return level != null ? (level.object != null ? level.object.getMainObject() : null) : null;
 	}
 
 	public HiObject getOutboundObject(HiClass clazz) {
@@ -762,14 +773,14 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 			array[i] = steConstructor.newInstance(this, null, null);
 
-			NodeString.createString(this, level.clazz.fullName.toCharArray());
+			NodeString.createString(this, level.clazz.fullName);
 			array[i].getField(this, "className").set(this, value);
 
 			if (level.method != null) {
-				NodeString.createString(this, level.method.toString().toCharArray());
+				NodeString.createString(this, level.method.toString());
 				array[i].getField(this, "methodName").set(this, value);
 			} else {
-				NodeString.createString(this, "<init>".toCharArray());
+				NodeString.createString(this, "<init>");
 				array[i].getField(this, "methodName").set(this, value);
 			}
 

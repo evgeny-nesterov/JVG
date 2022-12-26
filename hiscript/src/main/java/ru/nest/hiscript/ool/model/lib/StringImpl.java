@@ -9,64 +9,103 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class StringImpl extends ImplUtil {
 	public static void String_int_length(RuntimeContext ctx) {
-		char[] chars = getChars(ctx, ctx.value.object);
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
-		ctx.value.intNumber = chars.length;
+		returnInt(ctx, getChars(ctx, ctx.value.object).length);
+	}
+
+	public static void String_int_indexOf_int(RuntimeContext ctx, int ch) {
+		returnInt(ctx, getString(ctx, ctx.value.object).indexOf(ch));
+	}
+
+	public static void String_int_indexOf_String(RuntimeContext ctx, HiObject string) {
+		String s = getString(ctx, string);
+		returnInt(ctx, getString(ctx, ctx.value.object).indexOf(s));
+	}
+
+	public static void String_int_indexOf_int_int(RuntimeContext ctx, int ch, int fromIndex) {
+		returnInt(ctx, getString(ctx, ctx.value.object).indexOf(ch, fromIndex));
 	}
 
 	public static void String_int_indexOf_String_int(RuntimeContext ctx, HiObject string, int fromIndex) {
-		String s1 = getString(ctx, ctx.value.object);
-		String s2 = getString(ctx, string);
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
-		ctx.value.intNumber = s1.indexOf(s2, fromIndex);
+		String s = getString(ctx, string);
+		returnInt(ctx, getString(ctx, ctx.value.object).indexOf(s, fromIndex));
+	}
+
+	public static void String_int_lastIndexOf_int(RuntimeContext ctx, int ch) {
+		returnInt(ctx, getString(ctx, ctx.value.object).lastIndexOf(ch));
+	}
+
+	public static void String_int_lastIndexOf_String(RuntimeContext ctx, HiObject string) {
+		String s = getString(ctx, string);
+		returnInt(ctx, getString(ctx, ctx.value.object).lastIndexOf(s));
+	}
+
+	public static void String_int_lastIndexOf_int_int(RuntimeContext ctx, int ch, int fromIndex) {
+		returnInt(ctx, getString(ctx, ctx.value.object).lastIndexOf(ch, fromIndex));
 	}
 
 	public static void String_int_lastIndexOf_String_int(RuntimeContext ctx, HiObject string, int fromIndex) {
-		String s1 = getString(ctx, ctx.value.object);
-		String s2 = getString(ctx, string);
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
-		ctx.value.intNumber = s1.lastIndexOf(s2, fromIndex);
+		String s = getString(ctx, string);
+		returnInt(ctx, getString(ctx, ctx.value.object).lastIndexOf(s, fromIndex));
+	}
+
+	public static void String_String_substring_int(RuntimeContext ctx, int beginIndex) {
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).substring(beginIndex));
 	}
 
 	public static void String_String_substring_int_int(RuntimeContext ctx, int beginIndex, int endIndex) {
-		String s = getString(ctx, ctx.value.object);
-		s = s.substring(beginIndex, endIndex);
-		NodeString.createString(ctx, s.toCharArray());
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).substring(beginIndex, endIndex));
 	}
 
 	public static void String_String_toLowerCase(RuntimeContext ctx) {
-		String s = getString(ctx, ctx.value.object);
-		s = s.toLowerCase();
-		NodeString.createString(ctx, s.toCharArray());
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).toLowerCase());
 	}
 
 	public static void String_String_toUpperCase(RuntimeContext ctx) {
-		String s = getString(ctx, ctx.value.object);
-		s = s.toUpperCase();
-		NodeString.createString(ctx, s.toCharArray());
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).toUpperCase());
 	}
 
 	public static void String_String_replace_char_char(RuntimeContext ctx, char c1, char c2) {
-		String s = getString(ctx, ctx.value.object);
-		s = s.replace(c1, c2);
-		NodeString.createString(ctx, s.toCharArray());
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).replace(c1, c2));
 	}
 
 	public static void String_String_replace_String_String(RuntimeContext ctx, HiObject s1, HiObject s2) {
-		String s = getString(ctx, ctx.value.object);
-		String _s1 = new String(getChars(ctx, s1));
-		String _s2 = new String(getChars(ctx, s2));
-		s = s.replace(_s1, _s2);
-		NodeString.createString(ctx, s.toCharArray());
+		String target = getString(ctx, s1);
+		String replacement = getString(ctx, s2);
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).replace(target, replacement));
+	}
+
+	public static void String_String_replaceAll_String_String(RuntimeContext ctx, HiObject s1, HiObject s2) {
+		String regex = getString(ctx, s1);
+		String replacement = getString(ctx, s2);
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).replaceAll(regex, replacement));
+	}
+
+	public static void String_String_replaceFirst_String_String(RuntimeContext ctx, HiObject s1, HiObject s2) {
+		String regex = getString(ctx, s1);
+		String replacement = getString(ctx, s2);
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).replaceFirst(regex, replacement));
 	}
 
 	public static void String_String_trim(RuntimeContext ctx) {
-		String s = getString(ctx, ctx.value.object);
-		s = s.trim();
-		NodeString.createString(ctx, s.toCharArray());
+		NodeString.createString(ctx, getString(ctx, ctx.value.object).trim());
+	}
+
+	public static void String_char_charAt_int(RuntimeContext ctx, int index) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = HiClassPrimitive.CHAR.getArrayClass();
+		ctx.value.array = getString(ctx, ctx.value.object).charAt(index);
+	}
+
+	public static void String_0char_toCharArray(RuntimeContext ctx) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = HiClassPrimitive.CHAR.getArrayClass();
+		ctx.value.array = getString(ctx, ctx.value.object).toCharArray();
+	}
+
+	public static void String_0byte_getBytes(RuntimeContext ctx) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = HiClassPrimitive.BYTE.getArrayClass();
+		ctx.value.array = getString(ctx, ctx.value.object).getBytes();
 	}
 
 	public static void String_boolean_equals_Object(RuntimeContext ctx, HiObject o) {
@@ -94,11 +133,7 @@ public class StringImpl extends ImplUtil {
 		ctx.value.bool = equals;
 	}
 
-
 	public static void String_int_hashCode(RuntimeContext ctx) {
-		String s = getString(ctx, ctx.value.object);
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
-		ctx.value.intNumber = s.hashCode();
+		returnInt(ctx, getString(ctx, ctx.value.object).hashCode());
 	}
 }

@@ -29,7 +29,7 @@ public class ThreadImpl extends ImplUtil {
 
 	public static class Run implements Runnable {
 		public Run(RuntimeContext ctx, HiObject object) {
-			this.object = object;
+			this.object = object; // object fot thread
 			newCtx = new RuntimeContext(ctx);
 		}
 
@@ -39,10 +39,13 @@ public class ThreadImpl extends ImplUtil {
 
 		@Override
 		public void run() {
+			object = object.getMainObject(); // if class is anonymous
 			newCtx.currentThread = object;
 			newCtx.enterStart(object);
 			try {
 				NodeInvocation.invoke(newCtx, object, "run");
+			} catch (Throwable e) {
+				e.printStackTrace();
 			} finally {
 				newCtx.exit();
 				newCtx.close();
@@ -50,9 +53,10 @@ public class ThreadImpl extends ImplUtil {
 		}
 	}
 
-	public static void Thread_void_init(RuntimeContext ctx) {
+	public static void Thread_void_init_String(RuntimeContext ctx, HiObject name) {
+		String n = getString(ctx, name);
 		HiObject o = ctx.getCurrentObject();
-		o.userObject = new Thread(new Run(ctx, o));
+		o.userObject = n != null ? new Thread(new Run(ctx, o), n) : new Thread(new Run(ctx, o));
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.VOID;
