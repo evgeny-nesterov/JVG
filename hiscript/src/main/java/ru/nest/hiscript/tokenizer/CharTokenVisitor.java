@@ -18,7 +18,6 @@ public class CharTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 			return new CharToken(c, line, offset, tokenizer.getOffset() - 1 - offset, lineOffset);
 		}
-
 		return null;
 	}
 
@@ -66,7 +65,7 @@ public class CharTokenVisitor implements TokenVisitor {
 					int size = 0;
 					int value = 0;
 					while (tokenizer.hasNext()) {
-						char next = tokenizer.look_forward();
+						char next = tokenizer.lookForward();
 						if (next >= '0' && next <= '9') {
 							value = 16 * value + next - '0';
 							size++;
@@ -98,12 +97,12 @@ public class CharTokenVisitor implements TokenVisitor {
 					if (c >= '0' && c <= '7') {
 						value = c - '0';
 
-						char next = tokenizer.look_forward();
+						char next = tokenizer.lookForward();
 						if (next >= '0' && next <= '7') {
 							tokenizer.next();
 							value = 8 * value + next - '0';
 
-							next = tokenizer.look_forward();
+							next = tokenizer.lookForward();
 							if (next >= '0' && next <= '7') {
 								tokenizer.next();
 								value = 8 * value + next - '0';

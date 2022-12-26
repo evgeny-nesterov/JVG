@@ -26,6 +26,44 @@ public class NumberTokenVisitor implements TokenVisitor {
 		}
 
 		int offset = tokenizer.getOffset();
+
+		// hex
+		if (tokenizer.getCurrent() == '0' && tokenizer.lookForward() == 'x') {
+			tokenizer.next();
+			tokenizer.next();
+			char c = tokenizer.getCurrent();
+			long value = c;
+			if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+				tokenizer.next();
+				while (tokenizer.hasNext()) {
+					c = tokenizer.getCurrent();
+					if (c >= '0' && c <= '9') {
+						value = 16 * value + c - '0';
+					} else if (c >= 'a' && c <= 'f') {
+						value = 16 * value + 10 + c - 'a';
+					} else if (c >= 'A' && c <= 'F') {
+						value = 16 * value + 10 + c - 'A';
+					} else {
+						break;
+					}
+					tokenizer.nextToken();
+				}
+			} else {
+				throw new TokenizerException("Invalid number value", line, offset, tokenizer.getOffset() - offset, lineOffset);
+			}
+
+			if (tokenizer.lookForward() == 'l' || tokenizer.lookForward() == 'L') {
+				tokenizer.next();
+				return new LongToken(value, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
+			} else {
+				if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
+					return new IntToken((int) value, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
+				} else {
+					throw new TokenizerException("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				}
+			}
+		}
+
 		boolean hasIntegerPart = visitInteger(tokenizer);
 
 		boolean hasPoint = false;
@@ -83,7 +121,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 		}
 
 		String text = tokenizer.getText(offset, tokenizer.getOffset() - (isLong || isFloat || isDouble ? 1 : 0), '_');
-
 		if (isLong) {
 			long number;
 			try {
@@ -174,6 +211,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 	}
 
 	private boolean visitInteger(Tokenizer tokenizer) {
+		// decimal or octal (0x)
 		boolean found = false;
 		if (tokenizer.hasNext() && tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') {
 			found = true;
@@ -196,5 +234,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 	public static void main(String[] args) {
 		System.out.println(Double.parseDouble(".1E+2"));
 		System.out.println(Double.parseDouble(".1E-2"));
+		System.out.println(Integer.decode("0xff"));
 	}
 }

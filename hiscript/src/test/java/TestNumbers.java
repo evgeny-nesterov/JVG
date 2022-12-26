@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 public class TestNumbers extends HiTest {
 	@Test
 	public void testNumbersDeclarations() {
-		assertCondition("int a = 1;", "a == 1", "int");
+		assertSuccess("int a = 1; assert a == 1;");
 		assertCondition("int a = + -  + -+ -1;", "a == -1", "int");
 		assertFail("int a = 1.;", "int");
 		assertFail("int a = 1.0;", "int");
@@ -112,6 +112,20 @@ public class TestNumbers extends HiTest {
 		assertCondition("byte a = (short)1;", "a == 1", "byte");
 		assertCondition("byte a = (char)1;", "a == 1", "byte");
 		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
+	}
+
+	@Test
+	public void testHex() {
+		assertSuccess("int a = 0x01; assert a == 1;");
+		assertSuccess("int a = 0x0f; assert a == 15;");
+		assertSuccess("int a = 0x0F; assert a == 15;");
+		assertSuccess("long a = 0xffL; assert a == 255;");
+	}
+
+	@Test
+	public void testChars() {
+		assertSuccessSerialize("char c = '\\u0030'; assert c == '0'; assert c == 48;");
+		assertSuccessSerialize("char c = '\\uFFEE'; assert c == '￮'; assert c == 65518;");
 	}
 
 	@Test

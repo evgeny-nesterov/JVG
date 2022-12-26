@@ -105,7 +105,7 @@ public class Tokenizer {
 		}
 	}
 
-	protected char look_forward() {
+	protected char lookForward() {
 		if (offset < len - 1) {
 			return s.charAt(offset + 1);
 		} else {

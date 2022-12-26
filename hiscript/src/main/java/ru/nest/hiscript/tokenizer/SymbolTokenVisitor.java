@@ -41,9 +41,9 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '.':
-				if (tokenizer.look_forward() == '.') {
+				if (tokenizer.lookForward() == '.') {
 					tokenizer.next();
-					if (tokenizer.look_forward() == '.') {
+					if (tokenizer.lookForward() == '.') {
 						tokenizer.next();
 						type = Symbols.TRIPLE_POINTS;
 						length = 3;
@@ -60,9 +60,9 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '"':
-				if (tokenizer.look_forward() == '.') {
+				if (tokenizer.lookForward() == '.') {
 					tokenizer.next();
-					if (tokenizer.look_forward() == '.') {
+					if (tokenizer.lookForward() == '.') {
 						tokenizer.next();
 						type = Symbols.TRIPLE_DOUBLE_QUOTES;
 						length = 3;
@@ -79,7 +79,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '/':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_DIVIDE;
 					length = 2;
@@ -89,7 +89,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '*':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_MULTIPLY;
 					length = 2;
@@ -103,7 +103,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '!':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.NOT_EQUALS;
 					length = 2;
@@ -113,7 +113,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '^':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_BITWISE_XOR;
 					length = 2;
@@ -123,7 +123,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '%':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_PERCENT;
 					length = 2;
@@ -133,11 +133,11 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '+':
-				if (tokenizer.look_forward() == '+') {
+				if (tokenizer.lookForward() == '+') {
 					tokenizer.next();
 					type = Symbols.PLUS_PLUS;
 					length = 2;
-				} else if (tokenizer.look_forward() == '=') {
+				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_PLUS;
 					length = 2;
@@ -147,15 +147,15 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '-':
-				if (tokenizer.look_forward() == '-') {
+				if (tokenizer.lookForward() == '-') {
 					tokenizer.next();
 					type = Symbols.MINUS_MINUS;
 					length = 2;
-				} else if (tokenizer.look_forward() == '=') {
+				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_MINUS;
 					length = 2;
-				} else if (tokenizer.look_forward() == '>') {
+				} else if (tokenizer.lookForward() == '>') {
 					tokenizer.next();
 					type = Symbols.REFERENCE;
 					length = 2;
@@ -165,13 +165,13 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '>':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.GREATER_OR_EQUAL;
 					length = 2;
-				} else if (tokenizer.look_forward() == '>') {
+				} else if (tokenizer.lookForward() == '>') {
 					tokenizer.next();
-					if (tokenizer.look_forward() == '=') {
+					if (tokenizer.lookForward() == '=') {
 						tokenizer.next();
 						type = Symbols.EQUATE_BITWISE_SHIFT_RIGHT;
 						length = 3;
@@ -185,13 +185,13 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '<':
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.LOWER_OR_EQUAL;
 					length = 2;
-				} else if (tokenizer.look_forward() == '<') {
+				} else if (tokenizer.lookForward() == '<') {
 					tokenizer.next();
-					if (tokenizer.look_forward() == '=') {
+					if (tokenizer.lookForward() == '=') {
 						tokenizer.next();
 						type = Symbols.EQUATE_BITWISE_SHIFT_LEFT;
 						length = 3;
@@ -206,7 +206,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 
 			case '=':
 				length = 2;
-				if (tokenizer.look_forward() == '=') {
+				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUALS;
 					length = 2;
@@ -216,11 +216,11 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '&':
-				if (tokenizer.look_forward() == '&') {
+				if (tokenizer.lookForward() == '&') {
 					tokenizer.next();
 					type = Symbols.LOGICAL_AND;
 					length = 2;
-				} else if (tokenizer.look_forward() == '=') {
+				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_BITWISE_AND;
 					length = 2;
@@ -230,11 +230,11 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '|':
-				if (tokenizer.look_forward() == '|') {
+				if (tokenizer.lookForward() == '|') {
 					tokenizer.next();
 					type = Symbols.LOGICAL_OR;
 					length = 2;
-				} else if (tokenizer.look_forward() == '=') {
+				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
 					type = Symbols.EQUATE_BITWISE_OR;
 					length = 2;
@@ -244,7 +244,7 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case '[':
-				if (tokenizer.look_forward() == ']') {
+				if (tokenizer.lookForward() == ']') {
 					tokenizer.next();
 					type = Symbols.MASSIVE;
 					length = 2;
