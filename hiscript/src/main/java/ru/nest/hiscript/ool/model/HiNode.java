@@ -178,6 +178,8 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	private boolean isConstant;
 
+	private HiNode resolvedValueVariable;
+
 	@Override
 	public String toString() {
 		return name;
@@ -195,11 +197,15 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valueClass == null) {
+			ctx.nodeValueType.resolvedValueVariable = null;
+
 			computeValueType(validationInfo, ctx);
+
 			valueClass = ctx.nodeValueType.type;
 			valid = ctx.nodeValueType.valid;
 			isValue = ctx.nodeValueType.isValue;
 			isConstant = ctx.nodeValueType.isConstant;
+			resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
 
 			if (valueClass != null) {
 				valueClass.init(ctx);
@@ -207,7 +213,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant);
+			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant, resolvedValueVariable);
 		}
 		return ctx.nodeValueType;
 	}
@@ -233,11 +239,12 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 	}
 
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = null;
 		HiClass clazz = computeValueClass(validationInfo, ctx);
 		boolean valid = clazz != null;
 		boolean isValue = isValue() && (valid ? clazz != HiClassPrimitive.VOID : false);
 		boolean isConstant = (valid ? clazz != HiClassPrimitive.VOID : false) && isConstant(ctx);
-		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant);
+		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant, ctx.nodeValueType.resolvedValueVariable);
 	}
 
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {

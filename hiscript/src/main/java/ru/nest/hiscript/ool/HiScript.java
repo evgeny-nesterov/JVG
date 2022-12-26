@@ -103,7 +103,9 @@ public class HiScript implements AutoCloseable {
 
 	public HiScript throwExceptionIf() throws HiScriptValidationException {
 		compiler.getValidationInfo().throwExceptionIf();
-		ctx.throwExceptionIf(compiler.isVerbose());
+		if (ctx != null) {
+			ctx.throwExceptionIf(compiler.isVerbose());
+		}
 		return this;
 	}
 

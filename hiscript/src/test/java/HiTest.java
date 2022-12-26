@@ -73,6 +73,16 @@ public abstract class HiTest {
 		}
 	}
 
+	public void assertFailCompile(String script) {
+		try {
+			compile(script);
+			onFail(script, "fail");
+		} catch (TokenizerException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+		}
+	}
+
 	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		HiScript result = HiScript.create().compile(script).execute().printError();
 		result.close();
@@ -86,7 +96,7 @@ public abstract class HiTest {
 	}
 
 	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
-		return HiScript.create().compile(script);
+		return HiScript.create().compile(script).throwExceptionIf();
 	}
 
 	private void onFail(String script, String message) {

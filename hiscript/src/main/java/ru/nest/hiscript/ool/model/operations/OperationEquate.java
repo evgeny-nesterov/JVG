@@ -6,8 +6,11 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -31,11 +34,37 @@ public class OperationEquate extends BinaryOperation {
 	@Override
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 		NodeValueType node1 = nodes[0];
-		if (node1.node instanceof NodeIdentifier) {
-			NodeIdentifier identifierNode = (NodeIdentifier) node1.node;
+		HiNode node = node1.node != null ? node1.node : node1.resolvedValueVariable;
+		HiNode fieldNode = null;
+		Modifiers modifiers = null;
+		if (node instanceof NodeIdentifier) {
+			NodeIdentifier identifierNode = (NodeIdentifier) node;
 			Object resolvedIdentifier = ctx.resolveIdentifier(identifierNode.getName());
-			if (resolvedIdentifier instanceof HiNode) {
+			if (resolvedIdentifier instanceof HiField) {
+				HiField field = (HiField) resolvedIdentifier;
+				modifiers = field.getModifiers();
+				fieldNode = field;
+			} else if (resolvedIdentifier instanceof NodeDeclaration) {
+				NodeDeclaration declaration = ((NodeDeclaration) resolvedIdentifier);
+				modifiers = declaration.modifiers;
+				fieldNode = declaration;
+			} else if (resolvedIdentifier instanceof NodeArgument) {
+				NodeArgument argument = ((NodeArgument) resolvedIdentifier);
+				modifiers = argument.modifiers;
+				fieldNode = argument;
+			} else if (resolvedIdentifier instanceof HiNode) {
 				ctx.initializedNodes.add((HiNode) resolvedIdentifier);
+			}
+		} else if (node instanceof HiField) {
+			HiField field = (HiField) node;
+			modifiers = field.getModifiers();
+			fieldNode = node;
+		}
+		if (modifiers != null) {
+			if (modifiers.isFinal() && ctx.initializedNodes.contains(fieldNode)) {
+				validationInfo.error("can't assign value to final variable", node.getToken());
+			} else {
+				ctx.initializedNodes.add(fieldNode);
 			}
 		}
 		super.getOperationResultType(validationInfo, ctx, nodes);

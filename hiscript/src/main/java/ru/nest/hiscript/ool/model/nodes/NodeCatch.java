@@ -15,12 +15,18 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeCatch extends HiNode {
-	public NodeCatch(Type[] excTypes, HiNode catchBody, String excName) {
+	public NodeCatch(Type[] excTypes, HiNode catchBody, String excName, Modifiers modifiers, NodeAnnotation[] annotations) {
 		super("catch", TYPE_CATCH);
 		this.excTypes = excTypes;
 		this.catchBody = catchBody;
 		this.excName = excName; // .intern();
+		this.modifiers = modifiers; // .intern();
+		this.annotations = annotations; // .intern();
 	}
+
+	public Modifiers modifiers;
+
+	public NodeAnnotation[] annotations;
 
 	public Type[] excTypes;
 
@@ -71,7 +77,7 @@ public class NodeCatch extends HiNode {
 			}
 		}
 
-		NodeArgument field = new NodeArgument(excTypes[0], excName, new Modifiers(), null);
+		NodeArgument field = new NodeArgument(excTypes[0], excName, modifiers, annotations);
 		field.setToken(token);
 		valid &= field.validate(validationInfo, ctx);
 
@@ -96,7 +102,7 @@ public class NodeCatch extends HiNode {
 				if (catchBody != null) {
 					ctx.enter(RuntimeContext.CATCH, token);
 
-					HiFieldObject exc = (HiFieldObject) HiField.getField(excTypes[index], excName);
+					HiFieldObject exc = (HiFieldObject) HiField.getField(excTypes[index], excName, null);
 					exc.set(exception);
 					exc.initialized = true;
 
@@ -115,12 +121,14 @@ public class NodeCatch extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
+		modifiers.code(os);
+		os.writeShortArray(annotations);
 		os.writeTypes(excTypes);
 		os.writeNullable(catchBody);
 		os.writeUTF(excName);
 	}
 
 	public static NodeCatch decode(DecodeContext os) throws IOException {
-		return new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF());
+		return new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
 	}
 }

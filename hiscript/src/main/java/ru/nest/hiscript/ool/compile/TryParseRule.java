@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.HiScriptParseException;
+import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeCatch;
@@ -60,6 +61,10 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				if (visitWord(Words.CATCH, tokenizer) != null) {
 					Token startCatchToken = startToken(tokenizer);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+
+					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), FINAL);
+
 					Type excType = visitObjectType(tokenizer);
 					// TODO check excType extends Exception
 					excTypes.add(excType);
@@ -82,7 +87,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 						catchNodes = new ArrayList<>(1);
 					}
 
-					NodeCatch catchNode = new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName);
+					NodeCatch catchNode = new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 					catchNode.setToken(tokenizer.getBlockToken(startCatchToken));
 					catchNodes.add(catchNode);
 				} else {

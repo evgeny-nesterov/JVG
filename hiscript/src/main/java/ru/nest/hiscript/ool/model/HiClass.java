@@ -406,6 +406,12 @@ public class HiClass implements Codeable, TokenAccessible {
 			for (NodeInitializer initializer : initializers) {
 				valid &= ((HiNode) initializer).validate(validationInfo, ctx);
 				if (initializer instanceof HiField) {
+					HiField field = (HiField) initializer;
+					if (field.getModifiers().isFinal() && field.initializer == null) {
+						// TODO check initialization in all constructors
+						validationInfo.error("Variable '" + field.name + "' might not have been initialized", field.getToken());
+						valid = false;
+					}
 					ctx.initializedNodes.add((HiNode) initializer);
 				}
 			}

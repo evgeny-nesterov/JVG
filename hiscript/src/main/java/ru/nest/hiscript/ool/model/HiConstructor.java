@@ -322,8 +322,8 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeShortArray(annotations);
 		os.writeToken(token);
+		os.writeShortArray(annotations);
 		modifiers.code(os);
 		os.writeByte(arguments != null ? arguments.length : 0);
 		os.writeNullable(arguments);
@@ -335,8 +335,8 @@ public class HiConstructor implements Codeable, TokenAccessible {
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
-		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Token token = os.readToken();
+		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());

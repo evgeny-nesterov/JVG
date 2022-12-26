@@ -85,7 +85,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	@Override
 	public void execute(RuntimeContext ctx) {
 		// TODO keep in field only runtime annotations
-		HiField<?> field = HiField.getField(type, name, initialization);
+		HiField<?> field = HiField.getField(type, name, initialization, token);
 		field.setModifiers(modifiers);
 
 		try {

@@ -77,7 +77,7 @@ public class RecordParseRule extends ParserUtil {
 			record.defaultConstructor.body = defaultConstructorBody;
 
 			for (NodeArgument argument : arguments) {
-				HiField field = HiField.getField(argument.getType(), argument.getVariableName());
+				HiField field = HiField.getField(argument.getType(), argument.getVariableName(), argument.getToken());
 				field.getModifiers().setAccess(ModifiersIF.ACCESS_PRIVATE);
 				ctx.addField(field);
 

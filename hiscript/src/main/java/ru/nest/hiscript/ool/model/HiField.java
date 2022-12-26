@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -202,47 +203,34 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		return getConstructor(type) != null;
 	}
 
-	public static HiField<?> getField(Type type, String name) {
-		if (type.isArray()) {
-			return new HiFieldArray(type, name);
-		}
-
-		if (type == Type.varType) {
-			return new HiFieldVar(type, name);
-		}
-
-		if (!type.isPrimitive()) {
-			return new HiFieldObject(type, name);
-		}
-
-		java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(type.name);
-		if (constructor != null) {
-			try {
-				return constructor.newInstance(name);
-			} catch (Exception exc) {
-				exc.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	public static HiField<?> getField(Type type, String name, HiNode initializer) {
-		HiField<?> field = null;
+	public static HiField<?> getField(Type type, String name, Token token) {
+		HiField field;
 		if (type.isArray()) {
 			field = new HiFieldArray(type, name);
 		} else if (type == Type.varType) {
 			field = new HiFieldVar(type, name);
 		} else if (type.isPrimitive()) {
-			java.lang.reflect.Constructor<HiField<?>> constr = getConstructor(type.name);
-			try {
-				field = constr.newInstance(name);
-			} catch (Throwable exc) {
-				exc.printStackTrace();
+			java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(type.name);
+			if (constructor != null) {
+				try {
+					field = constructor.newInstance(name);
+				} catch (Exception exc) {
+					throw new RuntimeException("Undefined field type: " + type);
+				}
+			} else {
+				throw new RuntimeException("Can't initialize field by type: " + type);
 			}
 		} else {
 			field = new HiFieldObject(type, name);
 		}
+		if (field != null) {
+			field.setToken(token);
+		}
+		return field;
+	}
 
+	public static HiField<?> getField(Type type, String name, HiNode initializer, Token token) {
+		HiField<?> field = getField(type, name, token);
 		if (field != null) {
 			field.initializer = initializer;
 		}
@@ -259,7 +247,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	}
 
 	public static HiField<?> decode(DecodeContext os) throws IOException {
-		HiField<?> field = HiField.getField(os.readType(), os.readUTF(), os.readNullable(HiNode.class));
+		HiField<?> field = HiField.getField(os.readType(), os.readUTF(), os.readNullable(HiNode.class), null);
 		field.modifiers = Modifiers.decode(os);
 		return field;
 	}

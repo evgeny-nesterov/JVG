@@ -38,6 +38,8 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public boolean booleanValue;
 
+	public HiNode resolvedValueVariable;
+
 	public Token token;
 
 	public void init(HiNode node) {
@@ -47,6 +49,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = false;
 		this.valueType = null;
 		this.token = node.getToken() != null ? new Token(node.getToken()) : null;
+		this.resolvedValueVariable = null;
 	}
 
 	public NodeValueType apply(NodeValueType node) {
@@ -66,6 +69,7 @@ public class NodeValueType implements PrimitiveTypes {
 		nodeValueType.isValue = isValue;
 		nodeValueType.type = type;
 		nodeValueType.valid = valid;
+		nodeValueType.resolvedValueVariable = resolvedValueVariable;
 
 		if (isValue) {
 			nodeValueType.valueType = valueType;
@@ -87,7 +91,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = false;
 	}
 
-	public void get(HiNode node, HiClass type, boolean valid, boolean isValue, boolean isConstant) {
+	public void get(HiNode node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNode resolvedValueVariable) {
 		if (type == null) {
 			type = HiClassPrimitive.VOID;
 			isValue = false;
@@ -97,6 +101,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = valid;
 		this.isValue = isValue;
 		this.isConstant = isConstant;
+		this.resolvedValueVariable = resolvedValueVariable;
 		getValue();
 	}
 
@@ -114,6 +119,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = valid;
 		this.isValue = ctx.nodeValueType.isValue;
 		this.isConstant = ctx.nodeValueType.isConstant;
+		this.resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
 		getValue();
 		return this;
 	}

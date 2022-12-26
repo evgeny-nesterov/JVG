@@ -4,13 +4,13 @@ public abstract class Enum {
         this.ordinal = ordinal;
     }
 
-    private final String name;
+    private String name; // TODO final
 
     public final String name() {
         return name;
     }
 
-    private final int ordinal;
+    private int ordinal; // TODO final
 
     public final int ordinal() {
         return ordinal;

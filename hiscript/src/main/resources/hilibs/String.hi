@@ -3,7 +3,7 @@ class String {
     System.loadLib("StringImpl.class");
   }
 
-  private final char[] chars;
+  private char[] chars; // TODO final
 
   public String() {
     chars = new char[0];

@@ -168,8 +168,8 @@ public class HiMethod implements Codeable, TokenAccessible {
 		// do not write class as when method will being read the class will not
 		// be yet created
 		// os.writeClass(clazz);
-		os.writeShortArray(annotations);
 		os.writeToken(token);
+		os.writeShortArray(annotations);
 		modifiers.code(os);
 		os.writeType(returnType);
 		os.writeUTF(name);
@@ -181,8 +181,8 @@ public class HiMethod implements Codeable, TokenAccessible {
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
-		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Token token = os.readToken();
+		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		Type returnType = os.readType();
 		String name = os.readUTF();

@@ -209,7 +209,7 @@ public class NodeSwitch extends HiNode {
 											return -2;
 										}
 
-										HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), ctx.value.castedVariableName);
+										HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), ctx.value.castedVariableName, null);
 										castedField.set(object);
 										ctx.addVariable(castedField);
 									}

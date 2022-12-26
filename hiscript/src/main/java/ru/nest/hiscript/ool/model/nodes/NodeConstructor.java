@@ -124,7 +124,7 @@ public class NodeConstructor extends HiNode {
 				types[i] = ctx.value.type;
 
 				Type type = Type.getType(types[i]);
-				arguments[i] = HiField.getField(type, null);
+				arguments[i] = HiField.getField(type, null, argValues[i].getToken());
 				if (arguments[i] == null) {
 					ctx.throwRuntimeException("argument with type '" + type.fullName + "' is not found");
 					return;

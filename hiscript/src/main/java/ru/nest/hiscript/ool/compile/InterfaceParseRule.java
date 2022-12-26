@@ -126,6 +126,7 @@ public class InterfaceParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
+			Token startToken = startToken(tokenizer);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
 				tokenizer.commit();
@@ -140,7 +141,7 @@ public class InterfaceParseRule extends ParserUtil {
 				HiNode initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 				Type type = Type.getArrayType(baseType, addDimension);
-				HiField<?> field = HiField.getField(type, name, initializer);
+				HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 				field.setModifiers(modifiers);
 				field.setAnnotations(annotatedModifiers.getAnnotations());
 
@@ -159,13 +160,14 @@ public class InterfaceParseRule extends ParserUtil {
 	}
 
 	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		Token startToken = startToken(tokenizer);
 		String name = expectWord(Words.NOT_SERVICE, tokenizer);
 		int addDimension = visitDimension(tokenizer);
 		expectSymbol(tokenizer, Symbols.EQUATE);
 		HiNode initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 
 		Type type = Type.getArrayType(baseType, addDimension);
-		HiField<?> field = HiField.getField(type, name, initializer);
+		HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 		field.setModifiers(modifiers);
 
 		ctx.addField(field);

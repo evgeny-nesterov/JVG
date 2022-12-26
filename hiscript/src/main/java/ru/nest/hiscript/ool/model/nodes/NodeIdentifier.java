@@ -49,7 +49,10 @@ public class NodeIdentifier extends HiNode {
 		} else {
 			Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
 			if (resolvedIdentifier instanceof NodeVariable) {
-				return ((HiNode) resolvedIdentifier).getValueClass(validationInfo, ctx);
+				HiNode resolvedValueVariable = (HiNode) resolvedIdentifier;
+				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
+				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
+				return clazz;
 			} else if (resolvedIdentifier instanceof HiClass) {
 				return (HiClass) resolvedIdentifier;
 			}
