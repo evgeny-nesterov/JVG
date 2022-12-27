@@ -15,6 +15,9 @@ public class TestClasses extends HiTest {
 		assertFailSerialize("class A{A(int x){this(x);}} new A(1);");
 		assertFailSerialize("class A extends B{} class B extends A{}");
 		assertFailSerialize("class A extends B{} class B extends C{} class C extends A{}");
+		assertFailSerialize("final class A{} class B extends A{}");
+		assertSuccessSerialize("static class A{static class B{} static class C extends B{}}");
+		assertFailSerialize("static class A{class B{} static class C extends B{}}");
 
 		// initializing order
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert A.a.equals(\"nullBA\"); assert B.b.equals(\"nullB\");");

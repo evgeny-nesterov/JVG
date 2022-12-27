@@ -243,7 +243,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				// init super class
 				superClass.init(classResolver);
 
-				// TODO: move this logic to parser ???
+				// TODO: move this logic to validation ???
 
 				// check super class on static
 				if (!superClass.isStatic() && !superClass.isTopLevel() && isStatic()) {
@@ -271,9 +271,10 @@ public class HiClass implements Codeable, TokenAccessible {
 					// init interface
 					classInterface.init(classResolver);
 
+					// TODO remove (interface is always static)?
 					// check interface on static
 					if (!classInterface.isStatic() && !classInterface.isTopLevel() && isStatic()) {
-						throw new IllegalStateException("Static class " + fullName + " can not extends not static and not top level class");
+						classResolver.processResolverException("Static class " + fullName + " can not extends not static and not top level class");
 					}
 				}
 			}
@@ -385,11 +386,19 @@ public class HiClass implements Codeable, TokenAccessible {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass outboundClass = ctx.clazz;
 
+		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
+		if (interfaces == null && interfaceTypes != null) {
+			interfaces = new HiClass[interfaceTypes.length];
+			for (int i = 0; i < interfaceTypes.length; i++) {
+				interfaces[i] = interfaceTypes[i].getClass(ctx);
+			}
+		}
+
 		// init before enter
+		ctx.clazz = this;
 		init(ctx);
 
 		ctx.enter(RuntimeContext.STATIC_CLASS, this);
-		ctx.clazz = this;
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
