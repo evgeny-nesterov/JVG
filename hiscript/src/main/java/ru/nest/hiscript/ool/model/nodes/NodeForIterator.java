@@ -73,9 +73,10 @@ public class NodeForIterator extends HiNode {
 
 			if (ctx.value.type.isArray()) {
 				HiField<?> forVariable = ctx.getVariable(declaration.name);
-				int size = Array.getLength(ctx.value.array);
+				Object array = ctx.value.array;
+				int size = Array.getLength(array);
 				for (int i = 0; i < size; i++) {
-					Object value = Array.get(ctx.value.array, i); // TODO primitives
+					Object value = Array.get(array, i); // TODO primitives
 					if (!executeValue(ctx, forVariable, value)) {
 						break;
 					}

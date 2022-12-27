@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class NodeNative extends HiNode {
 	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
@@ -48,8 +49,14 @@ public class NodeNative extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		// TODO
-		return true;
+		Method method = HiNative.findMethod(ctx, id);
+		boolean valid = true;
+		if (method != null) {
+			// TODO check args
+		} else {
+			valid = false;
+		}
+		return valid;
 	}
 
 	@Override

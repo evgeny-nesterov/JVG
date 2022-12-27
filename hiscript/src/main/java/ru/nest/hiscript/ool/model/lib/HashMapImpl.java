@@ -26,62 +26,59 @@ public class HashMapImpl extends ImplUtil {
 	}
 
 	public static void HashMap_Object_get_Object(RuntimeContext ctx, Object key) {
-		Map<?, ?> map = getMap(ctx);
 		setCtx(ctx, key);
-		Object value = map.get(key);
-		ctx.value.set(value);
+		ctx.value.set(getMap(ctx).get(key));
 	}
 
 	public static void HashMap_Object_put_Object_Object(RuntimeContext ctx, Object key, Object value) {
-		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, key);
 		setCtx(ctx, value);
-		value = map.put(key, value);
-		ctx.value.set(value);
+		ctx.value.set(getMap(ctx).put(key, value));
 	}
 
 	public static void HashMap_boolean_containsKey_Object(RuntimeContext ctx, Object key) {
-		Map<?, ?> map = getMap(ctx);
 		setCtx(ctx, key);
-		returnBoolean(ctx, map.containsKey(key));
+		returnBoolean(ctx, getMap(ctx).containsKey(key));
 	}
 
 	public static void HashMap_boolean_containsValue_Object(RuntimeContext ctx, Object value) {
-		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, value);
-		returnBoolean(ctx, map.containsValue(value));
+		returnBoolean(ctx, getMap(ctx).containsValue(value));
 	}
 
 	public static void HashMap_int_size(RuntimeContext ctx) {
-		Map<Object, Object> map = getMap(ctx);
-		returnInt(ctx, map.size());
+		returnInt(ctx, getMap(ctx).size());
 	}
 
 	public static void HashMap_Object_remove_Object(RuntimeContext ctx, Object key) {
-		Map<Object, Object> map = getMap(ctx);
 		setCtx(ctx, key);
-		Object value = map.remove(key);
-		ctx.value.set(value);
+		ctx.value.set(getMap(ctx).remove(key));
 	}
 
 	public static void HashMap_ArrayList_keys(RuntimeContext ctx) {
-		Map<Object, Object> map = getMap(ctx);
-		// TODO: realize
+		returnArrayList(ctx, getMap(ctx).keySet());
 	}
 
 	public static void HashMap_ArrayList_values(RuntimeContext ctx) {
-		Map<Object, Object> map = getMap(ctx);
-		// TODO: realize
+		returnArrayList(ctx, getMap(ctx).values());
 	}
 
 	public static void HashMap_void_putAll_HashMap(RuntimeContext ctx, HiObject map) {
 		Map<Object, Object> currentMap = getMap(ctx);
-		// TODO: realize
+		for (Map.Entry<?, ?> e : currentMap.entrySet()) {
+			setCtx(ctx, e.getKey());
+			setCtx(ctx, e.getValue());
+		}
+		Map<Object, Object> putMap = (Map) map.userObject;
+		for (Map.Entry<?, ?> e : putMap.entrySet()) {
+			setCtx(ctx, e.getKey());
+			setCtx(ctx, e.getValue());
+		}
+		currentMap.putAll(putMap);
 	}
 
 	public static void HashMap_void_clear(RuntimeContext ctx) {
-		Map<Object, Object> map = getMap(ctx);
-		map.clear();
+		getMap(ctx).clear();
 		returnVoid(ctx);
 	}
 

@@ -98,10 +98,6 @@ public class NodeInvocation extends HiNode {
 					ctx.value.valueType = Value.CLASS;
 				}
 
-				if (ctx.value.type == null) {
-					// TODO: error
-				}
-
 				// v2 - contains method attributes (name, arguments)
 				Value v = vs[0];
 				v.valueType = Value.METHOD;

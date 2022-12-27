@@ -50,6 +50,7 @@ public class NodeString extends HiNode {
 		return createString(ctx, text.toCharArray());
 	}
 
+	// TODO cache string objects
 	public static HiObject createString(RuntimeContext ctx, char[] text) {
 		if (clazz == null) {
 			clazz = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);

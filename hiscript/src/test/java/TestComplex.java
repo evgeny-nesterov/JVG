@@ -12,5 +12,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws Exception {
+		execute("String[] arr = new String[]{\"a\", \"b\", \"c\"}; int i = 0; for(String s : arr){System.println(\"arr[\" + i++ + \"]=\" + s);}");
 	}
 }

@@ -14,6 +14,9 @@ public class ValidationInfo {
 
 	public ValidationInfo(HiCompiler compiler) {
 		this.compiler = compiler;
+		if (compiler.getValidationInfo() == null) {
+			compiler.setValidationInfo(this);
+		}
 	}
 
 	public List<ValidationMessage> messages = new ArrayList<>();

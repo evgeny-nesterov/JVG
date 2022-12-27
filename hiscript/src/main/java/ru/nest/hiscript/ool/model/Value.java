@@ -399,6 +399,10 @@ public class Value implements PrimitiveTypes {
 
 	// TODO: optimize
 	public void copyTo(Value dst) {
+		if (dst == this) {
+			return;
+		}
+
 		dst.valueType = valueType;
 		dst.type = type;
 		dst.name = name;

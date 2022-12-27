@@ -59,6 +59,10 @@ public class HiCompiler {
 		return validationInfo;
 	}
 
+	public void setValidationInfo(ValidationInfo validationInfo) {
+		this.validationInfo = validationInfo;
+	}
+
 	public void setRule(ParseRule<?> rule) {
 		this.rule = rule;
 	}

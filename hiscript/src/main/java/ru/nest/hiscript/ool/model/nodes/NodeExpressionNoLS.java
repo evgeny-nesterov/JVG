@@ -159,8 +159,30 @@ public class NodeExpressionNoLS extends NodeExpression {
 		return resultValueType.valid;
 	}
 
+	public boolean resolveValue(RuntimeContext ctx, Value value) {
+		if (value.valueType == Value.NAME) {
+			if (!NodeIdentifier.resolve(ctx, value, true)) {
+				if (value.nameDimensions == 0) {
+					ctx.throwRuntimeException("Can't resolve variable " + value.name);
+				} else {
+					ctx.throwRuntimeException("Can't resolve class " + value.name);
+				}
+				return false;
+			}
+		}
+		value.copyTo(ctx.value);
+		return true;
+	}
+
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// optimization
+		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
+			operands[0].execute(ctx);
+			resolveValue(ctx, ctx.value);
+			return;
+		}
+
 		Value ctxValue = ctx.value;
 		Value[] values = ctx.getValues(operands.length);
 		try {
@@ -236,18 +258,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 				}
 			}
 
-			if (values[0].valueType == Value.NAME) {
-				if (!NodeIdentifier.resolve(ctx, values[0], true)) {
-					if (values[0].nameDimensions == 0) {
-						ctx.throwRuntimeException("Can't resolve variable " + values[0].name);
-					} else {
-						ctx.throwRuntimeException("Can't resolve class " + values[0].name);
-					}
-					return;
-				}
-			}
-
-			values[0].copyTo(ctx.value);
+			resolveValue(ctx, values[0]);
 		} finally {
 			ctx.putValues(values);
 		}

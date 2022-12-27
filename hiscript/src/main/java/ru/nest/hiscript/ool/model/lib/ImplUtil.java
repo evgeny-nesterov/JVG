@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -77,5 +79,12 @@ public class ImplUtil {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = value;
+	}
+
+	protected static void returnArrayList(RuntimeContext ctx, Collection value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.type = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
+		ctx.value.object = ctx.value.type.searchConstructor(ctx).newInstance(ctx, null, null);
+		((List) ctx.value.object.userObject).addAll(value);
 	}
 }

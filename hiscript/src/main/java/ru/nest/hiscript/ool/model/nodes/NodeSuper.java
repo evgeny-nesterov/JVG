@@ -17,10 +17,15 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (ctx.clazz != null) {
-			return ctx.clazz.superClass;
+		return ctx.clazz.superClass;
+	}
+
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (ctx.clazz == null || ctx.clazz.superClass == null) {
+			validationInfo.error("Cannot resolve method 'super'", token);
+			return false;
 		}
-		return null;
+		return true;
 	}
 
 	@Override
