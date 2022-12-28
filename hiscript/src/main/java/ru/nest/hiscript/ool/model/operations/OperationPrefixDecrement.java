@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.operations;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -7,6 +8,8 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPrefixDecrement extends UnaryOperation {
 	private static HiOperation instance = new OperationPrefixDecrement();
@@ -17,6 +20,14 @@ public class OperationPrefixDecrement extends UnaryOperation {
 
 	private OperationPrefixDecrement() {
 		super("--", PREFIX_DECREMENT);
+	}
+
+	@Override
+	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
+		if (!node.type.isPrimitive() || HiFieldPrimitive.getType(node.type) == BOOLEAN) {
+			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
+		}
+		return node.type;
 	}
 
 	@Override

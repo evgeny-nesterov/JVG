@@ -43,22 +43,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 		for (int i = 0; i < o.length; i++) {
 			OperationsGroup og = o[i];
 
-			// check after appending prefixes
-			if (stackSize > 0) {
-				HiOperation lastStackOperation = stack[stackSize - 1];
-				if (lastStackOperation != null) {
-					int currentGroupMinPriority = og.getMinPriority();
-					while (lastStackOperation.getPriority() <= currentGroupMinPriority) {
-						operations[pos++] = lastStackOperation; // operation
-						stackSize--;
-						if (stackSize == 0) {
-							break;
-						}
-						lastStackOperation = stack[stackSize - 1];
-					}
-				}
-			}
-
 			// append postfixes
 			// priority of postfixes has to be greater or equals (for example, . and []) of operation priority
 			if (og.postfix != null) {
@@ -66,7 +50,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 				for (int j = 0; j < l; j++) {
 					HiOperation postOperation = og.postfix.get(j);
 
-					// prev operation may has same priority (for example, object.getArray()[index])
+					// prev operation may have same priority (for example, object.getArray()[index])
 					if (stackSize > 0) {
 						HiOperation lastStackOperation = stack[stackSize - 1];
 						if (lastStackOperation != null) {
@@ -83,6 +67,22 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 					pos += postOperation.getOperandsCount() - 1;
 					operations[pos++] = postOperation; // operation
+				}
+			}
+
+			// check after appending prefixes
+			if (stackSize > 0) {
+				HiOperation lastStackOperation = stack[stackSize - 1];
+				if (lastStackOperation != null && og.getOperation() != null) {
+					int currentGroupMinPriority = og.getOperation().getPriority();
+					while (lastStackOperation.getPriority() <= currentGroupMinPriority) {
+						operations[pos++] = lastStackOperation; // operation
+						stackSize--;
+						if (stackSize == 0) {
+							break;
+						}
+						lastStackOperation = stack[stackSize - 1];
+					}
 				}
 			}
 

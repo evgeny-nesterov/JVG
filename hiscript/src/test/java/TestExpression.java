@@ -68,7 +68,6 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert (1 > 2 ? 3 > 4 ? 5 : 6 : 7 > 8 ? 9 : 10) == 10;");
 		assertSuccessSerialize("assert 16/-2/2/-2/+2*2/2 == 1;");
 		assertSuccessSerialize("assert 2/+ -2 == -100000000000L/100000000000L;");
-		assertSuccessSerialize("assert true;");
 	}
 
 	@Test
@@ -202,5 +201,16 @@ public class TestExpression extends HiTest {
 		}
 		script.compile("System.println(\"x=\" + x); assert x == 1_000_000;").execute().printError().close();
 		System.out.println("load test duration: " + script.duration() / 1000.0 + "sec");
+	}
+
+	@Test
+	public void testIncrements() {
+		assertSuccessSerialize("int x = 1; assert x++ + x++ == 3;");
+		assertSuccessSerialize("int x = 1; assert ++x + ++x == 5;");
+		assertSuccessSerialize("int x = 1; int y = ++x + x++ + x; assert x == 3; assert y == 7;");
+
+		assertSuccessSerialize("int x = -1; assert x-- + x-- == -3;");
+		assertSuccessSerialize("int x = -1; assert --x + --x == -5;");
+		assertSuccessSerialize("int x = -1; int y = --x + x-- + x; assert x == -3; assert y == -7;");
 	}
 }

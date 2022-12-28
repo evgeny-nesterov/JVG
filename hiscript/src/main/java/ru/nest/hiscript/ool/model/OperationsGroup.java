@@ -25,10 +25,6 @@ public class OperationsGroup {
 		this.operation = Operations.getOperation(operation);
 	}
 
-	//	public OperationsGroup(int operation) {
-	//		setOperation(operation);
-	//	}
-
 	public int appendPrefix(HiOperation[] stack, int index) {
 		if (prefix != null) {
 			for (int i = 0; i < prefix.size(); i++) {
@@ -37,15 +33,6 @@ public class OperationsGroup {
 		}
 		return index;
 	}
-
-	//	public int appendPostfix(Operation[] stack, int index) {
-	//		if (postfix != null) {
-	//			for (int i = postfix.size() - 1; i >= 0; i--) {
-	//				stack[index++] = postfix.get(i);
-	//			}
-	//		}
-	//		return index;
-	//	}
 
 	public int append(HiOperation[] stack, int index) {
 		if (operation != null) {
@@ -64,17 +51,6 @@ public class OperationsGroup {
 		}
 		return count;
 	}
-
-	//	public int getPostfixOperandsCount() {
-	//		int count = 0;
-	//		if (postfix != null) {
-	//			int size = postfix.size();
-	//			for (int i = 0; i < size; i++) {
-	//				count += postfix.get(i).getIncrement();
-	//			}
-	//		}
-	//		return count;
-	//	}
 
 	public int getOperandsCount() {
 		if (operation != null) {
@@ -107,14 +83,6 @@ public class OperationsGroup {
 		prefix.add(Operations.getOperation(o));
 	}
 
-	//	public List<Operation> getPrefixOperations() {
-	//		return prefix != null ? prefix : empty;
-	//	}
-	//
-	//	public boolean hasPrefixOperations() {
-	//		return prefix != null;
-	//	}
-
 	public void addPostfixOperation(int o) {
 		if (postfix == null) {
 			postfix = new ArrayList<>(1);
@@ -122,62 +90,9 @@ public class OperationsGroup {
 		postfix.add(Operations.getOperation(o));
 	}
 
-	//	public List<Operation> getPostfixOperations() {
-	//		return postfix != null ? postfix : empty;
-	//	}
-	//
-	//	public boolean hasPostfixOperations() {
-	//		return postfix != null;
-	//	}
-
 	public boolean hasOperations() {
 		return operation != null || prefix != null || postfix != null;
 	}
-
-	public int getMinPriority() {
-		int priority = Integer.MAX_VALUE;
-		if (operation != null) {
-			priority = operation.getPriority();
-		}
-
-		// do not take into account prefix!
-
-		if (postfix != null) {
-			int size = postfix.size();
-			for (int i = 0; i < size; i++) {
-				HiOperation o = postfix.get(i);
-				priority = Math.min(priority, o.getPriority());
-			}
-		}
-
-		// set -1 if there are no one operation
-		if (priority == Integer.MAX_VALUE) {
-			priority = -1;
-		}
-		return priority;
-	}
-
-	//	public int getMaxPriority() {
-	//		int priority = 0;
-	//		if (operation != null) {
-	//			priority = operation.getPriority();
-	//		}
-	//
-	//		if (prefix != null) {
-	//			for (int i = 0; i < prefix.size(); i++) {
-	//				Operation o = prefix.get(i);
-	//				priority = Math.max(priority, o.getPriority());
-	//			}
-	//		}
-	//
-	//		if (postfix != null) {
-	//			for (int i = 0; i < postfix.size(); i++) {
-	//				Operation o = postfix.get(i);
-	//				priority = Math.max(priority, o.getPriority());
-	//			}
-	//		}
-	//		return priority;
-	//	}
 
 	@Override
 	public String toString() {
