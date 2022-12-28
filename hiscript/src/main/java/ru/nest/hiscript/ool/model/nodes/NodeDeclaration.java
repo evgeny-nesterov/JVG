@@ -38,6 +38,8 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 	public NodeAnnotation[] annotations;
 
+	private HiClass clazz;
+
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz;
@@ -79,13 +81,14 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		}
 		// TODO check name, modifiers, annotations
 		valid &= ctx.addLocalVariable(this);
+		clazz = getValueClass(validationInfo, ctx);
 		return valid;
 	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {
 		// TODO keep in field only runtime annotations
-		HiField<?> field = HiField.getField(type, name, initialization, token);
+		HiField<?> field = clazz != null ? HiField.getField(clazz, name, initialization, token) : HiField.getField(type, name, initialization, token);
 		field.setModifiers(modifiers);
 
 		try {

@@ -113,7 +113,7 @@ public class NodeIdentifier extends HiNode {
 			}
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = var.type.getClass(ctx);
+			ctx.value.type = var.getClass(ctx);
 			var.execute(ctx);
 
 			ctx.value.copyTo(value);

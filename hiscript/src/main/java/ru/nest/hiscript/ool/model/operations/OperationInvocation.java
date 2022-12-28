@@ -270,9 +270,10 @@ public class OperationInvocation extends BinaryOperation {
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-				types[i] = ctx.value.type;
 
-				Type type = Type.getType(types[i]);
+				HiClass type = ctx.value.type;
+				types[i] = type;
+
 				if (type != null) {
 					arguments[i] = HiField.getField(type, null, argValues[i].getToken());
 					arguments[i].set(ctx, ctx.value);
@@ -317,7 +318,7 @@ public class OperationInvocation extends BinaryOperation {
 				Type varargsArrayType = method.arguments[method.arguments.length - 1].getType();
 				HiClass varargsClass = varargsArrayType.getCellType().getClass(ctx);
 				HiClass varargsArrayClass = varargsArrayType.getClass(ctx);
-				HiField<?> varargsField = HiField.getField(varargsArrayType, method.arguments[method.arguments.length - 1].name, method.arguments[method.arguments.length - 1].getToken());
+				HiField<?> varargsField = HiField.getField(varargsArrayClass, method.arguments[method.arguments.length - 1].name, method.arguments[method.arguments.length - 1].getToken());
 
 				Class<?> _varargClass = HiArrays.getClass(varargsClass, 0);
 				Object array = Array.newInstance(_varargClass, varargsSize);
@@ -344,13 +345,13 @@ public class OperationInvocation extends BinaryOperation {
 
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
-					arguments[i] = HiField.getField(method.arguments[i].getType(), method.arguments[i].name, method.arguments[i].getToken());
+					arguments[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
 					ctx.value.type = HiClassNull.NULL;
 					arguments[i].set(ctx, ctx.value);
 				} else if (!argClass.isArray()) {
 					ctx.value.type = argClass;
 					arguments[i].get(ctx, ctx.value);
-					arguments[i] = HiField.getField(method.arguments[i].getType(), method.arguments[i].name, method.arguments[i].getToken());
+					arguments[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
 					arguments[i].set(ctx, ctx.value);
 				}
 				// TODO: update array cell type

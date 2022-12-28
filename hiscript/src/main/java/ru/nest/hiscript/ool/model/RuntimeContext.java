@@ -160,7 +160,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		HiField<?>[] args = new HiField<?>[1];
-		args[0] = HiField.getField(Type.stringType, "msg", null);
+		args[0] = HiField.getField(HiClass.forName(this, HiClass.STRING_CLASS_NAME), "msg", null);
 		NodeString.createString(this, message);
 		args[0].set(this, value);
 		args[0].initialized = true;

@@ -41,6 +41,8 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	public NodeAnnotation[] annotations;
 
+	private HiClass clazz;
+
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return getType().getClass(ctx);
@@ -50,15 +52,18 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check modifiers (access)
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		clazz = typeArgument.getType().getClass(ctx);
+		valid &= clazz != null;
 		valid &= ctx.addLocalVariable(this);
 		ctx.initializedNodes.add(this);
 		return valid;
 	}
 
+	// TODO unused!
 	@Override
 	public void execute(RuntimeContext ctx) {
 		// TODO keep in field only runtime annotations
-		HiField<?> field = HiField.getField(typeArgument.getType(), name, null);
+		HiField<?> field = HiField.getField(clazz, name, null);
 		field.setModifiers(modifiers);
 		field.declared = true;
 		field.initialized = true;

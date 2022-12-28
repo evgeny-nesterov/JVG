@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -33,11 +32,17 @@ public class NodeArrayValue extends HiNode {
 		return type.getArrayClass(ctx, dimensions);
 	}
 
+	private HiClass cellClass;
+
+	private Class<?> javaClass;
+
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		int size = array.length;
-		HiClass cellClass = type.getArrayClass(ctx, dimensions - 1);
+		HiClass rootCellClass = type.getClass(ctx);
+		cellClass = dimensions > 1 ? rootCellClass.getArrayClass(dimensions - 1) : rootCellClass;
+		javaClass = HiArrays.getClass(rootCellClass, dimensions - 1);
 		for (int i = 0; i < size; i++) {
 			valid &= array[i].validate(validationInfo, ctx) && array[i].expectValueClass(validationInfo, ctx, cellClass);
 		}
@@ -46,20 +51,15 @@ public class NodeArrayValue extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		HiClass cellClass = type.getClass(ctx);
-		HiClass currentCellClass = dimensions > 1 ? cellClass.getArrayClass(dimensions - 1) : cellClass;
-		HiClassArray clazz = currentCellClass.getArrayClass(1);
-		Class<?> javaClass = HiArrays.getClass(cellClass, dimensions - 1);
-
 		int size = array.length;
 		Object value = Array.newInstance(javaClass, array.length);
 		for (int i = 0; i < size; i++) {
 			array[i].execute(ctx);
-			HiArrays.setArray(currentCellClass, value, i, ctx.value);
+			HiArrays.setArray(cellClass, value, i, ctx.value);
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = clazz;
+		ctx.value.type = cellClass.getArrayClass();
 		ctx.value.array = value;
 	}
 

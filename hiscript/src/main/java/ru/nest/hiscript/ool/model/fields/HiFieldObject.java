@@ -19,6 +19,16 @@ public class HiFieldObject extends HiField<HiObject> {
 		this.initialized = true;
 	}
 
+	public HiFieldObject(HiClass clazz, String name) {
+		super(clazz, name);
+	}
+
+	public HiFieldObject(HiClass clazz, String name, HiObject object) {
+		super(clazz, name);
+		this.object = object;
+		this.initialized = true;
+	}
+
 	private HiObject object;
 
 	@Override

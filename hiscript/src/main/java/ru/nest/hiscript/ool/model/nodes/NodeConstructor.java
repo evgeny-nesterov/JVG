@@ -9,7 +9,6 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.NoClassException;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -121,9 +120,9 @@ public class NodeConstructor extends HiNode {
 					return;
 				}
 
-				types[i] = ctx.value.type;
+				HiClass type = ctx.value.type;
+				types[i] = type;
 
-				Type type = Type.getType(types[i]);
 				arguments[i] = HiField.getField(type, null, argValues[i].getToken());
 				if (arguments[i] == null) {
 					ctx.throwRuntimeException("argument with type '" + type.fullName + "' is not found");

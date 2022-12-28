@@ -61,7 +61,7 @@ public class OperationInstanceOf extends BinaryOperation {
 						return;
 					}
 
-					HiFieldObject castedField = (HiFieldObject) HiField.getField(Type.getType(c2), v2.castedVariableName, null);
+					HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, v2.castedVariableName, null);
 					castedField.set(v1.object);
 					ctx.addVariable(castedField);
 				}

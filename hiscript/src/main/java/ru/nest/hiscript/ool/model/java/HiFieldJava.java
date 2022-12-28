@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.java;
 
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 
 import java.lang.reflect.Field;
@@ -10,7 +11,7 @@ public class HiFieldJava extends HiField {
 	private Field field;
 
 	public HiFieldJava(Field field, String name) {
-		super(null, name);
+		super((Type) null, name);
 		this.field = field;
 		field.setAccessible(true);
 		type = HiJava.getTypeByJavaClass(field.getType());

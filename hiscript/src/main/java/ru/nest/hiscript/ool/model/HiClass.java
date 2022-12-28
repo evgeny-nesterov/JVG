@@ -481,6 +481,14 @@ public class HiClass implements Codeable, TokenAccessible {
 		return c;
 	}
 
+	public HiClass getArrayClassIf(int dimensions) {
+		HiClass c = this;
+		for (int i = 0; i < dimensions; i++) {
+			c = c.getArrayClass();
+		}
+		return c;
+	}
+
 	//	private Map<String, HiClass> classesMap;
 
 	// TODO optimize

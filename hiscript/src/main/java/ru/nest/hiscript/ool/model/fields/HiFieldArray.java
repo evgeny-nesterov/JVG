@@ -14,6 +14,10 @@ public class HiFieldArray extends HiField<Object> {
 		super(type, name);
 	}
 
+	public HiFieldArray(HiClass clazz, String name) {
+		super(clazz, name);
+	}
+
 	public Object array;
 
 	public HiClass arrayType;

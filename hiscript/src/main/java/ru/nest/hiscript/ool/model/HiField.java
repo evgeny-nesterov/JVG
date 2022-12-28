@@ -73,6 +73,13 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		this.name = name; //  != null ? name.intern() : null;
 	}
 
+	public HiField(HiClass clazz, String name) {
+		super("field", TYPE_FIELD);
+		this.type = Type.getType(clazz);
+		this.clazz = clazz;
+		this.name = name; //  != null ? name.intern() : null;
+	}
+
 	public abstract void get(RuntimeContext ctx, Value value);
 
 	public abstract T get();
@@ -123,7 +130,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return type.getClass(ctx);
+		return clazz != null ? clazz : type.getClass(ctx);
 	}
 
 	@Override
@@ -215,7 +222,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				try {
 					field = constructor.newInstance(name);
 				} catch (Exception exc) {
-					throw new RuntimeException("Undefined field type: " + type);
+					throw new RuntimeException("Undefined field type: " + type, exc);
 				}
 			} else {
 				throw new RuntimeException("Can't initialize field by type: " + type);
@@ -231,6 +238,34 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	public static HiField<?> getField(Type type, String name, HiNode initializer, Token token) {
 		HiField<?> field = getField(type, name, token);
+		if (field != null) {
+			field.initializer = initializer;
+		}
+		return field;
+	}
+
+	public static HiField<?> getField(HiClass clazz, String name, Token token) {
+		HiField field;
+		if (clazz.isArray()) {
+			field = new HiFieldArray(clazz, name);
+		} else if (clazz.isPrimitive()) {
+			java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(clazz.name);
+			try {
+				field = constructor.newInstance(name);
+			} catch (Exception exc) {
+				throw new RuntimeException("Undefined field type: " + clazz.name, exc);
+			}
+		} else {
+			field = new HiFieldObject(clazz, name);
+		}
+		if (field != null) {
+			field.setToken(token);
+		}
+		return field;
+	}
+
+	public static HiField<?> getField(HiClass clazz, String name, HiNode initializer, Token token) {
+		HiField<?> field = getField(clazz, name, token);
 		if (field != null) {
 			field.initializer = initializer;
 		}
@@ -272,6 +307,6 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	public String getVariableType() {
-		return type.fullName;
+		return clazz != null ? clazz.fullName : type.fullName;
 	}
 }
