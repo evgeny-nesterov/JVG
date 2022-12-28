@@ -388,14 +388,22 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiClass[] innerClasses;
 
+	private Boolean valid;
+
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return valid != null ? valid : (valid = _validate(validationInfo, ctx));
+	}
+
+	private boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass outboundClass = ctx.clazz;
+		boolean valid = true;
 
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
 			for (int i = 0; i < interfaceTypes.length; i++) {
 				interfaces[i] = interfaceTypes[i].getClass(ctx);
+				valid &= interfaces[i].validate(validationInfo, ctx);
 			}
 		}
 
@@ -404,10 +412,11 @@ public class HiClass implements Codeable, TokenAccessible {
 		init(ctx);
 
 		ctx.enter(RuntimeContext.STATIC_CLASS, this);
-		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		valid &= HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
 			superClass = superClassType.getClass(ctx);
+			valid &= superClass.validate(validationInfo, ctx);
 		}
 
 		// check modifiers
@@ -418,7 +427,8 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		if (initializers != null) {
 			for (NodeInitializer initializer : initializers) {
-				valid &= ((HiNode) initializer).validate(validationInfo, ctx);
+				HiNode initializerNode = (HiNode) initializer;
+				valid &= initializerNode.validate(validationInfo, ctx);
 				if (initializer instanceof HiField) {
 					HiField field = (HiField) initializer;
 					if (field.getModifiers().isFinal() && field.initializer == null) {
@@ -426,7 +436,7 @@ public class HiClass implements Codeable, TokenAccessible {
 						validationInfo.error("Variable '" + field.name + "' might not have been initialized", field.getToken());
 						valid = false;
 					}
-					ctx.initializedNodes.add((HiNode) initializer);
+					ctx.initializedNodes.add(initializerNode);
 				}
 			}
 		}
@@ -437,17 +447,15 @@ public class HiClass implements Codeable, TokenAccessible {
 					if (innerClass.isInterface) {
 						validationInfo.error("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
 						valid = false;
-						continue;
 					}
 
 					// check on valid static modifier (includes annotations)
 					if (innerClass.isStatic() && !innerClass.isDeclaredInRootClass()) {
 						validationInfo.error("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
 						valid = false;
-						continue;
 					}
 				}
-				valid &= ctx.addLocalClass(innerClass);
+				valid &= innerClass.validate(validationInfo, ctx);
 			}
 		}
 

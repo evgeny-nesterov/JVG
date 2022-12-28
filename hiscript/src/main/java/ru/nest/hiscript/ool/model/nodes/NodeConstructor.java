@@ -73,30 +73,6 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		if (clazz == null) {
-			// init by type
-			clazz = type.getType().getClass(ctx);
-
-			if (clazz == null) {
-				ctx.throwRuntimeException("class not found: " + name);
-				return;
-			}
-
-			if (clazz.isInterface) {
-				ctx.throwRuntimeException("cannot create object from interface '" + name + "'");
-				return;
-			}
-		} else {
-			if (clazz.isInterface) {
-				ctx.throwRuntimeException("cannot create object from interface '" + name + "'");
-				return;
-			}
-
-			// init by class
-			clazz.init(ctx);
-			ctx.addClass(clazz);
-		}
-
 		// init by class
 		clazz.init(ctx);
 		ctx.addClass(clazz);
