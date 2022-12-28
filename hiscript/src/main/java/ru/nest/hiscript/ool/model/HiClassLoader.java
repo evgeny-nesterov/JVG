@@ -71,6 +71,9 @@ public class HiClassLoader {
 
 		if (clazz.interfaces != null) {
 			for (HiClass i : clazz.interfaces) {
+				if (i == null) {
+					continue;
+				}
 				if (i != origClazz) {
 					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
 				} else {

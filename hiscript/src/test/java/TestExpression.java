@@ -213,4 +213,20 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("int x = -1; assert --x + --x == -5;");
 		assertSuccessSerialize("int x = -1; int y = --x + x-- + x; assert x == -3; assert y == -7;");
 	}
+
+	@Test
+	public void testBoolean() {
+		assertSuccessSerialize("boolean x = true; assert !x == false; assert !!x == true; assert !!!x == false; assert !!!!x == true; assert !!!!!x == false;");
+	}
+
+	@Test
+	public void testObject() {
+		assertSuccessSerialize("Object o1 = new Object(); Object o2 = o1; assert o1 == o2; assert o1.equals(o2);");
+		assertSuccessSerialize("class O{} O o1 = new O(); Object o2 = o1; assert o1 == o2; assert o1.equals(o2);");
+		assertSuccessSerialize("class O extends Object{} O o1 = new O(); Object o2 = o1; O o3 = (O)o2;");
+		assertFailCompile("class O{} O o1 = new O(); Object o2 = o1; O o3 = o2;");
+		assertSuccessSerialize("class O{int x = 0; public boolean equals(Object o){return x == ((O)o).x;}} O o1 = new O(); O o2 = new O(); assert o1 != o2; assert o1.equals(o2); o2.x++; assert !o1.equals(o2);");
+		assertFailCompile("class O extends O{}");
+		assertFailCompile("interface I extends I{}");
+	}
 }

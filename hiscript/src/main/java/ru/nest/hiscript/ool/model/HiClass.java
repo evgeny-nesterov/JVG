@@ -268,6 +268,11 @@ public class HiClass implements Codeable, TokenAccessible {
 
 			if (interfaces != null) {
 				for (HiClass classInterface : interfaces) {
+					if (classInterface == null) {
+						// not found
+						continue;
+					}
+
 					// init interface
 					classInterface.init(classResolver);
 
