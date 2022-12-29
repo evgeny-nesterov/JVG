@@ -247,6 +247,12 @@ public class CompileClassContext implements ClassResolver {
 		level = level.parent;
 	}
 
+	public HiClass consumeInvocationClass() {
+		HiClass clazz = this.level.objectClass;
+		this.level.objectClass = null;
+		return clazz;
+	}
+
 	public boolean addLocalClass(HiClass clazz) {
 		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
@@ -264,7 +270,7 @@ public class CompileClassContext implements ClassResolver {
 			if (clazz != null) {
 				return clazz;
 			}
-			if (level.type == RuntimeContext.STATIC_CLASS || level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR) {
+			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;
@@ -292,7 +298,7 @@ public class CompileClassContext implements ClassResolver {
 			dimension++;
 		}
 		String baseName = dimension == 0 ? name : name.substring(dimension);
-		HiClass baseClass = getBaseClass(baseName);
+		HiClass baseClass = (HiClass) resolveIdentifier(name, true, false, false);
 		return dimension == 0 ? baseClass : baseClass.getArrayClass(dimension);
 	}
 
@@ -312,56 +318,9 @@ public class CompileClassContext implements ClassResolver {
 		return null;
 	}
 
-	private HiClass getBaseClass(String name) {
-		CompileClassLevel level = this.level;
-		while (level != null) {
-			HiClass clazz = level.getClass(name);
-			if (clazz != null) {
-				return clazz;
-			}
-			level = level.parent;
-		}
-
-		if (this.clazz != null) {
-			if ((this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
-				return this.clazz;
-			}
-			HiClass innerClass = this.clazz.getInnerClass(this, name);
-			if (innerClass != null) {
-				return innerClass;
-			}
-		}
-
-		if (parent != null) {
-			HiClass clazz = parent.getBaseClass(name);
-			if (clazz != null) {
-				return clazz;
-			}
-		}
-
-		if (this.clazz != null && name.indexOf('$') == -1) {
-			int index = this.clazz.fullName.lastIndexOf('$');
-			if (index != -1) {
-				String outboundClassName = this.clazz.fullName.substring(0, index + 1);
-				String extendedName = outboundClassName + '0' + name;
-				HiClass clazz = HiClass.forName(this, extendedName);
-				if (clazz != null) {
-					return clazz;
-				}
-			}
-		}
-		return HiClass.forName(this, name);
-	}
-
-	public HiClass consumeInvocationClass() {
-		HiClass clazz = this.level.objectClass;
-		this.level.objectClass = null;
-		return clazz;
-	}
-
 	public boolean addLocalVariable(NodeVariable localVariable) {
 		boolean valid = true;
-		if (getLocalVariable(localVariable.getVariableName()) != null) {
+		if (hasLocalVariable(localVariable.getVariableName())) {
 			compiler.getValidationInfo().error("Duplicated local variable " + localVariable.getVariableName(), ((HiNode) localVariable).getToken());
 			valid = false;
 		}
@@ -369,56 +328,93 @@ public class CompileClassContext implements ClassResolver {
 		return valid;
 	}
 
-	public NodeVariable getLocalVariable(String name) {
+	public boolean hasLocalVariable(String name) {
+		return resolveIdentifier(name, false, true, true) != null;
+	}
+
+	public Object resolveIdentifier(String name) {
+		return resolveIdentifier(name, true, true, false);
+	}
+
+	public Object resolveIdentifier(String name, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
 		CompileClassLevel level = this.level;
 		while (level != null) {
-			NodeVariable variable = level.getField(name);
-			if (variable != null) {
-				return variable;
+			if (resolveVariable) {
+				NodeVariable variable = level.getField(name);
+				if (variable != null) {
+					return variable;
+				}
 			}
-			if (level.type == RuntimeContext.STATIC_CLASS || level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR) {
+			if (resolveClass) {
+				HiClass clazz = level.getClass(name);
+				if (clazz != null) {
+					return clazz;
+				}
+			}
+			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;
 		}
-		return null;
-	}
+		if (onlyLocal) {
+			return null;
+		}
 
-	public NodeVariable getVariable(String name) {
-		CompileClassLevel level = this.level;
-		while (level != null) {
-			NodeVariable variable = level.getField(name);
-			if (variable != null) {
-				return variable;
-			}
-			level = level.parent;
-		}
-		return null;
-	}
+		if (resolveClass) {
+			if (this.clazz != null) {
+				if ((this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
+					return this.clazz;
+				}
 
-	public Object resolveIdentifier(String name) {
-		CompileClassLevel level = this.level;
-		while (level != null) {
-			NodeVariable variable = level.getField(name);
-			if (variable != null) {
-				return variable;
+				HiClass outerClass = this.clazz;
+				while (outerClass != null) {
+					HiClass innerClass = outerClass.getInnerClass(this, name);
+					if (innerClass != null) {
+						return innerClass;
+					}
+					outerClass = outerClass.enclosingClass;
+				}
 			}
-			HiClass clazz = level.getClass(name);
-			if (clazz != null) {
-				return clazz;
-			}
-			level = level.parent;
 		}
-		if (this.clazz != null && (this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
-			return this.clazz;
-		}
+
 		if (parent != null) {
-			Object resolvedIdentifier = parent.resolveIdentifier(name);
+			Object resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
 			if (resolvedIdentifier != null) {
 				return resolvedIdentifier;
 			}
 		}
-		return HiClass.forName(this, name);
+
+		while (level != null) {
+			if (resolveVariable) {
+				NodeVariable variable = level.getField(name);
+				if (variable != null) {
+					return variable;
+				}
+			}
+			if (resolveClass) {
+				HiClass clazz = level.getClass(name);
+				if (clazz != null) {
+					return clazz;
+				}
+			}
+			level = level.parent;
+		}
+
+		if (resolveClass) {
+			if (this.clazz != null && name.indexOf('$') == -1) {
+				int index = this.clazz.fullName.lastIndexOf('$');
+				if (index != -1) {
+					String outboundClassName = this.clazz.fullName.substring(0, index + 1);
+					String extendedName = outboundClassName + '0' + name;
+					HiClass clazz = HiClass.forName(this, extendedName);
+					if (clazz != null) {
+						return clazz;
+					}
+				}
+			}
+			return HiClass.forName(this, name);
+		}
+		return null;
 	}
 
 	public class CompileClassLevel {

@@ -12,6 +12,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws Exception {
-		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert A.a.equals(\"nullBA\"); assert B.b.equals(\"nullB\");");
 	}
 }

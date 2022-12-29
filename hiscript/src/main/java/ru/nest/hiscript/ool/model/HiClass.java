@@ -155,17 +155,6 @@ public class HiClass implements Codeable, TokenAccessible {
 		this.enclosingClass = enclosingClass;
 		this.type = type;
 
-		// define top class
-		if (enclosingClass != null) {
-			if (enclosingClass.topClass != null) {
-				topClass = enclosingClass.topClass;
-			} else {
-				topClass = enclosingClass;
-			}
-		} else {
-			topClass = this;
-		}
-
 		// try resolve super class if needed
 		if (superClass == null && superClassType != null && classResolver instanceof RuntimeContext) {
 			superClass = superClassType.getClass(classResolver);
@@ -259,10 +248,14 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 
 			// resolve interfaces
-			if (interfaces == null && interfaceTypes != null) {
-				interfaces = new HiClass[interfaceTypes.length];
+			if (interfaceTypes != null) {
+				if (interfaces == null) {
+					interfaces = new HiClass[interfaceTypes.length];
+				}
 				for (int i = 0; i < interfaceTypes.length; i++) {
-					interfaces[i] = interfaceTypes[i].getClass(classResolver);
+					if (interfaces[i] == null) {
+						interfaces[i] = interfaceTypes[i].getClass(classResolver);
+					}
 				}
 			}
 
@@ -371,8 +364,6 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiClass enclosingClass;
 
-	public HiClass topClass;
-
 	public boolean isInterface = false;
 
 	// content
@@ -391,7 +382,11 @@ public class HiClass implements Codeable, TokenAccessible {
 	private Boolean valid;
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return valid != null ? valid : (valid = _validate(validationInfo, ctx));
+		if (valid == null) {
+			valid = true;
+			valid = _validate(validationInfo, ctx);
+		}
+		return valid;
 	}
 
 	private boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -402,8 +397,11 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
 			for (int i = 0; i < interfaceTypes.length; i++) {
-				interfaces[i] = interfaceTypes[i].getClass(ctx);
-				valid &= interfaces[i].validate(validationInfo, ctx);
+				HiClass intf = interfaceTypes[i].getClass(ctx);
+				if (intf != null) {
+					valid &= intf.validate(validationInfo, ctx);
+					interfaces[i] = intf;
+				}
 			}
 		}
 
@@ -442,15 +440,17 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		if (innerClasses != null) {
+			boolean isStaticRootClassTop = isStaticRootClassTop();
 			for (HiClass innerClass : innerClasses) {
-				if (innerClass.enclosingClass != null && !innerClass.enclosingClass.isTopLevel() && !innerClass.enclosingClass.isStatic()) {
+				if (!isStaticRootClassTop) {
 					if (innerClass.isInterface) {
 						validationInfo.error("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
+						isStaticRootClassTop();
 						valid = false;
 					}
 
 					// check on valid static modifier (includes annotations)
-					if (innerClass.isStatic() && !innerClass.isDeclaredInRootClass()) {
+					if (innerClass.isStatic()) {
 						validationInfo.error("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
 						valid = false;
 					}
@@ -1261,10 +1261,6 @@ public class HiClass implements Codeable, TokenAccessible {
 		return enclosingClass == null || enclosingClass.name.equals(HiClass.ROOT_CLASS_NAME);
 	}
 
-	public boolean isDeclaredInRootClass() {
-		return topClass != null && topClass.fullName.equals(HiClass.ROOT_CLASS_NAME);
-	}
-
 	public Class getJavaClass() {
 		switch (fullName) {
 			case "String":
@@ -1342,5 +1338,48 @@ public class HiClass implements Codeable, TokenAccessible {
 			}
 		}
 		return src.isInstanceof(dst);
+	}
+
+	public boolean hasInnerClass(HiClass clazz) {
+		if (innerClasses != null) {
+			for (HiClass innerClass : innerClasses) {
+				if (innerClass == clazz) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isRootClassTop() {
+		HiClass rootClass = getRootClass();
+		return rootClass.isTopLevel() || rootClass.name.equals(ROOT_CLASS_NAME);
+	}
+
+	public HiClass getRootClass() {
+		HiClass clazz = this;
+		while (clazz.enclosingClass != null) {
+			if (!clazz.enclosingClass.hasInnerClass(clazz)) {
+				break;
+			}
+			clazz = clazz.enclosingClass;
+		}
+		return clazz;
+	}
+
+	public boolean isStaticRootClassTop() {
+		HiClass rootClass = getStaticRootClass();
+		return rootClass != null && rootClass.isTopLevel();
+	}
+
+	public HiClass getStaticRootClass() {
+		HiClass clazz = this;
+		while (clazz.enclosingClass != null) {
+			if (!clazz.enclosingClass.hasInnerClass(clazz) || (!clazz.enclosingClass.isStatic() && !clazz.enclosingClass.isTopLevel())) {
+				break;
+			}
+			clazz = clazz.enclosingClass;
+		}
+		return clazz.isStatic() || clazz.isTopLevel() ? clazz : null;
 	}
 }
