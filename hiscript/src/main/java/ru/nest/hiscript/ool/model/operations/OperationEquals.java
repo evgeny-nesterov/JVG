@@ -25,12 +25,17 @@ public class OperationEquals extends BinaryOperation {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
-		if (c1.isPrimitive() == c2.isPrimitive() && c1.isNumber() == c2.isNumber()) {
+		if (c1.isPrimitive() == c2.isPrimitive()) {
+			if (c1.isNumber() == c2.isNumber()) {
+				return HiClassPrimitive.BOOLEAN;
+			} else if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
+				return HiClassPrimitive.BOOLEAN;
+			}
+		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			return HiClassPrimitive.BOOLEAN;
-		} else {
-			errorInvalidOperator(validationInfo, node1.token, c1, c2);
-			return null;
 		}
+		errorInvalidOperator(validationInfo, node1.token, c1, c2);
+		return null;
 	}
 
 	@Override

@@ -105,21 +105,21 @@ public class NodeIdentifier extends HiNode {
 			return false;
 		}
 
-		HiField<?> var = ctx.getVariable(name);
-		if (var != null) {
-			if (checkInitialization && !var.isInitialized(ctx)) {
-				ctx.throwRuntimeException("variable not initialized: " + var.name);
+		HiField<?> field = ctx.getVariable(name);
+		if (field != null) {
+			if (checkInitialization && !field.isInitialized(ctx)) {
+				ctx.throwRuntimeException("variable not initialized: " + field.name);
 				return true;
 			}
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = var.getClass(ctx);
-			var.execute(ctx);
+			ctx.value.type = field.getClass(ctx);
+			field.execute(ctx);
 
 			ctx.value.copyTo(value);
 			value.valueType = Value.VARIABLE;
 			value.name = name;
-			value.variable = var;
+			value.variable = field;
 			return true;
 		}
 		return false;

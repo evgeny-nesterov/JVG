@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
@@ -13,14 +14,23 @@ public class HiFieldVar extends HiField<Object> {
 		super(type, name);
 	}
 
+	private HiField typedField;
+
+	public HiField getTypedField(ClassResolver classResolver) {
+		if (typedField == null && type != Type.varType) {
+			typedField = HiFieldVar.getField(getClass(classResolver), name, initializer, token);
+		}
+		return typedField;
+	}
+
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
-		throw new RuntimeException("not supported");
+		getTypedField(ctx).get(ctx, value);
 	}
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
-		throw new RuntimeException("not supported");
+		getTypedField(ctx).set(ctx, value);
 	}
 
 	@Override

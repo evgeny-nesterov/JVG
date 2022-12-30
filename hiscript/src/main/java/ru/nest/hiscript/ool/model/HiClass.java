@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -424,17 +425,27 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		if (initializers != null) {
-			for (NodeInitializer initializer : initializers) {
-				HiNode initializerNode = (HiNode) initializer;
-				valid &= initializerNode.validate(validationInfo, ctx);
+			for (int i = 0; i < initializers.length; i++) {
+				HiNode initializer = (HiNode) initializers[i];
+				valid &= initializer.validate(validationInfo, ctx);
 				if (initializer instanceof HiField) {
+					if (initializer instanceof HiFieldVar) {
+						HiFieldVar varField = (HiFieldVar) initializer;
+						if (varField.type != Type.varType) {
+							HiField typedField = HiFieldVar.getField(varField.getClass(ctx), varField.name, varField.initializer, varField.token);
+							initializer = typedField;
+							initializers[i] = typedField;
+							ctx.level.addField(typedField);
+						}
+					}
+
 					HiField field = (HiField) initializer;
 					if (field.getModifiers().isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors
 						validationInfo.error("Variable '" + field.name + "' might not have been initialized", field.getToken());
 						valid = false;
 					}
-					ctx.initializedNodes.add(initializerNode);
+					ctx.initializedNodes.add(field);
 				}
 			}
 		}

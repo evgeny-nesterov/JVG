@@ -30,9 +30,8 @@ public class HiFieldArray extends HiField<Object> {
 			return;
 		}
 
-		HiClass type = getClass(ctx);
-		if (!HiClass.autoCast(value.type, type, false)) {
-			ctx.throwRuntimeException("incompatible types; found " + type.getClassName() + ", required " + value.type.getClassName());
+		if (!HiClass.autoCast(value.type, getClass(ctx), false)) {
+			ctx.throwRuntimeException("incompatible types; found " + getClass(ctx).getClassName() + ", required " + value.type.getClassName());
 			return;
 		}
 
@@ -51,9 +50,8 @@ public class HiFieldArray extends HiField<Object> {
 			return;
 		} else {
 			// check cast
-			HiClass type = getClass(ctx);
-			if (!HiClass.autoCast(value.type, type, false)) {
-				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + type.getClassName());
+			if (!HiClass.autoCast(value.type, getClass(ctx), false)) {
+				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + getClass(ctx).getClassName());
 				return;
 			}
 

@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
@@ -110,7 +111,11 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	public Type type;
 
-	protected HiClass clazz;
+	private HiClass clazz;
+
+	public String name;
+
+	public HiNode initializer;
 
 	public HiClass getClass(ClassResolver classResolver) {
 		if (clazz == null) {
@@ -118,10 +123,6 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		}
 		return clazz;
 	}
-
-	public String name;
-
-	public HiNode initializer;
 
 	@Override
 	public boolean isConstant(CompileClassContext ctx) {
@@ -137,8 +138,17 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initializer != null) {
-			valid &= initializer.validate(validationInfo, ctx);
+			valid &= initializer.validate(validationInfo, ctx) && initializer.expectValue(validationInfo, ctx);
+			if (type == Type.varType) {
+				clazz = initializer.getValueClass(validationInfo, ctx);
+				type = Type.getType(clazz);
+			}
+		} else if (type == Type.varType) {
+			validationInfo.error("var is not initialized", token);
+			valid = false;
+			clazz = HiClassPrimitive.VOID;
 		}
+		getClass(ctx);
 		valid &= ctx.addLocalVariable(this);
 		return valid;
 	}
@@ -178,7 +188,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = getClass(ctx);
+		ctx.value.type = clazz;
 		get(ctx, ctx.value);
 	}
 
@@ -255,6 +265,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 			java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(clazz.name);
 			try {
 				field = constructor.newInstance(name);
+				field.clazz = clazz;
 			} catch (Exception exc) {
 				throw new RuntimeException("Undefined field type: " + clazz.name, exc);
 			}
@@ -293,7 +304,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	@Override
 	public String toString() {
 		try (RuntimeContext ctx = new RuntimeContext(null, true)) {
-			String value = getClass(ctx).fullName + " " + name + " = " + get();
+			String value = (clazz != null ? clazz.fullName : type.fullName) + " " + name + " = " + get();
 			ctx.throwExceptionIf(false);
 			return value;
 		}
