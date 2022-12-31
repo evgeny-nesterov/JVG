@@ -160,12 +160,12 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("char c = (char)-1; assert c == 65535;");
 		assertSuccessSerialize("int c = (char)-1; assert c == 65535;");
 
-		assertFail("char c1 = -1;");
-		assertFail("char c1 = 'a'; char c2 = c1 + '1';");
-		assertFail("char c1 = 'a'; char c2 = c1 + 1;");
-		assertFail("char c1 = 'a'; char c2 = c1 + 1l;");
-		assertFail("char c1 = 'a'; char c2 = c1 + (byte)1;");
-		assertFail("char c1 = 'a'; char c2 = c1 + (short)1;");
+		assertFailCompile("char c1 = -1;");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + '1';");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1;");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1l;");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + (byte)1;");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + (short)1;");
 
 		assertSuccessSerialize("char c = \"x\".charAt(0); assert c == 'x';");
 		assertSuccessSerialize("String s = \"[\" + 'a' + 'b' + 'c' + \"]\"; assert s.equals(\"[abc]\");");

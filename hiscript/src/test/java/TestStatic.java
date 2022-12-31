@@ -20,8 +20,8 @@ public class TestStatic extends HiTest {
 
 		// method
 		assertSuccessSerialize("class C{static int x = 1; static int get(){return x;}}; assert C.get() == 1;");
-		assertFailSerialize("class C{int x = 1; int get(){return x;}}; C.get();");
-		assertFailSerialize("class C{int x = 1; static int get(){return x;}}; C.get();");
-		assertFailSerialize("class C{static int x = 1; int get(){return x;}}; C.get();");
+		assertFailCompile("class C{int x = 1; int get(){return x;}}; C.get();");
+		assertFailCompile("class C{static int x = 1; int get(){return x;}}; C.get();");
+		assertFailCompile("class C{int x = 1; static int get(){return x;}}; C.get();");
 	}
 }

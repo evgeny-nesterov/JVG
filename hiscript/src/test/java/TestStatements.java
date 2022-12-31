@@ -20,12 +20,12 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("String a = \"a\", b, c = null; assert \"a\".equals(a); assert c == null;");
 		assertSuccessSerialize("{int a = 1;} int a = 2; assert a == 2;");
 
-		assertFailSerialize("String 0var;");
-		assertFailSerialize("String a, a;");
-		assertFailSerialize("int a = 1; String a = \"\";");
-		assertFailSerialize("int x; int y = x;");
-		assertFailSerialize("int x = 1; int y = true || x;");
-		assertFailSerialize("int x = 1, y = 0.0;");
+		assertFailCompile("String 0var;");
+		assertFailCompile("String a, a;");
+		assertFailCompile("int a = 1; String a = \"\";");
+		assertFailCompile("int x; int y = x;");
+		assertFailCompile("int x = 1; int y = true || x;");
+		assertFailCompile("int x = 1, y = 0.0;");
 	}
 
 	@Test
@@ -126,31 +126,31 @@ public class TestStatements extends HiTest {
 		// methods
 		assertSuccessSerialize("class A{int m(){return 1;}} assert new A().m() == 1;");
 		assertSuccessSerialize("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
-		assertFailSerialize("class A{int m(){return \"\";}}");
-		assertFailSerialize("class A{int m(){return;}}");
-		assertFailSerialize("class A{void m(){return; int x = 1;}}");
-		assertFailSerialize("class A{void m(){return; return;}}");
+		assertFailCompile("class A{int m(){return \"\";}}");
+		assertFailCompile("class A{int m(){return;}}");
+		assertFailCompile("class A{void m(){return; int x = 1;}}");
+		assertFailCompile("class A{void m(){return; return;}}");
 
 		assertSuccessSerialize("class A{void m(){return;}} new A().m();");
-		assertFailSerialize("class A{void m(){return;}} Object x = new A().m();");
-		assertFailSerialize("class A{void m(){return 1;}}");
+		assertFailCompile("class A{void m(){return;}} Object x = new A().m();");
+		assertFailCompile("class A{void m(){return 1;}}");
 
 		assertSuccessSerialize("class A{int m(){ if(true) {{{return 1;}}} else return 2; }} assert new A().m() == 1;");
 
 		// constructors
 		assertSuccessSerialize("class A{A(){return;}}");
-		assertFailSerialize("class A{A(){return \"\";}}");
-		assertFailSerialize("class A{A(){return; int x = 1;}}");
-		assertFailSerialize("class A{A(){return; return;}}");
+		assertFailCompile("class A{A(){return \"\";}}");
+		assertFailCompile("class A{A(){return; int x = 1;}}");
+		assertFailCompile("class A{A(){return; return;}}");
 
 		assertSuccessSerialize("class A{int x = 0; A(){if(true) return; x = 1;}} assert new A().x == 0;");
 
 		// initializers
 		assertSuccessSerialize("class A{{int x = 0; return;}}");
 		assertSuccessSerialize("class A{static{int x = 0; return;}}");
-		assertFailSerialize("class A{{return \"\";}}");
-		assertFailSerialize("class A{{return; int x = 0;}}");
-		assertFailSerialize("class A{static{return; return;}}");
+		assertFailCompile("class A{{return \"\";}}");
+		assertFailCompile("class A{{return; int x = 0;}}");
+		assertFailCompile("class A{static{return; return;}}");
 
 		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
 	}

@@ -432,8 +432,16 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (initializers != null) {
 			for (int i = 0; i < initializers.length; i++) {
 				HiNode initializer = (HiNode) initializers[i];
+				boolean isField = initializer instanceof HiField;
+				if (!isField) {
+					ctx.enter(RuntimeContext.INITIALIZATION, initializer);
+				}
 				valid &= initializer.validate(validationInfo, ctx);
-				if (initializer instanceof HiField) {
+				if (!isField) {
+					ctx.exit();
+				}
+
+				if (isField) {
 					if (initializer instanceof HiFieldVar) {
 						HiFieldVar varField = (HiFieldVar) initializer;
 						if (varField.type != Type.varType) {
@@ -1253,12 +1261,16 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 	}
 
-	public boolean hasOutboundObject() {
-		return !isStatic() && !isTopLevel();
-	}
+	//	public boolean hasOutboundObject() {
+	//		return !isStatic() && !isTopLevel();
+	//	}
 
 	public boolean isStatic() {
-		return modifiers != null && modifiers.isStatic();
+		if (isTopLevel()) {
+			return true;
+		} else {
+			return (modifiers != null && modifiers.isStatic()) && isStaticRootClassTop();
+		}
 	}
 
 	public boolean isFinal() {

@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -63,17 +64,39 @@ public class NodeIdentifier extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		Object resolvedIdentifier = ctx.resolveIdentifier(name);
+		boolean valid = true;
+		boolean local = false;
+		Object resolvedIdentifier = ctx.resolveIdentifier(name, true, true, true);
+		if (resolvedIdentifier != null) {
+			local = true;
+		} else {
+			resolvedIdentifier = ctx.resolveIdentifier(name);
+		}
+
 		if (resolvedIdentifier == null) {
 			validationInfo.error("Can't resolve symbol '" + name + "'", token);
-			return false;
+			valid = false;
 		} else if (resolvedIdentifier instanceof NodeArgument) {
 			// arguments are always initialized
 		} else if (resolvedIdentifier instanceof HiNode && ctx.level.enclosingClass == null && !ctx.initializedNodes.contains(resolvedIdentifier)) {
 			validationInfo.error("Variable '" + name + "' is not initialized", token);
-			return false;
+			valid = false;
 		}
-		return true;
+
+		if (!local) {
+			boolean nonStaticField = false;
+			if (resolvedIdentifier instanceof HiField) {
+				nonStaticField = !((HiField) resolvedIdentifier).isStatic();
+			} else if (resolvedIdentifier instanceof NodeDeclaration) {
+				Modifiers modifiers = ((NodeDeclaration) resolvedIdentifier).modifiers;
+				nonStaticField = modifiers != null ? !modifiers.isStatic() : true;
+			}
+			if (nonStaticField && ctx.isStaticContext()) {
+				validationInfo.error("Non-static field '" + name + "' cannot be accessed from static context", token);
+				valid = false;
+			}
+		}
+		return valid;
 	}
 
 	@Override

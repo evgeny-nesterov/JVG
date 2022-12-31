@@ -11,7 +11,7 @@ public class TestAnnotations extends HiTest {
 		assertSuccess("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
 
 		assertSuccess("@interface A{int value() default y + 1; int x = 1; int y = x + 1;} @A(value=2) class C{} C c = new C();");
-		assertFail("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}"); // divide by zero
+		assertFailCompile("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}"); // divide by zero
 		assertSuccess("enum E{e1,e2} @interface A{E value() default e2; E e1 = E.e1; E e2 = e1;}; @A(E.e2) class C{@A(value=E.e2) void get(){}};");
 		assertSuccess("static class C{final static int CONST=1;} @interface A{int value() default C.CONST;}");
 
@@ -29,8 +29,8 @@ public class TestAnnotations extends HiTest {
 		assertSuccess("@interface NonNull{} for(@NonNull Object o : new Object[]{}){} for(@NonNull int i=0; i < 3; i++);");
 
 		assertSuccess("static class C1{final static int CONST=1;} static class C2{final static int CONST=C1.CONST;} @interface A{int value() default C2.CONST;}");
-		assertFail("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
-		assertFail("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
+		assertFailCompile("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
+		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
 
 		// array arguments
 	}

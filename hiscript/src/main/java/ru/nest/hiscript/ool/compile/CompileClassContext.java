@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
@@ -14,6 +13,7 @@ import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Token;
@@ -565,6 +565,25 @@ public class CompileClassContext implements ClassResolver {
 				localVariables.clear();
 			}
 		}
+	}
+
+	public boolean isStaticContext() {
+		if (clazz != null && !clazz.isStatic()) {
+			return false;
+		}
+		CompileClassLevel level = this.level;
+		while (level != null) {
+			if (level.type == RuntimeContext.METHOD) {
+				return ((HiMethod) level.node).modifiers.isStatic();
+			} else if (level.type == RuntimeContext.INITIALIZATION) {
+				return ((NodeBlock) level.node).isStatic();
+			}
+			level = level.parent;
+		}
+		if (parent != null) {
+			return parent.isStaticContext();
+		}
+		return false;
 	}
 
 	public String getTokenText(Token token) {
