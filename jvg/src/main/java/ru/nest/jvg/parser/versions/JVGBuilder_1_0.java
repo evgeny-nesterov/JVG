@@ -339,7 +339,7 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 		}
 	}
 
-	private String getImage(Resource<? extends Icon> image) throws JVGParseException {
+	private String getImage(Resource<? extends Icon> image) {
 		if (image != null) {
 			String id = image.getName();
 			if (id != null) {

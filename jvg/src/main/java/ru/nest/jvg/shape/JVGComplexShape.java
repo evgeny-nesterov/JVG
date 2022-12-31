@@ -28,7 +28,7 @@ public class JVGComplexShape extends JVGShape {
 		this(ctx.getURL());
 	}
 
-	public JVGComplexShape(ComplexShapeParser ctx, boolean editable) throws Exception {
+	public JVGComplexShape(ComplexShapeParser ctx, boolean editable) {
 		init(ctx, editable);
 	}
 

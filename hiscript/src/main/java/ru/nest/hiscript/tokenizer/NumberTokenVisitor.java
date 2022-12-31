@@ -33,34 +33,45 @@ public class NumberTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 			char c = tokenizer.getCurrent();
 			long value = c;
+			boolean tooLarge = false;
 			if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
 				tokenizer.next();
 				while (tokenizer.hasNext()) {
 					c = tokenizer.getCurrent();
+					long newValue;
 					if (c >= '0' && c <= '9') {
-						value = 16 * value + c - '0';
+						newValue = 16 * value + c - '0';
 					} else if (c >= 'a' && c <= 'f') {
-						value = 16 * value + 10 + c - 'a';
+						newValue = 16 * value + 10 + c - 'a';
 					} else if (c >= 'A' && c <= 'F') {
-						value = 16 * value + 10 + c - 'A';
+						newValue = 16 * value + 10 + c - 'A';
 					} else {
 						break;
 					}
+					if (newValue < value) {
+						tooLarge = true;
+					}
+					value = newValue;
 					tokenizer.nextToken();
 				}
 			} else {
-				throw new TokenizerException("Invalid number value", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				tokenizer.error("Invalid number value", line, offset, tokenizer.getOffset() - offset, lineOffset);
+			}
+			if (negative) {
+				value = -value;
 			}
 
 			if (tokenizer.lookForward() == 'l' || tokenizer.lookForward() == 'L') {
+				if (tooLarge) {
+					tokenizer.error("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				}
 				tokenizer.next();
 				return new LongToken(value, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
 			} else {
-				if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-					return new IntToken((int) value, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
-				} else {
-					throw new TokenizerException("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+					tokenizer.error("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				}
+				return new IntToken((int) value, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
 			}
 		}
 
@@ -125,14 +136,15 @@ public class NumberTokenVisitor implements TokenVisitor {
 			long number;
 			try {
 				number = Long.parseLong(text);
-				if (negative) {
-					number = -number;
-				}
 			} catch (NumberFormatException exc) {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				throw new TokenizerException("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				tokenizer.error("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				number = 0;
+			}
+			if (negative) {
+				number = -number;
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -155,7 +167,8 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				throw new TokenizerException("Float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				tokenizer.error("Float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				number = 0;
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -178,16 +191,18 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				throw new TokenizerException("Double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				tokenizer.error("Double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				number = 0;
 			}
 			if (hasSign) {
 				tokenizer.commit();
 			}
 			return new DoubleToken(number, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
 		} else {
-			int number;
+			long number;
+			boolean tooLarge = false;
 			try {
-				number = Integer.parseInt(text);
+				number = Long.parseLong(text);
 				if (negative) {
 					number = -number;
 				}
@@ -195,18 +210,16 @@ public class NumberTokenVisitor implements TokenVisitor {
 				if (hasSign) {
 					tokenizer.rollback();
 				}
-				throw new TokenizerException("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				tooLarge = true;
+				number = 0;
+			}
+			if (tooLarge || number < Integer.MIN_VALUE || number > Integer.MAX_VALUE) {
+				tokenizer.error("Integer number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 			if (hasSign) {
 				tokenizer.commit();
 			}
-			if (number >= Byte.MIN_VALUE && number <= Byte.MAX_VALUE) {
-				return new ByteToken((byte) number, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
-			} else if (number >= Short.MIN_VALUE && number <= Short.MAX_VALUE) {
-				return new ShortToken((short) number, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
-			} else {
-				return new IntToken(number, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
-			}
+			return new IntToken((int) number, line, offset, tokenizer.getOffset() - offset, lineOffset, hasSign);
 		}
 	}
 

@@ -762,7 +762,7 @@ public class JVGEditPane extends JVGPane {
 		setDocumentFormat(documentFormat);
 	}
 
-	public String getDocument() throws IOException, JVGParseException {
+	public String getDocument() throws JVGParseException {
 		JVGBuilder builder = JVGBuilder.create(documentFormat);
 		builder.setDocument(this);
 		return builder.build(getRoot().getChildren(), "utf-8");

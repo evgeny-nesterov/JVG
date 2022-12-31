@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class TestNodes extends HiTest {
 	@Test
-	public void testPlus() throws IOException {
+	public void testPlus() {
 		assertByte(doBinaryOperation(OperationPlus.getInstance(), byteNode(1), byteNode(2)), 3);
 		assertByte(doBinaryOperation(OperationPlus.getInstance(), byteNode(1), shortNode(2)), 3);
 		assertByte(doBinaryOperation(OperationPlus.getInstance(), byteNode(1), intNode(2)), 3);

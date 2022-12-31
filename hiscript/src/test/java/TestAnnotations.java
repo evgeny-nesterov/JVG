@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class TestAnnotations extends HiTest {
 	@Test
-	public void test() throws IOException {
+	public void test() {
 		assertSuccess("public @interface Field{int value() default 1 + 2;}");
 		assertSuccess("abstract @interface Field{String value() default \"x=\" + 1;}");
 		assertSuccess("static @interface Field{int value();}");

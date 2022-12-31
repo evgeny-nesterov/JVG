@@ -19,7 +19,7 @@ public class IncrementNode extends Node implements Value {
 	private int incrementOperation;
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 	}
 
 	@Override

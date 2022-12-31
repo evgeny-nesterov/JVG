@@ -1268,7 +1268,7 @@ public class JVGPane extends JComponent implements JVGSelectionListener, DropTar
 	private Map<Integer, VolatileImage> drawBuffers = new HashMap<>();
 
 	// not thread safe
-	protected VolatileImage createDrawBuffer(int level) throws Exception {
+	protected VolatileImage createDrawBuffer(int level) {
 		VolatileImage img = drawBuffers.get(level);
 		try {
 			if (img != null) {

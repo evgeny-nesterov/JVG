@@ -272,7 +272,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 	}
 
-	private String getImage(Resource<? extends Icon> image) throws JVGParseException {
+	private String getImage(Resource<? extends Icon> image) {
 		if (image != null) {
 			ImageResource<? extends Icon> imageResource = (ImageResource<? extends Icon>) image;
 			return "url(" + imageResource.getSource() + ")";
@@ -362,7 +362,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 		}
 	}
 
-	private void getFill(Painter painter, Element componentElement) throws JVGParseException {
+	private void getFill(Painter painter, Element componentElement) {
 		Draw draw = painter.getPaint();
 		if (draw == null) {
 			return;

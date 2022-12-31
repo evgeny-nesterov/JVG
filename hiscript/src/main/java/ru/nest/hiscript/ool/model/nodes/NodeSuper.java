@@ -17,6 +17,7 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = this;
 		return ctx.clazz.superClass;
 	}
 

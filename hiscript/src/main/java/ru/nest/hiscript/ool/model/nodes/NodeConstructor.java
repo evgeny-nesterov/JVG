@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.NoClassException;
+import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -43,6 +43,7 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = this;
 		return clazz != null ? clazz : type.getType().getClass(ctx);
 	}
 
@@ -62,11 +63,16 @@ public class NodeConstructor extends HiNode {
 		if (clazz == null) {
 			validationInfo.error("class not found: " + name, type.getToken());
 			valid = false;
-		} else {
-			if (clazz.isInterface) {
-				validationInfo.error("cannot create object from interface '" + name + "'", type.getToken());
-				valid = false;
-			}
+		} else if (clazz.isInterface) {
+			validationInfo.error("cannot create object from interface '" + name + "'", type.getToken());
+			valid = false;
+		}
+		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
+			validationInfo.error("qualified new of static class", type.getToken());
+			valid = false;
+		} else if (!clazz.isStatic() && ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
+			validationInfo.error("'" + name + "' is not an enclosing class", type.getToken());
+			valid = false;
 		}
 		return valid;
 	}
@@ -177,7 +183,7 @@ public class NodeConstructor extends HiNode {
 				HiClass clazz = os.readClass();
 				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 				return new NodeConstructor(clazz, argValues);
-			} catch (NoClassException exc) {
+			} catch (HiNoClassException exc) {
 				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 				final NodeConstructor node = new NodeConstructor(argValues);
 				os.addClassLoadListener(new ClassLoadListener() {

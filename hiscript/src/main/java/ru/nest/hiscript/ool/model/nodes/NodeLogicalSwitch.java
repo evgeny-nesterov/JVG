@@ -23,6 +23,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = this;
 		HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
 		HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
 		if (type1 != null && type2 != null) {

@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -37,7 +38,7 @@ public class NodeAnnotationArgument extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		throw new RuntimeException("Can't execute annotation");
+		throw new HiScriptRuntimeException("Can't execute annotation");
 	}
 
 	@Override

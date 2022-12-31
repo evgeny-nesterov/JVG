@@ -31,7 +31,7 @@ public class ArgumentNode extends Node {
 	private Variable var;
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 		statement = getTopStatement();
 		var = new Variable(null, name, type, dimension);
 	}

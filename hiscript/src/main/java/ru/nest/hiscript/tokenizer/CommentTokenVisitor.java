@@ -18,15 +18,22 @@ public class CommentTokenVisitor implements TokenVisitor {
 			} else if (tokenizer.getCurrent() == '*') {
 				tokenizer.next();
 				char prev = tokenizer.getCurrent();
+				boolean closed = false;
 				while (tokenizer.hasNext()) {
 					if (prev == '*' && tokenizer.getCurrent() == '/') {
 						tokenizer.next();
-						return new CommentToken(line, offset, tokenizer.getOffset() - offset, lineOffset);
+						closed = true;
+						break;
 					}
 					prev = tokenizer.getCurrent();
 					tokenizer.next();
 				}
-				throw new TokenizerException("end of comment '*/' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+
+				CommentToken commentToken = new CommentToken(line, offset, tokenizer.getOffset() - offset, lineOffset);
+				if (!closed) {
+					tokenizer.error("end of comment '*/' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+				}
+				return commentToken;
 			}
 		}
 		return null;

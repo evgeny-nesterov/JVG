@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -14,7 +15,7 @@ import java.util.Map;
 public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
 	protected static Map<Type, Integer> types_hash_type = new HashMap<>();
 
-	protected static Map<HiClass, Integer> types_hash_class = new HashMap<>();
+	protected static Map<HiClass, Integer> typesHashClass = new HashMap<>();
 
 	static {
 		types_hash_type.put(Type.getPrimitiveType("char"), CHAR);
@@ -27,15 +28,15 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		types_hash_type.put(Type.getPrimitiveType("boolean"), BOOLEAN);
 		types_hash_type.put(Type.getPrimitiveType("void"), VOID);
 
-		types_hash_class.put(HiClassPrimitive.CHAR, CHAR);
-		types_hash_class.put(HiClassPrimitive.BYTE, BYTE);
-		types_hash_class.put(HiClassPrimitive.SHORT, SHORT);
-		types_hash_class.put(HiClassPrimitive.INT, INT);
-		types_hash_class.put(HiClassPrimitive.FLOAT, FLOAT);
-		types_hash_class.put(HiClassPrimitive.LONG, LONG);
-		types_hash_class.put(HiClassPrimitive.DOUBLE, DOUBLE);
-		types_hash_class.put(HiClassPrimitive.BOOLEAN, BOOLEAN);
-		types_hash_class.put(HiClassPrimitive.VOID, VOID);
+		typesHashClass.put(HiClassPrimitive.CHAR, CHAR);
+		typesHashClass.put(HiClassPrimitive.BYTE, BYTE);
+		typesHashClass.put(HiClassPrimitive.SHORT, SHORT);
+		typesHashClass.put(HiClassPrimitive.INT, INT);
+		typesHashClass.put(HiClassPrimitive.FLOAT, FLOAT);
+		typesHashClass.put(HiClassPrimitive.LONG, LONG);
+		typesHashClass.put(HiClassPrimitive.DOUBLE, DOUBLE);
+		typesHashClass.put(HiClassPrimitive.BOOLEAN, BOOLEAN);
+		typesHashClass.put(HiClassPrimitive.VOID, VOID);
 	}
 
 	public HiFieldPrimitive(Type type, String name) {
@@ -48,20 +49,20 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	}
 
 	public static int getType(HiClass type) {
-		Integer t = types_hash_class.get(type);
+		Integer t = typesHashClass.get(type);
 		if (t != null) {
 			return t.intValue();
 		} else {
-			throw new RuntimeException("unknown type: " + type);
+			throw new HiScriptRuntimeException("unknown type: " + type);
 		}
 	}
 
 	public static int getType(Type type) {
-		Integer t = types_hash_class.get(type);
+		Integer t = typesHashClass.get(type);
 		if (t != null) {
 			return t.intValue();
 		} else {
-			throw new RuntimeException("unknown type: " + type);
+			throw new HiScriptRuntimeException("unknown type: " + type);
 		}
 	}
 
@@ -121,7 +122,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 			case CHAR:
 				switch (dstType) {
 					case CHAR:
-					case SHORT:
 					case INT:
 					case LONG:
 					case FLOAT:

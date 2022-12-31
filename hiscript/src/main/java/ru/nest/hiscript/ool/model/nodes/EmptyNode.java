@@ -29,7 +29,7 @@ public class EmptyNode extends HiNode {
 		super.code(os);
 	}
 
-	public static EmptyNode decode(DecodeContext os) throws IOException {
+	public static EmptyNode decode(DecodeContext os) {
 		return instance;
 	}
 }

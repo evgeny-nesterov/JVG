@@ -1,11 +1,15 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.lang.reflect.Array;
 
@@ -23,18 +27,12 @@ public class HiFieldArray extends HiField<Object> {
 	public HiClass arrayType;
 
 	@Override
+	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
+		return valueType.type.isNull() || (valueType.type.isArray() && HiClass.autoCast(valueType.type, fieldClass, false));
+	}
+
+	@Override
 	public void get(RuntimeContext ctx, Value value) {
-		// check value on array and on object
-		if (!value.type.isArray() && !(value.type.isObject() && value.type.superClass == null)) {
-			ctx.throwRuntimeException("array is expected");
-			return;
-		}
-
-		if (!HiClass.autoCast(value.type, getClass(ctx), false)) {
-			ctx.throwRuntimeException("incompatible types; found " + getClass(ctx).getClassName() + ", required " + value.type.getClassName());
-			return;
-		}
-
 		value.valueType = Value.VALUE;
 		value.type = arrayType != null ? arrayType : getClass(ctx);
 		value.array = array;
@@ -43,18 +41,10 @@ public class HiFieldArray extends HiField<Object> {
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (value.type == HiClass.getNullClass()) {
+		if (value.type == HiClassNull.NULL) {
 			array = null;
-		} else if (!value.type.isArray()) {
-			ctx.throwRuntimeException("array is expected");
-			return;
+			arrayType = getClass(ctx);
 		} else {
-			// check cast
-			if (!HiClass.autoCast(value.type, getClass(ctx), false)) {
-				ctx.throwRuntimeException("incompatible types; found " + value.type.getClassName() + ", required " + getClass(ctx).getClassName());
-				return;
-			}
-
 			array = value.array;
 			arrayType = value.type;
 		}

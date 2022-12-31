@@ -1,25 +1,5 @@
 package ru.nest.jvg.action;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-
-import javax.swing.BasicTextEditor;
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.WComboBox;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import ru.nest.hiscript.pol.CompileHandler;
 import ru.nest.hiscript.pol.Compiler;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -28,6 +8,15 @@ import ru.nest.jvg.editor.resources.JVGLocaleManager;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class ScriptAction extends JVGAction {
 	private boolean chooseScript;
@@ -165,8 +154,8 @@ public class ScriptAction extends JVGAction {
 									txtErrors.append(offset + " - " + length + ": " + msg + "\n");
 								}
 							});
-						} catch (TokenizerException exc) {
-							exc.printStackTrace();
+						} catch (TokenizerException te) {
+							te.printStackTrace();
 						}
 
 						pnl.revalidate();

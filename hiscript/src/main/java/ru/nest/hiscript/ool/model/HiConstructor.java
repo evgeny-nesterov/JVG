@@ -143,21 +143,6 @@ public class HiConstructor implements Codeable, TokenAccessible {
 			object = new HiObject(clazz, outboundObject);
 		}
 
-		// Check on valid outboundObject
-		// TODO: use only for DEBUGGING
-		if (clazz.hasOutboundObject()) {
-			if (outboundObject == null) {
-				throw new IllegalStateException("outboundObject must be not null: " + this);
-			}
-			if (outboundObject.clazz != clazz.enclosingClass) {
-				throw new IllegalStateException("outboundObject must be of type " + clazz.enclosingClass + ": " + this);
-			}
-		} else {
-			if (outboundObject != null) {
-				throw new IllegalStateException("outboundObject must be null: " + this);
-			}
-		}
-
 		// enter in constructor
 		ctx.enterConstructor(this, object, null);
 		try {

@@ -174,7 +174,7 @@ public class CodeContext {
 
 	private List<String> strings = new ArrayList<>();
 
-	private int getUTFIndex(String value) throws IOException {
+	private int getUTFIndex(String value) {
 		CodeContext ctx = getRoot();
 
 		int index;

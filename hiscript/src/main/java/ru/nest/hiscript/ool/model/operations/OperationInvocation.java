@@ -39,7 +39,8 @@ public class OperationInvocation extends BinaryOperation {
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		if (node1.type != null) {
-			ctx.enterObject(node1.type);
+			HiClass enclosingClass = node1.resolvedValueVariable != null ? node1.resolvedValueVariable.getValueClass(validationInfo, ctx) : node1.type;
+			ctx.enterObject(enclosingClass, node1.resolvedValueVariable != null);
 			if (node2.type == null) {
 				node2.get(validationInfo, ctx);
 				if (node2.type == null) {

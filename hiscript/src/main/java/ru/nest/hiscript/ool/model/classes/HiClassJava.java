@@ -254,10 +254,10 @@ public class HiClassJava extends HiClass {
 	}
 
 	@Override
-	public void code(CodeContext os) throws IOException {
+	public void code(CodeContext os) {
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
+	public static HiClass decode(DecodeContext os) {
 		return null;
 	}
 

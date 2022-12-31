@@ -1,7 +1,12 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class HiFieldChar extends HiFieldNumber<Character> {
 	public HiFieldChar(String name) {
@@ -11,28 +16,37 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 	private char value;
 
 	@Override
+	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
+		if (valueType.isValue) {
+			if (valueType.type == HiClassPrimitive.INT) {
+				return valueType.intValue >= Character.MIN_VALUE && valueType.intValue <= Character.MAX_VALUE;
+			} else if (valueType.type == HiClassPrimitive.SHORT) {
+				return valueType.shortValue >= Character.MIN_VALUE && valueType.shortValue <= Character.MAX_VALUE;
+			} else if (valueType.type == HiClassPrimitive.BYTE) {
+				return valueType.byteValue >= Character.MIN_VALUE;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
 		switch (valueType) {
 			case CHAR:
 				value.character = this.value;
 				break;
-
 			case INT:
 				value.intNumber = this.value;
 				break;
-
 			case LONG:
 				value.longNumber = this.value;
 				break;
-
 			case FLOAT:
 				value.floatNumber = this.value;
 				break;
-
 			case DOUBLE:
 				value.doubleNumber = this.value;
 				break;
-
 			default:
 				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
@@ -53,14 +67,12 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 							return;
 						}
 						break;
-
 					case SHORT:
 						if (value.shortNumber >= Character.MIN_VALUE) {
 							this.value = (char) value.shortNumber;
 							return;
 						}
 						break;
-
 					case INT:
 						if (value.intNumber >= Character.MIN_VALUE && value.intNumber <= Character.MAX_VALUE) {
 							this.value = (char) value.intNumber;

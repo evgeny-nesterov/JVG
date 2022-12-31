@@ -32,13 +32,20 @@ public class NodeInvocation extends HiNode {
 
 	private boolean innerInvocation;
 
+	private HiClass invocationClass;
+
+	private boolean isEnclosingObject;
+
+	private HiMethod method;
+
 	public void setInner(boolean innerInvocation) {
 		this.innerInvocation = innerInvocation;
 	}
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass invocationClass = ctx.consumeInvocationClass();
+		invocationClass = ctx.consumeInvocationClass();
+		isEnclosingObject = invocationClass != null ? ctx.level.isEnclosingObject : false;
 
 		// args has to be evaluated without invocationClass context
 		HiClass[] argumentsClasses = new HiClass[arguments != null ? arguments.length : 0];
@@ -49,14 +56,15 @@ public class NodeInvocation extends HiNode {
 			}
 		}
 
+		ctx.nodeValueType.resolvedValueVariable = this;
 		if (invocationClass != null) {
-			HiMethod method = invocationClass.searchMethod(ctx, name, argumentsClasses);
+			method = invocationClass.searchMethod(ctx, name, argumentsClasses);
 			if (method != null) {
 				return method.returnClass;
 			}
 		} else {
 			while (ctx != null) {
-				HiMethod method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
+				method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
 				if (method != null) {
 					return method.returnClass;
 				}
@@ -68,14 +76,28 @@ public class NodeInvocation extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		HiClass returnClass = getValueClass(validationInfo, ctx);
+
+		boolean valid = method != null;
 		if (arguments != null) {
 			for (HiNode argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);
 			}
 		}
 
-		// TODO check name
+		if (method != null) {
+			if (method.modifiers.isAbstract()) {
+				validationInfo.error("Cannot invoke abstract method", token);
+				valid = false;
+			}
+			if (!innerInvocation && !method.modifiers.isStatic() && !isEnclosingObject) {
+				validationInfo.error("Non-static method '" + method + "' cannot be referenced from a static context", token);
+				valid = false;
+			}
+		} else {
+			validationInfo.error("Cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.fullName + "'" : ""), token);
+			valid = false;
+		}
 		return valid;
 	}
 

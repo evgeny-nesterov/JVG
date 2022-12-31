@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
 
 import java.io.IOException;
@@ -223,7 +223,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return modifiers;
 	}
 
-	public boolean check(Tokenizer tokenizer, Token modifiersToken, int... allowed) throws HiScriptParseException {
+	public boolean check(Tokenizer tokenizer, Token modifiersToken, int... allowed) throws TokenizerException {
 		int allowedMask = ACCESS_DEFAULT;
 		for (int word : allowed) {
 			allowedMask |= mapWordsToModification(word);

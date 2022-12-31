@@ -18,6 +18,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,7 +178,7 @@ public class CompileClassContext implements ClassResolver {
 		return fieldsArray;
 	}
 
-	public void addClass(HiClass clazz) throws HiScriptParseException {
+	public void addClass(HiClass clazz) throws TokenizerException {
 		if (classes == null) {
 			classes = new ArrayList<>(1);
 			classesMap = new HashMap<>(1);
@@ -238,9 +239,10 @@ public class CompileClassContext implements ClassResolver {
 		level.label = label;
 	}
 
-	public void enterObject(HiClass objectClass) {
-		level = new CompileClassLevel(RuntimeContext.OBJECT, objectClass, level);
-		level.objectClass = objectClass;
+	public void enterObject(HiClass enclosingClass, boolean isEnclosingObject) {
+		level = new CompileClassLevel(RuntimeContext.OBJECT, enclosingClass, level);
+		level.enclosingClass = enclosingClass;
+		level.isEnclosingObject = isEnclosingObject;
 	}
 
 	public void exit() {
@@ -248,8 +250,8 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public HiClass consumeInvocationClass() {
-		HiClass clazz = this.level.objectClass;
-		this.level.objectClass = null;
+		HiClass clazz = this.level.enclosingClass;
+		this.level.enclosingClass = null;
 		return clazz;
 	}
 
@@ -417,6 +419,26 @@ public class CompileClassContext implements ClassResolver {
 		return null;
 	}
 
+	public HiMethod resolveMethod(String name, HiClass... argsClasses) {
+		if (level.enclosingClass != null) {
+			return level.enclosingClass.searchMethod(this, name, argsClasses);
+		}
+		if (this.clazz != null) {
+			HiClass outerClass = this.clazz;
+			while (outerClass != null) {
+				HiMethod method = outerClass.searchMethod(this, name, argsClasses);
+				if (method != null) {
+					return method;
+				}
+				outerClass = outerClass.enclosingClass;
+			}
+		}
+		if (parent != null) {
+			return parent.resolveMethod(name, argsClasses);
+		}
+		return null;
+	}
+
 	public class CompileClassLevel {
 		public int type;
 
@@ -430,7 +452,9 @@ public class CompileClassContext implements ClassResolver {
 
 		CompileClassLevel child;
 
-		public HiClass objectClass;
+		public HiClass enclosingClass;
+
+		public boolean isEnclosingObject;
 
 		public TokenAccessible node;
 
@@ -464,8 +488,8 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		public HiClass getClass(String name) {
-			if (objectClass != null) {
-				HiClass localClass = objectClass.getClass(CompileClassContext.this, name);
+			if (enclosingClass != null) {
+				HiClass localClass = enclosingClass.getClass(CompileClassContext.this, name);
 				if (localClass != null) {
 					return localClass;
 				}
@@ -512,9 +536,9 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		public NodeVariable getField(String name) {
-			if (objectClass != null) {
-				if (objectClass instanceof HiClassEnum) {
-					HiClassEnum classEnum = (HiClassEnum) objectClass;
+			if (enclosingClass != null) {
+				if (enclosingClass instanceof HiClassEnum) {
+					HiClassEnum classEnum = (HiClassEnum) enclosingClass;
 					classEnum.init(CompileClassContext.this);
 					HiField enumField = classEnum.getEnumValue(name);
 					if (enumField != null) {
@@ -522,7 +546,7 @@ public class CompileClassContext implements ClassResolver {
 					}
 				}
 
-				HiField field = objectClass.getField(CompileClassContext.this, name);
+				HiField field = enclosingClass.getField(CompileClassContext.this, name);
 				if (field != null) {
 					return field;
 				}

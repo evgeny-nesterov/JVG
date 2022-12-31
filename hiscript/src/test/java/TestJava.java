@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class TestJava extends HiTest {
 	@Test
-	public void testSingle() throws IOException {
+	public void testSingle() {
 		assertSuccess("Java.importClass(\"JByte\", \"java.lang.Byte\"); assert new JByte(127).byteValue() == 127;");
 		assertSuccess("Java.importClass(\"JInteger\", \"java.lang.Integer\"); assert new JInteger(1).intValue() == 1;");
 		assertSuccess("Java.importClass(\"JCharacter\", \"java.lang.Character\"); assert new JCharacter('x').charValue() == 'x';");

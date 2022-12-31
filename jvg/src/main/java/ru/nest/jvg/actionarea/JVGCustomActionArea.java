@@ -1,43 +1,5 @@
 package ru.nest.jvg.actionarea;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.BasicTextEditor;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.menu.WMenu;
-import javax.swing.menu.WMenuItem;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import ru.nest.hiscript.pol.CompileHandler;
 import ru.nest.hiscript.pol.Compiler;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -53,6 +15,23 @@ import ru.nest.jvg.event.JVGSelectionEvent;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.menu.WMenu;
+import javax.swing.menu.WMenuItem;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO JVGCustomActionArea -> JVGControl, realize independently from action area
 public class JVGCustomActionArea extends JVGActionArea implements JVGPeerListener {
@@ -206,8 +185,8 @@ public class JVGCustomActionArea extends JVGActionArea implements JVGPeerListene
 										txtErrors.append(offset + " - " + length + ": " + msg + "\n");
 									}
 								});
-							} catch (TokenizerException exc) {
-								exc.printStackTrace();
+							} catch (TokenizerException te) {
+								te.printStackTrace();
 							}
 
 							pnl.revalidate();

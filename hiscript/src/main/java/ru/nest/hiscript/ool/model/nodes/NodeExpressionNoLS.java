@@ -148,6 +148,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 		nodes[0].copyTo(ctx.nodeValueType);
 		ctx.putNodesValueTypesCache(nodes);
+		ctx.nodeValueType.resolvedValueVariable = this;
 	}
 
 	@Override

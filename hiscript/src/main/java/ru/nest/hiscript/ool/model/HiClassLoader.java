@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.ClassFileParseRule;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParserUtil;
@@ -39,7 +40,7 @@ public class HiClassLoader {
 		HiClass currentClass = classes.get(clazz.fullName);
 		if (currentClass != null) {
 			if (currentClass != clazz) {
-				throw new RuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+				throw new HiScriptRuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
 			} else {
 				return;
 			}
@@ -103,7 +104,7 @@ public class HiClassLoader {
 			HiClass currentClass = this.classes.get(clazz.fullName);
 			if (currentClass != null) {
 				if (currentClass != clazz) {
-					throw new RuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+					throw new HiScriptRuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
 				} else {
 					return;
 				}
@@ -126,16 +127,16 @@ public class HiClassLoader {
 
 	public synchronized void addClassLoader(HiClassLoader classLoader) {
 		if (classLoader.parent != null) {
-			throw new RuntimeException("can't add class loader");
+			throw new HiScriptRuntimeException("can't add class loader");
 		}
 		if (classLoader == HiClass.systemClassLoader) {
-			throw new RuntimeException("can't add system class loader");
+			throw new HiScriptRuntimeException("can't add system class loader");
 		}
 
 		HiClassLoader parent = this;
 		while (parent != null) {
 			if (parent == classLoader) {
-				throw new RuntimeException("can't add class loader: cyclic dependency");
+				throw new HiScriptRuntimeException("can't add class loader: cyclic dependency");
 			}
 			parent = parent.parent;
 		}

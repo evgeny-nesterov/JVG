@@ -45,7 +45,7 @@ public class NodeNull extends HiNode {
 		super.code(os);
 	}
 
-	public static NodeNull decode(DecodeContext os) throws IOException {
+	public static NodeNull decode(DecodeContext os) {
 		return instance;
 	}
 }

@@ -38,6 +38,7 @@ public class NodeArray extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = this;
 		return type.getClass(ctx);
 	}
 
@@ -81,7 +82,7 @@ public class NodeArray extends HiNode {
 		HiConstructor constructor = clazz.searchConstructor(ctx, null);
 		constructor.newInstance(ctx, null, null, null);
 
-		HiClass cellClass = clazz.cellClass;
+		HiClass cellClass = clazz.getRootCellClass();
 		int dimension = dimensionsCount - dimensionsCountActive;
 		Class<?> c = HiArrays.getClass(cellClass, dimension);
 

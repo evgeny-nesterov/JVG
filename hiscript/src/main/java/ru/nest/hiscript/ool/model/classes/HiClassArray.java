@@ -25,6 +25,14 @@ public class HiClassArray extends HiClass {
 		init(cellClass);
 	}
 
+	public HiClass getRootCellClass() {
+		HiClass cellClass = this.cellClass;
+		while (cellClass.isArray()) {
+			cellClass = ((HiClassArray) cellClass).cellClass;
+		}
+		return cellClass;
+	}
+
 	private void init(HiClass cellClass) {
 		this.cellClass = cellClass;
 

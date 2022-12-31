@@ -1,6 +1,8 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
@@ -178,7 +180,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 
 		if (isNull()) {
-			return HiClass.getNullClass();
+			return HiClassNull.NULL;
 		}
 
 		HiClass clazz;
@@ -352,7 +354,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			case ARRAY:
 				return getArrayType(os.readType());
 		}
-		throw new RuntimeException("unknown type " + typeType);
+		throw new HiScriptRuntimeException("unknown type " + typeType);
 	}
 
 	public byte getTypeClass() {

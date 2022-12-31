@@ -15,11 +15,11 @@ public class BooleanNode extends Node {
 	}
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 	}
 
 	@Override
-	public void execute(RuntimeContext ctx) throws ExecuteException {
+	public void execute(RuntimeContext ctx) {
 		ctx.value.type = Words.BOOLEAN;
 		ctx.value.dimension = 0;
 		ctx.value.bool = value;

@@ -29,7 +29,7 @@ public class HiClassNull extends HiClass {
 		os.writeByte(HiClass.CLASS_NULL);
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
+	public static HiClass decode(DecodeContext os) {
 		return NULL;
 	}
 

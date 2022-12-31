@@ -814,7 +814,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public void throwExceptionIf(boolean printStackTrace) {
 		if (exception != null) {
 			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-				throw new RuntimeException("Bad exception value");
+				throw new HiScriptRuntimeException("Bad exception value");
 			}
 			String message;
 			if (printStackTrace) {
@@ -829,7 +829,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public String printException() {
 		if (exception != null) {
 			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-				throw new RuntimeException("Bad exception value");
+				throw new HiScriptRuntimeException("Bad exception value");
 			}
 			String message = getExceptionMessage();
 			System.out.println(message);

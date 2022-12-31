@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.lib;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -14,7 +15,7 @@ public class ThreadImpl extends ImplUtil {
 		if (threadClass == null) {
 			threadClass = HiClass.forName(ctx, "Thread");
 			if (threadClass == null) {
-				throw new RuntimeException("can't find class Thread");
+				throw new HiScriptRuntimeException("can't find class Thread");
 			}
 		}
 

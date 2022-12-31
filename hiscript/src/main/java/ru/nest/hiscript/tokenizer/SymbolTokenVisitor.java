@@ -2,7 +2,7 @@ package ru.nest.hiscript.tokenizer;
 
 public class SymbolTokenVisitor implements TokenVisitor {
 	@Override
-	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
+	public Token getToken(Tokenizer tokenizer) {
 		int offset = tokenizer.getOffset();
 		int line = tokenizer.getLine();
 		int lineOffset = tokenizer.getLineOffset();

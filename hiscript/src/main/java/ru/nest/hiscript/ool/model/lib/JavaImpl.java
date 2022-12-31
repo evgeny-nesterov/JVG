@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.classes.HiClassJava;
 
 public class JavaImpl extends ImplUtil {
-	public static void Java_void_importClass_String_String(RuntimeContext ctx, HiObject className, HiObject javaClassName) throws ClassNotFoundException, NoSuchMethodException {
+	public static void Java_void_importClass_String_String(RuntimeContext ctx, HiObject className, HiObject javaClassName) throws ClassNotFoundException {
 		String name = getString(ctx, className);
 		HiClass clazz = ctx.getClassLoader().getClass(name);
 		if (clazz == null) {

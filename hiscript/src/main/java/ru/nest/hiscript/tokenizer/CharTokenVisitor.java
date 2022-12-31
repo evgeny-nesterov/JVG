@@ -12,7 +12,7 @@ public class CharTokenVisitor implements TokenVisitor {
 			char c = readCharacter(tokenizer);
 
 			if (tokenizer.getCurrent() != '\'') {
-				throw new TokenizerException("'\'' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+				tokenizer.error("'\'' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
 			}
 
 			tokenizer.next();
@@ -88,7 +88,7 @@ public class CharTokenVisitor implements TokenVisitor {
 					if (size == 4 && Character.isValidCodePoint(value)) {
 						c = (char) value;
 					} else {
-						throw new TokenizerException("invalid code of character", line, offset + 1, size, lineOffset + 1);
+						tokenizer.error("invalid code of character", line, offset + 1, size, lineOffset + 1);
 					}
 					break;
 
@@ -112,10 +112,10 @@ public class CharTokenVisitor implements TokenVisitor {
 						if (value < 256) {
 							c = (char) value;
 						} else {
-							throw new TokenizerException("illegal octal character definition", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
+							tokenizer.error("illegal octal character definition", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
 						}
 					} else {
-						throw new TokenizerException("illegal escape character", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
+						tokenizer.error("illegal escape character", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
 					}
 			}
 		}

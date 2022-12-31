@@ -46,6 +46,10 @@ public class OperationArrayIndex extends BinaryOperation {
 		if (!validIndex || !validArray) {
 			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 		}
+		if (validIndex && node2.isValue && node2.getIntValue() < 0) {
+			validationInfo.error("negative array index", node2.token);
+		}
+		ctx.nodeValueType.resolvedValueVariable = node1.resolvedValueVariable;
 		return type;
 	}
 

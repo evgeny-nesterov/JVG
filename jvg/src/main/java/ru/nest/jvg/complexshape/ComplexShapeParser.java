@@ -403,7 +403,7 @@ public class ComplexShapeParser {
 		return isFill;
 	}
 
-	private void parsePath(Element e) throws Exception {
+	private void parsePath(Element e) {
 		String fillValue = e.getAttributeValue("fill");
 		if (fillValue != null) {
 			isFill = JVGParseUtil.getBoolean(fillValue);

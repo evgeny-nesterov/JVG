@@ -46,7 +46,7 @@ public class HiScript implements AutoCloseable {
 		return this;
 	}
 
-	public HiScript serialize() throws IOException {
+	public HiScript serialize() {
 		//		CodeContext ctxCode = new CodeContext();
 		//		node.code(ctxCode);
 		//
@@ -109,7 +109,7 @@ public class HiScript implements AutoCloseable {
 		return this;
 	}
 
-	public HiScript printError() throws HiScriptValidationException {
+	public HiScript printError() {
 		compiler.getValidationInfo().printError();
 		ctx.printException();
 		return this;

@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
@@ -8,6 +9,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -131,7 +133,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return clazz != null ? clazz : type.getClass(ctx);
+		return getClass(ctx);
 	}
 
 	@Override
@@ -139,9 +141,13 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initializer != null) {
 			valid &= initializer.validate(validationInfo, ctx) && initializer.expectValue(validationInfo, ctx);
+			NodeValueType valueType = initializer.getValueType(validationInfo, ctx);
 			if (type == Type.varType) {
-				clazz = initializer.getValueClass(validationInfo, ctx);
+				clazz = valueType.type;
 				type = Type.getType(clazz);
+			} else if (valueType.type != getClass(ctx) && !validateType(validationInfo, ctx, getClass(ctx), valueType)) {
+				validationInfo.error("incompatible types; found " + valueType.type + ", required " + getClass(ctx), token);
+				valid = false;
 			}
 		} else if (type == Type.varType) {
 			validationInfo.error("var is not initialized", token);
@@ -152,6 +158,8 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		valid &= ctx.addLocalVariable(this);
 		return valid;
 	}
+
+	protected abstract boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType);
 
 	@Override
 	public void execute(RuntimeContext ctx) {
@@ -188,7 +196,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = clazz;
+		ctx.value.type = getClass(ctx);
 		get(ctx, ctx.value);
 	}
 
@@ -235,10 +243,10 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				try {
 					field = constructor.newInstance(name);
 				} catch (Exception exc) {
-					throw new RuntimeException("Undefined field type: " + type, exc);
+					throw new HiScriptRuntimeException("Undefined field type: " + type, exc);
 				}
 			} else {
-				throw new RuntimeException("Can't initialize field by type: " + type);
+				throw new HiScriptRuntimeException("Can't initialize field by type: " + type);
 			}
 		} else {
 			field = new HiFieldObject(type, name);
@@ -267,7 +275,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				field = constructor.newInstance(name);
 				field.clazz = clazz;
 			} catch (Exception exc) {
-				throw new RuntimeException("Undefined field type: " + clazz.name, exc);
+				throw new HiScriptRuntimeException("Undefined field type: " + clazz.name, exc);
 			}
 		} else {
 			field = new HiFieldObject(clazz, name);

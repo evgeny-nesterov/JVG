@@ -324,7 +324,7 @@ public class ExpressionParser {
 		return true;
 	}
 
-	private void doOperations(List<Value> values, List<Integer> operations) throws Exception {
+	private void doOperations(List<Value> values, List<Integer> operations) {
 		if (values.size() == 0) {
 			throw new RuntimeException("Value is expected");
 		}

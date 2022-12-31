@@ -44,7 +44,7 @@ public abstract class Node {
 		return var;
 	}
 
-	public void addVariables(Map<String, Variable> variables) throws ExecuteException {
+	public void addVariables(Map<String, Variable> variables) {
 		if (variables != null) {
 			if (this.variables == null) {
 				this.variables = new HashMap<>();

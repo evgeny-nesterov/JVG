@@ -2,7 +2,7 @@ package ru.nest.hiscript.tokenizer;
 
 public class WordTokenVisitor implements TokenVisitor {
 	@Override
-	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
+	public Token getToken(Tokenizer tokenizer) {
 		if (tokenizer.hasNext() && isWordSymbol(tokenizer.getCurrent())) {
 			int offset = tokenizer.getOffset();
 			int line = tokenizer.getLine();

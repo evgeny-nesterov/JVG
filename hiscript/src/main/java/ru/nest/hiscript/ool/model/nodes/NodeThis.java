@@ -17,6 +17,7 @@ public class NodeThis extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.resolvedValueVariable = this;
 		return ctx.clazz;
 	}
 
@@ -38,7 +39,7 @@ public class NodeThis extends HiNode {
 		super.code(os);
 	}
 
-	public static NodeThis decode(DecodeContext os) throws IOException {
+	public static NodeThis decode(DecodeContext os) {
 		return new NodeThis();
 	}
 }

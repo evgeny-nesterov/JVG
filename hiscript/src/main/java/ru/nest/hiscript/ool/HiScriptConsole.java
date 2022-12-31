@@ -44,9 +44,7 @@ public class HiScriptConsole extends JFrame {
 							System.err.print("[runtime] ");
 							script.printError();
 						}
-					} catch (HiScriptParseException exc) {
 					} catch (HiScriptRuntimeException exc) {
-					} catch (HiScriptValidationException exc) {
 					} catch (Throwable exc) {
 						exc.printStackTrace();
 					}

@@ -32,7 +32,7 @@ public class VariableNode extends Node implements Value {
 	}
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 	}
 
 	@Override

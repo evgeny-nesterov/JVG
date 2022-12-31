@@ -95,7 +95,6 @@ public class JVGTransferHandler extends TransferHandler implements UIResource {
 					handleImport(pane, (JVGCopyContext) transferObject);
 					imported = true;
 				} catch (UnsupportedFlavorException exc) {
-				} catch (BadLocationException exc) {
 				} catch (IOException exc) {
 				}
 			}
@@ -103,7 +102,7 @@ public class JVGTransferHandler extends TransferHandler implements UIResource {
 		return imported;
 	}
 
-	protected void handleImport(JVGPane pane, JVGCopyContext ctx) throws BadLocationException, IOException {
+	protected void handleImport(JVGPane pane, JVGCopyContext ctx) {
 		JVGParser parser = new JVGParser(pane.getEditorKit().getFactory());
 		try {
 			JVGComponent[] childs = null;

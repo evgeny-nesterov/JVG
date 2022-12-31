@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class TestStatic extends HiTest {
 	@Test
-	public void test() throws IOException {
+	public void test() {
 		// statement field
 		assertFailCompile("final static int x = 0;");
 

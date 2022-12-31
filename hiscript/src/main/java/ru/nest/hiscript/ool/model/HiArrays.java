@@ -31,6 +31,10 @@ public class HiArrays implements PrimitiveTypes {
 
 	public static Class<?> getClass(HiClass clazz, int dimension) {
 		Class<?> c = null;
+		while (clazz.isArray()) {
+			clazz = ((HiClassArray) clazz).cellClass;
+			dimension++;
+		}
 		if (dimension > 0) {
 			String prefix = "";
 			for (int i = 0; i < dimension; i++) {
@@ -137,7 +141,7 @@ public class HiArrays implements PrimitiveTypes {
 				v.object = (HiObject) value;
 				v.set(value);
 			} else {
-				throw new IllegalArgumentException("array cell: " + value);
+				throw new HiIllegalArgumentException("array cell: " + value, null);
 			}
 		} else {
 			HiClassArray arrayClass = (HiClassArray) v.type;

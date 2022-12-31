@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
@@ -415,7 +416,11 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
 			superClass = superClassType.getClass(ctx);
-			valid &= superClass.validate(validationInfo, ctx);
+			if (superClass != null) {
+				valid &= superClass.validate(validationInfo, ctx);
+			} else {
+				valid = false;
+			}
 		}
 
 		// check modifiers
@@ -1016,10 +1021,6 @@ public class HiClass implements Codeable, TokenAccessible {
 		return clazz;
 	}
 
-	public static HiClass getNullClass() {
-		return HiClassNull.NULL;
-	}
-
 	public static HiClass getPrimitiveClass(String name) {
 		return HiClassPrimitive.getPrimitiveClass(name);
 	}
@@ -1136,7 +1137,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			case CLASS_NULL:
 				return HiClassNull.decode(os);
 		}
-		throw new RuntimeException("unknown class type: " + classType);
+		throw new HiScriptRuntimeException("unknown class type: " + classType);
 	}
 
 	public static HiClass decodeObject(DecodeContext os, int classType) throws IOException {
@@ -1154,7 +1155,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (os.readBoolean()) {
 			try {
 				outerClass = os.readClass();
-			} catch (NoClassException exc) {
+			} catch (HiNoClassException exc) {
 				initClass = false;
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
@@ -1210,7 +1211,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			final int index = i;
 			try {
 				clazz.innerClasses[i] = os.readClass();
-			} catch (NoClassException exc) {
+			} catch (HiNoClassException exc) {
 				os.addClassLoadListener(new ClassLoadListener() {
 					@Override
 					public void classLoaded(HiClass clazz) {
@@ -1285,6 +1286,27 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public HiClass getCommonClass(HiClass c) {
+		if (this == c) {
+			return this;
+		}
+		if (isPrimitive() || c.isPrimitive()) {
+			if (isNumber() && c.isNumber()) {
+				if (this == HiClassPrimitive.DOUBLE || c == HiClassPrimitive.DOUBLE) {
+					return HiClassPrimitive.DOUBLE;
+				} else if (this == HiClassPrimitive.FLOAT || c == HiClassPrimitive.FLOAT) {
+					return HiClassPrimitive.DOUBLE;
+				} else if (this == HiClassPrimitive.LONG || c == HiClassPrimitive.LONG) {
+					return HiClassPrimitive.LONG;
+				} else if (this == HiClassPrimitive.INT || c == HiClassPrimitive.INT) {
+					return HiClassPrimitive.INT;
+				} else if (this == HiClassPrimitive.CHAR || c == HiClassPrimitive.CHAR) {
+					return HiClassPrimitive.INT;
+				} else if (this == HiClassPrimitive.SHORT || c == HiClassPrimitive.SHORT) {
+					return HiClassPrimitive.SHORT;
+				}
+			}
+			return null;
+		}
 		if (c.isInstanceof(this)) {
 			return this;
 		}

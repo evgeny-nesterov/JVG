@@ -209,7 +209,7 @@ public class TOIBuilder {
 		w.close();
 	}
 
-	public void export(Element rootElement, List<TOIObject> objects) throws Exception {
+	public void export(Element rootElement, List<TOIObject> objects) {
 		for (TOIObject o : objects) {
 			Element objectElement = null;
 			if (o instanceof TOIPath) {

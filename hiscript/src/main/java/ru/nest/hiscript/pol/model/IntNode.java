@@ -15,11 +15,11 @@ public class IntNode extends Node implements Value {
 	}
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 	}
 
 	@Override
-	public void execute(RuntimeContext ctx) throws ExecuteException {
+	public void execute(RuntimeContext ctx) {
 		ctx.value.type = Words.INT;
 		ctx.value.dimension = 0;
 		ctx.value.intNumber = value;

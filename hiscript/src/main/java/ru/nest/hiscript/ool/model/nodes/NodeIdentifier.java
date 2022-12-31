@@ -38,6 +38,7 @@ public class NodeIdentifier extends HiNode {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (dimension > 0) {
+			// <type>[][]...[]
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 			if (clazz == null) {
 				clazz = ctx.getClass(name);
@@ -68,7 +69,7 @@ public class NodeIdentifier extends HiNode {
 			return false;
 		} else if (resolvedIdentifier instanceof NodeArgument) {
 			// arguments are always initialized
-		} else if (resolvedIdentifier instanceof HiNode && ctx.level.objectClass == null && !ctx.initializedNodes.contains(resolvedIdentifier)) {
+		} else if (resolvedIdentifier instanceof HiNode && ctx.level.enclosingClass == null && !ctx.initializedNodes.contains(resolvedIdentifier)) {
 			validationInfo.error("Variable '" + name + "' is not initialized", token);
 			return false;
 		}

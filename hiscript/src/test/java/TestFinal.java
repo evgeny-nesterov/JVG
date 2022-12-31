@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class TestFinal extends HiTest {
 	@Test
-	public void test() throws IOException {
+	public void test() {
 		assertSuccessSerialize("final int x; x = 1;");
 		assertSuccessSerialize("final String x; x = \"a\";");
 		assertSuccessSerialize("final String x; x = null;");

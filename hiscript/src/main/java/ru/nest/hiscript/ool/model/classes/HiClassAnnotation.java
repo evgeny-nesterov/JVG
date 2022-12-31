@@ -69,7 +69,7 @@ public class HiClassAnnotation extends HiClass {
 		// TODO
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
+	public static HiClass decode(DecodeContext os) {
 		// TODO
 		return null;
 	}

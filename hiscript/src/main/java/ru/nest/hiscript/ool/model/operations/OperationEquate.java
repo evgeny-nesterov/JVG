@@ -72,11 +72,9 @@ public class OperationEquate extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		if (v2.valueType == Value.VARIABLE) {
-			if (!v2.variable.isInitialized(ctx)) {
-				ctx.throwRuntimeException("variable not initialized: " + v2.variable.name);
-				return;
-			}
+		if (v2.valueType == Value.VARIABLE && !v2.variable.isInitialized(ctx)) {
+			ctx.throwRuntimeException("variable not initialized: " + v2.variable.name);
+			return;
 		}
 
 		if (v1.valueType == Value.VARIABLE) {

@@ -103,7 +103,7 @@ public abstract class HiTest {
 		return result;
 	}
 
-	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
+	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return HiScript.create().compile(script).throwExceptionIf();
 	}
 

@@ -27,16 +27,23 @@ public class StringTokenVisitor implements TokenVisitor {
 			}
 
 			StringBuilder buf = new StringBuilder();
+			boolean closed = false;
 			while (tokenizer.hasNext()) {
 				if (tokenizer.getCurrent() == '"') {
 					tokenizer.next();
-					return new StringToken(buf.toString(), line, offset, tokenizer.getOffset() - offset, lineOffset);
+					closed = true;
+					break;
 				}
 
 				char c = CharTokenVisitor.readCharacter(tokenizer);
 				buf.append(c);
 			}
-			throw new TokenizerException("'\"' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+
+			StringToken stringToken = new StringToken(buf.toString(), line, offset, tokenizer.getOffset() - offset, lineOffset);
+			if (!closed) {
+				tokenizer.error("'\"' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+			}
+			return stringToken;
 		}
 		return null;
 	}
@@ -44,7 +51,7 @@ public class StringTokenVisitor implements TokenVisitor {
 	private Token getTextBlock(Tokenizer tokenizer, int line, int offset, int lineOffset) throws TokenizerException {
 		tokenizer.skipLineWhitespaces();
 		if (tokenizer.getCurrent() != '\n') {
-			throw new TokenizerException("new line is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+			tokenizer.error("new line is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
 		}
 		tokenizer.next();
 
@@ -87,7 +94,7 @@ public class StringTokenVisitor implements TokenVisitor {
 		}
 
 		if (quotesCount != 3) {
-			throw new TokenizerException("'\"\"\"' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+			tokenizer.error("'\"\"\"' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
 		}
 
 		lastLine.setLength(lastLine.length() - 2); // delete last two quotes

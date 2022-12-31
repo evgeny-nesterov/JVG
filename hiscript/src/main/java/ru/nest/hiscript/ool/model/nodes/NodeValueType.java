@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -145,6 +146,24 @@ public class NodeValueType implements PrimitiveTypes {
 				shortValue = ((NodeShort) node).getValue();
 			}
 		}
+	}
+
+	public long getIntValue() {
+		if (valid && isValue) {
+			valueType = type;
+			if (type == HiClassPrimitive.INT) {
+				return intValue;
+			} else if (type == HiClassPrimitive.LONG) {
+				return longValue;
+			} else if (type == HiClassPrimitive.CHAR) {
+				return charValue;
+			} else if (type == HiClassPrimitive.BYTE) {
+				return byteValue;
+			} else if (type == HiClassPrimitive.SHORT) {
+				return shortValue;
+			}
+		}
+		throw new HiScriptRuntimeException("integer expected");
 	}
 
 	public boolean autoCastValue(HiClass type) {

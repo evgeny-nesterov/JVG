@@ -138,8 +138,8 @@ public class TestNumbers extends HiTest {
 		assertFail("short a = " + (Short.MAX_VALUE + 1) + ";");
 		assertFail("short a = " + (Short.MIN_VALUE - 1) + ";");
 
-		assertFail("int a = " + (Integer.MAX_VALUE + 1) + ";");
-		assertFail("int a = " + (Integer.MIN_VALUE - 1l) + ";");
+		assertFail("int a = " + (Integer.MAX_VALUE + 1L) + ";");
+		assertFail("int a = " + (Integer.MIN_VALUE - 1L) + ";");
 
 		assertFail("long a = " + Long.MAX_VALUE + "0;");
 		assertFail("long a = " + Long.MIN_VALUE + "0;");

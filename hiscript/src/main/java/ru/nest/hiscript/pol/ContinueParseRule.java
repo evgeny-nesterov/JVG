@@ -17,7 +17,7 @@ public class ContinueParseRule extends ParseRule<ContinueNode> {
 	}
 
 	@Override
-	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException {
 		if (visitWord(Words.CONTINUE, tokenizer) != null) {
 			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new ContinueNode(mark);

@@ -12,7 +12,7 @@ public class ContinueNode extends Node {
 	}
 
 	@Override
-	public void compile() throws ExecuteException {
+	public void compile() {
 		Node parent = getParent();
 		while (parent != null) {
 			if (mark == null) {
@@ -42,7 +42,7 @@ public class ContinueNode extends Node {
 	}
 
 	@Override
-	public void execute(RuntimeContext ctx) throws ExecuteException {
+	public void execute(RuntimeContext ctx) {
 		int size = breakableNodes.size();
 		for (int i = 0; i < size; i++) {
 			Breakable breakable = breakableNodes.get(i);

@@ -25,7 +25,7 @@ public class Compiler {
 		this.tokenizer = tokenizer;
 	}
 
-	public Node build() throws TokenizerException, HiScriptParseException, ExecuteException {
+	public Node build() throws TokenizerException, HiScriptParseException {
 		Node node = rule.visit(tokenizer);
 		return node;
 	}
@@ -111,8 +111,8 @@ public class Compiler {
 							errors.add(msg);
 						}
 					});
-				} catch (TokenizerException exc) {
-					exc.printStackTrace();
+				} catch (TokenizerException te) {
+					te.printStackTrace();
 				}
 
 				// execute

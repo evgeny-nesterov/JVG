@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -436,7 +437,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 			node.token = token;
 			return node;
 		} else {
-			throw new RuntimeException("Node can't be decoded: undefined type " + type);
+			throw new HiScriptRuntimeException("Node can't be decoded: undefined type " + type);
 		}
 	}
 

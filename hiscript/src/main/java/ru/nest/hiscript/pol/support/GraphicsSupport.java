@@ -58,7 +58,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "clipRect", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
 				Double w = (Double) arguments[2];
@@ -68,7 +68,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "setPaintMode", new int[] {}, new int[] {}, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				g.setPaintMode();
 			}
 		});
@@ -107,7 +107,7 @@ public class GraphicsSupport {
 		// transform
 		methods.add(new Method(NAMESPACE, "translate", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
 				g.translate(x, y);
@@ -115,14 +115,14 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "rotate", new int[] { Words.DOUBLE }, new int[] { 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double angle = (Double) arguments[0];
 				g.rotate(angle);
 			}
 		});
 		methods.add(new Method(NAMESPACE, "rotate", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double angle = (Double) arguments[0];
 				Double x = (Double) arguments[1];
 				Double y = (Double) arguments[2];
@@ -131,7 +131,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "scale", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double sx = (Double) arguments[0];
 				Double sy = (Double) arguments[1];
 				g.scale(sx, sy);
@@ -139,7 +139,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "shear", new int[] { Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double sx = (Double) arguments[0];
 				Double sy = (Double) arguments[1];
 				g.shear(sx, sy);
@@ -147,7 +147,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "transform", new int[] { Words.DOUBLE }, new int[] { 1 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				double[] matrix = (double[]) arguments[0];
 				g.transform(new AffineTransform(matrix));
 			}
@@ -167,7 +167,7 @@ public class GraphicsSupport {
 		});
 		methods.add(new Method(NAMESPACE, "drawRect", new int[] { Words.DOUBLE, Words.DOUBLE, Words.DOUBLE, Words.DOUBLE }, new int[] { 0, 0, 0, 0 }, Words.VOID) {
 			@Override
-			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
+			public void invoke(RuntimeContext ctx, Node parent, Object... arguments) {
 				Double x = (Double) arguments[0];
 				Double y = (Double) arguments[1];
 				Double w = (Double) arguments[2];

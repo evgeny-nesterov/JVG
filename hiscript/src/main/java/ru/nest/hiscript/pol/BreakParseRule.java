@@ -17,7 +17,7 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 	}
 
 	@Override
-	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException {
 		if (visitWord(Words.BREAK, tokenizer) != null) {
 			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
 			return new BreakNode(mark);

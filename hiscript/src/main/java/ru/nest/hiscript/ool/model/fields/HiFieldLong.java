@@ -1,7 +1,12 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class HiFieldLong extends HiFieldNumber<Long> {
 	public HiFieldLong(String name) {
@@ -9,6 +14,11 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 	}
 
 	private long value;
+
+	@Override
+	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
+		return valueType.type == HiClassPrimitive.INT || valueType.type == HiClassPrimitive.BYTE || valueType.type == HiClassPrimitive.SHORT || valueType.type == HiClassPrimitive.CHAR;
+	}
 
 	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {

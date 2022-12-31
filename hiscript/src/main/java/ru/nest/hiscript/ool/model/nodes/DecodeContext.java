@@ -1,9 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
-import ru.nest.hiscript.ool.model.NoClassException;
+import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
@@ -153,7 +154,7 @@ public class DecodeContext {
 			if (index >= 0 && strings != null && index < strings.length) {
 				return strings[index];
 			} else {
-				throw new RuntimeException("invalid string index " + index + " (max " + (strings != null ? (strings.length - 1) : 0) + ")");
+				throw new HiScriptRuntimeException("invalid string index " + index + " (max " + (strings != null ? (strings.length - 1) : 0) + ")");
 			}
 		}
 	}
@@ -211,7 +212,7 @@ public class DecodeContext {
 			if (index >= 0 && types != null && index < types.length) {
 				return types[index];
 			} else {
-				throw new RuntimeException("invalid type index " + index + " (max " + (types != null ? (types.length - 1) : 0) + ")");
+				throw new HiScriptRuntimeException("invalid type index " + index + " (max " + (types != null ? (types.length - 1) : 0) + ")");
 			}
 		}
 	}
@@ -256,7 +257,7 @@ public class DecodeContext {
 		}
 	}
 
-	public HiClass readClass() throws IOException, NoClassException {
+	public HiClass readClass() throws IOException, HiNoClassException {
 		boolean isHasIndex = is.readBoolean();
 		HiClass clazz;
 		if (isHasIndex) {
@@ -273,18 +274,18 @@ public class DecodeContext {
 		return clazz;
 	}
 
-	public HiClass getClass(int index) throws NoClassException {
+	public HiClass getClass(int index) throws HiNoClassException {
 		DecodeContext ctx = getRoot();
 		if (ctx != this) {
 			return ctx.getClass(index);
 		} else {
 			if (index >= 0 && classes != null && index < classes.length) {
 				if (classes[index] == null) {
-					throw new NoClassException(index);
+					throw new HiNoClassException(index);
 				}
 				return classes[index];
 			} else {
-				throw new RuntimeException("invalid class index " + index + " (max is " + (classes != null ? (classes.length - 1) : 0) + ")");
+				throw new HiScriptRuntimeException("invalid class index " + index + " (max is " + (classes != null ? (classes.length - 1) : 0) + ")");
 			}
 		}
 	}
@@ -387,12 +388,12 @@ public class DecodeContext {
 		}
 	}
 
-	public <N> N read(Class<N> type) throws IOException {
+	public <N> N read(Class<N> type) {
 		try {
 			Method m = type.getMethod("decode", DecodeContext.class);
 			return (N) m.invoke(type, this);
 		} catch (Exception exc) {
-			throw new RuntimeException("Can't decode for " + type, exc);
+			throw new HiScriptRuntimeException("Can't decode for " + type, exc);
 		}
 	}
 

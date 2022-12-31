@@ -1,6 +1,5 @@
 package ru.nest.hiscript.tokenizer;
 
-import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -162,9 +161,13 @@ public class Tokenizer {
 				int curOffset = offset;
 				int curLineOffset = lineOffset;
 
+				boolean notEOF = currentToken != null;
 				currentToken = searchToken();
 				if (currentToken == null) {
-					throw new TokenizerException("unexpected character", curLine, curOffset, 1, curLineOffset);
+					if (!notEOF) {
+						error("unexpected character", curLine, curOffset, 1, curLineOffset);
+					}
+					return null;
 				}
 
 				if (startOffsets.size() > 0) {
@@ -181,7 +184,6 @@ public class Tokenizer {
 		} else {
 			currentToken = null;
 		}
-
 		return currentToken;
 	}
 
@@ -299,18 +301,22 @@ public class Tokenizer {
 		this.validationInfo = validationInfo;
 	}
 
-	public void error(String message) throws HiScriptParseException {
+	public void error(String message) throws TokenizerException {
 		error(message, currentToken());
 	}
 
-	public void error(String message, Token token) throws HiScriptParseException {
+	public void error(String message, int line, int offset, int length, int lineOffset) throws TokenizerException {
+		error(message, new Token(line, offset, length, lineOffset));
+	}
+
+	public void error(String message, Token token) throws TokenizerException {
 		if (token == null && offset == len) {
 			token = new Token(line, offset - 1, 1, lineOffset);
 		}
 		if (validationInfo != null) {
 			validationInfo.error(message, token);
 		} else {
-			throw new HiScriptParseException(message, token);
+			throw new TokenizerException(message, token);
 		}
 	}
 

@@ -75,7 +75,7 @@ public class ParserUtil implements Words {
 		return null;
 	}
 
-	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException {
 		String word = visitWord(type, tokenizer);
 		if (word == null) {
 			if (type != NOT_SERVICE) {
@@ -178,7 +178,7 @@ public class ParserUtil implements Words {
 		return type;
 	}
 
-	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException {
 		Type type = null;
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
@@ -281,7 +281,7 @@ public class ParserUtil implements Words {
 		return -1;
 	}
 
-	protected static void expectSymbol(Tokenizer tokenizer, int type) throws TokenizerException, HiScriptParseException {
+	protected static void expectSymbol(Tokenizer tokenizer, int type) throws TokenizerException {
 		if (visitSymbol(tokenizer, type) == -1) {
 			tokenizer.error("'" + SymbolToken.getSymbol(type) + "' is expected");
 		}
@@ -441,7 +441,7 @@ public class ParserUtil implements Words {
 		return new AnnotatedModifiers(annotations != null ? annotations.toArray(new NodeAnnotation[annotations.size()]) : null, modifiers, tokenizer.getBlockToken(startToken));
 	}
 
-	public static boolean checkModifiers(Tokenizer tokenizer, Modifiers m, Token modifiersToken, int... allowed) throws HiScriptParseException {
+	public static boolean checkModifiers(Tokenizer tokenizer, Modifiers m, Token modifiersToken, int... allowed) throws TokenizerException {
 		return m.check(tokenizer, modifiersToken, allowed);
 	}
 

@@ -53,7 +53,7 @@ public class JVGTransferable implements Transferable, UIResource {
 	private int width, height;
 
 	@Override
-	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+	public Object getTransferData(DataFlavor flavor) {
 		if (JVGCopyContext.class.equals(flavor.getRepresentationClass())) {
 			if (xml != null) {
 				return new JVGCopyContext(xml, width, height);

@@ -43,7 +43,7 @@ public class SystemImpl extends ImplUtil {
 			final Exception[] error = new Exception[1];
 			ClassLoader cl = new ClassLoader() {
 				@Override
-				protected Class<?> findClass(String name) throws ClassNotFoundException {
+				protected Class<?> findClass(String name) {
 					try {
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						URL url = new URL("file", "localhost", name);

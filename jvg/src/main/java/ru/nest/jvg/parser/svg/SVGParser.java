@@ -501,7 +501,7 @@ public class SVGParser implements JVGParserInterface {
 		}
 	}
 
-	private boolean parseTransform(JVGShape c, Element e, JVGContainer parent) throws JVGParseException {
+	private boolean parseTransform(JVGShape c, Element e, JVGContainer parent) {
 		boolean hasTransform = false;
 		AffineTransform transform = parseTransform(e.getAttributeValue("transform"));
 		if (transform != null) {
@@ -591,7 +591,7 @@ public class SVGParser implements JVGParserInterface {
 
 	private Draw defaulFill = new ColorDraw(ColorResource.black);
 
-	private FillPainter parseFill(JVGShape c, Element e, List<Painter> painters, Draw defaulFill) throws JVGParseException {
+	private FillPainter parseFill(JVGShape c, Element e, List<Painter> painters, Draw defaulFill) {
 		String fill = s("fill", e, null);
 		if ("none".equals(fill)) {
 			return transparentFill;
@@ -651,7 +651,7 @@ public class SVGParser implements JVGParserInterface {
 
 	private OutlinePainter transparentOutline = new OutlinePainter(StrokeResource.DEFAULT, ColorResource.transparent);
 
-	private OutlinePainter parseOutline(JVGShape c, Element e, List<Painter> painters) throws JVGParseException {
+	private OutlinePainter parseOutline(JVGShape c, Element e, List<Painter> painters) {
 		String stroke = e.getAttributeValue("stroke");
 		if (stroke == null) {
 			stroke = s("stroke");
@@ -722,7 +722,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parsePolygon(Element e) throws JVGParseException {
+	private JVGShape parsePolygon(Element e) {
 		MutableGeneralPath shape = new MutableGeneralPath();
 
 		String geom = e.getAttributeValue("points").trim();
@@ -743,7 +743,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parsePolyline(Element e) throws JVGParseException {
+	private JVGShape parsePolyline(Element e) {
 		MutableGeneralPath shape = new MutableGeneralPath();
 
 		String geom = e.getAttributeValue("points").trim();
@@ -766,7 +766,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseRect(Element e, JVGContainer parent) throws JVGParseException {
+	private JVGShape parseRect(Element e, JVGContainer parent) {
 		double x = parseXLength(e.getAttributeValue("x"), 0f, parent);
 		double y = parseYLength(e.getAttributeValue("y"), 0f, parent);
 		double w = parseXLength(e.getAttributeValue("width"), 0f, parent);
@@ -791,7 +791,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseLine(Element e, JVGContainer parent) throws JVGParseException {
+	private JVGShape parseLine(Element e, JVGContainer parent) {
 		double x1 = parseXLength(e.getAttributeValue("x1"), 0f, parent);
 		double y1 = parseYLength(e.getAttributeValue("y1"), 0f, parent);
 		double x2 = parseXLength(e.getAttributeValue("x2"), 0f, parent);
@@ -806,7 +806,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseCircle(Element e, JVGContainer parent) throws JVGParseException {
+	private JVGShape parseCircle(Element e, JVGContainer parent) {
 		double cx = parseXLength(e.getAttributeValue("cx"), 0f, parent);
 		double cy = parseYLength(e.getAttributeValue("cy"), 0f, parent);
 		double r = parseXLength(e.getAttributeValue("r"), 1f, parent);
@@ -818,7 +818,7 @@ public class SVGParser implements JVGParserInterface {
 		return c;
 	}
 
-	private JVGShape parseEllipse(Element e, JVGContainer parent) throws JVGParseException {
+	private JVGShape parseEllipse(Element e, JVGContainer parent) {
 		double cx = parseXLength(e.getAttributeValue("cx"), 0f, parent);
 		double cy = parseYLength(e.getAttributeValue("cy"), 0f, parent);
 		double rx = parseXLength(e.getAttributeValue("rx"), 1f, parent);
@@ -1007,7 +1007,7 @@ public class SVGParser implements JVGParserInterface {
 		}
 	}
 
-	public static double[] getPathCoords(String value, int length) throws JVGParseException {
+	public static double[] getPathCoords(String value, int length) {
 		String[] array = JVGParseUtil.getStringArray(value.trim().toLowerCase(), " -,.", true);
 
 		List<Double> coords = new ArrayList<>();
