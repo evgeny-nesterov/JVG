@@ -40,7 +40,7 @@ public class HiClassLoader {
 		HiClass currentClass = classes.get(clazz.fullName);
 		if (currentClass != null) {
 			if (currentClass != clazz) {
-				throw new HiScriptRuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+				throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
 			} else {
 				return;
 			}
@@ -104,7 +104,7 @@ public class HiClassLoader {
 			HiClass currentClass = this.classes.get(clazz.fullName);
 			if (currentClass != null) {
 				if (currentClass != clazz) {
-					throw new HiScriptRuntimeException("can't add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+					throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
 				} else {
 					return;
 				}
@@ -127,16 +127,16 @@ public class HiClassLoader {
 
 	public synchronized void addClassLoader(HiClassLoader classLoader) {
 		if (classLoader.parent != null) {
-			throw new HiScriptRuntimeException("can't add class loader");
+			throw new HiScriptRuntimeException("cannot add class loader");
 		}
 		if (classLoader == HiClass.systemClassLoader) {
-			throw new HiScriptRuntimeException("can't add system class loader");
+			throw new HiScriptRuntimeException("cannot add system class loader");
 		}
 
 		HiClassLoader parent = this;
 		while (parent != null) {
 			if (parent == classLoader) {
-				throw new HiScriptRuntimeException("can't add class loader: cyclic dependency");
+				throw new HiScriptRuntimeException("cannot add class loader: cyclic dependency");
 			}
 			parent = parent.parent;
 		}

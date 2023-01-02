@@ -182,12 +182,12 @@ public class HiConstructor implements Codeable, TokenAccessible {
 					} else {
 						HiConstructor superDefaultConstructor = clazz.superClass.getConstructor(ctx);
 						if (superDefaultConstructor == null) {
-							ctx.throwRuntimeException("Constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
+							ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
 							return null;
 						}
 
 						if (superDefaultConstructor == this) {
-							ctx.throwRuntimeException("Cyclic dependence for constructor " + superDefaultConstructor);
+							ctx.throwRuntimeException("cyclic dependence for constructor " + superDefaultConstructor);
 							return null;
 						}
 

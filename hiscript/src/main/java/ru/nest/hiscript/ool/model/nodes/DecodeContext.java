@@ -393,7 +393,7 @@ public class DecodeContext {
 			Method m = type.getMethod("decode", DecodeContext.class);
 			return (N) m.invoke(type, this);
 		} catch (Exception exc) {
-			throw new HiScriptRuntimeException("Can't decode for " + type, exc);
+			throw new HiScriptRuntimeException("cannot decode for " + type, exc);
 		}
 	}
 

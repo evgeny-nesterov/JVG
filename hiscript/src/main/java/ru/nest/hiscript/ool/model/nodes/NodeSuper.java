@@ -23,7 +23,7 @@ public class NodeSuper extends HiNode {
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (ctx.clazz == null || ctx.clazz.superClass == null) {
-			validationInfo.error("cannot resolve method 'super'", token);
+			validationInfo.error("cannot resolve super class", token);
 			return false;
 		}
 		return true;
@@ -33,7 +33,7 @@ public class NodeSuper extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null || currentObject.getSuperObject() == null) {
-			ctx.throwRuntimeException("can not access super");
+			ctx.throwRuntimeException("cannot access super class");
 			return;
 		}
 

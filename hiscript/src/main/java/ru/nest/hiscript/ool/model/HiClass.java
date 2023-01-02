@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClass implements Codeable, TokenAccessible {
 	public final static int CLASS_OBJECT = 0;
@@ -229,7 +230,7 @@ public class HiClass implements Codeable, TokenAccessible {
 			if (superClass == null && superClassType != null) {
 				superClass = superClassType.getClass(classResolver);
 				if (superClass == null) {
-					classResolver.processResolverException("Can't resolve class '" + superClassType.fullName + "'");
+					classResolver.processResolverException("cannot resolve class '" + superClassType.fullName + "'");
 					return;
 				}
 			}
@@ -242,13 +243,13 @@ public class HiClass implements Codeable, TokenAccessible {
 
 				// check super class on static
 				if (!superClass.isStatic() && !superClass.isTopLevel() && isStatic()) {
-					classResolver.processResolverException("Static class " + fullName + " can not extends not static and not top level class");
+					classResolver.processResolverException("static class " + fullName + " can not extends not static and not top level class");
 					return;
 				}
 
 				// check super class on final
 				if (superClass.isFinal()) {
-					classResolver.processResolverException("The type " + fullName + " cannot subclass the final class " + superClass.fullName);
+					classResolver.processResolverException("the type " + fullName + " cannot subclass the final class " + superClass.fullName);
 					return;
 				}
 			}
@@ -278,7 +279,7 @@ public class HiClass implements Codeable, TokenAccessible {
 					// TODO remove (interface is always static)?
 					// check interface on static
 					if (!classInterface.isStatic() && !classInterface.isTopLevel() && isStatic()) {
-						classResolver.processResolverException("Static class " + fullName + " can not extends not static and not top level class");
+						classResolver.processResolverException("static class " + fullName + " can not extends not static and not top level class");
 					}
 				}
 			}
@@ -339,7 +340,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				}
 			} catch (Throwable exc) {
 				exc.printStackTrace();
-				ctx.throwRuntimeException("Can not initialize class " + fullName + ": " + exc.getMessage());
+				ctx.throwRuntimeException("cannot initialize class " + fullName + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
 				if (ctx != classResolver) {
@@ -687,7 +688,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		return false;
 	}
 
-	protected HashMap<String, HiField<?>> fieldsMap;
+	protected Map<String, HiField<?>> fieldsMap;
 
 	public HiField<?> getField(ClassResolver classResolver, String name) {
 		if (fieldsMap != null && fieldsMap.containsKey(name)) {
@@ -697,7 +698,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		HiField<?> field = _searchField(classResolver, name);
 		if (field != null) {
 			if (fieldsMap == null) {
-				fieldsMap = new HashMap<>();
+				fieldsMap = new ConcurrentHashMap<>();
 			}
 			fieldsMap.put(name, field);
 		}
@@ -705,6 +706,7 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	protected HiField<?> _searchField(ClassResolver classResolver, String name) {
+		init(classResolver);
 		HiField<?> field = null;
 
 		// this fields

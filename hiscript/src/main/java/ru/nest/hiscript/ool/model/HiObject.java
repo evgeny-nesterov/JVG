@@ -278,7 +278,7 @@ public class HiObject {
 		if (clazz.isJava()) {
 			return userObject;
 		}
-		ctx.throwRuntimeException("Can't convert to java value: " + clazz.fullName);
+		ctx.throwRuntimeException("cannot convert to java value: " + clazz.fullName);
 		return null;
 	}
 

@@ -27,7 +27,7 @@ public class HiJava {
 		} else if (javaObject.getClass().isArray()) {
 			return convertArrayFromJava(ctx, javaObject);
 		}
-		ctx.throwRuntimeException("Inconvertible method return value: " + javaObject.getClass());
+		ctx.throwRuntimeException("inconvertible method return value: " + javaObject.getClass());
 		return null;
 	}
 

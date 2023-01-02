@@ -53,7 +53,7 @@ public class HiMethodJava extends HiMethod {
 			HiField<?> argument = arguments[i];
 			Object argValue = argument.getJava(ctx);
 			if (argValue == null && !arguments[i].type.isNull()) {
-				ctx.throwRuntimeException("Inconvertible java class argument: " + arguments[i].type.fullName);
+				ctx.throwRuntimeException("inconvertible java class argument: " + arguments[i].type.fullName);
 				return;
 			}
 			javaArgs[i] = argValue;

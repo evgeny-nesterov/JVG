@@ -437,7 +437,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 			node.token = token;
 			return node;
 		} else {
-			throw new HiScriptRuntimeException("Node can't be decoded: undefined type " + type);
+			throw new HiScriptRuntimeException("node cannot be decoded: undefined type " + type);
 		}
 	}
 

@@ -164,9 +164,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 		if (value.valueType == Value.NAME) {
 			if (!NodeIdentifier.resolve(ctx, value, true)) {
 				if (value.nameDimensions == 0) {
-					ctx.throwRuntimeException("Can't resolve variable " + value.name);
+					ctx.throwRuntimeException("cannot resolve variable " + value.name);
 				} else {
-					ctx.throwRuntimeException("Can't resolve class " + value.name);
+					ctx.throwRuntimeException("cannot resolve class " + value.name);
 				}
 				return false;
 			}

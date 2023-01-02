@@ -89,7 +89,7 @@ public class NodeTry extends HiNode {
 						HiFieldObject resourceField = (HiFieldObject) ctx.getVariable(resource.name);
 						HiObject resourceObject = resourceField.get();
 						if (resourceObject == null) {
-							ctx.throwRuntimeException("Null pointer");
+							ctx.throwRuntimeException("null pointer");
 							return;
 						}
 
@@ -133,7 +133,7 @@ public class NodeTry extends HiNode {
 
 				if (closeException) {
 					ctx.exception = null;
-					ctx.throwRuntimeException("can't catch close resource exception");
+					ctx.throwRuntimeException("cannot catch close resource exception");
 					break;
 				}
 

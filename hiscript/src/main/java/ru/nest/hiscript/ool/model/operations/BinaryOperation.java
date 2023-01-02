@@ -67,7 +67,7 @@ public abstract class BinaryOperation extends HiOperation {
 		if (v1.valueType == Value.NAME) {
 			boolean checkInitialization = operation != EQUATE;
 			if (!NodeIdentifier.resolve(ctx, v1, checkInitialization)) {
-				ctx.throwRuntimeException("can't resolve identifier " + v1.name);
+				ctx.throwRuntimeException("cannot resolve identifier " + v1.name);
 				return;
 			}
 
@@ -79,7 +79,7 @@ public abstract class BinaryOperation extends HiOperation {
 		if (operation != INVOCATION) {
 			if (v2.valueType == Value.NAME) {
 				if (!NodeIdentifier.resolve(ctx, v2, true)) {
-					ctx.throwRuntimeException("can't resolve identifier " + v2.name);
+					ctx.throwRuntimeException("cannot resolve identifier " + v2.name);
 					return;
 				}
 
@@ -182,12 +182,12 @@ public abstract class BinaryOperation extends HiOperation {
 	}
 
 	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
-		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
+		String text = "cannot cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
 		ctx.throwRuntimeException(text);
 	}
 
 	public void errorCast(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
-		String text = "can't cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
+		String text = "cannot cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
 		validationInfo.error(text, token);
 	}
 }

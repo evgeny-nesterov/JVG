@@ -30,7 +30,7 @@ public class OperationInstanceOf extends BinaryOperation {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
 		if (c1.isPrimitive()) {
-			validationInfo.error("Inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
+			validationInfo.error("inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
 		}
 		if (node2.node instanceof NodeCastedIdentifier) {
 			NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) node2.node;
@@ -56,7 +56,7 @@ public class OperationInstanceOf extends BinaryOperation {
 			if (isInstanceof) {
 				if (v2.castedVariableName != null) {
 					if (ctx.getVariable(v2.castedVariableName) != null) {
-						ctx.throwRuntimeException("Variable '" + v2.castedVariableName + "' is already defined in the scope");
+						ctx.throwRuntimeException("variable '" + v2.castedVariableName + "' is already defined in the scope");
 						return;
 					}
 
@@ -66,7 +66,7 @@ public class OperationInstanceOf extends BinaryOperation {
 				}
 				if (v2.castedRecordArguments != null) {
 					if (!c2.isRecord()) {
-						ctx.throwRuntimeException("Inconvertible types; cannot cast " + c2.fullName + " to Record");
+						ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.fullName + " to Record");
 						return;
 					}
 					for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
@@ -80,6 +80,6 @@ public class OperationInstanceOf extends BinaryOperation {
 			v1.bool = isInstanceof;
 			return;
 		}
-		ctx.throwRuntimeException("Inconvertible types; cannot cast " + v1.type.fullName + " to " + c2.fullName);
+		ctx.throwRuntimeException("inconvertible types; cannot cast " + v1.type.fullName + " to " + c2.fullName);
 	}
 }

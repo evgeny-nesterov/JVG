@@ -13,7 +13,7 @@ public class JavaImpl extends ImplUtil {
 			Class javaClass = Class.forName(getString(ctx, javaClassName));
 			clazz = new HiClassJava(ctx.getClassLoader(), name, javaClass);
 		} else if (!(clazz instanceof HiClassJava)) {
-			ctx.throwRuntimeException("Can't import java class with name " + className);
+			ctx.throwRuntimeException("cannot import java class with name " + className);
 		}
 		returnVoid(ctx);
 	}

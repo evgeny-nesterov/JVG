@@ -204,7 +204,7 @@ public class OperationInvocation extends BinaryOperation {
 			v1.type = clazz;
 			return true;
 		} else {
-			String text = "can't find symbol; variable " + name;
+			String text = "cannot find symbol; variable " + name;
 			clazz = ctx.level.clazz;
 			if (clazz != null) {
 				text += "; location " + clazz.fullName;
@@ -249,7 +249,7 @@ public class OperationInvocation extends BinaryOperation {
 		} else if (v1.valueType == Value.CLASS) {
 			isStatic = true;
 		} else {
-			String text = "can't find symbol; variable " + name;
+			String text = "cannot find symbol; variable " + name;
 			HiClass location = ctx.level.clazz;
 			if (location != null) {
 				text += "; location " + location.fullName;
@@ -286,7 +286,7 @@ public class OperationInvocation extends BinaryOperation {
 			// find super method
 			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, types);
 			if (superMethod == null) {
-				ctx.throwRuntimeException("can't find method " + v1Clazz.fullName + "." + name);
+				ctx.throwRuntimeException("cannot find method " + v1Clazz.fullName + "." + name);
 				return;
 			}
 		}
@@ -294,18 +294,18 @@ public class OperationInvocation extends BinaryOperation {
 		// find method
 		HiMethod method = clazz.searchMethod(ctx, name, types);
 		if (method == null) {
-			ctx.throwRuntimeException("can't find method " + clazz.fullName + "." + name);
+			ctx.throwRuntimeException("cannot find method " + clazz.fullName + "." + name);
 			return;
 		}
 
 		if (!method.isJava()) {
 			if (isStatic && !method.modifiers.isStatic()) {
-				ctx.throwRuntimeException("can't invoke not static method from static context");
+				ctx.throwRuntimeException("cannot invoke not static method from static context");
 				return;
 			}
 
 			if (method.modifiers.isAbstract()) {
-				ctx.throwRuntimeException("can't invoke abstract method");
+				ctx.throwRuntimeException("cannot invoke abstract method");
 				return;
 			}
 		}

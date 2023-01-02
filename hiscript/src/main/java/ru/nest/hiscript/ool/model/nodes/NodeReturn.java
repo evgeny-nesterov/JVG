@@ -60,9 +60,9 @@ public class NodeReturn extends HiNode {
 				if (ctx.value.valueType == Value.NAME) {
 					if (!NodeIdentifier.resolveVariable(ctx, ctx.value, true)) {
 						if (ctx.value.nameDimensions == 0) {
-							ctx.throwRuntimeException("Can't resolve variable " + ctx.value.name);
+							ctx.throwRuntimeException("cannot resolve variable " + ctx.value.name);
 						} else {
-							ctx.throwRuntimeException("Can't resolve class " + ctx.value.name);
+							ctx.throwRuntimeException("cannot resolve class " + ctx.value.name);
 						}
 						return;
 					}

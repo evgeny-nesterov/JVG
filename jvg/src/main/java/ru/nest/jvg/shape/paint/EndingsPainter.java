@@ -103,7 +103,7 @@ public class EndingsPainter extends Painter {
 					break;
 			}
 		} catch (Throwable thr) {
-			System.err.println("Can't draw outline endings: " + thr.toString());
+			System.err.println("cannot draw outline endings: " + thr.toString());
 			thr.printStackTrace();
 		}
 	}

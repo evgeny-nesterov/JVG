@@ -243,10 +243,10 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				try {
 					field = constructor.newInstance(name);
 				} catch (Exception exc) {
-					throw new HiScriptRuntimeException("Undefined field type: " + type, exc);
+					throw new HiScriptRuntimeException("undefined field type: " + type, exc);
 				}
 			} else {
-				throw new HiScriptRuntimeException("Can't initialize field by type: " + type);
+				throw new HiScriptRuntimeException("cannot initialize field by type: " + type);
 			}
 		} else {
 			field = new HiFieldObject(type, name);

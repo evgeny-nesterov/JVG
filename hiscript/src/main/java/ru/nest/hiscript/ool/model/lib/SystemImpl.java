@@ -65,10 +65,10 @@ public class SystemImpl extends ImplUtil {
 			if (clazz != null) {
 				HiNative.register(clazz);
 			} else {
-				ctx.throwRuntimeException("can't load library: " + error[0].toString());
+				ctx.throwRuntimeException("cannot load library: " + error[0].toString());
 			}
 		} catch (Exception exc) {
-			ctx.throwRuntimeException("can't load library: " + exc.toString());
+			ctx.throwRuntimeException("cannot load library: " + exc.toString());
 		}
 	}
 

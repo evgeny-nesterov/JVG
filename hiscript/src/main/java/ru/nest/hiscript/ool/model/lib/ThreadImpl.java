@@ -15,7 +15,7 @@ public class ThreadImpl extends ImplUtil {
 		if (threadClass == null) {
 			threadClass = HiClass.forName(ctx, "Thread");
 			if (threadClass == null) {
-				throw new HiScriptRuntimeException("can't find class Thread");
+				throw new HiScriptRuntimeException("cannot find class Thread");
 			}
 		}
 

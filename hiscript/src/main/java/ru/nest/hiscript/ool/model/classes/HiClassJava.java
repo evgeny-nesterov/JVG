@@ -46,7 +46,7 @@ public class HiClassJava extends HiClass {
 			}
 			Class argTypeJavaClass = argType.getJavaClass();
 			if (argTypeJavaClass == null) {
-				classResolver.processResolverException("Inconvertible java class argument: " + argType.fullName);
+				classResolver.processResolverException("inconvertible java class argument: " + argType.fullName);
 				return null;
 			}
 			javaArgClasses[i] = argTypeJavaClass;

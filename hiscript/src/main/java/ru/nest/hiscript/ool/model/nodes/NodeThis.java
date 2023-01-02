@@ -25,7 +25,7 @@ public class NodeThis extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null) {
-			ctx.throwRuntimeException("can not access to this");
+			ctx.throwRuntimeException("cannot access this class");
 			return;
 		}
 

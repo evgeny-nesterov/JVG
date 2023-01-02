@@ -186,7 +186,7 @@ public class NodeSwitch extends HiNode {
 								if (identifier != null) {
 									int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
 									if (enumOrdinal == -1) {
-										ctx.throwRuntimeException("Cannot resolve symbol '" + identifier.getName() + "'");
+										ctx.throwRuntimeException("cannot resolve symbol '" + identifier.getName() + "'");
 										return -2;
 									}
 									if (object.getField(ctx, "ordinal").get().equals(enumOrdinal)) {
@@ -196,7 +196,7 @@ public class NodeSwitch extends HiNode {
 								}
 							}
 
-							ctx.throwRuntimeException("An enum switch case label must be the unqualified name of an enumeration constant");
+							ctx.throwRuntimeException("an enum switch case label must be the unqualified name of an enumeration constant");
 							return -2;
 						}
 					} else {
@@ -223,7 +223,7 @@ public class NodeSwitch extends HiNode {
 								if (isInstanceof) {
 									if (ctx.value.castedVariableName != null) {
 										if (ctx.getVariable(ctx.value.castedVariableName) != null) {
-											ctx.throwRuntimeException("Variable '" + ctx.value.castedVariableName + "' is already defined in the scope");
+											ctx.throwRuntimeException("variable '" + ctx.value.castedVariableName + "' is already defined in the scope");
 											return -2;
 										}
 
@@ -233,7 +233,7 @@ public class NodeSwitch extends HiNode {
 									}
 									if (ctx.value.castedRecordArguments != null) {
 										if (!c2.isRecord()) {
-											ctx.throwRuntimeException("Inconvertible types; cannot cast " + c2.fullName + " to Record");
+											ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.fullName + " to Record");
 											return -2;
 										}
 										for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
