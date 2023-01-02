@@ -74,12 +74,12 @@ public class NodeIdentifier extends HiNode {
 		}
 
 		if (resolvedIdentifier == null) {
-			validationInfo.error("Can't resolve symbol '" + name + "'", token);
+			validationInfo.error("cannot resolve symbol '" + name + "'", token);
 			valid = false;
 		} else if (resolvedIdentifier instanceof NodeArgument) {
 			// arguments are always initialized
 		} else if (resolvedIdentifier instanceof HiNode && ctx.level.enclosingClass == null && !ctx.initializedNodes.contains(resolvedIdentifier)) {
-			validationInfo.error("Variable '" + name + "' is not initialized", token);
+			validationInfo.error("variable '" + name + "' is not initialized", token);
 			valid = false;
 		}
 
@@ -92,7 +92,7 @@ public class NodeIdentifier extends HiNode {
 				nonStaticField = modifiers != null ? !modifiers.isStatic() : true;
 			}
 			if (nonStaticField && ctx.isStaticContext()) {
-				validationInfo.error("Non-static field '" + name + "' cannot be accessed from static context", token);
+				validationInfo.error("non-static field '" + name + "' cannot be accessed from static context", token);
 				valid = false;
 			}
 		}

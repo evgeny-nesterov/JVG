@@ -274,7 +274,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 			for (NodeAnnotation annotation : annotations) {
 				valid &= annotation.validate(validationInfo, ctx);
 				if (names.contains(annotation.name)) {
-					validationInfo.error("Duplicate annotation", annotation.getToken());
+					validationInfo.error("duplicate annotation", annotation.getToken());
 					valid = false;
 				} else {
 					names.add(annotation.name);

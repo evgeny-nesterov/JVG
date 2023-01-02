@@ -64,11 +64,9 @@ public class NodeInvocation extends HiNode {
 			}
 		} else {
 			while (ctx != null) {
-				if (ctx.clazz != null) {
-					method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
-					if (method != null) {
-						return method.returnClass;
-					}
+				method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
+				if (method != null) {
+					return method.returnClass;
 				}
 				ctx = ctx.parent;
 			}
@@ -89,15 +87,15 @@ public class NodeInvocation extends HiNode {
 
 		if (method != null) {
 			if (method.modifiers.isAbstract()) {
-				validationInfo.error("Cannot invoke abstract method", token);
+				validationInfo.error("cannot invoke abstract method", token);
 				valid = false;
 			}
 			if (!innerInvocation && !method.modifiers.isStatic() && !isEnclosingObject) {
-				validationInfo.error("Non-static method '" + method + "' cannot be referenced from a static context", token);
+				validationInfo.error("non-static method '" + method + "' cannot be referenced from a static context", token);
 				valid = false;
 			}
 		} else {
-			validationInfo.error("Cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.fullName + "'" : ""), token);
+			validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.fullName + "'" : ""), token);
 			valid = false;
 		}
 		return valid;

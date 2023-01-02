@@ -28,7 +28,7 @@ public class NodeAnnotation extends HiNode {
 		boolean valid = true;
 		HiClass clazz = ctx.getClass(name);
 		if (clazz == null) {
-			validationInfo.error("can't resolve class '" + name + "'", getToken());
+			validationInfo.error("cannot resolve class '" + name + "'", getToken());
 			valid = false;
 		} else if (!clazz.isAnnotation()) {
 			validationInfo.error("annotation class expected", getToken());
@@ -39,7 +39,7 @@ public class NodeAnnotation extends HiNode {
 			for (NodeAnnotationArgument arg : args) {
 				valid &= arg.validate(validationInfo, ctx);
 				if (argsNames.contains(arg.name)) {
-					validationInfo.error("Duplicate annotation argument", arg.getToken());
+					validationInfo.error("duplicate annotation argument", arg.getToken());
 					valid = false;
 				} else {
 					argsNames.add(arg.name);

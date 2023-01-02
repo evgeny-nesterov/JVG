@@ -86,11 +86,11 @@ public class NodeCastedIdentifier extends HiNode {
 					if (recordArgument != null) {
 						HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
 						if (recordArgumentClass != null && !HiClass.autoCast(recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue)) {
-							validationInfo.error("Record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
+							validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
 							valid = false;
 						}
 					} else {
-						validationInfo.error("Record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
+						validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
 						valid = false;
 					}
 				}

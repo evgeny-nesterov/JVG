@@ -44,7 +44,7 @@ public class OperationInvocation extends BinaryOperation {
 			if (node2.type == null) {
 				node2.get(validationInfo, ctx);
 				if (node2.type == null) {
-					validationInfo.error("can't resolve expression type", node2.node.getToken());
+					validationInfo.error("cannot resolve expression type", node2.node.getToken());
 				}
 			}
 			ctx.exit();

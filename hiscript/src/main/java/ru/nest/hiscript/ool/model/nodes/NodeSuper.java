@@ -23,7 +23,7 @@ public class NodeSuper extends HiNode {
 
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (ctx.clazz == null || ctx.clazz.superClass == null) {
-			validationInfo.error("Cannot resolve method 'super'", token);
+			validationInfo.error("cannot resolve method 'super'", token);
 			return false;
 		}
 		return true;

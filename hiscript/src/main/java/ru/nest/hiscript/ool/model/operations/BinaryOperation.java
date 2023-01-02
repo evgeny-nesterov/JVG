@@ -43,7 +43,7 @@ public abstract class BinaryOperation extends HiOperation {
 			if (node1.type != null) {
 				valid = node1.valid;
 			} else {
-				validationInfo.error("can't resolve expression type", node1.node.getToken());
+				validationInfo.error("cannot resolve expression type", node1.node.getToken());
 				valid = false;
 			}
 		}
@@ -52,7 +52,7 @@ public abstract class BinaryOperation extends HiOperation {
 			if (node2.type != null) {
 				valid &= node2.valid;
 			} else {
-				validationInfo.error("can't resolve expression type", node2.node.getToken());
+				validationInfo.error("cannot resolve expression type", node2.node.getToken());
 				valid = false;
 			}
 		}

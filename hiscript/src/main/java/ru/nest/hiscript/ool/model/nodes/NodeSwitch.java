@@ -58,7 +58,7 @@ public class NodeSwitch extends HiNode {
 							if (identifier != null) {
 								int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
 								if (enumOrdinal == -1) {
-									validationInfo.error("Cannot resolve symbol '" + identifier.getName() + "'", caseValueNode.getToken());
+									validationInfo.error("cannot resolve symbol '" + identifier.getName() + "'", caseValueNode.getToken());
 									valid = false;
 								}
 							}

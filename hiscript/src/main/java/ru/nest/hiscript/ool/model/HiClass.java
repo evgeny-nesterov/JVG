@@ -429,7 +429,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		// check modifiers
 		if (ctx.enclosingClass != null && isStatic()) {
-			validationInfo.error("Illegal modifier for the local class " + fullName + "; only abstract or final is permitted", token);
+			validationInfo.error("illegal modifier for the local class " + fullName + "; only abstract or final is permitted", token);
 			valid = false;
 		}
 
@@ -459,7 +459,7 @@ public class HiClass implements Codeable, TokenAccessible {
 					HiField field = (HiField) initializer;
 					if (field.getModifiers().isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors
-						validationInfo.error("Variable '" + field.name + "' might not have been initialized", field.getToken());
+						validationInfo.error("variable '" + field.name + "' might not have been initialized", field.getToken());
 						valid = false;
 					}
 					ctx.initializedNodes.add(field);
@@ -472,14 +472,14 @@ public class HiClass implements Codeable, TokenAccessible {
 			for (HiClass innerClass : innerClasses) {
 				if (!isStaticRootClassTop) {
 					if (innerClass.isInterface) {
-						validationInfo.error("The member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
+						validationInfo.error("the member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
 						isStaticRootClassTop();
 						valid = false;
 					}
 
 					// check on valid static modifier (includes annotations)
 					if (innerClass.isStatic()) {
-						validationInfo.error("The member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
+						validationInfo.error("the member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
 						valid = false;
 					}
 				}

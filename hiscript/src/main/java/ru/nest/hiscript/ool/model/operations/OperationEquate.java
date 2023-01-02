@@ -62,7 +62,7 @@ public class OperationEquate extends BinaryOperation {
 		}
 		if (modifiers != null) {
 			if (modifiers.isFinal() && ctx.initializedNodes.contains(fieldNode)) {
-				validationInfo.error("can't assign value to final variable", node.getToken());
+				validationInfo.error("cannot assign value to final variable", node.getToken());
 			} else {
 				ctx.initializedNodes.add(fieldNode);
 			}
