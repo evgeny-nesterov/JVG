@@ -1,11 +1,9 @@
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class TestArrays extends HiTest {
 	@Test
 	public void testNew() {
-		assertSuccessSerialize("int[] x1, x2; boolean y[]; String[] z1[], z2;");
+		assertSuccessSerialize("int[] x1, x2; boolean y[]; String[] z1[] = {{}}, z2; assert z1 instanceof String[][];");
 		assertSuccessSerialize("int[] x = {1,2}; boolean y[] = {true,false}; String[] z[] = {{\"a\", \"b\"},{\"c\", \"d\"}};");
 		assertSuccessSerialize("int[] x = new int[]{1,2}; boolean y[] = new boolean[]{true,false}; String[] z[] = new String[][]{{\"a\", \"b\"},{\"c\", \"d\"}};");
 		assertSuccessSerialize("int[][] x = {new int[]{1, 2, 3}};");
@@ -28,7 +26,8 @@ public class TestArrays extends HiTest {
 	public void testExpressions() {
 		assertSuccessSerialize("int[] x = {0, 1, 2}; assert x.length == 3; assert x[0] == 0; assert x[1] == 1; assert x[2] == 2; assert x[x[x[x[x[2]-1]]]] == 1;");
 		assertSuccessSerialize("int[][] x = {{0, 1, 2}, {3, 5, 6}, {7, 8, 9}}; int y = x[0][0] + x[2][2]; assert y == 9;");
-		assertSuccessSerialize("int[][] x = {null};");
+		assertSuccessSerialize("String[][] s = {null}; assert !(s[0] instanceof String[]);");
+		assertSuccessSerialize("int[][] x = {null}; assert !(x[0] instanceof int[]);");
 		assertSuccessSerialize("String[] x = {null}; assert x[0] == null;");
 		assertSuccessSerialize("String[][] x = {null}; assert x[0] == null;");
 		assertSuccessSerialize("int[][][][][][][][][][] x = {null, {null, {null, {null, {null, {null, {null, {null, {null, { 1 }}}}}}}}}}; assert x[1] != null;");

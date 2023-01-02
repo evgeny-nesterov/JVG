@@ -115,6 +115,16 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testBreakContinueLabel() {
+		assertSuccessSerialize("A:{break A;};");
+		assertSuccessSerialize("A:{{{break A;}}};");
+		assertSuccessSerialize("A:break A;");
+		assertSuccessSerialize("A:{continue A;};");
+		assertSuccessSerialize("A:{{{continue A;}}};");
+		assertSuccessSerialize("A:continue A;");
+		assertSuccessSerialize("A:B:C:D:{break B;}");
+		assertFailCompile("break A;");
+		assertFailCompile("A:{} break A;");
+
 		assertSuccessSerialize("A:{if(true) break A; assert false;};");
 		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
 		assertSuccessSerialize("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");

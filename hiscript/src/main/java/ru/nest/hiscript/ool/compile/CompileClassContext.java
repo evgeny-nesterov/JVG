@@ -272,7 +272,7 @@ public class CompileClassContext implements ClassResolver {
 			if (clazz != null) {
 				return clazz;
 			}
-			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.STATIC_CLASS) {
+			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;
@@ -353,7 +353,7 @@ public class CompileClassContext implements ClassResolver {
 					return clazz;
 				}
 			}
-			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.STATIC_CLASS) {
+			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;

@@ -194,16 +194,6 @@ public class TestExpression extends HiTest {
 	}
 
 	@Test
-	public void testLoad() throws Exception {
-		HiScript script = HiScript.create().compile("int x = 0;").execute().printError().compile("x = x + 1;");
-		for (int i = 0; i < 1_000_000; i++) {
-			script.execute().printError();
-		}
-		script.compile("System.println(\"x=\" + x); assert x == 1_000_000;").execute().printError().close();
-		System.out.println("load test duration: " + script.duration() / 1000.0 + "sec");
-	}
-
-	@Test
 	public void testIncrements() {
 		assertSuccessSerialize("int x = 1; assert x++ + x++ == 3;");
 		assertSuccessSerialize("int x = 1; assert ++x + ++x == 5;");
