@@ -10,6 +10,7 @@ public class TestStatic extends HiTest {
 	@Test
 	public void testStatementField() {
 		assertSuccessSerialize("class A{static class B{static class C{static int x = 1;}}} assert A.B.C.x == 1;");
+		assertSuccessSerialize("class A {static int x = 1; static class B{int m() {return x;}}} new A.B().m();");
 		assertFailCompile("final static int x = 0;");
 	}
 

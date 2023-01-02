@@ -15,6 +15,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		execute("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(long a, Object b));");
 	}
 }
