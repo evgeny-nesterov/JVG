@@ -57,6 +57,10 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public static String STRING_CLASS_NAME = "String";
 
+	public static String ENUM_CLASS_NAME = "Enum";
+
+	public static String RECORD_CLASS_NAME = "Record";
+
 	public static String HASHMAP_CLASS_NAME = "HashMap";
 
 	public static String ARRAYLIST_CLASS_NAME = "ArrayList";

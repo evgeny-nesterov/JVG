@@ -89,13 +89,13 @@ public class NodeTry extends HiNode {
 						HiFieldObject resourceField = (HiFieldObject) ctx.getVariable(resource.name);
 						HiObject resourceObject = resourceField.get();
 						if (resourceObject == null) {
-							ctx.throwException("RuntimeException", "Null pointer");
+							ctx.throwRuntimeException("Null pointer");
 							return;
 						}
 
 						HiMethod closeMethod = resourceObject.clazz.searchMethod(ctx, "close");
 						if (closeMethod == null) {
-							ctx.throwException("RuntimeException", "'" + resource.name + "' is not auto closeable");
+							ctx.throwRuntimeException("'" + resource.name + "' is not auto closeable");
 							return;
 						}
 

@@ -446,18 +446,27 @@ public class ParserUtil implements Words {
 	}
 
 	protected static HiNode[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		tokenizer.start();
 		List<HiNode> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {
+			if (arg.isCastedIdentifier()) {
+				tokenizer.rollback();
+				return new HiNode[0];
+			}
+
+			tokenizer.commit();
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				Token token = tokenizer.currentToken();
 				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-				if (arg == null) {
+				if (arg == null || arg.isCastedIdentifier()) {
 					tokenizer.error("expression is expected", token);
 				}
 				args.add(arg);
 			}
+		} else {
+			tokenizer.commit();
 		}
 
 		HiNode[] argsArray = new HiNode[args.size()];

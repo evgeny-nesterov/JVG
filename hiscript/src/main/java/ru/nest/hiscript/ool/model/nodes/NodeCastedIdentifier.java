@@ -2,9 +2,11 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -45,8 +47,55 @@ public class NodeCastedIdentifier extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (castedRecordArguments != null) {
-			for (NodeArgument castedRecordArgument : castedRecordArguments) {
-				valid &= castedRecordArgument.validate(validationInfo, ctx);
+			for (int i = 0; i < castedRecordArguments.length; i++) {
+				NodeArgument castedRecordArgument = castedRecordArguments[i];
+				valid &= castedRecordArgument.validate(validationInfo, ctx) && castedRecordArgument.expectValue(validationInfo, ctx);
+			}
+
+			HiClass recordClass = ctx.getLocalClass(name);
+			if (recordClass != null) {
+				if (!recordClass.isRecord()) {
+					validationInfo.error("Inconvertible types; cannot cast " + name + " to Record", getToken());
+					valid = false;
+				}
+				for (int i = 0; i < castedRecordArguments.length; i++) {
+					NodeArgument castedRecordArgument = castedRecordArguments[i];
+					NodeValueType castedRecordArgumentValueType = castedRecordArgument.getValueType(validationInfo, ctx);
+					HiClass castedRecordArgumentClass = castedRecordArgumentValueType.type;
+					boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isValue;
+
+					NodeArgument recordArgument = null;
+					for (NodeArgument argument : ((HiClassRecord) recordClass).defaultConstructor.arguments) {
+						if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
+							recordArgument = argument;
+							break;
+						}
+					}
+					if (recordArgument == null && recordClass.constructors != null) {
+						for (HiConstructor constructor : recordClass.constructors) {
+							if (constructor.arguments != null) {
+								for (NodeArgument argument : constructor.arguments) {
+									if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
+										recordArgument = argument;
+										break;
+									}
+								}
+							}
+						}
+					}
+					if (recordArgument != null) {
+						HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
+						if (recordArgumentClass != null && !HiClass.autoCast(recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue)) {
+							validationInfo.error("Record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
+							valid = false;
+						}
+					} else {
+						validationInfo.error("Record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
+						valid = false;
+					}
+				}
+			} else {
+				valid = false;
 			}
 		}
 		if (castedVariableName != null) {

@@ -88,7 +88,6 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public void invalid() {
 		this.isValue = false;
-		this.type = null;
 		this.valid = false;
 	}
 

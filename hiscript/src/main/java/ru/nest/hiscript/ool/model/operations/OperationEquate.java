@@ -81,7 +81,7 @@ public class OperationEquate extends BinaryOperation {
 			// 1. copy variable from v1
 			HiField<?> variable = v1.variable;
 			if (variable.initialized && variable.getModifiers().isFinal()) {
-				ctx.throwException("RuntimeException", "Cannot assign a value to final variable '" + variable.name + "'");
+				ctx.throwRuntimeException("Cannot assign a value to final variable '" + variable.name + "'");
 				return;
 			}
 

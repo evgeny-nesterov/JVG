@@ -390,9 +390,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	// has to be set at the end of class init
 	public final static Type objectType = getTopType(HiClass.OBJECT_CLASS_NAME);
 
-	public final static Type enumType = getTopType("Enum");
+	public final static Type enumType = getTopType(HiClass.ENUM_CLASS_NAME);
 
-	public final static Type recordType = getTopType("Record");
+	public final static Type recordType = getTopType(HiClass.RECORD_CLASS_NAME);
 
 	public final static Type stringType = getTopType(HiClass.STRING_CLASS_NAME);
 

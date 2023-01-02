@@ -64,9 +64,11 @@ public class NodeInvocation extends HiNode {
 			}
 		} else {
 			while (ctx != null) {
-				method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
-				if (method != null) {
-					return method.returnClass;
+				if (ctx.clazz != null) {
+					method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
+					if (method != null) {
+						return method.returnClass;
+					}
 				}
 				ctx = ctx.parent;
 			}

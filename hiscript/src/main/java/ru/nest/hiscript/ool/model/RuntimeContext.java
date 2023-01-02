@@ -532,6 +532,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		public void putVariable(HiField<?> variable) {
+			if (variable == null) {
+				return;
+			}
 			if (variables == null) {
 				variables = new HashMap<>(1);
 			}

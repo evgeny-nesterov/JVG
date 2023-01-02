@@ -27,14 +27,13 @@ public abstract class BinaryOperation extends HiOperation {
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 		NodeValueType node1 = nodes[0];
 		NodeValueType node2 = nodes[1];
-		if (prepareOperationResultType(validationInfo, ctx, node1, node2)) {
-			ctx.nodeValueType.resolvedValueVariable = null;
-			HiClass clazz = getOperationResultType(validationInfo, ctx, node1, node2);
-			node1.get(node1.node, clazz, clazz != null, clazz != null && node1.isValue, clazz != null && node1.isConstant, ctx.nodeValueType.resolvedValueVariable);
-			node1.apply(node2);
-		} else {
+		if (!prepareOperationResultType(validationInfo, ctx, node1, node2)) {
 			ctx.nodeValueType.invalid();
 		}
+		ctx.nodeValueType.resolvedValueVariable = null;
+		HiClass clazz = getOperationResultType(validationInfo, ctx, node1, node2);
+		node1.get(node1.node, clazz, clazz != null, clazz != null && node1.isValue, clazz != null && node1.isConstant, ctx.nodeValueType.resolvedValueVariable);
+		node1.apply(node2);
 	}
 
 	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {

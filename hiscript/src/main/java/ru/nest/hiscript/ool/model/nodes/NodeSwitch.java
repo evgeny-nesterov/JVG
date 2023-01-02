@@ -88,9 +88,9 @@ public class NodeSwitch extends HiNode {
 							valid = false;
 						}
 						if (caseValueNode instanceof NodeExpressionNoLS) {
-							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
-							if (identifier != null) {
-								ctx.initializedNodes.add(identifier.declarationNode);
+							NodeCastedIdentifier castedIdentifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+							if (castedIdentifier != null) {
+								ctx.initializedNodes.add(castedIdentifier.declarationNode);
 							}
 						}
 					}
@@ -186,10 +186,9 @@ public class NodeSwitch extends HiNode {
 								if (identifier != null) {
 									int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
 									if (enumOrdinal == -1) {
-										ctx.throwException("RuntimeException", "Cannot resolve symbol '" + identifier.getName() + "'");
+										ctx.throwRuntimeException("Cannot resolve symbol '" + identifier.getName() + "'");
 										return -2;
 									}
-
 									if (object.getField(ctx, "ordinal").get().equals(enumOrdinal)) {
 										return i;
 									}
@@ -197,7 +196,7 @@ public class NodeSwitch extends HiNode {
 								}
 							}
 
-							ctx.throwException("RuntimeException", "An enum switch case label must be the unqualified name of an enumeration constant");
+							ctx.throwRuntimeException("An enum switch case label must be the unqualified name of an enumeration constant");
 							return -2;
 						}
 					} else {
