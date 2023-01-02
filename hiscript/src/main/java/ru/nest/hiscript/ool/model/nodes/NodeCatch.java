@@ -19,9 +19,9 @@ public class NodeCatch extends HiNode {
 		super("catch", TYPE_CATCH);
 		this.excTypes = excTypes;
 		this.catchBody = catchBody;
-		this.excName = excName; // .intern();
-		this.modifiers = modifiers; // .intern();
-		this.annotations = annotations; // .intern();
+		this.excName = excName.intern();
+		this.modifiers = modifiers;
+		this.annotations = annotations;
 	}
 
 	public Modifiers modifiers;

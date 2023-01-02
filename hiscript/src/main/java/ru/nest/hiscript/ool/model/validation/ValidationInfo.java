@@ -10,7 +10,7 @@ import java.util.List;
 public class ValidationInfo {
 	private HiCompiler compiler;
 
-	private boolean valid;
+	private boolean valid = true;
 
 	public ValidationInfo(HiCompiler compiler) {
 		this.compiler = compiler;

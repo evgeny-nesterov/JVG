@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -38,13 +39,12 @@ public class NodeExpressionSwitch extends HiNode {
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		if (size > 0) {
-			HiClass topType = casesNodes.get(0).getValueClass(validationInfo, ctx);
-			for (int i = 1; i < size && topType != null; i++) {
+			HiClass topType = null;
+			for (int i = 0; i < size; i++) {
 				HiClass caseValueType = casesNodes.get(i).getValueClass(validationInfo, ctx);
-				if (caseValueType != null) {
-					topType = topType.getCommonClass(caseValueType);
-				} else {
-					topType = null;
+				topType = caseValueType.getCommonClass(topType);
+				if (topType == null) {
+					break;
 				}
 			}
 			return topType;
@@ -55,14 +55,50 @@ public class NodeExpressionSwitch extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
+		HiClass topCaseClass = null;
+		HiClass topResultClass = null;
 		for (int i = 0; i < size; i++) {
-			HiNode[] caseValues = casesValues.get(i);
-			if (caseValues != null) {
-				for (HiNode caseValue : caseValues) {
-					valid &= caseValue.validate(validationInfo, ctx) && caseValue.expectValue(validationInfo, ctx);
+			HiNode[] caseValueNodes = casesValues.get(i);
+			if (caseValueNodes != null) {
+				for (HiNode caseValueNode : caseValueNodes) {
+					if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
+						HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
+						if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
+							HiClass c = caseValueClass.getCommonClass(topCaseClass);
+							if (c != null) {
+								topCaseClass = c;
+							} else {
+								validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
+								valid = false;
+							}
+						}
+					} else {
+						valid = false;
+					}
+					if (caseValueNode instanceof NodeExpressionNoLS) {
+						NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+						if (identifier != null) {
+							ctx.initializedNodes.add(identifier.declarationNode);
+						}
+					}
 				}
 			}
-			valid &= casesNodes.get(i).validate(validationInfo, ctx) && casesNodes.get(i).expectValue(validationInfo, ctx);
+
+			HiNode caseNode = casesNodes.get(i);
+			if (caseNode.validate(validationInfo, ctx) && caseNode.expectValue(validationInfo, ctx)) {
+				HiClass caseNodeClass = caseNode.getValueClass(validationInfo, ctx);
+				if (caseNodeClass != null) {
+					HiClass c = caseNodeClass.getCommonClass(topResultClass);
+					if (c != null) {
+						topResultClass = c;
+					} else {
+						validationInfo.error("incompatible switch values types; found " + caseNodeClass + ", required " + topResultClass, caseNode.getToken());
+						valid = false;
+					}
+				}
+			} else {
+				valid = false;
+			}
 		}
 		return valid;
 	}

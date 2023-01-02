@@ -35,8 +35,18 @@ public class NodeLogicalSwitch extends NodeExpression {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
-		valid &= trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
-		valid &= falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
+		boolean trueValid = trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
+		boolean falseValid = falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
+		if (trueValid && falseValid) {
+			HiClass trueClass = trueValueNode.getValueClass(validationInfo, ctx);
+			HiClass falseClass = falseValueNode.getValueClass(validationInfo, ctx);
+			if (trueClass.getCommonClass(falseClass) == null) {
+				validationInfo.error("incompatible switch values types: '" + trueClass + "' and '" + falseClass + "'", trueClass.getToken());
+				valid = false;
+			}
+		} else {
+			valid = false;
+		}
 		return valid;
 	}
 

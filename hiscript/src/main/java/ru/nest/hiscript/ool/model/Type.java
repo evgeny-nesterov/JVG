@@ -41,7 +41,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	private Type(Type parent, String name) {
 		this.parent = parent;
 		this.cellType = null;
-		this.name = name; // .intern();
+		this.name = name.intern();
 		this.dimension = 0;
 		this.primitive = false;
 
@@ -53,9 +53,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			} else {
 				path = new Type[] {parent};
 			}
-			this.fullName = parent.fullName + "." + name;
+			this.fullName = (parent.fullName + "." + name).intern();
 		} else {
-			this.fullName = name;
+			this.fullName = name.intern();
 		}
 	}
 
@@ -65,10 +65,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	private Type(String name) {
 		this.parent = null;
 		this.cellType = null;
-		this.name = name;
+		this.name = name.intern();
 		this.dimension = 0;
 		this.primitive = true;
-		this.fullName = name;
+		this.fullName = name.intern();
 	}
 
 	/**
@@ -77,10 +77,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	private Type(Type cellType) {
 		this.parent = null;
 		this.cellType = cellType;
-		this.name = "0" + cellType.name;
+		this.name = ("0" + cellType.name).intern();
 		this.dimension = cellType.dimension + 1;
 		this.primitive = false;
-		this.fullName = "0" + cellType.fullName;
+		this.fullName = ("0" + cellType.fullName).intern();
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;

@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool;
 
-import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;

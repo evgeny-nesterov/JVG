@@ -70,7 +70,7 @@ public class HiMethod implements Codeable, TokenAccessible {
 		this.annotations = annotations;
 		this.modifiers = modifiers != null ? modifiers : new Modifiers();
 		this.returnType = returnType;
-		this.name = name; // .intern();
+		this.name = name.intern();
 		this.arguments = arguments;
 		this.throwsTypes = throwsTypes;
 		this.body = body;

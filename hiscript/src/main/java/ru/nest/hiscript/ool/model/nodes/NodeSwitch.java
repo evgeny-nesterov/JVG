@@ -6,9 +6,9 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -67,12 +67,26 @@ public class NodeSwitch extends HiNode {
 				}
 			}
 		} else {
+			HiClass topCaseClass = null;
 			for (int i = 0; i < size; i++) {
 				HiNode[] caseValueNodes = casesValues.get(i);
 				if (caseValueNodes != null) { // not default
 					for (int j = 0; j < caseValueNodes.length; j++) {
 						HiNode caseValueNode = caseValueNodes[j];
-						valid &= caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx);
+						if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
+							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
+							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
+								HiClass c = caseValueClass.getCommonClass(topCaseClass);
+								if (c != null) {
+									topCaseClass = c;
+								} else {
+									validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
+									valid = false;
+								}
+							}
+						} else {
+							valid = false;
+						}
 						if (caseValueNode instanceof NodeExpressionNoLS) {
 							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
@@ -137,13 +151,18 @@ public class NodeSwitch extends HiNode {
 							return -2;
 						}
 
-						int caseValue = ctx.value.getInt();
-						if (ctx.exitFromBlock()) {
-							return -2;
-						}
-
-						if (value == caseValue) {
-							return i;
+						if (ctx.value.type == HiClassPrimitive.BOOLEAN) {
+							if (ctx.value.bool) {
+								return i;
+							}
+						} else {
+							int caseValue = ctx.value.getInt();
+							if (ctx.exitFromBlock()) {
+								return -2;
+							}
+							if (value == caseValue) {
+								return i;
+							}
 						}
 					}
 				} else {
@@ -231,7 +250,7 @@ public class NodeSwitch extends HiNode {
 									}
 									return i;
 								}
-							} else if (ctx.value.type.isPrimitive() && ctx.value.type.name.equals("boolean")) {
+							} else if (ctx.value.type.isPrimitive() && ctx.value.type == HiClassPrimitive.BOOLEAN) {
 								if (ctx.value.getBoolean()) {
 									return i;
 								}

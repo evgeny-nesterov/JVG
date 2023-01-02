@@ -13,7 +13,7 @@ public class MethodSignature implements Cloneable {
 	}
 
 	public void set(String name, HiClass[] argClasses) {
-		this.name = name; // .intern();
+		this.name = name.intern();
 		this.argClasses = argClasses;
 		argCount = argClasses != null ? argClasses.length : 0;
 	}

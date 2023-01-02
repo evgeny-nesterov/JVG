@@ -5,9 +5,9 @@ import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -18,14 +18,14 @@ public class NodeConstructor extends HiNode {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.type = type;
 		this.argValues = argValues;
-		name = type.getType().fullName; // .intern();
+		name = type.getType().fullName;
 	}
 
 	public NodeConstructor(HiClass clazz, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR);
 		this.clazz = clazz;
 		this.argValues = argValues;
-		name = clazz.getFullName(clazz.getClassLoader()); // .intern();
+		name = clazz.getFullName(clazz.getClassLoader());
 	}
 
 	private NodeConstructor(HiNode[] argValues) {
@@ -79,18 +79,6 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		// TODO define clazz in validation
-		if (clazz == null) {
-			clazz = type.getType().getClass(ctx);
-			if (clazz == null) {
-				return;
-			}
-			if (clazz.isInterface) {
-				ctx.throwRuntimeException("cannot create object from interface '" + name + "'");
-				return;
-			}
-		}
-
 		// init by class
 		clazz.init(ctx);
 		ctx.addClass(clazz);
@@ -190,7 +178,7 @@ public class NodeConstructor extends HiNode {
 					@Override
 					public void classLoaded(HiClass clazz) {
 						node.clazz = clazz;
-						node.name = clazz.fullName; // .intern();
+						node.name = clazz.fullName.intern();
 					}
 				}, exc.getIndex());
 				return node;

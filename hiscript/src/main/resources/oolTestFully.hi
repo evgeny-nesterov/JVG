@@ -1231,7 +1231,7 @@ Util.header("Test super class outbound object");
     		D o = new D() {
       			void m() {
         			D o2 = new D() {
-          				void m() {
+          				void mmmmm() {
             				class C1 extends B {
             				}
             				System.println("b1 = " + new C1().b1);
@@ -1242,7 +1242,7 @@ Util.header("Test super class outbound object");
             				System.println("t = " + t);
           				}
         			};
-        			o2.m();
+        			o2.mmmmm();
       			}
     		};
     		o.m();

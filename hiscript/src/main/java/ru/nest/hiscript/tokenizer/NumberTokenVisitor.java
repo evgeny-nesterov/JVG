@@ -9,6 +9,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 		boolean negative = false;
 		boolean hasSign = false;
 		if (tokenizer.hasNext() && (tokenizer.getCurrent() == '-' || tokenizer.getCurrent() == '+')) {
+			hasSign = true;
 			tokenizer.start();
 			negative = tokenizer.getCurrent() == '-';
 			tokenizer.next();
@@ -22,7 +23,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 					break;
 				}
 			}
-			hasSign = true;
 		}
 
 		int offset = tokenizer.getOffset();
@@ -137,9 +137,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 			try {
 				number = Long.parseLong(text);
 			} catch (NumberFormatException exc) {
-				if (hasSign) {
-					tokenizer.rollback();
-				}
 				tokenizer.error("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				number = 0;
 			}
@@ -155,18 +152,11 @@ public class NumberTokenVisitor implements TokenVisitor {
 			try {
 				number = Float.parseFloat(text);
 				if (Float.isInfinite(number)) {
-					if (hasSign) {
-						tokenizer.rollback();
-					}
-					return null;
-				}
-				if (negative) {
+					tokenizer.error("Float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				} else if (negative) {
 					number = -number;
 				}
 			} catch (NumberFormatException exc) {
-				if (hasSign) {
-					tokenizer.rollback();
-				}
 				tokenizer.error("Float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				number = 0;
 			}
@@ -179,18 +169,11 @@ public class NumberTokenVisitor implements TokenVisitor {
 			try {
 				number = Double.parseDouble(text);
 				if (Double.isInfinite(number)) {
-					if (hasSign) {
-						tokenizer.rollback();
-					}
-					return null;
-				}
-				if (negative) {
+					tokenizer.error("Double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				} else if (negative) {
 					number = -number;
 				}
 			} catch (NumberFormatException exc) {
-				if (hasSign) {
-					tokenizer.rollback();
-				}
 				tokenizer.error("Double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				number = 0;
 			}
@@ -207,9 +190,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 					number = -number;
 				}
 			} catch (NumberFormatException exc) {
-				if (hasSign) {
-					tokenizer.rollback();
-				}
 				tooLarge = true;
 				number = 0;
 			}

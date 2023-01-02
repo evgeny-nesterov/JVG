@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -48,7 +47,7 @@ public class OperationInstanceOf extends BinaryOperation {
 		if (!v1.type.isPrimitive()) {
 			HiClass c1;
 			if (v1.type.isArray()) {
-				c1 = v1.type;
+				c1 = v1.array != null ? v1.type : HiClassNull.NULL;
 			} else {
 				c1 = v1.object != null ? v1.object.clazz : HiClassNull.NULL;
 			}

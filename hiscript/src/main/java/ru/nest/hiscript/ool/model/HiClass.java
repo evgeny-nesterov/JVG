@@ -148,7 +148,7 @@ public class HiClass implements Codeable, TokenAccessible {
 	// for decode
 	private HiClass(Type superClassType, String name, int type) {
 		this.superClassType = superClassType;
-		this.name = name; // .intern();
+		this.name = name.intern();
 		this.type = type;
 		// init(...) is in decode
 	}
@@ -163,7 +163,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		}
 
 		// intern name to optimize via a == b
-		this.name = name; // .intern();
+		this.name = name.intern();
 		this.fullName = getFullName(classLoader);
 
 		if (classLoader == null) {
@@ -206,7 +206,7 @@ public class HiClass implements Codeable, TokenAccessible {
 				fullName = name;
 			}
 			// intern name to optimize via a == b
-			this.fullName = fullName; // .intern();
+			this.fullName = fullName.intern();
 		}
 		return this.fullName;
 	}
@@ -1298,7 +1298,7 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public HiClass getCommonClass(HiClass c) {
-		if (this == c) {
+		if (c == this || c == null) {
 			return this;
 		}
 		if (isPrimitive() || c.isPrimitive()) {
