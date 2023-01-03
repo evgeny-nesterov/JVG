@@ -943,15 +943,36 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes) {
-		int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
-		if (argCount != (argTypes != null ? argTypes.length : 0)) {
-			return false;
-		}
-
-		constructor.resolve(classResolver);
-		for (int i = 0; i < argCount; i++) {
-			if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
+		if (constructor.hasVarargs()) {
+			int mainArgCount = constructor.arguments.length - 1;
+			if (mainArgCount > argTypes.length) {
 				return false;
+			}
+
+			constructor.resolve(classResolver);
+
+			for (int i = 0; i < mainArgCount; i++) {
+				if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
+					return false;
+				}
+			}
+			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
+			for (int i = mainArgCount; i < argTypes.length; i++) {
+				if (!HiClass.autoCast(argTypes[i], varargsType, false)) {
+					return false;
+				}
+			}
+		} else {
+			int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
+			if (argCount != (argTypes != null ? argTypes.length : 0)) {
+				return false;
+			}
+
+			constructor.resolve(classResolver);
+			for (int i = 0; i < argCount; i++) {
+				if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
+					return false;
+				}
 			}
 		}
 		return true;

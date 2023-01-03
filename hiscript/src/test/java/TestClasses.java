@@ -22,6 +22,9 @@ public class TestClasses extends HiTest {
 		// initializing order
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert A.a.equals(\"nullBA\"); assert B.b.equals(\"nullB\");");
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert B.b.equals(\"nullAB\"); assert A.a.equals(\"nullA\");");
+
+		// abstract
+		assertFailCompile("abstract class A{} new A();");
 	}
 
 	@Test
@@ -29,6 +32,10 @@ public class TestClasses extends HiTest {
 		assertSuccess("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();");
+		assertSuccess("abstract class A{static int x = 1;} assert A.x == 1;");
+		assertSuccess("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
+		assertSuccess("interface I{static int x = 1;} assert I.x == 1;");
+		assertSuccess("interface I{static int get(){return 1;}} assert I.get() == 1;");
 	}
 
 	@Test
@@ -138,6 +145,64 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class C{void get(int x, byte y, char z){}} new C().get(1, 1, 1);");
 
 		assertSuccessSerialize("class A{void m(int x, int y){}} class B extends A{void m(int x, byte y){}} new B().m(1, 1);");
+	}
+
+	@Test
+	public void testConstructors() {
+		// signature
+		assertSuccessSerialize("class C{C(){}} new C();");
+		assertSuccessSerialize("class A{A(int x, String arg){}} new A(0, \"a\"); new A(0, null);");
+
+		assertFailCompile("class C{C(byte x){}} new C((short)1);");
+		assertFailCompile("class C{C(byte x){}} new C('1');");
+		assertFailCompile("class C{C(byte x){}} new C(1);");
+		assertFailCompile("class C{C(byte x){}} new C(1l);");
+		assertFailCompile("class C{C(byte x){}} new C(1.0f);");
+		assertFailCompile("class C{C(byte x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(short x){}} new C('1');");
+		assertFailCompile("class C{C(short x){}} new C(1);");
+		assertFailCompile("class C{C(short x){}} new C(1l);");
+		assertFailCompile("class C{C(short x){}} new C(1.0f);");
+		assertFailCompile("class C{C(short x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(char x){}} new C((byte)1);");
+		assertFailCompile("class C{C(char x){}} new C((short)1);");
+		assertFailCompile("class C{C(char x){}} new C(1);");
+		assertFailCompile("class C{C(char x){}} new C(1l);");
+		assertFailCompile("class C{C(char x){}} new C(1.0f);");
+		assertFailCompile("class C{C(char x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(int x){}} new C(1l);");
+		assertFailCompile("class C{C(int x){}} new C(1.0f);");
+		assertFailCompile("class C{C(int x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(long x){}} new C(1.0f);");
+		assertFailCompile("class C{C(long x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(float x){}} new C(1.0d);");
+
+		assertFailCompile("class C{C(int x, byte y, char z){}} new C(1, 1, 1);");
+
+		// varargs
+		assertSuccessSerialize("class C{C(int length, int... n){assert n.length == length;}} new C(0); new C(3, 1, 2, 3);");
+		assertSuccessSerialize("class O{} class O1 extends O{} class C{C(O... n){assert n.length == 2;}} new C(new O1(), new O());");
+		assertSuccessSerialize("class O{} class C{Object[] o; C(Object... o){this.o = o;}} assert new C().o.length == 0; assert new C(new O(), \"x\", new Object()).o.length == 3;;");
+		assertFailCompile("class C{C(String... s){}} new C(1, 2, 3);");
+		assertFailCompile("class C{C(int... x, String s){}} new C(1, 2, 3, \"x\");");
+		assertFailCompile("class C{C(int... x, int... y){}} new C(/*x=*/1, 2, /*y=*/3);");
+		assertFailCompile("class C{C(byte... x){}} new C(1, 2, 3);");
+
+		// this
+		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
+		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
+		assertFailCompile("class A{A(){this();}} new A();");
+		assertFailSerialize("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);"); // recursive constructor invocation
+		assertFailCompile("class A{A(this(1);){} A(byte x){}} new A();");
+
+		// super
+		assertSuccessSerialize("class A{A(int x){this.x = x;} int x;} class B extends A{B(int y){super(y);}} A a = new B(1); assert a.x == 1;");
+		assertSuccessSerialize("class A{A(int x, int y){}} class B extends A{B(int x, byte y){super(x, y);}} new B(1, (byte)1);");
 	}
 
 	@Test

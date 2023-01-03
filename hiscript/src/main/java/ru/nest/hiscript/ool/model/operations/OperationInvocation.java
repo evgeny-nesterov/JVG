@@ -258,14 +258,13 @@ public class OperationInvocation extends BinaryOperation {
 			return;
 		}
 
-		// build argument class array and
-		// evaluate method arguments
-		HiClass[] types = null;
-		HiField<?>[] arguments = null;
+		// build argument class array and evaluate method arguments
+		HiClass[] argsClasses = null;
+		HiField<?>[] argsFields = null;
 		if (argValues != null) {
 			int size = argValues.length;
-			types = new HiClass[size];
-			arguments = new HiField[size + 1];
+			argsClasses = new HiClass[size];
+			argsFields = new HiField[size + 1]; // +vararg
 			for (int i = 0; i < size; i++) {
 				argValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
@@ -273,18 +272,18 @@ public class OperationInvocation extends BinaryOperation {
 				}
 
 				HiClass type = ctx.value.type;
-				types[i] = type;
+				argsClasses[i] = type;
 
 				if (type != null) {
-					arguments[i] = HiField.getField(type, null, argValues[i].getToken());
-					arguments[i].set(ctx, ctx.value);
+					argsFields[i] = HiField.getField(type, null, argValues[i].getToken());
+					argsFields[i].set(ctx, ctx.value);
 				}
 			}
 		}
 
 		if ((v1ValueType == Value.VARIABLE || v1ValueType == Value.VALUE) && clazz != v1Clazz) {
 			// find super method
-			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, types);
+			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, argsClasses);
 			if (superMethod == null) {
 				ctx.throwRuntimeException("cannot find method " + v1Clazz.fullName + "." + name);
 				return;
@@ -292,7 +291,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// find method
-		HiMethod method = clazz.searchMethod(ctx, name, types);
+		HiMethod method = clazz.searchMethod(ctx, name, argsClasses);
 		if (method == null) {
 			ctx.throwRuntimeException("cannot find method " + clazz.fullName + "." + name);
 			return;
@@ -311,10 +310,10 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// set names and types of arguments
-		if (types != null) {
-			int size = types.length;
+		if (argsClasses != null) {
+			int size = argsClasses.length;
 			if (method.hasVarargs()) {
-				int varargsSize = types.length - method.arguments.length + 1;
+				int varargsSize = argsClasses.length - method.arguments.length + 1;
 				int mainSize = size - varargsSize;
 				Type varargsArrayType = method.arguments[method.arguments.length - 1].getType();
 				HiClass varargsClass = varargsArrayType.getCellType().getClass(ctx);
@@ -324,41 +323,41 @@ public class OperationInvocation extends BinaryOperation {
 				Class<?> _varargClass = HiArrays.getClass(varargsClass, 0);
 				Object array = Array.newInstance(_varargClass, varargsSize);
 				for (int i = 0; i < varargsSize; i++) {
-					v1.type = types[mainSize + i];
-					arguments[mainSize + i].get(ctx, v1);
-					HiArrays.setArrayIndex(varargsClass, array, i, v1, v2);
+					v1.type = argsClasses[mainSize + i];
+					argsFields[mainSize + i].get(ctx, v1);
+					HiArrays.setArray(varargsClass, array, i, v1);
 				}
 
 				ctx.value.type = varargsArrayClass;
 				ctx.value.array = array;
 				varargsField.set(ctx, ctx.value);
 
-				arguments[mainSize] = varargsField;
+				argsFields[mainSize] = varargsField;
 				int newSize = mainSize + 1;
 				for (int i = newSize; i < size; i++) {
-					arguments[i] = null;
+					argsFields[i] = null;
 				}
 				size = newSize;
 			}
 
 			for (int i = 0; i < size; i++) {
-				HiClass argClass = arguments[i] != null ? arguments[i].getClass(ctx) : HiClassNull.NULL;
+				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
 
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
-					arguments[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+					argsFields[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
 					ctx.value.type = HiClassNull.NULL;
-					arguments[i].set(ctx, ctx.value);
+					argsFields[i].set(ctx, ctx.value);
 				} else if (!argClass.isArray()) {
 					ctx.value.type = argClass;
-					arguments[i].get(ctx, ctx.value);
-					arguments[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
-					arguments[i].set(ctx, ctx.value);
+					argsFields[i].get(ctx, ctx.value);
+					argsFields[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+					argsFields[i].set(ctx, ctx.value);
 				}
 				// TODO: update array cell type
 
-				arguments[i].name = method.argNames[i];
-				arguments[i].initialized = true;
+				argsFields[i].name = method.argNames[i];
+				argsFields[i].initialized = true;
 			}
 		}
 
@@ -366,13 +365,13 @@ public class OperationInvocation extends BinaryOperation {
 		ctx.enterMethod(method, obj);
 		try {
 			// register variables in method
-			ctx.addVariables(arguments);
+			ctx.addVariables(argsFields);
 
 			// perform method invocation
 			Value oldValue = ctx.value;
 			try {
 				ctx.value = v1;
-				method.invoke(ctx, clazz, object, arguments);
+				method.invoke(ctx, clazz, object, argsFields);
 				if (ctx.exitFromBlock()) {
 					return;
 				}

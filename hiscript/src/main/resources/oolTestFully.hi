@@ -1209,7 +1209,7 @@ Util.header("Initialization order, this and super");
 ////////////////////////////////////
 Util.header("Test super class outbound object");
 {
-	class A {
+	class A123 {
   		int t = 45;
   		class B {
        		int b1 = 67;
@@ -1231,7 +1231,7 @@ Util.header("Test super class outbound object");
     		D o = new D() {
       			void m() {
         			D o2 = new D() {
-          				void mmmmm() {
+          				void m() {
             				class C1 extends B {
             				}
             				System.println("b1 = " + new C1().b1);
@@ -1242,13 +1242,13 @@ Util.header("Test super class outbound object");
             				System.println("t = " + t);
           				}
         			};
-        			o2.mmmmm();
+        			o2.m();
       			}
     		};
     		o.m();
   		}
 	}
-	A a = new A();
+	A123 a = new A123();
 	a.m();
 }
 

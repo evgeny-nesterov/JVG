@@ -57,24 +57,23 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initialization != null) {
 			HiClass variableType = getValueClass(validationInfo, ctx);
+			boolean validInitialization = initialization.validate(validationInfo, ctx);
+			valid &= validInitialization;
 			if (type == Type.varType) {
 				type = Type.getType(variableType);
 				// do not check cast
-			} else {
-				valid = initialization.validate(validationInfo, ctx);
-				if (valid) {
-					NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
-					HiClass initializationType = initializationValueType.type;
-					boolean canBeCasted;
-					if (initializationValueType.isValue) {
-						canBeCasted = initializationValueType.autoCastValue(variableType);
-					} else {
-						canBeCasted = HiClass.autoCast(initializationType, variableType, false);
-					}
-					if (!canBeCasted) {
-						validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
-						valid = false;
-					}
+			} else if (validInitialization) {
+				NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
+				HiClass initializationType = initializationValueType.type;
+				boolean canBeCasted;
+				if (initializationValueType.isValue) {
+					canBeCasted = initializationValueType.autoCastValue(variableType);
+				} else {
+					canBeCasted = HiClass.autoCast(initializationType, variableType, false);
+				}
+				if (!canBeCasted) {
+					validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
+					valid = false;
 				}
 			}
 			ctx.initializedNodes.add(this);

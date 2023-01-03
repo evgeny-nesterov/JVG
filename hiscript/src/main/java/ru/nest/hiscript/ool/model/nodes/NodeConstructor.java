@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
+import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
@@ -9,9 +10,13 @@ import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 
 public class NodeConstructor extends HiNode {
 	public NodeConstructor(NodeType type, HiNode[] argValues) {
@@ -35,11 +40,15 @@ public class NodeConstructor extends HiNode {
 
 	public NodeType type;
 
+	public HiClass[] argsClasses;
+
 	public HiNode[] argValues;
 
 	public String name;
 
 	private HiClass clazz;
+
+	private HiConstructor constructor;
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -51,8 +60,15 @@ public class NodeConstructor extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		if (argValues != null) {
-			for (HiNode argValue : argValues) {
-				valid &= argValue.validate(validationInfo, ctx) && argValue.expectValue(validationInfo, ctx);
+			int size = argValues.length;
+			argsClasses = new HiClass[size];
+			for (int i = 0; i < size; i++) {
+				HiNode argValue = argValues[i];
+				if (argValue.validate(validationInfo, ctx) && argValue.expectValue(validationInfo, ctx)) {
+					argsClasses[i] = argValue.getValueClass(validationInfo, ctx);
+				} else {
+					valid = false;
+				}
 			}
 		}
 
@@ -60,18 +76,48 @@ public class NodeConstructor extends HiNode {
 		if (clazz == null) {
 			clazz = getValueClass(validationInfo, ctx);
 		}
+		if (clazz == HiClassPrimitive.VOID) {
+			clazz = null;
+		}
+
 		if (clazz == null) {
 			validationInfo.error("class not found: " + name, type.getToken());
-			valid = false;
+			return false;
 		} else if (clazz.isInterface) {
 			validationInfo.error("cannot create object from interface '" + name + "'", type.getToken());
-			valid = false;
+			return false;
 		}
+
+		if (clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
+			valid &= clazz.validate(validationInfo, ctx);
+		}
+
 		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
 			validationInfo.error("qualified new of static class", type.getToken());
 			valid = false;
 		} else if (!clazz.isStatic() && ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
 			validationInfo.error("'" + name + "' is not an enclosing class", type.getToken());
+			valid = false;
+		}
+
+		// resolve constructor
+		if (!clazz.isAbstract()) {
+			constructor = clazz.searchConstructor(ctx, argsClasses);
+			if (constructor != null) {
+				CompileClassContext.CompileClassLevel level = ctx.level;
+				while (level != null) {
+					if (level.type == RuntimeContext.CONSTRUCTOR && level.node == constructor) {
+						validationInfo.error("recursive constructor invocation", getToken());
+						valid = false;
+					}
+					level = level.parent;
+				}
+			} else {
+				validationInfo.error("constructor not found: " + clazz.fullName, getToken());
+				valid = false;
+			}
+		} else {
+			validationInfo.error("'" + clazz.fullName + "' is abstract; cannot be instantiated", getToken());
 			valid = false;
 		}
 		return valid;
@@ -84,65 +130,140 @@ public class NodeConstructor extends HiNode {
 		ctx.addClass(clazz);
 
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
-		invokeConstructor(ctx, clazz, argValues, null, outboundObject);
+		invokeConstructor(ctx, clazz, constructor, argsClasses, argValues, null, outboundObject);
 	}
 
 	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, HiNode[] argValues, HiObject object, HiObject outboundObject) {
-		// build argument class array and
-		// evaluate method arguments
-		HiClass[] types = null;
-		HiField<?>[] arguments = null;
+		// build argument class array and evaluate method arguments
+		HiClass[] argsClasses = null;
 		if (argValues != null) {
 			int size = argValues.length;
-			arguments = new HiField<?>[size];
-			types = new HiClass[size];
+			argsClasses = new HiClass[size];
 			for (int i = 0; i < size; i++) {
 				argValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-
-				HiClass type = ctx.value.type;
-				types[i] = type;
-
-				arguments[i] = HiField.getField(type, null, argValues[i].getToken());
-				if (arguments[i] == null) {
-					ctx.throwRuntimeException("argument with type '" + type.fullName + "' is not found");
-					return;
-				}
-				arguments[i].set(ctx, ctx.value);
-				if (ctx.exitFromBlock()) {
-					return;
-				}
-				arguments[i].initialized = true;
+				argsClasses[i] = ctx.value.type;
 			}
 		}
 
 		// get constructor
-		HiConstructor constructor = clazz.searchConstructor(ctx, types);
+		HiConstructor constructor = clazz.searchConstructor(ctx, argsClasses);
 		if (constructor == null) {
 			ctx.throwRuntimeException("constructor not found: " + clazz.fullName);
 			return;
 		}
 
-		RuntimeContext.StackLevel l = ctx.level;
-		while (l != null) {
-			if (l.type == RuntimeContext.CONSTRUCTOR && l.constructor == constructor) {
+		RuntimeContext.StackLevel level = ctx.level;
+		while (level != null) {
+			if (level.type == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
 				ctx.throwRuntimeException("recursive constructor invocation");
 				return;
 			}
-			l = l.parent;
+			level = level.parent;
 		}
 
-		// set names of arguments
-		if (!clazz.isJava() && arguments != null) {
-			int size = arguments.length;
+		invokeConstructor(ctx, clazz, constructor, argsClasses, argValues, object, outboundObject);
+	}
+
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, HiConstructor constructor, HiClass[] argsClasses, HiNode[] argValues, HiObject object, HiObject outboundObject) {
+		HiField[] argsFields = getArgumentsFields(ctx, clazz, constructor, argValues);
+		if (ctx.exitFromBlock()) {
+			return;
+		}
+
+		// set names and types of arguments
+		if (argsClasses != null) {
+			int size = argsClasses.length;
+			if (constructor.hasVarargs()) {
+				int varargsSize = argsClasses.length - constructor.arguments.length + 1;
+				int mainSize = size - varargsSize;
+				Type varargsArrayType = constructor.arguments[constructor.arguments.length - 1].getType();
+				HiClass varargsClass = varargsArrayType.getCellType().getClass(ctx);
+				HiClass varargsArrayClass = varargsArrayType.getClass(ctx);
+				HiField<?> varargsField = HiField.getField(varargsArrayClass, constructor.arguments[constructor.arguments.length - 1].name, constructor.arguments[constructor.arguments.length - 1].getToken());
+
+				Class<?> _varargClass = HiArrays.getClass(varargsClass, 0);
+				Object array = Array.newInstance(_varargClass, varargsSize);
+				for (int i = 0; i < varargsSize; i++) {
+					ctx.value.type = argsClasses[mainSize + i];
+					argsFields[mainSize + i].get(ctx, ctx.value);
+					HiArrays.setArray(varargsClass, array, i, ctx.value);
+				}
+
+				ctx.value.type = varargsArrayClass;
+				ctx.value.array = array;
+				varargsField.set(ctx, ctx.value);
+
+				argsFields[mainSize] = varargsField;
+				int newSize = mainSize + 1;
+				for (int i = newSize; i < size; i++) {
+					argsFields[i] = null;
+				}
+				size = newSize;
+			}
+
 			for (int i = 0; i < size; i++) {
-				arguments[i].name = constructor.arguments[i].name;
+				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
+
+				// on null argument update field class from ClazzNull on argument class
+				if (argClass.isNull()) {
+					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
+					ctx.value.type = HiClassNull.NULL;
+					argsFields[i].set(ctx, ctx.value);
+				} else if (!argClass.isArray()) {
+					ctx.value.type = argClass;
+					argsFields[i].get(ctx, ctx.value);
+					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
+					argsFields[i].set(ctx, ctx.value);
+				}
+				// TODO: update array cell type
+
+				if (!clazz.isJava() && i < constructor.arguments.length) {
+					argsFields[i].name = constructor.arguments[i].name;
+				}
+				argsFields[i].initialized = true;
 			}
 		}
 
-		constructor.newInstance(ctx, arguments, object, outboundObject);
+		constructor.newInstance(ctx, argsFields, object, outboundObject);
+	}
+
+	/**
+	 * build argument class array and evaluate method arguments
+	 */
+	public static HiField[] getArgumentsFields(RuntimeContext ctx, HiClass clazz, HiConstructor constructor, HiNode[] argValues) {
+		HiField[] argsFields = null;
+		if (argValues != null) {
+			int size = argValues.length;
+			argsFields = new HiField<?>[size + (constructor.hasVarargs() ? 1 : 0)]; //
+			for (int i = 0; i < size; i++) {
+				argValues[i].execute(ctx);
+				if (ctx.exitFromBlock()) {
+					return null;
+				}
+
+				HiClass argClass = ctx.value.type;
+				HiField argField = HiField.getField(argClass, null, argValues[i].getToken());
+				if (argField == null) {
+					ctx.throwRuntimeException("argument with type '" + argClass.fullName + "' is not found");
+					return null;
+				}
+				argField.set(ctx, ctx.value);
+				if (ctx.exitFromBlock()) {
+					return null;
+				}
+
+				argField.initialized = true;
+				argsFields[i] = argField;
+
+				if (!clazz.isJava() && i < constructor.arguments.length) {
+					argsFields[i].name = constructor.arguments[i].name;
+				}
+			}
+		}
+		return argsFields;
 	}
 
 	@Override
