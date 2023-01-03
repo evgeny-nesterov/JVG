@@ -84,8 +84,10 @@ public class NodeConstructor extends HiNode {
 			validationInfo.error("class not found: " + name, type.getToken());
 			return false;
 		} else if (clazz.isInterface) {
-			validationInfo.error("cannot create object from interface '" + name + "'", type.getToken());
+			validationInfo.error("cannot create object from interface '" + name + "'", getToken());
 			return false;
+		} else if (clazz.isEnum()) {
+			validationInfo.error("Enum types cannot be instantiated", getToken());
 		}
 
 		if (clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
