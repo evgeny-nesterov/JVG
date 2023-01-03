@@ -40,6 +40,9 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testInnerClasses() {
+		// inner class
+		assertSuccessSerialize("class B{int x = 0; {new A();} class A{A(){x++;}} {new A();}} assert new B().x == 2;");
+
 		// static inner class
 		assertSuccessSerialize("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
 		assertSuccessSerialize("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
@@ -57,14 +60,14 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{class B{} B b = new B();} A a = new A(); assert a.b instanceof A.B;");
 
 		// interfaces
-		assertSuccessSerialize("interface I{interface I1{}} class X implements I {void m() {I1 i = new I1(){};}}");
+		assertSuccessSerialize("interface I{interface I1{}} class X implements I {I1 m() {I1 i = new I1(){}; return i;}} assert new X().m() instanceof I.I1;");
 	}
 
 	@Test
 	public void testInheritance() {
-		assertSuccessSerialize("class B{int x = 0; {new A();} class A{A(){x++;}} {new A();}} assert new B().x == 2;");
 		assertSuccessSerialize("class A{class A1{int get(){return 1;}} int get(){return 2;}} class B extends A{{assert new A1().get() == 4;} class A1{int get(){return 4;}} {assert new A1().get() == 4;} " //
 				+ "int get(){assert new A().get() == 2; assert new A1().get() == 4; class A1{int get(){return 5;}} assert new A1().get() == 5; return 6;}}; assert new B().get() == 6;");
+		assertSuccessSerialize("class A{int x = 1;} class B extends A{int x = 2; {assert super.x == 1; assert x == 2;} {this.x++; super.x--; assert super.x == 0; assert this.x == 3;}} assert new B().x == 3;");
 	}
 
 	@Test
@@ -74,6 +77,12 @@ public class TestClasses extends HiTest {
 		assertFailCompile("interface I{} new I();");
 		assertSuccessSerialize("interface I1{} interface I2 extends I1{} class C implements I2{} I1 c = new C(); c instanceof C; c instanceof I1; c instanceof I2;");
 		assertSuccessSerialize("interface I1{} interface I2{} interface I3 extends I1{} interface I12 extends I1, I1{} class C implements I12, I3{} Object c = new C(); c instanceof C; c instanceof I1; c instanceof I2; c instanceof I3; c instanceof I12;");
+		assertSuccessSerialize("interface I{void m();} class C implements I{void m(){}}");
+		assertFailCompile("interface I{void m();} class C implements I{}");
+		assertFailCompile("interface I{} class C extends I{}");
+		assertFailCompile("interface I{} interface C implements I{}");
+		assertSuccessSerialize("interface I{void m();} abstract class A implements I{}");
+		assertSuccessSerialize("interface I{void m();} abstract class A implements I{} class C extends A implements I{void m(){}} new C(); new A(){void m(){}};");
 
 		// fields
 		assertFailCompile("interface I{int c;}");
@@ -228,8 +237,8 @@ public class TestClasses extends HiTest {
 		assertFailCompile("record Rec(){int a;};");
 
 		// equals
-		assertSuccessSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(1));");
-		assertFailSerialize("record Rec(int a); assert new Rec(1).equals(new Rec(2));");
+		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"a\").equals(new Rec(1, \"a\"));");
+		assertFailSerialize("record Rec(int a, String b); assert new Rec(1, \"a\").equals(new Rec(2, \"a\"));");
 		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
 		assertSuccessSerialize("class O{} O o = new O(); record Rec(O o); assert new Rec(o).equals(new Rec(o));");
 		assertFailSerialize("class O{} record Rec(O o); assert new Rec(new O()).equals(new Rec(new O()));");
@@ -250,5 +259,6 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		// Duplicated local variable a
 		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
+		assertFailCompile("record R1(int x); record R2(int x) extends R1;");
 	}
 }

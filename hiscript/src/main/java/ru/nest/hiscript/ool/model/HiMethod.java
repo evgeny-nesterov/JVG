@@ -80,6 +80,10 @@ public class HiMethod implements Codeable, TokenAccessible {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		if (!clazz.isInterface && !clazz.isAbstract() && modifiers.isAbstract()) {
+			validationInfo.error("abstract method in non-abstract class", token);
+			valid = false;
+		}
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);

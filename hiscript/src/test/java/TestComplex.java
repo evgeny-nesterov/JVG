@@ -15,6 +15,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccessSerialize("enum E1{e} enum E2{e} assert E1.e != E2.e; assert E1.e.name().equals(E2.e.name()); assert !E1.e.equals(E2.e);");
 	}
 }

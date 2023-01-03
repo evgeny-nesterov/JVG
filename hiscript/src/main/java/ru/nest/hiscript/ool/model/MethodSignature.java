@@ -16,6 +16,10 @@ public class MethodSignature implements Cloneable {
 		this.name = name.intern();
 		this.argClasses = argClasses;
 		argCount = argClasses != null ? argClasses.length : 0;
+		hashCode = name.hashCode();
+		for (int i = 0; i < argCount; i++) {
+			hashCode += 31 * (argClasses[i] != null ? argClasses[i].hashCode() : 0);
+		}
 	}
 
 	public int argCount;
@@ -23,6 +27,8 @@ public class MethodSignature implements Cloneable {
 	public String name;
 
 	public HiClass[] argClasses;
+
+	private int hashCode;
 
 	@Override
 	public boolean equals(Object o) {
@@ -54,11 +60,7 @@ public class MethodSignature implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		int code = name.hashCode();
-		for (int i = 0; i < argCount; i++) {
-			code += 31 * (argClasses[i] != null ? argClasses[i].hashCode() : 0);
-		}
-		return code;
+		return hashCode;
 	}
 
 	private String descr;

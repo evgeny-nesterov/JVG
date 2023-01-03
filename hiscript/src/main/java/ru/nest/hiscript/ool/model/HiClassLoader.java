@@ -61,7 +61,7 @@ public class HiClassLoader {
 	private boolean checkCyclicDependencies(HiClass origClazz, HiClass clazz, ValidationInfo validationInfo) {
 		boolean valid = true;
 		HiClass superClass = clazz.superClass != null ? clazz.superClass : clazz.superClassType != null ? getClass(clazz.superClassType.fullName) : null;
-		if (superClass != null) {
+		if (superClass != null && !superClass.fullName.equals(HiClass.OBJECT_CLASS_NAME)) {
 			if (superClass != origClazz) {
 				valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
 			} else {

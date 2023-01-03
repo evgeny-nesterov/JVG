@@ -37,6 +37,41 @@ public class ClassImpl extends ImplUtil {
 		NodeBoolean.getInstance(clazz.isArray(), null).execute(ctx);
 	}
 
+	public static void Class_boolean_isPrimitive(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isPrimitive(), null).execute(ctx);
+	}
+
+	public static void Class_boolean_isInterface(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isInterface, null).execute(ctx);
+	}
+
+	public static void Class_boolean_isEnum(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isEnum(), null).execute(ctx);
+	}
+
+	public static void Class_boolean_isAnnotation(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isAnnotation(), null).execute(ctx);
+	}
+
+	public static void Class_boolean_isAnonymousClass(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isAnonymous(), null).execute(ctx);
+	}
+
+	public static void Class_boolean_isLocalClass(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isLocal(), null).execute(ctx);
+	}
+
+	public static void Class_boolean_isMemberClass(RuntimeContext ctx) {
+		HiClass clazz = (HiClass) ctx.value.object.userObject;
+		NodeBoolean.getInstance(clazz.isInner(), null).execute(ctx);
+	}
+
 	public static void Class_Class_getComponentType(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ctx.value.object.userObject;
 		if (!clazz.isArray()) {

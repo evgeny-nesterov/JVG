@@ -22,8 +22,10 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClass implements Codeable, TokenAccessible {
@@ -99,14 +101,16 @@ public class HiClass implements Codeable, TokenAccessible {
 		HiNative.register(ObjectImpl.class);
 
 		try {
+			List<HiClass> classes = new ArrayList<>();
+
 			// object
-			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi")).get(0);
+			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi"), false).get(0);
 			OBJECT_CLASS.superClassType = null;
 			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
+			classes.add(OBJECT_CLASS);
 
 			// TODO define classes initialization order automatically
-			List<HiClass> classes = new ArrayList<>();
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
@@ -427,6 +431,19 @@ public class HiClass implements Codeable, TokenAccessible {
 				valid = false;
 			}
 		}
+		if (superClass != null) {
+			if (!isInterface && superClass.isInterface && !isAnonymous()) {
+				validationInfo.error("cannot extends interface", token);
+				valid = false;
+			} else if (superClass.modifiers.isFinal()) {
+				validationInfo.error("cannot extends final class", token);
+				valid = false;
+			}
+		}
+		if ((isAbstract() || isInterface) && modifiers.isFinal()) {
+			validationInfo.error("abstract class cannot be final", token);
+			valid = false;
+		}
 
 		// check modifiers
 		if (ctx.enclosingClass != null && isStatic()) {
@@ -499,11 +516,56 @@ public class HiClass implements Codeable, TokenAccessible {
 				valid &= method.validate(validationInfo, ctx);
 			}
 		}
+
+		if (!isInterface && !isAbstract() && !isEnum() && !isRecord()) {
+			Map<MethodSignature, HiMethod> abstractMethods = new HashMap<>();
+			getAbstractMethods(validationInfo, ctx, abstractMethods, new HashMap<>(), new HashSet<>());
+			if (abstractMethods.size() > 0) {
+				for (HiMethod abstractMethod : abstractMethods.values()) {
+					validationInfo.error("abstract method " + abstractMethod.signature + " is implemented in non-abstract class", token);
+				}
+				valid = false;
+			}
+		}
 		ctx.exit();
 
 		ctx.addLocalClass(this);
 		ctx.clazz = outboundClass;
 		return valid;
+	}
+
+	private void getAbstractMethods(ValidationInfo validationInfo, CompileClassContext ctx, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
+		if (processedClasses.contains(this)) {
+			return;
+		}
+		processedClasses.add(this);
+
+		if (methods != null) {
+			for (HiMethod method : methods) {
+				if (!method.modifiers.isStatic()) {
+					method.resolve(ctx);
+					if (method.modifiers.isAbstract()) {
+						if (!implementedMethods.containsKey(method.signature)) {
+							abstractMethods.put(method.signature, method);
+						}
+					} else {
+						implementedMethods.put(method.signature, method);
+						abstractMethods.remove(method.signature);
+					}
+				}
+			}
+		}
+		if (interfaces != null) {
+			for (int i = 0; i < interfaces.length; i++) {
+				HiClass intf = interfaces[i];
+				if (intf != null) {
+					intf.getAbstractMethods(validationInfo, ctx, abstractMethods, implementedMethods, processedClasses);
+				}
+			}
+		}
+		if (superClass != null) {
+			superClass.getAbstractMethods(validationInfo, ctx, abstractMethods, implementedMethods, processedClasses);
+		}
 	}
 
 	private HiClassArray arrayClass;
@@ -920,7 +982,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
-		signature.set("", argTypes);
+		signature.set(HiConstructor.METHOD_NAME, argTypes);
 		HiConstructor constructor = constructorsHash.get(signature);
 		if (constructor == null) {
 			constructor = _searchConstructor(classResolver, argTypes);
@@ -1017,6 +1079,18 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public boolean isAnnotation() {
 		return false;
+	}
+
+	public boolean isAnonymous() {
+		return type == CLASS_TYPE_ANONYMOUS; // or name.equals("")
+	}
+
+	public boolean isLocal() {
+		return type == CLASS_TYPE_LOCAL;
+	}
+
+	public boolean isInner() {
+		return type == CLASS_TYPE_INNER;
 	}
 
 	public boolean isNull() {

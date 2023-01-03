@@ -783,7 +783,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				NodeString.createString(this, level.method.toString());
 				array[i].getField(this, "methodName").set(this, value);
 			} else {
-				NodeString.createString(this, "<init>");
+				NodeString.createString(this, HiConstructor.METHOD_NAME);
 				array[i].getField(this, "methodName").set(this, value);
 			}
 

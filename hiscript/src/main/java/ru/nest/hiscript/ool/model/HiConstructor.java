@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class HiConstructor implements Codeable, TokenAccessible {
+	public final static String METHOD_NAME = "<init>";
+
 	public enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
 
@@ -174,7 +176,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 					superObject = ctx.value.getObject();
 				} else {
 					// get default constructor from super classes
-					if (Type.enumType.name.equals(clazz.superClass.fullName)) {
+					if (HiClass.ENUM_CLASS_NAME.equals(clazz.superClass.fullName)) {
 						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, HiClass.STRING_CLASS_NAME), HiClassPrimitive.getPrimitiveClass("int"));
 
 						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
@@ -184,15 +186,20 @@ public class HiConstructor implements Codeable, TokenAccessible {
 							return null;
 						}
 					} else {
-						HiConstructor superDefaultConstructor = clazz.superClass.getConstructor(ctx);
-						if (superDefaultConstructor == null) {
-							ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
-							return null;
-						}
+						HiConstructor superDefaultConstructor;
+						if (clazz.superClass.isInterface) {
+							superDefaultConstructor = HiClass.OBJECT_CLASS.getConstructor(ctx);
+						} else {
+							superDefaultConstructor = clazz.superClass.getConstructor(ctx);
+							if (superDefaultConstructor == null) {
+								ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
+								return null;
+							}
 
-						if (superDefaultConstructor == this) {
-							ctx.throwRuntimeException("cyclic dependence for constructor " + superDefaultConstructor);
-							return null;
+							if (superDefaultConstructor == this) {
+								ctx.throwRuntimeException("cyclic dependence for constructor " + superDefaultConstructor);
+								return null;
+							}
 						}
 
 						superObject = superDefaultConstructor.newInstance(ctx, null, superOutboundObject);
