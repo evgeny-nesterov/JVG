@@ -72,7 +72,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			}
 
 			// field
-			if (InterfaceParseRule.getInstance().visitFields(tokenizer, ctx)) {
+			if (ClassParseRule.getInstance().visitFields(tokenizer, ctx)) {
 				continue;
 			}
 			break;

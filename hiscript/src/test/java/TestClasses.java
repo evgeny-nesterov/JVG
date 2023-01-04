@@ -73,8 +73,14 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testInterfaces() {
 		// extends, implements
+		assertSuccessSerialize("interface I{int x1 = 1; final static int x2 = 1; abstract void m1(); void m2(); default void m3(){} static void m4(){}}");
 		assertSuccessSerialize("interface I{} class C implements I{} assert new C() instanceof C; assert new C() instanceof I;");
 		assertFailCompile("interface I{} new I();");
+		assertFailCompile("interface I{I{}}");
+		assertFailCompile("interface I{int i;}");
+		assertFailCompile("interface I{default void m();}");
+		assertFailCompile("interface I{void m(){}}");
+		assertFailCompile("interface I{abstract void m(){}}");
 		assertSuccessSerialize("interface I1{} interface I2 extends I1{} class C implements I2{} I1 c = new C(); c instanceof C; c instanceof I1; c instanceof I2;");
 		assertSuccessSerialize("interface I1{} interface I2{} interface I3 extends I1{} interface I12 extends I1, I1{} class C implements I12, I3{} Object c = new C(); c instanceof C; c instanceof I1; c instanceof I2; c instanceof I3; c instanceof I12;");
 		assertSuccessSerialize("interface I{void m();} class C implements I{void m(){}}");

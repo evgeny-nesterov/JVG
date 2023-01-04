@@ -479,7 +479,12 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	public boolean expectValueClass(ValidationInfo validationInfo, CompileClassContext ctx, HiClass valueClass) {
 		NodeValueType castedConditionValueType = getValueType(validationInfo, ctx);
-		if (!HiClass.autoCast(castedConditionValueType.type, valueClass, castedConditionValueType.isValue)) {
+		if (castedConditionValueType.isValue) {
+			if (!castedConditionValueType.autoCastValue(valueClass)) {
+				validationInfo.error(valueClass.fullName + " is expected", getToken());
+				return false;
+			}
+		} else if (!HiClass.autoCast(castedConditionValueType.type, valueClass, false)) {
 			validationInfo.error(valueClass.fullName + " is expected", getToken());
 			return false;
 		}

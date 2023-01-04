@@ -40,8 +40,11 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
-		if (visitWord(Words.CLASS, tokenizer) != null) {
+		int classType = visitWordType(tokenizer, Words.CLASS, Words.INTERFACE);
+		if (classType != -1) {
 			tokenizer.commit();
+
+			boolean isInterface = classType == Words.INTERFACE;
 			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT);
 
 			String className = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -51,17 +54,23 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			// parse 'extends'
-			Type superClassType;
+			List<Type> superClassesList = null;
 			if (visitWord(Words.EXTENDS, tokenizer) != null) {
-				superClassType = visitType(tokenizer, false);
-				if (superClassType == null) {
+				Type superClassType = visitType(tokenizer, false);
+				if (superClassType != null) {
+					superClassesList = new ArrayList<>(1);
+					superClassesList.add(superClassType);
+					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+						superClassType = visitType(tokenizer, false);
+						if (superClassType != null) {
+							superClassesList.add(superClassType);
+						} else {
+							tokenizer.error("illegal start of type");
+						}
+					}
+				} else {
 					tokenizer.error("illegal start of type");
-					superClassType = Type.objectType;
 				}
-			} else if (!HiClass.OBJECT_CLASS_NAME.equals(className)) {
-				superClassType = Type.objectType;
-			} else {
-				superClassType = null;
 			}
 
 			// parse 'implements'
@@ -86,13 +95,33 @@ public class ClassParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
-			Type[] interfaces = null;
-			if (interfacesList != null) {
-				interfaces = new Type[interfacesList.size()];
-				interfacesList.toArray(interfaces);
-			}
+			if (isInterface) {
+				Type[] interfaces = null;
+				if (superClassesList != null) {
+					interfaces = new Type[superClassesList.size()];
+					superClassesList.toArray(interfaces);
+				}
 
-			ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+				if (interfacesList != null) {
+					tokenizer.error("interface cannot implements another interfaces");
+				}
+
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+			} else {
+				Type superClassType = superClassesList != null ? superClassesList.get(0) : null;
+				if (superClassesList != null && superClassesList.size() > 1) {
+					tokenizer.error("cannot extends multiple classes");
+				}
+
+				Type[] interfaces = null;
+				if (interfacesList != null) {
+					interfaces = new Type[interfacesList.size()];
+					interfacesList.toArray(interfaces);
+				}
+
+				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+			}
+			ctx.clazz.isInterface = isInterface;
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
 
 			visitContent(tokenizer, ctx, null);
@@ -111,7 +140,7 @@ public class ClassParseRule extends ParserUtil {
 		while (visitContentElement(tokenizer, ctx, visitor)) {
 		}
 
-		if (ctx.constructors == null) {
+		if (ctx.constructors == null && !ctx.clazz.isInterface) {
 			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
 			ctx.addConstructor(defaultConstructor);
 		}
@@ -128,9 +157,6 @@ public class ClassParseRule extends ParserUtil {
 
 		// inner class / interface
 		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
-		if (innerClass == null) {
-			innerClass = InterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
-		}
 		if (innerClass == null) {
 			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
 		}
@@ -152,7 +178,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		// method
-		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE);
+		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT);
 		if (method != null) {
 			// TODO keep in method only runtime annotations
 			ctx.addMethod(method);
@@ -272,6 +298,7 @@ public class ClassParseRule extends ParserUtil {
 					tokenizer.commit();
 					ctx.enter(RuntimeContext.METHOD, startToken);
 
+					Token modifiersToken = startToken(tokenizer);
 					Modifiers modifiers = annotatedModifiers.getModifiers();
 					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), allowed);
 
@@ -289,6 +316,9 @@ public class ClassParseRule extends ParserUtil {
 						if (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 							tokenizer.nextToken();
 							modifiers.setAbstract(true);
+							if (!clazz.isInterface) {
+								tokenizer.error("modifier 'abstract' is expected", modifiersToken);
+							}
 						} else {
 							expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 							body = BlockParseRule.getInstance().visit(tokenizer, ctx);
@@ -362,6 +392,10 @@ public class ClassParseRule extends ParserUtil {
 					HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 					field.setModifiers(modifiers);
 					field.setAnnotations(annotatedModifiers.getAnnotations());
+					if (ctx.clazz.isInterface) {
+						modifiers.setFinal(true);
+						modifiers.setStatic(true);
+					}
 
 					ctx.addField(field);
 
@@ -398,7 +432,7 @@ public class ClassParseRule extends ParserUtil {
 	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		boolean isStatic = visitWord(tokenizer, STATIC) != null;
+		boolean isStatic = visitWordType(tokenizer, STATIC) != -1;
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			tokenizer.commit();
 			ctx.enter(RuntimeContext.BLOCK, tokenizer.currentToken());

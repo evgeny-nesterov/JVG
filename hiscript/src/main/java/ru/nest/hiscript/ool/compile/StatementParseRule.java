@@ -37,9 +37,6 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		// local class / interface
 		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		if (clazz == null) {
-			clazz = InterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
-		}
-		if (clazz == null) {
 			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_LOCAL));
 		}
 		if (clazz == null) {

@@ -147,7 +147,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		init(classLoader, classResolver, enclosingClass, name, type);
 	}
 
-	// for ClassParseRule, InterfaceParseRule and NewParseRule
+	// for ClassParseRule and NewParseRule
 	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
@@ -481,6 +481,9 @@ public class HiClass implements Codeable, TokenAccessible {
 						valid = false;
 					}
 					ctx.initializedNodes.add(field);
+				} else if (isInterface) {
+					validationInfo.error("interface cannot have initializers", initializer.getToken());
+					valid = false;
 				}
 			}
 		}
@@ -508,6 +511,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (constructors != null) {
 			for (HiConstructor constructor : constructors) {
 				valid &= constructor.validate(validationInfo, ctx);
+				if (isInterface) {
+					validationInfo.error("interface cannot have constructors", constructor.getToken());
+					valid = false;
+				}
 			}
 		}
 

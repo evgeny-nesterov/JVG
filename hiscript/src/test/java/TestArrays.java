@@ -4,9 +4,17 @@ public class TestArrays extends HiTest {
 	@Test
 	public void testNew() {
 		assertSuccessSerialize("int[] x1, x2; boolean y[]; String[] z1[] = {{}}, z2; assert z1 instanceof String[][];");
-		assertSuccessSerialize("int[] x = {1,2}; boolean y[] = {true,false}; String[] z[] = {{\"a\", \"b\"},{\"c\", \"d\"}};");
+		assertSuccessSerialize("int[] x = {1,2}; boolean y[] = {true, false}; String[] z[] = {{\"a\", \"b\"}, new String[]{\"c\", \"d\"}};");
 		assertSuccessSerialize("int[] x = new int[]{1,2}; boolean y[] = new boolean[]{true,false}; String[] z[] = new String[][]{{\"a\", \"b\"},{\"c\", \"d\"}};");
-		assertSuccessSerialize("int[][] x = {new int[]{1, 2, 3}};");
+		assertSuccessSerialize("int [] [] x = {new int[]{1, 2, 3}};");
+		assertSuccessSerialize("class A{} class B extends A{} A[] x = new A[]{new A(), new B(), null}; assert x[1] instanceof B; assert x[2] == null; x[2] = new B(); assert x[2] instanceof B;");
+		assertFailCompile("int x[] = {1, true};");
+		assertFailCompile("Object x[] = {1, \"\"};");
+		assertFailCompile("byte x[] = {128};");
+		assertFailCompile("short[] x = {" + (Short.MAX_VALUE + 1) + "};");
+		assertFailCompile("char[] x = {-1};");
+		assertFailCompile("class A{} class B extends A{} B[] x = new A[]{new B()};");
+		assertFailCompile("class A{} class B extends A{} B[] x = new B[]{new A()};");
 	}
 
 	@Test

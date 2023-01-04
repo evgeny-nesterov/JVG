@@ -40,12 +40,6 @@ public class ClassFileParseRule extends ParseRule<HiNode> {
 				continue;
 			}
 
-			HiClass interfaceClass = InterfaceParseRule.getInstance().visit(tokenizer, getContext(compiler));
-			if (interfaceClass != null) {
-				classes.add(interfaceClass);
-				continue;
-			}
-
 			HiClass enumClass = EnumParseRule.getInstance().visit(tokenizer, getContext(compiler));
 			if (enumClass != null) {
 				classes.add(enumClass);

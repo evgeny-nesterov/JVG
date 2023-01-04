@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.tokenizer.Words;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,19 +21,42 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static int ARRAY = 2;
 
+	public final static Type byteType = new Type("byte");
+
+	public final static Type charType = new Type("char");
+
+	public final static Type shortType = new Type("short");
+
+	public final static Type intType = new Type("int");
+
+	public final static Type longType = new Type("long");
+
+	public final static Type floatType = new Type("float");
+
+	public final static Type doubleType = new Type("double");
+
+	public final static Type booleanType = new Type("boolean");
+
+	public final static Type voidType = new Type("void");
+
+	public final static Type nullType = new Type("null");
+
+	public final static Type varType = new Type("var");
+
 	private static Map<String, Type> predefinedTypes = new HashMap<>();
 
 	static {
-		predefinedTypes.put("char", new Type("char"));
-		predefinedTypes.put("boolean", new Type("boolean"));
-		predefinedTypes.put("byte", new Type("byte"));
-		predefinedTypes.put("short", new Type("short"));
-		predefinedTypes.put("int", new Type("int"));
-		predefinedTypes.put("float", new Type("float"));
-		predefinedTypes.put("long", new Type("long"));
-		predefinedTypes.put("double", new Type("double"));
-		predefinedTypes.put("void", voidType = new Type("void"));
-		predefinedTypes.put("null", new Type("null"));
+		predefinedTypes.put("byte", byteType);
+		predefinedTypes.put("char", charType);
+		predefinedTypes.put("short", shortType);
+		predefinedTypes.put("int", intType);
+		predefinedTypes.put("long", longType);
+		predefinedTypes.put("float", floatType);
+		predefinedTypes.put("double", doubleType);
+		predefinedTypes.put("boolean", booleanType);
+		predefinedTypes.put("void", voidType);
+		predefinedTypes.put("null", nullType);
+		predefinedTypes.put("var", varType);
 	}
 
 	/**
@@ -267,6 +291,34 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return predefinedTypes.get(name);
 	}
 
+	public static Type getTypeByWord(int wordType) {
+		switch (wordType) {
+			case Words.BYTE:
+				return byteType;
+			case Words.CHAR:
+				return charType;
+			case Words.SHORT:
+				return shortType;
+			case Words.INT:
+				return intType;
+			case Words.LONG:
+				return longType;
+			case Words.FLOAT:
+				return floatType;
+			case Words.DOUBLE:
+				return doubleType;
+			case Words.BOOLEAN:
+				return booleanType;
+			case Words.VOID:
+				return voidType;
+			case Words.NULL:
+				return nullType;
+			case Words.VAR:
+				return varType;
+		}
+		return null;
+	}
+
 	public static Type getArrayType(Type type) {
 		Type arrayType = arrayTypes.get(type);
 		if (arrayType == null) {
@@ -395,8 +447,4 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public final static Type recordType = getTopType(HiClass.RECORD_CLASS_NAME);
 
 	public final static Type stringType = getTopType(HiClass.STRING_CLASS_NAME);
-
-	public final static Type voidType;
-
-	public final static Type varType = new Type("var");
 }

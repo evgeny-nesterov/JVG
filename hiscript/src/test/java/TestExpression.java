@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Test;
-import ru.nest.hiscript.ool.HiScript;
 
 public class TestExpression extends HiTest {
 	@Test
@@ -218,5 +217,8 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("class O{int x = 0; public boolean equals(Object o){return x == ((O)o).x;}} O o1 = new O(); O o2 = new O(); assert o1 != o2; assert o1.equals(o2); o2.x++; assert !o1.equals(o2);");
 		assertFailCompile("class O extends O{}");
 		assertFailCompile("interface I extends I{}");
+		assertSuccessSerialize("assert new Object(){int m(int x){return x;}}.m(123) == 123;");
+		assertFailCompile("Object o = new Object(){void m(){}}; o.m();");
+		assertSuccessSerialize("var o = new Object(){void m(){}}; o.m();");
 	}
 }

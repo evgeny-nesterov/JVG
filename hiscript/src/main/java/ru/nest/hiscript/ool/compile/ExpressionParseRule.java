@@ -350,11 +350,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		// visit identifier as word: package, class, method, field
 		Token identifierToken = startToken(tokenizer);
-		String identifierName = visitWord(tokenizer, Words.NOT_SERVICE);
+		String identifierName = visitWord(tokenizer, NOT_SERVICE);
 		String primitiveTypeName = null;
 		if (identifierName == null) {
 			tokenizer.start();
-			primitiveTypeName = visitWord(tokenizer, Words.BYTE, Words.SHORT, Words.INT, Words.LONG, Words.FLOAT, Words.DOUBLE, Words.BOOLEAN, Words.CHAR);
+			primitiveTypeName = visitWord(tokenizer, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR);
 		}
 		if (identifierName != null || primitiveTypeName != null) {
 			int dimension = visitDimension(tokenizer);

@@ -69,6 +69,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	/**
 	 * src is value
 	 */
+	// TODO check value!!!
 	public static boolean autoCastValue(HiClass src, HiClass dst) {
 		int srcType = getType(src);
 		int dstType = getType(dst);
@@ -99,18 +100,13 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 				break;
 
 			case FLOAT:
-				switch (dstType) {
-					case FLOAT:
-					case DOUBLE:
-						return true;
-				}
-				break;
+				return dstType == FLOAT || dstType == DOUBLE;
 
 			case DOUBLE:
-				return true;
+				return dstType == DOUBLE;
 
 			case BOOLEAN:
-				return true;
+				return dstType == BOOLEAN;
 		}
 		return false;
 	}

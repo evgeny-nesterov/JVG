@@ -97,7 +97,7 @@ public class ParserUtil implements Words {
 			for (int type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
-					return wordToken.getType();
+					return type;
 				}
 			}
 		}
@@ -157,20 +157,10 @@ public class ParserUtil implements Words {
 	}
 
 	protected static Type visitType(Tokenizer tokenizer, boolean allowArray) throws TokenizerException, HiScriptParseException {
-		Type type = null;
-		String name = visitWord(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR);
-		if (name != null) {
-			if (name.equals("var")) {
-				return Type.varType;
-			} else {
-				type = Type.getPrimitiveType(name);
-			}
-		}
-
+		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
 		if (type == null) {
 			type = visitObjectType(tokenizer);
 		}
-
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
 			type = Type.getArrayType(type, dimension);
@@ -339,11 +329,11 @@ public class ParserUtil implements Words {
 		Token startToken = startToken(tokenizer);
 		Modifiers modifiers = null;
 		List<NodeAnnotation> annotations = null;
-		String word;
+		int word;
 		while (true) {
 			annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx, annotations);
 
-			if ((word = visitWord(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != null) {
+			if ((word = visitWordType(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != -1) {
 				if (modifiers != null && modifiers.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
 					tokenizer.error("Illegal combination of modifiers: 'public' and 'public'");
 				}
@@ -352,11 +342,11 @@ public class ParserUtil implements Words {
 					modifiers = new Modifiers();
 				}
 
-				modifiers.setAccess(Modifiers.mapWordsToModification(WordToken.getType(word)));
+				modifiers.setAccess(Modifiers.mapWordsToModification(word));
 				continue;
 			}
 
-			if (visitWord(tokenizer, FINAL) != null) {
+			if (visitWordType(tokenizer, FINAL) != -1) {
 				if (modifiers != null && modifiers.isFinal()) {
 					tokenizer.error("Illegal combination of modifiers: 'final' and 'final'");
 				}
@@ -369,7 +359,7 @@ public class ParserUtil implements Words {
 				continue;
 			}
 
-			if (visitWord(tokenizer, STATIC) != null) {
+			if (visitWordType(tokenizer, STATIC) != -1) {
 				if (modifiers != null && modifiers.isStatic()) {
 					tokenizer.error("Illegal combination of modifiers: 'static' and 'static'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
@@ -386,7 +376,7 @@ public class ParserUtil implements Words {
 				continue;
 			}
 
-			if (visitWord(tokenizer, NATIVE) != null) {
+			if (visitWordType(tokenizer, NATIVE) != -1) {
 				if (modifiers != null && modifiers.isNative()) {
 					tokenizer.error("Illegal combination of modifiers: 'native' and 'native'");
 				} else if (modifiers != null && modifiers.isDefault()) {
@@ -401,7 +391,7 @@ public class ParserUtil implements Words {
 				continue;
 			}
 
-			if (visitWord(tokenizer, ABSTRACT) != null) {
+			if (visitWordType(tokenizer, ABSTRACT) != -1) {
 				if (modifiers != null && modifiers.isAbstract()) {
 					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
@@ -418,7 +408,7 @@ public class ParserUtil implements Words {
 				continue;
 			}
 
-			if (visitWord(tokenizer, DEFAULT) != null) {
+			if (visitWordType(tokenizer, DEFAULT) != -1) {
 				if (modifiers != null && modifiers.isDefault()) {
 					tokenizer.error("Illegal combination of modifiers: 'default' and 'default'");
 				} else if (modifiers != null && modifiers.isAbstract()) {

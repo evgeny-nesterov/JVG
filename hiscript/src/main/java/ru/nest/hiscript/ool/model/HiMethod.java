@@ -80,10 +80,29 @@ public class HiMethod implements Codeable, TokenAccessible {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+
+		// check modifiers
 		if (!clazz.isInterface && !clazz.isAbstract() && modifiers.isAbstract()) {
 			validationInfo.error("abstract method in non-abstract class", token);
 			valid = false;
 		}
+		if (modifiers.isDefault() && (!clazz.isInterface || modifiers.isStatic() || modifiers.isNative() || modifiers.isAbstract())) {
+			validationInfo.error("invalid 'default' modification", token);
+			valid = false;
+		}
+		if (clazz.isInterface && modifiers.isNative()) {
+			validationInfo.error("interface methods cannot be native", token);
+			valid = false;
+		}
+		if (modifiers.isAbstract() && modifiers.isStatic()) {
+			validationInfo.error("static method cannot be abstract", token);
+			valid = false;
+		}
+		if (clazz.isInterface && !clazz.isAnnotation() && !modifiers.isAbstract() && !modifiers.isDefault() && !modifiers.isStatic()) {
+			validationInfo.error("interface abstract methods cannot have body", token);
+			valid = false;
+		}
+
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);
