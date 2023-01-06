@@ -44,6 +44,8 @@ public class NodeArrayValue extends HiNode {
 		cellClass = dimensions > 1 ? rootCellClass.getArrayClass(dimensions - 1) : rootCellClass;
 		javaClass = HiArrays.getClass(rootCellClass, dimensions - 1);
 		for (int i = 0; i < size; i++) {
+			ctx.level.variableClass = cellClass;
+			ctx.level.variableNode = array[i];
 			valid &= array[i].validate(validationInfo, ctx) && array[i].expectValueClass(validationInfo, ctx, cellClass);
 		}
 		return valid;

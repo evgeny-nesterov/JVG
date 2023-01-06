@@ -53,7 +53,9 @@ public class NodeInvocation extends HiNode {
 			for (int i = 0; i < arguments.length; i++) {
 				// set null for not valid argument
 				HiNode argument = arguments[i];
-				ctx.level.parent.variableNode = argument;
+				if (ctx.level.parent != null) {
+					ctx.level.parent.variableNode = argument;
+				}
 				argumentsClasses[i] = argument.getValueClass(validationInfo, ctx);
 			}
 		}
@@ -62,13 +64,17 @@ public class NodeInvocation extends HiNode {
 		if (invocationClass != null) {
 			method = invocationClass.searchMethod(ctx, name, argumentsClasses);
 			if (method != null) {
+				ctx.nodeValueType.enclosingClass = method.returnClass;
 				return method.returnClass;
 			}
 		} else {
 			while (ctx != null) {
-				method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
-				if (method != null) {
-					return method.returnClass;
+				if (ctx.clazz != null) {
+					method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
+					if (method != null) {
+						ctx.nodeValueType.enclosingClass = method.returnClass;
+						return method.returnClass;
+					}
 				}
 				ctx = ctx.parent;
 			}

@@ -55,6 +55,7 @@ public class OperationArrayIndex extends BinaryOperation {
 			validationInfo.error("negative array index", node2.token);
 		}
 		ctx.nodeValueType.resolvedValueVariable = node1.resolvedValueVariable;
+		ctx.nodeValueType.enclosingClass = type;
 		return type;
 	}
 

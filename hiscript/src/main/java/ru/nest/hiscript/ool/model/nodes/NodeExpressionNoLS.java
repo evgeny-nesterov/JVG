@@ -151,6 +151,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		nodes[0].copyTo(ctx.nodeValueType);
 		ctx.putNodesValueTypesCache(nodes);
 		ctx.nodeValueType.resolvedValueVariable = this;
+		ctx.nodeValueType.enclosingClass = ctx.nodeValueType.type;
 	}
 
 	@Override
@@ -159,7 +160,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 		if (resultValueType.isValue) {
 			// TODO simplify expression
 		}
-		return resultValueType.valid;
+
+		boolean valid = resultValueType.valid;
+		valid &= super.validate(validationInfo, ctx);
+		return valid;
 	}
 
 	public boolean resolveValue(RuntimeContext ctx, Value value) {

@@ -72,6 +72,8 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		if (enterType != RuntimeContext.SAME) {
 			ctx.exit();
 		}
+
+		valid &= NodeReturn.validateLambdaReturn(validationInfo, ctx, this, token);
 		return valid;
 	}
 

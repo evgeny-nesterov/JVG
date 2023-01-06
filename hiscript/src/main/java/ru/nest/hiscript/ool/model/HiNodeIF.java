@@ -15,6 +15,7 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 		ctx.nodeValueType.type = getValueClass(validationInfo, ctx);
 		ctx.nodeValueType.valid = validate(validationInfo, ctx);
 		ctx.nodeValueType.resolvedValueVariable = null;
+		ctx.nodeValueType.enclosingClass = null;
 		return ctx.nodeValueType;
 	}
 

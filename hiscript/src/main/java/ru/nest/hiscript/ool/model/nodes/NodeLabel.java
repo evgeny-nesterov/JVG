@@ -35,7 +35,7 @@ public class NodeLabel extends HiNode {
 				return false;
 			}
 
-			ctx.enterLabel(label, token);
+			ctx.enterLabel(label, this);
 			try {
 				return statement.validate(validationInfo, ctx);
 			} finally {

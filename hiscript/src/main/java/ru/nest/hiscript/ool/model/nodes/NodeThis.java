@@ -18,6 +18,7 @@ public class NodeThis extends HiNode {
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
+		ctx.nodeValueType.enclosingClass = ctx.clazz;
 		return ctx.clazz;
 	}
 

@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -25,28 +26,58 @@ public class NodeReturn extends HiNode {
 		boolean valid = value != null ? value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx) : true;
 
 		CompileClassContext.CompileClassLevel level = ctx.level;
-		HiClass expectedType = HiClassPrimitive.VOID;
+		HiMethod method = null;
 		while (level != null) {
 			if (level.type == RuntimeContext.METHOD) {
-				HiMethod method = (HiMethod) level.node;
-				method.resolve(ctx);
-				expectedType = method.isLambda() ? HiClassVar.VAR : method.returnClass;
+				method = (HiMethod) level.node;
 				break;
 			}
 			level = level.parent;
 		}
+		valid &= validateReturn(validationInfo, ctx, method, value, token);
+		return valid;
+	}
 
+	public static boolean validateLambdaReturn(ValidationInfo validationInfo, CompileClassContext ctx, HiNode value, Token token) {
+		if (ctx.level.type == RuntimeContext.METHOD) {
+			HiMethod method = (HiMethod) ctx.level.node;
+			if (method.isLambda()) {
+				if (value instanceof NodeBlock) {
+					NodeBlock block = (NodeBlock) value;
+					if (block.statements.size() > 0) {
+						value = block.statements.get(block.statements.size() - 1);
+						if (value instanceof NodeReturn) {
+							value = ((NodeReturn)value).value;
+						} else {
+							value = EmptyNode.getInstance();
+						}
+					} else {
+						value = EmptyNode.getInstance();
+					}
+				}
+				return NodeReturn.validateReturn(validationInfo, ctx, method, value, token);
+			}
+		}
+		return true;
+	}
+
+	public static boolean validateReturn(ValidationInfo validationInfo, CompileClassContext ctx, HiMethod method, HiNode value, Token token) {
+		HiClass expectedType = HiClassPrimitive.VOID;
+		if (method != null) {
+			method.resolve(ctx);
+			expectedType = method.returnClass == null ? HiClassVar.VAR : method.returnClass;
+		}
 		if (value != null) {
 			NodeValueType returnValueType = value.getValueType(validationInfo, ctx);
 			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.type, expectedType, returnValueType.isValue)) {
-				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : getToken());
-				valid = false;
+				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : token);
+				return false;
 			}
 		} else if (expectedType != HiClassPrimitive.VOID) {
-			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType, value != null ? value.getToken() : getToken());
-			valid = false;
+			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType, value != null ? value.getToken() : token);
+			return false;
 		}
-		return valid;
+		return true;
 	}
 
 	@Override

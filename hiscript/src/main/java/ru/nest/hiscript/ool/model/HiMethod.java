@@ -110,6 +110,7 @@ public class HiMethod implements HiNodeIF {
 					NodeArgument argNode2 = arguments[j];
 					if (argNode1.name.equals(argNode2.name)) {
 						validationInfo.error("argument with name '" + argNode2.name + "' already exists", argNode1.getToken());
+						valid = false;
 					}
 				}
 			}
@@ -175,8 +176,6 @@ public class HiMethod implements HiNodeIF {
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
 					signature = new MethodSignature(name, argClasses);
-
-					ctx.level.node = implementedMethod;
 				} else {
 					validationInfo.error("incompatible parameters signature in lambda expression", variableNode.getToken());
 					valid = false;
@@ -235,6 +234,15 @@ public class HiMethod implements HiNodeIF {
 					returnType = Type.getType(returnClass);
 				}
 			}
+
+			if (arguments != null) {
+				for (NodeArgument argument : arguments) {
+					if (argument.getValueClass(validationInfo, ctx).isVar()) {
+						validationInfo.error("'var' not allowed here", argument.getToken());
+						valid = false;
+					}
+				}
+			}
 		}
 
 		ctx.exit();
@@ -273,6 +281,7 @@ public class HiMethod implements HiNodeIF {
 							}
 						}
 						body.validate(ctx.getCompiler().getValidationInfo(), ctx);
+
 						ctx.exit();
 					}
 				}

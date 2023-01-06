@@ -39,7 +39,9 @@ public class NodeArray extends HiNode {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		return type.getClass(ctx);
+		HiClass clazz = type.getClass(ctx);
+		ctx.nodeValueType.enclosingClass = clazz;
+		return clazz;
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 		HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
 		HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
 		if (type1 != null && type2 != null) {
-			return type1.getCommonClass(type2);
+			return ctx.nodeValueType.enclosingClass = type1.getCommonClass(type2);
 		}
 		return null;
 	}
@@ -47,6 +47,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 		} else {
 			valid = false;
 		}
+		valid &= super.validate(validationInfo, ctx);
 		return valid;
 	}
 

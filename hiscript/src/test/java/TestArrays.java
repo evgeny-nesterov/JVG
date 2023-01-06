@@ -28,6 +28,8 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("int[] x = {}; int[] y = (int[])x;");
 		assertSuccessSerialize("String[] x = {\"a\", \"b\"}; assert x instanceof String[];");
 		assertSuccessSerialize("int[][] x = {{1}, {2}}; assert x instanceof int[][];");
+		assertSuccessSerialize("class A{int get(int x){return x + 1;}} A[][][] a = {null, {null, new A[]{null, new A()}}}; assert a[1][1][1].get(1) == 2;");
+		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{x->x+1}}; assert a[0][0].get(1) == 2;");
 	}
 
 	@Test

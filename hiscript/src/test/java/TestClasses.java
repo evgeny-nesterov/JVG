@@ -9,6 +9,13 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class C{static int c;} assert C.c == 0;");
 		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
 
+		// abstract
+		assertFailCompile("abstract class C{} new C();");
+		assertFailCompile("abstract class C{void get();}");
+		assertSuccessSerialize("abstract class C{} new C(){};");
+		assertSuccessSerialize("abstract class C{void get(){}} new C(){void get(){}};");
+		assertSuccessSerialize("abstract class C{abstract void get();} new C(){void get(){}};");
+
 		// extends
 		assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
 		assertFailSerialize("class A {A(boolean x){this(x ? 1 : 0);} A(int y){this(y == 1);}} new A(true);");
@@ -120,7 +127,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{int get(){return 1;}} class B extends A{int get(){return super.get() + 1;}} assert new A().get() == 1; assert new B().get() == 2; ");
 
 		assertFailCompile("class A{} class C extends A{void get(){}} A a = new C(); a.get();");
-		assertFailCompile("abstract class A{abstract void get();} class C extends A{void get(){}} A a = new C(); a.get();");
+		assertSuccessSerialize("abstract class A{abstract void get();} class C extends A{void get(){}} A a = new C(); a.get();");
 
 		// signature
 		assertSuccessSerialize("class A{String m(int x, String arg){return \"\";}} String s = new A().m(0, null);");

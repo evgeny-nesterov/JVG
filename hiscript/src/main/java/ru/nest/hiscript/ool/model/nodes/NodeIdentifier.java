@@ -54,6 +54,7 @@ public class NodeIdentifier extends HiNode {
 				HiNode resolvedValueVariable = (HiNode) resolvedIdentifier;
 				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
+				ctx.nodeValueType.enclosingClass = clazz;
 				return clazz;
 			} else if (resolvedIdentifier instanceof HiClass) {
 				return (HiClass) resolvedIdentifier;

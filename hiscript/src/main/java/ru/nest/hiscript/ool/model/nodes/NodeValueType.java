@@ -42,6 +42,8 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public HiNodeIF resolvedValueVariable;
 
+	public HiClass enclosingClass;
+
 	public Token token;
 
 	public void init(HiNodeIF node) {
@@ -52,6 +54,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valueType = null;
 		this.token = node.getToken() != null ? new Token(node.getToken()) : null;
 		this.resolvedValueVariable = null;
+		this.enclosingClass = null;
 	}
 
 	public NodeValueType apply(NodeValueType node) {
@@ -72,6 +75,7 @@ public class NodeValueType implements PrimitiveTypes {
 		nodeValueType.type = type;
 		nodeValueType.valid = valid;
 		nodeValueType.resolvedValueVariable = resolvedValueVariable;
+		nodeValueType.enclosingClass = enclosingClass;
 
 		if (isValue) {
 			nodeValueType.valueType = valueType;
@@ -92,7 +96,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = false;
 	}
 
-	public void get(HiNodeIF node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNodeIF resolvedValueVariable) {
+	public void get(HiNodeIF node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNodeIF resolvedValueVariable, HiClass enclosingClass) {
 		if (type == null) {
 			type = HiClassPrimitive.VOID;
 			isValue = false;
@@ -103,6 +107,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.isValue = isValue;
 		this.isConstant = isConstant;
 		this.resolvedValueVariable = resolvedValueVariable;
+		this.enclosingClass = enclosingClass;
 		getValue();
 	}
 
@@ -121,6 +126,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.isValue = ctx.nodeValueType.isValue;
 		this.isConstant = ctx.nodeValueType.isConstant;
 		this.resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
+		this.enclosingClass = ctx.nodeValueType.enclosingClass;
 		getValue();
 		return this;
 	}

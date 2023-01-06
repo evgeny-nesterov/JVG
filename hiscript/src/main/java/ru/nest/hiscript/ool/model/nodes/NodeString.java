@@ -39,7 +39,8 @@ public class NodeString extends HiNode {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		return ctx.getClassLoader().getClass(HiClass.STRING_CLASS_NAME);
+		ctx.nodeValueType.enclosingClass =  ctx.getClassLoader().getClass(HiClass.STRING_CLASS_NAME);
+		return ctx.nodeValueType.enclosingClass;
 	}
 
 	@Override

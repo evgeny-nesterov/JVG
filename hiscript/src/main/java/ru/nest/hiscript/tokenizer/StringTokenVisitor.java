@@ -6,12 +6,11 @@ import java.util.List;
 public class StringTokenVisitor implements TokenVisitor {
 	@Override
 	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
+		int line = tokenizer.getLine();
+		int offset = tokenizer.getOffset();
+		int lineOffset = tokenizer.getLineOffset();
 		if (tokenizer.getCurrent() == '"' && tokenizer.hasNext()) {
 			tokenizer.next();
-
-			int line = tokenizer.getLine();
-			int offset = tokenizer.getOffset();
-			int lineOffset = tokenizer.getLineOffset();
 
 			if (tokenizer.getCurrent() == '"') {
 				if (tokenizer.hasNext()) {

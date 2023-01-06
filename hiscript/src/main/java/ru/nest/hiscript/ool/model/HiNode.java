@@ -181,6 +181,8 @@ public abstract class HiNode implements HiNodeIF {
 
 	private HiNodeIF resolvedValueVariable;
 
+	private HiClass enclosingClass;
+
 	@Override
 	public String toString() {
 		return name;
@@ -199,6 +201,7 @@ public abstract class HiNode implements HiNodeIF {
 	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valueClass == null) {
 			ctx.nodeValueType.resolvedValueVariable = null;
+			ctx.nodeValueType.enclosingClass = null;
 
 			computeValueType(validationInfo, ctx);
 
@@ -207,6 +210,7 @@ public abstract class HiNode implements HiNodeIF {
 			isValue = ctx.nodeValueType.isValue;
 			isConstant = ctx.nodeValueType.isConstant;
 			resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
+			enclosingClass = ctx.nodeValueType.enclosingClass;
 
 			if (valueClass != null) {
 				valueClass.init(ctx);
@@ -214,7 +218,7 @@ public abstract class HiNode implements HiNodeIF {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant, resolvedValueVariable);
+			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant, resolvedValueVariable, enclosingClass);
 		}
 		return ctx.nodeValueType;
 	}
@@ -237,11 +241,12 @@ public abstract class HiNode implements HiNodeIF {
 
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = null;
+		ctx.nodeValueType.enclosingClass = null;
 		HiClass clazz = computeValueClass(validationInfo, ctx);
 		boolean valid = clazz != null;
 		boolean isValue = isValue() && (valid ? clazz != HiClassPrimitive.VOID : false);
 		boolean isConstant = (valid ? clazz != HiClassPrimitive.VOID : false) && isConstant(ctx);
-		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant, ctx.nodeValueType.resolvedValueVariable);
+		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
 	}
 
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
