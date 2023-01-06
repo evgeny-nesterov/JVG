@@ -34,6 +34,17 @@ public class TestLambda extends HiTest {
 	}
 
 	@Test
+	public void testConstructor() {
+		assertSuccessSerialize("interface I{void get();} class C{C(I i){i.get();}} new C(()->{});");
+		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int x; C(I i,int x,int y){this.x=i.get(x,y);}} assert new C((x,y)->x+y,1,2).x==3; assert new C((x,y)->{return x+y;},1,2).x==3;");
+		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String s; C(I i){s=i.get(\"l=\",1,2,3);}} assert new C((s,x)->s+x.length).s.equals(\"l=3\");");
+		assertFailCompile("interface I{void get();} class C{C(I i){i.get();}} new C(()->{return 1;});");
+		assertFailCompile("interface I{void get(int x);} class C{C(I i){i.get(1);}} new C(x->x);");
+		assertFailCompile("interface I{int get();} class C{C(I i){return i.get();}} new C(()->{});");
+		assertFailCompile("interface I{String get(int x);} class C{C(I i){return i.get(1);}} new C(x->{int y = x + 1;});");
+	}
+
+	@Test
 	public void testArray() {
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{x->x+1}}; assert a[0][0].get(1) == 2;");
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{(byte x)->x+1}}; assert a[0][0].get(1) == 2;");

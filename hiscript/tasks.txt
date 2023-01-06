@@ -36,3 +36,4 @@
         +29. Simple console
 30. Get variable value from script context to java
 31. implement 'class' (String.class, class Class), do with reflection
+        +32. Lambda (declaration, method/constructor argument)

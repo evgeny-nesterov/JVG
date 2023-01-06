@@ -1050,10 +1050,18 @@ public class HiClass implements HiNodeIF {
 				}
 			}
 			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
+			NodeArgument vararg = constructor.arguments[mainArgCount];
 			for (int i = mainArgCount; i < argTypes.length; i++) {
 				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
 					return false;
 				}
+			}
+
+			for (int i = 0; i < mainArgCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+			}
+			for (int i = mainArgCount; i < argTypes.length; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			}
 		} else {
 			int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
@@ -1066,6 +1074,9 @@ public class HiClass implements HiNodeIF {
 				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false)) {
 					return false;
 				}
+			}
+			for (int i = 0; i < argCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
 			}
 		}
 		return true;
