@@ -26,6 +26,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 		if (node.type.isPrimitive()) {
 			int t = HiFieldPrimitive.getType(node.type);
 			switch (t) {
+				case VAR:
 				case CHAR:
 				case BYTE:
 				case SHORT:

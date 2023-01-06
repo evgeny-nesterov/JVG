@@ -127,7 +127,7 @@ public class ClassParseRule extends ParserUtil {
 			visitContent(tokenizer, ctx, null);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			ctx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 			return ctx.clazz;
 		}
@@ -266,7 +266,7 @@ public class ClassParseRule extends ParserUtil {
 				ctx.exit();
 
 				HiConstructor constructor = new HiConstructor(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
-				constructor.token = tokenizer.getBlockToken(startToken);
+				constructor.setToken(tokenizer.getBlockToken(startToken));
 				return constructor;
 			}
 		}
@@ -329,7 +329,7 @@ public class ClassParseRule extends ParserUtil {
 					ctx.exit();
 
 					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), modifiers, type, name, arguments, exceptionTypes, body);
-					method.token = tokenizer.getBlockToken(startToken);
+					method.setToken(tokenizer.getBlockToken(startToken));
 					return method;
 				}
 			}

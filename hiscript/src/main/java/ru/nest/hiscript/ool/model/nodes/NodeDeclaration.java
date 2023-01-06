@@ -57,25 +57,25 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initialization != null) {
 			HiClass variableType = getValueClass(validationInfo, ctx);
-			boolean validInitialization = initialization.validate(validationInfo, ctx);
-			valid &= validInitialization;
 			if (type == Type.varType) {
 				type = Type.getType(variableType);
 				// do not check cast
-			} else if (validInitialization) {
+			} else {
+				ctx.level.variableClass = variableType;
+				ctx.level.variableNode = this;
 				NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
-				HiClass initializationType = initializationValueType.type;
 				boolean canBeCasted;
 				if (initializationValueType.isValue) {
 					canBeCasted = initializationValueType.autoCastValue(variableType);
 				} else {
-					canBeCasted = HiClass.autoCast(initializationType, variableType, false);
+					canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, variableType, false);
 				}
 				if (!canBeCasted) {
-					validationInfo.error("incompatible types: " + initializationType.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
+					validationInfo.error("incompatible types: " + initializationValueType.type.fullName + " cannot be converted to " + variableType.fullName, initialization.getToken());
 					valid = false;
 				}
 			}
+			valid &= initialization.validate(validationInfo, ctx);
 			ctx.initializedNodes.add(this);
 		}
 		// TODO check name, modifiers, annotations

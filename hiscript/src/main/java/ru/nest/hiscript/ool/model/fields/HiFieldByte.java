@@ -67,7 +67,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 		if (valueType == BYTE) {
 			this.value = value.byteNumber;
 		} else {
-			// autocast
+			// auto-cast
 			if (value.valueType == Value.VALUE) {
 				switch (valueType) {
 					case CHAR:

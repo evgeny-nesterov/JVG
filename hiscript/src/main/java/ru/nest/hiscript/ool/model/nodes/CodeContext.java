@@ -116,6 +116,15 @@ public class CodeContext {
 		}
 	}
 
+	public void writeStringArray(String[] array) throws IOException {
+		dos.writeInt(array != null ? array.length : 0);
+		if (array != null) {
+			for (String s : array) {
+				dos.writeUTF(s);
+			}
+		}
+	}
+
 	public <N extends Codeable> void writeArray(N[] objects) throws IOException {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {

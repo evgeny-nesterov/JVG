@@ -87,7 +87,7 @@ public class RecordParseRule extends ParserUtil {
 				}
 				HiNode getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName(), 0)));
 				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
-				getMethod.token = argument.getToken();
+				getMethod.setToken(argument.getToken());
 				ctx.addMethod(getMethod);
 
 				String setMethodName = "set" + Character.toUpperCase(argument.getVariableName().charAt(0));
@@ -100,7 +100,7 @@ public class RecordParseRule extends ParserUtil {
 				// TODO support set methods?
 				HiNode setMethodBody = new NodeBlock(setExpression);
 				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
-				setMethod.token = argument.getToken();
+				setMethod.setToken(argument.getToken());
 				ctx.addMethod(setMethod);
 
 				defaultConstructorBody.addStatement(setExpression);
@@ -122,7 +122,7 @@ public class RecordParseRule extends ParserUtil {
 				ctx.initClass();
 			}
 
-			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			ctx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			return ctx.clazz;
 		}
 

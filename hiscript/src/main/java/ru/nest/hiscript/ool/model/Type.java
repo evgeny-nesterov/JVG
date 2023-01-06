@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Words;
@@ -21,27 +22,27 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static int ARRAY = 2;
 
-	public final static Type byteType = new Type("byte");
+	public final static Type byteType = new Type("byte", true);
 
-	public final static Type charType = new Type("char");
+	public final static Type charType = new Type("char", true);
 
-	public final static Type shortType = new Type("short");
+	public final static Type shortType = new Type("short", true);
 
-	public final static Type intType = new Type("int");
+	public final static Type intType = new Type("int", true);
 
-	public final static Type longType = new Type("long");
+	public final static Type longType = new Type("long", true);
 
-	public final static Type floatType = new Type("float");
+	public final static Type floatType = new Type("float", true);
 
-	public final static Type doubleType = new Type("double");
+	public final static Type doubleType = new Type("double", true);
 
-	public final static Type booleanType = new Type("boolean");
+	public final static Type booleanType = new Type("boolean", true);
 
-	public final static Type voidType = new Type("void");
+	public final static Type voidType = new Type("void", true);
 
-	public final static Type nullType = new Type("null");
+	public final static Type nullType = new Type("null", false);
 
-	public final static Type varType = new Type("var");
+	public final static Type varType = new Type("var", false);
 
 	private static Map<String, Type> predefinedTypes = new HashMap<>();
 
@@ -86,12 +87,12 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	/**
 	 * Primitive type
 	 */
-	private Type(String name) {
+	private Type(String name, boolean primitive) {
 		this.parent = null;
 		this.cellType = null;
 		this.name = name.intern();
 		this.dimension = 0;
-		this.primitive = true;
+		this.primitive = primitive;
 		this.fullName = name.intern();
 	}
 
@@ -147,7 +148,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	public boolean isNull() {
-		return this == getNullType();
+		return this == nullType;
+	}
+
+	public boolean isVar() {
+		return this == varType;
 	}
 
 	@Override
@@ -205,6 +210,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 		if (isNull()) {
 			return HiClassNull.NULL;
+		}
+
+		if (isVar()) {
+			return HiClassVar.VAR;
 		}
 
 		HiClass clazz;
@@ -333,10 +342,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			cellType = getArrayType(cellType);
 		}
 		return cellType;
-	}
-
-	public static Type getNullType() {
-		return predefinedTypes.get("null");
 	}
 
 	public static Type getType(HiClass clazz) {

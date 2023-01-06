@@ -5,15 +5,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public interface Editor {
-	public void processMouseEvent(MouseEvent e, double x, double y, double adjustedX, double adjustedY);
+	void processMouseEvent(MouseEvent e, double x, double y, double adjustedX, double adjustedY);
 
-	public void processKeyEvent(KeyEvent e);
+	void processKeyEvent(KeyEvent e);
 
-	public void paint(Graphics2D g);
+	void paint(Graphics2D g);
 
-	public void start();
+	void start();
 
-	public void finish();
+	void finish();
 
-	public boolean isCustomActionsManager();
+	boolean isCustomActionsManager();
 }

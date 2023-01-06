@@ -17,7 +17,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
-public class HiConstructor implements Codeable, TokenAccessible {
+public class HiConstructor implements HiNodeIF {
 	public final static String METHOD_NAME = "<init>";
 
 	public enum BodyConstructorType {
@@ -73,7 +73,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 
 	public HiClass[] argClasses;
 
-	public Token token;
+	private Token token;
 
 	public void resolve(ClassResolver classResolver) {
 		if (argClasses == null) {
@@ -102,6 +102,7 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		return arguments != null && arguments.length > 0 && arguments[arguments.length - 1].isVarargs();
 	}
 
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
@@ -138,6 +139,11 @@ public class HiConstructor implements Codeable, TokenAccessible {
 		}
 		ctx.exit();
 		return valid;
+	}
+
+	@Override
+	public void execute(RuntimeContext ctx) {
+		// not supported
 	}
 
 	public HiObject newInstance(RuntimeContext ctx, HiField<?>[] arguments, HiObject outboundObject) {
@@ -348,6 +354,11 @@ public class HiConstructor implements Codeable, TokenAccessible {
 	@Override
 	public Token getToken() {
 		return token;
+	}
+
+	@Override
+	public void setToken(Token token) {
+		this.token = token;
 	}
 
 	public static void main(String[] a) {

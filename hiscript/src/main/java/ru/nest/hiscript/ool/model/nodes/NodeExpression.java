@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.tokenizer.Token;
 
@@ -27,6 +28,15 @@ public abstract class NodeExpression extends HiNode {
 			return exprCaseValueNode.checkCastedIdentifier() != null;
 		} else {
 			return false;
+		}
+	}
+
+	public HiMethod checkMethod() {
+		if (this instanceof NodeExpressionNoLS) {
+			NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) this;
+			return exprCaseValueNode.checkMethod();
+		} else {
+			return null;
 		}
 	}
 }

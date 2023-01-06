@@ -237,8 +237,8 @@ public class TOIPane extends JPanel {
 		return getObjectControl(x, y, controlFilter);
 	}
 
-	public static interface ControlFilter {
-		public boolean pass(TOIObjectControl c);
+	public interface ControlFilter {
+		boolean pass(TOIObjectControl c);
 	}
 
 	public TOIObjectControl getObjectControl(double x, double y, ControlFilter filter) {

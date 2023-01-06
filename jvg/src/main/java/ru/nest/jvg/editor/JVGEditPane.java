@@ -803,8 +803,8 @@ public class JVGEditPane extends JVGPane {
 		repaint();
 	}
 
-	public static interface InputTextHandler {
-		public void setValue(String value);
+	public interface InputTextHandler {
+		void setValue(String value);
 	}
 
 	private class InputComponent {

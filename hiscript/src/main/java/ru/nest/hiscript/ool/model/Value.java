@@ -36,7 +36,7 @@ public class Value implements PrimitiveTypes {
 		this.ctx = ctx;
 	}
 
-	public HiNode node;
+	public HiNodeIF node;
 
 	public int valueType;
 

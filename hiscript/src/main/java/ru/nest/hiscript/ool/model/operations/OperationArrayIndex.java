@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -30,6 +31,7 @@ public class OperationArrayIndex extends BinaryOperation {
 		boolean validIndex = false;
 		if (node2.type.isPrimitive()) {
 			switch (HiFieldPrimitive.getType(node2.type)) {
+				case VAR:
 				case CHAR:
 				case BYTE:
 				case SHORT:
@@ -39,7 +41,10 @@ public class OperationArrayIndex extends BinaryOperation {
 			}
 		}
 		boolean validArray = false;
-		if (node1.type.isArray()) {
+		if (node1.type.isVar()) {
+			type = HiClassVar.VAR;
+			validArray = true;
+		} else if (node1.type.isArray()) {
 			type = ((HiClassArray) type).cellClass;
 			validArray = true;
 		}

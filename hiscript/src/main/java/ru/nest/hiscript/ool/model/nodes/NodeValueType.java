@@ -3,7 +3,8 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
@@ -11,7 +12,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 public class NodeValueType implements PrimitiveTypes {
-	public HiNode node;
+	public HiNodeIF node;
 
 	public HiClass type;
 
@@ -39,11 +40,11 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public boolean booleanValue;
 
-	public HiNode resolvedValueVariable;
+	public HiNodeIF resolvedValueVariable;
 
 	public Token token;
 
-	public void init(HiNode node) {
+	public void init(HiNodeIF node) {
 		this.node = node;
 		this.isValue = node.isValue();
 		this.type = null;
@@ -91,7 +92,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.valid = false;
 	}
 
-	public void get(HiNode node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNode resolvedValueVariable) {
+	public void get(HiNodeIF node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNodeIF resolvedValueVariable) {
 		if (type == null) {
 			type = HiClassPrimitive.VOID;
 			isValue = false;
@@ -105,13 +106,13 @@ public class NodeValueType implements PrimitiveTypes {
 		getValue();
 	}
 
-	public NodeValueType get(ValidationInfo validationInfo, CompileClassContext ctx, HiNode node) {
+	public NodeValueType get(ValidationInfo validationInfo, CompileClassContext ctx, HiNodeIF node) {
 		this.node = node;
 		return get(validationInfo, ctx);
 	}
 
 	public NodeValueType get(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiNode node = this.node;
+		HiNodeIF node = this.node;
 		boolean valid = node.validate(validationInfo, ctx);
 		node.getValueType(validationInfo, ctx); // after validation
 		this.node = node;
@@ -244,5 +245,14 @@ public class NodeValueType implements PrimitiveTypes {
 				return t2 == BOOLEAN;
 		}
 		return false;
+	}
+
+	public HiMethod getMethod() {
+		if (node instanceof NodeExpression) {
+			return ((NodeExpression) node).checkMethod();
+		} else if (node instanceof HiMethod) {
+			return (HiMethod) node;
+		}
+		return null;
 	}
 }

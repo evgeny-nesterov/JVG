@@ -20,6 +20,7 @@ public class MethodSignature implements Cloneable {
 		for (int i = 0; i < argCount; i++) {
 			hashCode += 31 * (argClasses[i] != null ? argClasses[i].hashCode() : 0);
 		}
+		isLambda = name.startsWith(HiMethod.LAMBDA_METHOD_NAME);
 	}
 
 	public int argCount;
@@ -30,11 +31,17 @@ public class MethodSignature implements Cloneable {
 
 	private int hashCode;
 
+	private boolean isLambda;
+
+	public boolean isLambda() {
+		return isLambda;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof MethodSignature) {
 			MethodSignature m = (MethodSignature) o;
-			if (m.name != name) {
+			if (!m.name.equals(name) && !m.isLambda && !isLambda) {
 				return false;
 			}
 

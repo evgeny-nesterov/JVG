@@ -174,10 +174,10 @@ public class JVGResources {
 	}
 
 	// listeners
-	public static interface Listener {
-		public void resourceAdded(Resource<?> resource);
+	public interface Listener {
+		void resourceAdded(Resource<?> resource);
 
-		public void resourceRemoved(Resource<?> resource);
+		void resourceRemoved(Resource<?> resource);
 	}
 
 	private List<Listener> listeners = new ArrayList<>();

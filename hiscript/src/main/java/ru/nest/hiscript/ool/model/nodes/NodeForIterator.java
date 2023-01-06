@@ -40,7 +40,7 @@ public class NodeForIterator extends HiNode {
 			HiClass iterableClass = iterable.getValueClass(validationInfo, ctx);
 			if (iterableClass.isArray()) {
 				HiClass cellClass = ((HiClassArray) iterableClass).cellClass;
-				if (!HiClass.autoCast(cellClass, declarationClass, false)) {
+				if (!HiClass.autoCast(ctx, cellClass, declarationClass, false)) {
 					validationInfo.error("incompatible types: " + cellClass + " cannot be converted to " + declarationClass, token);
 					valid = false;
 				}

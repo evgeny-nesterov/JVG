@@ -1,17 +1,17 @@
 package ru.nest.jvg.event;
 
 public interface JVGMouseListener extends JVGEventListener {
-	public void mouseClicked(JVGMouseEvent e);
+	void mouseClicked(JVGMouseEvent e);
 
-	public void mousePressed(JVGMouseEvent e);
+	void mousePressed(JVGMouseEvent e);
 
-	public void mouseReleased(JVGMouseEvent e);
+	void mouseReleased(JVGMouseEvent e);
 
-	public void mouseEntered(JVGMouseEvent e);
+	void mouseEntered(JVGMouseEvent e);
 
-	public void mouseExited(JVGMouseEvent e);
+	void mouseExited(JVGMouseEvent e);
 
-	public void mouseDragged(JVGMouseEvent e);
+	void mouseDragged(JVGMouseEvent e);
 
-	public void mouseMoved(JVGMouseEvent e);
+	void mouseMoved(JVGMouseEvent e);
 }

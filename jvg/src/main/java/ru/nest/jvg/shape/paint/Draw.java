@@ -8,13 +8,13 @@ import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.shape.JVGShape;
 
 public interface Draw<V> extends Cloneable {
-	public Paint getPaint(JVGShape component, Shape shape, AffineTransform transform);
+	Paint getPaint(JVGShape component, Shape shape, AffineTransform transform);
 
-	public void setResource(Resource<V> resource);
+	void setResource(Resource<V> resource);
 
-	public double getOpacity();
+	double getOpacity();
 
-	public Resource<V> getResource();
+	Resource<V> getResource();
 
-	public Object clone();
+	Object clone();
 }

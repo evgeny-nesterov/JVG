@@ -57,7 +57,7 @@ public class ChooseColorButton extends AbstractChooseColorButton {
 		}
 	}
 
-	public static interface ActionCreator {
-		public JVGAction createAction(Draw draw);
+	public interface ActionCreator {
+		JVGAction createAction(Draw draw);
 	}
 }

@@ -304,8 +304,8 @@ public class ExplorerPanel extends JPanel {
 		}
 	}
 
-	public static interface Listener {
-		public void fileSelected(File file);
+	public interface Listener {
+		void fileSelected(File file);
 	}
 
 	public static void main(String[] args) {

@@ -93,4 +93,9 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public String getVariableType() {
 		return typeArgument.getName();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof NodeArgument && ((NodeArgument) o).name.equals(name);
+	}
 }

@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -17,7 +18,7 @@ public class HiScript implements AutoCloseable {
 
 	private HiCompiler compiler;
 
-	private HiNode node;
+	private HiNodeIF node;
 
 	private RootParseRule parseRule;
 

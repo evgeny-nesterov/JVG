@@ -24,7 +24,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		addStatement(statement);
 	}
 
-	private List<HiNode> statements = new ArrayList<>(0);
+	public List<HiNode> statements = new ArrayList<>(0);
 
 	public void addStatement(HiNode statement) {
 		statements.add(statement);

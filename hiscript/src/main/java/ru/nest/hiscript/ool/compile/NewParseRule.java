@@ -73,7 +73,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
-			innerCtx.clazz.token = tokenizer.getBlockToken(startToken);
+			innerCtx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			return new NodeConstructor(innerCtx.clazz, arguments);
 		} else {
 			NodeType nodeType = new NodeType(type);

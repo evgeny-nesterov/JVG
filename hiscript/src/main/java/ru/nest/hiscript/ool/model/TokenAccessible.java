@@ -4,4 +4,6 @@ import ru.nest.hiscript.tokenizer.Token;
 
 public interface TokenAccessible {
 	Token getToken();
+
+	void setToken(Token token);
 }

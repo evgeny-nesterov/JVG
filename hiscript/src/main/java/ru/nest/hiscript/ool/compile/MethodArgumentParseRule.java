@@ -30,26 +30,23 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			boolean vararg = visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1;
-
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
-			if (name == null) {
-				tokenizer.error("variable name is expected");
+			if (name != null) {
+				tokenizer.commit();
+				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
+
+				int addDimension = visitDimension(tokenizer);
+				type = Type.getArrayType(type, addDimension);
+
+				TypeArgumentIF typeArgument;
+				if (vararg) {
+					type = Type.getArrayType(type, 1);
+					typeArgument = new TypeVarargs(type);
+				} else {
+					typeArgument = type;
+				}
+				return new NodeArgument(typeArgument, name, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 			}
-
-			tokenizer.commit();
-			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
-
-			int addDimension = visitDimension(tokenizer);
-			type = Type.getArrayType(type, addDimension);
-
-			TypeArgumentIF typeArgument;
-			if (vararg) {
-				type = Type.getArrayType(type, 1);
-				typeArgument = new TypeVarargs(type);
-			} else {
-				typeArgument = type;
-			}
-			return new NodeArgument(typeArgument, name, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 		}
 
 		tokenizer.rollback();

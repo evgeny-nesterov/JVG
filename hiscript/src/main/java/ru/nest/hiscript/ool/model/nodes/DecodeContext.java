@@ -290,6 +290,18 @@ public class DecodeContext {
 		}
 	}
 
+	public String[] readStringArray() throws IOException {
+		int length = readInt();
+		if (length > 0) {
+			String[] array = new String[length];
+			for (int i = 0; i < length; i++) {
+				array[i] = readUTF();
+			}
+			return array;
+		}
+		return null;
+	}
+
 	public <N> List<N> readList(Class<N> type, int size) throws IOException {
 		List<N> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {

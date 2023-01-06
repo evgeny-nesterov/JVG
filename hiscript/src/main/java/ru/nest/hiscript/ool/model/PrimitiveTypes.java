@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 
 public interface PrimitiveTypes {
 	int CHAR = 0;
@@ -21,6 +22,8 @@ public interface PrimitiveTypes {
 
 	int VOID = 8;
 
+	int VAR = 9;
+
 	HiClassPrimitive TYPE_CHAR = HiClassPrimitive.CHAR;
 
 	HiClassPrimitive TYPE_BYTE = HiClassPrimitive.BYTE;
@@ -38,4 +41,6 @@ public interface PrimitiveTypes {
 	HiClassPrimitive TYPE_BOOLEAN = HiClassPrimitive.BOOLEAN;
 
 	HiClassPrimitive TYPE_VOID = HiClassPrimitive.VOID;
+
+	HiClassVar TYPE_VAR = HiClassVar.VAR;
 }

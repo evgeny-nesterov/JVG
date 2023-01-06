@@ -32,7 +32,7 @@ public class HiCompiler {
 		this.tokenizer = tokenizer;
 	}
 
-	public HiNode build() throws TokenizerException, HiScriptParseException, HiScriptValidationException {
+	public HiNodeIF build() throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		if (rule == null) {
 			rule = new RootParseRule(this, true, true);
 		}
@@ -40,7 +40,7 @@ public class HiCompiler {
 		validationInfo = new ValidationInfo(this);
 		tokenizer.setValidationInfo(verbose ? validationInfo : null);
 
-		HiNode node = rule.visit(tokenizer, null);
+		HiNodeIF node = rule.visit(tokenizer, null);
 		boolean valid = node != null && validationInfo.isValid();
 		if (node != null) {
 			valid &= node.validate(validationInfo, null);

@@ -5,33 +5,33 @@ import java.awt.geom.Rectangle2D;
 import ru.nest.jvg.event.JVGSelectionListener;
 
 public interface JVGSelectionModel {
-	public void setSelection(JVGComponent o);
+	void setSelection(JVGComponent o);
 
-	public void setSelection(JVGComponent[] o);
+	void setSelection(JVGComponent[] o);
 
-	public void addSelection(JVGComponent o);
+	void addSelection(JVGComponent o);
 
-	public void addSelection(JVGComponent[] o);
+	void addSelection(JVGComponent[] o);
 
-	public void removeSelection(JVGComponent o);
+	void removeSelection(JVGComponent o);
 
-	public void removeSelection(JVGComponent[] o);
+	void removeSelection(JVGComponent[] o);
 
-	public void clearSelection();
+	void clearSelection();
 
-	public JVGComponent[] getSelection();
+	JVGComponent[] getSelection();
 
-	public int getSelectionCount();
+	int getSelectionCount();
 
-	public boolean isSelected(JVGComponent o);
+	boolean isSelected(JVGComponent o);
 
-	public void addSelectionListener(JVGSelectionListener listener);
+	void addSelectionListener(JVGSelectionListener listener);
 
-	public void removeSelectionListener(JVGSelectionListener listener);
+	void removeSelectionListener(JVGSelectionListener listener);
 
-	public Rectangle2D getSelectionBounds();
+	Rectangle2D getSelectionBounds();
 
-	public void invalidate();
+	void invalidate();
 
-	public boolean isValid();
+	boolean isValid();
 }

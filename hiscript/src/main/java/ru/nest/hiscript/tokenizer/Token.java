@@ -89,6 +89,14 @@ public class Token implements Codeable, TokenAccessible {
 		return this;
 	}
 
+	@Override
+	public void setToken(Token token) {
+		this.offset = token.offset;
+		this.length = token.length;
+		this.line = token.line;
+		this.lineOffset = token.lineOffset;
+	}
+
 	public Token getInnerToken(Tokenizer tokenizer, String text) {
 		int innerOffset = tokenizer.indexOf(this, text);
 		if (innerOffset != -1) {

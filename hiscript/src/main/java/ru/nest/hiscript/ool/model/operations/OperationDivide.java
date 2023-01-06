@@ -245,6 +245,11 @@ public class OperationDivide extends BinaryOperation {
 					}
 			}
 		} else {
+			if (t1 == VAR) {
+				return c2;
+			} else if (t2 == VAR) {
+				return c1;
+			}
 			switch (t1) {
 				case CHAR:
 				case BYTE:

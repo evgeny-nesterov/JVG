@@ -26,6 +26,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 		if (node1.type.isPrimitive()) {
 			int t1 = HiFieldPrimitive.getType(node1.type);
 			switch (t1) {
+				case VAR:
 				case CHAR:
 				case BYTE:
 				case SHORT:
@@ -33,6 +34,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 				case LONG:
 					int t2 = HiFieldPrimitive.getType(node1.type);
 					switch (t2) {
+						case VAR:
 						case CHAR:
 						case BYTE:
 						case SHORT:

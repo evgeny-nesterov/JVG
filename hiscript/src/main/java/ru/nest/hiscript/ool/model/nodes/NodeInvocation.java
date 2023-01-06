@@ -52,7 +52,9 @@ public class NodeInvocation extends HiNode {
 		if (arguments != null) {
 			for (int i = 0; i < arguments.length; i++) {
 				// set null for not valid argument
-				argumentsClasses[i] = arguments[i].getValueClass(validationInfo, ctx);
+				HiNode argument = arguments[i];
+				ctx.level.parent.variableNode = argument;
+				argumentsClasses[i] = argument.getValueClass(validationInfo, ctx);
 			}
 		}
 
@@ -86,10 +88,6 @@ public class NodeInvocation extends HiNode {
 		}
 
 		if (method != null) {
-			if (method.modifiers.isAbstract()) {
-				validationInfo.error("cannot invoke abstract method", token);
-				valid = false;
-			}
 			if (!innerInvocation && !method.modifiers.isStatic() && !isEnclosingObject) {
 				validationInfo.error("non-static method '" + method + "' cannot be referenced from a static context", token);
 				valid = false;

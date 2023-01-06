@@ -104,7 +104,6 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		}
 
 		if ((node = DeclarationParseRule.getInstance().visit(tokenizer, ctx)) != null) {
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;
 		}
 

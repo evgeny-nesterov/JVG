@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HiClass implements Codeable, TokenAccessible {
+public class HiClass implements HiNodeIF {
 	public final static int CLASS_OBJECT = 0;
 
 	public final static int CLASS_PRIMITIVE = 1;
@@ -42,6 +42,8 @@ public class HiClass implements Codeable, TokenAccessible {
 	public final static int CLASS_ANNOTATION = 5;
 
 	public final static int CLASS_NULL = 6;
+
+	public final static int CLASS_VAR = 7;
 
 	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
@@ -72,7 +74,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	public static String RUNTIME_EXCEPTION_CLASS_NAME = "RuntimeException";
 
-	public Token token;
+	private Token token;
 
 	public final static HiClassLoader systemClassLoader = new HiClassLoader("system");
 
@@ -392,12 +394,18 @@ public class HiClass implements Codeable, TokenAccessible {
 
 	private Boolean valid;
 
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valid == null) {
 			valid = true;
 			valid = _validate(validationInfo, ctx);
 		}
 		return valid;
+	}
+
+	@Override
+	public void execute(RuntimeContext ctx) {
+		// not supported
 	}
 
 	private boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -526,7 +534,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 		if (!isInterface && !isAbstract() && !isEnum() && !isRecord()) {
 			Map<MethodSignature, HiMethod> abstractMethods = new HashMap<>();
-			getAbstractMethods(validationInfo, ctx, abstractMethods, new HashMap<>(), new HashSet<>());
+			getAbstractMethods(ctx, abstractMethods, new HashMap<>(), new HashSet<>());
 			if (abstractMethods.size() > 0) {
 				for (HiMethod abstractMethod : abstractMethods.values()) {
 					validationInfo.error("abstract method " + abstractMethod.signature + " is implemented in non-abstract class", token);
@@ -541,7 +549,13 @@ public class HiClass implements Codeable, TokenAccessible {
 		return valid;
 	}
 
-	private void getAbstractMethods(ValidationInfo validationInfo, CompileClassContext ctx, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
+	public int getAbstractMethodsCount(ClassResolver classResolver) {
+		Map<MethodSignature, HiMethod> abstractMethods = new HashMap<>();
+		getAbstractMethods(classResolver, abstractMethods, new HashMap<>(), new HashSet<>());
+		return abstractMethods.size();
+	}
+
+	private void getAbstractMethods(ClassResolver classResolver, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
 		if (processedClasses.contains(this)) {
 			return;
 		}
@@ -550,7 +564,7 @@ public class HiClass implements Codeable, TokenAccessible {
 		if (methods != null) {
 			for (HiMethod method : methods) {
 				if (!method.modifiers.isStatic()) {
-					method.resolve(ctx);
+					method.resolve(classResolver);
 					if (method.modifiers.isAbstract()) {
 						if (!implementedMethods.containsKey(method.signature)) {
 							abstractMethods.put(method.signature, method);
@@ -566,12 +580,12 @@ public class HiClass implements Codeable, TokenAccessible {
 			for (int i = 0; i < interfaces.length; i++) {
 				HiClass intf = interfaces[i];
 				if (intf != null) {
-					intf.getAbstractMethods(validationInfo, ctx, abstractMethods, implementedMethods, processedClasses);
+					intf.getAbstractMethods(classResolver, abstractMethods, implementedMethods, processedClasses);
 				}
 			}
 		}
 		if (superClass != null) {
-			superClass.getAbstractMethods(validationInfo, ctx, abstractMethods, implementedMethods, processedClasses);
+			superClass.getAbstractMethods(classResolver, abstractMethods, implementedMethods, processedClasses);
 		}
 	}
 
@@ -833,11 +847,10 @@ public class HiClass implements Codeable, TokenAccessible {
 		String name = signature.name;
 		HiClass[] argTypes = signature.argClasses;
 
-		// this methods
 		if (methods != null && methods.length > 0) {
 			for (HiMethod m : methods)
 				FOR:{
-					if (m.name.equals(name)) {
+					if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
 						if (m.hasVarargs()) {
 							int mainArgCount = m.argCount - 1;
 							if (mainArgCount > argTypes.length) {
@@ -847,15 +860,23 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < mainArgCount; i++) {
-								if (!HiClass.autoCast(argTypes[i], m.argClasses[i], false)) {
+								if (!HiClass.autoCast(classResolver, argTypes[i], m.argClasses[i], false)) {
 									break FOR;
 								}
 							}
 							HiClass varargsType = m.argClasses[mainArgCount].getArrayType();
+							NodeArgument vararg = m.arguments[mainArgCount];
 							for (int i = mainArgCount; i < argTypes.length; i++) {
-								if (!HiClass.autoCast(argTypes[i], varargsType, false)) {
+								if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
 									break FOR;
 								}
+							}
+
+							for (int i = 0; i < mainArgCount; i++) {
+								argTypes[i].applyLambdaImplementedMethod(classResolver, m.argClasses[i], m.arguments[i]);
+							}
+							for (int i = mainArgCount; i < argTypes.length; i++) {
+								argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 							}
 						} else {
 							int argCount = m.argCount;
@@ -866,9 +887,12 @@ public class HiClass implements Codeable, TokenAccessible {
 							m.resolve(classResolver);
 
 							for (int i = 0; i < argCount; i++) {
-								if (!HiClass.autoCast(argTypes[i], m.argClasses[i], false)) {
+								if (!HiClass.autoCast(classResolver, argTypes[i], m.argClasses[i], false)) {
 									break FOR;
 								}
+							}
+							for (int i = 0; i < argCount; i++) {
+								argTypes[i].applyLambdaImplementedMethod(classResolver, m.argClasses[i], m.arguments[i]);
 							}
 						}
 						return m;
@@ -1021,13 +1045,13 @@ public class HiClass implements Codeable, TokenAccessible {
 			constructor.resolve(classResolver);
 
 			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false)) {
 					return false;
 				}
 			}
 			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
 			for (int i = mainArgCount; i < argTypes.length; i++) {
-				if (!HiClass.autoCast(argTypes[i], varargsType, false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
 					return false;
 				}
 			}
@@ -1039,7 +1063,7 @@ public class HiClass implements Codeable, TokenAccessible {
 
 			constructor.resolve(classResolver);
 			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(argTypes[i], constructor.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false)) {
 					return false;
 				}
 			}
@@ -1117,6 +1141,10 @@ public class HiClass implements Codeable, TokenAccessible {
 	}
 
 	public boolean isRecord() {
+		return false;
+	}
+
+	public boolean isVar() {
 		return false;
 	}
 
@@ -1444,13 +1472,22 @@ public class HiClass implements Codeable, TokenAccessible {
 		return token;
 	}
 
-	public static boolean autoCast(HiClass src, HiClass dst, boolean isValue) {
+	@Override
+	public void setToken(Token token) {
+		this.token = token;
+	}
+
+	public static boolean autoCast(ClassResolver classResolver, HiClass src, HiClass dst, boolean isValue) {
 		if (src == dst) {
 			return true;
 		}
 
 		if (src == null || dst == null) {
 			return false;
+		}
+
+		if (src.isVar() || dst.isVar()) {
+			return true;
 		}
 
 		if (src.isPrimitive() || dst.isPrimitive()) {
@@ -1487,8 +1524,11 @@ public class HiClass implements Codeable, TokenAccessible {
 			if (arraySrc.cellClass.isPrimitive()) {
 				return arraySrc.cellClass == arrayDst.cellClass;
 			} else {
-				return autoCast(arraySrc.cellClass, arrayDst.cellClass, false);
+				return autoCast(classResolver, arraySrc.cellClass, arrayDst.cellClass, false);
 			}
+		}
+		if (src.getLambdaImplementedMethod(classResolver, dst) != null) {
+			return true;
 		}
 		return src.isInstanceof(dst);
 	}
@@ -1534,5 +1574,35 @@ public class HiClass implements Codeable, TokenAccessible {
 			clazz = clazz.enclosingClass;
 		}
 		return clazz.isStatic() || clazz.isTopLevel() ? clazz : null;
+	}
+
+	public boolean isLambda() {
+		return name.startsWith(HiMethod.LAMBDA_METHOD_NAME);
+	}
+
+	public HiMethod getLambdaMethod() {
+		if (isLambda() && methods != null && methods.length > 0) {
+			return methods[0];
+		}
+		return null;
+	}
+
+	public HiMethod getLambdaImplementedMethod(ClassResolver classResolver, HiClass dst) {
+		if (isLambda() && dst.isInterface) {
+			int methodsCount = dst.getAbstractMethodsCount(classResolver);
+			if (methodsCount == 1) {
+				HiMethod lambdaMethod = getLambdaMethod();
+				lambdaMethod.resolve(classResolver);
+				return dst.searchMethod(classResolver, lambdaMethod.signature);
+			}
+		}
+		return null;
+	}
+
+	public void applyLambdaImplementedMethod(ClassResolver classResolver, HiClass variableClass, NodeArgument variableNode) {
+		HiMethod lambdaMethod = getLambdaMethod();
+		if (lambdaMethod != null) {
+			lambdaMethod.applyLambdaImplementedMethod(classResolver, variableClass, variableNode);
+		}
 	}
 }

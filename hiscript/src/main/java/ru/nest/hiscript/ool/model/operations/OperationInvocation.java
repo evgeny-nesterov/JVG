@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -81,7 +82,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		// a.new B(), where v1=a, v2=new B()
-		HiNode valueNode = v2.node;
+		HiNodeIF valueNode = v2.node;
 
 		HiObject enterObject = null;
 		if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {

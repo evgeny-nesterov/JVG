@@ -478,6 +478,9 @@ public class ParserUtil implements Words {
 						}
 						hasVarargs = true;
 					}
+					if (arguments.contains(arg)) {
+						tokenizer.error("duplicated argument '" + arg.name + "'", arg.getToken());
+					}
 					arguments.add(arg);
 				} else {
 					tokenizer.error("argument is expected");

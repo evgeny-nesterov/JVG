@@ -1,7 +1,7 @@
 package ru.nest.jvg.conn;
 
 public interface Position {
-	public double getServerX();
+	double getServerX();
 
-	public double getServerY();
+	double getServerY();
 }

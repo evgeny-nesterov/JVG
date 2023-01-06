@@ -58,7 +58,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HiNode implements Codeable, TokenAccessible {
+public abstract class HiNode implements HiNodeIF {
 	public final static byte TYPE_EMPTY = -1;
 
 	public final static byte TYPE_ARGUMENT = 1;
@@ -171,7 +171,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	protected int type;
 
-	private HiClass valueClass = null;
+	private HiClass valueClass;
 
 	private boolean valid;
 
@@ -179,7 +179,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 
 	private boolean isConstant;
 
-	private HiNode resolvedValueVariable;
+	private HiNodeIF resolvedValueVariable;
 
 	@Override
 	public String toString() {
@@ -227,10 +227,6 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		this.token = token;
 	}
 
-	public boolean isValue() {
-		return false;
-	}
-
 	public boolean isConstant(CompileClassContext ctx) {
 		return false;
 	}
@@ -252,6 +248,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 		return HiClassPrimitive.VOID;
 	}
 
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return true;
 	}
@@ -484,7 +481,7 @@ public abstract class HiNode implements Codeable, TokenAccessible {
 				validationInfo.error(valueClass.fullName + " is expected", getToken());
 				return false;
 			}
-		} else if (!HiClass.autoCast(castedConditionValueType.type, valueClass, false)) {
+		} else if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false)) {
 			validationInfo.error(valueClass.fullName + " is expected", getToken());
 			return false;
 		}

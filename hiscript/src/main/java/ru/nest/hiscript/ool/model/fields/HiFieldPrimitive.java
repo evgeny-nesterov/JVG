@@ -7,26 +7,28 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
-	protected static Map<Type, Integer> types_hash_type = new HashMap<>();
+	protected static Map<Type, Integer> typesHashType = new HashMap<>();
 
 	protected static Map<HiClass, Integer> typesHashClass = new HashMap<>();
 
 	static {
-		types_hash_type.put(Type.getPrimitiveType("char"), CHAR);
-		types_hash_type.put(Type.getPrimitiveType("byte"), BYTE);
-		types_hash_type.put(Type.getPrimitiveType("short"), SHORT);
-		types_hash_type.put(Type.getPrimitiveType("int"), INT);
-		types_hash_type.put(Type.getPrimitiveType("float"), FLOAT);
-		types_hash_type.put(Type.getPrimitiveType("long"), LONG);
-		types_hash_type.put(Type.getPrimitiveType("double"), DOUBLE);
-		types_hash_type.put(Type.getPrimitiveType("boolean"), BOOLEAN);
-		types_hash_type.put(Type.getPrimitiveType("void"), VOID);
+		typesHashType.put(Type.charType, CHAR);
+		typesHashType.put(Type.byteType, BYTE);
+		typesHashType.put(Type.shortType, SHORT);
+		typesHashType.put(Type.intType, INT);
+		typesHashType.put(Type.floatType, FLOAT);
+		typesHashType.put(Type.longType, LONG);
+		typesHashType.put(Type.doubleType, DOUBLE);
+		typesHashType.put(Type.booleanType, BOOLEAN);
+		typesHashType.put(Type.voidType, VOID);
+		typesHashType.put(Type.varType, VAR);
 
 		typesHashClass.put(HiClassPrimitive.CHAR, CHAR);
 		typesHashClass.put(HiClassPrimitive.BYTE, BYTE);
@@ -37,6 +39,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		typesHashClass.put(HiClassPrimitive.DOUBLE, DOUBLE);
 		typesHashClass.put(HiClassPrimitive.BOOLEAN, BOOLEAN);
 		typesHashClass.put(HiClassPrimitive.VOID, VOID);
+		typesHashClass.put(HiClassVar.VAR, VAR);
 	}
 
 	public HiFieldPrimitive(Type type, String name) {
@@ -114,6 +117,9 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	public static boolean autoCast(HiClass src, HiClass dst) {
 		int srcType = getType(src);
 		int dstType = getType(dst);
+		if (srcType == VAR || dstType == VAR) {
+			return true;
+		}
 		switch (srcType) {
 			case CHAR:
 				switch (dstType) {

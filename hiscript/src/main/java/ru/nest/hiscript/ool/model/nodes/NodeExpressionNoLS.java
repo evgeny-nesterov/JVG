@@ -1,7 +1,9 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
@@ -16,18 +18,18 @@ public class NodeExpressionNoLS extends NodeExpression {
 	/**
 	 * <operations1> X1 <operations2> X2 ... <operations n> Xn <operations n+1>
 	 */
-	public NodeExpressionNoLS(HiNode[] operands, OperationsGroup[] operations) {
+	public NodeExpressionNoLS(HiNodeIF[] operands, OperationsGroup[] operations) {
 		super("expression", TYPE_EXPRESSION);
 		compile(operands, operations);
 	}
 
-	private NodeExpressionNoLS(HiNode[] operands, HiOperation[] operations) {
+	private NodeExpressionNoLS(HiNodeIF[] operands, HiOperation[] operations) {
 		super("expression", TYPE_EXPRESSION);
 		this.operands = operands;
 		this.operations = operations;
 	}
 
-	private void compile(HiNode[] operands, OperationsGroup[] o) {
+	private void compile(HiNodeIF[] operands, OperationsGroup[] o) {
 		this.operands = operands;
 		int operandsCount = operands.length;
 
@@ -119,7 +121,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		System.out.println();
 	}
 
-	private HiNode[] operands;
+	private HiNodeIF[] operands;
 
 	private HiOperation[] operations;
 
@@ -136,7 +138,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		for (int i = 0; i < operations.length; i++) {
 			if (operations[i] == null) {
 				// get value
-				HiNode valueNode = operands[valuePos];
+				HiNodeIF valueNode = operands[valuePos];
 				nodes[bufSize].init(valueNode);
 				bufSize++;
 				valuePos++;
@@ -194,7 +196,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 					// get value
 					try {
 						ctx.value = values[bufSize];
-						HiNode valueNode = operands[valuePos];
+						HiNodeIF valueNode = operands[valuePos];
 
 						// Check for a.new B()
 						boolean executeLater = false;
@@ -300,6 +302,13 @@ public class NodeExpressionNoLS extends NodeExpression {
 	public NodeCastedIdentifier checkCastedIdentifier() {
 		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeCastedIdentifier) {
 			return (NodeCastedIdentifier) operands[0];
+		}
+		return null;
+	}
+
+	public HiMethod checkMethod() {
+		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof HiMethod) {
+			return (HiMethod) operands[0];
 		}
 		return null;
 	}

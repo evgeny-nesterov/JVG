@@ -54,7 +54,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			visitContent(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
-			ctx.clazz.token = tokenizer.getBlockToken(startToken);
+			ctx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			return ctx.clazz;
 		}
 
@@ -110,7 +110,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					ctx.exit();
 					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), type, name, (NodeArgument[]) null, null, defaultValue);
 					method.isAnnotationArgument = true;
-					method.token = tokenizer.getBlockToken(startToken);
+					method.setToken(tokenizer.getBlockToken(startToken));
 					return method;
 				}
 			}

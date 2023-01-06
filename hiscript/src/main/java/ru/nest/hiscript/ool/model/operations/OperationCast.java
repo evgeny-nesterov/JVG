@@ -26,7 +26,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
-		if (c1.isPrimitive()) {
+		if (c1.isVar() || c2.isVar()) {
+		} else if (c1.isPrimitive()) {
 			int t1 = HiFieldPrimitive.getType(c1);
 			int t2 = HiFieldPrimitive.getType(c2);
 			if (t2 == BOOLEAN && t1 != BOOLEAN) {

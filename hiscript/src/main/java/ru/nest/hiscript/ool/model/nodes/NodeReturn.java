@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class NodeReturn extends HiNode {
 			if (level.type == RuntimeContext.METHOD) {
 				HiMethod method = (HiMethod) level.node;
 				method.resolve(ctx);
-				expectedType = method.returnClass;
+				expectedType = method.isLambda() ? HiClassVar.VAR : method.returnClass;
 				break;
 			}
 			level = level.parent;
@@ -37,7 +38,7 @@ public class NodeReturn extends HiNode {
 
 		if (value != null) {
 			NodeValueType returnValueType = value.getValueType(validationInfo, ctx);
-			if (returnValueType.valid && !HiClass.autoCast(returnValueType.type, expectedType, returnValueType.isValue)) {
+			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.type, expectedType, returnValueType.isValue)) {
 				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : getToken());
 				valid = false;
 			}

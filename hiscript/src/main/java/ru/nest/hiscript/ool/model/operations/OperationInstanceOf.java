@@ -29,13 +29,15 @@ public class OperationInstanceOf extends BinaryOperation {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
-		if (c1.isPrimitive()) {
-			validationInfo.error("inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
-		}
-		if (node2.node instanceof NodeCastedIdentifier) {
-			NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) node2.node;
-			if (castedIdentifier.declarationNode != null) {
-				ctx.initializedNodes.add(castedIdentifier.declarationNode);
+		if (!c1.isVar()) {
+			if (c1.isPrimitive()) {
+				validationInfo.error("inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
+			}
+			if (node2.node instanceof NodeCastedIdentifier) {
+				NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) node2.node;
+				if (castedIdentifier.declarationNode != null) {
+					ctx.initializedNodes.add(castedIdentifier.declarationNode);
+				}
 			}
 		}
 		return HiClassPrimitive.BOOLEAN;

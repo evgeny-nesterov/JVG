@@ -3,11 +3,11 @@ package ru.nest.toi;
 import java.awt.Font;
 
 public interface Text {
-	public String getText();
+	String getText();
 
-	public void setText(String text);
+	void setText(String text);
 
-	public Font getFont();
+	Font getFont();
 
-	public void setFont(Font font);
+	void setFont(Font font);
 }

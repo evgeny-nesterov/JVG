@@ -30,6 +30,12 @@ public class OperationXOR extends BinaryOperation {
 			return null;
 		}
 
+		if (c1.isVar()) {
+			return c2;
+		} else if (c2.isVar()) {
+			return c1;
+		}
+
 		int t1 = HiFieldPrimitive.getType(c1);
 		int t2 = HiFieldPrimitive.getType(c2);
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {

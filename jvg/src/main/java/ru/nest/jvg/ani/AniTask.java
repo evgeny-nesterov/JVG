@@ -1,13 +1,13 @@
 package ru.nest.jvg.ani;
 
 public interface AniTask {
-	public boolean isStart(long time);
+	boolean isStart(long time);
 
-	public boolean isDoAction(long time);
+	boolean isDoAction(long time);
 
-	public boolean isEnd(long time);
+	boolean isEnd(long time);
 
-	public boolean isFinish(long time);
+	boolean isFinish(long time);
 
-	public void doAction(long time, boolean isStart, boolean isEnd);
+	void doAction(long time, boolean isStart, boolean isEnd);
 }

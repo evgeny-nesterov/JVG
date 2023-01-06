@@ -1,17 +1,17 @@
 package ru.nest.toi;
 
 public interface Arrow {
-	public double getWidth();
+	double getWidth();
 
-	public void setWidth(double width);
+	void setWidth(double width);
 
-	public double getArrowWidth();
+	double getArrowWidth();
 
-	public void setArrowWidth(double arrowWidth);
+	void setArrowWidth(double arrowWidth);
 
-	public double getArrowLength();
+	double getArrowLength();
 
-	public void setArrowLength(double arrowLength);
+	void setArrowLength(double arrowLength);
 
-	public void setScale(double scaleWidth, double scaleArrowWidth, double scaleArrowLength);
+	void setScale(double scaleWidth, double scaleArrowWidth, double scaleArrowLength);
 }

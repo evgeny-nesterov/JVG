@@ -196,7 +196,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void enterMethod(HiMethod method, HiObject object) {
-		level = getStack(METHOD, level, method.clazz, null, method, object, null, method.token);
+		level = getStack(METHOD, level, method.clazz, null, method, object, null, method.getToken());
 	}
 
 	public void enterConstructor(HiConstructor constructor, HiObject object, Token token) {

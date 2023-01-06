@@ -24,7 +24,7 @@ public class OperationLogicalOR extends BinaryOperation {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.type;
 		HiClass c2 = node2.type;
-		if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
+		if ((c1 == HiClassPrimitive.BOOLEAN || c1.isVar()) && (c2 == HiClassPrimitive.BOOLEAN || c2.isVar())) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {
 			errorInvalidOperator(validationInfo, node1.token, c1, c2);

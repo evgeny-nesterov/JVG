@@ -21,6 +21,7 @@ public class NodeSuper extends HiNode {
 		return ctx.clazz.superClass;
 	}
 
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (ctx.clazz == null || ctx.clazz.superClass == null) {
 			validationInfo.error("cannot resolve super class", token);

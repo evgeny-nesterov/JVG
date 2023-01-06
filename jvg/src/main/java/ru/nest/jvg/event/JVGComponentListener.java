@@ -1,11 +1,11 @@
 package ru.nest.jvg.event;
 
 public interface JVGComponentListener extends JVGEventListener {
-	public void componentTransformed(JVGComponentEvent e);
+	void componentTransformed(JVGComponentEvent e);
 
-	public void componentGeometryChanged(JVGComponentEvent e);
+	void componentGeometryChanged(JVGComponentEvent e);
 
-	public void componentShown(JVGComponentEvent e);
+	void componentShown(JVGComponentEvent e);
 
-	public void componentHidden(JVGComponentEvent e);
+	void componentHidden(JVGComponentEvent e);
 }

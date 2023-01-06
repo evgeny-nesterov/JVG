@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -34,8 +35,8 @@ public class OperationEquate extends BinaryOperation {
 	@Override
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 		NodeValueType node1 = nodes[0];
-		HiNode node = node1.node != null ? node1.node : node1.resolvedValueVariable;
-		HiNode fieldNode = null;
+		HiNodeIF node = node1.node != null ? node1.node : node1.resolvedValueVariable;
+		HiNodeIF fieldNode = null;
 		Modifiers modifiers = null;
 		if (node instanceof NodeIdentifier) {
 			NodeIdentifier identifierNode = (NodeIdentifier) node;
@@ -100,7 +101,7 @@ public class OperationEquate extends BinaryOperation {
 			// System.out.println(v1.variable.name + " (" + v1.variable.getClazz(ctx)+ ") = " + v1.variable.get() + ", " + v1.get() + ", " +
 			// v1.type);
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
-			if (!HiClass.autoCast(v2.type, v1.type, false)) {
+			if (!HiClass.autoCast(ctx, v2.type, v1.type, false)) {
 				ctx.throwRuntimeException("incompatible types; found " + v2.type + ", required " + v1.type);
 				return;
 			}

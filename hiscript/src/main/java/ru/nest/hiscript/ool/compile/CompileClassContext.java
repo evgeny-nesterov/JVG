@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
@@ -72,7 +73,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public CompileClassContext parent;
 
-	public Set<HiNode> initializedNodes = new HashSet<>();
+	public Set<HiNodeIF> initializedNodes = new HashSet<>();
 
 	public NodeValueType nodeValueType = new NodeValueType();
 
@@ -258,7 +259,7 @@ public class CompileClassContext implements ClassResolver {
 	public boolean addLocalClass(HiClass clazz) {
 		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
-			compiler.getValidationInfo().error("Duplicated nested type " + clazz.fullName, clazz.token);
+			compiler.getValidationInfo().error("Duplicated nested type " + clazz.fullName, clazz.getToken());
 			valid = false;
 		}
 		level.addClass(clazz);
@@ -457,6 +458,10 @@ public class CompileClassContext implements ClassResolver {
 		public boolean isEnclosingObject;
 
 		public TokenAccessible node;
+
+		public HiClass variableClass;
+
+		public HiNodeIF variableNode;
 
 		String label;
 

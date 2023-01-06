@@ -12,15 +12,15 @@ import ru.nest.jvg.resource.JVGResources;
 import ru.nest.jvg.resource.ScriptResource;
 
 public interface JVGParserInterface {
-	public JVGResources getResources();
+	JVGResources getResources();
 
-	public Dimension getDocumentSize();
+	Dimension getDocumentSize();
 
-	public Color getDocumentColor();
+	Color getDocumentColor();
 
-	public Map<String, ScriptResource> getDocumentScripts();
+	Map<String, ScriptResource> getDocumentScripts();
 
-	public void init(JVGPane pane);
+	void init(JVGPane pane);
 
-	public void parse(Element rootElement, JVGContainer parent) throws JVGParseException;
+	void parse(Element rootElement, JVGContainer parent) throws JVGParseException;
 }
