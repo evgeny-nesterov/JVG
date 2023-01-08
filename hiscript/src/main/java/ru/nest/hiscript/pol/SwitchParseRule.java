@@ -91,14 +91,11 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 					defaultFound = true;
 					continue;
 				}
-
 				break;
 			}
 			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
-
 			return true;
 		}
-
 		return false;
 	}
 }

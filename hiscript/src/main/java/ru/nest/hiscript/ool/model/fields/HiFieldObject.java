@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -27,13 +26,9 @@ public class HiFieldObject extends HiField<HiObject> {
 		super(clazz, name);
 	}
 
-	public HiFieldObject(HiClass clazz, String name, HiObject object) {
-		super(clazz, name);
-		this.object = object;
-		this.initialized = true;
-	}
-
 	private HiObject object;
+
+	private HiClass lambdaClass; // has to be different from object class
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
@@ -44,17 +39,19 @@ public class HiFieldObject extends HiField<HiObject> {
 	public void get(RuntimeContext ctx, Value value) {
 		value.valueType = Value.VALUE;
 		value.type = getClass(ctx);
+		value.lambdaClass = lambdaClass;
 		value.object = object;
 	}
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		HiClass valueClass = value.type;
-		if (valueClass.isNull()) {
+		if (value.type.isNull()) {
 			object = null;
+			lambdaClass = null;
 		} else {
 			object = value.object;
+			lambdaClass = value.type.isLambda() ? value.type : null;
 		}
 		initialized = true;
 	}
@@ -70,9 +67,10 @@ public class HiFieldObject extends HiField<HiObject> {
 	}
 
 	public void set(HiObject object) {
-		declared = true;
+		this.declared = true;
 		this.object = object;
-		initialized = true;
+		this.lambdaClass = null;
+		this.initialized = true;
 	}
 
 	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {

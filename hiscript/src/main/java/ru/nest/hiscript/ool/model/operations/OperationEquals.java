@@ -36,7 +36,9 @@ public class OperationEquals extends BinaryOperation {
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			return HiClassPrimitive.BOOLEAN;
 		}
-		errorInvalidOperator(validationInfo, node1.token, c1, c2);
+		if (node1.valid && node1.valid) {
+			errorInvalidOperator(validationInfo, node1.token, c1, c2);
+		}
 		return null;
 	}
 

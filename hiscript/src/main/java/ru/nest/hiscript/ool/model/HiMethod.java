@@ -182,21 +182,7 @@ public class HiMethod implements HiNodeIF {
 				}
 				isResolved = true;
 			}
-
-			String lambdaClassName = LAMBDA_METHOD_NAME;
-			if (ctx.level.enclosingClass != null) {
-				lambdaClassName += ctx.level.enclosingClass.fullName + "/";
-			}
-			lambdaClassName += lambdasCount.getAndIncrement();
-
-			Type[] interfaces = variableClass != null ? new Type[] {Type.getType(variableClass)} : null;
-			clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
-			HiConstructor defaultConstructor = new HiConstructor(clazz, null, Modifiers.PUBLIC(), (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
-			clazz.modifiers = Modifiers.PUBLIC();
-			clazz.methods = new HiMethod[] {this};
-			clazz.constructors = new HiConstructor[] {defaultConstructor};
-			clazz.setToken(token);
-			clazz.init(ctx);
+			clazz = createLambdaClass(ctx, variableClass);
 		}
 
 		if (throwsTypes != null) {
@@ -249,6 +235,24 @@ public class HiMethod implements HiNodeIF {
 		return valid;
 	}
 
+	public HiClass createLambdaClass(CompileClassContext ctx, HiClass interfaceClass) {
+		String lambdaClassName = LAMBDA_METHOD_NAME;
+		if (ctx.level.enclosingClass != null) {
+			lambdaClassName += ctx.level.enclosingClass.fullName + "/";
+		}
+		lambdaClassName += lambdasCount.getAndIncrement();
+
+		Type[] interfaces = interfaceClass != null ? new Type[] {Type.getType(interfaceClass)} : null;
+		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+		HiConstructor defaultConstructor = new HiConstructor(clazz, null, Modifiers.PUBLIC(), (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
+		clazz.modifiers = Modifiers.PUBLIC();
+		clazz.functionalMethod = this;
+		clazz.constructors = new HiConstructor[] {defaultConstructor};
+		clazz.setToken(token);
+		clazz.init(ctx);
+		return clazz;
+	}
+
 	public boolean isLambda() {
 		return name.startsWith(LAMBDA_METHOD_NAME);
 	}
@@ -291,9 +295,13 @@ public class HiMethod implements HiNodeIF {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		execute(ctx, clazz, null);
+	}
+
+	public static void execute(RuntimeContext ctx, HiClass clazz, HiObject object) {
 		ctx.addClass(clazz);
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
-		NodeConstructor.invokeConstructor(ctx, clazz, null, null, outboundObject);
+		NodeConstructor.invokeConstructor(ctx, clazz, null, object, outboundObject);
 	}
 
 	public boolean hasVarargs() {
@@ -328,6 +336,7 @@ public class HiMethod implements HiNodeIF {
 			if (modifiers.isNative()) {
 				ctx.value.valueType = Value.VALUE;
 				ctx.value.type = type;
+				ctx.value.lambdaClass = null;
 				if (type.isArray()) {
 					ctx.value.array = object;
 				} else {

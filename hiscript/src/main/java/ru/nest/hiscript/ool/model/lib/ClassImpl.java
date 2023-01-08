@@ -25,6 +25,7 @@ public class ClassImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = getClassClass(ctx);
+		ctx.value.lambdaClass = null;
 		if (clazz != null) {
 			ctx.value.object = getClassObject(ctx, clazz);
 		} else {
@@ -81,6 +82,7 @@ public class ClassImpl extends ImplUtil {
 		HiClassArray arrayClazz = (HiClassArray) clazz;
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = getClassClass(ctx);
+		ctx.value.lambdaClass = null;
 		ctx.value.object = getClassObject(ctx, arrayClazz.cellClass);
 	}
 }

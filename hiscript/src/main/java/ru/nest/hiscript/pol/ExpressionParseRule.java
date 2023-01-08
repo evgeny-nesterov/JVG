@@ -106,10 +106,8 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 					errorOccurred(tokenizer, handler, "expression is expected");
 				}
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -172,7 +170,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 			return node;
 		}
-
 		return null;
 	}
 
@@ -227,7 +224,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 			return true;
 		}
-
 		return false;
 	}
 
@@ -242,7 +238,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				return symbolToken.getType();
 			}
 		}
-
 		return -1;
 	}
 
@@ -261,7 +256,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return -1;
 	}
 }

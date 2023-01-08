@@ -48,6 +48,7 @@ public class ObjectImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.OBJECT_CLASS;
+		ctx.value.lambdaClass = null;
 		ctx.value.object = clone;
 	}
 
@@ -119,6 +120,7 @@ public class ObjectImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = clazzObj.clazz;
+		ctx.value.lambdaClass = null;
 		ctx.value.object = clazzObj;
 	}
 }

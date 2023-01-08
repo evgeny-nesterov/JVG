@@ -16,6 +16,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
+import ru.nest.hiscript.ool.model.nodes.NodeMethodReference;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeSuper;
@@ -104,6 +105,9 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 					tokenizer.error("expression expected");
 				}
 				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
+			} else if (visitSymbol(tokenizer, Symbols.DOUBLE_COLON) != -1) {
+				String methodName = expectWord(NOT_SERVICE, tokenizer);
+				return new NodeMethodReference(expressionNode, methodName);
 			}
 			return expressionNode;
 		}
@@ -266,7 +270,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return found;
 	}
 
-	protected boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNodeIF> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+	protected static boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNodeIF> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
 
 		// visit number

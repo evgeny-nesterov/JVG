@@ -24,6 +24,7 @@ public class ThreadImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = threadClass;
+		ctx.value.lambdaClass = null;
 		ctx.value.object = object;
 		ctx.currentThread = object;
 	}
@@ -170,6 +171,7 @@ public class ThreadImpl extends ImplUtil {
 	public static void Thread_Thread_currentThread(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = HiClass.forName(ctx, "Thread");
+		ctx.value.lambdaClass = null;
 		ctx.value.object = ctx.currentThread;
 	}
 

@@ -49,7 +49,6 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				}
 
 				if (isField) {
-					tokenizer.commit();
 					Modifiers modifiers = annotatedModifiers.getModifiers();
 					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), FINAL);
 
@@ -60,6 +59,10 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 						startToken = startToken(tokenizer);
 						varName = expectWord(Words.NOT_SERVICE, tokenizer);
+						if (varName == null) {
+							tokenizer.rollback();
+							return null;
+						}
 						addDimension = visitDimension(tokenizer);
 						type = Type.getArrayType(baseType, addDimension);
 
@@ -70,6 +73,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 						declarations.add(type, varName, initializer, modifiers, annotatedModifiers.getAnnotations(), tokenizer.getBlockToken(startToken));
 					}
+					tokenizer.commit();
 					return declarations;
 				}
 			}

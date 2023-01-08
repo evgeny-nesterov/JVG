@@ -33,7 +33,13 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				break;
 
 			case ':':
-				type = Symbols.COLON;
+				if (tokenizer.lookForward() == ':') {
+					tokenizer.next();
+					type = Symbols.DOUBLE_COLON;
+					length = 2;
+				} else {
+					type = Symbols.COLON;
+				}
 				break;
 
 			case ',':

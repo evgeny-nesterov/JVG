@@ -41,6 +41,7 @@ public class NodeSuper extends HiNode {
 		HiObject superObject = currentObject.getSuperObject();
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = superObject.clazz;
+		ctx.value.lambdaClass = null;
 		ctx.value.object = superObject;
 	}
 

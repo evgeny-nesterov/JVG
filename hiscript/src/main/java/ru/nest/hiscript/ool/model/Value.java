@@ -22,7 +22,7 @@ public class Value implements PrimitiveTypes {
 
 	public final static int CLASS = 3;
 
-	public final static int METHOD = 4;
+	public final static int METHOD_INVOCATION = 4;
 
 	public final static int ARRAY_INDEX = 5;
 
@@ -41,6 +41,8 @@ public class Value implements PrimitiveTypes {
 	public int valueType;
 
 	public HiClass type;
+
+	public HiClass lambdaClass;
 
 	// Переменные со всеми возможными типами данных
 	public byte byteNumber;
@@ -90,6 +92,7 @@ public class Value implements PrimitiveTypes {
 	public void clear() {
 		node = null;
 		type = null;
+		lambdaClass = null;
 		object = null;
 		array = null;
 		parentArray = null;
@@ -149,6 +152,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public boolean set(Object value) {
+		lambdaClass = null;
 		if (value instanceof HiObject || value == null) {
 			valueType = VALUE;
 			if (value != null) {
@@ -405,6 +409,7 @@ public class Value implements PrimitiveTypes {
 
 		dst.valueType = valueType;
 		dst.type = type;
+		dst.lambdaClass = lambdaClass;
 		dst.name = name;
 		dst.nameDimensions = nameDimensions;
 
@@ -548,7 +553,7 @@ public class Value implements PrimitiveTypes {
 				return "VARIABLE: name=" + name + ", variable=" + variable;
 			case CLASS:
 				return "CLASS: type=" + type + ", name=" + name;
-			case METHOD:
+			case METHOD_INVOCATION:
 				return "METHOD: name=" + name + ", arguments=" + arguments;
 			case ARRAY_INDEX:
 				return "ARRAY INDEX: type=" + type + ", parent array=" + parentArray + ", ara index=" + arrayIndex;

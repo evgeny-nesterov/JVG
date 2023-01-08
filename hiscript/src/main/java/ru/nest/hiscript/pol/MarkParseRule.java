@@ -31,7 +31,6 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 				if (body == null) {
 					throw new HiScriptParseException("Statement is expected", tokenizer.currentToken());
 				}
-
 				return new MarkNode(markName, body);
 			}
 		}
@@ -52,12 +51,11 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 				if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
 					errorOccurred(tokenizer, handler, "Statement is expected");
 				}
-
 				return true;
 			}
 		}
-		tokenizer.rollback();
 
+		tokenizer.rollback();
 		return false;
 	}
 }

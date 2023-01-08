@@ -390,6 +390,8 @@ public class HiClass implements HiNodeIF {
 
 	public HiMethod[] methods;
 
+	public HiMethod functionalMethod;
+
 	public HiClass[] innerClasses;
 
 	private Boolean valid;
@@ -553,6 +555,12 @@ public class HiClass implements HiNodeIF {
 		Map<MethodSignature, HiMethod> abstractMethods = new HashMap<>();
 		getAbstractMethods(classResolver, abstractMethods, new HashMap<>(), new HashSet<>());
 		return abstractMethods.size();
+	}
+
+	public List<HiMethod> getAbstractMethods(ClassResolver classResolver) {
+		Map<MethodSignature, HiMethod> abstractMethods = new HashMap<>();
+		getAbstractMethods(classResolver, abstractMethods, new HashMap<>(), new HashSet<>());
+		return new ArrayList<>(abstractMethods.values());
 	}
 
 	private void getAbstractMethods(ClassResolver classResolver, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
@@ -847,57 +855,20 @@ public class HiClass implements HiNodeIF {
 		String name = signature.name;
 		HiClass[] argTypes = signature.argClasses;
 
+		if (functionalMethod != null) {
+			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes)) {
+				return functionalMethod;
+			}
+		}
+
 		if (methods != null && methods.length > 0) {
-			for (HiMethod m : methods)
-				FOR:{
-					if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
-						if (m.hasVarargs()) {
-							int mainArgCount = m.argCount - 1;
-							if (mainArgCount > argTypes.length) {
-								continue;
-							}
-
-							m.resolve(classResolver);
-
-							for (int i = 0; i < mainArgCount; i++) {
-								if (!HiClass.autoCast(classResolver, argTypes[i], m.argClasses[i], false)) {
-									break FOR;
-								}
-							}
-							HiClass varargsType = m.argClasses[mainArgCount].getArrayType();
-							NodeArgument vararg = m.arguments[mainArgCount];
-							for (int i = mainArgCount; i < argTypes.length; i++) {
-								if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
-									break FOR;
-								}
-							}
-
-							for (int i = 0; i < mainArgCount; i++) {
-								argTypes[i].applyLambdaImplementedMethod(classResolver, m.argClasses[i], m.arguments[i]);
-							}
-							for (int i = mainArgCount; i < argTypes.length; i++) {
-								argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
-							}
-						} else {
-							int argCount = m.argCount;
-							if (argCount != argTypes.length) {
-								continue;
-							}
-
-							m.resolve(classResolver);
-
-							for (int i = 0; i < argCount; i++) {
-								if (!HiClass.autoCast(classResolver, argTypes[i], m.argClasses[i], false)) {
-									break FOR;
-								}
-							}
-							for (int i = 0; i < argCount; i++) {
-								argTypes[i].applyLambdaImplementedMethod(classResolver, m.argClasses[i], m.arguments[i]);
-							}
-						}
+			for (HiMethod m : methods) {
+				if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
+					if (isMatchMethodArguments(classResolver, m, argTypes)) {
 						return m;
 					}
 				}
+			}
 		}
 
 		// super methods
@@ -946,6 +917,98 @@ public class HiClass implements HiNodeIF {
 		return null;
 	}
 
+	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
+		if (methods != null && methods.length > 0) {
+			for (HiMethod m : methods) {
+				if (m.modifiers.isAbstract() && isMatchMethodArguments(classResolver, m, argTypes)) {
+					return m;
+				}
+			}
+		}
+		if (interfaces != null) {
+			for (HiClass i : interfaces) {
+				HiMethod m = i.getInterfaceAbstractMethod(classResolver, argTypes);
+				if (m != null) {
+					return m;
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
+		if (method.hasVarargs()) {
+			int mainArgCount = method.argCount - 1;
+			if (mainArgCount > argTypes.length) {
+				return false;
+			}
+
+			method.resolve(classResolver);
+
+			for (int i = 0; i < mainArgCount; i++) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+					return false;
+				}
+			}
+			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
+			NodeArgument vararg = method.arguments[mainArgCount];
+			for (int i = mainArgCount; i < argTypes.length; i++) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
+					return false;
+				}
+			}
+
+			for (int i = 0; i < mainArgCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+			}
+			for (int i = mainArgCount; i < argTypes.length; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+			}
+		} else {
+			int argCount = method.argCount;
+			if (argCount != argTypes.length) {
+				return false;
+			}
+
+			method.resolve(classResolver);
+
+			for (int i = 0; i < argCount; i++) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+					return false;
+				}
+			}
+			for (int i = 0; i < argCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+			}
+		}
+		return true;
+	}
+
+	public List<HiMethod> searchMethodsByName(ClassResolver classResolver, String name) {
+		Map<MethodSignature, HiMethod> foundMethods = new HashMap<>(1);
+		searchMethodsByName(classResolver, name, foundMethods);
+		return new ArrayList<>(foundMethods.values());
+	}
+
+	private void searchMethodsByName(ClassResolver classResolver, String name, Map<MethodSignature, HiMethod> foundMethods) {
+		if (methods != null && methods.length > 0) {
+			for (HiMethod m : methods) {
+				if (m.name.equals(name)) {
+					m.resolve(classResolver);
+					foundMethods.putIfAbsent(m.signature, m);
+				}
+			}
+		}
+		if (superClass != null) {
+			superClass.searchMethodsByName(classResolver, name, foundMethods);
+		}
+		if (interfaces != null) {
+			for (HiClass i : interfaces) {
+				i.searchMethodsByName(classResolver, name, foundMethods);
+			}
+		}
+	}
+
 	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(name, argTypes);
@@ -966,6 +1029,23 @@ public class HiClass implements HiNodeIF {
 	private HiMethod _getMethod(ClassResolver classResolver, MethodSignature signature) {
 		String name = signature.name;
 		HiClass[] argTypes = signature.argClasses;
+
+		if (functionalMethod != null) {
+			int argCount = functionalMethod.argCount;
+			if (argCount == argTypes.length) {
+				functionalMethod.resolve(classResolver);
+				boolean match = true;
+				for (int i = 0; i < argCount; i++) {
+					if (argTypes[i] != functionalMethod.argClasses[i]) {
+						match = false;
+						break;
+					}
+				}
+				if (match) {
+					return functionalMethod;
+				}
+			}
+		}
 
 		// this methods
 		if (methods != null) {
@@ -1592,8 +1672,13 @@ public class HiClass implements HiNodeIF {
 	}
 
 	public HiMethod getLambdaMethod() {
-		if (isLambda() && methods != null && methods.length > 0) {
-			return methods[0];
+		if (isLambda()) {
+			if (functionalMethod != null) {
+				return functionalMethod;
+			} else if (methods != null && methods.length > 0) {
+				// TODO remove
+				return methods[0];
+			}
 		}
 		return null;
 	}
@@ -1603,8 +1688,10 @@ public class HiClass implements HiNodeIF {
 			int methodsCount = dst.getAbstractMethodsCount(classResolver);
 			if (methodsCount == 1) {
 				HiMethod lambdaMethod = getLambdaMethod();
-				lambdaMethod.resolve(classResolver);
-				return dst.searchMethod(classResolver, lambdaMethod.signature);
+				if (lambdaMethod != null) {
+					lambdaMethod.resolve(classResolver);
+					return dst.searchMethod(classResolver, lambdaMethod.signature);
+				}
 			}
 		}
 		return null;

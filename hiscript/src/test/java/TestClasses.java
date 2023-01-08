@@ -220,7 +220,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
 		assertFailCompile("class A{A(){this();}} new A();");
 		assertFailSerialize("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);"); // recursive constructor invocation
-		assertFailCompile("class A{A(this(1);){} A(byte x){}} new A();");
+		assertFailCompile("class A{A(){this(1);} A(byte x){}} new A();");
 
 		// super
 		assertSuccessSerialize("class A{A(int x){this.x = x;} int x;} class B extends A{B(int y){super(y);}} A a = new B(1); assert a.x == 1;");

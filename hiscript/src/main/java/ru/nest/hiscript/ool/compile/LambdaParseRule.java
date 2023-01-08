@@ -48,7 +48,7 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 					argNode.setToken(argToken);
 					arguments.add(argNode);
 					if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						argName = expectWord(NOT_SERVICE, tokenizer);
+						argName = visitWord(NOT_SERVICE, tokenizer);
 					} else {
 						argName = null;
 					}

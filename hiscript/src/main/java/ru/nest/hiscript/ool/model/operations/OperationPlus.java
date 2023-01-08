@@ -296,6 +296,7 @@ public class OperationPlus extends BinaryOperation {
 			NodeString.createString(ctx, chars);
 
 			v1.type = ctx.value.type;
+			v1.lambdaClass = null;
 			v1.object = ctx.value.object;
 			return;
 		}

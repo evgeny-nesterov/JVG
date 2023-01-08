@@ -290,6 +290,7 @@ public class HiConstructor implements HiNodeIF {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = clazz;
+		ctx.value.lambdaClass = null;
 		ctx.value.object = object;
 		return object;
 	}

@@ -155,6 +155,8 @@ public abstract class HiNode implements HiNodeIF {
 
 	public final static byte TYPE_EXPRESSION_SWITCH = 47;
 
+	public final static byte TYPE_METHOD_REFERENCE = 48;
+
 	public HiNode(String name, int type) {
 		this(name, type, null);
 	}

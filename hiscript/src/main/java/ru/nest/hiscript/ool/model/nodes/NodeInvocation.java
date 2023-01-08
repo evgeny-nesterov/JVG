@@ -108,7 +108,7 @@ public class NodeInvocation extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		if (!innerInvocation) {
-			ctx.value.valueType = Value.METHOD;
+			ctx.value.valueType = Value.METHOD_INVOCATION;
 			ctx.value.name = name;
 			ctx.value.arguments = arguments;
 		} else {
@@ -117,6 +117,7 @@ public class NodeInvocation extends HiNode {
 				// v1 - contains value as object
 				ctx.value.object = ctx.level.object;
 				ctx.value.type = ctx.level.clazz;
+				ctx.value.lambdaClass = null;
 				if (ctx.value.object != null) {
 					ctx.value.valueType = Value.VALUE;
 				} else {
@@ -126,7 +127,7 @@ public class NodeInvocation extends HiNode {
 
 				// v2 - contains method attributes (name, arguments)
 				Value v = vs[0];
-				v.valueType = Value.METHOD;
+				v.valueType = Value.METHOD_INVOCATION;
 				v.name = name;
 				v.arguments = arguments;
 
@@ -144,12 +145,13 @@ public class NodeInvocation extends HiNode {
 		try {
 			// v1 - contains value as object
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.object = object;
 			ctx.value.type = object.clazz;
+			ctx.value.lambdaClass = null;
+			ctx.value.object = object;
 
 			// v2 - contains method attributes (name, arguments)
 			Value v = vs[0];
-			v.valueType = Value.METHOD;
+			v.valueType = Value.METHOD_INVOCATION;
 			v.name = methodName;
 			v.arguments = arguments;
 

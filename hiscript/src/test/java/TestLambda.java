@@ -51,4 +51,35 @@ public class TestLambda extends HiTest {
 		assertFailCompile("interface A{int get(int x);} A[][] a = {{x->x==0}};");
 		assertFailCompile("interface A{int get(int x, int y);} A[][][] a = {{{x->0}}};");
 	}
+
+	@Test
+	public void testMethodReferenceDeclaration() {
+		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;");
+		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;");
+		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;");
+		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;");
+
+		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
+		assertSuccessSerialize("interface A{void get(); default void get2(){} static void get3(){}} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
+		assertSuccessSerialize("interface A{void get();} class C{static void get(){}}; A a = C::get; a.get();");
+		assertFailCompile("interface A{void get(); void get2();} class C{void m(){}}; A a = new C()::m;");
+		assertFailCompile("abstract class A{abstract void get();} class C{void get(){}}; A a = new C()::get;");
+		assertSuccessSerialize("interface A{void get();} class C{void get(){} void m(){}}; A a = new C()::m;");
+		assertSuccessSerialize("interface A{void get();} class C{static void get(){} static void m(){}}; A a = C::m;");
+
+		assertSuccessSerialize("interface A1{void get();} interface A2{void get(int x);} class C{void get(){} void get(int x){}}; C c = new C(); A1 a1 = c::get; a1.get(); A2 a2 = c::get; a2.get(1);");
+		assertSuccessSerialize("interface A1{void get();} interface A2{void get(int x);} class C{static void get(){} static void get(int x){}}; A1 a1 = C::get; a1.get(); A2 a2 = C::get; a2.get(1);");
+
+		assertSuccessSerialize("interface A{int get(int x);} class C{int c = 1; int get(int x){return c + x + 1;}}; A a = new C()::get; assert a.get(1) == 3;");
+		assertSuccessSerialize("interface A{int get(int x);} class C{static int c = 1; static int get(int x){return c + x + 1;}}; A a = C::get; assert a.get(1) == 3;");
+
+		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{int get(){return 1;} int get(int x){return x;}}; C c = new C(); A1 a1 = c::get; assert a1.get() == 1; A2 a2 = c::get; assert a2.get(2) == 2;");
+		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{static int get(){return 1;} static int get(int x){return x;}}; A1 a1 = C::get; assert a1.get() == 1; A2 a2 = C::get; assert a2.get(2) == 2;");
+
+		// extends
+		assertSuccessSerialize("interface A{int get();} interface B extends A{} abstract class C{int get(){return 1;}}; class D extends C{}; D d = new D(); B b = d::get; assert b.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} interface B extends A{} abstract class C{abstract int get();}; class D extends C{int get(){return 1;}}; D d = new D(); B b = d::get; assert b.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} interface B extends A{} class C implements A{int get(){return 1;}}; C c = new C(); B b = c::get; assert b.get() == 1;");
+		assertSuccessSerialize("interface A{int get(); int get2();} interface B extends A{default int get2(){return 2;}} class C{int get1(){return 1;}}; B b = new C()::get1; assert b.get() == 1;");
+	}
 }

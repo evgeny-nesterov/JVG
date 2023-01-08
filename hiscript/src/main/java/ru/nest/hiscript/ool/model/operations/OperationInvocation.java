@@ -61,7 +61,7 @@ public class OperationInvocation extends BinaryOperation {
 				invokeName(ctx, v1, v2);
 				break;
 
-			case Value.METHOD:
+			case Value.METHOD_INVOCATION:
 				invokeMethod(ctx, v1, v2);
 				break;
 
@@ -238,7 +238,13 @@ public class OperationInvocation extends BinaryOperation {
 				if (obj != null) {
 					// inf cycle
 					// obj = obj.getMainObject();
-					clazz = obj.clazz;
+					if (v1.lambdaClass != null) {
+						// In this case object is used as container of original method on which functional method is mapped.
+						// Methods names (object and functional) may be different.
+						clazz = v1.lambdaClass;
+					} else {
+						clazz = obj.clazz;
+					}
 				}
 				object = obj;
 			}

@@ -149,6 +149,9 @@ public class SymbolToken extends Token implements Symbols {
 			case COLON:
 				return ":";
 
+			case DOUBLE_COLON:
+				return "::";
+
 			case SQUARE_BRACES_LEFT:
 				return "[";
 

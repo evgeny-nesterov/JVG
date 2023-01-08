@@ -23,8 +23,14 @@ public class NodeIdentifier extends HiNode {
 
 	public int dimension;
 
+	public Object resolvedIdentifier;
+
 	public String getName() {
 		return name;
+	}
+
+	public boolean isClass() {
+		return resolvedIdentifier instanceof HiClass;
 	}
 
 	@Override
@@ -67,7 +73,7 @@ public class NodeIdentifier extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
 		boolean local = false;
-		Object resolvedIdentifier = ctx.resolveIdentifier(name, true, true, true);
+		resolvedIdentifier = ctx.resolveIdentifier(name, true, true, true);
 		if (resolvedIdentifier != null) {
 			local = true;
 		} else {
