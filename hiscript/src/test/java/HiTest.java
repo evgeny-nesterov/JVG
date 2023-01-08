@@ -30,8 +30,7 @@ public abstract class HiTest {
 		try {
 			execute(script);
 		} catch (Exception e) {
-			e.printStackTrace();
-			onFail(script, "fail");
+			onFail(script, e.toString());
 		}
 	}
 
@@ -92,12 +91,12 @@ public abstract class HiTest {
 	}
 
 	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		HiScript result = HiScript.create().compile(script).execute().printError();
+		HiScript result = HiScript.create().compile(script).execute().throwExceptionIf();
 		result.close();
 		return result;
 	}
 
-	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, IOException, HiScriptValidationException {
+	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		HiScript result = HiScript.create().compile(script).serialize().execute().throwExceptionIf();
 		result.close();
 		return result;

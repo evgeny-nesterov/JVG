@@ -32,11 +32,10 @@ public class NumberTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 			tokenizer.next();
 			char c = tokenizer.getCurrent();
-			long value = c;
+			long value = 0;
 			boolean tooLarge = false;
 			if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
-				tokenizer.next();
-				while (tokenizer.hasNext()) {
+				do {
 					c = tokenizer.getCurrent();
 					long newValue;
 					if (c >= '0' && c <= '9') {
@@ -52,8 +51,8 @@ public class NumberTokenVisitor implements TokenVisitor {
 						tooLarge = true;
 					}
 					value = newValue;
-					tokenizer.nextToken();
-				}
+					tokenizer.next();
+				} while (tokenizer.hasNext());
 			} else {
 				tokenizer.error("Invalid number value", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
@@ -61,7 +60,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				value = -value;
 			}
 
-			if (tokenizer.lookForward() == 'l' || tokenizer.lookForward() == 'L') {
+			if (tokenizer.getCurrent() == 'l' || tokenizer.getCurrent() == 'L') {
 				if (tooLarge) {
 					tokenizer.error("Long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				}

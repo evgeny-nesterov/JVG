@@ -116,10 +116,20 @@ public class TestNumbers extends HiTest {
 
 	@Test
 	public void testHex() {
-		assertSuccess("int a = 0x01; assert a == 1;");
-		assertSuccess("int a = 0x0f; assert a == 15;");
-		assertSuccess("int a = 0x0F; assert a == 15;");
-		assertSuccess("long a = 0xffL; assert a == 255;");
+		assertSuccessSerialize("int a = 0x1; assert a == 1;");
+		assertSuccessSerialize("int a = 0x01; assert a == 1;");
+		assertSuccessSerialize("int a = 0x00000000000000000000000000001; assert a == 1;");
+		assertSuccessSerialize("int a = 0x0f; assert a == 15;");
+		assertSuccessSerialize("int a = 0x0F; assert a == 15;");
+		assertSuccessSerialize("long a = 0xffL; assert a == 255;");
+		assertSuccessSerialize("long a = 0x01L; assert a == 1L;");
+		assertFailCompile("long a = 0x0x;");
+
+		assertSuccessSerialize("int a = 0x9 + 0x6; assert a == 0x0000f;");
+		assertSuccessSerialize("int a = 0x10<<1; assert a == 0x20;");
+		assertSuccessSerialize("int a = 0x10<<4; assert a == 0x100;");
+		assertSuccessSerialize("int a = 0x10<<4>>4; assert a == 16;");
+		assertSuccessSerialize("int a = 0x10<<4<<4; assert a == 0x1000;");
 	}
 
 	@Test
