@@ -15,6 +15,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		execute("interface I{int get();} class C{int m(I i){return i.get();}} class D{void d(){}} new C().m(new D()::d);"); // return type not match
 	}
 }

@@ -68,8 +68,12 @@ public class NodeMethodReference extends NodeExpression {
 					}
 					if (matchedMethod != null) {
 						lambdaClass = matchedMethod.createLambdaClass(ctx, functionalInterface);
+						if (!HiClass.autoCast(ctx, matchedMethod.returnClass, functionalMethod.returnClass, false)) {
+							validationInfo.error("incompatible return type '" + matchedMethod.returnClass.fullName + "' of method " + matchedMethod.clazz.fullName + "." + matchedMethod + "; expected return type '" + functionalMethod.returnClass.fullName + "'", getToken());
+							valid = false;
+						}
 					} else {
-						validationInfo.error("method '" + name + "' not match for functional interface '" + functionalInterface.fullName + "'", getToken());
+						validationInfo.error("method '" + name + "' of class '" + methods.get(0).clazz + "' doesn't match to the method '" + functionalMethod + "' of functional interface '" + functionalInterface.fullName + "'", getToken());
 						valid = false;
 					}
 				}

@@ -30,7 +30,7 @@ public class TestLambda extends HiTest {
 		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{return 1;});");
 		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);");
 		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} new C().m(()->{});");
-		assertFailCompile("interface I{String get(int x);} class C{int m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});");
+		assertFailCompile("interface I{String get(int x);} class C{String m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});");
 	}
 
 	@Test
@@ -40,8 +40,8 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String s; C(I i){s=i.get(\"l=\",1,2,3);}} assert new C((s,x)->s+x.length).s.equals(\"l=3\");");
 		assertFailCompile("interface I{void get();} class C{C(I i){i.get();}} new C(()->{return 1;});");
 		assertFailCompile("interface I{void get(int x);} class C{C(I i){i.get(1);}} new C(x->x);");
-		assertFailCompile("interface I{int get();} class C{C(I i){return i.get();}} new C(()->{});");
-		assertFailCompile("interface I{String get(int x);} class C{C(I i){return i.get(1);}} new C(x->{int y = x + 1;});");
+		assertFailCompile("interface I{int get();} class C{C(I i){i.get();}} new C(()->{});");
+		assertFailCompile("interface I{String get(int x);} class C{C(I i){i.get(1);}} new C(x->{int y = x + 1;});");
 	}
 
 	@Test
@@ -90,9 +90,14 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{void get();} class C{void m(I i){i.get();}} class D{void d(){}} new C().m(new D()::d);");
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} class D{int d(int x,int y){return x+y;}} assert new C().m(new D()::d,1,2)==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} class D{String d(String s, int... x){return s+x.length;}} assert new C().m(new D()::d).equals(\"l=3\");");
-		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} class D{int d(){return 1;}} new C().m(new D()::d);"); // return type not match
-		//		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);");
-		//		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} new C().m(()->{});");
-		//		assertFailCompile("interface I{String get(int x);} class C{int m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});");
+		assertSuccessSerialize("interface I{int get(int x, String s);} class C{int m(I i){return i.get(2, \"abc\");}} class D{int d(long x, Object s){return (int)x + ((String)s).length();}} assert new C().m(new D()::d) == 5;");
+
+		assertFailCompile("interface I{void get();} class C{void m(I i){i.get(1);}} class D{int d(){return 1;}} new C().m(new D()::d);"); // return type not match
+		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get();}} class D{int d(int x){return x;}} new C().m(new D()::d);"); // return type not match
+		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} class D{void d(){}} new C().m(new D()::d);"); // return type not match
+		assertFailCompile("interface I{String get(int x);} class C{String m(I i){return i.get();}} class D{void d(int x){int y = x + 1;}} new C().m(new D()::d);"); // return type not match
+
+		assertFailCompile("interface I{void get(Object s);} class C{void m(I i){i.get(null);}} class D{void d(String s){}} new C().m(new D()::d);"); // arguments not match
+		assertFailCompile("interface I{void get(long x, String s);} class C{void m(I i){i.get(1, \"a\");}} class D{void d(int x, Object s){}} new C().m(new D()::d);"); // arguments not match
 	}
 }

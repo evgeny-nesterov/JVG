@@ -190,11 +190,6 @@ public abstract class HiNode implements HiNodeIF {
 		return name;
 	}
 
-	@Override
-	public Token getToken() {
-		return token;
-	}
-
 	public HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		getValueType(validationInfo, ctx);
 		return valueClass;
@@ -230,8 +225,19 @@ public abstract class HiNode implements HiNodeIF {
 		return valueClass;
 	}
 
+	@Override
+	public Token getToken() {
+		return token;
+	}
+
+	@Override
 	public void setToken(Token token) {
 		this.token = token;
+	}
+
+	@Override
+	public boolean isValue() {
+		return isValue;
 	}
 
 	public boolean isConstant(CompileClassContext ctx) {

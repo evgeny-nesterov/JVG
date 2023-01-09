@@ -920,7 +920,7 @@ public class HiClass implements HiNodeIF {
 	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
 		if (methods != null && methods.length > 0) {
 			for (HiMethod m : methods) {
-				if (m.modifiers.isAbstract() && isMatchMethodArguments(classResolver, m, argTypes)) {
+				if (m.modifiers.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes)) {
 					return m;
 				}
 			}
@@ -982,6 +982,62 @@ public class HiClass implements HiNodeIF {
 
 			for (int i = 0; i < argCount; i++) {
 				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+					return false;
+				}
+			}
+			for (int i = 0; i < argCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+			}
+		}
+		return true;
+	}
+
+	private boolean isMatchMethodDefinition(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
+		if (method.hasVarargs()) {
+			int mainArgCount = method.argCount - 1;
+			if (mainArgCount > argTypes.length) {
+				return false;
+			}
+
+			method.resolve(classResolver);
+
+			for (int i = 0; i < mainArgCount; i++) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+					return false;
+				}
+			}
+			for (int i = 0; i < mainArgCount; i++) {
+				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+			}
+
+			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
+			NodeArgument vararg = method.arguments[mainArgCount];
+			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
+				HiClass argType = argTypes[mainArgCount].getArrayType();
+				if (!HiClass.autoCast(classResolver, varargsType, argType, false)) {
+					return false;
+				}
+				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+			} else {
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					if (!HiClass.autoCast(classResolver, varargsType, argTypes[i], false)) {
+						return false;
+					}
+				}
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				}
+			}
+		} else {
+			int argCount = method.argCount;
+			if (argCount != argTypes.length) {
+				return false;
+			}
+
+			method.resolve(classResolver);
+
+			for (int i = 0; i < argCount; i++) {
+				if (!HiClass.autoCast(classResolver, method.argClasses[i], argTypes[i], false)) {
 					return false;
 				}
 			}
