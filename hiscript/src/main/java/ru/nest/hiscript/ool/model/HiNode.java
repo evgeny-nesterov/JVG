@@ -204,6 +204,7 @@ public abstract class HiNode implements HiNodeIF {
 		if (valueClass == null) {
 			ctx.nodeValueType.resolvedValueVariable = null;
 			ctx.nodeValueType.enclosingClass = null;
+			ctx.nodeValueType.isValue = false;
 
 			computeValueType(validationInfo, ctx);
 

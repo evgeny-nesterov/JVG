@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class NodeInvocation extends HiNode {
 					ctx.level.enclosingClass = null;
 				}
 				if (method.hasVarargs()) {
-					HiClass varargClass = method.argClasses[mainArgsCount].getArrayClass();
+					HiClass varargClass = ((HiClassArray)method.argClasses[mainArgsCount]).cellClass;
 					for (int i = mainArgsCount; i < arguments.length; i++) {
 						HiNode argument = arguments[i];
 						ctx.level.enclosingClass = varargClass;
