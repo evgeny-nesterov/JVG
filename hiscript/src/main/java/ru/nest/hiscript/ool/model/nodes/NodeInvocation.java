@@ -88,8 +88,27 @@ public class NodeInvocation extends HiNode {
 
 		boolean valid = method != null;
 		if (arguments != null) {
-			for (HiNode argument : arguments) {
-				valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);
+			if (method != null) {
+				int mainArgsCount = method.hasVarargs() ? method.argCount - 1 : method.argCount;
+				for (int i = 0; i < mainArgsCount; i++) {
+					HiNode argument = arguments[i];
+					ctx.level.enclosingClass = method.argClasses[i];
+					valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, method.argClasses[i]);
+					ctx.level.enclosingClass = null;
+				}
+				if (method.hasVarargs()) {
+					HiClass varargClass = method.argClasses[mainArgsCount].getArrayClass();
+					for (int i = mainArgsCount; i < arguments.length; i++) {
+						HiNode argument = arguments[i];
+						ctx.level.enclosingClass = varargClass;
+						valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, varargClass);
+						ctx.level.enclosingClass = null;
+					}
+				}
+			} else {
+				for (HiNode argument : arguments) {
+					valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);
+				}
 			}
 		}
 

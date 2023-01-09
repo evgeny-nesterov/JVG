@@ -950,19 +950,27 @@ public class HiClass implements HiNodeIF {
 					return false;
 				}
 			}
-			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
-			NodeArgument vararg = method.arguments[mainArgCount];
-			for (int i = mainArgCount; i < argTypes.length; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
-					return false;
-				}
-			}
-
 			for (int i = 0; i < mainArgCount; i++) {
 				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
 			}
-			for (int i = mainArgCount; i < argTypes.length; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+
+			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
+			NodeArgument vararg = method.arguments[mainArgCount];
+			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
+				HiClass argType = argTypes[mainArgCount].getArrayType();
+				if (!HiClass.autoCast(classResolver, argType, varargsType, false)) {
+					return false;
+				}
+				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+			} else {
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
+						return false;
+					}
+				}
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				}
 			}
 		} else {
 			int argCount = method.argCount;
@@ -1241,6 +1249,10 @@ public class HiClass implements HiNodeIF {
 
 	public HiClass getArrayType() {
 		return null;
+	}
+
+	public int getArrayDimension() {
+		return 0;
 	}
 
 	public boolean isConstant() {

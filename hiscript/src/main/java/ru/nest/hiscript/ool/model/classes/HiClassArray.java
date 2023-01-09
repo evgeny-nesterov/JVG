@@ -69,6 +69,11 @@ public class HiClassArray extends HiClass {
 		return cellClass;
 	}
 
+	@Override
+	public int getArrayDimension() {
+		return dimension;
+	}
+
 	// name for array generation from java
 	public String className;
 

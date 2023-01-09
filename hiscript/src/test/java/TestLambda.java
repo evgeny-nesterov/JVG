@@ -54,18 +54,20 @@ public class TestLambda extends HiTest {
 
 	@Test
 	public void testMethodReferenceDeclaration() {
-		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;");
-		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;");
-		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;");
-		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;");
+		// string
+		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;"); // same name
+		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;"); // another name
+		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;"); // name not match
+		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;"); // not functional interface
 
+		// object
 		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
 		assertSuccessSerialize("interface A{void get(); default void get2(){} static void get3(){}} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
 		assertSuccessSerialize("interface A{void get();} class C{static void get(){}}; A a = C::get; a.get();");
 		assertFailCompile("interface A{void get(); void get2();} class C{void m(){}}; A a = new C()::m;");
 		assertFailCompile("abstract class A{abstract void get();} class C{void get(){}}; A a = new C()::get;");
-		assertSuccessSerialize("interface A{void get();} class C{void get(){} void m(){}}; A a = new C()::m;");
-		assertSuccessSerialize("interface A{void get();} class C{static void get(){} static void m(){}}; A a = C::m;");
+		assertSuccessSerialize("interface A{void get();} class C{void get(){assert false;} void m(){}}; A a = new C()::m;");
+		assertSuccessSerialize("interface A{void get();} class C{static void get(){} static void m(){}}; A a = C::m;"); // static method
 
 		assertSuccessSerialize("interface A1{void get();} interface A2{void get(int x);} class C{void get(){} void get(int x){}}; C c = new C(); A1 a1 = c::get; a1.get(); A2 a2 = c::get; a2.get(1);");
 		assertSuccessSerialize("interface A1{void get();} interface A2{void get(int x);} class C{static void get(){} static void get(int x){}}; A1 a1 = C::get; a1.get(); A2 a2 = C::get; a2.get(1);");
@@ -81,5 +83,16 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface A{int get();} interface B extends A{} abstract class C{abstract int get();}; class D extends C{int get(){return 1;}}; D d = new D(); B b = d::get; assert b.get() == 1;");
 		assertSuccessSerialize("interface A{int get();} interface B extends A{} class C implements A{int get(){return 1;}}; C c = new C(); B b = c::get; assert b.get() == 1;");
 		assertSuccessSerialize("interface A{int get(); int get2();} interface B extends A{default int get2(){return 2;}} class C{int get1(){return 1;}}; B b = new C()::get1; assert b.get() == 1;");
+	}
+
+	@Test
+	public void testMethodReferenceMethod() {
+		assertSuccessSerialize("interface I{void get();} class C{void m(I i){i.get();}} class D{void d(){}} new C().m(new D()::d);");
+		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} class D{int d(int x,int y){return x+y;}} assert new C().m(new D()::d,1,2)==3;");
+		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} class D{String d(String s, int... x){return s+x.length;}} assert new C().m(new D()::d).equals(\"l=3\");");
+		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} class D{int d(){return 1;}} new C().m(new D()::d);"); // return type not match
+		//		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);");
+		//		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} new C().m(()->{});");
+		//		assertFailCompile("interface I{String get(int x);} class C{int m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});");
 	}
 }

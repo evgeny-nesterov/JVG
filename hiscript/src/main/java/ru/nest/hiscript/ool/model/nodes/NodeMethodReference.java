@@ -45,7 +45,9 @@ public class NodeMethodReference extends NodeExpression {
 			valid = false;
 		}
 
-		valid &= init(validationInfo, ctx, functionalInterface);
+		if (functionalInterface != null) {
+			valid &= init(validationInfo, ctx, functionalInterface);
+		}
 		return valid;
 	}
 
