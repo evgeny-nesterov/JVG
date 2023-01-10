@@ -27,6 +27,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 		if (!node.type.isPrimitive() || HiFieldPrimitive.getType(node.type) == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
+		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		return node.type;
 	}
 

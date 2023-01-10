@@ -2,6 +2,9 @@ package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -88,6 +91,43 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 				return index - 1;
 		}
 		return index;
+	}
+
+	public void checkFinal(ValidationInfo validationInfo, CompileClassContext ctx, HiNodeIF node, boolean initialize) {
+		HiNodeIF fieldNode = null;
+		Modifiers modifiers = null;
+		if (node instanceof NodeIdentifier) {
+			NodeIdentifier identifierNode = (NodeIdentifier) node;
+			Object resolvedIdentifier = ctx.resolveIdentifier(identifierNode.getName());
+			if (resolvedIdentifier instanceof HiField) {
+				HiField field = (HiField) resolvedIdentifier;
+				modifiers = field.getModifiers();
+				fieldNode = field;
+			} else if (resolvedIdentifier instanceof NodeDeclaration) {
+				NodeDeclaration declaration = ((NodeDeclaration) resolvedIdentifier);
+				modifiers = declaration.modifiers;
+				fieldNode = declaration;
+			} else if (resolvedIdentifier instanceof NodeArgument) {
+				NodeArgument argument = ((NodeArgument) resolvedIdentifier);
+				modifiers = argument.modifiers;
+				fieldNode = argument;
+			} else if (resolvedIdentifier instanceof HiNode) {
+				if (initialize) {
+					ctx.initializedNodes.add((HiNode) resolvedIdentifier);
+				}
+			}
+		} else if (node instanceof HiField) {
+			HiField field = (HiField) node;
+			modifiers = field.getModifiers();
+			fieldNode = node;
+		}
+		if (modifiers != null) {
+			if (modifiers.isFinal() && ctx.initializedNodes.contains(fieldNode)) {
+				validationInfo.error("cannot assign value to final variable", node.getToken());
+			} else if (initialize) {
+				ctx.initializedNodes.add(fieldNode);
+			}
+		}
 	}
 
 	public void errorIncompatibleTypes(RuntimeContext ctx, HiClass type1, HiClass type2) {

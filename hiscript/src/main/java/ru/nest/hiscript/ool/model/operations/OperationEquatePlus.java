@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -25,6 +26,8 @@ public class OperationEquatePlus extends BinaryOperation {
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		// TODO check
+		HiNodeIF node = node1.node != null ? node1.node : node1.resolvedValueVariable;
+		checkFinal(validationInfo, ctx, node, true);
 		return node1.type;
 	}
 
