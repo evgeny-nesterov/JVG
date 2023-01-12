@@ -8,6 +8,10 @@ public class TestFinal extends HiTest {
 		assertSuccessSerialize("final String x; x = null; assert x == null;");
 		assertSuccessSerialize("final int x = 1; class A{int y; A(){this.y = x;}} new A();");
 		assertSuccessSerialize("final int x = 1; class A{int y = x;} new A();");
+		assertSuccessSerialize("try{int x = 0;}catch(final Exception e){}");
+		assertSuccessSerialize("class A{final int x = 1; {int y = x + 1;}}");
+		assertSuccessSerialize("class A{final static int x = 1; static{int y = x + 1;}}");
+		assertSuccessSerialize("class A{int get(final int x){final int y = x + 1; return y;}}");
 
 		assertFailCompile("final int x = 1; x = 1;");
 		assertFailCompile("final int x; x = 1; x = 2;");
@@ -51,5 +55,17 @@ public class TestFinal extends HiTest {
 		// interface field is final on default
 		assertFailCompile("interface I{int x = 1;} I.x = 2;");
 		assertFailCompile("interface I{static int x = 1;} I.x = 2;");
+	}
+
+	@Test
+	public void testMethod() {
+		assertSuccessSerialize("class A{final void get(){}} new A().get();");
+		assertFailCompile("class A{final void get(){}} class B extends A{void get(){}}");
+	}
+
+	@Test
+	public void testClass() {
+		assertSuccessSerialize("final class A{} new A();");
+		assertFailCompile("final class A{} class B extends A{}");
 	}
 }

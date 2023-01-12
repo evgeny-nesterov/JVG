@@ -167,6 +167,10 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class C{void get(int x, byte y, char z){}} new C().get(1, 1, 1);");
 
 		assertSuccessSerialize("class A{void m(int x, int y){}} class B extends A{void m(int x, byte y){}} new B().m(1, 1);");
+
+		assertFailCompile("class A{void get(){}} class B extends A{int get(){}};"); // rewrite method with another return type
+
+		// TODO check incompatible throws of rewrite method
 	}
 
 	@Test

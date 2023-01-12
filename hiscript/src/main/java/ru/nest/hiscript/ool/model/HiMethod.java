@@ -58,6 +58,8 @@ public class HiMethod implements HiNodeIF {
 	 */
 	public Object annotationDefaultValue;
 
+	public HiMethod rewritedMethod;
+
 	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
 		NodeArgument[] _arguments = null;
 		if (arguments != null) {
@@ -138,6 +140,20 @@ public class HiMethod implements HiNodeIF {
 			if (clazz.isInterface && !clazz.isAnnotation() && !modifiers.isAbstract() && !modifiers.isDefault() && !modifiers.isStatic()) {
 				validationInfo.error("interface abstract methods cannot have body", token);
 				valid = false;
+			}
+			if (clazz.superClass != null) {
+				resolve(ctx);
+				rewritedMethod = clazz.superClass.getMethod(ctx, signature);
+				if (rewritedMethod != null) {
+					if (rewritedMethod.returnClass != returnClass) {
+						validationInfo.error("cannot rewrite method with another return type", getToken());
+						valid = false;
+					}
+					if (rewritedMethod.modifiers.isFinal()) {
+						validationInfo.error("cannot rewrite final method", getToken());
+						valid = false;
+					}
+				}
 			}
 			isResolved = true;
 		} else {
