@@ -55,10 +55,10 @@ public class TestLambda extends HiTest {
 	@Test
 	public void testMethodReferenceDeclaration() {
 		// string
-		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;"); // same name
-		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;"); // another name
-		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;"); // name not match
-		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;"); // not functional interface
+		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;"); // same method name
+		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;"); // another method name
+		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;"); // method name is not match
+		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;"); // not a functional interface
 
 		// object
 		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");

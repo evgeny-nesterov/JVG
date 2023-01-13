@@ -136,6 +136,15 @@ public class TestNumbers extends HiTest {
 	public void testChars() {
 		assertSuccessSerialize("char c = '\\u0030'; assert c == '0'; assert c == 48;");
 		assertSuccessSerialize("char c = '\\uFFEE'; assert c == '￮'; assert c == 65518;");
+		assertSuccessSerialize("char c = 'a' + 1; assert c == 'b';");
+		assertSuccessSerialize("char c = 50; assert c == 50;");
+		assertSuccessSerialize("char c = (byte)50; assert c == 50;");
+		assertFailCompile("char c = ' a';");
+		assertFailCompile("char c = \"a\";");
+		assertFailCompile("char c = 0L;");
+		assertFailCompile("char c = 10f;");
+		assertFailCompile("char c = 0.0;");
+		assertFailCompile("char c = 100000000;");
 	}
 
 	@Test
