@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassMix;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
@@ -44,6 +45,8 @@ public class HiClass implements HiNodeIF {
 	public final static int CLASS_NULL = 6;
 
 	public final static int CLASS_VAR = 7;
+
+	public final static int CLASS_MIX = 8;
 
 	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
@@ -138,6 +141,10 @@ public class HiClass implements HiNodeIF {
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	// fox mix class
+	protected HiClass() {
 	}
 
 	// for ClassPrimitive, ClassArray and ClassNull
@@ -394,7 +401,7 @@ public class HiClass implements HiNodeIF {
 
 	public HiClass[] innerClasses;
 
-	private Boolean valid;
+	public Boolean valid;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -410,7 +417,7 @@ public class HiClass implements HiNodeIF {
 		// not supported
 	}
 
-	private boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+	protected boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass outboundClass = ctx.clazz;
 		boolean valid = true;
 
@@ -563,7 +570,7 @@ public class HiClass implements HiNodeIF {
 		return new ArrayList<>(abstractMethods.values());
 	}
 
-	private void getAbstractMethods(ClassResolver classResolver, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
+	protected void getAbstractMethods(ClassResolver classResolver, Map<MethodSignature, HiMethod> abstractMethods, Map<MethodSignature, HiMethod> implementedMethods, Set<HiClass> processedClasses) {
 		if (processedClasses.contains(this)) {
 			return;
 		}
@@ -724,15 +731,24 @@ public class HiClass implements HiNodeIF {
 		if (clazz == null) {
 			return false;
 		}
-		HiClass c = this;
-		while (c != null) {
-			if (c == clazz || c.fullName.equals(clazz.fullName)) {
-				return true;
+		if (clazz.isMix()) {
+			HiClassMix mixClass = (HiClassMix) clazz;
+			for (HiClass c : mixClass.classes) {
+				if (isInstanceof(c)) {
+					return true;
+				}
 			}
-			if (c.hasInterfaceInstanceof(clazz)) {
-				return true;
+		} else {
+			HiClass c = this;
+			while (c != null) {
+				if (c == clazz || c.fullName.equals(clazz.fullName)) {
+					return true;
+				}
+				if (c.hasInterfaceInstanceof(clazz)) {
+					return true;
+				}
+				c = c.superClass;
 			}
-			c = c.superClass;
 		}
 		return false;
 	}
@@ -1303,6 +1319,10 @@ public class HiClass implements HiNodeIF {
 		return false;
 	}
 
+	public boolean isMix() {
+		return false;
+	}
+
 	public HiClass getArrayType() {
 		return null;
 	}
@@ -1703,11 +1723,13 @@ public class HiClass implements HiNodeIF {
 		return false;
 	}
 
+	@Deprecated
 	public boolean isRootClassTop() {
 		HiClass rootClass = getRootClass();
 		return rootClass.isTopLevel() || rootClass.name.equals(ROOT_CLASS_NAME);
 	}
 
+	@Deprecated
 	public HiClass getRootClass() {
 		HiClass clazz = this;
 		while (clazz.enclosingClass != null) {

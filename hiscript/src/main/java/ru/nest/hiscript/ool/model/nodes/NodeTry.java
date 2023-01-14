@@ -125,19 +125,13 @@ public class NodeTry extends HiNode {
 
 		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException") && catches != null) {
 			for (NodeCatch catchNode : catches) {
-				int index = catchNode.getMatchedExceptionClass(ctx);
-				if (index == -2) {
-					// error occurred while catch exception class resolving
-					return;
-				}
-
 				if (closeException) {
 					ctx.exception = null;
 					ctx.throwRuntimeException("cannot catch close resource exception");
 					break;
 				}
 
-				if (index >= 0) {
+				if (ctx.exception.clazz.isInstanceof(catchNode.excClass)) {
 					catchNode.execute(ctx);
 					break;
 				}

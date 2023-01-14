@@ -1,7 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -9,6 +8,7 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassMix;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -34,47 +34,40 @@ public class NodeCatch extends HiNode {
 
 	private String excName;
 
-	public HiClass[] excClasses; // TODO HiClassMixed
-
-	public int getMatchedExceptionClass(RuntimeContext ctx) {
-		HiObject exception = ctx.exception;
-		for (int i = 0; i < excTypes.length; i++) {
-			if (exception != ctx.exception) {
-				// new runtime exception thrown while exception class resolving
-				return -2;
-			}
-		}
-		initClasses(ctx);
-		for (int i = 0; i < excClasses.length; i++) {
-			if (exception.clazz.isInstanceof(excClasses[i])) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	private void initClasses(ClassResolver classResolver) {
-		if (excClasses == null) {
-			excClasses = new HiClass[excTypes.length];
-		}
-		for (int i = 0; i < excTypes.length; i++) {
-			Type excType = excTypes[i];
-			if (excClasses[i] == null) {
-				excClasses[i] = excType.getClass(classResolver);
-			}
-		}
-	}
+	public HiClass excClass;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
-		initClasses(ctx);
 
-		for (int i = 0; i < excClasses.length; i++) {
-			if (!excClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-				validationInfo.error("incompatible types: " + excClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
-				valid = false;
+		if (excTypes.length > 1) {
+			HiClass[] excClasses = new HiClass[excTypes.length];
+			HiClassMix excClassMix = new HiClassMix(excClasses, null);
+			for (int i = 0; i < excTypes.length; i++) {
+				Type excType = excTypes[i];
+				if (excClassMix.classes[i] == null) {
+					excClassMix.classes[i] = excType.getClass(ctx);
+				}
 			}
+			excClass = excClassMix;
+		} else {
+			excClass = excTypes[0].getClass(ctx);
+		}
+
+		valid &= excClass.validate(validationInfo, ctx);
+
+		if (!excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+			if (excClass instanceof HiClassMix) {
+				HiClassMix excClassMax = (HiClassMix) excClass;
+				for (HiClass clazz : excClassMax.classes) {
+					if (!clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+						validationInfo.error("incompatible types: " + clazz.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					}
+				}
+			} else {
+				validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+			}
+			valid = false;
 		}
 
 		NodeArgument field = new NodeArgument(excTypes[0], excName, modifiers, annotations);
@@ -91,12 +84,6 @@ public class NodeCatch extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException")) {
 			HiObject exception = ctx.exception;
-			int index = getMatchedExceptionClass(ctx);
-			if (index < 0) {
-				return;
-			}
-
-			HiClass excClass = excClasses[index];
 			if (exception.clazz.isInstanceof(excClass)) {
 				ctx.exception = null;
 				if (catchBody != null) {
