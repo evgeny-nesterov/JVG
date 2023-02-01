@@ -23,7 +23,7 @@ public class TestLambda extends HiTest {
 	}
 
 	@Test
-	public void testMethod() {
+	public void testMethodArgument() {
 		assertSuccessSerialize("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{});");
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} assert new C().m((x,y)->x+y,1,2)==3; assert new C().m((x,y)->{return x+y;},1,2)==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} assert new C().m((s,x)->s+x.length).equals(\"l=3\");");
@@ -34,7 +34,7 @@ public class TestLambda extends HiTest {
 	}
 
 	@Test
-	public void testConstructor() {
+	public void testConstructorArgument() {
 		assertSuccessSerialize("interface I{void get();} class C{C(I i){i.get();}} new C(()->{});");
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int x; C(I i,int x,int y){this.x=i.get(x,y);}} assert new C((x,y)->x+y,1,2).x==3; assert new C((x,y)->{return x+y;},1,2).x==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String s; C(I i){s=i.get(\"l=\",1,2,3);}} assert new C((s,x)->s+x.length).s.equals(\"l=3\");");

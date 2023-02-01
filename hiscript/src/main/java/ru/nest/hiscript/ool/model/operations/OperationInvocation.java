@@ -182,7 +182,7 @@ public class OperationInvocation extends BinaryOperation {
 
 				// find by pattern: <CLASS>.<CLASS>
 				if (field == null) {
-					clazz = clazz.getInnerClass(ctx, name);
+					clazz = clazz.getInnerClass(ctx, name, true);
 				}
 			}
 		}

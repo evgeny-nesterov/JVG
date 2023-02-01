@@ -176,7 +176,8 @@ public class HiClass implements HiNodeIF {
 		this.type = type;
 
 		// try resolve super class if needed
-		if (superClass == null && superClassType != null && classResolver instanceof RuntimeContext) {
+		boolean isRuntime = classResolver instanceof RuntimeContext;
+		if (superClass == null && superClassType != null && isRuntime) {
 			superClass = superClassType.getClass(classResolver);
 		}
 
@@ -187,7 +188,7 @@ public class HiClass implements HiNodeIF {
 		if (classLoader == null) {
 			classLoader = userClassLoader;
 		}
-		classLoader.addClass(this);
+		classLoader.addClass(this, isRuntime);
 	}
 
 	public String getFullName(HiClassLoader classLoader) {
@@ -421,6 +422,14 @@ public class HiClass implements HiNodeIF {
 		HiClass outboundClass = ctx.clazz;
 		boolean valid = true;
 
+		if (isInner() || isLocal()) {
+			HiClass classSameName = ctx.getUniqueClass(name, this);
+			if (classSameName != null && classSameName != this) {
+				validationInfo.error("duplicate class: " + name, token);
+				valid = false;
+			}
+		}
+
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
@@ -649,7 +658,7 @@ public class HiClass implements HiNodeIF {
 
 	private HiClass _getClass(ClassResolver classResolver, String name) {
 		// inner classes
-		HiClass innerClass = getInnerClass(classResolver, name);
+		HiClass innerClass = getInnerClass(classResolver, name, true);
 		if (innerClass != null) {
 			return innerClass;
 		}
@@ -663,7 +672,7 @@ public class HiClass implements HiNodeIF {
 			}
 
 			// check enclosing classes
-			localClass = clazz.getInnerClass(classResolver, name);
+			localClass = clazz.getInnerClass(classResolver, name, true);
 			if (localClass != null) {
 				return localClass;
 			}
@@ -675,7 +684,7 @@ public class HiClass implements HiNodeIF {
 		return forName(classResolver, name);
 	}
 
-	public HiClass getInnerClass(ClassResolver classResolver, String name) {
+	public HiClass getInnerClass(ClassResolver classResolver, String name, boolean checkInheritance) {
 		if (innerClasses != null) {
 			for (HiClass c : innerClasses) {
 				if (c.name.equals(name) || c.fullName.equals(name)) {
@@ -684,17 +693,19 @@ public class HiClass implements HiNodeIF {
 				}
 			}
 		}
-		if (superClass != null) {
-			HiClass innerClass = superClass.getInnerClass(classResolver, name);
-			if (innerClass != null) {
-				return innerClass;
-			}
-		}
-		if (interfaces != null) {
-			for (HiClass i : interfaces) {
-				HiClass innerClass = i.getInnerClass(classResolver, name);
+		if (checkInheritance) {
+			if (superClass != null) {
+				HiClass innerClass = superClass.getInnerClass(classResolver, name, true);
 				if (innerClass != null) {
 					return innerClass;
+				}
+			}
+			if (interfaces != null) {
+				for (HiClass i : interfaces) {
+					HiClass innerClass = i.getInnerClass(classResolver, name, true);
+					if (innerClass != null) {
+						return innerClass;
+					}
 				}
 			}
 		}

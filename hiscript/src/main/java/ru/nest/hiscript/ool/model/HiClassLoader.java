@@ -36,11 +36,11 @@ public class HiClassLoader {
 		}
 	}
 
-	public synchronized void addClass(HiClass clazz) {
+	public synchronized void addClass(HiClass clazz, boolean isRuntime) {
 		HiClass currentClass = classes.get(clazz.fullName);
 		if (currentClass != null) {
-			if (currentClass != clazz) {
-				throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+			if (isRuntime && currentClass != clazz) {
+				throw new HiDuplicateClassException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
 			} else {
 				return;
 			}

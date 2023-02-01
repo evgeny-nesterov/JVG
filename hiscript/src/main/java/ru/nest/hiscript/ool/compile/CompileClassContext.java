@@ -281,6 +281,30 @@ public class CompileClassContext implements ClassResolver {
 		return null;
 	}
 
+	public HiClass getUniqueClass(String name, HiClass currentClass) {
+		CompileClassLevel level = this.level;
+		while (level != null) {
+			if (level.classes != null) {
+				HiClass clazz = level.classes.get(name);
+				if (clazz != null) {
+					return clazz;
+				}
+			}
+			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
+				break;
+			}
+			level = level.parent;
+		}
+		HiClass outerClass = this.clazz;
+		while (outerClass != null) {
+			if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
+				return this.clazz;
+			}
+			outerClass = outerClass.enclosingClass;
+		}
+		return null;
+	}
+
 	@Override
 	public HiClass getLocalClass(HiClass enclosingClass, String name) {
 		CompileClassLevel level = this.level;
@@ -300,7 +324,6 @@ public class CompileClassContext implements ClassResolver {
 		while (name.charAt(dimension) == '0') {
 			dimension++;
 		}
-		String baseName = dimension == 0 ? name : name.substring(dimension);
 		HiClass baseClass = (HiClass) resolveIdentifier(name, true, false, false);
 		return dimension == 0 ? baseClass : baseClass.getArrayClass(dimension);
 	}
@@ -371,7 +394,7 @@ public class CompileClassContext implements ClassResolver {
 
 				HiClass outerClass = this.clazz;
 				while (outerClass != null) {
-					HiClass innerClass = outerClass.getInnerClass(this, name);
+					HiClass innerClass = outerClass.getInnerClass(this, name, true);
 					if (innerClass != null) {
 						return innerClass;
 					}
@@ -504,7 +527,7 @@ public class CompileClassContext implements ClassResolver {
 					String[] path = name.split("\\.");
 					HiClass clazz = classes.get(path[0]);
 					for (int i = 1; i < path.length && clazz != null; i++) {
-						clazz = clazz.getInnerClass(CompileClassContext.this, path[i]);
+						clazz = clazz.getInnerClass(CompileClassContext.this, path[i], true);
 					}
 					return clazz;
 				} else {
@@ -521,7 +544,7 @@ public class CompileClassContext implements ClassResolver {
 					String[] path = name.split("\\.");
 					clazz = classes.get(path[0]);
 					for (int i = 1; i < path.length && clazz != null; i++) {
-						clazz = clazz.getInnerClass(CompileClassContext.this, path[i]);
+						clazz = clazz.getInnerClass(CompileClassContext.this, path[i], true);
 					}
 				} else {
 					clazz = classes.get(name);

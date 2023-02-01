@@ -8,6 +8,8 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class C{int c = 1;} assert new C().c == 1;");
 		assertSuccessSerialize("class C{static int c;} assert C.c == 0;");
 		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
+		assertFailCompile("class C{class C{}}"); // duplicate
+		assertFailCompile("class C{{class C{}}}"); // duplicate
 
 		// abstract
 		assertFailCompile("abstract class C{} new C();");
@@ -39,6 +41,7 @@ public class TestClasses extends HiTest {
 		assertSuccess("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();");
+		assertFailCompile("class A{int x; int x;}");
 		assertSuccess("abstract class A{static int x = 1;} assert A.x == 1;");
 		assertSuccess("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
 		assertSuccess("interface I{static int x = 1;} assert I.x == 1;");
@@ -57,6 +60,7 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class AA{static class BB{}} BB b;");
 		assertFailCompile("class A{static class B{}} A.B b = new B();");
 		assertFailCompile("class A{static class B{}} A a = new A(); A.B b = a.new B();");
+		assertFailCompile("class A{static class AA{} static class AA{}}");
 		assertSuccessSerialize("class A {void get(){}} A a = new A(); a.get();");
 
 		// not static inner class
@@ -244,7 +248,7 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testRecords() {
-		assertSuccessSerialize("record Rec(int a); new Rec(1);");
+		assertSuccessSerialize("record Rec(int a); Rec r = new Rec(1);");
 		assertFailCompile("record Rec(int a, long a);");
 		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
 

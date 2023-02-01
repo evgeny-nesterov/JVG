@@ -20,7 +20,7 @@ public class TestStatic extends HiTest {
 	@Test
 	public void testClassField() {
 		assertSuccessSerialize("class C{static int x;} assert C.x == 0; C.x = 1; assert C.x == 1;");
-		assertSuccessSerialize("class C{static int x = 1 + 1;} C.x = 2; C.x--; assert C.x == 1;");
+		assertSuccessSerialize("class C{static int x = -1 - 1;} C.x = 2; C.x--; assert C.x == 1;");
 		assertSuccessSerialize("class C1{static int x = 1; class C2{static int x = 2; class C3{static int x = 3;}}} assert C1.C2.C3.x == 3;");
 	}
 
