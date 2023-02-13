@@ -8,7 +8,7 @@ label		name, body				                statement		+
 break		label					                statement		+
 continue	label					                statement		+
 return		values                                  statement       +
-try			body, catch-body, catch-err-name, finally-body	statement	+-
+try			resource, body, catch-body, catch-multi-exceptions, finally-body    +
 empty                                               statement       +
 declaration	type, ...names, ...values               statement       +
 expression                                          statement       +
@@ -25,11 +25,11 @@ constructor	...arguments                                            +
 field		expression                                              +
 class		name, ...fields, ...methods, ...classes	statement	    +
 block		...statements                                           +
-text block
-annotation
-throw
-throws
-
+text block                                                          +
+annotation                                                          +
+throw                                                               +
+throws                                                              +
+generics
 
 expression	...operations, ...expressions
 operations	+ - * / %			    numeric

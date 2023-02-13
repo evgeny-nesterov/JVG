@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -55,6 +56,7 @@ public class EnumParseRule extends ParserUtil {
 	}
 
 	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		Token enumValueToken = startToken(tokenizer);
 		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (enumName != null) {
 			int ordinal = 0;
@@ -64,7 +66,7 @@ public class EnumParseRule extends ParserUtil {
 					args = visitArgumentsValues(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 				}
-				ctx.addEnum(new HiEnumValue(enumName, ordinal++, args));
+				ctx.addEnum(new HiEnumValue(enumName, ordinal++, args, enumValueToken));
 
 				if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
@@ -73,6 +75,7 @@ public class EnumParseRule extends ParserUtil {
 					tokenizer.error("expected ',', '(' or ';'");
 				}
 
+				enumValueToken = startToken(tokenizer);
 				enumName = expectWord(Words.NOT_SERVICE, tokenizer);
 			}
 		}

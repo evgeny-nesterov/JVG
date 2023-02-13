@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiEnumValue;
@@ -12,6 +13,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,6 +40,24 @@ public class HiClassEnum extends HiClass {
 			}
 			enumsMap.put(enumValue.getName(), createField(enumValue.getName(), ctx.value.getObject()));
 		}
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = super.validate(validationInfo, ctx);
+		if (enumValues != null) {
+			for (int i1 = 0; i1 < enumValues.size() - 1; i1++) {
+				HiEnumValue enumValue1 = enumValues.get(i1);
+				for (int i2 = i1 + 1; i2 < enumValues.size(); i2++) {
+					HiEnumValue enumValue2 = enumValues.get(i2);
+					if (enumValue1.getName().equals(enumValue2.getName())) {
+						validationInfo.error("Variable '" + enumValue1.getName() + "' is already defined in the scope", enumValue2.getToken());
+						valid = false;
+					}
+				}
+			}
+		}
+		return valid;
 	}
 
 	private HiFieldObject createField(String name, HiObject value) {

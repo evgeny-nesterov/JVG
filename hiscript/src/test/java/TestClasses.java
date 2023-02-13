@@ -241,9 +241,11 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("enum E1{e} enum E2{e;} assert E1.e != E2.e; assert E1.e.name().equals(E2.e.name()); assert !E1.e.equals(E2.e);");
 		assertSuccessSerialize("enum E{e1(\"e1\", 0), e2(\"e2\", 1); String name; int number; E(String name, int number){this.name = name; this.number = number;} String getName(){return name;} int getNumber(){return number;}} E e = E.e2; assert e.getName().equals(\"e2\"); assert e.getNumber() == 1;");
 		assertSuccessSerialize("enum E{e} assert E.e instanceof Enum; assert E.e instanceof E;");
-		assertSuccessSerialize("enum E{}");
+		assertSuccessSerialize("enum E{} E e = null;");
 		assertFailCompile("enum E1{e1} enum E2 extends E1{e2}");
 		assertFailCompile("enum E1{e1} new E1();");
+		assertFailCompile("enum E1{e1} E1 e = new Object();");
+		assertFailCompile("enum E1{A, b, C, A, d, C, e, f, g}");
 	}
 
 	@Test
