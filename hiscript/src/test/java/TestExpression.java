@@ -221,4 +221,25 @@ public class TestExpression extends HiTest {
 		assertFailCompile("Object o = new Object(){void m(){}}; o.m();");
 		assertSuccessSerialize("var o = new Object(){void m(){}}; o.m();");
 	}
+
+	@Test
+	public void variableWithoutName() {
+		assertSuccessSerialize("String[] arr = {\"a\", \"b\", \"c\"}; int i = 0; for(String _ : arr) i++; assert i == arr.length;");
+	}
+
+	@Test
+	public void testSwitch() {
+		assertSuccessSerialize("int x = 1; int y = switch(x){case 1 -> 10; case 2 -> 20; default -> 30;}; assert y == 10;");
+		assertSuccessSerialize("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20; default -> 30;}; assert y == 20;");
+		assertSuccessSerialize("int x = 3; int y = switch(x){case 1 -> 10; case 2 -> 20; default -> 30;}; assert y == 30;");
+
+		assertSuccessSerialize("String x = null; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 0;");
+		assertSuccessSerialize("String x = \"a\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 1;");
+		assertSuccessSerialize("String x = \"b\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 1;");
+		assertSuccessSerialize("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 2;");
+
+		// TODO
+		// assertFailCompile("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20;};");
+		// assertFailCompile("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; case \"c\" -> 2;};");
+	}
 }

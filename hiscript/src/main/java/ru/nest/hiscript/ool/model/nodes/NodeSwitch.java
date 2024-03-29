@@ -172,9 +172,8 @@ public class NodeSwitch extends HiNode {
 			}
 		} else if (ctx.value.type.isObject()) {
 			HiObject object = ctx.value.object;
-			if (object.clazz.isEnum()) {
+			if (object != null && object.clazz.isEnum()) {
 				HiClassEnum enumClass = (HiClassEnum) object.clazz;
-				FOR:
 				for (int i = 0; i < size; i++) {
 					HiNode[] caseValueNodes = casesValues.get(i);
 					if (caseValueNodes != null && caseValueNodes.length > 0) {
@@ -205,7 +204,6 @@ public class NodeSwitch extends HiNode {
 					}
 				}
 			} else {
-				FOR:
 				for (int i = 0; i < size; i++) {
 					HiNode[] caseValueNodes = casesValues.get(i);
 					if (caseValueNodes != null && caseValueNodes.length > 0) {
@@ -254,11 +252,19 @@ public class NodeSwitch extends HiNode {
 									return i;
 								}
 							} else if (ctx.value.type.isObject()) {
-								if (object.equals(ctx, ctx.value.object)) {
+								if (object == null) {
+									if (ctx.value.object == null) {
+										return i;
+									}
+								} else if (object.equals(ctx, ctx.value.object)) {
 									return i;
 								}
 								if (ctx.exitFromBlock()) {
 									return -2;
+								}
+							} else if (ctx.value.type.isNull()) {
+								if (object == null) {
+									return i;
 								}
 							}
 						}

@@ -3,9 +3,7 @@ import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
@@ -30,6 +28,7 @@ public abstract class HiTest {
 		try {
 			execute(script);
 		} catch (Exception e) {
+			e.printStackTrace();
 			onFail(script, e.toString());
 		}
 	}
@@ -38,6 +37,7 @@ public abstract class HiTest {
 		try {
 			executeSerialized(script);
 		} catch (Exception e) {
+			e.printStackTrace();
 			onFail(script, e.toString());
 		}
 	}
@@ -46,6 +46,7 @@ public abstract class HiTest {
 		try {
 			compile(script);
 		} catch (Exception e) {
+			e.printStackTrace();
 			onFail(script, e.toString());
 		}
 	}
