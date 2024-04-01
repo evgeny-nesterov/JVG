@@ -1,5 +1,5 @@
 		+1. Add varargs (void method(Object... array), method("arg1", "arg2", "arg3"))
-!2. Autoboxing/unboxing (add classes Integer etc., Integer a = 1; int b = a;)
+        +2. Autoboxing/unboxing (add classes Integer etc., Integer a = 1; int b = a;)
         +3. Add class loader
 4. Add import of file with classes (import <packages.className>), add packages
 		+5. Class implementation

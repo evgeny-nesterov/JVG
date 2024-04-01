@@ -305,6 +305,18 @@ public class Value implements PrimitiveTypes {
 		return -1;
 	}
 
+	// autobox
+	public void unbox() {
+		if (type.getAutoboxedPrimitiveClass() != null) {
+			if (object != null) {
+				substitutePrimitiveValueFromAutoboxValue();
+				type = type.getAutoboxedPrimitiveClass();
+			} else {
+				ctx.throwRuntimeException("null pointer");
+			}
+		}
+	}
+
 	public boolean getBoolean() {
 		if (getAutoboxPrimitiveValue(BOOLEAN)) {
 			return bool;
@@ -616,16 +628,5 @@ public class Value implements PrimitiveTypes {
 			return object.clazz;
 		}
 		return type;
-	}
-
-	public void debox() {
-		if (type.getAutoboxedPrimitiveClass() != null) {
-			if (object != null) {
-				substitutePrimitiveValueFromAutoboxValue();
-				type = type.getAutoboxedPrimitiveClass();
-			} else {
-				ctx.throwRuntimeException("null pointer");
-			}
-		}
 	}
 }

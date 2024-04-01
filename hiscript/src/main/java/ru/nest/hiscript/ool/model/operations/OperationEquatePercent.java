@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -23,7 +24,14 @@ public class OperationEquatePercent extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		if (node1.type == HiClassPrimitive.BYTE.getAutoboxClass() || node1.type == HiClassPrimitive.SHORT.getAutoboxClass()) {
+			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+			return null;
+		}
+
+		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
 		// TODO check
+
 		HiNodeIF node = node1.node != null ? node1.node : node1.resolvedValueVariable;
 		checkFinal(validationInfo, ctx, node, true);
 		return node1.type;
@@ -224,6 +232,12 @@ public class OperationEquatePercent extends BinaryOperation {
 								break;
 						}
 						break;
+				}
+
+				// autobox
+				if (v1.type.isObject()) {
+					v1.type = c1;
+					v1.object = ((HiClassPrimitive) c1).autobox(ctx, v1);
 				}
 
 				if (v1.valueType == Value.VARIABLE) {

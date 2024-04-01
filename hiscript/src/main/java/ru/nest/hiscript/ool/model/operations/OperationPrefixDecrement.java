@@ -70,6 +70,8 @@ public class OperationPrefixDecrement extends UnaryOperation {
 				value.doubleNumber--;
 				break;
 		}
+
+		// autobox
 		if (value.type.isObject()) {
 			value.type = c;
 			value.object = ((HiClassPrimitive) c).autobox(ctx, value);

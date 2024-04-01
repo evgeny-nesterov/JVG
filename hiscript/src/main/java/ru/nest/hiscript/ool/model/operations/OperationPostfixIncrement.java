@@ -76,6 +76,8 @@ public class OperationPostfixIncrement extends UnaryOperation {
 					tmp.doubleNumber++;
 					break;
 			}
+
+			// autobox
 			if (value.type.isObject()) {
 				tmp.type = c;
 				tmp.object = ((HiClassPrimitive) c).autobox(ctx, tmp);

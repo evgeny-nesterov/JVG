@@ -27,7 +27,7 @@ public class OperationLogicalOR extends BinaryOperation {
 		if ((c1 == HiClassPrimitive.BOOLEAN || c1.isVar()) && (c2 == HiClassPrimitive.BOOLEAN || c2.isVar())) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {
-			errorInvalidOperator(validationInfo, node1.token, c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 			return null;
 		}
 	}

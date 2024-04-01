@@ -333,7 +333,7 @@ public class OperationInvocation extends BinaryOperation {
 					// autobox
 					if (varargsClass.isPrimitive()) {
 						if (v1.type.isObject()) {
-							v1.debox();
+							v1.unbox();
 						}
 					}
 
@@ -391,7 +391,7 @@ public class OperationInvocation extends BinaryOperation {
 				// autobox
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
 					if (v1.type.isObject()) {
-						v1.debox();
+						v1.unbox();
 					}
 				}
 

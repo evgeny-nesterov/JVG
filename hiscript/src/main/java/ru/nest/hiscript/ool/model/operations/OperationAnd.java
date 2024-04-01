@@ -26,7 +26,7 @@ public class OperationAnd extends BinaryOperation {
 		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
 		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
 		if (!c1.isPrimitive() || !c2.isPrimitive()) {
-			errorInvalidOperator(validationInfo, node1.token, c1, c2);
+			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 			return null;
 		}
 
@@ -194,7 +194,7 @@ public class OperationAnd extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(validationInfo, node1.token, c1, c2);
+		errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 		return null;
 	}
 

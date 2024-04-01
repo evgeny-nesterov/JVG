@@ -46,7 +46,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 					}
 			}
 		}
-		errorInvalidOperator(validationInfo, node1.token, c1, c2);
+		errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 		return c1;
 	}
 
