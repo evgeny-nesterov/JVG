@@ -1603,7 +1603,7 @@ b.findByValuesCount(4);
 /////////////////////
 // 2. Sum of numbers
 /////////////////////
-Util.header("ALGIRITHM: Sum of numbers");
+Util.header("ALGORITHM: Sum of numbers");
 public class SumOfNumbers {
 	private int count;
 	private int[] stack;

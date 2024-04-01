@@ -43,6 +43,10 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	private HiClass clazz;
 
+	public HiClass getArgClass() {
+		return clazz;
+	}
+
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return getType().getClass(ctx);

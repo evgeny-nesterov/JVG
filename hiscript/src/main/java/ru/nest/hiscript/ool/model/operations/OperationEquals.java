@@ -27,7 +27,17 @@ public class OperationEquals extends BinaryOperation {
 		HiClass c2 = node2.type;
 		if (c1.isVar() || c2.isVar()) {
 			return HiClassPrimitive.BOOLEAN;
-		} else if (c1.isPrimitive() == c2.isPrimitive()) {
+		}
+		if (c1.isPrimitive() && !c2.isPrimitive()) {
+			if (c2.getAutoboxedPrimitiveClass() != null) {
+				c2 = c2.getAutoboxedPrimitiveClass();
+			}
+		} else if (!c1.isPrimitive() && c2.isPrimitive()) {
+			if (c1.getAutoboxedPrimitiveClass() != null) {
+				c1 = c1.getAutoboxedPrimitiveClass();
+			}
+		}
+		if (c1.isPrimitive() == c2.isPrimitive()) {
 			if (c1.isNumber() == c2.isNumber()) {
 				return HiClassPrimitive.BOOLEAN;
 			} else if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
@@ -46,10 +56,24 @@ public class OperationEquals extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.type;
 		HiClass c2 = v2.type;
-		v1.type = TYPE_BOOLEAN;
 
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
+		if (isP1 && !isP2) {
+			if (c2.getAutoboxedPrimitiveClass() != null) {
+				c2 = c2.getAutoboxedPrimitiveClass();
+				v2.substitutePrimitiveValueFromAutoboxValue();
+				isP2 = true;
+			}
+		} else if (!isP1 && isP2) {
+			if (c1.getAutoboxedPrimitiveClass() != null) {
+				c1 = c1.getAutoboxedPrimitiveClass();
+				v1.substitutePrimitiveValueFromAutoboxValue();
+				isP1 = true;
+			}
+		}
+
+		v1.type = TYPE_BOOLEAN;
 		if (isP1 && isP2) {
 			int t1 = HiFieldPrimitive.getType(c1);
 			int t2 = HiFieldPrimitive.getType(c2);
@@ -66,27 +90,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.character == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.character == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.character == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.character == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.character == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.character == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.character == v2.doubleNumber;
 							return;
@@ -98,27 +116,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.byteNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.byteNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.byteNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.byteNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.byteNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.byteNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.byteNumber == v2.doubleNumber;
 							return;
@@ -130,27 +142,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.shortNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.shortNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.shortNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.shortNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.shortNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.shortNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.shortNumber == v2.doubleNumber;
 							return;
@@ -162,27 +168,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.intNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.intNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.intNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.intNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.intNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.intNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.intNumber == v2.doubleNumber;
 							return;
@@ -194,27 +194,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.longNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.longNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.longNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.longNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.longNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.longNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.longNumber == v2.doubleNumber;
 							return;
@@ -226,27 +220,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.floatNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.floatNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.floatNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.floatNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.floatNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.floatNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.floatNumber == v2.doubleNumber;
 							return;
@@ -258,27 +246,21 @@ public class OperationEquals extends BinaryOperation {
 						case CHAR:
 							v1.bool = v1.doubleNumber == v2.character;
 							return;
-
 						case BYTE:
 							v1.bool = v1.doubleNumber == v2.byteNumber;
 							return;
-
 						case SHORT:
 							v1.bool = v1.doubleNumber == v2.shortNumber;
 							return;
-
 						case INT:
 							v1.bool = v1.doubleNumber == v2.intNumber;
 							return;
-
 						case LONG:
 							v1.bool = v1.doubleNumber == v2.longNumber;
 							return;
-
 						case FLOAT:
 							v1.bool = v1.doubleNumber == v2.floatNumber;
 							return;
-
 						case DOUBLE:
 							v1.bool = v1.doubleNumber == v2.doubleNumber;
 							return;
@@ -308,6 +290,6 @@ public class OperationEquals extends BinaryOperation {
 			return;
 		}
 
-		errorInvalidOperator(ctx, c1, c2);
+		errorInvalidOperator(ctx, v1.type, v2.type);
 	}
 }

@@ -68,7 +68,7 @@ public class NodeMethodReference extends NodeExpression {
 					}
 					if (matchedMethod != null) {
 						lambdaClass = matchedMethod.createLambdaClass(ctx, functionalInterface);
-						if (!HiClass.autoCast(ctx, matchedMethod.returnClass, functionalMethod.returnClass, false)) {
+						if (!HiClass.autoCast(ctx, matchedMethod.returnClass, functionalMethod.returnClass, false, true)) {
 							validationInfo.error("incompatible return type '" + matchedMethod.returnClass.fullName + "' of method " + matchedMethod.clazz.fullName + "." + matchedMethod + "; expected return type '" + functionalMethod.returnClass.fullName + "'", getToken());
 							valid = false;
 						}

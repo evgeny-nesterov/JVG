@@ -125,25 +125,18 @@ public class Value implements PrimitiveTypes {
 			switch (typeIndex) {
 				case BOOLEAN:
 					return bool;
-
 				case CHAR:
 					return character;
-
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
-
 				case INT:
 					return intNumber;
-
 				case LONG:
 					return longNumber;
-
 				case FLOAT:
 					return floatNumber;
-
 				case DOUBLE:
 					return doubleNumber;
 			}
@@ -227,6 +220,19 @@ public class Value implements PrimitiveTypes {
 		return object;
 	}
 
+	public HiObject getObject(HiClass dstClass) {
+		if (type.isArray()) {
+			ctx.throwRuntimeException("object is expected");
+			return null;
+		}
+		if (type.isPrimitive()) {
+			HiClassPrimitive primitiveClass = dstClass != null ? dstClass.getAutoboxedPrimitiveClass() : (HiClassPrimitive) type;
+			return primitiveClass.autobox(ctx, this); // changes ctx
+		} else {
+			return object;
+		}
+	}
+
 	public String getStringValue(RuntimeContext ctx) {
 		HiObject object = getObject();
 		if (object != null) {
@@ -243,160 +249,180 @@ public class Value implements PrimitiveTypes {
 		return array;
 	}
 
-	public boolean getBoolean() {
+	// autobox
+	public boolean getAutoboxPrimitiveValue(int expectedTypeIndex) {
 		if (type.isPrimitive()) {
 			int typeIndex = HiFieldPrimitive.getType(type);
-			if (typeIndex == BOOLEAN) {
-				return bool;
+			if (typeIndex == expectedTypeIndex) {
+				return true;
+			}
+		} else if (type.getAutoboxedPrimitiveClass() != null) {
+			int typeIndex = HiFieldPrimitive.getType(type.getAutoboxedPrimitiveClass());
+			if (typeIndex == expectedTypeIndex) {
+				if (object != null) {
+					object.getAutoboxedValue(ctx);
+					int autoboxTypeIndex = HiFieldPrimitive.getType(ctx.value.type);
+					if (autoboxTypeIndex == expectedTypeIndex) {
+						return true;
+					}
+				} else {
+					ctx.throwRuntimeException("null pointer");
+					return false;
+				}
 			}
 		}
+		return false;
+	}
 
+	// autobox
+	public int getAutoboxValues(int... expectedTypesIndexes) {
+		if (type.isPrimitive()) {
+			int typeIndex = HiFieldPrimitive.getType(type);
+			for (int i = 0; i < expectedTypesIndexes.length; i++) {
+				int expectedTypeIndex = expectedTypesIndexes[i];
+				if (typeIndex == expectedTypeIndex) {
+					return typeIndex;
+				}
+			}
+		} else if (type.getAutoboxedPrimitiveClass() != null) {
+			int typeIndex = HiFieldPrimitive.getType(type.getAutoboxedPrimitiveClass());
+			for (int i = 0; i < expectedTypesIndexes.length; i++) {
+				int expectedTypeIndex = expectedTypesIndexes[i];
+				if (typeIndex == expectedTypeIndex) {
+					if (object != null) {
+						object.getAutoboxedValue(ctx);
+						int autoboxTypeIndex = HiFieldPrimitive.getType(ctx.value.type);
+						if (autoboxTypeIndex == expectedTypeIndex) {
+							return autoboxTypeIndex;
+						}
+					} else {
+						ctx.throwRuntimeException("null pointer");
+					}
+					return -1;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public boolean getBoolean() {
+		if (getAutoboxPrimitiveValue(BOOLEAN)) {
+			return bool;
+		}
 		ctx.throwRuntimeException("boolean is expected");
 		return false;
 	}
 
 	public char getChar() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
-			if (typeIndex == CHAR) {
-				return character;
-			}
+		if (getAutoboxPrimitiveValue(CHAR)) {
+			return character;
 		}
-
 		ctx.throwRuntimeException("char is expected");
 		return 0;
 	}
 
 	public byte getByte() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
-			if (typeIndex == BYTE) {
-				return byteNumber;
-			}
+		if (getAutoboxPrimitiveValue(BYTE)) {
+			return byteNumber;
 		}
-
 		ctx.throwRuntimeException("byte is expected");
 		return 0;
 	}
 
 	public short getShort() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = getAutoboxValues(BYTE, SHORT);
+		if (typeIndex != -1) {
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
 			}
 		}
-
 		ctx.throwRuntimeException("short is expected");
 		return 0;
 	}
 
 	public int getInt() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT);
+		if (typeIndex != -1) {
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
-
 				case CHAR:
 					return character;
-
 				case INT:
 					return intNumber;
 			}
 		}
-
 		ctx.throwRuntimeException("int is expected");
 		return 0;
 	}
 
 	public long getLong() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG);
+		if (typeIndex != -1) {
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
-
 				case CHAR:
 					return character;
-
 				case INT:
 					return intNumber;
-
 				case LONG:
 					return longNumber;
 			}
 		}
-
 		ctx.throwRuntimeException("long is expected");
 		return 0;
 	}
 
 	public float getFloat() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG, FLOAT);
+		if (typeIndex != -1) {
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
-
 				case CHAR:
 					return character;
-
 				case INT:
 					return intNumber;
-
 				case LONG:
 					return longNumber;
-
 				case FLOAT:
 					return floatNumber;
 			}
 		}
-
 		ctx.throwRuntimeException("float is expected");
 		return 0;
 	}
 
 	public double getDouble() {
-		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE);
+		if (typeIndex != -1) {
 			switch (typeIndex) {
 				case BYTE:
 					return byteNumber;
-
 				case SHORT:
 					return shortNumber;
-
 				case CHAR:
 					return character;
-
 				case INT:
 					return intNumber;
-
 				case LONG:
 					return longNumber;
-
 				case FLOAT:
 					return floatNumber;
-
 				case DOUBLE:
 					return doubleNumber;
 			}
 		}
-
 		ctx.throwRuntimeException("double is expected");
 		return 0;
 	}
@@ -455,31 +481,24 @@ public class Value implements PrimitiveTypes {
 			case BOOLEAN:
 				Array.setBoolean(parentArray, arrayIndex, value.bool);
 				break;
-
 			case CHAR:
 				Array.setChar(parentArray, arrayIndex, value.character);
 				break;
-
 			case BYTE:
 				Array.setByte(parentArray, arrayIndex, value.byteNumber);
 				break;
-
 			case SHORT:
 				Array.setShort(parentArray, arrayIndex, value.shortNumber);
 				break;
-
 			case INT:
 				Array.setInt(parentArray, arrayIndex, value.intNumber);
 				break;
-
 			case LONG:
 				Array.setLong(parentArray, arrayIndex, value.longNumber);
 				break;
-
 			case FLOAT:
 				Array.setFloat(parentArray, arrayIndex, value.floatNumber);
 				break;
-
 			case DOUBLE:
 				Array.setDouble(parentArray, arrayIndex, value.doubleNumber);
 				break;
@@ -492,25 +511,18 @@ public class Value implements PrimitiveTypes {
 			switch (t) {
 				case BOOLEAN:
 					return Boolean.toString(bool).toCharArray();
-
 				case CHAR:
 					return Character.toString(character).toCharArray();
-
 				case BYTE:
 					return Byte.toString(byteNumber).toCharArray();
-
 				case SHORT:
 					return Short.toString(shortNumber).toCharArray();
-
 				case INT:
 					return Integer.toString(intNumber).toCharArray();
-
 				case LONG:
 					return Long.toString(longNumber).toCharArray();
-
 				case FLOAT:
 					return Float.toString(floatNumber).toCharArray();
-
 				case DOUBLE:
 					return Double.toString(doubleNumber).toCharArray();
 			}
@@ -542,6 +554,44 @@ public class Value implements PrimitiveTypes {
 		}
 	}
 
+	public void substitutePrimitiveValueFromAutoboxValue() {
+		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
+		HiField valueField = object.getField(ctx, "value");
+		switch (t) {
+			case BOOLEAN:
+				bool = (Boolean) valueField.get();
+				break;
+			case CHAR:
+				character = (Character) valueField.get();
+				break;
+			case BYTE:
+				byteNumber = (Byte) valueField.get();
+				break;
+			case SHORT:
+				shortNumber = (Short) valueField.get();
+				break;
+			case INT:
+				intNumber = (Integer) valueField.get();
+				break;
+			case LONG:
+				longNumber = (Long) valueField.get();
+				break;
+			case FLOAT:
+				floatNumber = (Float) valueField.get();
+				break;
+			case DOUBLE:
+				doubleNumber = (Double) valueField.get();
+				break;
+		}
+	}
+
+	// TODO check?
+	public void substituteAutoboxValueFromPrimitiveValue() {
+		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
+		HiField valueField = object.getField(ctx, "value");
+		valueField.set(ctx, this);
+	}
+
 	@Override
 	public String toString() {
 		switch (valueType) {
@@ -563,5 +613,26 @@ public class Value implements PrimitiveTypes {
 				return "EXECUTE: node=" + node;
 		}
 		return "";
+	}
+
+	public HiClass getOperationClass() {
+		if (type.getAutoboxedPrimitiveClass() != null) {
+			substitutePrimitiveValueFromAutoboxValue();
+			return type.getAutoboxedPrimitiveClass();
+		} else if (object != null && type.isObject()) {
+			return object.clazz;
+		}
+		return type;
+	}
+
+	public void debox() {
+		if (type.getAutoboxedPrimitiveClass() != null) {
+			if (object != null) {
+				substitutePrimitiveValueFromAutoboxValue();
+				type = type.getAutoboxedPrimitiveClass();
+			} else {
+				ctx.throwRuntimeException("null pointer");
+			}
+		}
 	}
 }

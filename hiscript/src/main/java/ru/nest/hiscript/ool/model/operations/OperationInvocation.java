@@ -60,15 +60,12 @@ public class OperationInvocation extends BinaryOperation {
 			case Value.NAME:
 				invokeName(ctx, v1, v2);
 				break;
-
 			case Value.METHOD_INVOCATION:
 				invokeMethod(ctx, v1, v2);
 				break;
-
 			case Value.EXECUTE:
 				invokeExecute(ctx, v1, v2);
 				break;
-
 			default:
 				ctx.throwRuntimeException("identifier is expected");
 				break;
@@ -332,6 +329,14 @@ public class OperationInvocation extends BinaryOperation {
 				for (int i = 0; i < varargsSize; i++) {
 					v1.type = argsClasses[mainSize + i];
 					argsFields[mainSize + i].get(ctx, v1);
+
+					// autobox
+					if (varargsClass.isPrimitive()) {
+						if (v1.type.isObject()) {
+							v1.debox();
+						}
+					}
+
 					HiArrays.setArray(varargsClass, array, i, v1);
 				}
 
@@ -349,6 +354,9 @@ public class OperationInvocation extends BinaryOperation {
 
 			for (int i = 0; i < size; i++) {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
+				if (argClass.getAutoboxedPrimitiveClass() != null || argClass.getAutoboxClass() != null) {
+					argClass = argClass;
+				}
 
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
@@ -379,6 +387,14 @@ public class OperationInvocation extends BinaryOperation {
 			try {
 				ctx.value = v1;
 				method.invoke(ctx, clazz, object, argsFields);
+
+				// autobox
+				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
+					if (v1.type.isObject()) {
+						v1.debox();
+					}
+				}
+
 				if (ctx.exitFromBlock()) {
 					return;
 				}

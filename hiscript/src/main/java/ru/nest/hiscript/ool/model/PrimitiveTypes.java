@@ -43,4 +43,6 @@ public interface PrimitiveTypes {
 	HiClassPrimitive TYPE_VOID = HiClassPrimitive.VOID;
 
 	HiClassVar TYPE_VAR = HiClassVar.VAR;
+
+	HiClass[] primitiveClasses = {TYPE_CHAR, TYPE_BYTE, TYPE_SHORT, TYPE_INT, TYPE_LONG, TYPE_FLOAT, TYPE_DOUBLE, TYPE_BOOLEAN, TYPE_VOID, TYPE_VAR};
 }

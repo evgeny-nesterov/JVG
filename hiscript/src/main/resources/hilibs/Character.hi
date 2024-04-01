@@ -1,0 +1,15 @@
+public final class Character extends Object {
+    private char value;
+
+    public Character(char value) {
+        this.value = value;
+    }
+
+    public char charValue() {
+        return value;
+    }
+
+    public String toString() {
+        return "" + value;
+    }
+}

@@ -49,7 +49,7 @@ public class HiClassRecord extends HiClass {
 	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
 		HiConstructor constructor = super._searchConstructor(classResolver, argTypes);
 		if (constructor == null) {
-			if (matchConstructor(classResolver, defaultConstructor, argTypes)) {
+			if (matchConstructor(classResolver, defaultConstructor, argTypes, MatchMethodArgumentsType.soft)) {
 				constructor = defaultConstructor;
 			}
 		}

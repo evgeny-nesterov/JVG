@@ -24,7 +24,8 @@ public class OperationPostfixIncrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		if (!node.type.isPrimitive() || HiFieldPrimitive.getType(node.type) == BOOLEAN) {
+		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		if (!type.isPrimitive() || HiFieldPrimitive.getType(type) == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
@@ -33,7 +34,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.type;
+		HiClass c = v.getOperationClass();
 
 		boolean isPrimitive = c.isPrimitive();
 		if (!isPrimitive) {
@@ -57,27 +58,21 @@ public class OperationPostfixIncrement extends UnaryOperation {
 				case CHAR:
 					tmp.character++;
 					break;
-
 				case BYTE:
 					tmp.byteNumber++;
 					break;
-
 				case SHORT:
 					tmp.shortNumber++;
 					break;
-
 				case INT:
 					tmp.intNumber++;
 					break;
-
 				case LONG:
 					tmp.longNumber++;
 					break;
-
 				case FLOAT:
 					tmp.floatNumber++;
 					break;
-
 				case DOUBLE:
 					tmp.doubleNumber++;
 					break;

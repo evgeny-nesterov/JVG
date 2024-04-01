@@ -50,8 +50,8 @@ public class HiFieldObject extends HiField<HiObject> {
 			object = null;
 			lambdaClass = null;
 		} else {
-			object = value.object;
 			lambdaClass = value.type.isLambda() ? value.type : null;
+			object = value.getObject(getClass(ctx));
 		}
 		initialized = true;
 	}

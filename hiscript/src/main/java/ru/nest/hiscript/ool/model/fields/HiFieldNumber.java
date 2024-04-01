@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.fields;
 
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
@@ -11,12 +12,13 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 
 	@Override
 	public final void get(RuntimeContext ctx, Value value) {
-		if (!value.type.isPrimitive()) {
+		HiClass valueClass = value.getOperationClass();
+		if (!valueClass.isPrimitive()) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 
-		int valueType = getType(value.type);
+		int valueType = getType(valueClass);
 		if (valueType == BOOLEAN) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
@@ -33,12 +35,14 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	@Override
 	public final void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (!value.type.isPrimitive()) {
+		if (value.type.getAutoboxedPrimitiveClass() != null) {
+			value.substitutePrimitiveValueFromAutoboxValue();
+		} else if (!value.type.isPrimitive()) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
 		}
 
-		int valueType = getType(value.type);
+		int valueType = getType(value.type.getAutoboxedPrimitiveClass() != null ? value.type.getAutoboxedPrimitiveClass() : value.type);
 		if (valueType == BOOLEAN) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;

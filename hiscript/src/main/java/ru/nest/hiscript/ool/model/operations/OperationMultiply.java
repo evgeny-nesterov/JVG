@@ -23,9 +23,8 @@ public class OperationMultiply extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type;
-		HiClass c2 = node2.type;
-
+		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
+		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
 		if (!c1.isNumber() || !c2.isNumber()) {
 			errorInvalidOperator(validationInfo, node1.token, c1, c2);
 			return null;
@@ -268,550 +267,456 @@ public class OperationMultiply extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.type;
-		HiClass c2 = v2.type;
-		if (v1.object != null && c1.isObject()) {
-			c1 = v1.object.clazz;
-		}
-		if (v2.object != null && c2.isObject()) {
-			c2 = v2.object.clazz;
-		}
-
-		if (!c1.isNumber() || !c2.isNumber()) {
-			errorInvalidOperator(ctx, c1, c2);
-			return;
-		}
-
-		int t1 = HiFieldPrimitive.getType(c1);
-		int t2 = HiFieldPrimitive.getType(c2);
-		if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
-			switch (t1) {
-				case CHAR:
-					switch (t2) {
-						case CHAR:
-							autoCastInt(v1, v1.character * v2.character);
-							return;
-
-						case BYTE:
-							autoCastInt(v1, v1.character * v2.byteNumber);
-							return;
-
-						case SHORT:
-							autoCastInt(v1, v1.character * v2.shortNumber);
-							return;
-
-						case INT:
-							autoCastInt(v1, v1.character * v2.intNumber);
-							return;
-
-						case LONG:
-							autoCastLong(v1, v1.character * v2.longNumber);
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.character * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.character * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case BYTE:
-					switch (t2) {
-						case CHAR:
-							autoCastInt(v1, v1.byteNumber * v2.character);
-							return;
-
-						case BYTE:
-							autoCastInt(v1, v1.byteNumber * v2.byteNumber);
-							return;
-
-						case SHORT:
-							autoCastInt(v1, v1.byteNumber * v2.shortNumber);
-							return;
-
-						case INT:
-							v1.type = TYPE_INT;
-							autoCastInt(v1, v1.byteNumber * v2.intNumber);
-							return;
-
-						case LONG:
-							autoCastLong(v1, v1.byteNumber * v2.longNumber);
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.byteNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.byteNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case SHORT:
-					switch (t2) {
-						case CHAR:
-							autoCastInt(v1, v1.shortNumber * v2.character);
-							return;
-
-						case BYTE:
-							autoCastInt(v1, v1.shortNumber * v2.byteNumber);
-							return;
-
-						case SHORT:
-							autoCastInt(v1, v1.shortNumber * v2.shortNumber);
-							return;
-
-						case INT:
-							autoCastInt(v1, v1.shortNumber * v2.intNumber);
-							return;
-
-						case LONG:
-							autoCastLong(v1, v1.shortNumber * v2.longNumber);
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.shortNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.shortNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case INT:
-					switch (t2) {
-						case CHAR:
-							autoCastInt(v1, v1.intNumber * v2.character);
-							return;
-
-						case BYTE:
-							autoCastInt(v1, v1.intNumber * v2.byteNumber);
-							return;
-
-						case SHORT:
-							autoCastInt(v1, v1.intNumber * v2.shortNumber);
-							return;
-
-						case INT:
-							autoCastInt(v1, v1.intNumber * v2.intNumber);
-							return;
-
-						case LONG:
-							autoCastLong(v1, v1.intNumber * v2.longNumber);
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.intNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.intNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case LONG:
-					switch (t2) {
-						case CHAR:
-							autoCastLong(v1, v1.longNumber * v2.character);
-							return;
-
-						case BYTE:
-							autoCastLong(v1, v1.longNumber * v2.byteNumber);
-							return;
-
-						case SHORT:
-							autoCastLong(v1, v1.longNumber * v2.shortNumber);
-							return;
-
-						case INT:
-							autoCastLong(v1, v1.longNumber * v2.intNumber);
-							return;
-
-						case LONG:
-							autoCastLong(v1, v1.longNumber * v2.longNumber);
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.longNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.longNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case FLOAT:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.floatNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case DOUBLE:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-			}
-		} else {
-			switch (t1) {
-				case CHAR:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.character * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.character * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.character * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.character * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.character * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.character * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.character * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case BYTE:
-					switch (t2) {
-						case CHAR:
-							v1.intNumber = v1.byteNumber * v2.character;
-							v1.type = TYPE_INT;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.byteNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.byteNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.byteNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.byteNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.byteNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.byteNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case SHORT:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.shortNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.shortNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.shortNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.shortNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.shortNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.shortNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.shortNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case INT:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.intNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.intNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.intNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_INT;
-							v1.intNumber = v1.intNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.intNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.intNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.intNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case LONG:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.longNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.longNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.longNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.longNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_LONG;
-							v1.longNumber = v1.longNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.longNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.longNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case FLOAT:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_FLOAT;
-							v1.floatNumber = v1.floatNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.floatNumber * v2.doubleNumber;
-							return;
-					}
-					break;
-
-				case DOUBLE:
-					switch (t2) {
-						case CHAR:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.character;
-							return;
-
-						case BYTE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.byteNumber;
-							return;
-
-						case SHORT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.shortNumber;
-							return;
-
-						case INT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.intNumber;
-							return;
-
-						case LONG:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.longNumber;
-							return;
-
-						case FLOAT:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.floatNumber;
-							return;
-
-						case DOUBLE:
-							v1.type = TYPE_DOUBLE;
-							v1.doubleNumber = v1.doubleNumber * v2.doubleNumber;
-							return;
-					}
-					break;
+		HiClass c1 = v1.getOperationClass();
+		HiClass c2 = v2.getOperationClass();
+		if (c1.isNumber() && c2.isNumber()) {
+			int t1 = HiFieldPrimitive.getType(c1);
+			int t2 = HiFieldPrimitive.getType(c2);
+			if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
+				switch (t1) {
+					case CHAR:
+						switch (t2) {
+							case CHAR:
+								autoCastInt(v1, v1.character * v2.character);
+								return;
+							case BYTE:
+								autoCastInt(v1, v1.character * v2.byteNumber);
+								return;
+							case SHORT:
+								autoCastInt(v1, v1.character * v2.shortNumber);
+								return;
+							case INT:
+								autoCastInt(v1, v1.character * v2.intNumber);
+								return;
+							case LONG:
+								autoCastLong(v1, v1.character * v2.longNumber);
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.character * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.character * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case BYTE:
+						switch (t2) {
+							case CHAR:
+								autoCastInt(v1, v1.byteNumber * v2.character);
+								return;
+							case BYTE:
+								autoCastInt(v1, v1.byteNumber * v2.byteNumber);
+								return;
+							case SHORT:
+								autoCastInt(v1, v1.byteNumber * v2.shortNumber);
+								return;
+							case INT:
+								v1.type = TYPE_INT;
+								autoCastInt(v1, v1.byteNumber * v2.intNumber);
+								return;
+							case LONG:
+								autoCastLong(v1, v1.byteNumber * v2.longNumber);
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.byteNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.byteNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case SHORT:
+						switch (t2) {
+							case CHAR:
+								autoCastInt(v1, v1.shortNumber * v2.character);
+								return;
+							case BYTE:
+								autoCastInt(v1, v1.shortNumber * v2.byteNumber);
+								return;
+							case SHORT:
+								autoCastInt(v1, v1.shortNumber * v2.shortNumber);
+								return;
+							case INT:
+								autoCastInt(v1, v1.shortNumber * v2.intNumber);
+								return;
+							case LONG:
+								autoCastLong(v1, v1.shortNumber * v2.longNumber);
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.shortNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.shortNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case INT:
+						switch (t2) {
+							case CHAR:
+								autoCastInt(v1, v1.intNumber * v2.character);
+								return;
+							case BYTE:
+								autoCastInt(v1, v1.intNumber * v2.byteNumber);
+								return;
+							case SHORT:
+								autoCastInt(v1, v1.intNumber * v2.shortNumber);
+								return;
+							case INT:
+								autoCastInt(v1, v1.intNumber * v2.intNumber);
+								return;
+							case LONG:
+								autoCastLong(v1, v1.intNumber * v2.longNumber);
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.intNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.intNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case LONG:
+						switch (t2) {
+							case CHAR:
+								autoCastLong(v1, v1.longNumber * v2.character);
+								return;
+							case BYTE:
+								autoCastLong(v1, v1.longNumber * v2.byteNumber);
+								return;
+							case SHORT:
+								autoCastLong(v1, v1.longNumber * v2.shortNumber);
+								return;
+							case INT:
+								autoCastLong(v1, v1.longNumber * v2.intNumber);
+								return;
+							case LONG:
+								autoCastLong(v1, v1.longNumber * v2.longNumber);
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.longNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.longNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case FLOAT:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.floatNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case DOUBLE:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+				}
+			} else {
+				switch (t1) {
+					case CHAR:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.character * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.character * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.character * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.character * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.character * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.character * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.character * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case BYTE:
+						switch (t2) {
+							case CHAR:
+								v1.intNumber = v1.byteNumber * v2.character;
+								v1.type = TYPE_INT;
+								return;
+							case BYTE:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.byteNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.byteNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.byteNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.byteNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.byteNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.byteNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case SHORT:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.shortNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.shortNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.shortNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.shortNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.shortNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.shortNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.shortNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case INT:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.intNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.intNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.intNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_INT;
+								v1.intNumber = v1.intNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.intNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.intNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.intNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case LONG:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.longNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.longNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.longNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.longNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_LONG;
+								v1.longNumber = v1.longNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.longNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.longNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case FLOAT:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_FLOAT;
+								v1.floatNumber = v1.floatNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.floatNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+
+					case DOUBLE:
+						switch (t2) {
+							case CHAR:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.character;
+								return;
+							case BYTE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.byteNumber;
+								return;
+							case SHORT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.shortNumber;
+								return;
+							case INT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.intNumber;
+								return;
+							case LONG:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.longNumber;
+								return;
+							case FLOAT:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.floatNumber;
+								return;
+							case DOUBLE:
+								v1.type = TYPE_DOUBLE;
+								v1.doubleNumber = v1.doubleNumber * v2.doubleNumber;
+								return;
+						}
+						break;
+				}
 			}
 		}
 
-		errorInvalidOperator(ctx, c1, c2);
+		errorInvalidOperator(ctx, v1.type, v2.type);
 	}
 }

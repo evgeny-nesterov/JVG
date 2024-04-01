@@ -1,0 +1,15 @@
+public final class Boolean extends Object {
+    private boolean value;
+
+    public Boolean(boolean value) {
+        this.value = value;
+    }
+
+    public boolean booleanValue() {
+        return value;
+    }
+
+    public String toString() {
+        return "" + value;
+    }
+}

@@ -295,31 +295,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BOOLEAN:
 				castBoolean(ctx, v1, v2, type2);
 				break;
-
 			case CHAR:
 				castCharacter(ctx, v1, v2, type2);
 				break;
-
 			case BYTE:
 				castByte(ctx, v1, v2, type2);
 				break;
-
 			case SHORT:
 				castShort(ctx, v1, v2, type2);
 				break;
-
 			case INT:
 				castInt(ctx, v1, v2, type2);
 				break;
-
 			case LONG:
 				castLong(ctx, v1, v2, type2);
 				break;
-
 			case FLOAT:
 				castFloat(ctx, v1, v2, type2);
 				break;
-
 			case DOUBLE:
 				castDouble(ctx, v1, v2, type2);
 				break;
@@ -339,31 +332,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.character = (char) v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.character = (char) v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.character = v2.character;
 				break;
-
 			case INT:
 				v1.character = (char) v2.intNumber;
 				break;
-
 			case LONG:
 				v1.character = (char) v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.character = (char) v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.character = (char) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -374,31 +360,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.byteNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.byteNumber = (byte) v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.byteNumber = (byte) v2.character;
 				break;
-
 			case INT:
 				v1.byteNumber = (byte) v2.intNumber;
 				break;
-
 			case LONG:
 				v1.byteNumber = (byte) v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.byteNumber = (byte) v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.byteNumber = (byte) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -409,31 +388,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.shortNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.shortNumber = v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.shortNumber = (short) v2.character;
 				break;
-
 			case INT:
 				v1.shortNumber = (short) v2.intNumber;
 				break;
-
 			case LONG:
 				v1.shortNumber = (short) v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.shortNumber = (short) v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.shortNumber = (short) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -444,31 +416,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.intNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.intNumber = v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.intNumber = v2.character;
 				break;
-
 			case INT:
 				v1.intNumber = v2.intNumber;
 				break;
-
 			case LONG:
 				v1.intNumber = (int) v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.intNumber = (int) v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.intNumber = (int) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -479,31 +444,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.floatNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.floatNumber = v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.floatNumber = v2.character;
 				break;
-
 			case INT:
 				v1.floatNumber = v2.intNumber;
 				break;
-
 			case LONG:
 				v1.floatNumber = v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.floatNumber = v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.floatNumber = (float) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -514,31 +472,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.longNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.longNumber = v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.longNumber = v2.character;
 				break;
-
 			case INT:
 				v1.longNumber = v2.intNumber;
 				break;
-
 			case LONG:
 				v1.longNumber = v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.longNumber = (long) v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.longNumber = (long) v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}
@@ -549,31 +500,24 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			case BYTE:
 				v1.doubleNumber = v2.byteNumber;
 				break;
-
 			case SHORT:
 				v1.doubleNumber = v2.shortNumber;
 				break;
-
 			case CHAR:
 				v1.doubleNumber = v2.character;
 				break;
-
 			case INT:
 				v1.doubleNumber = v2.intNumber;
 				break;
-
 			case LONG:
 				v1.doubleNumber = v2.longNumber;
 				break;
-
 			case FLOAT:
 				v1.doubleNumber = v2.floatNumber;
 				break;
-
 			case DOUBLE:
 				v1.doubleNumber = v2.doubleNumber;
 				break;
-
 			default:
 				errorCast(ctx, v2.type, v1.type);
 		}

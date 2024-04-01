@@ -31,17 +31,14 @@ public class OperationEquateDivide extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.type;
-		HiClass c2 = v2.type;
-
 		if (v1.valueType != Value.VARIABLE && v1.valueType != Value.ARRAY_INDEX) {
 			errorUnexpectedType(ctx);
 			return;
 		}
 
-		boolean isP1 = c1.isPrimitive();
-		boolean isP2 = c2.isPrimitive();
-		if (isP1 && isP2) {
+		HiClass c1 = v1.getOperationClass();
+		HiClass c2 = v2.getOperationClass();
+		if (c1.isPrimitive() && c2.isPrimitive()) {
 			int t1 = HiFieldPrimitive.getType(c1);
 			int t2 = HiFieldPrimitive.getType(c2);
 			if (t1 != BOOLEAN && t2 != BOOLEAN) {
@@ -52,42 +49,36 @@ public class OperationEquateDivide extends BinaryOperation {
 							return;
 						}
 						break;
-
 					case BYTE:
 						if (v2.byteNumber == 0) {
 							errorDivideByZero(ctx);
 							return;
 						}
 						break;
-
 					case SHORT:
 						if (v2.shortNumber == 0) {
 							errorDivideByZero(ctx);
 							return;
 						}
 						break;
-
 					case INT:
 						if (v2.intNumber == 0) {
 							errorDivideByZero(ctx);
 							return;
 						}
 						break;
-
 					case LONG:
 						if (v2.longNumber == 0) {
 							errorDivideByZero(ctx);
 							return;
 						}
 						break;
-
 					case FLOAT:
 						if (v2.floatNumber == 0) {
 							errorDivideByZero(ctx);
 							return;
 						}
 						break;
-
 					case DOUBLE:
 						if (v2.doubleNumber == 0) {
 							errorDivideByZero(ctx);
@@ -102,219 +93,171 @@ public class OperationEquateDivide extends BinaryOperation {
 							case CHAR:
 								v1.character /= v2.character;
 								break;
-
 							case BYTE:
 								v1.character /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.character /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.character /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.character /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.character /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.character /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case BYTE:
 						switch (t2) {
 							case CHAR:
 								v1.byteNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.byteNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.byteNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.byteNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.byteNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.byteNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.byteNumber /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case SHORT:
 						switch (t2) {
 							case CHAR:
 								v1.shortNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.shortNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.shortNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.shortNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.shortNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.shortNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.shortNumber /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case INT:
 						switch (t2) {
 							case CHAR:
 								v1.intNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.intNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.intNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.intNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.intNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.intNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.intNumber /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case LONG:
 						switch (t2) {
 							case CHAR:
 								v1.longNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.longNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.longNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.longNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.longNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.longNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.longNumber /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case FLOAT:
 						switch (t2) {
 							case CHAR:
 								v1.floatNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.floatNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.floatNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.floatNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.floatNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.floatNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.floatNumber /= v2.doubleNumber;
 								break;
 						}
 						break;
-
 					case DOUBLE:
 						switch (t2) {
 							case CHAR:
 								v1.doubleNumber /= v2.character;
 								break;
-
 							case BYTE:
 								v1.doubleNumber /= v2.byteNumber;
 								break;
-
 							case SHORT:
 								v1.doubleNumber /= v2.shortNumber;
 								break;
-
 							case INT:
 								v1.doubleNumber /= v2.intNumber;
 								break;
-
 							case LONG:
 								v1.doubleNumber /= v2.longNumber;
 								break;
-
 							case FLOAT:
 								v1.doubleNumber /= v2.floatNumber;
 								break;
-
 							case DOUBLE:
 								v1.doubleNumber /= v2.doubleNumber;
 								break;
@@ -331,6 +274,6 @@ public class OperationEquateDivide extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(ctx, c1, c2);
+		errorInvalidOperator(ctx, v1.type, v2.type);
 	}
 }

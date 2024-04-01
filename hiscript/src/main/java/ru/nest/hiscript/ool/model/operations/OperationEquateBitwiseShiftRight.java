@@ -31,25 +31,21 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.type;
-		HiClass c2 = v2.type;
-
 		if (v1.valueType != Value.VARIABLE && v1.valueType != Value.ARRAY_INDEX) {
 			errorUnexpectedType(ctx);
 			return;
 		}
 
-		boolean isP1 = c1.isPrimitive();
-		boolean isP2 = c2.isPrimitive();
-		if (isP1 && isP2) {
+		HiClass c1 = v1.getOperationClass();
+		HiClass c2 = v2.getOperationClass();
+		if (c1.isPrimitive() && c2.isPrimitive()) {
 			int t1 = HiFieldPrimitive.getType(c1);
 			int t2 = HiFieldPrimitive.getType(c2);
-
 			switch (t1) {
 				case BOOLEAN:
 				case FLOAT:
 				case DOUBLE:
-					errorInvalidOperator(ctx, c1, c2);
+					errorInvalidOperator(ctx, v1.type, v2.type);
 					return;
 			}
 
@@ -57,7 +53,7 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 				case BOOLEAN:
 				case FLOAT:
 				case DOUBLE:
-					errorInvalidOperator(ctx, c1, c2);
+					errorInvalidOperator(ctx, v1.type, v2.type);
 					return;
 			}
 
@@ -67,19 +63,15 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 						case CHAR:
 							v1.character >>= v2.character;
 							break;
-
 						case BYTE:
 							v1.character >>= v2.byteNumber;
 							break;
-
 						case SHORT:
 							v1.character >>= v2.shortNumber;
 							break;
-
 						case INT:
 							v1.character >>= v2.intNumber;
 							break;
-
 						case LONG:
 							v1.character >>= v2.longNumber;
 							break;
@@ -91,19 +83,15 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 						case CHAR:
 							v1.byteNumber >>= v2.character;
 							break;
-
 						case BYTE:
 							v1.byteNumber >>= v2.byteNumber;
 							break;
-
 						case SHORT:
 							v1.byteNumber >>= v2.shortNumber;
 							break;
-
 						case INT:
 							v1.byteNumber >>= v2.intNumber;
 							break;
-
 						case LONG:
 							v1.byteNumber >>= v2.longNumber;
 							break;
@@ -115,19 +103,15 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 						case CHAR:
 							v1.shortNumber >>= v2.character;
 							break;
-
 						case BYTE:
 							v1.shortNumber >>= v2.byteNumber;
 							break;
-
 						case SHORT:
 							v1.shortNumber >>= v2.shortNumber;
 							break;
-
 						case INT:
 							v1.shortNumber >>= v2.intNumber;
 							break;
-
 						case LONG:
 							v1.shortNumber >>= v2.longNumber;
 							break;
@@ -139,19 +123,15 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 						case CHAR:
 							v1.intNumber >>= v2.character;
 							break;
-
 						case BYTE:
 							v1.intNumber >>= v2.byteNumber;
 							break;
-
 						case SHORT:
 							v1.intNumber >>= v2.shortNumber;
 							break;
-
 						case INT:
 							v1.intNumber >>= v2.intNumber;
 							break;
-
 						case LONG:
 							v1.intNumber >>= v2.longNumber;
 							break;
@@ -163,19 +143,15 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 						case CHAR:
 							v1.longNumber >>= v2.character;
 							break;
-
 						case BYTE:
 							v1.longNumber >>= v2.byteNumber;
 							break;
-
 						case SHORT:
 							v1.longNumber >>= v2.shortNumber;
 							break;
-
 						case INT:
 							v1.longNumber >>= v2.intNumber;
 							break;
-
 						case LONG:
 							v1.longNumber >>= v2.longNumber;
 							break;
@@ -191,6 +167,6 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 			return;
 		}
 
-		errorInvalidOperator(ctx, c1, c2);
+		errorInvalidOperator(ctx, v1.type, v2.type);
 	}
 }

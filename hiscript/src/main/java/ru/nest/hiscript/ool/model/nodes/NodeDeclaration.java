@@ -59,7 +59,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		clazz = getValueClass(validationInfo, ctx);
-		if (initialization != null) {
+		if (initialization != null && ctx.nodeValueType.valid) {
 			if (type == Type.varType) {
 				type = Type.getType(clazz);
 				// do not check cast
@@ -71,7 +71,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 				if (initializationValueType.isValue) {
 					canBeCasted = initializationValueType.autoCastValue(clazz);
 				} else {
-					canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false);
+					canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false, true);
 				}
 				if (!canBeCasted) {
 					validationInfo.error("incompatible types: " + initializationValueType.type.fullName + " cannot be converted to " + clazz.fullName, initialization.getToken());

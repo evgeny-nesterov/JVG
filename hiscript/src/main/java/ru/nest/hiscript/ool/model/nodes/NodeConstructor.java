@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -247,13 +248,27 @@ public class NodeConstructor extends HiNode {
 					return null;
 				}
 
+				HiField argField = null;
 				HiClass argClass = ctx.value.type;
-				HiField argField = HiField.getField(argClass, null, argValues[i].getToken());
-				if (argField == null) {
-					ctx.throwRuntimeException("argument with type '" + argClass.fullName + "' is not found");
-					return null;
+
+				// autobox
+				if (argClass.isPrimitive()) {
+					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass();
+					if (dstArgClass.isObject()) {
+						HiObject autoboxValue = ((HiClassPrimitive) argClass).autobox(ctx, ctx.value);
+						argField = HiField.getField(argClass.getAutoboxClass(), null, argValues[i].getToken());
+						((HiFieldObject) argField).set(autoboxValue);
+					}
 				}
-				argField.set(ctx, ctx.value);
+
+				if (argField == null) {
+					argField = HiField.getField(argClass, null, argValues[i].getToken());
+					if (argField == null) {
+						ctx.throwRuntimeException("argument with type '" + argClass.fullName + "' is not found");
+						return null;
+					}
+					argField.set(ctx, ctx.value);
+				}
 				if (ctx.exitFromBlock()) {
 					return null;
 				}

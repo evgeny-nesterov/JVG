@@ -28,7 +28,7 @@ public class HiFieldArray extends HiField<Object> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type.isNull() || (valueType.type.isArray() && HiClass.autoCast(ctx, valueType.type, fieldClass, false));
+		return valueType.type.isNull() || (valueType.type.isArray() && HiClass.autoCast(ctx, valueType.type, fieldClass, false, true));
 	}
 
 	@Override

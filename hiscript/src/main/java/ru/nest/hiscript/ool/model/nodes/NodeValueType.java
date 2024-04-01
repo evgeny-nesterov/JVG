@@ -174,7 +174,12 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public boolean autoCastValue(HiClass type) {
 		if (!type.isPrimitive()) {
-			return false;
+			HiClass autoboxedPrimitiveClass = type.getAutoboxedPrimitiveClass();
+			if (autoboxedPrimitiveClass != null) {
+				type = autoboxedPrimitiveClass;
+			} else {
+				return false;
+			}
 		}
 		int t1 = HiFieldPrimitive.getType(valueType);
 		int t2 = HiFieldPrimitive.getType(type);

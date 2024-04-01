@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HiClass implements HiNodeIF {
+public class HiClass implements HiNodeIF, HiType {
 	public final static int CLASS_OBJECT = 0;
 
 	public final static int CLASS_PRIMITIVE = 1;
@@ -58,6 +58,8 @@ public class HiClass implements HiNodeIF {
 	public final static int CLASS_TYPE_ANONYMOUS = 3; // like new Object() {...}
 
 	public static HiClass OBJECT_CLASS;
+
+	public static HiClass NUMBER_CLASS;
 
 	public static String ROOT_CLASS_NAME = "@root";
 
@@ -116,6 +118,23 @@ public class HiClass implements HiNodeIF {
 			classes.add(OBJECT_CLASS);
 
 			// TODO define classes initialization order automatically
+			NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0);
+			classes.add(NUMBER_CLASS);
+			HiClassPrimitive.BYTE.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0);
+			HiClassPrimitive.SHORT.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0);
+			HiClassPrimitive.INT.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0);
+			HiClassPrimitive.LONG.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Long.hi"), false).get(0);
+			HiClassPrimitive.FLOAT.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Float.hi"), false).get(0);
+			HiClassPrimitive.DOUBLE.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0);
+			HiClassPrimitive.BOOLEAN.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0);
+			HiClassPrimitive.CHAR.autoboxClass = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0);
+			for (HiClassPrimitive primitiveClass : HiClassPrimitive.primitiveClasses.values()) {
+				if (primitiveClass != HiClassPrimitive.VOID) {
+					classes.add(primitiveClass.autoboxClass);
+					primitiveClass.autoboxClass.autoboxedPrimitiveClass = primitiveClass;
+				}
+			}
+
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
@@ -228,6 +247,11 @@ public class HiClass implements HiNodeIF {
 			this.fullName = fullName.intern();
 		}
 		return this.fullName;
+	}
+
+	@Override
+	public String getTypeName() {
+		return name;
 	}
 
 	private boolean isInitialized = false;
@@ -883,16 +907,18 @@ public class HiClass implements HiNodeIF {
 		HiClass[] argTypes = signature.argClasses;
 
 		if (functionalMethod != null) {
-			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes)) {
+			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes, MatchMethodArgumentsType.soft)) {
 				return functionalMethod;
 			}
 		}
 
 		if (methods != null && methods.length > 0) {
-			for (HiMethod m : methods) {
-				if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
-					if (isMatchMethodArguments(classResolver, m, argTypes)) {
-						return m;
+			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
+				for (HiMethod m : methods) {
+					if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
+						if (isMatchMethodArguments(classResolver, m, argTypes, matchType)) {
+							return m;
+						}
 					}
 				}
 			}
@@ -946,9 +972,11 @@ public class HiClass implements HiNodeIF {
 
 	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
 		if (methods != null && methods.length > 0) {
-			for (HiMethod m : methods) {
-				if (m.modifiers.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes)) {
-					return m;
+			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
+				for (HiMethod m : methods) {
+					if (m.modifiers.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes, matchType)) {
+						return m;
+					}
 				}
 			}
 		}
@@ -963,8 +991,29 @@ public class HiClass implements HiNodeIF {
 		return null;
 	}
 
-	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
-		if (method.hasVarargs()) {
+	public enum MatchMethodArgumentsType {
+		strict(false, false), noAutobox(true, false), soft(true, true);
+
+		private boolean isVarargs;
+
+		private boolean isAutobox;
+
+		MatchMethodArgumentsType(boolean isVarargs, boolean isAutobox) {
+			this.isVarargs = isVarargs;
+			this.isAutobox = isAutobox;
+		}
+
+		public boolean isVarargs() {
+			return isVarargs;
+		}
+
+		public boolean isAutobox() {
+			return isAutobox;
+		}
+	}
+
+	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
+		if (matchType.isVarargs() && method.hasVarargs()) {
 			int mainArgCount = method.argCount - 1;
 			if (mainArgCount > argTypes.length) {
 				return false;
@@ -973,7 +1022,7 @@ public class HiClass implements HiNodeIF {
 			method.resolve(classResolver);
 
 			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -985,13 +1034,13 @@ public class HiClass implements HiNodeIF {
 			NodeArgument vararg = method.arguments[mainArgCount];
 			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
 				HiClass argType = argTypes[mainArgCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, argType, varargsType, false)) {
+				if (!HiClass.autoCast(classResolver, argType, varargsType, false, matchType.isAutobox())) {
 					return false;
 				}
 				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			} else {
 				for (int i = mainArgCount; i < argTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
+					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
 						return false;
 					}
 				}
@@ -1008,7 +1057,7 @@ public class HiClass implements HiNodeIF {
 			method.resolve(classResolver);
 
 			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -1019,8 +1068,8 @@ public class HiClass implements HiNodeIF {
 		return true;
 	}
 
-	private boolean isMatchMethodDefinition(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
-		if (method.hasVarargs()) {
+	private boolean isMatchMethodDefinition(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
+		if (matchType.isVarargs() && method.hasVarargs()) {
 			int mainArgCount = method.argCount - 1;
 			if (mainArgCount > argTypes.length) {
 				return false;
@@ -1029,7 +1078,7 @@ public class HiClass implements HiNodeIF {
 			method.resolve(classResolver);
 
 			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -1041,13 +1090,13 @@ public class HiClass implements HiNodeIF {
 			NodeArgument vararg = method.arguments[mainArgCount];
 			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
 				HiClass argType = argTypes[mainArgCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, varargsType, argType, false)) {
+				if (!HiClass.autoCast(classResolver, varargsType, argType, false, matchType.isAutobox())) {
 					return false;
 				}
 				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			} else {
 				for (int i = mainArgCount; i < argTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, varargsType, argTypes[i], false)) {
+					if (!HiClass.autoCast(classResolver, varargsType, argTypes[i], false, matchType.isAutobox())) {
 						return false;
 					}
 				}
@@ -1064,7 +1113,7 @@ public class HiClass implements HiNodeIF {
 			method.resolve(classResolver);
 
 			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, method.argClasses[i], argTypes[i], false)) {
+				if (!HiClass.autoCast(classResolver, method.argClasses[i], argTypes[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -1197,17 +1246,19 @@ public class HiClass implements HiNodeIF {
 
 	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
 		if (constructors != null) {
-			for (HiConstructor constructor : constructors) {
-				if (matchConstructor(classResolver, constructor, argTypes)) {
-					return constructor;
+			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
+				for (HiConstructor constructor : constructors) {
+					if (matchConstructor(classResolver, constructor, argTypes, matchType)) {
+						return constructor;
+					}
 				}
 			}
 		}
 		return null;
 	}
 
-	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes) {
-		if (constructor.hasVarargs()) {
+	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
+		if (matchType.isVarargs && constructor.hasVarargs()) {
 			int mainArgCount = constructor.arguments.length - 1;
 			if (mainArgCount > argTypes.length) {
 				return false;
@@ -1216,14 +1267,14 @@ public class HiClass implements HiNodeIF {
 			constructor.resolve(classResolver);
 
 			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
 			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
 			NodeArgument vararg = constructor.arguments[mainArgCount];
 			for (int i = mainArgCount; i < argTypes.length; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -1242,7 +1293,7 @@ public class HiClass implements HiNodeIF {
 
 			constructor.resolve(classResolver);
 			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false)) {
+				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
@@ -1276,6 +1327,16 @@ public class HiClass implements HiNodeIF {
 
 	public boolean isPrimitive() {
 		return false;
+	}
+
+	public HiClass getAutoboxClass() {
+		return null;
+	}
+
+	public HiClassPrimitive autoboxedPrimitiveClass;
+
+	public HiClassPrimitive getAutoboxedPrimitiveClass() {
+		return autoboxedPrimitiveClass;
 	}
 
 	public boolean isNumber() {
@@ -1628,18 +1689,31 @@ public class HiClass implements HiNodeIF {
 			return this;
 		}
 		if (isPrimitive() || c.isPrimitive()) {
-			if (isNumber() && c.isNumber()) {
-				if (this == HiClassPrimitive.DOUBLE || c == HiClassPrimitive.DOUBLE) {
+			// autobox
+			// TODO autobox int => Integer?
+			HiClass c1 = this;
+			HiClass c2 = c;
+			if (!c1.isPrimitive()) {
+				if (c1.getAutoboxedPrimitiveClass() != null) {
+					c1 = c1.getAutoboxedPrimitiveClass();
+				}
+			} else if (!c2.isPrimitive()) {
+				if (c2.getAutoboxedPrimitiveClass() != null) {
+					c2 = c2.getAutoboxedPrimitiveClass();
+				}
+			}
+			if (c1.isNumber() && c2.isNumber()) {
+				if (c1 == HiClassPrimitive.DOUBLE || c2 == HiClassPrimitive.DOUBLE) {
 					return HiClassPrimitive.DOUBLE;
-				} else if (this == HiClassPrimitive.FLOAT || c == HiClassPrimitive.FLOAT) {
+				} else if (c1 == HiClassPrimitive.FLOAT || c2 == HiClassPrimitive.FLOAT) {
 					return HiClassPrimitive.DOUBLE;
-				} else if (this == HiClassPrimitive.LONG || c == HiClassPrimitive.LONG) {
+				} else if (c1 == HiClassPrimitive.LONG || c2 == HiClassPrimitive.LONG) {
 					return HiClassPrimitive.LONG;
-				} else if (this == HiClassPrimitive.INT || c == HiClassPrimitive.INT) {
+				} else if (c1 == HiClassPrimitive.INT || c2 == HiClassPrimitive.INT) {
 					return HiClassPrimitive.INT;
-				} else if (this == HiClassPrimitive.CHAR || c == HiClassPrimitive.CHAR) {
+				} else if (c1 == HiClassPrimitive.CHAR || c2 == HiClassPrimitive.CHAR) {
 					return HiClassPrimitive.INT;
-				} else if (this == HiClassPrimitive.SHORT || c == HiClassPrimitive.SHORT) {
+				} else if (c1 == HiClassPrimitive.SHORT || c2 == HiClassPrimitive.SHORT) {
 					return HiClassPrimitive.SHORT;
 				}
 			}
@@ -1667,7 +1741,7 @@ public class HiClass implements HiNodeIF {
 		this.token = token;
 	}
 
-	public static boolean autoCast(ClassResolver classResolver, HiClass src, HiClass dst, boolean isValue) {
+	public static boolean autoCast(ClassResolver classResolver, HiClass src, HiClass dst, boolean isValue, boolean isAutobox) {
 		if (src == dst) {
 			return true;
 		}
@@ -1680,7 +1754,27 @@ public class HiClass implements HiNodeIF {
 			return true;
 		}
 
+		// autobox
+		if (isAutobox && src != HiClassPrimitive.VOID && dst == HiClass.OBJECT_CLASS) {
+			return true;
+		}
+
 		if (src.isPrimitive() || dst.isPrimitive()) {
+			// autobox
+			if (isAutobox) {
+				if (!src.isPrimitive()) {
+					if (src.getAutoboxedPrimitiveClass() != null) {
+						src = src.getAutoboxedPrimitiveClass();
+					}
+				} else if (!dst.isPrimitive()) {
+					if (dst.getAutoboxedPrimitiveClass() != null) {
+						dst = dst.getAutoboxedPrimitiveClass();
+					} else if (dst == HiClass.NUMBER_CLASS) {
+						return src.isNumber();
+					}
+				}
+			}
+
 			if (src.isPrimitive() && dst.isPrimitive()) {
 				if (isValue) {
 					return HiFieldPrimitive.autoCastValue(src, dst);
@@ -1714,7 +1808,7 @@ public class HiClass implements HiNodeIF {
 			if (arraySrc.cellClass.isPrimitive()) {
 				return arraySrc.cellClass == arrayDst.cellClass;
 			} else {
-				return autoCast(classResolver, arraySrc.cellClass, arrayDst.cellClass, false);
+				return autoCast(classResolver, arraySrc.cellClass, arrayDst.cellClass, false, isAutobox);
 			}
 		}
 		if (src.getLambdaImplementedMethod(classResolver, dst) != null) {

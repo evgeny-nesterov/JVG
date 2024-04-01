@@ -24,7 +24,8 @@ public class OperationPrefixDecrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		if (!node.type.isPrimitive() || HiFieldPrimitive.getType(node.type) == BOOLEAN) {
+		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		if (!type.isPrimitive() || HiFieldPrimitive.getType(type) == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
@@ -33,7 +34,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.type;
+		HiClass c = v.getOperationClass();
 
 		boolean isP = c.isPrimitive();
 		if (!isP) {
@@ -51,27 +52,21 @@ public class OperationPrefixDecrement extends UnaryOperation {
 			case CHAR:
 				v.character--;
 				break;
-
 			case BYTE:
 				v.byteNumber--;
 				break;
-
 			case SHORT:
 				v.shortNumber--;
 				break;
-
 			case INT:
 				v.intNumber--;
 				break;
-
 			case LONG:
 				v.longNumber--;
 				break;
-
 			case FLOAT:
 				v.floatNumber--;
 				break;
-
 			case DOUBLE:
 				v.doubleNumber--;
 				break;

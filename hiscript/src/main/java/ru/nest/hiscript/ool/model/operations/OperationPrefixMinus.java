@@ -22,7 +22,8 @@ public class OperationPrefixMinus extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		if (!node.type.isPrimitive() || HiFieldPrimitive.getType(node.type) == BOOLEAN) {
+		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		if (!type.isPrimitive() || HiFieldPrimitive.getType(type) == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
 		return node.type;
@@ -30,7 +31,7 @@ public class OperationPrefixMinus extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.type;
+		HiClass c = v.getOperationClass();
 
 		boolean isP = c.isPrimitive();
 		if (!isP) {
@@ -49,29 +50,23 @@ public class OperationPrefixMinus extends UnaryOperation {
 				v.type = TYPE_INT;
 				v.intNumber = -v.character;
 				break;
-
 			case BYTE:
 				v.type = TYPE_INT;
 				v.intNumber = -v.byteNumber;
 				break;
-
 			case SHORT:
 				v.type = TYPE_INT;
 				v.intNumber = -v.shortNumber;
 				break;
-
 			case INT:
 				v.intNumber = -v.intNumber;
 				break;
-
 			case LONG:
 				v.longNumber = -v.longNumber;
 				break;
-
 			case FLOAT:
 				v.floatNumber = -v.floatNumber;
 				break;
-
 			case DOUBLE:
 				v.doubleNumber = -v.doubleNumber;
 				break;

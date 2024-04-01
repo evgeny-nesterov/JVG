@@ -1,6 +1,11 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
@@ -31,7 +36,7 @@ public class HiClassPrimitive extends HiClass {
 		super(HiClass.systemClassLoader, null, null, name, CLASS_TYPE_TOP, null);
 	}
 
-	private static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
+	public static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
 
 	static {
 		primitiveClasses.put("char", CHAR);
@@ -45,8 +50,20 @@ public class HiClassPrimitive extends HiClass {
 		primitiveClasses.put("void", VOID);
 	}
 
-	public static HiClass getPrimitiveClass(String name) {
+	public static HiClassPrimitive getPrimitiveClass(String name) {
 		return primitiveClasses.get(name);
+	}
+
+	public static HiClass getAutoboxClass(String name) {
+		HiClassPrimitive primitiveClass = primitiveClasses.get(name);
+		return primitiveClass != null ? primitiveClass.autoboxClass : null;
+	}
+
+	public HiClass autoboxClass;
+
+	@Override
+	public HiClass getAutoboxClass() {
+		return autoboxClass;
 	}
 
 	@Override
@@ -67,6 +84,13 @@ public class HiClassPrimitive extends HiClass {
 	@Override
 	public boolean isObject() {
 		return false;
+	}
+
+	public HiObject autobox(RuntimeContext ctx, Value value) {
+		HiField valueField = HiField.getField(this, "value", null);
+		valueField.set(ctx, value);
+		HiConstructor constructor = autoboxClass.getConstructor(ctx, this);
+		return constructor.newInstance(ctx, new HiField[] {valueField}, null);
 	}
 
 	@Override

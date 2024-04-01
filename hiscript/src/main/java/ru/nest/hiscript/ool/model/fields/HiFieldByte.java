@@ -35,27 +35,21 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 			case BYTE:
 				value.byteNumber = this.value;
 				break;
-
 			case SHORT:
 				value.shortNumber = this.value;
 				break;
-
 			case INT:
 				value.intNumber = this.value;
 				break;
-
 			case LONG:
 				value.longNumber = this.value;
 				break;
-
 			case FLOAT:
 				value.floatNumber = this.value;
 				break;
-
 			case DOUBLE:
 				value.doubleNumber = this.value;
 				break;
-
 			default:
 				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
@@ -76,14 +70,12 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 							return;
 						}
 						break;
-
 					case SHORT:
 						if (value.shortNumber >= Byte.MIN_VALUE && value.shortNumber <= Byte.MAX_VALUE) {
 							this.value = (byte) value.shortNumber;
 							return;
 						}
 						break;
-
 					case INT:
 						if (value.intNumber >= Byte.MIN_VALUE && value.intNumber <= Byte.MAX_VALUE) {
 							this.value = (byte) value.intNumber;

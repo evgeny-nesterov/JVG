@@ -47,7 +47,7 @@ public class NodeReturn extends HiNode {
 					if (block.statements.size() > 0) {
 						value = block.statements.get(block.statements.size() - 1);
 						if (value instanceof NodeReturn) {
-							value = ((NodeReturn)value).value;
+							value = ((NodeReturn) value).value;
 						} else {
 							value = EmptyNode.getInstance();
 						}
@@ -69,7 +69,7 @@ public class NodeReturn extends HiNode {
 		}
 		if (value != null) {
 			NodeValueType returnValueType = value.getValueType(validationInfo, ctx);
-			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.type, expectedType, returnValueType.isValue)) {
+			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.type, expectedType, returnValueType.isValue, true)) {
 				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value != null ? value.getToken() : token);
 				return false;
 			}

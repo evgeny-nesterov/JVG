@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
+	// TODO optimize
 	protected static Map<Type, Integer> typesHashType = new HashMap<>();
 
 	protected static Map<HiClass, Integer> typesHashClass = new HashMap<>();
@@ -51,22 +52,27 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 
+	public static int getAutoType(HiClass type) {
+		if (type.getAutoboxedPrimitiveClass() != null) {
+			type = type.getAutoboxedPrimitiveClass();
+		}
+		return getType(type);
+	}
+
 	public static int getType(HiClass type) {
 		Integer t = typesHashClass.get(type);
 		if (t != null) {
 			return t.intValue();
-		} else {
-			throw new HiScriptRuntimeException("unknown type: " + type);
 		}
+		throw new HiScriptRuntimeException("unknown type: " + type);
 	}
 
 	public static int getType(Type type) {
 		Integer t = typesHashClass.get(type);
 		if (t != null) {
 			return t.intValue();
-		} else {
-			throw new HiScriptRuntimeException("unknown type: " + type);
 		}
+		throw new HiScriptRuntimeException("unknown type: " + type);
 	}
 
 	/**

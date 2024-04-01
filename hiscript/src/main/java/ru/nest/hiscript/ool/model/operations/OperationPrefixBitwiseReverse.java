@@ -23,8 +23,9 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		if (node.type.isPrimitive()) {
-			int t = HiFieldPrimitive.getType(node.type);
+		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		if (type.isPrimitive()) {
+			int t = HiFieldPrimitive.getType(type);
 			switch (t) {
 				case VAR:
 				case CHAR:
@@ -32,7 +33,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 				case SHORT:
 				case INT:
 				case LONG:
-					return t == LONG ? node.type : HiClassPrimitive.INT;
+					return t == LONG ? type : HiClassPrimitive.INT;
 			}
 		}
 		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
@@ -41,7 +42,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.type;
+		HiClass c = v.getOperationClass();
 
 		boolean isP = c.isPrimitive();
 		if (!isP) {
@@ -55,21 +56,17 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 				v.type = TYPE_INT;
 				v.intNumber = ~v.character;
 				return;
-
 			case BYTE:
 				v.type = TYPE_INT;
 				v.intNumber = ~v.byteNumber;
 				return;
-
 			case SHORT:
 				v.type = TYPE_INT;
 				v.intNumber = ~v.shortNumber;
 				return;
-
 			case INT:
 				v.intNumber = ~v.intNumber;
 				return;
-
 			case LONG:
 				v.longNumber = ~v.longNumber;
 				return;

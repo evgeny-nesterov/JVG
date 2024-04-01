@@ -1009,35 +1009,27 @@ public class ValueContainer implements Words {
 				case CHAR:
 					Array.set(array, indexes[indexes.length - 1], value.getCharacter());
 					break;
-
 				case STRING:
 					Array.set(array, indexes[indexes.length - 1], value.getString());
 					break;
-
 				case BOOLEAN:
 					Array.set(array, indexes[indexes.length - 1], value.getBoolean());
 					break;
-
 				case BYTE:
 					Array.set(array, indexes[indexes.length - 1], value.getByte());
 					break;
-
 				case SHORT:
 					Array.set(array, indexes[indexes.length - 1], value.getShort());
 					break;
-
 				case INT:
 					Array.set(array, indexes[indexes.length - 1], value.getInt());
 					break;
-
 				case FLOAT:
 					Array.set(array, indexes[indexes.length - 1], value.getFloat());
 					break;
-
 				case LONG:
 					Array.set(array, indexes[indexes.length - 1], value.getLong());
 					break;
-
 				case DOUBLE:
 					Array.set(array, indexes[indexes.length - 1], value.getDouble());
 					break;

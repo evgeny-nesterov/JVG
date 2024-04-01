@@ -36,7 +36,7 @@ public class HiFieldJava extends HiField {
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		if (value.object.userObject == null) {
-			ctx.throwRuntimeException("Null pointer");
+			ctx.throwRuntimeException("null pointer");
 			return;
 		}
 

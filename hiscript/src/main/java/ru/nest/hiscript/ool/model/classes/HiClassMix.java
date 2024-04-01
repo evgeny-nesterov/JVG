@@ -10,7 +10,7 @@ public class HiClassMix extends HiClass {
 
 	public HiClassMix(HiClass[] classes, HiClass enclosingClass) {
 		this.classes = classes;
-		this.type = CLASS_TYPE_ANONYMOUS;
+		this.type = CLASS_MIX;
 		this.name = "mix";
 		if (enclosingClass != null) {
 			this.fullName = enclosingClass.fullName + "$$mix";

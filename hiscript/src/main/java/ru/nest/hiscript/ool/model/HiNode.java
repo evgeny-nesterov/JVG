@@ -495,7 +495,7 @@ public abstract class HiNode implements HiNodeIF {
 				validationInfo.error(valueClass.fullName + " is expected", getToken());
 				return false;
 			}
-		} else if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false)) {
+		} else if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false, true)) {
 			validationInfo.error(valueClass.fullName + " is expected", getToken());
 			return false;
 		}
