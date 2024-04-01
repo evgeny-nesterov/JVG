@@ -38,7 +38,7 @@ public class TestAutoboxing extends HiTest {
 
 		// operations
 		assertSuccess("Byte a = 1; Byte b = 2; Byte c = 3; assert a + b == c;");
-		assertSuccess("Byte a = 1; Byte b = 1; assert a != b;");
+		assertSuccess("Byte a = 1; Byte b = 1; assert a == b;"); // cached value
 		for (String operation : operations) {
 			String B1 = "new Byte((byte)63)";
 			String b1 = "(byte)63";
@@ -62,33 +62,35 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("Byte a = 1; assert a < 2;");
 		assertSuccess("Byte a = 1; assert a <= 2;");
 		assertSuccess("Byte a = 1; assert a != 2;");
-		assertSuccess("Byte a = 1; byte b = a; Byte c = a; Byte d = b; assert a == c; assert a != d;");
+		assertSuccess("Byte a = 1; byte b = a; Byte c = a; Byte d = b; assert a == c; assert a == d;");
 
 		// class fields
-		assertSuccess("class C{Byte a; C(Byte a) {this.a = a;}} assert new C((byte)127).a == 127;");
+		assertSuccessSerialize("class C{Byte a; C(Byte a) {this.a = a;}} assert new C((byte)127).a == 127;");
+		assertSuccessSerialize("class C{static Byte a;} C.a = (byte)127; assert C.a == 127;");
+		assertSuccessSerialize("class C{static byte a;} C.a = new Byte((byte)127); assert C.a == new Byte((byte)127);");
 
 		// methods + return
-		assertSuccess("class C{byte set(Byte a){return a;}} assert new C().set(new Byte((byte)123)) == new Byte((byte)123) : \"assert 2\";");
-		assertSuccess("class C{Byte set(byte a){return a;}} assert new C().set(new Byte((byte)123)) == 123;");
-		assertSuccess("class C{void set(byte... a){assert a[1] == 127;}} new C().set(new Byte((byte)0), new Byte((byte)127));");
-		assertSuccess("class C{C(byte... a){assert a[0] == 0; assert a[1] == 127; assert a[2] == -1;}} new C(new Byte((byte)0), new Byte((byte)127), (byte)-1);");
+		assertSuccessSerialize("class C{byte set(Byte a){return a;}} assert new C().set(new Byte((byte)123)) == new Byte((byte)123) : \"assert 2\";");
+		assertSuccessSerialize("class C{Byte set(byte a){return a;}} assert new C().set(new Byte((byte)123)) == 123;");
+		assertSuccessSerialize("class C{void set(byte... a){assert a[1] == 127;}} new C().set(new Byte((byte)0), new Byte((byte)127));");
+		assertSuccessSerialize("class C{C(byte... a){assert a[0] == 0; assert a[1] == 127; assert a[2] == -1;}} new C(new Byte((byte)0), new Byte((byte)127), (byte)-1);");
 		assertFail("class C{C(byte... a){}} new C(new Byte((byte)0), new Byte((byte)127), null);");
 
 		// constructors
-		assertSuccess("class C{byte set(Byte a){assert a == 123; return a;}} assert new C().set((byte)123) == 123;");
-		assertSuccess("class C{Byte set(byte a){return a;}} assert new C().set((byte)123) == 123;");
-		assertSuccess("class C{C(Object a){assert a instanceof Byte;}} new C((byte)123);");
-		assertSuccess("class C{C(Byte... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert a[1] == 127; assert a[2] == null; assert a[3] == -1;}} new C((byte)0, (byte)127, null, new Byte((byte)-1));");
-		assertSuccess("class C{C(Object... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert (Byte)a[1] == 127;}} new C((byte)0, (byte)127);");
+		assertSuccessSerialize("class C{byte set(Byte a){assert a == 123; return a;}} assert new C().set((byte)123) == 123;");
+		assertSuccessSerialize("class C{Byte set(byte a){return a;}} assert new C().set((byte)123) == 123;");
+		assertSuccessSerialize("class C{C(Object a){assert a instanceof Byte;}} new C((byte)123);");
+		assertSuccessSerialize("class C{C(Byte... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert a[1] == 127; assert a[2] == null; assert a[3] == -1;}} new C((byte)0, (byte)127, null, new Byte((byte)-1));");
+		assertSuccessSerialize("class C{C(Object... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert (Byte)a[1] == 127;}} new C((byte)0, (byte)127);");
 
 		// arrays
-		assertSuccess("Byte[] a = new Byte[3]; a[0] = (byte)1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
-		assertSuccess("Byte[][] a = new Byte[3][3]; a[0][0] = (byte)1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
-		assertSuccess("byte[] a = new byte[2]; a[1] = new Byte((byte)127); assert a[1] == 127;");
-		assertSuccess("byte[][] a = new byte[2][2]; a[1][1] = new Byte((byte)127); assert a[1][1] == 127;");
+		assertSuccessSerialize("Byte[] a = new Byte[3]; a[0] = (byte)1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
+		assertSuccessSerialize("Byte[][] a = new Byte[3][3]; a[0][0] = (byte)1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
+		assertSuccessSerialize("byte[] a = new byte[2]; a[1] = new Byte((byte)127); assert a[1] == 127;");
+		assertSuccessSerialize("byte[][] a = new byte[2][2]; a[1][1] = new Byte((byte)127); assert a[1][1] == 127;");
 
 		// statements
-		assertSuccess("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
+		assertSuccessSerialize("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
 	}
 
 	@Test
