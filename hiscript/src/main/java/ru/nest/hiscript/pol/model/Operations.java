@@ -390,6 +390,12 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 				left.type = LONG;
 				break;
 
+			case BITWISE_SHIFT_RIGHT_CYCLIC:
+			case EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
+				left.longNumber = left.getLong() >>> right.getLong();
+				left.type = LONG;
+				break;
+
 			case BITWISE_AND:
 			case EQUATE_BITWISE_AND:
 				left.longNumber = left.getLong() & right.getLong();
@@ -495,6 +501,12 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 			case BITWISE_SHIFT_RIGHT:
 			case EQUATE_BITWISE_SHIFT_RIGHT:
 				left.intNumber = left.getInt() >> right.getInt();
+				left.type = INT;
+				break;
+
+			case BITWISE_SHIFT_RIGHT_CYCLIC:
+			case EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
+				left.intNumber = left.getInt() >>> right.getInt();
 				left.type = INT;
 				break;
 

@@ -41,6 +41,7 @@ public class Tokenizer {
 		int startOffset = token.getOffset() - token.getLineOffset();
 		int endOffset = s.indexOf('\n', token.getOffset());
 		if (endOffset == -1) {
+			startOffset = 0;
 			endOffset = s.length();
 		}
 		return getText(startOffset, endOffset);

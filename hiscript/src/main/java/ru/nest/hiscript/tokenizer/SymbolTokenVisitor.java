@@ -177,12 +177,17 @@ public class SymbolTokenVisitor implements TokenVisitor {
 					length = 2;
 				} else if (tokenizer.lookForward() == '>') {
 					tokenizer.next();
+					boolean cyclic = false;
+					if (tokenizer.lookForward() == '>') {
+						tokenizer.next();
+						cyclic = true;
+					}
 					if (tokenizer.lookForward() == '=') {
 						tokenizer.next();
-						type = Symbols.EQUATE_BITWISE_SHIFT_RIGHT;
+						type = cyclic ? Symbols.EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC : Symbols.EQUATE_BITWISE_SHIFT_RIGHT;
 						length = 3;
 					} else {
-						type = Symbols.BITWISE_SHIFT_RIGHT;
+						type = cyclic ? Symbols.BITWISE_SHIFT_RIGHT_CYCLIC : Symbols.BITWISE_SHIFT_RIGHT;
 						length = 2;
 					}
 				} else {

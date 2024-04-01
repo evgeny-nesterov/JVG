@@ -29,6 +29,9 @@ public class SymbolToken extends Token implements Symbols {
 			case BITWISE_SHIFT_RIGHT:
 				return ">>";
 
+			case BITWISE_SHIFT_RIGHT_CYCLIC:
+				return ">>>";
+
 			case BITWISE_XOR:
 				return "^";
 
@@ -70,6 +73,9 @@ public class SymbolToken extends Token implements Symbols {
 
 			case EQUATE_BITWISE_SHIFT_RIGHT:
 				return ">>=";
+
+			case EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
+				return ">>>=";
 
 			case EQUATE_BITWISE_XOR:
 				return "^=";
