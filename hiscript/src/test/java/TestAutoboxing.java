@@ -56,6 +56,13 @@ public class TestAutoboxing extends HiTest {
 		for (String operation : operations) {
 			assertFailCompile("Byte a = 32; a " + operation + "= 1;");
 		}
+		assertFailCompile("Byte a = 32; a ~= 1;");
+		assertSuccess("Byte a = 1; assert a > 0;");
+		assertSuccess("Byte a = 1; assert a >= 0;");
+		assertSuccess("Byte a = 1; assert a < 2;");
+		assertSuccess("Byte a = 1; assert a <= 2;");
+		assertSuccess("Byte a = 1; assert a != 2;");
+		assertSuccess("Byte a = 1; byte b = a; Byte c = a; Byte d = b; assert a == c; assert a != d;");
 
 		// class fields
 		assertSuccess("class C{Byte a; C(Byte a) {this.a = a;}} assert new C((byte)127).a == 127;");
@@ -75,8 +82,13 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("class C{C(Object... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert (Byte)a[1] == 127;}} new C((byte)0, (byte)127);");
 
 		// arrays
-		assertSuccess("Byte[] a = new Byte[3]; a[0] = (byte)1; a[1] = 127; assert a[0] == 1; assert a[1] == 127; assert a[2] == null;");
+		assertSuccess("Byte[] a = new Byte[3]; a[0] = (byte)1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
+		assertSuccess("Byte[][] a = new Byte[3][3]; a[0][0] = (byte)1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
 		assertSuccess("byte[] a = new byte[2]; a[1] = new Byte((byte)127); assert a[1] == 127;");
+		assertSuccess("byte[][] a = new byte[2][2]; a[1][1] = new Byte((byte)127); assert a[1][1] == 127;");
+
+		// statements
+		assertSuccess("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
 	}
 
 	@Test

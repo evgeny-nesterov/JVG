@@ -23,8 +23,8 @@ public class OperationLower extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type;
-		HiClass c2 = node2.type;
+		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
+		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
 		if (c1.isNumber() && c2.isNumber()) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {

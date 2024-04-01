@@ -26,6 +26,7 @@ public class OperationPrefixPlus extends UnaryOperation {
 		if (!type.isPrimitive() || HiFieldPrimitive.getType(type) == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
+		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		return node.type;
 	}
 

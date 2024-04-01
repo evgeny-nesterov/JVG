@@ -56,7 +56,6 @@ public class OperationNotEquals extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.type;
 		HiClass c2 = v2.type;
-		v1.type = TYPE_BOOLEAN;
 
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
@@ -74,6 +73,7 @@ public class OperationNotEquals extends BinaryOperation {
 			}
 		}
 
+		v1.type = TYPE_BOOLEAN;
 		if (isP1 && isP2) {
 			int t1 = HiFieldPrimitive.getType(c1);
 			int t2 = HiFieldPrimitive.getType(c2);

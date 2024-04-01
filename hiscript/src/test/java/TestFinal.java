@@ -47,10 +47,12 @@ public class TestFinal extends HiTest {
 		assertFailCompile("for(final int i = 0; i < 10; i++){}");
 
 		// boolean operations which changes value
-		assertFailCompile("final boolean x = true; x &= true;");
-		assertFailCompile("final boolean x = true; x &&= true;");
-		assertFailCompile("final boolean x = true; x |= true;");
-		assertFailCompile("final boolean x = true; x ||= true;");
+		assertFailCompile("final boolean x = false; x &= true;");
+		assertFailCompile("final boolean x = false; x &&= true;");
+		assertFailCompile("final boolean x = false; x |= true;");
+		assertFailCompile("final boolean x = false; x ||= true;");
+		assertFailCompile("final boolean x = false; x ^= true;");
+		assertFailCompile("final boolean x = false; x ~= true;");
 
 		// interface field is final on default
 		assertFailCompile("interface I{int x = 1;} I.x = 2;");
