@@ -185,9 +185,9 @@ public class HiObject {
 		return ImplUtil.getChars(ctx, ctx.value.object);
 	}
 
-	public void getAutoboxedValue(RuntimeContext ctx) {
+	public void getAutoboxedValue(RuntimeContext ctx, Value value) {
 		HiField<?> field = getField(ctx, "value");
-		field.get(ctx, ctx.value);
+		field.get(ctx, value);
 	}
 
 	@Override

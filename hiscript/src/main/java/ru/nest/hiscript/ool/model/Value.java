@@ -30,7 +30,7 @@ public class Value implements PrimitiveTypes {
 
 	public final static int EXECUTE = 7; // for node
 
-	private RuntimeContext ctx;
+	public RuntimeContext ctx;
 
 	public Value(RuntimeContext ctx) {
 		this.ctx = ctx;
@@ -260,8 +260,8 @@ public class Value implements PrimitiveTypes {
 			int typeIndex = HiFieldPrimitive.getType(type.getAutoboxedPrimitiveClass());
 			if (typeIndex == expectedTypeIndex) {
 				if (object != null) {
-					object.getAutoboxedValue(ctx);
-					int autoboxTypeIndex = HiFieldPrimitive.getType(ctx.value.type);
+					object.getAutoboxedValue(ctx, this);
+					int autoboxTypeIndex = HiFieldPrimitive.getType(type);
 					if (autoboxTypeIndex == expectedTypeIndex) {
 						return true;
 					}
@@ -290,8 +290,8 @@ public class Value implements PrimitiveTypes {
 				int expectedTypeIndex = expectedTypesIndexes[i];
 				if (typeIndex == expectedTypeIndex) {
 					if (object != null) {
-						object.getAutoboxedValue(ctx);
-						int autoboxTypeIndex = HiFieldPrimitive.getType(ctx.value.type);
+						object.getAutoboxedValue(ctx, this);
+						int autoboxTypeIndex = HiFieldPrimitive.getType(type);
 						if (autoboxTypeIndex == expectedTypeIndex) {
 							return autoboxTypeIndex;
 						}
@@ -314,6 +314,47 @@ public class Value implements PrimitiveTypes {
 			} else {
 				ctx.throwRuntimeException("null pointer");
 			}
+		}
+	}
+
+	// autobox
+	public void substitutePrimitiveValueFromAutoboxValue() {
+		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
+		if (object == null) {
+			ctx.throwRuntimeException("null pointer");
+			return;
+		}
+		HiField valueField = object.getField(ctx, "value");
+		switch (t) {
+			case BOOLEAN:
+				bool = (Boolean) valueField.get();
+				break;
+			case CHAR:
+				Object valueObject = valueField.get();
+				if (valueObject instanceof Character) {
+					character = (Character) valueObject;
+				} else {
+					character = (char) ((Number) valueField.get()).intValue();
+				}
+				break;
+			case BYTE:
+				byteNumber = ((Number) valueField.get()).byteValue();
+				break;
+			case SHORT:
+				shortNumber = ((Number) valueField.get()).shortValue();
+				break;
+			case INT:
+				intNumber = ((Number) valueField.get()).intValue();
+				break;
+			case LONG:
+				longNumber = ((Number) valueField.get()).longValue();
+				break;
+			case FLOAT:
+				floatNumber = ((Number) valueField.get()).floatValue();
+				break;
+			case DOUBLE:
+				doubleNumber = ((Number) valueField.get()).doubleValue();
+				break;
 		}
 	}
 
@@ -563,37 +604,6 @@ public class Value implements PrimitiveTypes {
 			return toString;
 		} else {
 			return NULL;
-		}
-	}
-
-	public void substitutePrimitiveValueFromAutoboxValue() {
-		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
-		HiField valueField = object.getField(ctx, "value");
-		switch (t) {
-			case BOOLEAN:
-				bool = (Boolean) valueField.get();
-				break;
-			case CHAR:
-				character = (Character) valueField.get();
-				break;
-			case BYTE:
-				byteNumber = (Byte) valueField.get();
-				break;
-			case SHORT:
-				shortNumber = (Short) valueField.get();
-				break;
-			case INT:
-				intNumber = (Integer) valueField.get();
-				break;
-			case LONG:
-				longNumber = (Long) valueField.get();
-				break;
-			case FLOAT:
-				floatNumber = (Float) valueField.get();
-				break;
-			case DOUBLE:
-				doubleNumber = (Double) valueField.get();
-				break;
 		}
 	}
 

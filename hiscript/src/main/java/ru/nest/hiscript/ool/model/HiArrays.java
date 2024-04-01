@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 
 import java.lang.reflect.Array;
@@ -170,7 +171,7 @@ public class HiArrays implements PrimitiveTypes {
 			dst.object = value.object;
 			Array.set(parentArray, index, dst.array);
 		} else if (type.isPrimitive()) {
-			// TODO autobox
+			// autobox
 			int typeIndex = HiFieldPrimitive.getType(type);
 			switch (typeIndex) {
 				case BOOLEAN:
@@ -207,7 +208,11 @@ public class HiArrays implements PrimitiveTypes {
 					break;
 			}
 		} else {
-			// TODO autobox
+			// autobox
+			if (value.type.isPrimitive()) {
+				value.object = ((HiClassPrimitive) value.type).autobox(value.ctx, value);
+				value.type = value.type.getAutoboxClass();
+			}
 			dst.object = value.getObject();
 			dst.lambdaClass = null;
 			Array.set(parentArray, index, dst.object);
