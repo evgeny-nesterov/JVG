@@ -10,7 +10,7 @@ import java.io.IOException;
 public class TestComplex extends HiTest {
 	@Test
 	public void testFull() throws IOException {
-		assertSuccessSerialize(ParserUtil.readString(HiCompiler.class.getResourceAsStream("/oolTestFully.hi")));
+		assertSuccessSerialize(ParserUtil.readString(HiCompiler.class.getResourceAsStream("/test/ool/oolTestFully.hi")));
 	}
 
 	@Test

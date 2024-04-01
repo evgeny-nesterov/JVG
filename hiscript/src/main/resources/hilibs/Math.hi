@@ -1,4 +1,4 @@
-public class Math {
+public final class Math {
   static {
     System.loadLib("MathImpl.class");
   }

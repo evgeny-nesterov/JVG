@@ -324,8 +324,8 @@ Util.header("CAST: PRIMITIVES");
 Util.header("CAST: ARRAYS");
 {
 	interface IX {}
-	class A4 extends String implements IX {}
-	String[] s = new A4[10];
+	class A4 extends HashMap implements IX {}
+	HashMap[] s = new A4[10];
 	System.println("\t(IX[])s: " + (IX[])s);
 }
 
@@ -762,7 +762,7 @@ Util.header("TRY CATCH FINALLY");
     class Exc2 extends Exception    {Exc2(){this("exc2");} Exc2(String msg){super(msg);}}
     class Exc22 extends Exc2        {Exc22(){super("exc22");}}
 
-	class Try extends String {
+	class Try extends HashMap {
   		public void hope1(int i) {
     		hope2(i);
   		}
@@ -1304,7 +1304,7 @@ Util.header("Check logical AND and OR, not all conditions are calculated");
 /////////////
 // 1. Braces
 /////////////
-Util.header("ALGIRITHM: Braces");
+Util.header("ALGORITHM: Braces");
 public class Braces {
 	public final static int VALUE = 0;
 

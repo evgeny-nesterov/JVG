@@ -1,4 +1,4 @@
-class String {
+public final class String {
   static {
     System.loadLib("StringImpl.class");
   }

@@ -1,4 +1,4 @@
-public class System {
+public final class System {
   public static native void print(String text);
 
   public static native void println(String text);
