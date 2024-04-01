@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -33,50 +34,52 @@ public class OperationPrefixDecrement extends UnaryOperation {
 	}
 
 	@Override
-	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.getOperationClass();
-
-		boolean isP = c.isPrimitive();
-		if (!isP) {
-			errorInvalidOperator(ctx, c);
+	public void doOperation(RuntimeContext ctx, Value value) {
+		HiClass c = value.getOperationClass();
+		if (!c.isPrimitive()) {
+			errorInvalidOperator(ctx, value.type);
 			return;
 		}
 
 		int t = HiFieldPrimitive.getType(c);
 		if (t == BOOLEAN) {
-			errorInvalidOperator(ctx, c);
+			errorInvalidOperator(ctx, value.type);
 			return;
 		}
 
 		switch (t) {
 			case CHAR:
-				v.character--;
+				value.character--;
 				break;
 			case BYTE:
-				v.byteNumber--;
+				value.byteNumber--;
 				break;
 			case SHORT:
-				v.shortNumber--;
+				value.shortNumber--;
 				break;
 			case INT:
-				v.intNumber--;
+				value.intNumber--;
 				break;
 			case LONG:
-				v.longNumber--;
+				value.longNumber--;
 				break;
 			case FLOAT:
-				v.floatNumber--;
+				value.floatNumber--;
 				break;
 			case DOUBLE:
-				v.doubleNumber--;
+				value.doubleNumber--;
 				break;
 		}
+		if (value.type.isObject()) {
+			value.type = c;
+			value.object = ((HiClassPrimitive) c).autobox(ctx, value);
+		}
 
-		HiField<?> var = v.variable;
-		if (v.valueType == Value.ARRAY_INDEX) {
-			HiArrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, v, ctx.value);
+		HiField<?> var = value.variable;
+		if (value.valueType == Value.ARRAY_INDEX) {
+			HiArrays.setArrayIndex(value.type, value.parentArray, value.arrayIndex, value, ctx.value);
 		} else {
-			var.set(ctx, v);
+			var.set(ctx, value);
 		}
 	}
 }

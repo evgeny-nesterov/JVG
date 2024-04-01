@@ -44,7 +44,9 @@ public class TestAutoboxing extends HiTest {
 //		assertSuccess("assert new Byte((byte)10) / new Byte((byte)5) == 2;");
 
 		assertSuccess("Byte a = 1; a++; assert a == 2;");
+		assertSuccess("Byte a = 1; ++a; assert a == 2;");
 		assertSuccess("Byte a = 1; a--; assert a == 0;");
+		assertSuccess("Byte a = 1; --a; assert a == 0;");
 		assertSuccess("Byte a = 1; a += 1; assert a == 2;");
 		assertSuccess("Byte a = 1; a -= 1; assert a == 0;");
 		assertSuccess("Byte a = 10; a *= 2; assert a == 20;");

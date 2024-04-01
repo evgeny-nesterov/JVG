@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -33,26 +34,24 @@ public class OperationPostfixIncrement extends UnaryOperation {
 	}
 
 	@Override
-	public void doOperation(RuntimeContext ctx, Value v) {
-		HiClass c = v.getOperationClass();
-
-		boolean isPrimitive = c.isPrimitive();
-		if (!isPrimitive) {
-			errorInvalidOperator(ctx, c);
+	public void doOperation(RuntimeContext ctx, Value value) {
+		HiClass c = value.getOperationClass();
+		if (!c.isPrimitive()) {
+			errorInvalidOperator(ctx, value.type);
 			return;
 		}
 
 		int type = HiFieldPrimitive.getType(c);
 		if (type == BOOLEAN) {
-			errorInvalidOperator(ctx, c);
+			errorInvalidOperator(ctx, value.type);
 			return;
 		}
 
-		HiField<?> var = v.variable;
-		Value[] vs = ctx.getValues(1);
+		HiField<?> var = value.variable;
+		Value[] tmpValues = ctx.getValues(1);
 		try {
-			Value tmp = vs[0];
-			v.copyTo(tmp);
+			Value tmp = tmpValues[0];
+			value.copyTo(tmp); // copy primitive value
 
 			switch (type) {
 				case CHAR:
@@ -77,14 +76,18 @@ public class OperationPostfixIncrement extends UnaryOperation {
 					tmp.doubleNumber++;
 					break;
 			}
+			if (value.type.isObject()) {
+				tmp.type = c;
+				tmp.object = ((HiClassPrimitive) c).autobox(ctx, tmp);
+			}
 
-			if (v.valueType == Value.ARRAY_INDEX) {
-				HiArrays.setArrayIndex(v.type, v.parentArray, v.arrayIndex, tmp, ctx.value);
+			if (value.valueType == Value.ARRAY_INDEX) {
+				HiArrays.setArrayIndex(value.type, value.parentArray, value.arrayIndex, tmp, ctx.value);
 			} else {
 				var.set(ctx, tmp);
 			}
 		} finally {
-			ctx.putValues(vs);
+			ctx.putValues(tmpValues);
 		}
 	}
 }

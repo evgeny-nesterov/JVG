@@ -585,13 +585,6 @@ public class Value implements PrimitiveTypes {
 		}
 	}
 
-	// TODO check?
-	public void substituteAutoboxValueFromPrimitiveValue() {
-		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
-		HiField valueField = object.getField(ctx, "value");
-		valueField.set(ctx, this);
-	}
-
 	@Override
 	public String toString() {
 		switch (valueType) {
