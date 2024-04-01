@@ -32,7 +32,13 @@ public class HiFieldObject extends HiField<HiObject> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type.isNull() || (valueType.type.isObject() && valueType.type.isInstanceof(fieldClass));
+		HiClass valueClass = valueType.type;
+
+		// autobox
+		if (valueClass.isPrimitive()) {
+			valueClass = valueClass.getAutoboxClass();
+		}
+		return valueClass.isNull() || (valueClass.isObject() && valueClass.isInstanceof(fieldClass));
 	}
 
 	@Override

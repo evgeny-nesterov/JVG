@@ -252,8 +252,7 @@ public class HiArrays implements PrimitiveTypes {
 					break;
 			}
 		} else {
-			// TODO autobox
-			Array.set(array, index, value.getObject());
+			Array.set(array, index, value.getObject(type));
 		}
 	}
 }

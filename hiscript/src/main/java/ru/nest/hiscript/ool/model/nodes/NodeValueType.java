@@ -173,7 +173,14 @@ public class NodeValueType implements PrimitiveTypes {
 	}
 
 	public boolean autoCastValue(HiClass type) {
+		// autobox
 		if (!type.isPrimitive()) {
+			if (type == HiClass.OBJECT_CLASS) {
+				return true;
+			} else if (type == HiClass.NUMBER_CLASS) {
+				return valueType.isNumber();
+			}
+
 			HiClass autoboxedPrimitiveClass = type.getAutoboxedPrimitiveClass();
 			if (autoboxedPrimitiveClass != null) {
 				type = autoboxedPrimitiveClass;
@@ -181,6 +188,7 @@ public class NodeValueType implements PrimitiveTypes {
 				return false;
 			}
 		}
+
 		int t1 = HiFieldPrimitive.getType(valueType);
 		int t2 = HiFieldPrimitive.getType(type);
 		switch (t1) {

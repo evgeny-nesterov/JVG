@@ -24,4 +24,8 @@ public final class Double extends Number {
     public String toString() {
         return "" + value;
     }
+
+    public boolean equals(Object o) {
+        return o instanceof Double && ((Double)o).value == value;
+    }
 }

@@ -12,4 +12,12 @@ public final class Character extends Object {
     public String toString() {
         return "" + value;
     }
+
+    public boolean equals(Object o) {
+        return o instanceof Character && ((Character)o).value == value;
+    }
+
+    public int hashCode() {
+        return value;
+    }
 }

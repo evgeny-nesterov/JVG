@@ -28,4 +28,12 @@ public final class Byte extends Number {
     public String toString() {
         return "" + value;
     }
+
+    public boolean equals(Object o) {
+        return o instanceof Byte && ((Byte)o).value == value;
+    }
+
+    public int hashCode() {
+        return value;
+    }
 }

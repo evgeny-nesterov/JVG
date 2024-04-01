@@ -95,14 +95,23 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testShort() {
+		// create autobox object
+		assertSuccess("Short a = new Short((short)127); assert a == 127;");
+		assertSuccess("var a = new Short((byte)127); assert a == 127;");
 	}
 
 	@Test
 	public void testInteger() {
+		// create autobox object
+		assertSuccess("Integer a = new Integer(127); assert a == 127;");
+		assertSuccess("var a = new Integer((byte)127); assert a == 127;");
 	}
 
 	@Test
 	public void testLong() {
+		// create autobox object
+		assertSuccess("Long a = new Long(127); assert a == 127;");
+		assertSuccess("var a = new Long((byte)127); assert a == 127;");
 	}
 
 	@Test
@@ -115,6 +124,21 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testBoolean() {
+		// constants TRUE and FALSE
+		assertSuccess("assert Boolean.TRUE == true;");
+		assertSuccess("assert Boolean.FALSE == false;");
+		assertSuccess("assert Boolean.TRUE.equals(new Boolean(true));");
+		assertSuccess("assert Boolean.FALSE.equals(new Boolean(false));");
+		assertSuccess("assert new Boolean(true).equals(Boolean.TRUE);");
+		assertSuccess("assert new Boolean(false).equals(Boolean.FALSE);");
+
+		// create autobox object
+		assertSuccess("Boolean a = new Boolean(true); assert a == true;");
+		assertSuccess("var a = new Boolean(false); assert a == false;");
+		assertSuccess("Boolean a = Boolean.TRUE; assert a.equals(true); assert a.equals(Boolean.TRUE);");
+		assertSuccess("Boolean a = Boolean.FALSE; assert a.equals(false); assert a.equals(Boolean.FALSE);");
+
+		assertSuccess("Boolean a = true; Boolean b = true; assert a == b;"); // from cache
 	}
 
 	@Test

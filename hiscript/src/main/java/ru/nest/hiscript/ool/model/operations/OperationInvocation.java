@@ -354,25 +354,34 @@ public class OperationInvocation extends BinaryOperation {
 
 			for (int i = 0; i < size; i++) {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
-				if (argClass.getAutoboxedPrimitiveClass() != null || argClass.getAutoboxClass() != null) {
-					argClass = argClass;
+
+				// autobox
+				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass();
+				HiClass origArgClass = argClass;
+				if (argClass.isPrimitive() && expectedArgClass.isObject()) {
+					argClass = argClass.getAutoboxClass();
 				}
 
 				// on null argument update field class from ClazzNull on argument class
-				if (argClass.isNull()) {
-					argsFields[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+				HiField argsField;
+				if (origArgClass.isNull()) {
+					argsField = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
 					ctx.value.type = HiClassNull.NULL;
-					argsFields[i].set(ctx, ctx.value);
-				} else if (!argClass.isArray()) {
-					ctx.value.type = argClass;
+					argsField.set(ctx, ctx.value);
+					argsFields[i] = argsField;
+				} else if (!origArgClass.isArray()) {
+					ctx.value.type = origArgClass;
 					argsFields[i].get(ctx, ctx.value);
-					argsFields[i] = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
-					argsFields[i].set(ctx, ctx.value);
+					argsField = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+					argsField.set(ctx, ctx.value);
+					argsFields[i] = argsField;
+				} else {
+					argsField = argsFields[i];
 				}
 				// TODO: update array cell type
 
-				argsFields[i].name = method.argNames[i];
-				argsFields[i].initialized = true;
+				argsField.name = method.argNames[i];
+				argsField.initialized = true;
 			}
 		}
 

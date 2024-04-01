@@ -28,4 +28,8 @@ public final class Short extends Number {
     public String toString() {
         return "" + value;
     }
+
+    public boolean equals(Object o) {
+        return o instanceof Short && ((Short)o).value == value;
+    }
 }
