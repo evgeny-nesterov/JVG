@@ -206,6 +206,7 @@ public class HiClassPrimitive extends HiClass {
 		return false;
 	}
 
+	// autobox
 	public HiObject autobox(RuntimeContext ctx, Value value) {
 		HiField valueField = HiField.getField(this, "value", null);
 		valueField.set(ctx, value);

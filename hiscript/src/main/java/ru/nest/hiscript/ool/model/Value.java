@@ -633,6 +633,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiClass getOperationClass() {
 		if (type.getAutoboxedPrimitiveClass() != null) {
+			// autobox
 			substitutePrimitiveValueFromAutoboxValue();
 			return type.getAutoboxedPrimitiveClass();
 		} else if (object != null && type.isObject()) {

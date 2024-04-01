@@ -27,7 +27,7 @@ public class TestAutoboxing extends HiTest {
 		assertFailCompile("Byte a = 1f;");
 		assertFailCompile("Byte a = true;");
 
-		// autobox object => primitive
+		// boxed object => primitive
 		assertSuccess("byte a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("int a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("short a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
@@ -138,10 +138,22 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("Boolean a = Boolean.TRUE; assert a.equals(true); assert a.equals(Boolean.TRUE);");
 		assertSuccess("Boolean a = Boolean.FALSE; assert a.equals(false); assert a.equals(Boolean.FALSE);");
 
+		// primitive => autobox object
+		assertSuccess("Boolean a = true; assert a == true; assert a == Boolean.TRUE;");
+		assertSuccess("Boolean a = false; assert a == false; assert a == Boolean.FALSE;");
 		assertSuccess("Boolean a = true; Boolean b = true; assert a == b;"); // from cache
+
+		// boxed object => primitive
+		assertSuccess("boolean a = new Boolean(true); assert a == true;");
+		assertSuccess("boolean a = new Boolean(false); assert a == Boolean.FALSE;");
+
+		// operations
+		assertSuccess("Boolean a = true; Boolean b = false; assert (a && b) == false;");
 	}
 
 	@Test
 	public void testCharacter() {
+		// TODO fix
+		assertSuccess("assert (Boolean.TRUE && Boolean.FALSE) == false;");
 	}
 }

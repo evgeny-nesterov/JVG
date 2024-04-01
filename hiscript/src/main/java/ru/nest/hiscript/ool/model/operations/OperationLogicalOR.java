@@ -37,6 +37,7 @@ public class OperationLogicalOR extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1 == TYPE_BOOLEAN && c2 == TYPE_BOOLEAN) {
+			v1.type = TYPE_BOOLEAN;
 			v1.bool = v1.bool || v2.bool;
 		} else {
 			errorInvalidOperator(ctx, v1.type, v2.type);

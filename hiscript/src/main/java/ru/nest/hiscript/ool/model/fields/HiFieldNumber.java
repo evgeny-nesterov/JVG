@@ -36,6 +36,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	public final void set(RuntimeContext ctx, Value value) {
 		declared = true;
 		if (value.type.getAutoboxedPrimitiveClass() != null) {
+			// autobox
 			value.substitutePrimitiveValueFromAutoboxValue();
 		} else if (!value.type.isPrimitive()) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);

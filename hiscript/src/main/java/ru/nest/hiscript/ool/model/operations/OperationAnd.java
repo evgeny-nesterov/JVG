@@ -207,6 +207,7 @@ public class OperationAnd extends BinaryOperation {
 			int t2 = HiFieldPrimitive.getType(c2);
 			if (t1 == BOOLEAN || t2 == BOOLEAN) {
 				if (t1 == BOOLEAN && t2 == BOOLEAN) {
+					v1.type = TYPE_BOOLEAN;
 					v1.bool = v1.bool & v2.bool;
 					return;
 				}

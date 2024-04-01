@@ -31,12 +31,16 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (value.type == getClass(ctx)) {
-			this.value = value.bool;
-			this.initialized = true;
-		} else {
+
+		if (value.type.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
+			// autobox
+			value.substitutePrimitiveValueFromAutoboxValue();
+		} else if (value.type != HiClassPrimitive.BOOLEAN) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 		}
+
+		this.value = value.bool;
+		this.initialized = true;
 	}
 
 	@Override

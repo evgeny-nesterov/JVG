@@ -56,9 +56,10 @@ public class OperationEquals extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.type;
 		HiClass c2 = v2.type;
-
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
+
+		// autobox
 		if (isP1 && !isP2) {
 			if (c2.getAutoboxedPrimitiveClass() != null) {
 				c2 = c2.getAutoboxedPrimitiveClass();
