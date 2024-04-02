@@ -184,7 +184,9 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case XOR:
 			case OR:
 			case LOGICAL_AND:
+			case LOGICAL_AND_CHECK:
 			case LOGICAL_OR:
+			case LOGICAL_OR_CHECK:
 			case EQUATE:
 			case EQUATE_PLUS:
 			case EQUATE_MINUS:
@@ -195,10 +197,8 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case EQUATE_BITWISE_SHIFT_RIGHT:
 			case EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
 			case EQUATE_AND:
-			case EQUATE_XOR:
 			case EQUATE_OR:
-			case LOGICAL_AND_CHECK:
-			case LOGICAL_OR_CHECK:
+			case EQUATE_XOR:
 				return true;
 		}
 		return false;
@@ -410,8 +410,14 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_AND:
 				return "&&";
 
+			case LOGICAL_AND_CHECK:
+				return "?&&";
+
 			case LOGICAL_OR:
 				return "||";
+
+			case LOGICAL_OR_CHECK:
+				return "?||";
 
 			case EQUATE:
 				return "=";
@@ -448,12 +454,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case EQUATE_OR:
 				return "=|";
-
-			case LOGICAL_AND_CHECK:
-				return "?&&";
-
-			case LOGICAL_OR_CHECK:
-				return "?||";
 		}
 		return "<No such operation: " + operation + ">";
 	}
@@ -552,8 +552,14 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 			case LOGICAL_AND:
 				return OperationLogicalAnd.getInstance();
 
+			case LOGICAL_AND_CHECK:
+				return OperationLogicalAndCheck.getInstance();
+
 			case LOGICAL_OR:
 				return OperationLogicalOR.getInstance();
+
+			case LOGICAL_OR_CHECK:
+				return OperationLogicalOrCheck.getInstance();
 
 			case EQUATE:
 				return OperationEquate.getInstance();
@@ -590,12 +596,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case EQUATE_OR:
 				return OperationEquateOR.getInstance();
-
-			case LOGICAL_AND_CHECK:
-				return OperationLogicalAndCheck.getInstance();
-
-			case LOGICAL_OR_CHECK:
-				return OperationLogicalOrCheck.getInstance();
 		}
 		return null;
 	}

@@ -177,6 +177,12 @@ public class NodeExpressionNoLS extends NodeExpression {
 				return false;
 			}
 		}
+
+		// autobox
+		if (value.type.getAutoboxedPrimitiveClass() != null) {
+			value.substitutePrimitiveValueFromAutoboxValue();
+		}
+
 		value.copyTo(ctx.value);
 		return true;
 	}
@@ -227,11 +233,15 @@ public class NodeExpressionNoLS extends NodeExpression {
 					int skipToOperation = -1;
 					// TODO do not check && and || of inner blocks
 					if (operations[i].getOperation() == OperationsIF.LOGICAL_AND_CHECK) {
-						if (!values[bufSize - 1].bool) {
+						Value lastValue = values[bufSize - 1];
+						resolveValue(ctx, lastValue);
+						if (!lastValue.bool) {
 							skipToOperation = OperationsIF.LOGICAL_AND;
 						}
 					} else if (operations[i].getOperation() == OperationsIF.LOGICAL_OR_CHECK) {
-						if (values[bufSize - 1].bool) {
+						Value lastValue = values[bufSize - 1];
+						resolveValue(ctx, lastValue);
+						if (lastValue.bool) {
 							skipToOperation = OperationsIF.LOGICAL_OR;
 						}
 					}

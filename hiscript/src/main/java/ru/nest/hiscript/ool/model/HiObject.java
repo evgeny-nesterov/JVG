@@ -75,8 +75,7 @@ public class HiObject {
 
 	/**
 	 * @param name
-	 * @param clazz
-	 *            Super class, one of interfaces or super interfaces
+	 * @param clazz Super class, one of interfaces or super interfaces
 	 * @return
 	 */
 	public HiField<?> getField(RuntimeContext ctx, String name, HiClass clazz) {
@@ -163,6 +162,12 @@ public class HiObject {
 
 	@Override
 	public String toString() {
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
+		return toString(ctx);
+	}
+
+	public String toString(RuntimeContext ctx) {
+		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "toString");
 		if (method.clazz.superClass == null) {
 			// is Object
@@ -180,7 +185,7 @@ public class HiObject {
 	}
 
 	// overridden toString
-	public char[] toString(RuntimeContext ctx) {
+	public char[] getStringChars(RuntimeContext ctx) {
 		NodeInvocation.invoke(ctx, this, "toString");
 		return ImplUtil.getChars(ctx, ctx.value.object);
 	}
@@ -195,10 +200,12 @@ public class HiObject {
 		if (!(object instanceof HiObject)) {
 			return false;
 		}
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
 		return equals(ctx, (HiObject) object);
 	}
 
 	public boolean equals(RuntimeContext ctx, HiObject object) {
+		this.ctx = ctx;
 		if (this == object) {
 			return true;
 		}
@@ -235,10 +242,12 @@ public class HiObject {
 
 	@Override
 	public int hashCode() {
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
 		return hashCode(ctx);
 	}
 
 	public int hashCode(RuntimeContext ctx) {
+		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "hashCode");
 		if (method.clazz.superClass == null) {
 			// is Object

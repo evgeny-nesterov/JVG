@@ -17,8 +17,7 @@ public class ObjectImpl extends ImplUtil {
 		if (ctx.value.type.isArray()) {
 			ctx.value.intNumber = ctx.value.array.hashCode();
 		} else {
-			ctx.value.object.ctx = ctx;
-			ctx.value.intNumber = ctx.value.object.hashCode();
+			ctx.value.intNumber = ctx.value.object.hashCode(ctx);
 		}
 	}
 
@@ -33,8 +32,7 @@ public class ObjectImpl extends ImplUtil {
 			}
 		} else {
 			if (ctx.value.object != null) {
-				ctx.value.object.ctx = ctx;
-				text = ctx.value.object.toString();
+				text = ctx.value.object.toString(ctx);
 			} else {
 				text = "null";
 			}
@@ -70,7 +68,7 @@ public class ObjectImpl extends ImplUtil {
 
 	public static void Object_boolean_equals_Object(RuntimeContext ctx, Object obj) {
 		if (ctx.value.type.isArray()) {
-			ctx.value.bool = ctx.value.array == obj;String s;
+			ctx.value.bool = ctx.value.array == obj;
 		} else {
 			ctx.value.bool = ctx.value.object == obj;
 		}

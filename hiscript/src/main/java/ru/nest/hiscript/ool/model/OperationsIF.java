@@ -83,9 +83,9 @@ public interface OperationsIF {
 
 	int EQUATE_AND = 40;
 
-	int EQUATE_XOR = 41;
+	int EQUATE_OR = 41;
 
-	int EQUATE_OR = 42;
+	int EQUATE_XOR = 42;
 
 	int LOGICAL_OR_CHECK = 43;
 

@@ -148,12 +148,14 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("boolean a = new Boolean(false); assert a == Boolean.FALSE;");
 
 		// operations
+		assertSuccess("Boolean a = true; Boolean b = false; assert (a || b) == true;");
 		assertSuccess("Boolean a = true; Boolean b = false; assert (a && b) == false;");
+		assertSuccess("Boolean a = true; Boolean b = null; assert (a || b) == true;");
+		assertFail("Boolean a = true; Boolean b = null; assert a && b;"); // null pointer in b
+		assertFail("boolean a = false; Boolean b = null; assert a || b;"); // null pointer in b
 	}
 
 	@Test
 	public void testCharacter() {
-		// TODO fix
-		assertSuccess("assert (Boolean.TRUE && Boolean.FALSE) == false;");
 	}
 }

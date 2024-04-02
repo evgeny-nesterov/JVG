@@ -600,7 +600,7 @@ public class Value implements PrimitiveTypes {
 			return ImplUtil.getChars(ctx, object);
 		}
 
-		char[] toString = object.toString(ctx);
+		char[] toString = object.getStringChars(ctx);
 		if (toString != null) {
 			return toString;
 		} else {
