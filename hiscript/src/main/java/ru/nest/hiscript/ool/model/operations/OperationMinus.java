@@ -30,8 +30,8 @@ public class OperationMinus extends BinaryOperation {
 			return null;
 		}
 
-		int t1 = HiFieldPrimitive.getType(c1);
-		int t2 = HiFieldPrimitive.getType(c2);
+		int t1 = c1.getPrimitiveType();
+		int t2 = c2.getPrimitiveType();
 		if (node1.isValue && node2.isValue) {
 			switch (t1) {
 				case CHAR:
@@ -270,8 +270,8 @@ public class OperationMinus extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isNumber() && c2.isNumber()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
 				switch (t1) {
 					case CHAR:

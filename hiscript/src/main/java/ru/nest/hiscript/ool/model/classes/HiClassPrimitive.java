@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -15,9 +16,9 @@ import java.util.Map;
 
 public class HiClassPrimitive extends HiClass {
 	// TODO cache?
-	public final static HiClassPrimitive CHAR = new HiClassPrimitive("char");
+	public final static HiClassPrimitive CHAR = new HiClassPrimitive(PrimitiveTypes.CHAR, "char");
 
-	public final static HiClassPrimitive BOOLEAN = new HiClassPrimitive("boolean") {
+	public final static HiClassPrimitive BOOLEAN = new HiClassPrimitive(PrimitiveTypes.BOOLEAN, "boolean") {
 		HiObject trueValue;
 
 		HiObject falseValue;
@@ -42,7 +43,7 @@ public class HiClassPrimitive extends HiClass {
 		}
 	};
 
-	public final static HiClassPrimitive BYTE = new HiClassPrimitive("byte") {
+	public final static HiClassPrimitive BYTE = new HiClassPrimitive(PrimitiveTypes.BYTE, "byte") {
 		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
@@ -67,7 +68,7 @@ public class HiClassPrimitive extends HiClass {
 		}
 	};
 
-	public final static HiClassPrimitive SHORT = new HiClassPrimitive("short") {
+	public final static HiClassPrimitive SHORT = new HiClassPrimitive(PrimitiveTypes.SHORT, "short") {
 		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
@@ -92,7 +93,7 @@ public class HiClassPrimitive extends HiClass {
 		}
 	};
 
-	public final static HiClassPrimitive INT = new HiClassPrimitive("int") {
+	public final static HiClassPrimitive INT = new HiClassPrimitive(PrimitiveTypes.INT, "int") {
 		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
@@ -117,9 +118,9 @@ public class HiClassPrimitive extends HiClass {
 		}
 	};
 
-	public final static HiClassPrimitive FLOAT = new HiClassPrimitive("float");
+	public final static HiClassPrimitive FLOAT = new HiClassPrimitive(PrimitiveTypes.FLOAT, "float");
 
-	public final static HiClassPrimitive LONG = new HiClassPrimitive("long") {
+	public final static HiClassPrimitive LONG = new HiClassPrimitive(PrimitiveTypes.LONG, "long") {
 		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
@@ -144,12 +145,15 @@ public class HiClassPrimitive extends HiClass {
 		}
 	};
 
-	public final static HiClassPrimitive DOUBLE = new HiClassPrimitive("double");
+	public final static HiClassPrimitive DOUBLE = new HiClassPrimitive(PrimitiveTypes.DOUBLE, "double");
 
-	public final static HiClassPrimitive VOID = new HiClassPrimitive("void");
+	public final static HiClassPrimitive VOID = new HiClassPrimitive(PrimitiveTypes.VOID, "void");
 
-	private HiClassPrimitive(String name) {
+	public final int typeId;
+
+	private HiClassPrimitive(int typeId, String name) {
 		super(HiClass.systemClassLoader, null, null, name, CLASS_TYPE_TOP, null);
+		this.typeId = typeId;
 	}
 
 	public static Map<String, HiClassPrimitive> primitiveClasses = new HashMap<>();
@@ -173,6 +177,10 @@ public class HiClassPrimitive extends HiClass {
 	public static HiClass getAutoboxClass(String name) {
 		HiClassPrimitive primitiveClass = primitiveClasses.get(name);
 		return primitiveClass != null ? primitiveClass.autoboxClass : null;
+	}
+
+	public int getPrimitiveType() {
+		return typeId;
 	}
 
 	private HiClass autoboxClass;

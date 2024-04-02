@@ -103,7 +103,5 @@ public interface Symbols {
 
 	int REFERENCE = 51;
 
-	int TRIPLE_DOUBLE_QUOTES = 52;
-
-	int DOUBLE_COLON = 53;
+	int DOUBLE_COLON = 52;
 }

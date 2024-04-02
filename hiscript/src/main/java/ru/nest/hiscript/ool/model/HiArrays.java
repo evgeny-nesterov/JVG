@@ -44,7 +44,7 @@ public class HiArrays implements PrimitiveTypes {
 
 			try {
 				if (clazz.isPrimitive()) {
-					int typeIndex = HiFieldPrimitive.getType(clazz);
+					int typeIndex = clazz.getPrimitiveType();
 					switch (typeIndex) {
 						case PrimitiveTypes.BOOLEAN:
 							c = Class.forName(prefix + "Z");
@@ -80,7 +80,7 @@ public class HiArrays implements PrimitiveTypes {
 			}
 		} else {
 			if (clazz.isPrimitive()) {
-				int typeIndex = HiFieldPrimitive.getType(clazz);
+				int typeIndex = clazz.getPrimitiveType();
 				switch (typeIndex) {
 					case PrimitiveTypes.BOOLEAN:
 						c = boolean.class;
@@ -133,7 +133,7 @@ public class HiArrays implements PrimitiveTypes {
 		} else {
 			HiClassArray arrayClass = (HiClassArray) v.type;
 			HiClass cellType = arrayClass.cellClass;
-			int typeIndex = HiFieldPrimitive.getType(cellType);
+			int typeIndex = cellType.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					v.bool = Array.getBoolean(array, index);
@@ -172,7 +172,7 @@ public class HiArrays implements PrimitiveTypes {
 			Array.set(parentArray, index, dst.array);
 		} else if (type.isPrimitive()) {
 			// autobox
-			int typeIndex = HiFieldPrimitive.getType(type);
+			int typeIndex = type.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					dst.bool = value.getBoolean();

@@ -4,6 +4,10 @@ public class TestNumbers extends HiTest {
 	@Test
 	public void testNumbersDeclarations() {
 		assertSuccess("int a = 1; assert a == 1;");
+		assertSuccess("int a = +1; assert a == 1;");
+		assertSuccess("int a = -1; assert a == -1;");
+		assertSuccess("int a = --1; assert a == 1;");
+		assertSuccess("int a = ---1; assert a == -1;");
 		assertCondition("int a = + -  + -+ -1;", "a == -1", "int");
 		assertFailCompile("int a = 1.;");
 		assertFailCompile("int a = 1.0;");
@@ -25,8 +29,12 @@ public class TestNumbers extends HiTest {
 		assertCondition("int a = (char)1;", "a == 1", "int");
 		assertCondition("int a = 'a';", "a == (int)'a'", "int");
 		assertFailCompile("int a = 1e;");
+		assertFailCompile("int a = 10_000_000_000;");
+		assertFailCompile("int a = 0xfffffffff;");
+		assertFailCompile("int a = -1.0e;");
 
 		assertCondition("long a = 1;", "a == 1", "long");
+		assertCondition("long a = -1;", "a == -1", "long");
 		assertFailCompile("long a = 1.;");
 		assertFailCompile("long a = 1.0;");
 		assertFailCompile("long a = 10.0e-1;");
@@ -46,6 +54,9 @@ public class TestNumbers extends HiTest {
 		assertCondition("long a = (short)1;", "a == 1", "long");
 		assertCondition("long a = (char)1;", "a == 1", "long");
 		assertCondition("long a = 'a';", "a == (long)'a'", "long");
+		assertFailCompile("long a = 0xABCDEFabcdefabcdefabcdef1234567890L;");
+		assertFailCompile("long a = 1000000000000000000000000000000000000000000000L;");
+		assertFailCompile("long a = 0xQWEL;");
 
 		assertCondition("double a = 1;", "a == 1", "double");
 		assertCondition("double a = 1.;", "a == 1", "double");
@@ -111,6 +122,29 @@ public class TestNumbers extends HiTest {
 		assertCondition("byte a = (byte)1;", "a == 1l", "byte");
 		assertCondition("byte a = (short)1;", "a == 1", "byte");
 		assertCondition("byte a = (char)1;", "a == 1", "byte");
+		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
+
+		assertCondition("short a = 127;", "a == 127", "short");
+		assertCondition("short a = -+-+-111;", "a == -111", "short");
+		assertCondition("short a = -128;", "a == -128", "short");
+		assertFailCompile("short a = 1.;");
+		assertFailCompile("short a = 1.0;");
+		assertFailCompile("short a = 10.0e-1;");
+		assertFailCompile("short a = 0.0e-1;");
+		assertFailCompile("short a = 0.01e2;");
+		assertFailCompile("short a = 1l;");
+		assertFailCompile("short a = 1L;");
+		assertFailCompile("short a = 1f;");
+		assertFailCompile("short a = 1F;");
+		assertFailCompile("short a = 1.0f;");
+		assertFailCompile("short a = 1.0F;");
+		assertFailCompile("short a = 1d;");
+		assertFailCompile("short a = 1D;");
+		assertFailCompile("short a = 1.0d;");
+		assertFailCompile("short a = 1.0D;");
+		assertCondition("short a = (byte)1;", "a == 1l", "short");
+		assertCondition("byte a = (short)1;", "a == 1", "short");
+		assertCondition("byte a = (char)1;", "a == 1", "short");
 		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
 	}
 

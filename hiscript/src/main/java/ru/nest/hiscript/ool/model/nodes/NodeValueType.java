@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
@@ -79,15 +78,32 @@ public class NodeValueType implements PrimitiveTypes {
 
 		if (isValue) {
 			nodeValueType.valueType = valueType;
-			// TODO optimize
-			nodeValueType.intValue = intValue;
-			nodeValueType.booleanValue = booleanValue;
-			nodeValueType.longValue = longValue;
-			nodeValueType.doubleValue = doubleValue;
-			nodeValueType.charValue = charValue;
-			nodeValueType.byteValue = byteValue;
-			nodeValueType.floatValue = floatValue;
-			nodeValueType.shortValue = shortValue;
+			switch (valueType.getPrimitiveType()) {
+				case CHAR:
+					nodeValueType.charValue = charValue;
+					break;
+				case BYTE:
+					nodeValueType.byteValue = byteValue;
+					break;
+				case SHORT:
+					nodeValueType.shortValue = shortValue;
+					break;
+				case INT:
+					nodeValueType.intValue = intValue;
+					break;
+				case LONG:
+					nodeValueType.longValue = longValue;
+					break;
+				case FLOAT:
+					nodeValueType.floatValue = floatValue;
+					break;
+				case DOUBLE:
+					nodeValueType.doubleValue = doubleValue;
+					break;
+				case BOOLEAN:
+					nodeValueType.booleanValue = booleanValue;
+					break;
+			}
 		}
 	}
 
@@ -189,8 +205,8 @@ public class NodeValueType implements PrimitiveTypes {
 			}
 		}
 
-		int t1 = HiFieldPrimitive.getType(valueType);
-		int t2 = HiFieldPrimitive.getType(type);
+		int t1 = valueType.getPrimitiveType();
+		int t2 = type.getPrimitiveType();
 		switch (t1) {
 			case BYTE:
 				switch (t2) {

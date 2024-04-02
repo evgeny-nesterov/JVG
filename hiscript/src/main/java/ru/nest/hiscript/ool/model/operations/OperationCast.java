@@ -28,9 +28,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		HiClass c2 = node2.type;
 		if (c1.isVar() || c2.isVar()) {
 		} else if (c1.isPrimitive()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
-			if (t2 == BOOLEAN && t1 != BOOLEAN) {
+			if (c2.type == BOOLEAN && c1.type != BOOLEAN) {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		} else if (c1.isArray() && c2.isArray()) {
@@ -47,8 +45,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		if (node2.isValue) {
 			node1.valueType = c1;
 			node1.isValue = true;
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			switch (t1) {
 				case BYTE:
 					switch (t2) {
@@ -289,8 +287,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			return;
 		}
 
-		int type1 = HiFieldPrimitive.getType(v1.type);
-		int type2 = HiFieldPrimitive.getType(v2.type);
+		int type1 = v1.type.getPrimitiveType();
+		int type2 = v2.type.getPrimitiveType();
 		switch (type1) {
 			case BOOLEAN:
 				castBoolean(ctx, v1, v2, type2);

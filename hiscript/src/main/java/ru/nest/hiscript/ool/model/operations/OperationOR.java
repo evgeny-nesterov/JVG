@@ -36,8 +36,8 @@ public class OperationOR extends BinaryOperation {
 			return c1;
 		}
 
-		int t1 = HiFieldPrimitive.getType(c1);
-		int t2 = HiFieldPrimitive.getType(c2);
+		int t1 = c1.getPrimitiveType();
+		int t2 = c2.getPrimitiveType();
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {
 			if (t1 == BOOLEAN && t2 == BOOLEAN) {
 				return HiClassPrimitive.BOOLEAN;
@@ -198,8 +198,8 @@ public class OperationOR extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			if (t1 == BOOLEAN || t2 == BOOLEAN) {
 				if (t1 == BOOLEAN && t2 == BOOLEAN) {
 					v1.type = TYPE_BOOLEAN;

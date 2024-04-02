@@ -30,7 +30,7 @@ public class OperationArrayIndex extends BinaryOperation {
 		HiClass type = node1.type;
 		boolean validIndex = false;
 		if (node2.type.isPrimitive()) {
-			switch (HiFieldPrimitive.getType(node2.type)) {
+			switch (node2.type.getPrimitiveType()) {
 				case VAR:
 				case CHAR:
 				case BYTE:

@@ -30,11 +30,10 @@ public class OperationDivide extends BinaryOperation {
 			return null;
 		}
 
-		int t1 = HiFieldPrimitive.getType(c1);
-		int t2 = HiFieldPrimitive.getType(c2);
+		int t1 = c1.getPrimitiveType();
+		int t2 = c2.getPrimitiveType();
 		boolean divisionByZero = false;
 		if (node2.isValue) {
-			t2 = HiFieldPrimitive.getType(c2);
 			switch (t2) {
 				case CHAR:
 					if (node2.charValue == 0) {
@@ -310,8 +309,8 @@ public class OperationDivide extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isNumber() && c2.isNumber()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			switch (t2) {
 				case CHAR:
 					if (v2.character == 0) {

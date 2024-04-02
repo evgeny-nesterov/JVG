@@ -32,19 +32,15 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 			case INT:
 				value.intNumber = this.value;
 				break;
-
 			case LONG:
 				value.longNumber = this.value;
 				break;
-
 			case FLOAT:
 				value.floatNumber = this.value;
 				break;
-
 			case DOUBLE:
 				value.doubleNumber = this.value;
 				break;
-
 			default:
 				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;
@@ -61,19 +57,15 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 			case CHAR:
 				this.value = value.character;
 				break;
-
 			case BYTE:
 				this.value = value.byteNumber;
 				break;
-
 			case SHORT:
 				this.value = value.shortNumber;
 				break;
-
 			case INT:
 				this.value = value.intNumber;
 				break;
-
 			default:
 				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 				break;

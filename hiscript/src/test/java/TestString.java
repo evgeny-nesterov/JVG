@@ -80,5 +80,8 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("assert \"\\u0000\".charAt(0) == 0;");
 		assertSuccessSerialize("assert \"\\uffff\".charAt(0) == '\\uffff';");
 		assertSuccessSerialize("assert \"\\n\".charAt(0) == '\\n';");
+
+		// triple quotes
+		assertSuccessSerialize("String s = \"\"\"\nabc\nabc\"\"\"; assert s.equals(\"abc\nabc\");");
 	}
 }

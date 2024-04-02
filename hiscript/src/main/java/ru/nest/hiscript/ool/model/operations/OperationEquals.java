@@ -76,8 +76,8 @@ public class OperationEquals extends BinaryOperation {
 
 		v1.type = TYPE_BOOLEAN;
 		if (isP1 && isP2) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			switch (t1) {
 				case BOOLEAN:
 					if (t2 == BOOLEAN) {

@@ -49,8 +49,8 @@ public class OperationEquatePlus extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			if (t1 != BOOLEAN && t2 != BOOLEAN) {
 				switch (t1) {
 					case CHAR:

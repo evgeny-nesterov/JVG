@@ -18,7 +18,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 			return;
 		}
 
-		int valueType = getType(valueClass);
+		int valueType = valueClass.getPrimitiveType();
 		if (valueType == BOOLEAN) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;
@@ -43,7 +43,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 			return;
 		}
 
-		int valueType = getType(value.type.getAutoboxedPrimitiveClass() != null ? value.type.getAutoboxedPrimitiveClass() : value.type);
+		int valueType = HiFieldPrimitive.getAutoType(value.type);
 		if (valueType == BOOLEAN) {
 			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
 			return;

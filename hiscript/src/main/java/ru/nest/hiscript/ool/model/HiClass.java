@@ -1329,6 +1329,10 @@ public class HiClass implements HiNodeIF, HiType {
 		return false;
 	}
 
+	public int getPrimitiveType() {
+		throw new HiScriptRuntimeException("unknown type: " + name);
+	}
+
 	public HiClass getAutoboxClass() {
 		return null;
 	}

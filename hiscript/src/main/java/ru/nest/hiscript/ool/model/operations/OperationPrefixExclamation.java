@@ -23,7 +23,7 @@ public class OperationPrefixExclamation extends UnaryOperation {
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
-		if (!type.isPrimitive() && HiFieldPrimitive.getType(type) != BOOLEAN) {
+		if (!type.isPrimitive() && type.getPrimitiveType() != BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);

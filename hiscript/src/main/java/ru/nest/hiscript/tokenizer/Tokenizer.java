@@ -280,20 +280,6 @@ public class Tokenizer {
 
 	public static Map<?, ?> properties = new HashMap<>();
 
-	public static void main(String[] args) {
-		String s = "'\\333'\n\n \"12\\\"3\"";
-
-		Tokenizer t = getDefaultTokenizer(s);
-		try {
-			while (t.hasNext()) {
-				Token token = t.nextToken();
-				System.out.println(token);
-			}
-		} catch (TokenizerException exc) {
-			exc.printStackTrace();
-		}
-	}
-
 	public ValidationInfo getValidationInfo() {
 		return validationInfo;
 	}
@@ -346,5 +332,19 @@ public class Tokenizer {
 			}
 		}
 		return lineOffset;
+	}
+
+	public static void main(String[] args) {
+		String s = "'\\333'\n\n \"12\\\"3\"";
+
+		Tokenizer t = getDefaultTokenizer(s);
+		try {
+			while (t.hasNext()) {
+				Token token = t.nextToken();
+				System.out.println(token);
+			}
+		} catch (TokenizerException exc) {
+			exc.printStackTrace();
+		}
 	}
 }

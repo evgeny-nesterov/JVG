@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ *
  */
 public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
@@ -22,35 +23,35 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static int ARRAY = 2;
 
-	public final static Type byteType = new Type("byte", true);
-	public final static Type byteBoxType = new Type("Byte", false);
+	public final static Type byteType = new Type(BYTE, "byte", true);
+	public final static Type byteBoxType = new Type(-1, "Byte", false);
 
-	public final static Type charType = new Type("char", true);
-	public final static Type charBoxType = new Type("Character", false);
+	public final static Type charType = new Type(CHAR, "char", true);
+	public final static Type charBoxType = new Type(-1, "Character", false);
 
-	public final static Type shortType = new Type("short", true);
-	public final static Type shortBoxType = new Type("Short", false);
+	public final static Type shortType = new Type(SHORT, "short", true);
+	public final static Type shortBoxType = new Type(-1, "Short", false);
 
-	public final static Type intType = new Type("int", true);
-	public final static Type intBoxType = new Type("Integer", false);
+	public final static Type intType = new Type(INT, "int", true);
+	public final static Type intBoxType = new Type(-1, "Integer", false);
 
-	public final static Type longType = new Type("long", true);
-	public final static Type longBoxType = new Type("Long", false);
+	public final static Type longType = new Type(LONG, "long", true);
+	public final static Type longBoxType = new Type(-1, "Long", false);
 
-	public final static Type floatType = new Type("float", true);
-	public final static Type floatBoxType = new Type("Float", false);
+	public final static Type floatType = new Type(FLOAT, "float", true);
+	public final static Type floatBoxType = new Type(-1, "Float", false);
 
-	public final static Type doubleType = new Type("double", true);
-	public final static Type doubleBoxType = new Type("Double", false);
+	public final static Type doubleType = new Type(DOUBLE, "double", true);
+	public final static Type doubleBoxType = new Type(-1, "Double", false);
 
-	public final static Type booleanType = new Type("boolean", true);
-	public final static Type booleanBoxType = new Type("Boolean", false);
+	public final static Type booleanType = new Type(BOOLEAN, "boolean", true);
+	public final static Type booleanBoxType = new Type(-1, "Boolean", false);
 
-	public final static Type voidType = new Type("void", true);
+	public final static Type voidType = new Type(VOID, "void", true);
 
-	public final static Type nullType = new Type("null", false);
+	public final static Type nullType = new Type(-1, "null", false);
 
-	public final static Type varType = new Type("var", false);
+	public final static Type varType = new Type(VAR, "var", false);
 
 	private static Map<String, Type> primitiveTypes = new HashMap<>();
 
@@ -77,10 +78,13 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		primitiveTypes.put("Boolean", booleanBoxType);
 	}
 
+	public final int id;
+
 	/**
 	 * Object type
 	 */
 	private Type(Type parent, String name) {
+		this.id = -1;
 		this.parent = parent;
 		this.cellType = null;
 		this.name = name.intern();
@@ -104,7 +108,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	/**
 	 * Primitive type
 	 */
-	private Type(String name, boolean primitive) {
+	private Type(int id, String name, boolean primitive) {
+		this.id = id;
 		this.parent = null;
 		this.cellType = null;
 		this.name = name.intern();
@@ -117,6 +122,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	 * Array type
 	 */
 	private Type(Type cellType) {
+		this.id = -1;
 		this.parent = null;
 		this.cellType = cellType;
 		this.name = ("0" + cellType.name).intern();

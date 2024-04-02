@@ -26,7 +26,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		if (type.isPrimitive()) {
-			int t = HiFieldPrimitive.getType(type);
+			int t = type.getPrimitiveType();
 			switch (t) {
 				case VAR:
 				case CHAR:
@@ -51,7 +51,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 			return;
 		}
 
-		int t = HiFieldPrimitive.getType(c);
+		int t = c.getPrimitiveType();
 		switch (t) {
 			case CHAR:
 				v.type = TYPE_INT;

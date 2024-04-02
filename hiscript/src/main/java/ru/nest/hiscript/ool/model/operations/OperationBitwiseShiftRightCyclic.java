@@ -26,7 +26,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
 		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
 		if (c1.isPrimitive()) {
-			int t1 = HiFieldPrimitive.getType(c1);
+			int t1 = c1.getPrimitiveType();
 			switch (t1) {
 				case VAR:
 				case CHAR:
@@ -34,7 +34,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 				case SHORT:
 				case INT:
 				case LONG:
-					int t2 = HiFieldPrimitive.getType(c1);
+					int t2 = c2.getPrimitiveType();
 					switch (t2) {
 						case VAR:
 						case CHAR:
@@ -55,8 +55,8 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = HiFieldPrimitive.getType(c1);
-			int t2 = HiFieldPrimitive.getType(c2);
+			int t1 = c1.getPrimitiveType();
+			int t2 = c2.getPrimitiveType();
 			switch (t1) {
 				case CHAR:
 					switch (t2) {

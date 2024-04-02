@@ -2,7 +2,6 @@ package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
@@ -123,7 +122,7 @@ public class Value implements PrimitiveTypes {
 
 		// primitives
 		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+			int typeIndex = type.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					return bool;
@@ -255,16 +254,16 @@ public class Value implements PrimitiveTypes {
 	// autobox
 	public boolean getAutoboxPrimitiveValue(int expectedTypeIndex) {
 		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+			int typeIndex = type.getPrimitiveType();
 			if (typeIndex == expectedTypeIndex) {
 				return true;
 			}
 		} else if (type.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = HiFieldPrimitive.getType(type.getAutoboxedPrimitiveClass());
+			int typeIndex = type.getAutoboxedPrimitiveClass().getPrimitiveType();
 			if (typeIndex == expectedTypeIndex) {
 				if (object != null) {
 					object.getAutoboxedValue(ctx, this);
-					int autoboxTypeIndex = HiFieldPrimitive.getType(type);
+					int autoboxTypeIndex = type.getPrimitiveType();
 					if (autoboxTypeIndex == expectedTypeIndex) {
 						return true;
 					}
@@ -280,7 +279,7 @@ public class Value implements PrimitiveTypes {
 	// autobox
 	public int getAutoboxValues(int... expectedTypesIndexes) {
 		if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getType(type);
+			int typeIndex = type.getPrimitiveType();
 			for (int i = 0; i < expectedTypesIndexes.length; i++) {
 				int expectedTypeIndex = expectedTypesIndexes[i];
 				if (typeIndex == expectedTypeIndex) {
@@ -288,13 +287,13 @@ public class Value implements PrimitiveTypes {
 				}
 			}
 		} else if (type.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = HiFieldPrimitive.getType(type.getAutoboxedPrimitiveClass());
+			int typeIndex = type.getAutoboxedPrimitiveClass().getPrimitiveType();
 			for (int i = 0; i < expectedTypesIndexes.length; i++) {
 				int expectedTypeIndex = expectedTypesIndexes[i];
 				if (typeIndex == expectedTypeIndex) {
 					if (object != null) {
 						object.getAutoboxedValue(ctx, this);
-						int autoboxTypeIndex = HiFieldPrimitive.getType(type);
+						int autoboxTypeIndex = type.getPrimitiveType();
 						if (autoboxTypeIndex == expectedTypeIndex) {
 							return autoboxTypeIndex;
 						}
@@ -322,7 +321,7 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public void substitutePrimitiveValueFromAutoboxValue() {
-		int t = HiFieldPrimitive.getType(type.autoboxedPrimitiveClass);
+		int t = type.getAutoboxedPrimitiveClass().getPrimitiveType();
 		if (object == null) {
 			ctx.throwRuntimeException("null pointer");
 			return;
@@ -496,16 +495,45 @@ public class Value implements PrimitiveTypes {
 		dst.nameDimensions = nameDimensions;
 
 		// VALUE
-		dst.array = array;
-		dst.bool = bool;
-		dst.byteNumber = byteNumber;
-		dst.character = character;
-		dst.doubleNumber = doubleNumber;
-		dst.floatNumber = floatNumber;
-		dst.intNumber = intNumber;
-		dst.longNumber = longNumber;
-		dst.object = object;
-		dst.shortNumber = shortNumber;
+		if (type.isPrimitive()) {
+			switch (type.getPrimitiveType()) {
+				case CHAR:
+					dst.character = character;
+					break;
+				case BYTE:
+					dst.byteNumber = byteNumber;
+					break;
+				case SHORT:
+					dst.shortNumber = shortNumber;
+					break;
+				case INT:
+					dst.intNumber = intNumber;
+					break;
+				case LONG:
+					dst.longNumber = longNumber;
+					break;
+				case FLOAT:
+					dst.floatNumber = floatNumber;
+					break;
+				case DOUBLE:
+					dst.doubleNumber = doubleNumber;
+					break;
+				case BOOLEAN:
+					dst.bool = bool;
+					break;
+			}
+		} else {
+			dst.bool = bool;
+			dst.byteNumber = byteNumber;
+			dst.character = character;
+			dst.doubleNumber = doubleNumber;
+			dst.floatNumber = floatNumber;
+			dst.intNumber = intNumber;
+			dst.longNumber = longNumber;
+			dst.shortNumber = shortNumber;
+			dst.array = array;
+			dst.object = object;
+		}
 
 		// VARIABLE
 		dst.variable = variable;
@@ -532,7 +560,7 @@ public class Value implements PrimitiveTypes {
 	public void copyToArray(Value value) {
 		// TODO: copy array and object
 
-		int typeIndex = HiFieldPrimitive.getType(type);
+		int typeIndex = type.getPrimitiveType();
 		switch (typeIndex) {
 			case BOOLEAN:
 				Array.setBoolean(parentArray, arrayIndex, value.bool);
@@ -563,7 +591,7 @@ public class Value implements PrimitiveTypes {
 
 	public char[] getString(RuntimeContext ctx) {
 		if (type.isPrimitive()) {
-			int t = HiFieldPrimitive.getType(type);
+			int t = type.getPrimitiveType();
 			switch (t) {
 				case BOOLEAN:
 					return Boolean.toString(bool).toCharArray();
