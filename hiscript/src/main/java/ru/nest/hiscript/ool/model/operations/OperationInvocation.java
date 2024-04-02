@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -65,6 +66,9 @@ public class OperationInvocation extends BinaryOperation {
 				break;
 			case Value.EXECUTE:
 				invokeExecute(ctx, v1, v2);
+				break;
+			case Value.GET_CLASS:
+				invokeGetClass(ctx, v1, v2);
 				break;
 			default:
 				ctx.throwRuntimeException("identifier is expected");
@@ -209,6 +213,22 @@ public class OperationInvocation extends BinaryOperation {
 			}
 			ctx.throwRuntimeException(text);
 			return false;
+		}
+	}
+
+	public void invokeGetClass(RuntimeContext ctx, Value v1, Value v2) {
+		if (v1.valueType == Value.CLASS) {
+			HiClass clazz = v1.type;
+			v1.valueType = Value.VALUE;
+			v1.type = ImplUtil.getClassClass(ctx);
+			v1.object = ImplUtil.getClassObject(ctx, clazz);
+		} else {
+			String text = "cannot find symbol; variable " + name;
+			HiClass clazz = ctx.level.clazz;
+			if (clazz != null) {
+				text += "; location " + clazz.fullName;
+			}
+			ctx.throwRuntimeException(text);
 		}
 	}
 

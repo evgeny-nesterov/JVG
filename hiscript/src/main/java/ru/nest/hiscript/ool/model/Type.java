@@ -23,20 +23,28 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public final static int ARRAY = 2;
 
 	public final static Type byteType = new Type("byte", true);
+	public final static Type byteBoxType = new Type("Byte", false);
 
 	public final static Type charType = new Type("char", true);
+	public final static Type charBoxType = new Type("Character", false);
 
 	public final static Type shortType = new Type("short", true);
+	public final static Type shortBoxType = new Type("Short", false);
 
 	public final static Type intType = new Type("int", true);
+	public final static Type intBoxType = new Type("Integer", false);
 
 	public final static Type longType = new Type("long", true);
+	public final static Type longBoxType = new Type("Long", false);
 
 	public final static Type floatType = new Type("float", true);
+	public final static Type floatBoxType = new Type("Float", false);
 
 	public final static Type doubleType = new Type("double", true);
+	public final static Type doubleBoxType = new Type("Double", false);
 
 	public final static Type booleanType = new Type("boolean", true);
+	public final static Type booleanBoxType = new Type("Boolean", false);
 
 	public final static Type voidType = new Type("void", true);
 
@@ -44,20 +52,29 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static Type varType = new Type("var", false);
 
-	private static Map<String, Type> predefinedTypes = new HashMap<>();
+	private static Map<String, Type> primitiveTypes = new HashMap<>();
 
 	static {
-		predefinedTypes.put("byte", byteType);
-		predefinedTypes.put("char", charType);
-		predefinedTypes.put("short", shortType);
-		predefinedTypes.put("int", intType);
-		predefinedTypes.put("long", longType);
-		predefinedTypes.put("float", floatType);
-		predefinedTypes.put("double", doubleType);
-		predefinedTypes.put("boolean", booleanType);
-		predefinedTypes.put("void", voidType);
-		predefinedTypes.put("null", nullType);
-		predefinedTypes.put("var", varType);
+		primitiveTypes.put("byte", byteType);
+		primitiveTypes.put("char", charType);
+		primitiveTypes.put("short", shortType);
+		primitiveTypes.put("int", intType);
+		primitiveTypes.put("long", longType);
+		primitiveTypes.put("float", floatType);
+		primitiveTypes.put("double", doubleType);
+		primitiveTypes.put("boolean", booleanType);
+		primitiveTypes.put("void", voidType);
+		primitiveTypes.put("null", nullType);
+		primitiveTypes.put("var", varType);
+
+		primitiveTypes.put("Byte", byteBoxType);
+		primitiveTypes.put("Character", charBoxType);
+		primitiveTypes.put("Short", shortBoxType);
+		primitiveTypes.put("Integer", intBoxType);
+		primitiveTypes.put("Long", longBoxType);
+		primitiveTypes.put("Float", floatBoxType);
+		primitiveTypes.put("Double", doubleBoxType);
+		primitiveTypes.put("Boolean", booleanBoxType);
 	}
 
 	/**
@@ -264,7 +281,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	public static Type getTopType(String name) {
-		Type type = predefinedTypes.get(name);
+		Type type = primitiveTypes.get(name);
 		if (type != null) {
 			return type;
 		}
@@ -297,7 +314,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	public static Type getPrimitiveType(String name) {
-		return predefinedTypes.get(name);
+		return primitiveTypes.get(name);
+	}
+
+	public static Type getAutoboxType(String name) {
+		return primitiveTypes.get(name);
 	}
 
 	public static Type getTypeByWord(int wordType) {

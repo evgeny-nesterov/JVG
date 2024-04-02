@@ -1,60 +1,60 @@
 public final class String {
-  static {
-    System.loadLib("StringImpl.class");
-  }
+    static {
+        System.loadLib("StringImpl.class");
+    }
 
-  private char[] chars; // TODO final
+    private char[] chars; // TODO final
 
-  public String() {
-    chars = new char[0];
-  }
+    public String() {
+        chars = new char[0];
+    }
 
-  public String(char[] c) {
-    chars = c;
-  }
+    public String(char[] c) {
+        chars = c;
+    }
 
-  public String(String str) {
-    chars = str.chars;
-  }
+    public String(String str) {
+        chars = str.chars;
+    }
 
-  public char[] getChars() {
-    return chars;
-  }
+    public char[] getChars() {
+        return chars;
+    }
 
-  public char charAt(int pos) {
-    return chars[pos];
-  }
+    public char charAt(int pos) {
+        return chars[pos];
+    }
 
-  public native int length();
+    public native int length();
 
-  public native int indexOf(int ch);
-  public native int indexOf(String s);
-  public native int indexOf(int ch, int fromIndex);
-  public native int indexOf(String s, int fromIndex);
+    public native int indexOf(int ch);
+    public native int indexOf(String s);
+    public native int indexOf(int ch, int fromIndex);
+    public native int indexOf(String s, int fromIndex);
 
-  public native int lastIndexOf(int ch);
-  public native int lastIndexOf(String s);
-  public native int lastIndexOf(int ch, int fromIndex);
-  public native int lastIndexOf(String s, int fromIndex);
+    public native int lastIndexOf(int ch);
+    public native int lastIndexOf(String s);
+    public native int lastIndexOf(int ch, int fromIndex);
+    public native int lastIndexOf(String s, int fromIndex);
 
-  public native String substring(int beginIndex);
-  public native String substring(int beginIndex, int endIndex);
+    public native String substring(int beginIndex);
+    public native String substring(int beginIndex, int endIndex);
 
-  public native String toLowerCase();
-  public native String toUpperCase();
+    public native String toLowerCase();
+    public native String toUpperCase();
 
-  public native String replace(char c1, char c2);
-  public native String replace(String s1, String s2);
-  public native String replaceAll(String s1, String s2);
-  public native String replaceFirst(String s1, String s2);
+    public native String replace(char c1, char c2);
+    public native String replace(String s1, String s2);
+    public native String replaceAll(String s1, String s2);
+    public native String replaceFirst(String s1, String s2);
 
-  public native String trim();
+    public native String trim();
 
-  public native char[] charAt(int index);
-  public native char[] toCharArray();
-  public native byte[] getBytes();
+    public native char[] charAt(int index);
+    public native char[] toCharArray();
+    public native byte[] getBytes();
 
-  public native boolean equals(Object o);
+    public native boolean equals(Object o);
 
-  public native int hashCode();
+    public native int hashCode();
 }

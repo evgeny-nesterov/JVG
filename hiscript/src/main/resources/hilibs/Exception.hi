@@ -1,51 +1,51 @@
 public class Exception {
-  static {
-    System.loadLib("ExceptionImpl.class");
-  }
-
-  private String message;
-  private StackTraceElement[] stackTrace;
-
-  public Exception() {
-    fillTrace();
-    message = "";
-  }
-
-  public Exception(String msg) {
-    fillTrace();
-    message = msg;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void printStackTrace() {
-    System.println("Exception: " + message);
-
-    int length = stackTrace.length;
-    for(int i = 0; i < length; i++) {
-      System.println("\tat " + stackTrace[i].toString());
+    static {
+        System.loadLib("ExceptionImpl.class");
     }
-  }
 
-  private native void fillTrace();
+    private String message;
+    private StackTraceElement[] stackTrace;
 
-  public String toString() {
-    return message;
-  }
+    public Exception() {
+        fillTrace();
+        message = "";
+    }
+
+    public Exception(String msg) {
+        fillTrace();
+        message = msg;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void printStackTrace() {
+        System.println("Exception: " + message);
+
+        int length = stackTrace.length;
+        for(int i = 0; i < length; i++) {
+            System.println("\tat " + stackTrace[i].toString());
+        }
+    }
+
+    private native void fillTrace();
+
+    public String toString() {
+        return message;
+    }
 }
 
 class StackTraceElement {
-  String className;
-  String methodName;
-  int line = -1;
+    String className;
+    String methodName;
+    int line = -1;
 
-  public String toString() {
-    String s = className + "." + methodName;
-    if(line >= 0) {
-      s = s + ": " + line;
+    public String toString() {
+        String s = className + "." + methodName;
+        if(line >= 0) {
+            s = s + ": " + line;
+        }
+        return s;
     }
-    return s;
-  }
 }

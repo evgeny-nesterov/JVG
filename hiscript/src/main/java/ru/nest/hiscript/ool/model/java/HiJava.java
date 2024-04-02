@@ -59,7 +59,7 @@ public class HiJava {
 			rootElementClass = rootElementClass.getComponentType();
 			className += "[";
 		}
-		if (rootElementClass.isPrimitive() || rootElementClass == String.class || HiObject.class.isAssignableFrom(rootElementClass)) {
+		if (rootElementClass.isPrimitive() || rootElementClass == String.class || Number.class.isAssignableFrom(rootElementClass) || rootElementClass == Boolean.class || rootElementClass == Character.class || HiObject.class.isAssignableFrom(rootElementClass)) {
 			return javaArray;
 		}
 		int length = Array.getLength(javaArray);
@@ -67,22 +67,6 @@ public class HiJava {
 			className += "L" + HashMap.class.getName() + ";";
 		} else if (List.class.isAssignableFrom(rootElementClass)) {
 			className += "L" + ArrayList.class.getName() + ";";
-		} else if (rootElementClass == Boolean.class) {
-			className += "Z";
-		} else if (rootElementClass == Byte.class) {
-			className += "B";
-		} else if (rootElementClass == Character.class) {
-			className += "C";
-		} else if (rootElementClass == Double.class) {
-			className += "D";
-		} else if (rootElementClass == Float.class) {
-			className += "F";
-		} else if (rootElementClass == Integer.class) {
-			className += "I";
-		} else if (rootElementClass == Long.class) {
-			className += "J";
-		} else if (rootElementClass == Short.class) {
-			className += "S";
 		} else {
 			className += "L" + Object.class.getName() + ";";
 		}
@@ -118,24 +102,17 @@ public class HiJava {
 	}
 
 	public static Type getTypeByJavaClass(Class javaClass) {
-		if (javaClass == Integer.class || javaClass == int.class) {
-			return Type.getPrimitiveType("int");
-		} else if (javaClass == Long.class || javaClass == long.class) {
-			return Type.getPrimitiveType("long");
-		} else if (javaClass == Double.class || javaClass == double.class) {
-			return Type.getPrimitiveType("double");
-		} else if (javaClass == Boolean.class || javaClass == boolean.class) {
-			return Type.getPrimitiveType("boolean");
-		} else if (javaClass == Byte.class || javaClass == byte.class) {
-			return Type.getPrimitiveType("byte");
-		} else if (javaClass == Float.class || javaClass == float.class) {
-			return Type.getPrimitiveType("float");
-		} else if (javaClass == Short.class || javaClass == short.class) {
-			return Type.getPrimitiveType("short");
-		} else if (javaClass == Character.class || javaClass == char.class) {
-			return Type.getPrimitiveType("char");
-		} else if (javaClass == String.class) {
+		Type primitiveType = Type.getPrimitiveType(javaClass.getSimpleName());
+		if (primitiveType != null) {
+			return primitiveType;
+		}
+
+		if (javaClass == String.class) {
 			return Type.getTopType(HiClass.STRING_CLASS_NAME);
+		} else if (Number.class.isAssignableFrom(javaClass)) {
+			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
+		} else if (javaClass == Boolean.class || javaClass == Character.class) {
+			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
 		} else if (Map.class.isAssignableFrom(javaClass)) {
 			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
 		} else if (List.class.isAssignableFrom(javaClass)) {
@@ -152,6 +129,6 @@ public class HiJava {
 				return Type.getArrayType(rootElementType, dimension);
 			}
 		}
-		return null;
+		return Type.getTopType(javaClass.getSimpleName());
 	}
 }

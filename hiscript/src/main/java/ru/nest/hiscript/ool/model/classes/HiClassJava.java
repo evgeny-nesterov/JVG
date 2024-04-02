@@ -14,7 +14,6 @@ import ru.nest.hiscript.ool.model.java.HiMethodJava;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -52,8 +51,8 @@ public class HiClassJava extends HiClass {
 			javaArgClasses[i] = argTypeJavaClass;
 		}
 		try {
-			Integer argsId = Objects.hash(javaArgClasses);
-			HiConstructorJava javaConstructor = javaConstructorsMap.get(argsId);
+			Integer signatureId = Objects.hash(javaArgClasses);
+			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
 				return javaConstructor != noJavaConstructor ? javaConstructor : null;
 			}
@@ -76,10 +75,10 @@ public class HiClassJava extends HiClass {
 			}
 			if (matchedConstructor != null) {
 				javaConstructor = new HiConstructorJava(this, matchedConstructor);
-				javaConstructorsMap.put(argsId, javaConstructor);
+				javaConstructorsMap.put(signatureId, javaConstructor);
 				return javaConstructor;
 			} else {
-				javaConstructorsMap.put(argsId, noJavaConstructor);
+				javaConstructorsMap.put(signatureId, noJavaConstructor);
 			}
 		} catch (Exception e) {
 			classResolver.processResolverException(e.getMessage());
@@ -171,13 +170,11 @@ public class HiClassJava extends HiClass {
 		return t2.isAssignableFrom(t1);
 	}
 
-	private Map<Integer, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
+	private Map<MethodSignature, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
 
 	@Override
 	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {
-		String name = signature.name;
 		HiClass[] argTypes = signature.argClasses;
-
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];
@@ -192,15 +189,14 @@ public class HiClassJava extends HiClass {
 			javaArgClasses[i] = argTypeJavaClass;
 		}
 		try {
-			Integer argsId = Objects.hash(javaArgClasses);
-			HiMethodJava javaMethod = javaMethodsMap.get(argsId);
+			HiMethodJava javaMethod = javaMethodsMap.get(signature);
 			if (javaMethod != null) {
 				return javaMethod != HiMethodJava.NULL ? javaMethod : null;
 			}
 			Method matchedMethod = null;
 			Method nullMatchedMethod = null;
 			for (Method method : javaClass.getMethods()) {
-				if (!method.getName().equals(name)) {
+				if (!method.getName().equals(signature.name)) {
 					continue;
 				}
 				switch (matchParameters(javaArgClasses, method.getParameterTypes())) {
@@ -208,7 +204,7 @@ public class HiClassJava extends HiClass {
 						continue;
 					case NULL_MATCHED:
 						if (nullMatchedMethod != null) {
-							classResolver.processResolverException("multiple java methods of class " + javaClass.getName() + " matched to signature " + name + "(" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
+							classResolver.processResolverException("multiple java methods of class " + javaClass.getName() + " matched to signature " + signature.name + "(" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
 							return null;
 						}
 						nullMatchedMethod = method;
@@ -218,11 +214,11 @@ public class HiClassJava extends HiClass {
 				}
 			}
 			if (matchedMethod != null) {
-				javaMethod = new HiMethodJava(this, matchedMethod, name);
-				javaMethodsMap.put(argsId, javaMethod);
+				javaMethod = new HiMethodJava(classResolver, this, matchedMethod, signature.name);
+				javaMethodsMap.put(signature, javaMethod);
 				return javaMethod;
 			} else {
-				javaMethodsMap.put(argsId, HiMethodJava.NULL);
+				javaMethodsMap.put(signature, HiMethodJava.NULL);
 			}
 		} catch (Exception e) {
 			classResolver.processResolverException(e.getMessage());

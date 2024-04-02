@@ -22,6 +22,12 @@ public class ClassImpl extends ImplUtil {
 	public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {
 		String name = getString(ctx, string);
 		HiClass clazz = HiClass.forName(ctx, name);
+		if (clazz == null) {
+			String prefix = HiClass.ROOT_CLASS_NAME + "$0";
+			if (!name.startsWith(prefix)) {
+				clazz = HiClass.forName(ctx, prefix + name);
+			}
+		}
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.type = getClassClass(ctx);

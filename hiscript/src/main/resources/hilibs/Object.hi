@@ -1,21 +1,21 @@
 public class Object {
-  private native void init();
+    private native void init();
 
-  public native String toString();
+    public native String toString();
 
-  public native int hashCode();
+    public native int hashCode();
 
-  public native Object clone();
+    public native Object clone();
 
-  public native boolean equals(Object obj);
+    public native boolean equals(Object obj);
 
-  public native void wait();
+    public native void wait();
 
-  public native void wait(long timeout);
+    public native void wait(long timeout);
 
-  public native void notify();
+    public native void notify();
 
-  public native void notifyAll();
+    public native void notifyAll();
 
-  public native Class getClass();
+    public native Class getClass();
 }

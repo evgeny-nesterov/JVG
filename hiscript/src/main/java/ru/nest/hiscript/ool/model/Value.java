@@ -30,6 +30,8 @@ public class Value implements PrimitiveTypes {
 
 	public final static int EXECUTE = 7; // for node
 
+	public final static int GET_CLASS = 8;
+
 	public RuntimeContext ctx;
 
 	public Value(RuntimeContext ctx) {

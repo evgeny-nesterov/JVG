@@ -23,7 +23,7 @@ public class JavaImpl extends ImplUtil {
 		returnVoid(ctx);
 	}
 
-	public static void Java_void_newInstance_String_0Object(RuntimeContext ctx, HiObject className, Object[] args) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static void Java_Object_newInstance_Class_String_0Object(RuntimeContext ctx, HiObject hiInerface, HiObject className, Object[] args) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		String javaClassName = getString(ctx, className);
 		Class javaClass = Class.forName(javaClassName);
 		String hiClassName = "#" + javaClassName.replace('.', '_');
@@ -33,6 +33,10 @@ public class JavaImpl extends ImplUtil {
 			clazz = new HiClassJava(ctx.getClassLoader(), hiClassName, javaClass);
 		} else if (!clazz.isJava()) {
 			ctx.throwRuntimeException("cannot import java class with name " + hiClassName);
+		}
+
+		if (hiInerface != null && hiInerface.userObject instanceof HiClass) {
+			clazz.interfaces = new HiClass[] {(HiClass) hiInerface.userObject};
 		}
 
 		Object[] javaArgs = new Object[args.length];

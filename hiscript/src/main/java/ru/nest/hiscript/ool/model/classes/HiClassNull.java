@@ -37,4 +37,9 @@ public class HiClassNull extends HiClass {
 	public Class getJavaClass() {
 		return null;
 	}
+
+	@Override
+	public boolean isInstanceof(HiClass clazz) {
+		return false;
+	}
 }

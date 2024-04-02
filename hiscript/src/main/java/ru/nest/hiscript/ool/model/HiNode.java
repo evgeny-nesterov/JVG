@@ -30,6 +30,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
+import ru.nest.hiscript.ool.model.nodes.NodeGetClass;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeIf;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
@@ -133,11 +134,11 @@ public abstract class HiNode implements HiNodeIF {
 
 	public final static byte TYPE_SYNCHRONIZED = 36;
 
-	public final static byte THIS = 37;
+	public final static byte TYPE_THIS = 37;
 
-	public final static byte SUPER = 38;
+	public final static byte TYPE_SUPER = 38;
 
-	public final static byte MAIN_WRAPPER = 39;
+	public final static byte TYPE_MAIN_WRAPPER = 39;
 
 	public final static byte TYPE_FOR_ITERATOR = 40;
 
@@ -156,6 +157,8 @@ public abstract class HiNode implements HiNodeIF {
 	public final static byte TYPE_EXPRESSION_SWITCH = 47;
 
 	public final static byte TYPE_METHOD_REFERENCE = 48;
+
+	public final static byte TYPE_GET_CLASS = 49;
 
 	public HiNode(String name, int type) {
 		this(name, type, null);
@@ -434,14 +437,17 @@ public abstract class HiNode implements HiNodeIF {
 			case TYPE_ASSERT:
 				node = NodeAssert.decode(os);
 				break;
-			case THIS:
+			case TYPE_THIS:
 				node = NodeThis.decode(os);
 				break;
 			case TYPE_CATCH:
 				node = NodeCatch.decode(os);
 				break;
-			case SUPER:
+			case TYPE_SUPER:
 				node = NodeSuper.decode(os);
+				break;
+			case TYPE_GET_CLASS:
+				node = NodeGetClass.decode(os);
 				break;
 		}
 		if (node != null) {

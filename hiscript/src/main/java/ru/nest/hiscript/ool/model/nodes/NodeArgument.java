@@ -41,7 +41,7 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	public NodeAnnotation[] annotations;
 
-	private HiClass clazz;
+	public HiClass clazz;
 
 	public HiClass getArgClass() {
 		return clazz;

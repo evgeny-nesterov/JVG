@@ -1,34 +1,34 @@
-while		condition, body				            statement		+
-do-while	condition, body				            statement		+
-if			condition, body, next-if		        statement		+
-for			init, condition, expression, body	    statement		+
-for			declaration, iterable, body	    		statement		+
-switch		variable, ...casesValues, casesBodies	statement		+
-label		name, body				                statement		+
-break		label					                statement		+
-continue	label					                statement		+
-return		values                                  statement       +
+while		condition, body				            statement		            +
+do-while	condition, body				            statement		            +
+if			condition, body, next-if		        statement		            +
+for			init, condition, expression, body	    statement		            +
+for			declaration, iterable, body	    		statement		            +
+switch		variable, ...casesValues, casesBodies	statement		            +
+label		name, body				                statement		            +
+break		label					                statement		            +
+continue	label					                statement		            +
+return		values                                  statement                   +
 try			resource, body, catch-body, catch-multi-exceptions, finally-body    +
-empty                                               statement       +
-declaration	type, ...names, ...values               statement       +
-expression                                          statement       +
-synchronized	lock, body                          statement       +
-assert      condition, message                      statement       +
+empty                                               statement                   +
+declaration	type, ...names, ...values               statement                   +
+expression                                          statement                   +
+synchronized	lock, body                          statement                   +
+assert      condition, message                      statement                   +
 
 
-new			type, ...arguments, class-body		    statement		+
-new			type, ...array-sizes, array-body	    statement		+
+new			type, ...arguments, class-body		    statement		            +
+new			type, ...array-sizes, array-body	    statement		            +
 
 
-method		return-type, name, ...arguments, vararg                 +
-constructor	...arguments                                            +
-field		expression                                              +
-class		name, ...fields, ...methods, ...classes	statement	    +
-block		...statements                                           +
-text block                                                          +
-annotation                                                          +
-throw                                                               +
-throws                                                              +
+method		return-type, name, ...arguments, vararg                             +
+constructor	...arguments                                                        +
+field		expression                                                          +
+class		name, ...fields, ...methods, ...classes	statement	                +
+block		...statements                                                       +
+text block                                                                      +
+annotation                                                                      +
+throw                                                                           +
+throws                                                                          +
 generics
 
 expression	...operations, ...expressions

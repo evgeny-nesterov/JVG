@@ -29,11 +29,17 @@ public class HiNative {
 			return;
 		}
 
+		String methodNamePrefix = c.getSimpleName();
+		if (methodNamePrefix.endsWith("Impl")) {
+			methodNamePrefix = methodNamePrefix.substring(0, methodNamePrefix.length() - 4);
+		}
+		methodNamePrefix += "_";
+
 		Method[] methods = c.getMethods();
 		for (Method m : methods) {
 			String name = m.getName();
 			Class<?>[] argClasses = m.getParameterTypes();
-			if (argClasses.length > 0 && argClasses[0] == RuntimeContext.class) {
+			if (argClasses.length > 0 && argClasses[0] == RuntimeContext.class && name.startsWith(methodNamePrefix)) {
 				HiNative.methods.put(name, m);
 
 				if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) {

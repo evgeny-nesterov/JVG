@@ -5,5 +5,5 @@ public class Java {
 
     public static native void importClass(String className, String javaClassName);
 
-    public static native Object newInstance(String className, Object... args);
+    public static native Object newInstance(Class intf, String className, Object... args);
 }

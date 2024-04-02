@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeGetClass;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
@@ -302,6 +303,12 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		// visit super
 		if (visitWordType(tokenizer, Words.SUPER) != -1) {
 			operands.add(new NodeSuper());
+			return true;
+		}
+
+		// visit class
+		if (visitWordType(tokenizer, Words.CLASS) != -1) {
+			operands.add(new NodeGetClass());
 			return true;
 		}
 

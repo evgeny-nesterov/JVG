@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.java;
 
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -22,7 +23,7 @@ public class HiMethodJava extends HiMethod {
 		super(null, null, null, null, "null", (NodeArgument[]) null, null, null);
 	}
 
-	public HiMethodJava(HiClassJava clazz, Method method, String name) {
+	public HiMethodJava(ClassResolver classResolver, HiClassJava clazz, Method method, String name) {
 		super(clazz, null, null, null, name, (NodeArgument[]) null, null, null);
 		this.method = method;
 
@@ -40,6 +41,7 @@ public class HiMethodJava extends HiMethod {
 			}
 			String argName = "arg" + i;
 			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);
+			arguments[i].clazz = argType.getType().getClass(classResolver);
 			argNames[i] = argName;
 		}
 	}
@@ -64,7 +66,6 @@ public class HiMethodJava extends HiMethod {
 			Object resultValue = HiJava.convertFromJava(ctx, resultJavaValue);
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = type;
 			ctx.value.set(resultValue);
 		} catch (Exception e) {
 			ctx.throwRuntimeException(e.toString());

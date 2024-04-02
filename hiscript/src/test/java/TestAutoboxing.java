@@ -91,6 +91,9 @@ public class TestAutoboxing extends HiTest {
 
 		// statements
 		assertSuccessSerialize("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
+
+		// nulls
+		assertFail("Byte a = null; byte b = a;");
 	}
 
 	@Test
@@ -150,6 +153,9 @@ public class TestAutoboxing extends HiTest {
 		// operations
 		assertSuccess("Boolean a = true; Boolean b = false; assert (a || b) == true;");
 		assertSuccess("Boolean a = true; Boolean b = false; assert (a && b) == false;");
+
+		// nulls
+		assertSuccess("Boolean a = false; Boolean b = null; assert (a && b) == false;");
 		assertSuccess("Boolean a = true; Boolean b = null; assert (a || b) == true;");
 		assertFail("Boolean a = true; Boolean b = null; assert a && b;"); // null pointer in b
 		assertFail("boolean a = false; Boolean b = null; assert a || b;"); // null pointer in b

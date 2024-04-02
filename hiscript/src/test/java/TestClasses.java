@@ -37,6 +37,14 @@ public class TestClasses extends HiTest {
 	}
 
 	@Test
+	public void testClassWord() {
+		assertSuccess("interface A{} Class c = A.class; assert c.getName().equals(\"A\");");
+		assertSuccess("interface A{} Class c = A.class; assert c.isInterface() && !c.isArray() && !c.isPrimitive() && !c.isEnum() && !c.isAnnotation() && !c.isAnonymousClass();");
+		assertSuccess("interface A{} assert Class.forName(\"A\") == A.class;");
+		assertSuccess("class A{class B{}} Class c = A.B.class; assert c.getName().equals(\"B\"); assert c.getFullName().equals(\"@root$0A$B\");");
+	}
+
+	@Test
 	public void testFields() {
 		assertSuccess("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();");

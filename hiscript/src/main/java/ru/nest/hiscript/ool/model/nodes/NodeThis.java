@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeThis extends HiNode {
 	public NodeThis() {
-		super("this", THIS);
+		super("this", TYPE_THIS);
 	}
 
 	@Override

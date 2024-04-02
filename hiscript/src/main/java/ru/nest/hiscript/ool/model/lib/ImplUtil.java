@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.lib;
 
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
@@ -24,11 +25,12 @@ public class ImplUtil {
 		ctx.currentThread = null;
 	}
 
-	public static HiClass getClassClass(RuntimeContext ctx) {
+	public static HiClass getClassClass(ClassResolver ctx) {
 		if (classClass == null) {
 			classClass = HiClass.forName(ctx, "Class");
 			classConstructor = classClass.getConstructor(ctx);
 		}
+		classClass.init(ctx);
 		return classClass;
 	}
 

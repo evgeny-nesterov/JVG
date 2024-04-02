@@ -760,7 +760,7 @@ public class HiClass implements HiNodeIF, HiType {
 	}
 
 	public boolean isInstanceof(HiClass clazz) {
-		if (this == clazz) {
+		if (this == clazz || clazz == HiClass.OBJECT_CLASS) {
 			return true;
 		}
 		if (clazz == null) {
