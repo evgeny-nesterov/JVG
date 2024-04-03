@@ -15,7 +15,7 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("Byte a = (short)127; assert a == 127;");
 		assertFailCompile("Byte a = 128;");
 		assertSuccess("Byte a = (byte)127; assert a != null;");
-		assertSuccess("Byte a = 127; assert a.toString().equals(\"127\");");
+		assertSuccess("Byte a = null; a = 127; assert a.toString().equals(\"127\");");
 		assertSuccess("Byte a = 127; assert a instanceof Byte;");
 		assertSuccess("Byte a = 1; assert a instanceof Number;");
 		assertSuccess("byte a = 127; Byte b = a; assert b == a; assert b == 127;");
@@ -50,8 +50,10 @@ public class TestAutoboxing extends HiTest {
 		}
 
 		assertSuccess("Byte a = 1; a++; assert a == 2;");
+		assertSuccess("Byte a = 127; a++; assert a == -128;");
 		assertSuccess("Byte a = 1; ++a; assert a == 2;");
 		assertSuccess("Byte a = 1; a--; assert a == 0;");
+		assertSuccess("Byte a = -128; a--; assert a == 127;");
 		assertSuccess("Byte a = 1; --a; assert a == 0;");
 		for (String operation : operations) {
 			assertFailCompile("Byte a = 32; a " + operation + "= 1;");
@@ -63,6 +65,8 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("Byte a = 1; assert a <= 2;");
 		assertSuccess("Byte a = 1; assert a != 2;");
 		assertSuccess("Byte a = 1; byte b = a; Byte c = a; Byte d = b; assert a == c; assert a == d;");
+		assertSuccess("Byte a = 127; Byte b = 127; assert a == b;");
+		assertSuccess("Byte a = new Byte((byte)1); Byte b = 1; assert a != b;");
 
 		// class fields
 		assertSuccessSerialize("class C{Byte a; C(Byte a) {this.a = a;}} assert new C((byte)127).a == 127;");
@@ -82,18 +86,20 @@ public class TestAutoboxing extends HiTest {
 		assertSuccessSerialize("class C{C(Object a){assert a instanceof Byte;}} new C((byte)123);");
 		assertSuccessSerialize("class C{C(Byte... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert a[1] == 127; assert a[2] == null; assert a[3] == -1;}} new C((byte)0, (byte)127, null, new Byte((byte)-1));");
 		assertSuccessSerialize("class C{C(Object... a){assert a[0] instanceof Byte; assert a[1] instanceof Byte; assert (Byte)a[1] == 127;}} new C((byte)0, (byte)127);");
+		assertFail("class C{void set(byte a){}} Byte b = null; new C().set(b);");
+		assertFail("class C{C(byte a){}} Byte b = null; new C(b);");
 
 		// arrays
 		assertSuccessSerialize("Byte[] a = new Byte[3]; a[0] = (byte)1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
 		assertSuccessSerialize("Byte[][] a = new Byte[3][3]; a[0][0] = (byte)1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
 		assertSuccessSerialize("byte[] a = new byte[2]; a[1] = new Byte((byte)127); assert a[1] == 127;");
 		assertSuccessSerialize("byte[][] a = new byte[2][2]; a[1][1] = new Byte((byte)127); assert a[1][1] == 127;");
+		assertFail("byte[][] a = new byte[1][1]; Byte b = null; a[0][0] = b;");
 
 		// statements
 		assertSuccessSerialize("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
-
-		// nulls
-		assertFail("Byte a = null; byte b = a;");
+		assertSuccessSerialize("Byte i = 0; while(i < 10) i++; assert i == 10;");
+		assertFail("byte i = 0; while(i < 10) i = null;");
 	}
 
 	@Test
@@ -149,6 +155,7 @@ public class TestAutoboxing extends HiTest {
 		// boxed object => primitive
 		assertSuccess("boolean a = new Boolean(true); assert a == true;");
 		assertSuccess("boolean a = new Boolean(false); assert a == Boolean.FALSE;");
+		assertSuccess("boolean a = Boolean.TRUE; assert a == Boolean.TRUE;");
 
 		// operations
 		assertSuccess("Boolean a = true; Boolean b = false; assert (a || b) == true;");

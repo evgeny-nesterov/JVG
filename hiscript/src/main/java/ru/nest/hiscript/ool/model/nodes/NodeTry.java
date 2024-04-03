@@ -43,7 +43,9 @@ public class NodeTry extends HiNode {
 				}
 			}
 		}
-		valid &= body.validateBlock(validationInfo, ctx);
+		if (body != null) {
+			valid &= body.validateBlock(validationInfo, ctx);
+		}
 		if (catches != null) {
 			for (NodeCatch catchNode : catches) {
 				valid &= catchNode.validateBlock(validationInfo, ctx);

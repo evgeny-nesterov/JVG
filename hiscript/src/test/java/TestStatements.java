@@ -45,20 +45,39 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int i = 0; for(;i < 0;); assert i == 0;");
 		assertSuccessSerialize("int i = 0; for(;;i++, i++) {break;} assert i == 0;");
 		assertSuccessSerialize("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
+
+		assertFailCompile("for() {}");
+		assertFailCompile("for(;) {}");
+		assertFailCompile("for(;;;) {}");
+		assertFailCompile("for(;;) {");
+		assertFailCompile("for(;;)");
+		assertFailCompile("int x = 0; for(;x=1, x=2;) {}");
 	}
 
 	@Test
 	public void testWhile() {
 		assertSuccessSerialize("int x = 3; while(x != 0) {x--;}");
 		assertSuccessSerialize("int x = 3; while(true) {x--; if(x <= 1) break; else continue; x = 1;} assert x == 1;");
-		assertSuccessSerialize("int x = 3; do {x--;} while(x != 0); assert x == 0;");
-		assertSuccessSerialize("int x = 3; do {x--; if(x == 1) break;} while(x != 0); assert x == 1;");
-		assertSuccessSerialize("int x = 3; do {x--; if(x >= 1) continue; break;} while(true); assert x == 0;");
+
+		assertFailCompile("while() {}");
+		assertFailCompile("while(1) {}");
+		assertFailCompile("while(1.1) {}");
+		assertFailCompile("while(\"\") {}");
+		assertFailCompile("while(true;) {}");
+		assertFailCompile("while(true)");
+		assertFailCompile("while(true) {");
 	}
 
 	@Test
 	public void testDoWhile() {
 		assertSuccessSerialize("int x = 3; do{x--;} while(x != 0); assert x == 0;");
+		assertSuccessSerialize("int x = 3; do {x--;} while(x != 0); assert x == 0;");
+		assertSuccessSerialize("int x = 3; do {x--; if(x == 1) break;} while(x != 0); assert x == 1;");
+		assertSuccessSerialize("int x = 3; do {x--; if(x >= 1) continue; break;} while(true); assert x == 0;");
+
+		assertFailCompile("do {} do(true);");
+		assertFailCompile("do {} while();");
+		assertFailCompile("do {} while(true;);");
 	}
 
 	@Test
@@ -71,10 +90,23 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int x = 2; if (x == 0) {assert false;} else if(x == 1) {assert false;} else x++; assert x == 3;");
 		assertSuccessSerialize("int x = 1; if (x > 0) if(x != 0) if (x == 1) x++; assert x == 2;");
 		assertSuccessSerialize("String s = \"a\"; if (s != null && s.length() == 1 && s.equals(\"a\")) {s = null;} assert s == null;");
+
+		assertFailCompile("if() {}");
+		assertFailCompile("if(true;) {}");
+		assertFailCompile("if(true)");
+		assertFailCompile("if(1) {}");
+		assertFailCompile("if(1.0) {}");
+		assertFailCompile("if(\"\") {}");
+		assertFailCompile("if(true) {} else if(){}");
+		assertFailCompile("if(true) {} else if(false)");
+		assertFailCompile("if(true) {} else if(false){");
+		assertFailCompile("if(true) {} else if(false){} else ");
+		assertFailCompile("if(true) {} else if(false){} else {");
 	}
 
 	@Test
 	public void testSwitch() {
+		assertSuccess("switch(1){}");
 		assertSuccessSerialize("int x = 1; switch(x){case 1: assert true;break; case 2: assert false;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2: assert false;break; default: assert true;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2, x == 1: assert true;break; case 1, x == 2: assert false;break;}");
@@ -86,6 +118,15 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case o.a == 1: assert o.a == 1;return;} assert false : \"case 2\";");
 		assertFailSerialize("int x = 1; switch(x){case 1:break; case \"\":break;}");
 		assertSuccessSerialize("Object s = null; switch(s){case \"a\": assert true;break; case \"b\": assert false;break; case null: assert s == null;break;}");
+		assertFailCompile("int x = 1; switch(x){case 1,:break;}");
+
+		assertFailCompile("switch(){}");
+		assertFailCompile("switch(1);");
+		assertFailCompile("switch(1;){}");
+		assertFailCompile("switch(1){case}");
+		assertFailCompile("switch(1){case :}");
+		assertFailCompile("switch(1){case 1: break}");
+		assertFailCompile("switch(1){case 1: break; default}");
 	}
 
 	@Test
@@ -103,7 +144,14 @@ public class TestStatements extends HiTest {
 				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
 				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
 		assertSuccessSerialize("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
+		assertSuccessSerialize("class A implements AutoCloseable{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
+		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A(); ) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
+
+		assertFailCompile("try(){}");
+		assertFailCompile("try(){}");
+		assertFailCompile("try{} catch(Exception ){}");
+		assertFailCompile("try{} catch(Exception | e){}");
 	}
 
 	@Test

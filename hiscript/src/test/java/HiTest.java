@@ -78,6 +78,7 @@ public abstract class HiTest {
 		} catch (TokenizerException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -88,6 +89,7 @@ public abstract class HiTest {
 		} catch (TokenizerException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

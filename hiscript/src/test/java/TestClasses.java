@@ -60,6 +60,10 @@ public class TestClasses extends HiTest {
 	public void testInnerClasses() {
 		// inner class
 		assertSuccessSerialize("class B{int x = 0; {new A();} class A{A(){x++;}} {new A();}} assert new B().x == 2;");
+		assertSuccessSerialize("class B{record R(int a);} assert new B().new R(1).a == 1;");
+		assertSuccessSerialize("static class B{interface I{int get();}} class A implements B.I{public int get(){return 1;}} assert new A().get() == 1;");
+		assertSuccessSerialize("class B{enum E{a,b,c}} E e = B.E.b; assert e == B.E.b;");
+		assertSuccessSerialize("class C{} enum E{a} interface I{} record R(int a);");
 
 		// static inner class
 		assertSuccessSerialize("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
@@ -260,6 +264,7 @@ public class TestClasses extends HiTest {
 	public void testRecords() {
 		assertSuccessSerialize("record Rec(int a); Rec r = new Rec(1);");
 		assertFailCompile("record Rec(int a, long a);");
+		assertFailCompile("record (int a);");
 		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
 
 		assertSuccessSerialize("record Rec(int a, String field); Rec rec = new Rec(1, \"abc\"); assert rec.getA() == 1; assert rec.getField().equals(\"abc\");");

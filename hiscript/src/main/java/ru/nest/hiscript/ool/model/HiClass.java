@@ -281,7 +281,7 @@ public class HiClass implements HiNodeIF, HiType {
 
 				// check super class on static
 				if (!superClass.isStatic() && !superClass.isTopLevel() && isStatic()) {
-					classResolver.processResolverException("static class " + fullName + " can not extends not static and not top level class");
+					classResolver.processResolverException("static class " + fullName + " can not extend not static and not top level class");
 					return;
 				}
 
@@ -313,12 +313,6 @@ public class HiClass implements HiNodeIF, HiType {
 
 					// init interface
 					classInterface.init(classResolver);
-
-					// TODO remove (interface is always static)?
-					// check interface on static
-					if (!classInterface.isStatic() && !classInterface.isTopLevel() && isStatic()) {
-						classResolver.processResolverException("static class " + fullName + " can not extends not static and not top level class");
-					}
 				}
 			}
 

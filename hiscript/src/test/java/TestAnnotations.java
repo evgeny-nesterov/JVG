@@ -9,6 +9,7 @@ public class TestAnnotations extends HiTest {
 		assertSuccess("abstract @interface Field{String value() default \"x=\" + 1;}");
 		assertSuccess("static @interface Field{int value();}");
 		assertSuccess("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
+		assertFailCompile("@interface {String value();}");
 
 		assertSuccess("@interface A{int value() default y + 1; int x = 1; int y = x + 1;} @A(value=2) class C{} C c = new C();");
 		assertFailCompile("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}"); // division by zero while compiling
@@ -31,6 +32,7 @@ public class TestAnnotations extends HiTest {
 		assertSuccess("static class C1{final static int CONST=1;} static class C2{final static int CONST=C1.CONST;} @interface A{int value() default C2.CONST;}");
 		assertFailCompile("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
 		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
+		assertFailCompile("@ (value = \"x\") int x;} }");
 
 		// array arguments
 	}

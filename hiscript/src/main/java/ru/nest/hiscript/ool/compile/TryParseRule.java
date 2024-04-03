@@ -35,14 +35,19 @@ public class TryParseRule extends ParseRule<NodeTry> {
 
 				List<NodeDeclaration> resourcesList = new ArrayList<>(1);
 				NodeDeclaration resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
-				resourcesList.add(resource);
+				if (resource != null) {
+					resourcesList.add(resource);
+				} else {
+					tokenizer.error("declaration expected");
+				}
 				while (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 					tokenizer.nextToken();
 					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
-					if (resource == null) {
+					if (resource != null) {
+						resourcesList.add(resource);
+					} else {
 						tokenizer.error("declaration expected");
 					}
-					resourcesList.add(resource);
 				}
 				resources = resourcesList.toArray(new NodeDeclaration[resourcesList.size()]);
 				// TODO check resources on AutoCloseable
@@ -87,9 +92,11 @@ public class TryParseRule extends ParseRule<NodeTry> {
 						catchNodes = new ArrayList<>(1);
 					}
 
-					NodeCatch catchNode = new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
-					catchNode.setToken(tokenizer.getBlockToken(startCatchToken));
-					catchNodes.add(catchNode);
+					if (excName != null) {
+						NodeCatch catchNode = new NodeCatch(excTypes != null ? excTypes.toArray(new Type[excTypes.size()]) : null, catchBody, excName, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
+						catchNode.setToken(tokenizer.getBlockToken(startCatchToken));
+						catchNodes.add(catchNode);
+					}
 				} else {
 					break;
 				}
