@@ -27,9 +27,9 @@ public class NodeInvocation extends HiNode {
 		this.arguments = arguments;
 	}
 
-	private String name;
+	private final String name;
 
-	private HiNode[] arguments;
+	private final HiNode[] arguments;
 
 	private boolean innerInvocation;
 
@@ -46,7 +46,7 @@ public class NodeInvocation extends HiNode {
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		invocationClass = ctx.consumeInvocationClass();
-		isEnclosingObject = invocationClass != null ? ctx.level.isEnclosingObject : false;
+		isEnclosingObject = invocationClass != null && ctx.level.isEnclosingObject;
 
 		// args has to be evaluated without invocationClass context
 		HiClass[] argumentsClasses = new HiClass[arguments != null ? arguments.length : 0];

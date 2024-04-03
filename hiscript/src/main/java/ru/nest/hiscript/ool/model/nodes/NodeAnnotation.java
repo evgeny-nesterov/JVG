@@ -21,7 +21,7 @@ public class NodeAnnotation extends HiNode {
 
 	public String name;
 
-	private NodeAnnotationArgument[] args;
+	private final NodeAnnotationArgument[] args;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

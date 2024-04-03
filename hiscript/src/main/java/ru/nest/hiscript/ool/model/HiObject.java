@@ -144,11 +144,7 @@ public class HiObject {
 				fieldsMap = new HashMap<>(1);
 			}
 
-			Map<String, HiField<?>> classFieldsMap = fieldsMap.get(clazz);
-			if (classFieldsMap == null) {
-				classFieldsMap = new HashMap<>(1);
-				fieldsMap.put(clazz, classFieldsMap);
-			}
+			Map<String, HiField<?>> classFieldsMap = fieldsMap.computeIfAbsent(clazz, k -> new HashMap<>(1));
 			classFieldsMap.put(name, field);
 		}
 		return field;
@@ -213,7 +209,7 @@ public class HiObject {
 		HiClass objectClass = HiClass.forName(ctx, HiClass.OBJECT_CLASS_NAME);
 		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
 		if (equalsMethod == null) {
-			return this == object;
+			return false;
 		}
 
 		// enter into method

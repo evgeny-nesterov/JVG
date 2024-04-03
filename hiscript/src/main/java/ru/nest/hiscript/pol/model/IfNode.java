@@ -18,19 +18,19 @@ public class IfNode extends Node {
 		}
 	}
 
-	private Node condition;
+	private final Node condition;
 
 	public Node getCondition() {
 		return condition;
 	}
 
-	private Node body;
+	private final Node body;
 
 	public Node getBody() {
 		return body;
 	}
 
-	private List<IfNode> elseIf = new ArrayList<>();
+	private final List<IfNode> elseIf = new ArrayList<>();
 
 	public void addElseIf(IfNode node) {
 		elseIf.add(node);

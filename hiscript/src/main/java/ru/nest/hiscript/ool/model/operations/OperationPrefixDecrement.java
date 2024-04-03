@@ -8,12 +8,11 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPrefixDecrement extends UnaryOperation {
-	private static HiOperation instance = new OperationPrefixDecrement();
+	private static final HiOperation instance = new OperationPrefixDecrement();
 
 	public static HiOperation getInstance() {
 		return instance;

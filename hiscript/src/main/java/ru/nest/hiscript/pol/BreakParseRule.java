@@ -1,6 +1,5 @@
 package ru.nest.hiscript.pol;
 
-import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BreakNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;

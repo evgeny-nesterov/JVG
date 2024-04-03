@@ -10,13 +10,13 @@ public class CaseNode extends Node {
 		body.setParent(this);
 	}
 
-	private Node value;
+	private final Node value;
 
 	public Node getValue() {
 		return value;
 	}
 
-	private BlockNode body;
+	private final BlockNode body;
 
 	public BlockNode getBody() {
 		return body;

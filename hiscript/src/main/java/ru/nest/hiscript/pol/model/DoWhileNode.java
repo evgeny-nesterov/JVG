@@ -13,13 +13,13 @@ public class DoWhileNode extends Node implements Breakable {
 		body.setParent(this);
 	}
 
-	private Node condition;
+	private final Node condition;
 
 	public Node getCondition() {
 		return condition;
 	}
 
-	private Node body;
+	private final Node body;
 
 	public Node getBody() {
 		return body;

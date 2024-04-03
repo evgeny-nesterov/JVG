@@ -58,7 +58,7 @@ public class HiMethod implements HiNodeIF {
 	 */
 	public Object annotationDefaultValue;
 
-	public HiMethod rewritedMethod;
+	public HiMethod rewrittenMethod;
 
 	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
 		NodeArgument[] _arguments = null;
@@ -94,7 +94,7 @@ public class HiMethod implements HiNodeIF {
 		this.argCount = arguments != null ? arguments.length : 0;
 	}
 
-	private static AtomicInteger lambdasCount = new AtomicInteger();
+	private static final AtomicInteger lambdasCount = new AtomicInteger();
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -143,13 +143,13 @@ public class HiMethod implements HiNodeIF {
 			}
 			if (clazz.superClass != null) {
 				resolve(ctx);
-				rewritedMethod = clazz.superClass.getMethod(ctx, signature);
-				if (rewritedMethod != null) {
-					if (rewritedMethod.returnClass != returnClass) {
+				rewrittenMethod = clazz.superClass.getMethod(ctx, signature);
+				if (rewrittenMethod != null) {
+					if (rewrittenMethod.returnClass != returnClass) {
 						validationInfo.error("cannot rewrite method with another return type", getToken());
 						valid = false;
 					}
-					if (rewritedMethod.modifiers.isFinal()) {
+					if (rewrittenMethod.modifiers.isFinal()) {
 						validationInfo.error("cannot rewrite final method", getToken());
 						valid = false;
 					}
@@ -231,7 +231,7 @@ public class HiMethod implements HiNodeIF {
 							returnType = Type.voidType;
 						}
 					}
-				} else {
+				} else if (body != null) {
 					returnClass = body.getValueClass(validationInfo, ctx);
 					returnType = Type.getType(returnClass);
 				}

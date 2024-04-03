@@ -15,11 +15,11 @@ public class NodeLogicalSwitch extends NodeExpression {
 		this.falseValueNode = falseValueNode;
 	}
 
-	private NodeExpression condition;
+	private final NodeExpression condition;
 
-	private NodeExpression trueValueNode;
+	private final NodeExpression trueValueNode;
 
-	private NodeExpression falseValueNode;
+	private final NodeExpression falseValueNode;
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {

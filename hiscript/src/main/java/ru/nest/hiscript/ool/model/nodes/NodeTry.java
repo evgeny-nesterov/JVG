@@ -21,13 +21,13 @@ public class NodeTry extends HiNode {
 		this.finallyBody = finallyBody;
 	}
 
-	private NodeDeclaration[] resources;
+	private final NodeDeclaration[] resources;
 
-	private HiNode body;
+	private final HiNode body;
 
 	public NodeCatch[] catches;
 
-	private HiNode finallyBody;
+	private final HiNode finallyBody;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

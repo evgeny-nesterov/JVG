@@ -24,25 +24,25 @@ public class TryCatchNode extends Node {
 		}
 	}
 
-	private Node tryBody;
+	private final Node tryBody;
 
 	public Node getTryBody() {
 		return tryBody;
 	}
 
-	private Node catchBody;
+	private final Node catchBody;
 
 	public Node getCatchBody() {
 		return catchBody;
 	}
 
-	private Node finallyBody;
+	private final Node finallyBody;
 
 	public Node getFinallyBody() {
 		return finallyBody;
 	}
 
-	private String errorVariableName;
+	private final String errorVariableName;
 
 	public String getErrorVariableName() {
 		return errorVariableName;

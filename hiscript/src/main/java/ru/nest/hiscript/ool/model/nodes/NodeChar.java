@@ -16,7 +16,7 @@ public class NodeChar extends HiNode {
 
 	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
-	private static NodeChar[] cache = new NodeChar[256];
+	private static final NodeChar[] cache = new NodeChar[256];
 
 	public static NodeChar getInstance(char value, Token token) {
 		if (token != null) {
@@ -37,7 +37,7 @@ public class NodeChar extends HiNode {
 		this.value = value;
 	}
 
-	private char value;
+	private final char value;
 
 	public char getValue() {
 		return value;

@@ -35,7 +35,7 @@ public class ThreadImpl extends ImplUtil {
 			newCtx = new RuntimeContext(ctx);
 		}
 
-		private RuntimeContext newCtx;
+		private final RuntimeContext newCtx;
 
 		private HiObject object;
 

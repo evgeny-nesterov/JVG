@@ -16,13 +16,13 @@ public class NodeFor extends HiNode {
 		this.body = body;
 	}
 
-	private HiNode initialization;
+	private final HiNode initialization;
 
-	private NodeExpression condition;
+	private final NodeExpression condition;
 
-	private HiNode assignment;
+	private final HiNode assignment;
 
-	private HiNode body;
+	private final HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

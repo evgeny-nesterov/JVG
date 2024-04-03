@@ -5,13 +5,10 @@ import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
-import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-
-import java.io.IOException;
 
 public class HiScript implements AutoCloseable {
 	private HiClassLoader classLoader;
@@ -24,7 +21,7 @@ public class HiScript implements AutoCloseable {
 
 	private RuntimeContext ctx;
 
-	private long startTime;
+	private final long startTime;
 
 	private HiScript() {
 		startTime = System.currentTimeMillis();

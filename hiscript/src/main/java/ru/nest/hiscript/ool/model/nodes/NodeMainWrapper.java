@@ -22,7 +22,7 @@ public class NodeMainWrapper extends HiNode {
 		this.rootClass = getRootClass(body);
 	}
 
-	private HiClassLoader classLoader;
+	private final HiClassLoader classLoader;
 
 	private CompileClassContext ctx;
 
@@ -60,7 +60,7 @@ public class NodeMainWrapper extends HiNode {
 			}
 		}
 		this.ctx = ctx;
-		return body != null ? body.validate(validationInfo, ctx) : false;
+		return body != null && body.validate(validationInfo, ctx);
 	}
 
 	@Override

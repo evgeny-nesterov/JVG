@@ -140,7 +140,6 @@ public class NodeSwitch extends HiNode {
 			if (ctx.exitFromBlock()) {
 				return -2;
 			}
-			FOR:
 			for (int i = 0; i < size; i++) {
 				HiNode[] caseValueNodes = casesValues.get(i);
 				if (caseValueNodes != null && caseValueNodes.length > 0) {

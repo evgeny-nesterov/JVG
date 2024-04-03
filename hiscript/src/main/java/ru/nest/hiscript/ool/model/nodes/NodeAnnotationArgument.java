@@ -18,7 +18,7 @@ public class NodeAnnotationArgument extends HiNode {
 
 	public String name;
 
-	private HiNode valueNode;
+	private final HiNode valueNode;
 
 	public Object value;
 

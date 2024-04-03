@@ -17,25 +17,25 @@ public class TokenizerException extends Exception {
 		this.lineOffset = token.getLineOffset();
 	}
 
-	private int line;
+	private final int line;
 
 	public int getLine() {
 		return line;
 	}
 
-	private int offset;
+	private final int offset;
 
 	public int getOffset() {
 		return offset;
 	}
 
-	private int length;
+	private final int length;
 
 	public int getLength() {
 		return length;
 	}
 
-	private int lineOffset;
+	private final int lineOffset;
 
 	public int getLineOffset() {
 		return lineOffset;

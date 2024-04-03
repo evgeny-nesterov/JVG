@@ -35,7 +35,7 @@ public class NodeBoolean extends HiNode {
 		this.value = value;
 	}
 
-	private boolean value;
+	private final boolean value;
 
 	public boolean getValue() {
 		return value;

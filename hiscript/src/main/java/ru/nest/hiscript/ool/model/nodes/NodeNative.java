@@ -40,11 +40,11 @@ public class NodeNative extends HiNode {
 		this.id = id;
 	}
 
-	private int argCount;
+	private final int argCount;
 
-	private String[] argNames;
+	private final String[] argNames;
 
-	private String id;
+	private final String id;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

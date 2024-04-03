@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ValidationInfo {
-	private HiCompiler compiler;
+	private final HiCompiler compiler;
 
 	private boolean valid = true;
 

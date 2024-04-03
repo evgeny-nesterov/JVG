@@ -53,7 +53,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public final static Type varType = new Type(VAR, "var", false);
 
-	private static Map<String, Type> primitiveTypes = new HashMap<>();
+	private final static Map<String, Type> primitiveTypes = new HashMap<>();
 
 	static {
 		primitiveTypes.put("byte", byteType);
@@ -154,7 +154,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public String fullName;
 
-	private int dimension;
+	private final int dimension;
 
 	public int getDimension() {
 		return dimension;
@@ -164,7 +164,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return cellType;
 	}
 
-	private boolean primitive;
+	private final boolean primitive;
 
 	public boolean isPrimitive() {
 		return primitive;
@@ -274,9 +274,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	// === Static Methods ===
-	private static Map<String, Type> typesWithoutParent = new HashMap<>();
+	private final static Map<String, Type> typesWithoutParent = new HashMap<>();
 
-	private static Map<Type, Type> arrayTypes = new HashMap<>();
+	private final static Map<Type, Type> arrayTypes = new HashMap<>();
 
 	public static Type getType(Type parent, String name) {
 		if (parent != null) {

@@ -7,13 +7,13 @@ public class CastNode extends Node implements Value {
 		this.dimension = dimension;
 	}
 
-	private int type;
+	private final int type;
 
 	public int getType() {
 		return type;
 	}
 
-	private int dimension;
+	private final int dimension;
 
 	public int getDimension() {
 		return dimension;

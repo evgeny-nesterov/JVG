@@ -6,7 +6,7 @@ public class CharToken extends Token {
 		this.c = c;
 	}
 
-	private char c;
+	private final char c;
 
 	public char getChar() {
 		return c;

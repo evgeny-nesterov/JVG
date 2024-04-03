@@ -327,20 +327,18 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return ".";
 
 			case POST_INCREMENT:
-				return "++";
-
-			case POST_DECREMENT:
-				return "--";
-
 			case PREFIX_INCREMENT:
 				return "++";
 
+			case POST_DECREMENT:
 			case PREFIX_DECREMENT:
 				return "--";
 
+			case PLUS:
 			case PREFIX_PLUS:
 				return "+";
 
+			case MINUS:
 			case PREFIX_MINUS:
 				return "-";
 
@@ -361,12 +359,6 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 
 			case PERCENT:
 				return "%";
-
-			case PLUS:
-				return "+";
-
-			case MINUS:
-				return "-";
 
 			case BITWISE_SHIFT_LEFT:
 				return "<<";

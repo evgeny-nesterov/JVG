@@ -34,7 +34,7 @@ public class SelectionRotater extends Thread {
 			try {
 				sleep(100);
 			} catch (InterruptedException exc) {
-				System.err.println("SelectionRotater: exit with error " + exc.toString());
+				System.err.println("SelectionRotater: exit with error " + exc);
 				return;
 			}
 

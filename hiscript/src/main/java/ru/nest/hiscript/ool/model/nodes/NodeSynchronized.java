@@ -15,9 +15,9 @@ public class NodeSynchronized extends HiNode {
 		this.body = body;
 	}
 
-	private HiNode lock;
+	private final HiNode lock;
 
-	private HiNode body;
+	private final HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

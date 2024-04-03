@@ -14,7 +14,7 @@ public class ArgumentsNode extends Node {
 		return value;
 	}
 
-	private List<ArgumentNode> arguments = new ArrayList<>();
+	private final List<ArgumentNode> arguments = new ArrayList<>();
 
 	public void addArgument(ArgumentNode argument) {
 		arguments.add(argument);

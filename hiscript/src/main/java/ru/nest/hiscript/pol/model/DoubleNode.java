@@ -8,7 +8,7 @@ public class DoubleNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private double value;
+	private final double value;
 
 	public double getNumber() {
 		return value;

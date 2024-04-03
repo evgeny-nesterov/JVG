@@ -118,7 +118,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		switch (access) {
 			case ACCESS_PUBLIC:
 				sb.append("public ");

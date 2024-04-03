@@ -13,8 +13,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.operations.OperationPlus;
 
-import java.io.IOException;
-
 public class TestNodes extends HiTest {
 	@Test
 	public void testPlus() {

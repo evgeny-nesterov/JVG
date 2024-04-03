@@ -12,7 +12,7 @@ public class ReturnNode extends Node {
 		}
 	}
 
-	private Node value;
+	private final Node value;
 
 	public Node getValue() {
 		return value;

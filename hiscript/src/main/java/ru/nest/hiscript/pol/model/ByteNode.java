@@ -8,7 +8,7 @@ public class ByteNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private byte value;
+	private final byte value;
 
 	public byte getNumber() {
 		return value;

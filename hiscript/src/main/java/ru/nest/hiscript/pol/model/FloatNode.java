@@ -8,7 +8,7 @@ public class FloatNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private float value;
+	private final float value;
 
 	public float getNumber() {
 		return value;

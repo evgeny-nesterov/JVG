@@ -6,11 +6,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiNative {
-	private static Map<String, Method> methods = new ConcurrentHashMap<>();
+	private static final Map<String, Method> methods = new ConcurrentHashMap<>();
 
-	private static Map<String, Object> objects = new ConcurrentHashMap<>();
+	private static final Map<String, Object> objects = new ConcurrentHashMap<>();
 
-	private static Set<Class<?>> registered = ConcurrentHashMap.newKeySet();
+	private static final Set<Class<?>> registered = ConcurrentHashMap.newKeySet();
 
 	public static void register(Object o) {
 		if (o != null) {
@@ -18,13 +18,13 @@ public class HiNative {
 		}
 	}
 
-	public static void register(Class<? extends Object> c) {
+	public static void register(Class<?> c) {
 		if (c != null) {
 			register(c, null);
 		}
 	}
 
-	private static void register(Class<? extends Object> c, Object o) {
+	private static void register(Class<?> c, Object o) {
 		if (registered.contains(c)) {
 			return;
 		}
@@ -70,7 +70,7 @@ public class HiNative {
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			classResolver.processResolverException("native method '" + name + "' invocation error: " + exc.toString());
+			classResolver.processResolverException("native method '" + name + "' invocation error: " + exc);
 		}
 	}
 }

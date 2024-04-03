@@ -34,19 +34,19 @@ public class ForNode extends Node implements Breakable {
 		return initialization;
 	}
 
-	private Node condition;
+	private final Node condition;
 
 	public Node getCondition() {
 		return condition;
 	}
 
-	private Node assignments;
+	private final Node assignments;
 
 	public Node getAssignments() {
 		return assignments;
 	}
 
-	private Node body;
+	private final Node body;
 
 	public Node getBody() {
 		return body;

@@ -251,9 +251,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		} else {
 			field = new HiFieldObject(type, name);
 		}
-		if (field != null) {
-			field.setToken(token);
-		}
+		field.setToken(token);
 		return field;
 	}
 
@@ -280,9 +278,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		} else {
 			field = new HiFieldObject(clazz, name);
 		}
-		if (field != null) {
-			field.setToken(token);
-		}
+		field.setToken(token);
 		return field;
 	}
 

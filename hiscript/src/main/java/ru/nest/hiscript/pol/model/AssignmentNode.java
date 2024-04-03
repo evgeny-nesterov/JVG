@@ -1,6 +1,5 @@
 package ru.nest.hiscript.pol.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.nest.hiscript.tokenizer.OperationSymbols;
@@ -28,33 +27,33 @@ public class AssignmentNode extends Node {
 		value.setParent(this);
 	}
 
-	private String fullname;
+	private final String fullname;
 
 	public String getFullname() {
 		return fullname;
 	}
 
-	private String namespace;
+	private final String namespace;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
-	private String varName;
+	private final String varName;
 
 	public String getVarName() {
 		return varName;
 	}
 
-	private List<ExpressionNode> indexes;
+	private final List<ExpressionNode> indexes;
 
-	private Node value;
+	private final Node value;
 
 	public Node getValue() {
 		return value;
 	}
 
-	private int equateType;
+	private final int equateType;
 
 	public int getEquateType() {
 		return equateType;

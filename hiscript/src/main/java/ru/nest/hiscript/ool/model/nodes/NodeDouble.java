@@ -22,7 +22,7 @@ public class NodeDouble extends NodeNumber {
 		this.value = value;
 	}
 
-	private double value;
+	private final double value;
 
 	public double getValue() {
 		return value;

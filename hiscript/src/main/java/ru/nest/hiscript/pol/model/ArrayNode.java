@@ -10,13 +10,13 @@ public class ArrayNode extends Node {
 		this.type = type;
 	}
 
-	private int type;
+	private final int type;
 
 	public int getType() {
 		return type;
 	}
 
-	private List<ExpressionNode> indexes = new ArrayList<>();
+	private final List<ExpressionNode> indexes = new ArrayList<>();
 
 	public void addIndex(ExpressionNode index) {
 		indexes.add(index);

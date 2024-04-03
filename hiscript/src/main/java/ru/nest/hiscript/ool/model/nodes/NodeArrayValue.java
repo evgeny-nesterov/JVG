@@ -23,9 +23,9 @@ public class NodeArrayValue extends HiNode {
 
 	public Type type;
 
-	private int dimensions;
+	private final int dimensions;
 
-	private HiNode[] array;
+	private final HiNode[] array;
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {

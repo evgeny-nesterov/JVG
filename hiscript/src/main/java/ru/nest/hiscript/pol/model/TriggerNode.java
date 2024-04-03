@@ -12,19 +12,19 @@ public class TriggerNode extends Node {
 		falseValue.setParent(this);
 	}
 
-	private Node condition;
+	private final Node condition;
 
 	public Node getCondition() {
 		return condition;
 	}
 
-	private Node trueValue;
+	private final Node trueValue;
 
 	public Node getTrueValue() {
 		return trueValue;
 	}
 
-	private Node falseValue;
+	private final Node falseValue;
 
 	public Node getFalseValue() {
 		return falseValue;

@@ -22,7 +22,7 @@ public class NodeFloat extends NodeNumber {
 		this.value = value;
 	}
 
-	private float value;
+	private final float value;
 
 	public float getValue() {
 		return value;

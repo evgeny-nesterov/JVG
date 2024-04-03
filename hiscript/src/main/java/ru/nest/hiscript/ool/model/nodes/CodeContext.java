@@ -26,9 +26,9 @@ public class CodeContext {
 		this.clazz = clazz;
 	}
 
-	private HiClass clazz;
+	private final HiClass clazz;
 
-	private CodeContext parent;
+	private final CodeContext parent;
 
 	public CodeContext getRoot() {
 		CodeContext ctx = this;
@@ -38,7 +38,7 @@ public class CodeContext {
 		return ctx;
 	}
 
-	private ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 	private DataOutputStream dos = new DataOutputStream(bos);
 
@@ -179,9 +179,9 @@ public class CodeContext {
 	// ============================================================================
 	private int len_utf = 0;
 
-	private Map<String, Integer> stringsHash = new HashMap<>();
+	private final Map<String, Integer> stringsHash = new HashMap<>();
 
-	private List<String> strings = new ArrayList<>();
+	private final List<String> strings = new ArrayList<>();
 
 	private int getUTFIndex(String value) {
 		CodeContext ctx = getRoot();
@@ -232,9 +232,9 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private Map<Type, Integer> typesHash = new HashMap<>();
+	private final Map<Type, Integer> typesHash = new HashMap<>();
 
-	private List<Type> types = new ArrayList<>();
+	private final List<Type> types = new ArrayList<>();
 
 	public void writeType(Type type) throws IOException {
 		CodeContext ctx = getRoot();
@@ -319,9 +319,9 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private Map<Integer, Integer> classes = new HashMap<>();
+	private final Map<Integer, Integer> classes = new HashMap<>();
 
-	private Map<Integer, HiClass> indexToClasses = new HashMap<>();
+	private final Map<Integer, HiClass> indexToClasses = new HashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
 		CodeContext ctx = getRoot();

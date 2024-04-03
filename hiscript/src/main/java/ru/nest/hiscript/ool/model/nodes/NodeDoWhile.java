@@ -14,9 +14,9 @@ public class NodeDoWhile extends HiNode {
 		this.condition = condition;
 	}
 
-	private NodeBlock body;
+	private final NodeBlock body;
 
-	private NodeExpression condition;
+	private final NodeExpression condition;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

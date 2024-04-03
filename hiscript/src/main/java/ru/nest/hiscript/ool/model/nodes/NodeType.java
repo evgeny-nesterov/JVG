@@ -16,7 +16,7 @@ public class NodeType extends HiNode {
 		this.type = type;
 	}
 
-	private Type type;
+	private final Type type;
 
 	public Type getType() {
 		return type;

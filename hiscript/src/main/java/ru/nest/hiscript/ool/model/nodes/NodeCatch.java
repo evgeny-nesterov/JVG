@@ -30,9 +30,9 @@ public class NodeCatch extends HiNode {
 
 	public Type[] excTypes;
 
-	private HiNode catchBody;
+	private final HiNode catchBody;
 
-	private String excName;
+	private final String excName;
 
 	public HiClass excClass;
 

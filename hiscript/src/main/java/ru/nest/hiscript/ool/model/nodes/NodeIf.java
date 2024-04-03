@@ -15,11 +15,11 @@ public class NodeIf extends HiNode {
 		this.nextIf = nextIf;
 	}
 
-	private NodeExpression condition;
+	private final NodeExpression condition;
 
-	private HiNode body;
+	private final HiNode body;
 
-	private NodeIf nextIf;
+	private final NodeIf nextIf;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

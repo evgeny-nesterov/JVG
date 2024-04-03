@@ -120,7 +120,7 @@ public class RuntimeContext {
 		return current_id++;
 	}
 
-	private static Set<Long> locks = new HashSet<>();
+	private static final Set<Long> locks = new HashSet<>();
 
 	private volatile static long current_lock_id = 0;
 
@@ -149,7 +149,7 @@ public class RuntimeContext {
 
 	private final static List<Method> nativeMethods = new ArrayList<>();
 
-	private static Map<Long, Thread> threads = new HashMap<>();
+	private static final Map<Long, Thread> threads = new HashMap<>();
 	static {
 		try {
 			// In, Out
@@ -717,7 +717,7 @@ public class RuntimeContext {
 	public void addMethod(Method method) throws ExecuteException {
 		Method m = getMethod(method.getNamespace(), method.getName(), method.getArgTypes(), method.getArgDimensions());
 		if (m != null) {
-			throw new ExecuteException(method.toString() + " is already defined");
+			throw new ExecuteException(method + " is already defined");
 		}
 
 		if (methods == null) {

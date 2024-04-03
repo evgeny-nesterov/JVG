@@ -6,7 +6,7 @@ public class LongToken extends NumberToken {
 		this.number = number;
 	}
 
-	private long number;
+	private final long number;
 
 	public long getNumber() {
 		return number;

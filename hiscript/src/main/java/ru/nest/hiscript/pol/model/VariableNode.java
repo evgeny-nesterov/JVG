@@ -13,19 +13,19 @@ public class VariableNode extends Node implements Value {
 		this.varName = varName.intern();
 	}
 
-	private String fullname;
+	private final String fullname;
 
 	public String getFullname() {
 		return fullname;
 	}
 
-	private String namespace;
+	private final String namespace;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
-	private String varName;
+	private final String varName;
 
 	public String getVarName() {
 		return varName;

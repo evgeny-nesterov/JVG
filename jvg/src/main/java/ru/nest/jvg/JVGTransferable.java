@@ -2,9 +2,7 @@ package ru.nest.jvg;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.plaf.UIResource;

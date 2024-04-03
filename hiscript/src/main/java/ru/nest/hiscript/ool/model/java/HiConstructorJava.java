@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import java.lang.reflect.Constructor;
 
 public class HiConstructorJava extends HiConstructor {
-	private Constructor constructor;
+	private final Constructor constructor;
 
 	public HiConstructorJava(HiClass clazz, Constructor constructor) {
 		super(clazz, null, null, (NodeArgument[]) null, null, null, null, null);

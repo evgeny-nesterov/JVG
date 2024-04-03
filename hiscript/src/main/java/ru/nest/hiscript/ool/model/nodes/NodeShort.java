@@ -20,7 +20,7 @@ public class NodeShort extends NodeNumber {
 		this.value = value;
 	}
 
-	private short value;
+	private final short value;
 
 	public short getValue() {
 		return value;

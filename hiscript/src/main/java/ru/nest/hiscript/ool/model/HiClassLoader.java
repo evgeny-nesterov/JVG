@@ -17,13 +17,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassLoader {
-	private String name;
+	private final String name;
 
 	private HiClassLoader parent;
 
 	private List<HiClassLoader> classLoaders;
 
-	private Map<String, HiClass> classes = new ConcurrentHashMap<>();
+	private final Map<String, HiClass> classes = new ConcurrentHashMap<>();
 
 	public HiClassLoader(String name) {
 		this.name = name;

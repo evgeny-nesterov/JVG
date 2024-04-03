@@ -5,12 +5,11 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationPrefixExclamation extends UnaryOperation {
-	private static HiOperation instance = new OperationPrefixExclamation();
+	private static final HiOperation instance = new OperationPrefixExclamation();
 
 	public static HiOperation getInstance() {
 		return instance;

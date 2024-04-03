@@ -68,7 +68,7 @@ public class SystemImpl extends ImplUtil {
 				ctx.throwRuntimeException("cannot load library: " + error[0].toString());
 			}
 		} catch (Exception exc) {
-			ctx.throwRuntimeException("cannot load library: " + exc.toString());
+			ctx.throwRuntimeException("cannot load library: " + exc);
 		}
 	}
 

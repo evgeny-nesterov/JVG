@@ -160,7 +160,7 @@ public class Value implements PrimitiveTypes {
 			}
 		} else {
 			// arrays
-			Class<? extends Object> clazz = value.getClass();
+			Class<?> clazz = value.getClass();
 			if (clazz.isArray()) {
 				valueType = VALUE;
 				type = HiClass.getArrayType(clazz);

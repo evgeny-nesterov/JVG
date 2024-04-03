@@ -7,12 +7,11 @@ import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationCast extends BinaryOperation implements PrimitiveTypes {
-	private static HiOperation instance = new OperationCast();
+	private static final HiOperation instance = new OperationCast();
 
 	public static HiOperation getInstance() {
 		return instance;

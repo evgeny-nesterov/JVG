@@ -8,7 +8,7 @@ public class CharacterNode extends Node implements Value {
 		this.character = character;
 	}
 
-	private char character;
+	private final char character;
 
 	public char getCharacter() {
 		return character;

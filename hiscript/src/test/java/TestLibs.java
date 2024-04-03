@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class TestLibs extends HiTest {
 	@Test
 	public void testCollections() {

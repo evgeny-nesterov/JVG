@@ -15,9 +15,9 @@ public class NodeAssert extends HiNode {
 		this.messageNode = messageNode;
 	}
 
-	private HiNode conditionNode;
+	private final HiNode conditionNode;
 
-	private NodeExpression messageNode;
+	private final NodeExpression messageNode;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

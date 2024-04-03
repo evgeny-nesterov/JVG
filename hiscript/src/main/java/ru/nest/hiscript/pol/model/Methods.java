@@ -55,24 +55,12 @@ public class Methods {
 			hash_methods = new HashMap<>();
 		}
 
-		Map<String, Map<Integer, List<Method>>> namespace_methods = hash_methods.get(method.getNamespace());
-		if (namespace_methods == null) {
-			namespace_methods = new HashMap<>();
-			hash_methods.put(method.getNamespace(), namespace_methods);
-		}
+		Map<String, Map<Integer, List<Method>>> namespace_methods = hash_methods.computeIfAbsent(method.getNamespace(), k -> new HashMap<>());
 
-		Map<Integer, List<Method>> argcount_methods = namespace_methods.get(method.getName());
-		if (argcount_methods == null) {
-			argcount_methods = new HashMap<>();
-			namespace_methods.put(method.getName(), argcount_methods);
-		}
+		Map<Integer, List<Method>> argcount_methods = namespace_methods.computeIfAbsent(method.getName(), k -> new HashMap<>());
 
 		int argCount = method.getArgTypes().length;
-		List<Method> methods = argcount_methods.get(argCount);
-		if (methods == null) {
-			methods = new ArrayList<>();
-			argcount_methods.put(argCount, methods);
-		}
+		List<Method> methods = argcount_methods.computeIfAbsent(argCount, k -> new ArrayList<>());
 		methods.add(method);
 	}
 }

@@ -20,7 +20,7 @@ public class NodeLong extends NodeNumber {
 		this.value = value;
 	}
 
-	private long value;
+	private final long value;
 
 	public long getValue() {
 		return value;

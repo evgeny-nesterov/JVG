@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 public class HiIllegalArgumentException extends RuntimeException {
-	private String argumentName;
+	private final String argumentName;
 
 	public HiIllegalArgumentException(String message, String argumentName) {
 		super(message);

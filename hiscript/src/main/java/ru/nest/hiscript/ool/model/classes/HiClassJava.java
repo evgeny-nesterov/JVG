@@ -31,7 +31,7 @@ public class HiClassJava extends HiClass {
 		this.javaClass = javaClass;
 	}
 
-	private Map<Integer, HiConstructorJava> javaConstructorsMap = new ConcurrentHashMap<>();
+	private final Map<Integer, HiConstructorJava> javaConstructorsMap = new ConcurrentHashMap<>();
 
 	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null);
 
@@ -170,7 +170,7 @@ public class HiClassJava extends HiClass {
 		return t2.isAssignableFrom(t1);
 	}
 
-	private Map<MethodSignature, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
+	private final Map<MethodSignature, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
 
 	@Override
 	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {

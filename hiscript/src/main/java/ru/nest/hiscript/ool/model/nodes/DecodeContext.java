@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DecodeContext {
-	private DataInputStream is;
+	private final DataInputStream is;
 
 	private HiClass clazz;
 
@@ -48,9 +48,9 @@ public class DecodeContext {
 		this.parent = parent;
 	}
 
-	private DecodeContext parent;
+	private final DecodeContext parent;
 
-	private HiClassLoader classLoader;
+	private final HiClassLoader classLoader;
 
 	public HiClassLoader getClassLoader() {
 		return classLoader;
@@ -217,15 +217,11 @@ public class DecodeContext {
 		}
 	}
 
-	private Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>();
+	private final Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>();
 
 	public void addClassLoadListener(ClassLoadListener listener, int index) {
 		DecodeContext ctx = getRoot();
-		List<ClassLoadListener> list = ctx.classLoadListeners.get(index);
-		if (list == null) {
-			list = new ArrayList<>();
-			ctx.classLoadListeners.put(index, list);
-		}
+		List<ClassLoadListener> list = ctx.classLoadListeners.computeIfAbsent(index, k -> new ArrayList<>());
 		list.add(listener);
 	}
 

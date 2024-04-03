@@ -211,7 +211,6 @@ public class NumberTokenVisitor implements TokenVisitor {
 
 			boolean lastUnderscore = false;
 			while (tokenizer.hasNext() && ((tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') || tokenizer.getCurrent() == '_')) {
-				found = true;
 				lastUnderscore = tokenizer.getCurrent() == '_';
 				tokenizer.next();
 			}

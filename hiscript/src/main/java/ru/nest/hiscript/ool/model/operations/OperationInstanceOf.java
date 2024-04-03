@@ -15,7 +15,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationInstanceOf extends BinaryOperation {
-	private static HiOperation instance = new OperationInstanceOf();
+	private static final HiOperation instance = new OperationInstanceOf();
 
 	public static HiOperation getInstance() {
 		return instance;

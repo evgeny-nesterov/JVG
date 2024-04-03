@@ -10,7 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationLogicalAnd extends BinaryOperation {
-	private static HiOperation instance = new OperationLogicalAnd();
+	private static final HiOperation instance = new OperationLogicalAnd();
 
 	public static HiOperation getInstance() {
 		return instance;

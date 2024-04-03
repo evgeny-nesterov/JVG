@@ -6,7 +6,7 @@ public class DoubleToken extends NumberToken {
 		this.number = number;
 	}
 
-	private double number;
+	private final double number;
 
 	public double getNumber() {
 		return number;

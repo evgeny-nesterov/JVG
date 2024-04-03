@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Compiler {
-	private Tokenizer tokenizer;
+	private final Tokenizer tokenizer;
 
 	public Compiler(Tokenizer tokenizer) {
 		this.tokenizer = tokenizer;
@@ -75,9 +75,9 @@ public class Compiler {
 		JToolBar toolBar = new JToolBar();
 		JButton btnExecute = new JButton("Execute");
 		btnExecute.addActionListener(new ActionListener() {
-			private SimpleAttributeSet defaultAttr = new SimpleAttributeSet();
+			private final SimpleAttributeSet defaultAttr = new SimpleAttributeSet();
 
-			private SimpleAttributeSet errorAttr = new SimpleAttributeSet();
+			private final SimpleAttributeSet errorAttr = new SimpleAttributeSet();
 
 			{
 				StyleConstants.setForeground(defaultAttr, Color.black);

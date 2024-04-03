@@ -96,7 +96,7 @@ public class NodeIdentifier extends HiNode {
 				nonStaticField = !((HiField) resolvedIdentifier).isStatic();
 			} else if (resolvedIdentifier instanceof NodeDeclaration) {
 				Modifiers modifiers = ((NodeDeclaration) resolvedIdentifier).modifiers;
-				nonStaticField = modifiers != null ? !modifiers.isStatic() : true;
+				nonStaticField = modifiers == null || !modifiers.isStatic();
 			}
 			if (nonStaticField && ctx.isStaticContext()) {
 				validationInfo.error("non-static field '" + name + "' cannot be accessed from static context", token);

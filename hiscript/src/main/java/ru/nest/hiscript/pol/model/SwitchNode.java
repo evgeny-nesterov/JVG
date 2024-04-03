@@ -14,13 +14,13 @@ public class SwitchNode extends Node implements Breakable {
 		value.setParent(this);
 	}
 
-	private Node value;
+	private final Node value;
 
 	public Node getValue() {
 		return value;
 	}
 
-	private List<CaseNode> cases = new ArrayList<>();
+	private final List<CaseNode> cases = new ArrayList<>();
 
 	public void addCase(CaseNode node) {
 		cases.add(node);

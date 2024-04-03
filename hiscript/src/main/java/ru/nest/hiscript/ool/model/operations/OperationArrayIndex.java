@@ -8,14 +8,13 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.lang.reflect.Array;
 
 public class OperationArrayIndex extends BinaryOperation {
-	private static HiOperation instance = new OperationArrayIndex();
+	private static final HiOperation instance = new OperationArrayIndex();
 
 	public static HiOperation getInstance() {
 		return instance;

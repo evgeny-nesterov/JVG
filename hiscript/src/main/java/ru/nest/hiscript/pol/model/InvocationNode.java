@@ -12,19 +12,19 @@ public class InvocationNode extends Node implements Value {
 		this.methodName = methodName;
 	}
 
-	private String namespace;
+	private final String namespace;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
-	private String methodName;
+	private final String methodName;
 
 	public String getMethodName() {
 		return methodName;
 	}
 
-	private List<Node> arguments = new ArrayList<>();
+	private final List<Node> arguments = new ArrayList<>();
 
 	public void addArgument(Node argument) {
 		arguments.add(argument);

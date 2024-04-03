@@ -31,25 +31,25 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private List<Integer> operations = new ArrayList<>();
+	private final List<Integer> operations = new ArrayList<>();
 
 	public List<Integer> getOperations() {
 		return operations;
 	}
 
-	private List<PrefixNode> prefixes = new ArrayList<>();
+	private final List<PrefixNode> prefixes = new ArrayList<>();
 
 	public List<PrefixNode> getPrefixes() {
 		return prefixes;
 	}
 
-	private List<Node> values = new ArrayList<>();
+	private final List<Node> values = new ArrayList<>();
 
 	public List<Node> getValues() {
 		return values;
 	}
 
-	private List<ArrayIndexesNode> indexes = new ArrayList<>();
+	private final List<ArrayIndexesNode> indexes = new ArrayList<>();
 
 	public List<ArrayIndexesNode> getIndexes() {
 		return indexes;

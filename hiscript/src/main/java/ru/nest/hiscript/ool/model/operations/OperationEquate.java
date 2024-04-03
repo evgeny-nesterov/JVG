@@ -12,7 +12,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquate extends BinaryOperation {
-	private static HiOperation instance = new OperationEquate();
+	private static final HiOperation instance = new OperationEquate();
 
 	public static HiOperation getInstance() {
 		return instance;

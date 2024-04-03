@@ -63,7 +63,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public RuntimeContext root;
 
-	private List<Value[]> cacheValues = new ArrayList<>();
+	private final List<Value[]> cacheValues = new ArrayList<>();
 
 	public HiEnumValue initializingEnumValue;
 
@@ -452,7 +452,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		level.putClass(clazz);
 	}
 
-	private List<StackLevel> stacksCache = new ArrayList<>();
+	private final List<StackLevel> stacksCache = new ArrayList<>();
 
 	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, Token token) {
 		StackLevel stack;
@@ -660,11 +660,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			localClasses = new HashMap<>();
 		}
 
-		Map<String, HiClass> classes = localClasses.get(clazz);
-		if (classes == null) {
-			classes = new HashMap<>();
-			localClasses.put(clazz, classes);
-		}
+		Map<String, HiClass> classes = localClasses.computeIfAbsent(clazz, k -> new HashMap<>());
 		classes.put(localClass.name, localClass);
 		classes.put(localClass.fullName, localClass);
 	}
@@ -686,11 +682,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			localVariables = new HashMap<>();
 		}
 
-		Map<String, HiField<?>> fields = localVariables.get(clazz);
-		if (fields == null) {
-			fields = new HashMap<>(1);
-			localVariables.put(clazz, fields);
-		}
+		Map<String, HiField<?>> fields = localVariables.computeIfAbsent(clazz, k -> new HashMap<>(1));
 		fields.put(field.name, field);
 	}
 

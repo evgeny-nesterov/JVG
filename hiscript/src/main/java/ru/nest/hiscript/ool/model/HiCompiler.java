@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class HiCompiler {
-	private Tokenizer tokenizer;
+	private final Tokenizer tokenizer;
 
 	private boolean assertsActive = false;
 
@@ -25,7 +25,7 @@ public class HiCompiler {
 
 	private ValidationInfo validationInfo;
 
-	private HiClassLoader classLoader;
+	private final HiClassLoader classLoader;
 
 	public HiCompiler(HiClassLoader classLoader, Tokenizer tokenizer) {
 		this.classLoader = classLoader;

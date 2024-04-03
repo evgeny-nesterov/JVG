@@ -45,9 +45,9 @@ public class CompileClassContext implements ClassResolver {
 		this.classType = classType;
 	}
 
-	private HiCompiler compiler;
+	private final HiCompiler compiler;
 
-	private Tokenizer tokenizer;
+	private final Tokenizer tokenizer;
 
 	public HiClass clazz;
 
@@ -77,7 +77,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public NodeValueType nodeValueType = new NodeValueType();
 
-	private List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
+	private final List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (this.nodesValueTypesCache.size() > 0) {

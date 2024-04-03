@@ -12,7 +12,7 @@ public class CharTokenVisitor implements TokenVisitor {
 			char c = readCharacter(tokenizer);
 
 			if (tokenizer.getCurrent() != '\'') {
-				tokenizer.error("'\'' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
+				tokenizer.error("' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
 			}
 
 			tokenizer.next();

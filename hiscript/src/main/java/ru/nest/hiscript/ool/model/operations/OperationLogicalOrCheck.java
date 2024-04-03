@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationLogicalOrCheck extends UnaryOperation {
-	private static HiOperation instance = new OperationLogicalOrCheck();
+	private static final HiOperation instance = new OperationLogicalOrCheck();
 
 	public static HiOperation getInstance() {
 		return instance;

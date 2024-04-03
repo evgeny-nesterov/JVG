@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 public class TestVar extends HiTest {
 	@Test
 	public void test() {

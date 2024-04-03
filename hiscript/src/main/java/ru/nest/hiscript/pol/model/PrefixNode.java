@@ -8,7 +8,7 @@ public class PrefixNode extends Node {
 		super("prefix");
 	}
 
-	private List<Object> prefixes = new ArrayList<>();
+	private final List<Object> prefixes = new ArrayList<>();
 
 	public void addPrefix(int operation) {
 		prefixes.add(operation);

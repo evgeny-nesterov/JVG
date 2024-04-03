@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 public class Tokenizer {
-	public Tokenizer(String s) {
-		this.s = s;
-		len = s.length();
-	}
+	private final int len;
 
-	private int len;
-
-	private String s;
+	private final String s;
 
 	private ValidationInfo validationInfo;
+
+	public Tokenizer(String s) {
+		this.s = s;
+		this.len = s.length();
+	}
 
 	public String getText(int beginIndex, int endIndex) {
 		return s.substring(beginIndex, endIndex);
@@ -188,11 +188,11 @@ public class Tokenizer {
 		return currentToken;
 	}
 
-	private List<Token> buffer = new ArrayList<>();
+	private final List<Token> buffer = new ArrayList<>();
 
-	private List<Integer> startOffsets = new ArrayList<>();
+	private final List<Integer> startOffsets = new ArrayList<>();
 
-	private List<Token> startPrevTokens = new ArrayList<>();
+	private final List<Token> startPrevTokens = new ArrayList<>();
 
 	private int tokenOffset = 0;
 
@@ -217,7 +217,7 @@ public class Tokenizer {
 		currentToken = startPrevTokens.remove(startPrevTokens.size() - 1);
 	}
 
-	private List<TokenVisitor> visitors = new ArrayList<>();
+	private final List<TokenVisitor> visitors = new ArrayList<>();
 
 	public void addVisitor(TokenVisitor visitor) {
 		visitors.add(visitor);

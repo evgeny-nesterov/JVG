@@ -90,7 +90,7 @@ public class HiClassArray extends HiClass {
 		return cellClass.getArrayClass();
 	}
 
-	private static Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
+	private static final Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
 
 	@Override
 	public Class getJavaClass() {

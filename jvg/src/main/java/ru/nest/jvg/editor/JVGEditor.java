@@ -1069,7 +1069,7 @@ public class JVGEditor extends JFrame {
 			//			}
 		} catch (JVGParseException exc) {
 			exc.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Can't open. Error: " + exc.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Can't open. Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
 
 			frame = null;
 		}
@@ -1086,7 +1086,7 @@ public class JVGEditor extends JFrame {
 			frame.load(title, document);
 		} catch (JVGParseException exc) {
 			exc.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Can't open. Error: " + exc.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Can't open. Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
 			frame = null;
 		}
 		System.out.println("LOADED COMPONENTS> count=" + JVGComponent.count);

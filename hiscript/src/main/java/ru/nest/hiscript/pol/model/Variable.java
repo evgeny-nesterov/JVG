@@ -17,25 +17,25 @@ public class Variable {
 		value.dimension = dimension;
 	}
 
-	private String fullname;
+	private final String fullname;
 
 	public String getFullname() {
 		return fullname;
 	}
 
-	private String namespace;
+	private final String namespace;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
-	private String name;
+	private final String name;
 
 	public String getName() {
 		return name;
 	}
 
-	private ValueContainer value;
+	private final ValueContainer value;
 
 	public ValueContainer getValue() {
 		return value;

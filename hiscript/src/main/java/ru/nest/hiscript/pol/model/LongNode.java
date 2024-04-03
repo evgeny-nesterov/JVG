@@ -8,7 +8,7 @@ public class LongNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private long value;
+	private final long value;
 
 	public long getNumber() {
 		return value;

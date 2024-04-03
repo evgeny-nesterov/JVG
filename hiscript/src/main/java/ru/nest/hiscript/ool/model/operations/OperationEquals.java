@@ -6,12 +6,11 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class OperationEquals extends BinaryOperation {
-	private static HiOperation instance = new OperationEquals();
+	private static final HiOperation instance = new OperationEquals();
 
 	public static HiOperation getInstance() {
 		return instance;
@@ -46,7 +45,7 @@ public class OperationEquals extends BinaryOperation {
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			return HiClassPrimitive.BOOLEAN;
 		}
-		if (node1.valid && node1.valid) {
+		if (node1.valid && node2.valid) {
 			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
 		}
 		return null;

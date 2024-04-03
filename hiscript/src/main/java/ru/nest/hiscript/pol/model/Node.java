@@ -18,7 +18,7 @@ public abstract class Node {
 		this.parent = parent;
 	}
 
-	private String name;
+	private final String name;
 
 	public String getName() {
 		return name;
@@ -116,7 +116,7 @@ public abstract class Node {
 	public void addMethod(RuntimeContext ctx, Method method) throws ExecuteException {
 		Method m = getMethod(ctx, method.getNamespace(), method.getName(), method.getArgTypes(), method.getArgDimensions());
 		if (m != null) {
-			throw new ExecuteException(method.toString() + " is already defined");
+			throw new ExecuteException(method + " is already defined");
 		}
 
 		if (methods == null) {

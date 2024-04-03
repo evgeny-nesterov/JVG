@@ -21,31 +21,31 @@ public class MethodNode extends Node {
 		}
 	}
 
-	private String name;
+	private final String name;
 
 	public String getMethodName() {
 		return name;
 	}
 
-	private int type;
+	private final int type;
 
 	public int getType() {
 		return type;
 	}
 
-	private int dimension;
+	private final int dimension;
 
 	public int getDimension() {
 		return dimension;
 	}
 
-	private ArgumentsNode arguments;
+	private final ArgumentsNode arguments;
 
 	public ArgumentsNode getArguments() {
 		return arguments;
 	}
 
-	private BlockNode body;
+	private final BlockNode body;
 
 	public BlockNode getBody() {
 		return body;

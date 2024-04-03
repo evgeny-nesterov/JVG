@@ -20,11 +20,11 @@ public class NodeForIterator extends HiNode {
 		this.body = body;
 	}
 
-	private NodeDeclaration declaration;
+	private final NodeDeclaration declaration;
 
-	private HiNode iterable;
+	private final HiNode iterable;
 
-	private HiNode body;
+	private final HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

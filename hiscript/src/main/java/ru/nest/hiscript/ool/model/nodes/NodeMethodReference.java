@@ -20,9 +20,9 @@ public class NodeMethodReference extends NodeExpression {
 		this.name = name;
 	}
 
-	private HiNode node;
+	private final HiNode node;
 
-	private String name;
+	private final String name;
 
 	private List<HiMethod> methods;
 

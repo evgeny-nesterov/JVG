@@ -23,9 +23,9 @@ public class HiConstructor implements HiNodeIF {
 	public enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
 
-		static BodyConstructorType[] types = {NONE, THIS, SUPER};
+		final static BodyConstructorType[] types = {NONE, THIS, SUPER};
 
-		int intType;
+		final int intType;
 
 		BodyConstructorType(int intType) {
 			this.intType = intType;

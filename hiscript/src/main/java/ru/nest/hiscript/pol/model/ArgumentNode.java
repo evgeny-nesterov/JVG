@@ -8,19 +8,19 @@ public class ArgumentNode extends Node {
 		this.name = name;
 	}
 
-	private int type;
+	private final int type;
 
 	public int getType() {
 		return type;
 	}
 
-	private int dimension;
+	private final int dimension;
 
 	public int getDimension() {
 		return dimension;
 	}
 
-	private String name;
+	private final String name;
 
 	public String getArgName() {
 		return name;

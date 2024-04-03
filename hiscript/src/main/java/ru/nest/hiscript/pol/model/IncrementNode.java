@@ -12,11 +12,11 @@ public class IncrementNode extends Node implements Value {
 		this.incrementOperation = incrementOperation;
 	}
 
-	private VariableNode value;
+	private final VariableNode value;
 
-	private int incrementType;
+	private final int incrementType;
 
-	private int incrementOperation;
+	private final int incrementOperation;
 
 	@Override
 	public void compile() {

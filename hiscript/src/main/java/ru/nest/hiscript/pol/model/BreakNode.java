@@ -34,13 +34,13 @@ public class BreakNode extends Node {
 		}
 	}
 
-	private String mark;
+	private final String mark;
 
 	public String getMark() {
 		return mark;
 	}
 
-	private List<Breakable> breakableNodes = new ArrayList<>();
+	private final List<Breakable> breakableNodes = new ArrayList<>();
 
 	public List<Breakable> getBreakableNodes() {
 		return breakableNodes;

@@ -62,7 +62,7 @@ import ru.nest.hiscript.tokenizer.Words;
 public class SwingSupport {
 	public final static String NAMESPACE = "gui";
 
-	private long rootID;
+	private final long rootID;
 
 	public SwingSupport(JComponent root) {
 		rootID = registerComponent(root);
@@ -79,9 +79,9 @@ public class SwingSupport {
 		return id++;
 	}
 
-	private Map<Long, JComponent> id_components = new HashMap<>();
+	private final Map<Long, JComponent> id_components = new HashMap<>();
 
-	private Map<JComponent, Long> components_id = new HashMap<>();
+	private final Map<JComponent, Long> components_id = new HashMap<>();
 
 	public long registerComponent(JComponent component) {
 		long id = nextID();
@@ -97,7 +97,7 @@ public class SwingSupport {
 		return components_id.get(c);
 	}
 
-	private List<Method> methods = new ArrayList<>();
+	private final List<Method> methods = new ArrayList<>();
 
 	private void init() {
 		// Structure

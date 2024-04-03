@@ -6,7 +6,7 @@ public class ByteToken extends NumberToken {
 		this.number = number;
 	}
 
-	private byte number;
+	private final byte number;
 
 	public byte getNumber() {
 		return number;

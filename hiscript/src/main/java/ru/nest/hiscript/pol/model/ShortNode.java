@@ -8,7 +8,7 @@ public class ShortNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private short value;
+	private final short value;
 
 	public short getNumber() {
 		return value;

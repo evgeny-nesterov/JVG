@@ -14,9 +14,9 @@ public class NodeWhile extends HiNode {
 		this.body = body;
 	}
 
-	private HiNode condition;
+	private final HiNode condition;
 
-	private HiNode body;
+	private final HiNode body;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

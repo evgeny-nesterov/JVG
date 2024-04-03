@@ -7,13 +7,13 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 
 public class HiEnumValue implements Codeable {
-	private String name;
+	private final String name;
 
-	private int ordinal;
+	private final int ordinal;
 
-	private HiNode[] arguments;
+	private final HiNode[] arguments;
 
-	private Token token;
+	private final Token token;
 
 	public HiEnumValue(String name, int ordinal, HiNode[] arguments, Token token) {
 		this.name = name;

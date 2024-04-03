@@ -8,7 +8,7 @@ public class StringNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private String value;
+	private final String value;
 
 	public String getString() {
 		return value;

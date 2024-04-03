@@ -37,9 +37,9 @@ public class HiArrays implements PrimitiveTypes {
 			dimension++;
 		}
 		if (dimension > 0) {
-			String prefix = "";
+			StringBuilder prefix = new StringBuilder();
 			for (int i = 0; i < dimension; i++) {
-				prefix += "[";
+				prefix.append("[");
 			}
 
 			try {

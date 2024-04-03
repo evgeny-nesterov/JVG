@@ -44,7 +44,7 @@ public class HiClassPrimitive extends HiClass {
 	};
 
 	public final static HiClassPrimitive BYTE = new HiClassPrimitive(PrimitiveTypes.BYTE, "byte") {
-		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
+		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
 		public void setAutoboxClass(HiClass autoboxClass) {
@@ -69,7 +69,7 @@ public class HiClassPrimitive extends HiClass {
 	};
 
 	public final static HiClassPrimitive SHORT = new HiClassPrimitive(PrimitiveTypes.SHORT, "short") {
-		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
+		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
 		public void setAutoboxClass(HiClass autoboxClass) {
@@ -94,7 +94,7 @@ public class HiClassPrimitive extends HiClass {
 	};
 
 	public final static HiClassPrimitive INT = new HiClassPrimitive(PrimitiveTypes.INT, "int") {
-		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
+		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
 		public void setAutoboxClass(HiClass autoboxClass) {
@@ -121,7 +121,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive FLOAT = new HiClassPrimitive(PrimitiveTypes.FLOAT, "float");
 
 	public final static HiClassPrimitive LONG = new HiClassPrimitive(PrimitiveTypes.LONG, "long") {
-		HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
+		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
 		public void setAutoboxClass(HiClass autoboxClass) {

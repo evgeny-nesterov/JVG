@@ -6,7 +6,7 @@ public class FloatToken extends NumberToken {
 		this.number = number;
 	}
 
-	private float number;
+	private final float number;
 
 	public float getNumber() {
 		return number;

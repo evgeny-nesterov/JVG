@@ -38,7 +38,7 @@ public class NodeByte extends NodeNumber {
 		this.value = value;
 	}
 
-	private byte value;
+	private final byte value;
 
 	public byte getValue() {
 		return value;

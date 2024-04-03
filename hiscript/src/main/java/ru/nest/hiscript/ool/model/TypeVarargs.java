@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 public class TypeVarargs implements TypeArgumentIF {
-	private Type type;
+	private final Type type;
 
 	public TypeVarargs(Type arrayType) {
 		this.type = arrayType;

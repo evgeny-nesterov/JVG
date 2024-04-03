@@ -13,7 +13,7 @@ public class NodeContinue extends HiNode {
 		this.label = label; // != null ? label.intern() : null;
 	}
 
-	private String label;
+	private final String label;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

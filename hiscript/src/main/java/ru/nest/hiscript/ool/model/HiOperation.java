@@ -42,13 +42,13 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 		return name;
 	}
 
-	private int operandsCount;
+	private final int operandsCount;
 
 	public int getOperandsCount() {
 		return operandsCount;
 	}
 
-	private int increment;
+	private final int increment;
 
 	public int getIncrement() {
 		return increment;

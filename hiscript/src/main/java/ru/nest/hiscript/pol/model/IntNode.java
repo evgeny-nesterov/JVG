@@ -8,7 +8,7 @@ public class IntNode extends Node implements Value {
 		this.value = value;
 	}
 
-	private int value;
+	private final int value;
 
 	public int getNumber() {
 		return value;

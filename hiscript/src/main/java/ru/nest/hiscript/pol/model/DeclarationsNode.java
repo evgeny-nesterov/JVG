@@ -13,7 +13,7 @@ public class DeclarationsNode extends Node {
 		this.type = type;
 	}
 
-	private int type;
+	private final int type;
 
 	public int getType() {
 		return type;

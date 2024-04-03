@@ -18,37 +18,37 @@ public abstract class Method {
 		this(namespace, name, argTypes, argDimensions, returnType, 0);
 	}
 
-	private String namespace;
+	private final String namespace;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
-	private String name;
+	private final String name;
 
 	public String getName() {
 		return name;
 	}
 
-	private int[] argTypes;
+	private final int[] argTypes;
 
 	public int[] getArgTypes() {
 		return argTypes;
 	}
 
-	private int[] argDimensions;
+	private final int[] argDimensions;
 
 	public int[] getArgDimensions() {
 		return argDimensions;
 	}
 
-	private int returnType;
+	private final int returnType;
 
 	public int getReturnType() {
 		return returnType;
 	}
 
-	private int returnDimension;
+	private final int returnDimension;
 
 	public int getReturnDimension() {
 		return returnDimension;
@@ -65,7 +65,7 @@ public abstract class Method {
 		return hash;
 	}
 
-	private int hashCode;
+	private final int hashCode;
 
 	@Override
 	public int hashCode() {

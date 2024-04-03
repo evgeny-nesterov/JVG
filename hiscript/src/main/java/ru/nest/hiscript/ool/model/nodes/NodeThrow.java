@@ -16,7 +16,7 @@ public class NodeThrow extends HiNode {
 		this.exception = exception;
 	}
 
-	private HiNode exception;
+	private final HiNode exception;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

@@ -12,7 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.plaf.UIResource;
-import javax.swing.text.BadLocationException;
 
 import ru.nest.jvg.action.AlignmentAction;
 import ru.nest.jvg.editor.clipboard.JVGClipboardContext;

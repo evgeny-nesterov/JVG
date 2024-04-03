@@ -6,7 +6,7 @@ public class IntToken extends NumberToken {
 		this.number = number;
 	}
 
-	private int number;
+	private final int number;
 
 	public int getNumber() {
 		return number;

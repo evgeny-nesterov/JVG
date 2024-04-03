@@ -10,13 +10,13 @@ public class MarkNode extends Node {
 		body.setParent(this);
 	}
 
-	private String markName;
+	private final String markName;
 
 	public String getMarkName() {
 		return markName;
 	}
 
-	private Node body;
+	private final Node body;
 
 	public Node getBody() {
 		return body;

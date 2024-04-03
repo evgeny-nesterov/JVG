@@ -14,9 +14,9 @@ public class NodeLabel extends HiNode {
 		this.statement = statement;
 	}
 
-	private String label;
+	private final String label;
 
-	private HiNode statement;
+	private final HiNode statement;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

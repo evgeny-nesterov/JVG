@@ -11,7 +11,7 @@ public class BlockNode extends Node implements Breakable {
 		isBlock = true;
 	}
 
-	private List<Node> statements = new ArrayList<>();
+	private final List<Node> statements = new ArrayList<>();
 
 	public void addStatement(Node statement) {
 		statements.add(statement);

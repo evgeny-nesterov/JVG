@@ -12,7 +12,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.lang.reflect.Field;
 
 public class HiFieldJava extends HiField {
-	private Field field;
+	private final Field field;
 
 	public HiFieldJava(Field field, String name) {
 		super((Type) null, name);

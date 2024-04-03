@@ -61,7 +61,7 @@ public class OutlinePainter extends Painter {
 				g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
 				g.draw(shape);
 			} catch (Throwable thr) {
-				System.err.println("Can't draw outline: " + thr.toString());
+				System.err.println("Can't draw outline: " + thr);
 			}
 
 			if (stroke != null) {

@@ -18,9 +18,9 @@ public class NodeString extends HiNode {
 		this.chars = text.toCharArray();
 	}
 
-	private String text;
+	private final String text;
 
-	private char[] chars;
+	private final char[] chars;
 
 	private static HiClass clazz;
 

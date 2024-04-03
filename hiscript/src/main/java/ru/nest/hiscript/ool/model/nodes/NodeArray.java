@@ -24,7 +24,7 @@ public class NodeArray extends HiNode {
 		this.type = Type.getArrayType(cellType, dimensionsCount);
 	}
 
-	private int dimensionsCount;
+	private final int dimensionsCount;
 
 	private int dimensionsCountActive;
 
@@ -34,7 +34,7 @@ public class NodeArray extends HiNode {
 
 	public Type type;
 
-	private HiNode[] dimensions;
+	private final HiNode[] dimensions;
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {

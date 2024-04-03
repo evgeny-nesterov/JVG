@@ -8,7 +8,7 @@ public class BooleanNode extends Node {
 		this.value = value;
 	}
 
-	private boolean value;
+	private final boolean value;
 
 	public boolean getBoolean() {
 		return value;

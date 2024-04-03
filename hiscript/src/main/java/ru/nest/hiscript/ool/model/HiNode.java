@@ -256,8 +256,8 @@ public abstract class HiNode implements HiNodeIF {
 		ctx.nodeValueType.enclosingClass = null;
 		HiClass clazz = computeValueClass(validationInfo, ctx);
 		boolean valid = clazz != null;
-		boolean isValue = isValue() && (valid ? clazz != HiClassPrimitive.VOID : false);
-		boolean isConstant = (valid ? clazz != HiClassPrimitive.VOID : false) && isConstant(ctx);
+		boolean isValue = isValue() && valid && clazz != HiClassPrimitive.VOID;
+		boolean isConstant = valid && clazz != HiClassPrimitive.VOID && isConstant(ctx);
 		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
 	}
 
@@ -469,7 +469,7 @@ public abstract class HiNode implements HiNodeIF {
 
 	public boolean expectBooleanValue(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass valueClass = getValueClass(validationInfo, ctx);
-		if (valueClass == null || valueClass != HiClassPrimitive.BOOLEAN) {
+		if (valueClass != HiClassPrimitive.BOOLEAN) {
 			validationInfo.error("boolean is expected", getToken());
 			return false;
 		}

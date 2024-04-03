@@ -27,7 +27,7 @@ public class NodeExpressionSwitch extends HiNode {
 		size++;
 	}
 
-	private HiNode valueNode;
+	private final HiNode valueNode;
 
 	private int size;
 

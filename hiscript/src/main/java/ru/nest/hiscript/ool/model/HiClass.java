@@ -351,7 +351,7 @@ public class HiClass implements HiNodeIF, HiType {
 				}
 			}
 
-			RuntimeContext ctx = classResolver instanceof RuntimeContext ? (RuntimeContext) classResolver : new RuntimeContext(classResolver.getCompiler(), false);
+			RuntimeContext ctx = (RuntimeContext) classResolver;
 			ctx.enterInitialization(this, null, null);
 			try {
 				if (initializers != null) {
@@ -375,9 +375,6 @@ public class HiClass implements HiNodeIF, HiType {
 				ctx.throwRuntimeException("cannot initialize class " + fullName + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
-				if (ctx != classResolver) {
-					ctx.close();
-				}
 			}
 		}
 	}
@@ -988,9 +985,9 @@ public class HiClass implements HiNodeIF, HiType {
 	public enum MatchMethodArgumentsType {
 		strict(false, false), noAutobox(true, false), soft(true, true);
 
-		private boolean isVarargs;
+		private final boolean isVarargs;
 
-		private boolean isAutobox;
+		private final boolean isAutobox;
 
 		MatchMethodArgumentsType(boolean isVarargs, boolean isAutobox) {
 			this.isVarargs = isVarargs;
@@ -1223,7 +1220,7 @@ public class HiClass implements HiNodeIF, HiType {
 		return null;
 	}
 
-	private Map<MethodSignature, HiConstructor> constructorsHash = new HashMap<>();
+	private final Map<MethodSignature, HiConstructor> constructorsHash = new HashMap<>();
 
 	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();

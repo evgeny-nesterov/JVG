@@ -11,9 +11,9 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 public class RootParseRule extends ParseRule<HiNode> {
-	private boolean wrapped;
+	private final boolean wrapped;
 
-	private HiCompiler compiler;
+	private final HiCompiler compiler;
 
 	private CompileClassContext ctx;
 
@@ -21,7 +21,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 
 	private NodeMainWrapper mainWrapperNode;
 
-	private boolean outerContext;
+	private final boolean outerContext;
 
 	public RootParseRule(HiCompiler compiler, boolean wrapped, boolean outerContext) {
 		this.wrapped = wrapped;

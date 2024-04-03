@@ -6,7 +6,7 @@ public class ShortToken extends NumberToken {
 		this.number = number;
 	}
 
-	private short number;
+	private final short number;
 
 	public short getNumber() {
 		return number;

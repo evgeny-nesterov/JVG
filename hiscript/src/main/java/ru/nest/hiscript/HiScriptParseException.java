@@ -8,7 +8,7 @@ public class HiScriptParseException extends Exception {
 		this.token = token;
 	}
 
-	private Token token;
+	private final Token token;
 
 	public Token getToken() {
 		return token;
