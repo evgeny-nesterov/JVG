@@ -26,6 +26,11 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 	public NodeAnnotation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		String name = visitAnnotationWord(tokenizer);
 		if (name != null) {
+			if (name.length() == 0) {
+				name = "Empty" + new Object().hashCode();
+				tokenizer.error("annotation name is expected");
+			}
+
 			List<NodeAnnotationArgument> args = new ArrayList<>();
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.start();

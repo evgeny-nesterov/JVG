@@ -135,11 +135,16 @@ public class NodeExpressionNoLS extends NodeExpression {
 		NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
 		int bufSize = 0;
 		int valuePos = 0;
+		boolean validValue = true;
 		for (int i = 0; i < operations.length; i++) {
 			if (operations[i] == null) {
 				// get value
-				HiNodeIF valueNode = operands[valuePos];
-				nodes[bufSize].init(valueNode);
+				if (valuePos < operands.length) {
+					HiNodeIF valueNode = operands[valuePos];
+					nodes[bufSize].init(valueNode);
+				} else {
+					validValue = false;
+				}
 				bufSize++;
 				valuePos++;
 			} else {
@@ -152,6 +157,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 		ctx.putNodesValueTypesCache(nodes);
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = ctx.nodeValueType.type;
+
+		if (!validValue && validationInfo.messages.size() == 0) {
+			validationInfo.error("invalid expression", getToken());
+		}
 	}
 
 	@Override

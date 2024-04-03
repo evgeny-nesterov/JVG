@@ -186,7 +186,23 @@ public class TestClasses extends HiTest {
 
 		assertFailCompile("class A{void get(){}} class B extends A{int get(){}};"); // rewrite method with another return type
 
+		assertSuccessSerialize("class C{void m(int... x){assert false;} void m(int x1, int x2, int x3){}} new C().m(1, 2, 3);");
+
 		// TODO check incompatible throws of rewrite method
+		assertSuccessSerialize("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1, E2 {throw new E1();}}");
+		assertFailCompile("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1 {throw new E2();}}");
+		assertFailCompile("class E extends Exception{};class A{void m() throws E {throw new E(); throw new E();}}");
+
+		assertFailCompile("class A{void ()}");
+		assertFailCompile("class A{void m()}");
+		assertFailCompile("class A{void m(){}");
+		assertFailCompile("class A{m(){}}");
+		assertFailCompile("class A{void m(){return 1;}}");
+		assertFailCompile("class A{int m(){return;}}");
+		assertFailCompile("class A{int m(){return 1;return 1;}}");
+		assertFailCompile("class A{void m(){return;return;}}");
+		assertFailCompile("class A{void m() throws {}}");
+		assertFailCompile("class A{void m() throws Exception, {}}");
 	}
 
 	@Test
@@ -234,6 +250,7 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class C{C(int... x, String s){}} new C(1, 2, 3, \"x\");");
 		assertFailCompile("class C{C(int... x, int... y){}} new C(/*x=*/1, 2, /*y=*/3);");
 		assertFailCompile("class C{C(byte... x){}} new C(1, 2, 3);");
+		assertSuccessSerialize("class C{C(int... x){assert false;} C(int x1, int x2, int x3){}} new C(1, 2, 3);");
 
 		// this
 		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");

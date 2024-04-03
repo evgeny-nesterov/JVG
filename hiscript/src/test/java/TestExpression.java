@@ -51,6 +51,34 @@ public class TestExpression extends HiTest {
 		assertSuccess("int a = 11 ^ 7; assert a == " + (11 ^ 7) + ";");
 		assertSuccess("boolean a = true; a &= false; assert !a;");
 		assertSuccess("boolean a = false; a |= true; assert a;");
+
+		assertFailCompile("int a = 1 + true;");
+		assertFailCompile("int a = true | 1;");
+		assertFailCompile("int a = true;");
+		assertFailCompile("boolean a = 1.0;");
+	}
+
+	@Test
+	public void testAllTypesAndOperations() {
+		String[] types = {"byte", "short", "int", "long", "char", "Byte", "Short", "Integer", "Long", "Character"};
+		String[] operations = {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"};
+		for (String t1 : types) {
+			for (String t2 : types) {
+				for (String o : operations) {
+					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == (63 " + o + " 3);");
+				}
+			}
+		}
+
+		types = new String[] {"byte", "short", "int", "long", "float", "double", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Character"};
+		operations = new String[] {"+", "-", "*", "/"};
+		for (String t1 : types) {
+			for (String t2 : types) {
+				for (String o : operations) {
+					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == (63 " + o + " 3);");
+				}
+			}
+		}
 	}
 
 	@Test

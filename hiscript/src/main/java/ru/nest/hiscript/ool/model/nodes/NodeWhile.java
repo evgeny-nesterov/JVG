@@ -20,8 +20,8 @@ public class NodeWhile extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
-		valid &= body.validateBlock(validationInfo, ctx);
+		boolean valid = condition != null && condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
+		valid &= body == null || body.validateBlock(validationInfo, ctx);
 		return valid;
 	}
 

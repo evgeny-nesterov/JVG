@@ -352,7 +352,7 @@ public class ClassParseRule extends ParserUtil {
 			if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
 				tokenizer.nextToken();
 				exceptionType = visitType(tokenizer, true);
-				if (exceptionType == null) {
+				if (exceptionType != null) {
 					exceptionTypesList.add(exceptionType);
 				} else {
 					tokenizer.error("identifier expected");

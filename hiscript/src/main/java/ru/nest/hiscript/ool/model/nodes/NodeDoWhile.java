@@ -25,7 +25,7 @@ public class NodeDoWhile extends HiNode {
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}
-		valid &= condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
+		valid &= condition != null && condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		ctx.exit();
 		return valid;
 	}

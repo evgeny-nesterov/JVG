@@ -49,6 +49,7 @@ public class RecordParseRule extends ParserUtil {
 
 			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (recordName == null) {
+				recordName = "Null" + new Object().hashCode();
 				tokenizer.error("record name is expected");
 			}
 

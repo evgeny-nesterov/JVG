@@ -42,6 +42,10 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (valueNode == null) {
+			validationInfo.error("expression expected", getToken());
+			return false;
+		}
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		HiClass valueClass = valueNode.getValueClass(validationInfo, ctx);
 		ctx.enter(RuntimeContext.SWITCH, this);
@@ -98,7 +102,13 @@ public class NodeSwitch extends HiNode {
 			}
 		}
 		for (int i = 0; i < size; i++) {
-			valid &= casesNodes.get(i).validate(validationInfo, ctx);
+			HiNode caseNode = casesNodes.get(i);
+			if (caseNode != null) {
+				valid &= caseNode.validate(validationInfo, ctx);
+			} else {
+				validationInfo.error("expression expected", getToken());
+				valid = false;
+			}
 		}
 		ctx.exit();
 		return valid;

@@ -41,6 +41,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
+				name = "Null" + new Object().hashCode();
 				tokenizer.error("annotation class name is expected");
 			}
 

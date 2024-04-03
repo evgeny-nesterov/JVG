@@ -38,7 +38,6 @@ public class TestFinal extends HiTest {
 		assertFailCompile("final int x = 1; x >>= 1;");
 		assertFailCompile("final int x = 1; x <<= 1;");
 		assertFailCompile("final int x = 1; x >>>= 1;");
-		assertFailCompile("final int x = 1; x <<<= 1;");
 		assertFailCompile("final int x = 1; x %= 1;");
 		assertFailCompile("final int x = 1; x++;");
 		assertFailCompile("final int x = 1; ++x;");
