@@ -137,9 +137,9 @@ public class HiClassPrimitive extends HiClass {
 
 		@Override
 		public HiObject autobox(RuntimeContext ctx, Value value) {
-			int intValue = value.getInt();
-			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
-				return cachedValues[intValue + (-Byte.MIN_VALUE)];
+			long longValue = value.getLong();
+			if (longValue >= Byte.MIN_VALUE && longValue <= Byte.MAX_VALUE) {
+				return cachedValues[(int)longValue + (-Byte.MIN_VALUE)];
 			}
 			return super.autobox(ctx, value);
 		}

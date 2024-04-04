@@ -105,31 +105,7 @@ public class HiClassArray extends HiClass {
 		}
 		Class javaRootCellClass = cellClass.getJavaClass();
 		if (javaRootCellClass != null) {
-			String name = "";
-			for (int i = 0; i < dimension; i++) {
-				name += '[';
-			}
-			if (javaRootCellClass.isPrimitive()) {
-				if (javaRootCellClass == boolean.class) {
-					name += "Z";
-				} else if (javaRootCellClass == byte.class) {
-					name += "B";
-				} else if (javaRootCellClass == char.class) {
-					name += "C";
-				} else if (javaRootCellClass == double.class) {
-					name += "D";
-				} else if (javaRootCellClass == float.class) {
-					name += "F";
-				} else if (javaRootCellClass == int.class) {
-					name += "I";
-				} else if (javaRootCellClass == long.class) {
-					name += "J";
-				} else if (javaRootCellClass == short.class) {
-					name += "S";
-				}
-			} else {
-				name += "L" + javaRootCellClass.getName() + ";";
-			}
+			String name = getJavaClassName(javaRootCellClass);
 			try {
 				javaClass = Class.forName(name);
 				javaClassesMap.put(this, javaClass);
@@ -138,6 +114,35 @@ public class HiClassArray extends HiClass {
 			}
 		}
 		return null;
+	}
+
+	private String getJavaClassName(Class javaRootCellClass) {
+		String name = "";
+		for (int i = 0; i < dimension; i++) {
+			name += '[';
+		}
+		if (javaRootCellClass.isPrimitive()) {
+			if (javaRootCellClass == boolean.class) {
+				name += "Z";
+			} else if (javaRootCellClass == byte.class) {
+				name += "B";
+			} else if (javaRootCellClass == char.class) {
+				name += "C";
+			} else if (javaRootCellClass == double.class) {
+				name += "D";
+			} else if (javaRootCellClass == float.class) {
+				name += "F";
+			} else if (javaRootCellClass == int.class) {
+				name += "I";
+			} else if (javaRootCellClass == long.class) {
+				name += "J";
+			} else if (javaRootCellClass == short.class) {
+				name += "S";
+			}
+		} else {
+			name += "L" + javaRootCellClass.getName() + ";";
+		}
+		return name;
 	}
 
 	public static Class<?> getArrayClass(Class<?> componentType) throws ClassNotFoundException {

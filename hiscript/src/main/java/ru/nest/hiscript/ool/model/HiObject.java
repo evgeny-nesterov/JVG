@@ -260,12 +260,25 @@ public class HiObject {
 		return ctx.value.intNumber;
 	}
 
+	public Object getAutoboxValue(RuntimeContext ctx) {
+		return getField(ctx, "value").get();
+	}
+
 	public String getStringValue(RuntimeContext ctx) {
 		return new String((char[]) getField(ctx, "chars").get());
 	}
 
 	public Object getJavaValue(RuntimeContext ctx) {
 		switch (clazz.fullName) {
+			case "Byte":
+			case "Short":
+			case "Integer":
+			case "Long":
+			case "Float":
+			case "Double":
+			case "Character":
+			case "Boolean":
+				return getAutoboxValue(ctx);
 			case "String":
 				return getStringValue(ctx);
 			case "HashMap":

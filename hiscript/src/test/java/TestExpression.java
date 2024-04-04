@@ -60,22 +60,60 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testAllTypesAndOperations() {
-		String[] types = {"byte", "short", "int", "long", "char", "Byte", "Short", "Integer", "Long", "Character"};
-		String[] operations = {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"};
-		for (String t1 : types) {
-			for (String t2 : types) {
-				for (String o : operations) {
-					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == (63 " + o + " 3);");
+		String[] priIntTypes1 = {"byte", "short", "int", "long", "char"};
+		String[] boxIntTypes1 = {"Byte", "Short", "Integer", "Long", "Character"};
+		String[] intOperations = {"&", "|", "^", "<<", ">>", ">>>"};
+		for (int i = 0; i < boxIntTypes1.length; i++) {
+			String bt1 = boxIntTypes1[i];
+			String pt1 = priIntTypes1[i];
+			for (int j = 0; j < boxIntTypes1.length; j++) {
+				String bt2 = boxIntTypes1[j];
+				String pt2 = priIntTypes1[j];
+				for (String o : intOperations) {
+					assertSuccess(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+
+					assertSuccess("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
+					assertSuccess("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
 				}
 			}
 		}
 
-		types = new String[] {"byte", "short", "int", "long", "float", "double", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Character"};
-		operations = new String[] {"+", "-", "*", "/"};
+		String[] priIntTypes2 = {"int", "long", "char"};
+		String[] boxIntTypes2 = {"Integer", "Long", "Character"};
+		String[] allOperations = {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"};
+		for (int i = 0; i < boxIntTypes2.length; i++) {
+			String t1 = boxIntTypes2[i];
+			String pt1 = priIntTypes2[i];
+			for (int j = 0; j < boxIntTypes2.length; j++) {
+				String t2 = boxIntTypes2[j];
+				String pt2 = priIntTypes2[j];
+				for (String o : allOperations) {
+					assertSuccess(t1 + " x1 = new " + t1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + t2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+				}
+			}
+		}
+
+		String[] types = new String[] {"byte", "short", "int", "long", "float", "double", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Character"};
+		String[] operations = new String[] {"+", "-", "*", "/", "%"};
 		for (String t1 : types) {
 			for (String t2 : types) {
 				for (String o : operations) {
-					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == (63 " + o + " 3);");
+					String T1 = t1.toLowerCase();
+					if (t1.equals("Integer")) {
+						T1 = "int";
+					} else if (t1.equals("Character")) {
+						T1 = "char";
+					}
+					String T2 = t2.toLowerCase();
+					if (t2.equals("Integer")) {
+						T2 = "int";
+					} else if (t2.equals("Character")) {
+						T2 = "char";
+					}
+					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == ((" + T1 + ")63 " + o + " (" + T2 + ")3);");
 				}
 			}
 		}
