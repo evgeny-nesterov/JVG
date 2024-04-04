@@ -60,8 +60,8 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testAllTypesAndOperations() {
-		String[] priIntTypes1 = {"byte", "short", "int", "long", "char"};
 		String[] boxIntTypes1 = {"Byte", "Short", "Integer", "Long", "Character"};
+		String[] priIntTypes1 = {"byte", "short", "int", "long", "char"};
 		String[] intOperations = {"&", "|", "^", "<<", ">>", ">>>"};
 		for (int i = 0; i < boxIntTypes1.length; i++) {
 			String bt1 = boxIntTypes1[i];
@@ -80,41 +80,78 @@ public class TestExpression extends HiTest {
 			}
 		}
 
-		String[] priIntTypes2 = {"int", "long", "char"};
 		String[] boxIntTypes2 = {"Integer", "Long", "Character"};
+		String[] priIntTypes2 = new String[] {"int", "long", "char"};
 		String[] allOperations = {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"};
 		for (int i = 0; i < boxIntTypes2.length; i++) {
-			String t1 = boxIntTypes2[i];
+			String bt1 = boxIntTypes2[i];
 			String pt1 = priIntTypes2[i];
-			for (int j = 0; j < boxIntTypes2.length; j++) {
-				String t2 = boxIntTypes2[j];
-				String pt2 = priIntTypes2[j];
+			for (int j = 0; j < boxIntTypes1.length; j++) {
+				String bt2 = boxIntTypes1[j];
+				String pt2 = priIntTypes1[j];
 				for (String o : allOperations) {
-					assertSuccess(t1 + " x1 = new " + t1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + t2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+				}
+			}
+		}
+		String[] boxIntTypes3 = {"Byte", "Short"};
+		String[] priIntTypes3 = new String[] {"byte", "short"};
+		for (int i = 0; i < boxIntTypes3.length; i++) {
+			String bt1 = boxIntTypes3[i];
+			String pt1 = priIntTypes3[i];
+			for (int j = 0; j < boxIntTypes1.length; j++) {
+				String bt2 = boxIntTypes1[j];
+				String pt2 = priIntTypes1[j];
+				for (String o : allOperations) {
+					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertSuccess(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 				}
 			}
 		}
 
-		String[] types = new String[] {"byte", "short", "int", "long", "float", "double", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Character"};
+		String[] boxIntTypesAll = {"Byte", "Short", "Integer", "Long", "Float", "Double", "Character"};
+		String[] priIntTypesALl = {"byte", "short", "int", "long", "float", "double", "char"};
 		String[] operations = new String[] {"+", "-", "*", "/", "%"};
-		for (String t1 : types) {
-			for (String t2 : types) {
+		for (int i = 0; i < boxIntTypesAll.length; i++) {
+			String bt1 = boxIntTypesAll[i];
+			String pt1 = priIntTypesALl[i];
+			for (int j = 0; j < boxIntTypesAll.length; j++) {
+				String bt2 = boxIntTypesAll[j];
+				String pt2 = priIntTypesALl[j];
 				for (String o : operations) {
-					String T1 = t1.toLowerCase();
-					if (t1.equals("Integer")) {
-						T1 = "int";
-					} else if (t1.equals("Character")) {
-						T1 = "char";
+					assertSuccess(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccess(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+
+					if (bt1.equals("Byte") || bt1.equals("Short")) {
+						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					} else {
+						assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
-					String T2 = t2.toLowerCase();
-					if (t2.equals("Integer")) {
-						T2 = "int";
-					} else if (t2.equals("Character")) {
-						T2 = "char";
+					assertSuccess(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					if (bt1.equals("Byte") || bt1.equals("Short")) {
+						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					} else {
+						assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
-					assertSuccess(t1 + " x1=63; " + t2 + " x2=3; assert (x1 " + o + " x2) == ((" + T1 + ")63 " + o + " (" + T2 + ")3);");
 				}
+			}
+		}
+
+		for (int i = 0; i < priIntTypesALl.length; i++) {
+			String pt = priIntTypesALl[i];
+			for (String o : operations) {
+				assertFailCompile("var x = (" + pt + ")0 " + o + " new Object();");
+				assertFailCompile("var x = new Object() " + o + " (" + pt + ")0;");
+				assertFailCompile("var x = (" + pt + ")0 " + o + " true;");
+				assertFailCompile("var x = false " + o + " (" + pt + ")0;");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " new Object();");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = new Object() " + o + " x;");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " true;");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = true" + o + " x;");
 			}
 		}
 	}
