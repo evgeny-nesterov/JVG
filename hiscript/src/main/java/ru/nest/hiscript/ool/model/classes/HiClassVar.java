@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 
@@ -76,5 +77,9 @@ public class HiClassVar extends HiClass {
 	@Override
 	public Class getJavaClass() {
 		return null;
+	}
+
+	public int getPrimitiveType() {
+		return PrimitiveTypes.VAR;
 	}
 }

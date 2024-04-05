@@ -55,9 +55,10 @@ public abstract class HiTest {
 		try {
 			execute(script);
 			onFail(script, message);
-		} catch (TokenizerException e) {
-			e.printStackTrace();
+		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
+			System.out.println("Expected failure: " + e.getMessage());
 		} catch (Exception e) {
+			// success
 		}
 	}
 
@@ -65,9 +66,9 @@ public abstract class HiTest {
 		try {
 			execute(script);
 			onFail(script, "fail");
-		} catch (TokenizerException e) {
-			e.printStackTrace();
+		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 		} catch (Exception e) {
+			// success
 		}
 	}
 
@@ -75,8 +76,7 @@ public abstract class HiTest {
 		try {
 			executeSerialized(script);
 			onFail(script, "fail");
-		} catch (TokenizerException e) {
-			e.printStackTrace();
+		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -85,11 +85,11 @@ public abstract class HiTest {
 	public void assertFailCompile(String script) {
 		try {
 			compile(script);
-			onFail(script, "fail");
-		} catch (TokenizerException e) {
-			e.printStackTrace();
+			onFail(script, "fail (actual success)");
+		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
+			onFail(script, "fail (actual exception)");
 		}
 	}
 
