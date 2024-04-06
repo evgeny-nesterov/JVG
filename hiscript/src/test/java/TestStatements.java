@@ -116,7 +116,7 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("String s = \"c\"; switch(s) {case \"a\", \"x\": s = \"\"; break; case \"b\": break; case \"c\", \"b\": s += 1; break;} assert s.equals(\"c1\");");
 		assertSuccessSerialize("class A {}; class B{}; A a = new A(); Object b = new B(); switch(b) {case a: break; case new A(): break; case b: b = a;} assert b == a && b.equals(a);");
 		assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case o.a == 1: assert o.a == 1;return;} assert false : \"case 2\";");
-		assertFailSerialize("int x = 1; switch(x){case 1:break; case \"\":break;}");
+		assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}");
 		assertSuccessSerialize("Object s = null; switch(s){case \"a\": assert true;break; case \"b\": assert false;break; case null: assert s == null;break;}");
 		assertFailCompile("int x = 1; switch(x){case 1,:break;}");
 
@@ -133,25 +133,71 @@ public class TestStatements extends HiTest {
 	public void testExceptions() {
 		assertSuccessSerialize("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
 		assertSuccessSerialize("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
-		assertFailSerialize("throw new Exception(\"error\");");
-		assertFailSerialize("throw new Object();");
-		assertFailSerialize("class E extends Exception{} throw new E();");
-		assertSuccessSerialize("try {throw new Exception(\"error\");} catch(Exception e) {assert e.getMessage().equals(\"error\");} ");
-		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
-		assertFailSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {}");
-		assertSuccessSerialize("class E extends Exception {} try {throw new Exception();} catch(E e) {assert false;} catch(RuntimeException e) {assert false;} catch(Exception e){}");
+
+		// throw in root
+		assertFailCompile("throw new Exception(\"error\");"); // unreported exception
+		assertFailCompile("throw new Exception(1, 2, 3);");
+		assertFailSerialize("throw new RuntimeException(\"error\");");
+		assertFailCompile("throw new Object();");
+		assertFailCompile("class E extends Exception{} throw new E();"); // unreported exception
+		assertFailSerialize("class E extends RuntimeException{} throw new E();");
+
+		// throw in try
+		assertSuccessSerialize("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
+		assertSuccessSerialize("class E extends Exception{E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
+		assertFailCompile("class E extends Exception{} try{throw new Exception();} catch(E e) {}"); // unreported exception
+		assertFailSerialize("class E extends RuntimeException{} try{throw new RuntimeException();} catch(E e) {}");
+		assertSuccessSerialize("class E extends Exception{} try{throw new Exception();} catch(E e){assert false;} catch(RuntimeException e){assert false;} catch(Exception e){}");
 		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} " + //
 				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
 				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
 		assertSuccessSerialize("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
 		assertSuccessSerialize("class A implements AutoCloseable{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
-		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A(); ) {}");
+		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
 
-		assertFailCompile("try(){}");
+		// Exception has already been caught
+		assertFailCompile("try{} catch(Exception e){} catch(Exception e){}"); // Exception 'java.lang.Exception' has already been caught
+		assertFailCompile("try{} catch(Exception e){} catch(RuntimeException e){}"); // Exception 'java.lang.RuntimeException' has already been caught
+		assertFailCompile("try{} catch(RuntimeException e){} catch(RuntimeException e){}");
+		assertFailCompile("class E extends Exception{} try{} catch(E e){} catch(E e){}");
+		assertFailCompile("class E extends Exception{} try{} catch(Exception e){} catch(E e){}");
+		assertFailCompile("try{} catch(Exception | Exception e){}");
+		assertFailCompile("try{} catch(Exception | RuntimeException e){}");
+		assertFailCompile("try{} catch(RuntimeException | Exception e){}");
+
+		// in constructor
+		assertFailCompile("class A{A() {throw new Exception();}}");
+		assertFailCompile("class A{A() throws RuntimeException {throw new Exception();}}");
+		assertFailCompile("class A{A() throws Exception {throw new Exception(); super();}}");
+		assertFail("class A{A(){throw new RuntimeException();}} new A();");
+
+		// in method
+		assertFailCompile("class A{void m() {throw new Exception();}}");
+		assertFailCompile("class A{void m() throws RuntimeException {throw new Exception();}}");
+		assertFail("class A{void m(){throw new RuntimeException();}} new A().m();");
+
+		// in initialization
+		assertFailCompile("class A{{throw new Exception();}}");
+		assertFail("class A{{throw new RuntimeException();}} new A();");
+
+		assertFailCompile("class A{static{throw new Exception();}}");
+		assertSuccessSerialize("class A{static{throw new RuntimeException();}}");
+		assertFail("class A{static int x = 1; static{throw new RuntimeException();}} int x = A.x;");
+
+		// invalid format
+		assertFailCompile("throw Exception();");
+		assertFailCompile("throw new;");
+		assertFailCompile("throw new Exception;");
+		assertFailCompile("try()");
 		assertFailCompile("try(){}");
 		assertFailCompile("try{} catch(Exception ){}");
 		assertFailCompile("try{} catch(Exception | e){}");
+		assertFailCompile("try{} catch(Exception e){} finally");
+	}
+
+	@Test
+	public void testNew1() {
 	}
 
 	@Test

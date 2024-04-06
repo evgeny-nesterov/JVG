@@ -21,12 +21,14 @@ public class TestClasses extends HiTest {
 		// extends
 		assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
 		assertFailSerialize("class A {A(boolean x){this(x ? 1 : 0);} A(int y){this(y == 1);}} new A(true);");
-		assertFailSerialize("class A{A(int x){this(x);}} new A(1);");
+		assertFailCompile("class A{A(int x){this(x);}} new A(1);");
 		assertFailCompile("class A extends B{} class B extends A{}");
 		assertFailCompile("class A extends B{} class B extends C{} class C extends A{}");
 		assertFailCompile("final class A{} class B extends A{}");
 		assertSuccessSerialize("static class A{static class B{} static class C extends B{}}");
 		assertFailCompile("static class A{class B{} static class C extends B{}}");
+		assertFailCompile("class A extends B{}");
+		assertFailCompile("class A implements B{}");
 
 		// initializing order
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert A.a.equals(\"nullBA\"); assert B.b.equals(\"nullB\");");
@@ -34,6 +36,20 @@ public class TestClasses extends HiTest {
 
 		// abstract
 		assertFailCompile("abstract class A{} new A();");
+		assertFailCompile("final abstract class A{}");
+
+		// invalid format
+		assertFailCompile("class {}");
+		assertFailCompile("class 1A{}");
+		assertFailCompile("class A{");
+		assertFailCompile("class A extends");
+		assertFailCompile("class A extends {}");
+		assertFailCompile("class A{} extends B, ");
+		assertFailCompile("class A implements");
+		assertFailCompile("class A implements {}");
+		assertFailCompile("class A implements B, ");
+		assertFailCompile("class A implements B, {}");
+		assertFailCompile("class A{A()}");
 	}
 
 	@Test
@@ -133,6 +149,15 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A1{int a1 = 1; default int a(){return 0;} interface A2{int a2 = a1 + 1; default int a(){return 0;} interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 1; assert A1.A2.a2 == 2; assert A1.A2.A3.a3 == 3;");
 		assertSuccessSerialize("interface A1{int a1 = A2.A3.a3 + 1; interface A2{int a2 = a1 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 1; assert A1.A2.A3.a3 == 2;");
 		assertSuccessSerialize("interface A1{int a1 = A2.a2 + 1; interface A2{int a2 = A3.a3 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 2; assert A1.A2.A3.a3 == 1;");
+
+		assertFailCompile("final interface A{}");
+
+		// invalid format
+		assertFailCompile("interface {}");
+		assertFailCompile("interface 1A{}");
+		assertFailCompile("interface A extends");
+		assertFailCompile("interface A extends {}");
+		assertFailCompile("interface A extends B, {}");
 	}
 
 	@Test

@@ -49,6 +49,25 @@ public class NodeCatch extends HiNode {
 					excClassMix.classes[i] = excType.getClass(ctx);
 				}
 			}
+			for (int i = 0; i < excClassMix.classes.length - 1; i++) {
+				HiClass excClass1 = excClassMix.classes[i];
+				if (excClass1 == null) {
+					continue;
+				}
+				for (int j = i + 1; j < excClassMix.classes.length; j++) {
+					HiClass excClass2 = excClassMix.classes[j];
+					if (excClass2 == null) {
+						continue;
+					}
+					if (excClass1.isInstanceof(excClass2)) {
+						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass1.fullName + "' is a subclass of '" + excClass2.fullName + "'", getToken());
+						valid = false;
+					} else if (excClass2.isInstanceof(excClass1)) {
+						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass2.fullName + "' is a subclass of '" + excClass1.fullName + "'", getToken());
+						valid = false;
+					}
+				}
+			}
 			excClass = excClassMix;
 		} else {
 			excClass = excTypes[0].getClass(ctx);

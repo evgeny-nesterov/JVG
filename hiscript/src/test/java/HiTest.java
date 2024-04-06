@@ -9,6 +9,7 @@ public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
 		try {
 			execute(script + "\nassert " + condition + " : \"" + message + "\";");
+			// expected
 		} catch (Exception e) {
 			e.printStackTrace();
 			onFail(script, message);
@@ -18,6 +19,7 @@ public abstract class HiTest {
 	public void assertSuccess(String script, String message) {
 		try {
 			execute(script);
+			// expected
 		} catch (Exception e) {
 			e.printStackTrace();
 			onFail(script, message);
@@ -27,6 +29,7 @@ public abstract class HiTest {
 	public void assertSuccess(String script) {
 		try {
 			execute(script);
+			// expected
 		} catch (Exception e) {
 			e.printStackTrace();
 			onFail(script, e.toString());
@@ -36,6 +39,7 @@ public abstract class HiTest {
 	public void assertSuccessSerialize(String script) {
 		try {
 			executeSerialized(script);
+			// expected
 		} catch (Exception e) {
 			e.printStackTrace();
 			onFail(script, e.toString());
@@ -45,6 +49,7 @@ public abstract class HiTest {
 	public void assertSuccessCompile(String script) {
 		try {
 			compile(script);
+			// expected
 		} catch (Exception e) {
 			e.printStackTrace();
 			onFail(script, e.toString());
@@ -56,9 +61,10 @@ public abstract class HiTest {
 			execute(script);
 			onFail(script, message);
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
-			System.out.println("Expected failure: " + e.getMessage());
+			onFail(script, "Compilation failed, expected exception");
 		} catch (Exception e) {
-			// success
+			// expected
+			System.out.println("Success: expected failure: " + e.getMessage());
 		}
 	}
 
@@ -67,8 +73,10 @@ public abstract class HiTest {
 			execute(script);
 			onFail(script, "fail");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
+			onFail(script, "Compilation failed, expected exception");
 		} catch (Exception e) {
-			// success
+			// expected
+			System.out.println("Success: expected failure: " + e.getMessage());
 		}
 	}
 
@@ -77,8 +85,10 @@ public abstract class HiTest {
 			executeSerialized(script);
 			onFail(script, "fail");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
+			onFail(script, "Compilation failed, expected exception");
 		} catch (Exception e) {
-			e.printStackTrace();
+			// expected
+			System.out.println("Success: expected failure: " + e.getMessage());
 		}
 	}
 
@@ -87,9 +97,11 @@ public abstract class HiTest {
 			compile(script);
 			onFail(script, "fail (actual success)");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
+			// expected
+			System.out.println("Success: expected compile failure: " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			onFail(script, "fail (actual exception)");
+			onFail(script, "Expected compile failure");
 		}
 	}
 

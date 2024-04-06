@@ -78,7 +78,7 @@ public class TestAutoboxing extends HiTest {
 		assertSuccessSerialize("class C{Byte set(byte a){return a;}} assert new C().set(new Byte((byte)123)) == 123;");
 		assertSuccessSerialize("class C{void set(byte... a){assert a[1] == 127;}} new C().set(new Byte((byte)0), new Byte((byte)127));");
 		assertSuccessSerialize("class C{C(byte... a){assert a[0] == 0; assert a[1] == 127; assert a[2] == -1;}} new C(new Byte((byte)0), new Byte((byte)127), (byte)-1);");
-		assertFail("class C{C(byte... a){}} new C(new Byte((byte)0), new Byte((byte)127), null);");
+		assertFailCompile("class C{C(byte... a){}} new C(new Byte((byte)0), new Byte((byte)127), null);");
 
 		// constructors
 		assertSuccessSerialize("class C{byte set(Byte a){assert a == 123; return a;}} assert new C().set((byte)123) == 123;");

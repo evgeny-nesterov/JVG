@@ -11,6 +11,8 @@ import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeTry extends HiNode {
 	public NodeTry(HiNode body, NodeCatch[] catches, HiNode finallyBody, NodeDeclaration[] resources) {
@@ -47,8 +49,18 @@ public class NodeTry extends HiNode {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}
 		if (catches != null) {
+			List<HiClass> excClasses = new ArrayList<>(1);
 			for (NodeCatch catchNode : catches) {
 				valid &= catchNode.validateBlock(validationInfo, ctx);
+				if (catchNode.excClass != null) {
+					for (HiClass prevExcClass : excClasses) {
+						if (catchNode.excClass.isInstanceof(prevExcClass)) {
+							validationInfo.error("Exception '" + catchNode.excClass.fullName + "' has already been caught", catchNode.getToken());
+							valid = false;
+						}
+					}
+					excClasses.add(catchNode.excClass);
+				}
 			}
 		}
 		if (finallyBody != null) {

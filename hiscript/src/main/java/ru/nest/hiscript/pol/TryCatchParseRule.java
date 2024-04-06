@@ -58,10 +58,8 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			if (!thereIsCatch && !thereIsFinally) {
 				throw new HiScriptParseException("'catch' or 'finally' expected", tokenizer.currentToken());
 			}
-
 			return new TryCatchNode(tryBody, catchBody, finallyBody, errorVariableName);
 		}
-
 		return null;
 	}
 
@@ -103,10 +101,8 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			if (!thereIsCatch && !thereIsFinally) {
 				errorOccurred(tokenizer, handler, "'catch' or 'finally' expected");
 			}
-
 			return true;
 		}
-
 		return false;
 	}
 }

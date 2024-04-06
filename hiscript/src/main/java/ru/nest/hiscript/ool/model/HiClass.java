@@ -717,7 +717,7 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 			if (interfaces != null) {
 				for (HiClass i : interfaces) {
-					HiClass innerClass = i.getInnerClass(classResolver, name, true);
+					HiClass innerClass = i != null ? i.getInnerClass(classResolver, name, true) : null;
 					if (innerClass != null) {
 						return innerClass;
 					}

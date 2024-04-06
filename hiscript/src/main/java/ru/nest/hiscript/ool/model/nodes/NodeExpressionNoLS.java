@@ -133,6 +133,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 
 		NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
+		if (operands.length == 0) {
+			validationInfo.error("invalid expression", getToken());
+			return;
+		}
+
 		int bufSize = 0;
 		int valuePos = 0;
 		boolean validValue = true;
