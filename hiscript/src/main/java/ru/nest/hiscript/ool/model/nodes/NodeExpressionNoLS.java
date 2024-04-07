@@ -68,7 +68,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 					}
 
 					pos += postOperation.getOperandsCount() - 1;
-					operations[pos++] = postOperation; // operation
+					if (pos < operations.length) {
+						operations[pos++] = postOperation; // operation
+					}
 				}
 			}
 
@@ -146,7 +148,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 				// get value
 				if (valuePos < operands.length) {
 					HiNodeIF valueNode = operands[valuePos];
-					nodes[bufSize].init(valueNode);
+					if (valueNode != null) {
+						nodes[bufSize].init(valueNode);
+					}
 				} else {
 					validValue = false;
 				}

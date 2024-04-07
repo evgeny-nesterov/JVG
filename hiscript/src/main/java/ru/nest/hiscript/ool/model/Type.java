@@ -87,7 +87,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.id = -1;
 		this.parent = parent;
 		this.cellType = null;
-		this.name = name.intern();
+		this.name = (name != null ? name : "").intern();
 		this.dimension = 0;
 		this.primitive = false;
 

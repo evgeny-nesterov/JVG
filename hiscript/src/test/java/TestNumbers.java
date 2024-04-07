@@ -146,6 +146,14 @@ public class TestNumbers extends HiTest {
 		assertCondition("byte a = (short)1;", "a == 1", "short");
 		assertCondition("byte a = (char)1;", "a == 1", "short");
 		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
+
+		for (String t : new String[] {"byte", "short", "int", "long", "float", "double", "boolean"}) {
+			for (char c = 0; c < 255; c++) {
+				if (!Character.isDigit(c) && c != ';') {
+					assertFailCompile(t + " a = " + c + ";");
+				}
+			}
+		}
 	}
 
 	@Test

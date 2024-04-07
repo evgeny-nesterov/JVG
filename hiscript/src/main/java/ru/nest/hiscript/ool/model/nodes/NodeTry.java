@@ -107,7 +107,10 @@ public class NodeTry extends HiNode {
 							return;
 						}
 
-						HiMethod closeMethod = resourceObject.clazz.searchMethod(ctx, "close");
+						HiMethod closeMethod = null;
+						if (resourceObject.clazz.isInstanceof(HiClass.AUTOCLOSEABLE_CLASS_NAME)) {
+							closeMethod = resourceObject.clazz.searchMethod(ctx, "close");
+						}
 						if (closeMethod == null) {
 							ctx.throwRuntimeException("'" + resource.name + "' is not auto closeable");
 							return;

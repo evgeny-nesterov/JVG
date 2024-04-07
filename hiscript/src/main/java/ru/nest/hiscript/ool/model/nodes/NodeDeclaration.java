@@ -64,15 +64,17 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 				ctx.level.variableClass = clazz;
 				ctx.level.variableNode = this;
 				NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
-				boolean canBeCasted;
-				if (initializationValueType.isValue) {
-					canBeCasted = initializationValueType.autoCastValue(clazz);
-				} else {
-					canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false, true);
-				}
-				if (!canBeCasted) {
-					validationInfo.error("incompatible types: " + initializationValueType.type.fullName + " cannot be converted to " + clazz.fullName, initialization.getToken());
-					valid = false;
+				if (initializationValueType.valid) {
+					boolean canBeCasted;
+					if (initializationValueType.isValue) {
+						canBeCasted = initializationValueType.autoCastValue(clazz);
+					} else {
+						canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false, true);
+					}
+					if (!canBeCasted) {
+						validationInfo.error("incompatible types: " + initializationValueType.type.fullName + " cannot be converted to " + clazz.fullName, initialization.getToken());
+						valid = false;
+					}
 				}
 			}
 

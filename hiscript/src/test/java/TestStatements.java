@@ -45,6 +45,12 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int i = 0; for(;i < 0;); assert i == 0;");
 		assertSuccessSerialize("int i = 0; for(;;i++, i++) {break;} assert i == 0;");
 		assertSuccessSerialize("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
+		assertSuccessSerialize("for(long x : new int[]{1, 2, 3}){}");
+		assertSuccessSerialize("int x = 0; for(int y : new int[]{1, 2, 3}){x=y; break;} assert x == 1;");
+
+		assertFailCompile("for(private int x = 0; x < 10; x++){}");
+		assertFailCompile("for(int x : new String[]{\"a\", \"b\"}){}");
+		assertFailCompile("for(int x : new long[]{1L, 2L, 3L}){}");
 
 		assertFailCompile("for() {}");
 		assertFailCompile("for(;) {}");
@@ -52,6 +58,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("for(;;) {");
 		assertFailCompile("for(;;)");
 		assertFailCompile("int x = 0; for(;x=1, x=2;) {}");
+		assertFailCompile("for(int x : new Object()) {}");
 	}
 
 	@Test
@@ -155,6 +162,7 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("class A implements AutoCloseable{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
+		assertFailSerialize("class A implements AutoCloseable{public void close(){throw new RuntimeException();}} try(A a = new A()) {} catch(RuntimeException e){}");
 
 		// Exception has already been caught
 		assertFailCompile("try{} catch(Exception e){} catch(Exception e){}"); // Exception 'java.lang.Exception' has already been caught
@@ -184,6 +192,10 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{static{throw new Exception();}}");
 		assertSuccessSerialize("class A{static{throw new RuntimeException();}}");
 		assertFail("class A{static int x = 1; static{throw new RuntimeException();}} int x = A.x;");
+		assertFailCompile("try(int x = 1) {}");
+		assertFailCompile("try(Object x = new Object()) {}");
+		assertFailCompile("try {} catch(String | Integer e){}");
+		assertFailCompile("try {} catch(RuntimeException | Integer e){}");
 
 		// invalid format
 		assertFailCompile("throw Exception();");
@@ -194,6 +206,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("try{} catch(Exception ){}");
 		assertFailCompile("try{} catch(Exception | e){}");
 		assertFailCompile("try{} catch(Exception e){} finally");
+		assertFailCompile("try(Object x) {}");
 	}
 
 	@Test
@@ -224,6 +237,8 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("A:B:C:D:{break B;}");
 		assertFailCompile("break A;");
 		assertFailCompile("A:{} break A;");
+		assertFailCompile("A:{break B;}");
+		assertFailCompile("A:{continue B;}");
 
 		assertSuccessSerialize("A:{if(true) break A; assert false;};");
 		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");

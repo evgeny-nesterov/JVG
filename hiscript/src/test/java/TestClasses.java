@@ -85,6 +85,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
 		assertSuccessSerialize("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
 		assertSuccessSerialize("class A{static class B{static class C{static class D{}}}} A.B.C.D d = new A.B.C.D(); assert d instanceof A.B.C.D;");
+		assertFailCompile("class AA{class BB{static class CC{}}}"); // BB is not static
 		assertFailCompile("class AA{static class BB{}} BB b;");
 		assertFailCompile("class A{static class B{}} A.B b = new B();");
 		assertFailCompile("class A{static class B{}} A a = new A(); A.B b = a.new B();");
@@ -100,6 +101,17 @@ public class TestClasses extends HiTest {
 
 		// interfaces
 		assertSuccessSerialize("interface I{interface I1{}} class X implements I {I1 m() {I1 i = new I1(){}; return i;}} assert new X().m() instanceof I.I1;");
+	}
+
+	@Test
+	public void testLocalClasses() {
+		assertSuccessSerialize("class A{int x; {class B{B(){x = 2;}} new B();}} assert new A().x == 2;");
+		// assertSuccessSerialize("class A{int x; void m(int x) {class B{B(){A.this.x = x;}} new B();}} A a = new A(); a.m(2); assert a.x == 2;");
+		assertSuccessSerialize("class A{int x; A m(int y) {class B{B(){x = y;}} new B(); return this;}} assert new A().m(2).x == 2;");
+		assertFailCompile("class A{{static class B{}}}");
+		assertFailCompile("class A{static {static class B{}}}");
+		assertFailCompile("static class A{void m(){static class B{}}}");
+		assertFailCompile("static class A{static void m(){static class B{}}}");
 	}
 
 	@Test
@@ -151,6 +163,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A1{int a1 = A2.a2 + 1; interface A2{int a2 = A3.a3 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 2; assert A1.A2.A3.a3 == 1;");
 
 		assertFailCompile("final interface A{}");
+		assertFailCompile("class A{void m(){static class B{}}}");
 
 		// invalid format
 		assertFailCompile("interface {}");

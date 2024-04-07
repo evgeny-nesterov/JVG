@@ -42,6 +42,9 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					isField = true;
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
+					if (initializer == null) {
+						tokenizer.error("expression is expected");
+					}
 					isField = true;
 				} else if (tokenizer.currentToken() == null || checkSymbol(tokenizer, SymbolToken.BRACES_RIGHT) != -1) {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);

@@ -77,6 +77,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public static String EXCEPTION_CLASS_NAME = "Exception";
 
+	public static String AUTOCLOSEABLE_CLASS_NAME = "AutoCloseable";
+
 	public static String RUNTIME_EXCEPTION_CLASS_NAME = "RuntimeException";
 
 	private Token token;
@@ -472,6 +474,8 @@ public class HiClass implements HiNodeIF, HiType {
 				valid = false;
 			}
 		}
+
+		// check modifiers
 		if (superClass != null) {
 			if (!isInterface && superClass.isInterface && !isAnonymous()) {
 				validationInfo.error("cannot extends interface", token);
@@ -481,15 +485,19 @@ public class HiClass implements HiNodeIF, HiType {
 				valid = false;
 			}
 		}
-		if ((isAbstract() || isInterface) && modifiers.isFinal()) {
-			validationInfo.error("abstract class cannot be final", token);
-			valid = false;
-		}
-
-		// check modifiers
-		if (ctx.enclosingClass != null && isStatic()) {
-			validationInfo.error("illegal modifier for the local class " + fullName + "; only abstract or final is permitted", token);
-			valid = false;
+		if (modifiers != null) {
+			if ((isAbstract() || isInterface) && modifiers.isFinal()) {
+				validationInfo.error("abstract class cannot be final", token);
+				valid = false;
+			}
+			if (enclosingClass != null && isLocal() && !isTopLevel() && modifiers.isStatic()) {
+				validationInfo.error("modifier 'static' not allowed in local classes", token);
+				valid = false;
+			}
+			if (isInner() && isObject() && !isEnum() && !isRecord() && !isInterface && modifiers.isStatic() && !isStaticRootClassTop()) {
+				validationInfo.error("static declarations in inner classes are not supported", token);
+				valid = false;
+			}
 		}
 
 		if (initializers != null) {
@@ -1841,9 +1849,20 @@ public class HiClass implements HiNodeIF, HiType {
 		return clazz;
 	}
 
+	private byte isStaticRootClassTop = -1;
+
 	public boolean isStaticRootClassTop() {
+		if (isStaticRootClassTop != -1) {
+			return isStaticRootClassTop == 1 ? true : false;
+		}
 		HiClass rootClass = getStaticRootClass();
-		return rootClass != null && rootClass.isTopLevel();
+		if (rootClass != null && rootClass.isTopLevel()) {
+			isStaticRootClassTop = 1;
+			return true;
+		} else {
+			isStaticRootClassTop = 0;
+			return false;
+		}
 	}
 
 	public HiClass getStaticRootClass() {
@@ -1854,7 +1873,7 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 			clazz = clazz.enclosingClass;
 		}
-		return clazz.isStatic() || clazz.isTopLevel() ? clazz : null;
+		return clazz.modifiers != null && clazz.modifiers.isStatic() || clazz.isTopLevel() ? clazz : null;
 	}
 
 	public boolean isLambda() {

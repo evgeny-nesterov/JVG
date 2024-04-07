@@ -75,17 +75,16 @@ public class NodeCatch extends HiNode {
 
 		valid &= excClass.validate(validationInfo, ctx);
 
-		if (!excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-			if (excClass instanceof HiClassMix) {
-				HiClassMix excClassMax = (HiClassMix) excClass;
-				for (HiClass clazz : excClassMax.classes) {
-					if (!clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-						validationInfo.error("incompatible types: " + clazz.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
-					}
+		if (excClass instanceof HiClassMix) {
+			HiClassMix excClassMax = (HiClassMix) excClass;
+			for (HiClass clazz : excClassMax.classes) {
+				if (!clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+					validationInfo.error("incompatible types: " + clazz.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					valid = false;
 				}
-			} else {
-				validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 			}
+		} else if (!excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
+			validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 			valid = false;
 		}
 
