@@ -113,7 +113,7 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testSwitch() {
-		assertSuccess("switch(1){}");
+		assertSuccessSerialize("switch(1){}");
 		assertSuccessSerialize("int x = 1; switch(x){case 1: assert true;break; case 2: assert false;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2: assert false;break; default: assert true;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2, x == 1: assert true;break; case 1, x == 2: assert false;break;}");

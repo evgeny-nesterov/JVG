@@ -54,22 +54,22 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testClassWord() {
-		assertSuccess("interface A{} Class c = A.class; assert c.getName().equals(\"A\");");
-		assertSuccess("interface A{} Class c = A.class; assert c.isInterface() && !c.isArray() && !c.isPrimitive() && !c.isEnum() && !c.isAnnotation() && !c.isAnonymousClass();");
-		assertSuccess("interface A{} assert Class.forName(\"A\") == A.class;");
-		assertSuccess("class A{class B{}} Class c = A.B.class; assert c.getName().equals(\"B\"); assert c.getFullName().equals(\"@root$0A$B\");");
+		assertSuccessSerialize("interface A{} Class c = A.class; assert c.getName().equals(\"A\");");
+		assertSuccessSerialize("interface A{} Class c = A.class; assert c.isInterface() && !c.isArray() && !c.isPrimitive() && !c.isEnum() && !c.isAnnotation() && !c.isAnonymousClass();");
+		assertSuccessSerialize("interface A{} assert Class.forName(\"A\") == A.class;");
+		assertSuccessSerialize("class A{class B{}} Class c = A.B.class; assert c.getName().equals(\"B\"); assert c.getFullName().equals(\"@root$0A$B\");");
 	}
 
 	@Test
 	public void testFields() {
-		assertSuccess("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
+		assertSuccessSerialize("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();");
 		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();");
 		assertFailCompile("class A{int x; int x;}");
-		assertSuccess("abstract class A{static int x = 1;} assert A.x == 1;");
-		assertSuccess("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
-		assertSuccess("interface I{static int x = 1;} assert I.x == 1;");
-		assertSuccess("interface I{static int get(){return 1;}} assert I.get() == 1;");
+		assertSuccessSerialize("abstract class A{static int x = 1;} assert A.x == 1;");
+		assertSuccessSerialize("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
+		assertSuccessSerialize("interface I{static int x = 1;} assert I.x == 1;");
+		assertSuccessSerialize("interface I{static int get(){return 1;}} assert I.get() == 1;");
 	}
 
 	@Test

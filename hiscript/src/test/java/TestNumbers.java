@@ -3,11 +3,11 @@ import org.junit.jupiter.api.Test;
 public class TestNumbers extends HiTest {
 	@Test
 	public void testNumbersDeclarations() {
-		assertSuccess("int a = 1; assert a == 1;");
-		assertSuccess("int a = +1; assert a == 1;");
-		assertSuccess("int a = -1; assert a == -1;");
-		assertSuccess("int a = --1; assert a == 1;");
-		assertSuccess("int a = ---1; assert a == -1;");
+		assertSuccessSerialize("int a = 1; assert a == 1;");
+		assertSuccessSerialize("int a = +1; assert a == 1;");
+		assertSuccessSerialize("int a = -1; assert a == -1;");
+		assertSuccessSerialize("int a = --1; assert a == 1;");
+		assertSuccessSerialize("int a = ---1; assert a == -1;");
 		assertCondition("int a = + -  + -+ -1;", "a == -1", "int");
 		assertFailCompile("int a = 1.;");
 		assertFailCompile("int a = 1.0;");

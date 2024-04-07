@@ -24,8 +24,8 @@ public class NodeLogicalSwitch extends NodeExpression {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		HiClass type1 = trueValueNode.getValueClass(validationInfo, ctx);
-		HiClass type2 = falseValueNode.getValueClass(validationInfo, ctx);
+		HiClass type1 = trueValueNode != null ? trueValueNode.getValueClass(validationInfo, ctx) : null;
+		HiClass type2 = falseValueNode != null ? falseValueNode.getValueClass(validationInfo, ctx) : null;
 		if (type1 != null && type2 != null) {
 			return ctx.nodeValueType.enclosingClass = type1.getCommonClass(type2);
 		}
@@ -35,8 +35,8 @@ public class NodeLogicalSwitch extends NodeExpression {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
-		boolean trueValid = trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx);
-		boolean falseValid = falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx);
+		boolean trueValid = trueValueNode != null ? trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx) : false;
+		boolean falseValid = falseValueNode != null ? falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx) : false;
 		if (trueValid && falseValid) {
 			HiClass trueClass = trueValueNode.getValueClass(validationInfo, ctx);
 			HiClass falseClass = falseValueNode.getValueClass(validationInfo, ctx);

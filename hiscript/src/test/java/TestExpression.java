@@ -29,28 +29,28 @@ public class TestExpression extends HiTest {
 		assertCondition("float a = 121f / 11;", "a == 11.0", "float divide");
 		assertCondition("float a = 10f % 9.0f;", "a == 1.0", "float %");
 
-		assertSuccess("byte a = " + Byte.MAX_VALUE + "; assert a == " + Byte.MAX_VALUE + ";");
-		assertSuccess("byte a = " + Byte.MIN_VALUE + "; assert a == " + Byte.MIN_VALUE + ";");
-		assertSuccess("short a = " + Short.MAX_VALUE + "; assert a == " + Short.MAX_VALUE + ";");
-		assertSuccess("short a = " + Short.MIN_VALUE + "; assert a == " + Short.MIN_VALUE + ";");
+		assertSuccessSerialize("byte a = " + Byte.MAX_VALUE + "; assert a == " + Byte.MAX_VALUE + ";");
+		assertSuccessSerialize("byte a = " + Byte.MIN_VALUE + "; assert a == " + Byte.MIN_VALUE + ";");
+		assertSuccessSerialize("short a = " + Short.MAX_VALUE + "; assert a == " + Short.MAX_VALUE + ";");
+		assertSuccessSerialize("short a = " + Short.MIN_VALUE + "; assert a == " + Short.MIN_VALUE + ";");
 
 		assertSuccessSerialize("int a = 2; a /= 2; assert a == 1;");
-		assertSuccess("int a = 1; a *= 2; assert a == 2;");
-		assertSuccess("int a = 1; a += 1; assert a == 2;");
-		assertSuccess("int a = 1; a -= 1; assert a == 0;");
-		assertSuccess("int a = 1; a |= 2; assert a == 3;");
-		assertSuccess("int a = 1 | 2; assert a == 3;");
-		assertSuccess("int a = 3; a &= 2; assert a == 2;");
-		assertSuccess("int a = 3 & 2; assert a == 2;");
-		//		assertSuccess("int a = 11; a >>>= 2; assert a == " + (11 >>> 2) + ";");
-		assertSuccess("int a = 11; a >>= 2; assert a == " + (11 >> 2) + ";");
-		assertSuccess("int a = 11; a <<= 2; assert a == " + (11 << 2) + ";");
-		assertSuccess("int a = 11>>2; assert a == " + (11 >> 2) + ";");
-		assertSuccess("int a = 11<<2; assert a == " + (11 << 2) + ";");
-		assertSuccess("int a = 11; a ^= 7; assert a == " + (11 ^ 7) + ";");
-		assertSuccess("int a = 11 ^ 7; assert a == " + (11 ^ 7) + ";");
-		assertSuccess("boolean a = true; a &= false; assert !a;");
-		assertSuccess("boolean a = false; a |= true; assert a;");
+		assertSuccessSerialize("int a = 1; a *= 2; assert a == 2;");
+		assertSuccessSerialize("int a = 1; a += 1; assert a == 2;");
+		assertSuccessSerialize("int a = 1; a -= 1; assert a == 0;");
+		assertSuccessSerialize("int a = 1; a |= 2; assert a == 3;");
+		assertSuccessSerialize("int a = 1 | 2; assert a == 3;");
+		assertSuccessSerialize("int a = 3; a &= 2; assert a == 2;");
+		assertSuccessSerialize("int a = 3 & 2; assert a == 2;");
+		assertSuccessSerialize("int a = 11; a <<= 2; assert a == " + (11 << 2) + ";");
+		assertSuccessSerialize("int a = 11; a >>= 2; assert a == " + (11 >> 2) + ";");
+		assertSuccessSerialize("int a = 11; a >>>= 2; assert a == " + (11 >>> 2) + ";");
+		assertSuccessSerialize("int a = 11>>2; assert a == " + (11 >> 2) + ";");
+		assertSuccessSerialize("int a = 11<<2; assert a == " + (11 << 2) + ";");
+		assertSuccessSerialize("int a = 11; a ^= 7; assert a == " + (11 ^ 7) + ";");
+		assertSuccessSerialize("int a = 11 ^ 7; assert a == " + (11 ^ 7) + ";");
+		assertSuccessSerialize("boolean a = true; a &= false; assert !a;");
+		assertSuccessSerialize("boolean a = false; a |= true; assert a;");
 
 		assertFailCompile("int a = 1 + true;");
 		assertFailCompile("int a = true | 1;");
@@ -73,13 +73,13 @@ public class TestExpression extends HiTest {
 				String pt2 = priNumberTypes[j];
 				for (String o : new String[] {"+", "-", "*", "/", "%", ">", ">=", "<", "<=", "==", "!="}) {
 					// Integer x1=63; byte x2=3; assert (x1 + x2) == ((int)63 + (byte)3);
-					assertSuccess(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					// assert (new Integer((int)63) + (byte)3) == (63 + 3);
-					assertSuccess("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
-					assertSuccess("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
+					assertSuccessSerialize("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
+					assertSuccessSerialize("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
 				}
 			}
 		}
@@ -92,13 +92,13 @@ public class TestExpression extends HiTest {
 				String pt2 = priIntTypes1[j];
 				for (String o : new String[] {"&", "|", "^", "<<", ">>", ">>>"}) {
 					// Integer x1=63; byte x2=3; assert (x1 + x2) == ((int)63 + (byte)3);
-					assertSuccess(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					// assert (new Integer((int)63) + (byte)3) == (63 + 3);
-					assertSuccess("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
-					assertSuccess("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
+					assertSuccessSerialize("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
+					assertSuccessSerialize("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
 				}
 			}
 		}
@@ -113,9 +113,9 @@ public class TestExpression extends HiTest {
 				String bt2 = boxIntTypes1[j];
 				String pt2 = priIntTypes1[j];
 				for (String o : new String[] {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"}) {
-					assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 				}
 			}
 		}
@@ -129,7 +129,7 @@ public class TestExpression extends HiTest {
 				String pt2 = priIntTypes1[j];
 				for (String o : new String[] {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"}) {
 					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 				}
 			}
@@ -145,20 +145,20 @@ public class TestExpression extends HiTest {
 				String bt2 = boxIntTypesAll[j];
 				String pt2 = priIntTypesALl[j];
 				for (String o : operations) {
-					assertSuccess(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
-					assertSuccess(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					if (bt1.equals("Byte") || bt1.equals("Short")) {
 						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					} else {
-						assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+						assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
-					assertSuccess(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					if (bt1.equals("Byte") || bt1.equals("Short")) {
 						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					} else {
-						assertSuccess(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+						assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
 				}
 			}
@@ -181,12 +181,12 @@ public class TestExpression extends HiTest {
 		// check operations with vars
 		for (String t : new String[] {"byte", "short", "int", "long", "float", "double", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Character"}) {
 			for (String o : new String[] {"+", "-", "*", "/", "%"}) {
-				assertSuccess("interface I{double get(" + t + " x, " + t + " y);} I o = (x, y) -> x " + o + " y;");
+				assertSuccessSerialize("interface I{double get(" + t + " x, " + t + " y);} I o = (x, y) -> x " + o + " y;");
 			}
 		}
-		assertSuccess("interface I{String get(String x, String y);} I o = (x, y) -> x + y;");
+		assertSuccessSerialize("interface I{String get(String x, String y);} I o = (x, y) -> x + y;");
 		for (String o : new String[] {"|", "||", "&", "&&", "^"}) {
-			assertSuccess("interface I{boolean get(boolean x, boolean y);} I o = (x, y) -> x " + o + " y;");
+			assertSuccessSerialize("interface I{boolean get(boolean x, boolean y);} I o = (x, y) -> x " + o + " y;");
 		}
 	}
 
@@ -229,7 +229,7 @@ public class TestExpression extends HiTest {
 						for (String suffix1 : suffixes) {
 							for (String suffix2 : suffixes) {
 								String script = "assert " + prefix1 + prefix2 + prefix3 + successNumber + suffix1 + " == " + successNumber + suffix2 + ";";
-								assertSuccess(script);
+								assertSuccessSerialize(script);
 							}
 						}
 					}
@@ -327,6 +327,16 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert 1>0?1>0?1<0?false:true:false:false;");
 		assertSuccessSerialize("assert 1<0?1>0?1>0?false:false:false:true;");
 		assertSuccessSerialize("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
+
+		assertFailCompile("Long x = true ? \"\" : new Integer(1);");
+		assertFailCompile("int x = true ? 1 : \"\";");
+		assertFailCompile("int x = 1 ? 1 : 2;");
+		assertFailCompile("int x = 1 ? true : 2;");
+		assertFailCompile("int x = true ? ;");
+		assertFailCompile("int x = true ? 1;");
+		assertFailCompile("int x = true ? 1 : ;");
+		assertFailCompile("int x = true ? : 1;");
+		assertFailCompile("int x = true ? : ;");
 	}
 
 	@Test

@@ -7,8 +7,12 @@ import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+
+import java.io.IOException;
 
 public class HiScript implements AutoCloseable {
 	private HiClassLoader classLoader;
@@ -45,23 +49,27 @@ public class HiScript implements AutoCloseable {
 	}
 
 	public HiScript serialize() {
-		//		CodeContext ctxCode = new CodeContext();
-		//		node.code(ctxCode);
-		//
-		//		byte[] bytes = ctxCode.code();
-		//
-		//		// DEBUG
-		//		//		System.out.println("======================");
-		//		//		ctxCode.statistics();
-		//		//		System.out.println("total: " + bytes.length + " bytes");
-		//		//		System.out.println("======================");
-		//		//
-		//		//		System.out.println("\n" + new String(bytes));
-		//		//		System.out.println("======================");
-		//
-		//		HiClassLoader classLoader = new HiClassLoader("test-decoded");
-		//		DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
-		//		node = ctxDecode.load();
+		try {
+			CodeContext ctxCode = new CodeContext();
+			node.code(ctxCode);
+
+			byte[] bytes = ctxCode.code();
+
+			// DEBUG
+			//		System.out.println("======================");
+			//		ctxCode.statistics();
+			//		System.out.println("total: " + bytes.length + " bytes");
+			//		System.out.println("======================");
+			//
+			//		System.out.println("\n" + new String(bytes));
+			//		System.out.println("======================");
+
+			HiClassLoader classLoader = new HiClassLoader("test-decoded");
+			DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
+			//node = ctxDecode.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return this;
 	}
 

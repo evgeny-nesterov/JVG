@@ -134,36 +134,36 @@ public class TestAutoboxing extends HiTest {
 	@Test
 	public void testBoolean() {
 		// constants TRUE and FALSE
-		assertSuccess("assert Boolean.TRUE == true;");
-		assertSuccess("assert Boolean.FALSE == false;");
-		assertSuccess("assert Boolean.TRUE.equals(new Boolean(true));");
-		assertSuccess("assert Boolean.FALSE.equals(new Boolean(false));");
-		assertSuccess("assert new Boolean(true).equals(Boolean.TRUE);");
-		assertSuccess("assert new Boolean(false).equals(Boolean.FALSE);");
+		assertSuccessSerialize("assert Boolean.TRUE == true;");
+		assertSuccessSerialize("assert Boolean.FALSE == false;");
+		assertSuccessSerialize("assert Boolean.TRUE.equals(new Boolean(true));");
+		assertSuccessSerialize("assert Boolean.FALSE.equals(new Boolean(false));");
+		assertSuccessSerialize("assert new Boolean(true).equals(Boolean.TRUE);");
+		assertSuccessSerialize("assert new Boolean(false).equals(Boolean.FALSE);");
 
 		// create autobox object
-		assertSuccess("Boolean a = new Boolean(true); assert a == true;");
-		assertSuccess("var a = new Boolean(false); assert a == false;");
-		assertSuccess("Boolean a = Boolean.TRUE; assert a.equals(true); assert a.equals(Boolean.TRUE);");
-		assertSuccess("Boolean a = Boolean.FALSE; assert a.equals(false); assert a.equals(Boolean.FALSE);");
+		assertSuccessSerialize("Boolean a = new Boolean(true); assert a == true;");
+		assertSuccessSerialize("var a = new Boolean(false); assert a == false;");
+		assertSuccessSerialize("Boolean a = Boolean.TRUE; assert a.equals(true); assert a.equals(Boolean.TRUE);");
+		assertSuccessSerialize("Boolean a = Boolean.FALSE; assert a.equals(false); assert a.equals(Boolean.FALSE);");
 
 		// primitive => autobox object
-		assertSuccess("Boolean a = true; assert a == true; assert a == Boolean.TRUE;");
-		assertSuccess("Boolean a = false; assert a == false; assert a == Boolean.FALSE;");
-		assertSuccess("Boolean a = true; Boolean b = true; assert a == b;"); // from cache
+		assertSuccessSerialize("Boolean a = true; assert a == true; assert a == Boolean.TRUE;");
+		assertSuccessSerialize("Boolean a = false; assert a == false; assert a == Boolean.FALSE;");
+		assertSuccessSerialize("Boolean a = true; Boolean b = true; assert a == b;"); // from cache
 
 		// boxed object => primitive
-		assertSuccess("boolean a = new Boolean(true); assert a == true;");
-		assertSuccess("boolean a = new Boolean(false); assert a == Boolean.FALSE;");
-		assertSuccess("boolean a = Boolean.TRUE; assert a == Boolean.TRUE;");
+		assertSuccessSerialize("boolean a = new Boolean(true); assert a == true;");
+		assertSuccessSerialize("boolean a = new Boolean(false); assert a == Boolean.FALSE;");
+		assertSuccessSerialize("boolean a = Boolean.TRUE; assert a == Boolean.TRUE;");
 
 		// operations
-		assertSuccess("Boolean a = true; Boolean b = false; assert (a || b) == true;");
-		assertSuccess("Boolean a = true; Boolean b = false; assert (a && b) == false;");
+		assertSuccessSerialize("Boolean a = true; Boolean b = false; assert (a || b) == true;");
+		assertSuccessSerialize("Boolean a = true; Boolean b = false; assert (a && b) == false;");
 
 		// nulls
-		assertSuccess("Boolean a = false; Boolean b = null; assert (a && b) == false;");
-		assertSuccess("Boolean a = true; Boolean b = null; assert (a || b) == true;");
+		assertSuccessSerialize("Boolean a = false; Boolean b = null; assert (a && b) == false;");
+		assertSuccessSerialize("Boolean a = true; Boolean b = null; assert (a || b) == true;");
 		assertFail("Boolean a = true; Boolean b = null; assert a && b;"); // null pointer in b
 		assertFail("boolean a = false; Boolean b = null; assert a || b;"); // null pointer in b
 	}

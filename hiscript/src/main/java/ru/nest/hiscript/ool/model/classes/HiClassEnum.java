@@ -113,8 +113,12 @@ public class HiClassEnum extends HiClass {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		code(os, CLASS_ENUM);
-		os.writeShort(enumValues.size());
-		os.write(enumValues);
+		if (enumValues != null) {
+			os.writeShort(enumValues.size());
+			os.write(enumValues);
+		} else {
+			os.writeShort(0);
+		}
 	}
 
 	public static HiClass decode(DecodeContext os) throws IOException {

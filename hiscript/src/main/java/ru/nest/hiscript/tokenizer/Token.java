@@ -105,4 +105,9 @@ public class Token implements Codeable, TokenAccessible {
 		}
 		return null;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Token && line == ((Token) o).length && offset == ((Token) o).offset && length == ((Token) o).length && lineOffset == ((Token) o).lineOffset;
+	}
 }

@@ -22,7 +22,10 @@ public class ValidationInfo {
 	public List<ValidationMessage> messages = new ArrayList<>();
 
 	public void error(String message, Token token) {
-		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token));
+		ValidationMessage validationMessage = new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token);
+		if (!messages.contains(validationMessage)) {
+			messages.add(validationMessage);
+		}
 		valid = false;
 	}
 
