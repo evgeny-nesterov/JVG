@@ -78,6 +78,7 @@ public abstract class BinaryOperation extends HiOperation {
 		if (v1.valueType == Value.NAME) {
 			boolean checkInitialization = operation != EQUATE;
 			if (!NodeIdentifier.resolve(ctx, v1, checkInitialization)) {
+				NodeIdentifier.resolve(ctx, v1, checkInitialization);
 				ctx.throwRuntimeException("cannot resolve identifier " + v1.name);
 				return;
 			}

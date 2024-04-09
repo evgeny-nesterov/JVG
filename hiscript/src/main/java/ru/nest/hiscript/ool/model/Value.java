@@ -29,7 +29,7 @@ public class Value implements PrimitiveTypes {
 
 	public final static int EXECUTE = 7; // for node
 
-	public final static int GET_CLASS = 8;
+	public final static int TYPE_INVOCATION = 8; // for .class, .this, .super
 
 	public RuntimeContext ctx;
 
@@ -657,6 +657,8 @@ public class Value implements PrimitiveTypes {
 				return "NAME: name=" + name + (nameDimensions > 0 ? "[]" : "");
 			case EXECUTE:
 				return "EXECUTE: node=" + node;
+			case TYPE_INVOCATION:
+				return "TYPE INVOCATION: node=" + node;
 		}
 		return "";
 	}

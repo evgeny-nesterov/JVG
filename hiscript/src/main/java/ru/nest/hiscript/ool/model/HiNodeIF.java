@@ -7,7 +7,13 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 public interface HiNodeIF extends TokenAccessible, Codeable {
 	boolean validate(ValidationInfo validationInfo, CompileClassContext ctx);
 
-	void execute(RuntimeContext ctx);
+	default void execute(RuntimeContext ctx) {
+		execute(ctx, null);
+	}
+
+	default void execute(RuntimeContext ctx, HiClass clazz) {
+		execute(ctx);
+	}
 
 	default NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.node = this;
@@ -33,5 +39,9 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 
 	default boolean isRuntimeValue() {
 		return getReturnValueType() == NodeValueType.NodeValueReturnType.runtimeValue;
+	}
+
+	default int getInvocationValueType() {
+		return -1;
 	}
 }

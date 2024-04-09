@@ -70,7 +70,15 @@ public class HiObject {
 	private Map<HiClass, Map<String, HiField<?>>> fieldsMap;
 
 	public HiField<?> getField(RuntimeContext ctx, String name) {
-		return getField(ctx, name, clazz);
+		return getField(ctx, name, clazz, true);
+	}
+
+	public HiField<?> getField(RuntimeContext ctx, String name, boolean searchOutbound) {
+		return getField(ctx, name, clazz, searchOutbound);
+	}
+
+	public HiField<?> getField(RuntimeContext ctx, String name, HiClass clazz) {
+		return getField(ctx, name, clazz, true);
 	}
 
 	/**
@@ -78,7 +86,7 @@ public class HiObject {
 	 * @param clazz Super class, one of interfaces or super interfaces
 	 * @return
 	 */
-	public HiField<?> getField(RuntimeContext ctx, String name, HiClass clazz) {
+	public HiField<?> getField(RuntimeContext ctx, String name, HiClass clazz, boolean searchOutbound) {
 		if (fieldsMap != null) {
 			Map<String, HiField<?>> classFieldsMap = fieldsMap.get(clazz);
 			if (classFieldsMap != null) {
@@ -110,8 +118,13 @@ public class HiObject {
 			}
 
 			// super object (after this)
+			HiField<?> privateField = null;
 			if (field == null && superObject != null) {
 				field = superObject.getField(ctx, name);
+				if (field != null && field.getModifiers().isPrivate()) {
+					privateField = field;
+					field = null;
+				}
 			}
 
 			// static: super class
@@ -123,16 +136,20 @@ public class HiObject {
 			}
 
 			// outbound object (after super)
-			if (field == null && outboundObject != null) {
-				field = outboundObject.getField(ctx, name);
+			if (field == null && searchOutbound) {
+				field = getOutboundField(ctx, name);
 			}
 
-			// static: outbound class
+			// static: enclosing class
 			if (field == null && !clazz.isTopLevel()) {
 				field = clazz.enclosingClass.getField(ctx, name);
 				if (field != null && !field.isStatic()) {
 					field = null;
 				}
+			}
+
+			if (field == null) {
+				field = privateField;
 			}
 		} else {
 			field = clazz.getField(ctx, name);
@@ -148,6 +165,13 @@ public class HiObject {
 			classFieldsMap.put(name, field);
 		}
 		return field;
+	}
+
+	public HiField<?> getOutboundField(RuntimeContext ctx, String name) {
+		if (outboundObject != null) {
+			return outboundObject.getField(ctx, name);
+		}
+		return null;
 	}
 
 	public RuntimeContext ctx;

@@ -17,8 +17,10 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type.superClass : ctx.clazz.superClass;
 		ctx.nodeValueType.resolvedValueVariable = this;
-		return ctx.nodeValueType.enclosingClass = ctx.clazz.superClass;
+		ctx.nodeValueType.enclosingClass = invocationClass;
+		return invocationClass;
 	}
 
 	@Override
@@ -31,11 +33,25 @@ public class NodeSuper extends HiNode {
 	}
 
 	@Override
-	public void execute(RuntimeContext ctx) {
+	public int getInvocationValueType() {
+		return Value.TYPE_INVOCATION;
+	}
+
+	@Override
+	public void execute(RuntimeContext ctx, HiClass clazz) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null || currentObject.getSuperObject() == null) {
 			ctx.throwRuntimeException("cannot access super class");
 			return;
+		}
+
+		if (clazz != null && clazz != currentObject.clazz) {
+			while (currentObject != null) {
+				currentObject = currentObject.getSuperObject();
+				if (currentObject == null || currentObject.clazz == clazz) {
+					break;
+				}
+			}
 		}
 
 		HiObject superObject = currentObject.getSuperObject();

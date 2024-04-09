@@ -229,11 +229,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 						// Check for a.new B()
 						boolean executeLater = false;
 						if (bufSize > 0 && i < operations.length - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
-							if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {
+							if (valueNode.getInvocationValueType() != -1) {
 								executeLater = true;
 								// Previous operand may be not calculated yet
 								// For example, in the case of Value.NAME
-								ctx.value.valueType = Value.EXECUTE;
+								ctx.value.valueType = valueNode.getInvocationValueType();
 								ctx.value.node = valueNode;
 							}
 						}

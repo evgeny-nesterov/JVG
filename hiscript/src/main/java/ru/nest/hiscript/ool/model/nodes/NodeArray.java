@@ -56,6 +56,11 @@ public class NodeArray extends HiNode {
 	}
 
 	@Override
+	public int getInvocationValueType() {
+		return Value.EXECUTE;
+	}
+
+	@Override
 	public void execute(RuntimeContext ctx) {
 		if (dim == null) {
 			for (dimensionsCountActive = 0; dimensionsCountActive < dimensionsCount; dimensionsCountActive++) {

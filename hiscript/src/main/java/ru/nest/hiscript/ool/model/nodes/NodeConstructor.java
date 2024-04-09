@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -126,6 +127,11 @@ public class NodeConstructor extends HiNode {
 			valid = false;
 		}
 		return valid;
+	}
+
+	@Override
+	public int getInvocationValueType() {
+		return Value.EXECUTE;
 	}
 
 	@Override

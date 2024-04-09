@@ -17,23 +17,42 @@ public class NodeThis extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type : ctx.clazz;
 		ctx.nodeValueType.resolvedValueVariable = this;
-		ctx.nodeValueType.enclosingClass = ctx.clazz;
-		return ctx.clazz;
+		ctx.nodeValueType.enclosingClass = invocationClass;
+		return invocationClass;
 	}
 
 	@Override
-	public void execute(RuntimeContext ctx) {
+	public int getInvocationValueType() {
+		return Value.TYPE_INVOCATION;
+	}
+
+	@Override
+	public void execute(RuntimeContext ctx, HiClass clazz) {
 		HiObject currentObject = ctx.getCurrentObject();
 		if (currentObject == null) {
 			ctx.throwRuntimeException("cannot access this class");
 			return;
 		}
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = currentObject.clazz;
-		ctx.value.lambdaClass = null;
-		ctx.value.object = currentObject;
+		if (clazz != null && clazz != currentObject.clazz) {
+			while (currentObject != null) {
+				currentObject = currentObject.outboundObject;
+				if (currentObject == null || currentObject.clazz == clazz) {
+					break;
+				}
+			}
+		}
+
+		if (currentObject != null) {
+			ctx.value.valueType = Value.VALUE;
+			ctx.value.type = currentObject.clazz;
+			ctx.value.lambdaClass = null;
+			ctx.value.object = currentObject;
+		} else {
+			ctx.throwRuntimeException("can not find this for class '" + clazz.fullName + "'");
+		}
 	}
 
 	@Override

@@ -292,17 +292,19 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
+					level = level.parent;
 					break WHILE;
 			}
 			level = level.parent;
 		}
 
-		// check object fields
+		// check object fields (except outbound classes)
+		HiObject object = null;
 		if (var == null) {
-			HiObject object = getCurrentObject();
+			object = getCurrentObject();
 			if (object != null) {
 				object = object.getMainObject();
-				var = object.getField(this, name);
+				var = object.getField(this, name, false);
 			}
 		}
 
@@ -319,13 +321,29 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		// check local enclosing classes
 		if (var == null) {
+			WHILE:
 			while (level != null) {
 				var = level.getVariable(name);
 				if (var != null) {
 					break;
 				}
+				switch (level.type) {
+					case METHOD:
+					case CONSTRUCTOR:
+					case INITIALIZATION:
+						if (level.object != null) {
+							var = level.object.getMainObject().getField(this, name, false);
+							if (var != null) {
+								break WHILE;
+							}
+						}
+				}
 				level = level.parent;
 			}
+		}
+
+		if (var == null && object != null) {
+			var = object.getOutboundField(this, name);
 		}
 
 		// TODO remove?
@@ -602,8 +620,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		/**
-		 * @param name
-		 *            имя или полное имя класса
+		 * @param name имя или полное имя класса
 		 * @return найденный класс
 		 */
 		public HiClass getClass(String name) {

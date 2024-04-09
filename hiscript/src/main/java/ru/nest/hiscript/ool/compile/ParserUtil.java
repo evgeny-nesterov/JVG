@@ -176,6 +176,9 @@ public class ParserUtil implements Words {
 			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
 				name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {
+					if (visitWord(tokenizer, Words.THIS, Words.SUPER, Words.CLASS) != null) {
+						return null;
+					}
 					tokenizer.error("identifier is expected");
 				}
 				type = Type.getType(type, name);

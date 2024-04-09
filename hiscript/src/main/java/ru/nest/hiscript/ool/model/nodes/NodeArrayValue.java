@@ -55,6 +55,11 @@ public class NodeArrayValue extends HiNode {
 	}
 
 	@Override
+	public int getInvocationValueType() {
+		return Value.EXECUTE;
+	}
+
+	@Override
 	public void execute(RuntimeContext ctx) {
 		int size = array.length;
 		Object value = Array.newInstance(javaClass, array.length);

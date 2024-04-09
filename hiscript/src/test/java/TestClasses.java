@@ -106,7 +106,9 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testLocalClasses() {
 		assertSuccessSerialize("class A{int x; {class B{B(){x = 2;}} new B();}} assert new A().x == 2;");
-		// assertSuccessSerialize("class A{int x; void m(int x) {class B{B(){A.this.x = x;}} new B();}} A a = new A(); a.m(2); assert a.x == 2;");
+		assertSuccessSerialize("class A {class B{A getA(){return A.this;} A.B getB(){return A.B.this;}}} " + //
+				"A a = new A(); assert a.new B().getA() == a; A.B b = a.new B(); assert b. getB() == b;");
+		assertSuccessSerialize("class A{int x; void m(int x) {class B{B(){A.this.x = x;}} new B();}} A a = new A(); a.m(2); assert a.x == 2;");
 		assertSuccessSerialize("class A{int x; A m(int y) {class B{B(){x = y;}} new B(); return this;}} assert new A().m(2).x == 2;");
 		assertFailCompile("class A{{static class B{}}}");
 		assertFailCompile("class A{static {static class B{}}}");

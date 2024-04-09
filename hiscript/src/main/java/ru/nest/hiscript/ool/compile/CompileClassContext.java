@@ -79,6 +79,8 @@ public class CompileClassContext implements ClassResolver {
 
 	private final List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
+	public NodeValueType invocationNode;
+
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (this.nodesValueTypesCache.size() > 0) {
 			NodeValueType[] nodesValueTypesCache = this.nodesValueTypesCache.remove(this.nodesValueTypesCache.size() - 1);
@@ -388,12 +390,12 @@ public class CompileClassContext implements ClassResolver {
 
 		if (resolveClass) {
 			if (this.clazz != null) {
-				if ((this.clazz.name.equals(name) || this.clazz.fullName.equals(name))) {
-					return this.clazz;
-				}
-
 				HiClass outerClass = this.clazz;
 				while (outerClass != null) {
+					if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
+						return outerClass;
+					}
+
 					HiClass innerClass = outerClass.getInnerClass(this, name, true);
 					if (innerClass != null) {
 						return innerClass;

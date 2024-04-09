@@ -312,8 +312,6 @@ public abstract class HiNode implements HiNodeIF {
 		return valid;
 	}
 
-	public abstract void execute(RuntimeContext ctx);
-
 	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeByte(type);

@@ -62,6 +62,10 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return access;
 	}
 
+	public boolean isPrivate() {
+		return (access & ACCESS_PRIVATE) != 0;
+	}
+
 	public void setAccess(int access) {
 		this.access = access;
 	}
