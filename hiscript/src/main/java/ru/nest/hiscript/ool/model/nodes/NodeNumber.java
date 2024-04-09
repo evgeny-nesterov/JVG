@@ -17,7 +17,12 @@ public abstract class NodeNumber extends HiNode {
 	}
 
 	@Override
-	public boolean isValue() {
+	public NodeValueType.NodeValueReturnType getReturnValueType() {
+		return NodeValueType.NodeValueReturnType.compileValue;
+	}
+
+	@Override
+	public boolean isCompileValue() {
 		return true;
 	}
 

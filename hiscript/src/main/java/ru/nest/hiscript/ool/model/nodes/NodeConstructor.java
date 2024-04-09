@@ -55,6 +55,7 @@ public class NodeConstructor extends HiNode {
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = clazz != null ? clazz : type.getType().getClass(ctx);
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return ctx.nodeValueType.enclosingClass;
 	}
 

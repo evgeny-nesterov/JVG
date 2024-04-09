@@ -133,6 +133,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return getClass(ctx);
 	}
 

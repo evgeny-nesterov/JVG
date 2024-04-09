@@ -49,7 +49,12 @@ public class NodeChar extends HiNode {
 	}
 
 	@Override
-	public boolean isValue() {
+	public NodeValueType.NodeValueReturnType getReturnValueType() {
+		return NodeValueType.NodeValueReturnType.compileValue;
+	}
+
+	@Override
+	public boolean isCompileValue() {
 		return true;
 	}
 
@@ -60,6 +65,7 @@ public class NodeChar extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.compileValue;
 		return HiClassPrimitive.CHAR;
 	}
 

@@ -30,6 +30,7 @@ public class NodeMethodReference extends NodeExpression {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return HiClassVar.VAR;
 	}
 

@@ -180,7 +180,7 @@ public abstract class HiNode implements HiNodeIF {
 
 	private boolean valid;
 
-	private boolean isValue;
+	private NodeValueType.NodeValueReturnType returnType;
 
 	private boolean isConstant;
 
@@ -202,13 +202,13 @@ public abstract class HiNode implements HiNodeIF {
 		if (valueClass == null) {
 			ctx.nodeValueType.resolvedValueVariable = null;
 			ctx.nodeValueType.enclosingClass = null;
-			ctx.nodeValueType.isValue = false;
+			ctx.nodeValueType.returnType = null;
 
 			computeValueType(validationInfo, ctx);
 
 			valueClass = ctx.nodeValueType.type;
 			valid = ctx.nodeValueType.valid;
-			isValue = ctx.nodeValueType.isValue;
+			returnType = ctx.nodeValueType.returnType;
 			isConstant = ctx.nodeValueType.isConstant;
 			resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
 			enclosingClass = ctx.nodeValueType.enclosingClass;
@@ -219,12 +219,12 @@ public abstract class HiNode implements HiNodeIF {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(this, valueClass, valid, isValue, isConstant, resolvedValueVariable, enclosingClass);
+			ctx.nodeValueType.get(this, valueClass, valid, returnType, isConstant, resolvedValueVariable, enclosingClass);
 		}
 		return ctx.nodeValueType;
 	}
 
-	public HiClass getValueType() {
+	public HiClass getReturnType() {
 		return valueClass;
 	}
 
@@ -239,8 +239,8 @@ public abstract class HiNode implements HiNodeIF {
 	}
 
 	@Override
-	public boolean isValue() {
-		return isValue;
+	public NodeValueType.NodeValueReturnType getReturnValueType() {
+		return returnType;
 	}
 
 	public boolean isConstant(CompileClassContext ctx) {
@@ -254,14 +254,28 @@ public abstract class HiNode implements HiNodeIF {
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = null;
 		ctx.nodeValueType.enclosingClass = null;
+		ctx.nodeValueType.valueType = null;
+		ctx.nodeValueType.returnType = null;
+
 		HiClass clazz = computeValueClass(validationInfo, ctx);
 		boolean valid = clazz != null;
-		boolean isValue = isValue() && valid && clazz != HiClassPrimitive.VOID;
+		NodeValueType.NodeValueReturnType returnType = null;
+		if (valid) {
+			if (clazz != HiClassPrimitive.VOID) {
+				returnType = getReturnValueType();
+				if (returnType == null) {
+					returnType = ctx.nodeValueType.returnType;
+				}
+			} else {
+				returnType = NodeValueType.NodeValueReturnType.noValue;
+			}
+		}
 		boolean isConstant = valid && clazz != HiClassPrimitive.VOID && isConstant(ctx);
-		ctx.nodeValueType.get(this, clazz, valid, isValue, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
+		ctx.nodeValueType.get(this, clazz, valid, returnType, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
 	}
 
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.noValue;
 		return HiClassPrimitive.VOID;
 	}
 
@@ -496,16 +510,21 @@ public abstract class HiNode implements HiNodeIF {
 
 	public boolean expectValueClass(ValidationInfo validationInfo, CompileClassContext ctx, HiClass valueClass) {
 		NodeValueType castedConditionValueType = getValueType(validationInfo, ctx);
-		if (castedConditionValueType.isValue) {
+		if (castedConditionValueType.isCompileValue()) {
 			if (!castedConditionValueType.autoCastValue(valueClass)) {
 				validationInfo.error(valueClass.fullName + " is expected", getToken());
 				return false;
 			}
-		} else if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false, true)) {
-			validationInfo.error(valueClass.fullName + " is expected", getToken());
-			return false;
+			return true;
+		} else if (castedConditionValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
+			if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false, true)) {
+				validationInfo.error(valueClass.fullName + " is expected", getToken());
+				return false;
+			}
+			return true;
 		}
-		return true;
+		validationInfo.error(valueClass.fullName + " is expected", getToken());
+		return false;
 	}
 
 	public boolean expectObjectValue(ValidationInfo validationInfo, CompileClassContext ctx) {

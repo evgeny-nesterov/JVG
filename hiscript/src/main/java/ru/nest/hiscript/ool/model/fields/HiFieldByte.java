@@ -17,7 +17,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		if (valueType.isValue) {
+		if (valueType.isCompileValue()) {
 			if (valueType.type == HiClassPrimitive.INT) {
 				return valueType.intValue >= Byte.MIN_VALUE && valueType.intValue <= Byte.MAX_VALUE;
 			} else if (valueType.type == HiClassPrimitive.SHORT) {

@@ -48,6 +48,7 @@ public class NodeExpressionSwitch extends HiNode {
 				}
 			}
 			ctx.nodeValueType.enclosingClass = topType;
+			ctx.nodeValueType.returnType = topType != null && topType.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
 			return topType;
 		}
 		return null;

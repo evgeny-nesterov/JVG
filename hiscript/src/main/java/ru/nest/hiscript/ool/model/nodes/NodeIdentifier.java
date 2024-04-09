@@ -53,6 +53,7 @@ public class NodeIdentifier extends HiNode {
 			if (dimension > 0) {
 				clazz = clazz.getArrayClass(dimension);
 			}
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			return clazz;
 		} else {
 			Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
@@ -61,8 +62,10 @@ public class NodeIdentifier extends HiNode {
 				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
 				ctx.nodeValueType.enclosingClass = clazz;
+				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 				return clazz;
 			} else if (resolvedIdentifier instanceof HiClass) {
+				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
 				return (HiClass) resolvedIdentifier;
 			}
 		}

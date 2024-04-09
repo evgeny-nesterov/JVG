@@ -29,6 +29,8 @@ public class NodeNull extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// TODO compileValue
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return HiClassNull.NULL;
 	}
 

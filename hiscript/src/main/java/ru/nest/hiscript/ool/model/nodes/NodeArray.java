@@ -41,6 +41,8 @@ public class NodeArray extends HiNode {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		HiClass clazz = type.getClass(ctx);
 		ctx.nodeValueType.enclosingClass = clazz;
+		// TODO compileValue for arrays
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return clazz;
 	}
 

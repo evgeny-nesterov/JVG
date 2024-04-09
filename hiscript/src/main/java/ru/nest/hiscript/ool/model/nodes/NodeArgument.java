@@ -49,6 +49,7 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return getType().getClass(ctx);
 	}
 

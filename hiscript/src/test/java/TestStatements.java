@@ -249,14 +249,18 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testReturn() {
 		// methods
-//		assertSuccessSerialize("class A{int m(){return 1;}} assert new A().m() == 1;");
-//		assertSuccessSerialize("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
-//		assertFailCompile("class A{int m(){return \"\";}}");
-//		assertFailCompile("class A{int m(){return;}}");
-//		assertFailCompile("class A{void m(){return; int x = 1;}}");
-//		assertFailCompile("class A{void m(){return; return;}}");
-//
-//		assertSuccessSerialize("class A{void m(){return;}} new A().m();");
+		assertSuccessSerialize("class A{int m(){return 1;}} assert new A().m() == 1;");
+		assertSuccessSerialize("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
+		assertSuccessSerialize("class A{int x; A set(int x){this.x = x; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
+		assertSuccessSerialize("class A{int x; A set(int y){x = y; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
+		assertFailCompile("class A{int m(){return \"\";}}");
+		assertFailCompile("class A{int m(){return 1L;}}");
+		assertFailCompile("class A{int m(){return;}}");
+		assertFailCompile("class A{void m(){return; int x = 1;}}");
+		assertFailCompile("class A{void m(){return; return;}}");
+		assertFailCompile("class A{void m(){return A;}}");
+
+		assertSuccessSerialize("class A{void m(){return;}} new A().m();");
 		assertFailCompile("class A{void m(){return;}} Object x = new A().m();");
 		assertFailCompile("class A{void m(){return 1;}}");
 
@@ -278,5 +282,11 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{static{return; return;}}");
 
 		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
+	}
+
+	@Test
+	public void testThis() {
+		assertFailCompile("class A{void m(){return A;}}");
+		assertSuccessSerialize("String s = 1 + \"\"; assert s.equals(\"1\");");
 	}
 }

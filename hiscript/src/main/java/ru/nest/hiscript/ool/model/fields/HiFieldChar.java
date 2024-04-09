@@ -17,7 +17,7 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		if (valueType.isValue) {
+		if (valueType.isCompileValue()) {
 			if (valueType.type == HiClassPrimitive.INT) {
 				return valueType.intValue >= Character.MIN_VALUE && valueType.intValue <= Character.MAX_VALUE;
 			} else if (valueType.type == HiClassPrimitive.SHORT) {

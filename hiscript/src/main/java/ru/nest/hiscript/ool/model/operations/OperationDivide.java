@@ -32,7 +32,7 @@ public class OperationDivide extends BinaryOperation {
 		int t1 = c1.getPrimitiveType();
 		int t2 = c2.getPrimitiveType();
 		boolean divisionByZero = false;
-		if (node2.isValue) {
+		if (node2.isCompileValue()) {
 			switch (t2) {
 				case CHAR:
 					if (node2.charValue == 0) {
@@ -72,7 +72,7 @@ public class OperationDivide extends BinaryOperation {
 			}
 		}
 
-		if (node1.isValue && node2.isValue && !divisionByZero) {
+		if (node1.isCompileValue() && node2.isCompileValue() && !divisionByZero) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {

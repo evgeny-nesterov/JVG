@@ -35,6 +35,7 @@ public class NodeDouble extends NodeNumber {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.compileValue;
 		return HiClassPrimitive.DOUBLE;
 	}
 

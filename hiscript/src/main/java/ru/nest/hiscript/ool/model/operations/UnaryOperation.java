@@ -23,7 +23,9 @@ public abstract class UnaryOperation extends HiOperation {
 		NodeValueType node = nodes[0];
 		if (prepareOperationResultType(validationInfo, ctx, node)) {
 			node.type = getOperationResultType(validationInfo, ctx, node);
-			node.isValue = node.isValue && node.isValue;
+			if (!node.valid) {
+				node.returnType = null;
+			}
 		}
 	}
 
@@ -31,7 +33,10 @@ public abstract class UnaryOperation extends HiOperation {
 		if (node.type == null) {
 			node.type = node.get(validationInfo, ctx).type;
 			if (node.type != null) {
-				node.isValue = node.node.isValue();
+				node.returnType = node.node.getReturnValueType();
+				if (node.returnType == null) {
+					node.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+				}
 				return true;
 			}
 		}

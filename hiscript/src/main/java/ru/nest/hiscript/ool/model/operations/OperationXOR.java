@@ -41,7 +41,7 @@ public class OperationXOR extends BinaryOperation {
 			if (t1 == BOOLEAN && t2 == BOOLEAN) {
 				return HiClassPrimitive.BOOLEAN;
 			}
-		} else if (node1.isValue && node2.isValue) {
+		} else if (node1.isCompileValue() && node2.isCompileValue()) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {

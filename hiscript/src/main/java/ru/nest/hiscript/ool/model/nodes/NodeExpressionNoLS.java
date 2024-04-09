@@ -175,11 +175,11 @@ public class NodeExpressionNoLS extends NodeExpression {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		NodeValueType resultValueType = getValueType(validationInfo, ctx);
-		if (resultValueType.isValue) {
+		boolean valid = resultValueType.valid;
+		if (resultValueType.isCompileValue()) {
 			// TODO simplify expression
 		}
 
-		boolean valid = resultValueType.valid;
 		valid &= super.validate(validationInfo, ctx);
 		return valid;
 	}

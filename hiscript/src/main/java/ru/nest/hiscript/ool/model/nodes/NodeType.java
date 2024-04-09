@@ -24,6 +24,7 @@ public class NodeType extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
 		return type.getClass(ctx);
 	}
 

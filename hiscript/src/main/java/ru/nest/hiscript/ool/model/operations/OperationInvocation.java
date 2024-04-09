@@ -40,6 +40,7 @@ public class OperationInvocation extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		ctx.nodeValueType.returnType = null;
 		if (node1.type != null) {
 			HiClass enclosingClass = node1.enclosingClass != null ? node1.enclosingClass : node1.type;
 			ctx.enterObject(enclosingClass, node1.enclosingClass != null);
@@ -50,8 +51,10 @@ public class OperationInvocation extends BinaryOperation {
 				}
 			}
 			ctx.exit();
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
 			return node2.type;
 		}
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return null;
 	}
 

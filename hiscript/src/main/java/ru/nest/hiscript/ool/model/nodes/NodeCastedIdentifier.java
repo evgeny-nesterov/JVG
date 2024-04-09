@@ -36,6 +36,7 @@ public class NodeCastedIdentifier extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
@@ -62,7 +63,7 @@ public class NodeCastedIdentifier extends HiNode {
 					NodeArgument castedRecordArgument = castedRecordArguments[i];
 					NodeValueType castedRecordArgumentValueType = castedRecordArgument.getValueType(validationInfo, ctx);
 					HiClass castedRecordArgumentClass = castedRecordArgumentValueType.type;
-					boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isValue;
+					boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isCompileValue();
 
 					NodeArgument recordArgument = null;
 					for (NodeArgument argument : ((HiClassRecord) recordClass).defaultConstructor.arguments) {

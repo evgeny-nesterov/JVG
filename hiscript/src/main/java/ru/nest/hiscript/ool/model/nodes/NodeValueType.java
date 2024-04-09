@@ -11,11 +11,23 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 public class NodeValueType implements PrimitiveTypes {
+	public enum NodeValueReturnType {
+		noValue, compileValue, runtimeValue, classValue
+	}
+
 	public HiNodeIF node;
 
 	public HiClass type;
 
-	public boolean isValue;
+	public NodeValueReturnType returnType = NodeValueReturnType.runtimeValue;
+
+	public boolean isCompileValue() {
+		return returnType == NodeValueReturnType.compileValue;
+	}
+
+	public boolean isRuntimeValue() {
+		return returnType == NodeValueReturnType.runtimeValue;
+	}
 
 	public boolean isConstant;
 
@@ -47,7 +59,7 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public void init(HiNodeIF node) {
 		this.node = node;
-		this.isValue = node.isValue();
+		this.returnType = null;
 		this.type = null;
 		this.valid = false;
 		this.valueType = null;
@@ -58,7 +70,17 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public NodeValueType apply(NodeValueType node) {
 		this.valid &= node.valid;
-		this.isValue &= this.valid && node.isValue;
+		if (this.valid) {
+			if (this.returnType == NodeValueReturnType.compileValue) {
+				if (node.returnType == null || node.returnType == NodeValueReturnType.runtimeValue) {
+					this.returnType = NodeValueReturnType.runtimeValue;
+				}
+			} else if (this.returnType != NodeValueReturnType.runtimeValue) {
+				this.returnType = node.returnType;
+			}
+		} else {
+			this.returnType = null;
+		}
 		this.isConstant &= this.valid && node.isConstant;
 		if (this.token != null) {
 			this.token.extend(node.token);
@@ -70,13 +92,13 @@ public class NodeValueType implements PrimitiveTypes {
 
 	public void copyTo(NodeValueType nodeValueType) {
 		nodeValueType.node = node;
-		nodeValueType.isValue = isValue;
+		nodeValueType.returnType = returnType;
 		nodeValueType.type = type;
 		nodeValueType.valid = valid;
 		nodeValueType.resolvedValueVariable = resolvedValueVariable;
 		nodeValueType.enclosingClass = enclosingClass;
 
-		if (isValue) {
+		if (isCompileValue() && valueType != null) { // not void
 			nodeValueType.valueType = valueType;
 			switch (valueType.getPrimitiveType()) {
 				case CHAR:
@@ -108,19 +130,19 @@ public class NodeValueType implements PrimitiveTypes {
 	}
 
 	public void invalid() {
-		this.isValue = false;
+		this.returnType = null;
 		this.valid = false;
 	}
 
-	public void get(HiNodeIF node, HiClass type, boolean valid, boolean isValue, boolean isConstant, HiNodeIF resolvedValueVariable, HiClass enclosingClass) {
+	public void get(HiNodeIF node, HiClass type, boolean valid, NodeValueReturnType returnType, boolean isConstant, HiNodeIF resolvedValueVariable, HiClass enclosingClass) {
 		if (type == null) {
 			type = HiClassPrimitive.VOID;
-			isValue = false;
+			returnType = NodeValueReturnType.noValue;
 		}
 		this.node = node;
 		this.type = type;
 		this.valid = valid;
-		this.isValue = isValue;
+		this.returnType = returnType;
 		this.isConstant = isConstant;
 		this.resolvedValueVariable = resolvedValueVariable;
 		this.enclosingClass = enclosingClass;
@@ -139,7 +161,7 @@ public class NodeValueType implements PrimitiveTypes {
 		this.node = node;
 		this.type = ctx.nodeValueType.type;
 		this.valid = valid;
-		this.isValue = ctx.nodeValueType.isValue;
+		this.returnType = ctx.nodeValueType.returnType;
 		this.isConstant = ctx.nodeValueType.isConstant;
 		this.resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
 		this.enclosingClass = ctx.nodeValueType.enclosingClass;
@@ -148,7 +170,7 @@ public class NodeValueType implements PrimitiveTypes {
 	}
 
 	private void getValue() {
-		if (valid && node != null && node.isValue()) {
+		if (valid && node != null && node.isCompileValue()) {
 			valueType = type;
 			if (node instanceof NodeInt) {
 				intValue = ((NodeInt) node).getValue();
@@ -171,7 +193,7 @@ public class NodeValueType implements PrimitiveTypes {
 	}
 
 	public long getIntValue() {
-		if (valid && isValue) {
+		if (valid && isCompileValue()) {
 			valueType = type;
 			if (type == HiClassPrimitive.INT) {
 				return intValue;

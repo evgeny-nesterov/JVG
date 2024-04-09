@@ -49,6 +49,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		} else {
 			clazz = type.getClass(ctx);
 		}
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return clazz;
 	}
 
@@ -65,10 +66,10 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 				ctx.level.variableNode = this;
 				NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
 				if (initializationValueType.valid) {
-					boolean canBeCasted;
-					if (initializationValueType.isValue) {
+					boolean canBeCasted = false;
+					if (initializationValueType.isCompileValue()) {
 						canBeCasted = initializationValueType.autoCastValue(clazz);
-					} else {
+					} else if (initializationValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
 						canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false, true);
 					}
 					if (!canBeCasted) {

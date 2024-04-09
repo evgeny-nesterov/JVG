@@ -29,7 +29,10 @@ public class NodeArrayValue extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return type.getArrayClass(ctx, dimensions);
+		HiClass clazz = type.getArrayClass(ctx, dimensions);
+		// TODO compileValue for arrays
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		return clazz;
 	}
 
 	private HiClass cellClass;

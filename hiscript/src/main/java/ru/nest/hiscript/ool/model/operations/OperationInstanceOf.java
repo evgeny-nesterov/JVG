@@ -40,6 +40,7 @@ public class OperationInstanceOf extends BinaryOperation {
 				}
 			}
 		}
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return HiClassPrimitive.BOOLEAN;
 	}
 

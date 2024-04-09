@@ -432,6 +432,11 @@ public class HiMethod implements HiNodeIF {
 	@Override
 	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.type = getValueClass(validationInfo, ctx);
+		if (ctx.nodeValueType.type == null || ctx.nodeValueType.type == HiClassPrimitive.VOID) {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.noValue;
+		} else {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		}
 		return ctx.nodeValueType;
 	}
 

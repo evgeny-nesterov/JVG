@@ -31,7 +31,7 @@ public class OperationMultiply extends BinaryOperation {
 
 		int t1 = c1.getPrimitiveType();
 		int t2 = c2.getPrimitiveType();
-		if (node1.isValue && node2.isValue) {
+		if (node1.isCompileValue() && node2.isCompileValue()) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {
