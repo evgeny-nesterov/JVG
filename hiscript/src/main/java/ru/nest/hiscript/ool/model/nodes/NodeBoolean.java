@@ -31,7 +31,7 @@ public class NodeBoolean extends HiNode {
 	}
 
 	private NodeBoolean(boolean value) {
-		super(name, TYPE_BOOLEAN);
+		super(name, TYPE_BOOLEAN, false);
 		this.value = value;
 	}
 

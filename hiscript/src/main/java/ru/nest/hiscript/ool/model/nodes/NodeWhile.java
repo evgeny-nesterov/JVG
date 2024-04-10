@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class NodeWhile extends HiNode {
 	public NodeWhile(HiNode condition, HiNode body) {
-		super("while", TYPE_WHILE);
+		super("while", TYPE_WHILE, true);
 		this.condition = condition;
 		this.body = body;
 	}

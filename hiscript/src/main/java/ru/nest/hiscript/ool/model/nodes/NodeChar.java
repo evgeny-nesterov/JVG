@@ -33,7 +33,7 @@ public class NodeChar extends HiNode {
 	}
 
 	private NodeChar(char value) {
-		super(name, TYPE_CHAR);
+		super(name, TYPE_CHAR, false);
 		this.value = value;
 	}
 

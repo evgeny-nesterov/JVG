@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -35,7 +36,7 @@ public class HiFieldObject extends HiField<HiObject> {
 		HiClass valueClass = valueType.type;
 
 		// autobox
-		if (valueClass.isPrimitive()) {
+		if (valueClass.isPrimitive() && valueClass != HiClassPrimitive.VOID) {
 			valueClass = valueClass.getAutoboxClass();
 		}
 		return valueClass.isNull() || (valueClass.isObject() && valueClass.isInstanceof(fieldClass));

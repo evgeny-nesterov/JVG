@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class NodeIf extends HiNode {
 	public NodeIf(NodeExpression condition, HiNode body, NodeIf nextIf) {
-		super("if", TYPE_IF);
+		super("if", TYPE_IF, true);
 		this.condition = condition;
 		this.body = body;
 		this.nextIf = nextIf;

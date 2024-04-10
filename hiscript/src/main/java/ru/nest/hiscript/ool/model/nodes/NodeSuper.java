@@ -12,12 +12,12 @@ import java.io.IOException;
 
 public class NodeSuper extends HiNode {
 	public NodeSuper() {
-		super("super", TYPE_SUPER);
+		super("super", TYPE_SUPER, false);
 	}
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type.superClass : ctx.clazz.superClass;
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type.superClass : (ctx.clazz != null ? ctx.clazz.superClass : null);
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = invocationClass;
 		return invocationClass;

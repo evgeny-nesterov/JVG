@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class NodeString extends HiNode {
 	public NodeString(String text) {
-		super("string", TYPE_STRING);
+		super("string", TYPE_STRING, false);
 		this.text = text;
 		this.chars = text.toCharArray();
 	}

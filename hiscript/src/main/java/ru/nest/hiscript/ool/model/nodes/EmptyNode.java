@@ -18,7 +18,7 @@ public class EmptyNode extends HiNode {
 	}
 
 	private EmptyNode() {
-		super("empty", TYPE_EMPTY);
+		super("empty", TYPE_EMPTY, false);
 	}
 
 	@Override

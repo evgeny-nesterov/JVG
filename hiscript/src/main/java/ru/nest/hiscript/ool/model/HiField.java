@@ -71,13 +71,13 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	}
 
 	public HiField(Type type, String name) {
-		super("field", TYPE_FIELD);
+		super("field", TYPE_FIELD, false);
 		this.type = type;
 		this.name = name; //  != null ? name.intern() : null;
 	}
 
 	public HiField(HiClass clazz, String name) {
-		super("field", TYPE_FIELD);
+		super("field", TYPE_FIELD, false);
 		this.type = Type.getType(clazz);
 		this.clazz = clazz;
 		this.name = name; //  != null ? name.intern() : null;

@@ -16,7 +16,7 @@ import java.lang.reflect.Array;
 
 public class NodeArray extends HiNode {
 	public NodeArray(Type cellType, HiNode[] dimensions) {
-		super("array", TYPE_ARRAY);
+		super("array", TYPE_ARRAY, false);
 
 		this.cellType = cellType;
 		this.dimensions = dimensions;

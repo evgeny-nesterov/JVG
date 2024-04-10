@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class NodeClass extends HiNode {
 	public NodeClass(HiClass clazz) {
-		super("class", TYPE_CLASS);
+		super("class", TYPE_CLASS, true);
 		this.clazz = clazz;
 
 		if (clazz == null) {
@@ -22,7 +22,7 @@ public class NodeClass extends HiNode {
 	}
 
 	private NodeClass() {
-		super("class", TYPE_CLASS);
+		super("class", TYPE_CLASS, true);
 	}
 
 	private HiClass clazz;

@@ -130,11 +130,20 @@ public class NodeExpressionNoLS extends NodeExpression {
 	@Override
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
-			ctx.nodeValueType.get(validationInfo, ctx, operands[0]);
+			HiNodeIF operand = operands[0];
+			if (isStatement() && !operand.isStatement()) {
+				validationInfo.error("not a statement", operand.getToken());
+			} else {
+				ctx.nodeValueType.get(validationInfo, ctx, operand);
+			}
 			return;
 		}
 
 		NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
+		if (isStatement() && operations[operations.length - 1] != null && !operations[operations.length - 1].isStatement()) {
+			validationInfo.error("not a statement", getToken());
+			return;
+		}
 		if (operands.length == 0) {
 			validationInfo.error("invalid expression", getToken());
 			return;

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class NodeSwitch extends HiNode {
 	public NodeSwitch(HiNode valueNode) {
-		super("switch", TYPE_SWITCH);
+		super("switch", TYPE_SWITCH, true);
 		this.valueNode = valueNode;
 	}
 

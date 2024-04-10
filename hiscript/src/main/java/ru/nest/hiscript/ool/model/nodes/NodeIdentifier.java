@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class NodeIdentifier extends HiNode {
 	public NodeIdentifier(String name, int dimension) {
-		super("identifier", TYPE_IDENTIFIER);
+		super("identifier", TYPE_IDENTIFIER, false);
 		this.name = name.intern();
 		this.dimension = dimension;
 	}

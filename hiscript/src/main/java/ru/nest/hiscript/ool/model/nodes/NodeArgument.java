@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class NodeArgument extends HiNode implements NodeVariable {
 	public NodeArgument(TypeArgumentIF typeArgument, String name, Modifiers modifiers, NodeAnnotation[] annotations) {
-		super("argument", TYPE_ARGUMENT);
+		super("argument", TYPE_ARGUMENT, false);
 		this.typeArgument = typeArgument;
 		this.name = name.intern();
 		this.modifiers = modifiers;

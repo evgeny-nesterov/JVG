@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeType extends HiNode {
 	public NodeType(Type type) {
-		super("type", TYPE_TYPE);
+		super("type", TYPE_TYPE, false);
 		this.type = type;
 	}
 

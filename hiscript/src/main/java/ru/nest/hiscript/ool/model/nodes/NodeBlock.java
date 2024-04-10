@@ -16,7 +16,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 	}
 
 	public NodeBlock(String name) {
-		super(name, TYPE_BLOCK);
+		super(name, TYPE_BLOCK, true);
 	}
 
 	public NodeBlock(HiNode statement) {

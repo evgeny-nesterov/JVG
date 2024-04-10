@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeThrow extends HiNode {
 	public NodeThrow(HiNode exception) {
-		super("throw", TYPE_THROW);
+		super("throw", TYPE_THROW, true);
 		this.exception = exception;
 	}
 

@@ -12,7 +12,7 @@ public abstract class NodeNumber extends HiNode {
 	}
 
 	public NodeNumber(String name, int type, boolean hasSign, Token token) {
-		super(name, type, token);
+		super(name, type, token, false);
 		this.hasSign = hasSign;
 	}
 

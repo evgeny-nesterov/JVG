@@ -14,7 +14,7 @@ import java.util.List;
 
 public class NodeDeclarations extends HiNode {
 	public NodeDeclarations() {
-		super("declarations", TYPE_DECLARATIONS);
+		super("declarations", TYPE_DECLARATIONS, true);
 	}
 
 	public NodeDeclaration add(Type type, String name, HiNode initializer, Modifiers modifiers, NodeAnnotation[] annotations, Token token) {

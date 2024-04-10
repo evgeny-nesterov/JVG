@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class NodeAssert extends HiNode {
 	public NodeAssert(NodeExpression conditionNode, NodeExpression messageNode) {
-		super("assert", TYPE_ASSERT);
+		super("assert", TYPE_ASSERT, true);
 		this.conditionNode = conditionNode;
 		this.messageNode = messageNode;
 	}

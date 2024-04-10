@@ -38,6 +38,11 @@ public class OperationInvocation extends BinaryOperation {
 	}
 
 	@Override
+	public boolean isStatement() {
+		return true;
+	}
+
+	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		ctx.nodeValueType.returnType = null;
 		if (node1.type != null) {

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class NodeExpressionSwitch extends HiNode {
 	public NodeExpressionSwitch(HiNode valueNode) {
-		super("switch", TYPE_EXPRESSION_SWITCH);
+		super("switch", TYPE_EXPRESSION_SWITCH, true);
 		this.valueNode = valueNode;
 	}
 

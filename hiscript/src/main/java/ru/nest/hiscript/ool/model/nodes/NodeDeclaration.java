@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTypes {
 	public NodeDeclaration(Type type, String name, HiNode initialization, Modifiers modifiers, NodeAnnotation[] annotations) {
-		super("declaration", TYPE_DECLARATION);
+		super("declaration", TYPE_DECLARATION, true);
 		this.type = type;
 		this.name = name.intern();
 		this.initialization = initialization;
@@ -23,7 +23,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 	}
 
 	public NodeDeclaration(String typeName, String name) {
-		super("declaration", TYPE_DECLARATION);
+		super("declaration", TYPE_DECLARATION, true);
 		this.type = Type.getTypeByFullName(typeName);
 		this.name = name.intern();
 	}

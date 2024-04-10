@@ -22,6 +22,11 @@ public class OperationEquateDivide extends BinaryOperation {
 	}
 
 	@Override
+	public boolean isStatement() {
+		return true;
+	}
+
+	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		if (node1.type == HiClassPrimitive.BYTE.getAutoboxClass() || node1.type == HiClassPrimitive.SHORT.getAutoboxClass()) {
 			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);

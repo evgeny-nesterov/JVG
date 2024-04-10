@@ -23,6 +23,11 @@ public class OperationEquate extends BinaryOperation {
 	}
 
 	@Override
+	public boolean isStatement() {
+		return true;
+	}
+
+	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		return node1.type;
 	}

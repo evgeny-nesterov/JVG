@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeNative extends HiNode {
 	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
-		super("native", TYPE_NATIVE);
+		super("native", TYPE_NATIVE, false);
 
 		this.argNames = argNames;
 
@@ -34,7 +34,7 @@ public class NodeNative extends HiNode {
 	}
 
 	private NodeNative(String[] argNames, String id) {
-		super("native", TYPE_NATIVE);
+		super("native", TYPE_NATIVE, false);
 		this.argNames = argNames;
 		this.argCount = argNames != null ? argNames.length : 0;
 		this.id = id;

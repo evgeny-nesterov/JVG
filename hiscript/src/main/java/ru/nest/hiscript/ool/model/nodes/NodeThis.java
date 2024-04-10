@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeThis extends HiNode {
 	public NodeThis() {
-		super("this", TYPE_THIS);
+		super("this", TYPE_THIS, false);
 	}
 
 	@Override
@@ -21,6 +21,15 @@ public class NodeThis extends HiNode {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = invocationClass;
 		return invocationClass;
+	}
+
+	@Override
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (ctx.clazz == null) {
+			validationInfo.error("cannot resolve this", token);
+			return false;
+		}
+		return true;
 	}
 
 	@Override

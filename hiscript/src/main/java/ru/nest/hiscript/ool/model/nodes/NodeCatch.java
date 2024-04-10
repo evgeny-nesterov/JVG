@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class NodeCatch extends HiNode {
 	public NodeCatch(Type[] excTypes, HiNode catchBody, String excName, Modifiers modifiers, NodeAnnotation[] annotations) {
-		super("catch", TYPE_CATCH);
+		super("catch", TYPE_CATCH, false);
 		this.excTypes = excTypes;
 		this.catchBody = catchBody;
 		this.excName = excName.intern();

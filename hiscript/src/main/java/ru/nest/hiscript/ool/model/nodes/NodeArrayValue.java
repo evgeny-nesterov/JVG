@@ -14,7 +14,7 @@ import java.lang.reflect.Array;
 
 public class NodeArrayValue extends HiNode {
 	public NodeArrayValue(Type type, int dimensions, HiNode[] array) {
-		super("array-value", TYPE_ARRAY_VALUE);
+		super("array-value", TYPE_ARRAY_VALUE, false);
 
 		this.type = type;
 		this.dimensions = dimensions;

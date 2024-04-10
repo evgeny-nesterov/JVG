@@ -16,7 +16,7 @@ import java.util.List;
 
 public class NodeTry extends HiNode {
 	public NodeTry(HiNode body, NodeCatch[] catches, HiNode finallyBody, NodeDeclaration[] resources) {
-		super("try", TYPE_TRY);
+		super("try", TYPE_TRY, true);
 		this.resources = resources;
 		this.body = body;
 		this.catches = catches;

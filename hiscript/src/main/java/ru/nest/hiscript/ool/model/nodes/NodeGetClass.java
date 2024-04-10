@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeGetClass extends HiNode {
 	public NodeGetClass() {
-		super("class", TYPE_GET_CLASS);
+		super("class", TYPE_GET_CLASS, false);
 	}
 
 	@Override

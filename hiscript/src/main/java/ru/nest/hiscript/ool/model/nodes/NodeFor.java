@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class NodeFor extends HiNode {
 	public NodeFor(HiNode initialization, NodeExpression condition, HiNode assignment, HiNode body) {
-		super("for", TYPE_FOR);
+		super("for", TYPE_FOR, true);
 		this.initialization = initialization;
 		this.condition = condition;
 		this.assignment = assignment;

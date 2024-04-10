@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class NodeSynchronized extends HiNode {
 	public NodeSynchronized(HiNode lock, HiNode body) {
-		super("synchronized", TYPE_SYNCHRONIZED);
+		super("synchronized", TYPE_SYNCHRONIZED, true);
 		this.lock = lock;
 		this.body = body;
 	}

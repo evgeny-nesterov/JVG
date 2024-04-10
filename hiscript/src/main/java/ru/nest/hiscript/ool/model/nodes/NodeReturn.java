@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class NodeReturn extends HiNode {
 	public NodeReturn(HiNode value) {
-		super("return", TYPE_RETURN);
+		super("return", TYPE_RETURN, true);
 		this.value = value;
 	}
 

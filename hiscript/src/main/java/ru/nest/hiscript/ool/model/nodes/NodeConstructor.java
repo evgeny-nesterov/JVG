@@ -22,21 +22,21 @@ import java.lang.reflect.Array;
 
 public class NodeConstructor extends HiNode {
 	public NodeConstructor(NodeType type, HiNode[] argValues) {
-		super("constructor", TYPE_CONSTRUCTOR);
+		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.type = type;
 		this.argValues = argValues;
 		name = type.getType().fullName;
 	}
 
 	public NodeConstructor(HiClass clazz, HiNode[] argValues) {
-		super("constructor", TYPE_CONSTRUCTOR);
+		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.clazz = clazz;
 		this.argValues = argValues;
 		name = clazz.getFullName(clazz.getClassLoader());
 	}
 
 	private NodeConstructor(HiNode[] argValues) {
-		super("constructor", TYPE_CONSTRUCTOR);
+		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.argValues = argValues;
 	}
 

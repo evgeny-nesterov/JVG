@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class NodeAnnotationArgument extends HiNode {
 	public NodeAnnotationArgument(String name, HiNode value, Token token) {
-		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT, token);
+		super("annotationArgument", TYPE_ANNOTATION_ARGUMENT, token, false);
 		this.name = name;
 		this.valueNode = value;
 	}

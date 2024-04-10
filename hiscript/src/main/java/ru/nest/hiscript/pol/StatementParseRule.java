@@ -230,7 +230,6 @@ public class StatementParseRule extends ParseRule<Node> {
 		if (lastToken != null) {
 			handler.errorOccurred(line, offset, lastToken.getOffset() + lastToken.getLength() - offset, "not a statement");
 		}
-
 		return found;
 	}
 }

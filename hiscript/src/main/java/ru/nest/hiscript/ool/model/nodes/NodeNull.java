@@ -14,7 +14,7 @@ public class NodeNull extends HiNode {
 	public final static NodeNull instance = new NodeNull();
 
 	private NodeNull() {
-		super("null", TYPE_NULL);
+		super("null", TYPE_NULL, false);
 	}
 
 	@Override

@@ -130,6 +130,7 @@ public class HiClass implements HiNodeIF, HiType {
 			HiClassPrimitive.DOUBLE.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0));
 			HiClassPrimitive.BOOLEAN.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0));
 			HiClassPrimitive.CHAR.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0));
+			HiClassPrimitive.VOID.setAutoboxClass(HiClassPrimitive.VOID); // to avoid NPE
 			for (HiClassPrimitive primitiveClass : HiClassPrimitive.primitiveClasses.values()) {
 				if (primitiveClass != HiClassPrimitive.VOID) {
 					classes.add(primitiveClass.getAutoboxClass());

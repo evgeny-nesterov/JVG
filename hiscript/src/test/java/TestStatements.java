@@ -286,7 +286,38 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testThis() {
-		assertFailCompile("class A{void m(){return A;}}");
-		assertSuccessSerialize("String s = 1 + \"\"; assert s.equals(\"1\");");
+		assertSuccessSerialize("class A{{Object a = this; assert a instanceof A;}} new A();");
+		assertSuccessSerialize("class A{void m(){Object a = A.this; assert a instanceof A;}} new A().m();");
+		assertSuccessSerialize("class A{int x = 1; {this.x = 2;}} assert new A().x == 2;");
+		assertSuccessSerialize("class A{int x = 1; {A.this.x = 2;}} assert new A().x == 2;");
+		assertSuccessSerialize("class A{int x(){return 1;} int y(){return this.x() + 1;}} assert new A().y() == 2;");
+		assertSuccessSerialize("class A{int x(){return 1;} int y(){return A.this.x() + 1;}} assert new A().y() == 2;");
+
+		assertFailCompile("this();");
+		assertFailCompile("this;");
+		assertFailCompile("this = null;");
+	}
+
+	@Test
+	public void testSuper() {
+		assertSuccessSerialize("class A{int x = 1;} class B extends A{int x = 2; int get(){return super.x;}} assert new B().get() == 1;");
+		assertSuccessSerialize("class A{int x(){return 1;}} class B extends A{int x(){return 2;} int get(){return super.x();}} assert new B().get() == 1;");
+
+		assertFailCompile("class A{void m1(){} void m2(){super.m1();}}");
+
+		assertFailCompile("super();");
+		assertFailCompile("super;");
+		assertFailCompile("super = null;");
+	}
+
+	@Test
+	public void testFails() {
+		assertFailCompile("class;");
+		assertFailCompile("true;");
+		assertFailCompile("1;");
+		assertFailCompile("1+2;");
+		assertFailCompile("(1);");
+		assertFailCompile("(1+2);");
+		assertFailCompile("{1}");
 	}
 }

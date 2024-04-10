@@ -41,6 +41,10 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 		return getReturnValueType() == NodeValueType.NodeValueReturnType.runtimeValue;
 	}
 
+	default boolean isStatement() {
+		return false;
+	}
+
 	default int getInvocationValueType() {
 		return -1;
 	}

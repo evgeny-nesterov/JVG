@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class NodeCastedIdentifier extends HiNode {
 	public NodeCastedIdentifier(String name, int dimension) {
-		super("identifier", TYPE_CASTED_IDENTIFIER);
+		super("identifier", TYPE_CASTED_IDENTIFIER, false);
 		this.name = name.intern();
 		this.dimension = dimension;
 	}

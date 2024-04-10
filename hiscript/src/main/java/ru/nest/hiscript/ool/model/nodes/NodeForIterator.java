@@ -14,7 +14,7 @@ import java.util.List;
 
 public class NodeForIterator extends HiNode {
 	public NodeForIterator(NodeDeclaration declaration, HiNode iterable, HiNode body) {
-		super("for", TYPE_FOR_ITERATOR);
+		super("for", TYPE_FOR_ITERATOR, true);
 		this.declaration = declaration;
 		this.iterable = iterable;
 		this.body = body;

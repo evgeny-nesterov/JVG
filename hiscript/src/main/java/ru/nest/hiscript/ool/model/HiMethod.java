@@ -94,6 +94,11 @@ public class HiMethod implements HiNodeIF {
 		this.argCount = arguments != null ? arguments.length : 0;
 	}
 
+	@Override
+	public boolean isStatement() {
+		return true;
+	}
+
 	private static final AtomicInteger lambdasCount = new AtomicInteger();
 
 	@Override

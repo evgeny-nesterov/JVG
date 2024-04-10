@@ -14,7 +14,7 @@ import java.util.List;
 
 public class NodeAnnotation extends HiNode {
 	public NodeAnnotation(String name, NodeAnnotationArgument[] args) {
-		super("annotation", TYPE_ANNOTATION);
+		super("annotation", TYPE_ANNOTATION, false);
 		this.name = name;
 		this.args = args;
 	}

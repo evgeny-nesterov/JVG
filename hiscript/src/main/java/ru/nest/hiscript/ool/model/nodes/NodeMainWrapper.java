@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class NodeMainWrapper extends HiNode {
 	public NodeMainWrapper(HiClassLoader classLoader, NodeBlock body, HiClass rootClass) {
-		super("main", TYPE_MAIN_WRAPPER);
+		super("main", TYPE_MAIN_WRAPPER, false);
 		this.classLoader = classLoader;
 		this.body = body;
 		this.rootClass = rootClass;

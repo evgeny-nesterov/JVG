@@ -22,7 +22,7 @@ public class NodeInvocation extends HiNode {
 	}
 
 	public NodeInvocation(String name, HiNode[] arguments) {
-		super("invocation", TYPE_INVOCATION);
+		super("invocation", TYPE_INVOCATION, true);
 		this.name = name.intern();
 		this.arguments = arguments;
 	}

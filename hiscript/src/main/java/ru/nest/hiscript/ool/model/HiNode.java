@@ -160,14 +160,15 @@ public abstract class HiNode implements HiNodeIF {
 
 	public final static byte TYPE_GET_CLASS = 49;
 
-	public HiNode(String name, int type) {
-		this(name, type, null);
+	public HiNode(String name, int type, boolean isStatement) {
+		this(name, type, null, isStatement);
 	}
 
-	public HiNode(String name, int type, Token token) {
+	public HiNode(String name, int type, Token token, boolean isStatement) {
 		this.name = name;
 		this.type = type;
 		this.token = token != null ? token.bounds() : null;
+		this.isStatement = isStatement;
 	}
 
 	protected Token token;
@@ -187,6 +188,17 @@ public abstract class HiNode implements HiNodeIF {
 	private HiNodeIF resolvedValueVariable;
 
 	private HiClass enclosingClass;
+
+	private boolean isStatement;
+
+	@Override
+	public boolean isStatement() {
+		return isStatement;
+	}
+
+	public void setStatement(boolean isStatement) {
+		this.isStatement = isStatement;
+	}
 
 	@Override
 	public String toString() {

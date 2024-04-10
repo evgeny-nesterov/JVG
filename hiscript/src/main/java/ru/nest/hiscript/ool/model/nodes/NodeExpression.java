@@ -8,11 +8,11 @@ import ru.nest.hiscript.tokenizer.Token;
 
 public abstract class NodeExpression extends HiNode {
 	public NodeExpression(String name, int type) {
-		super(name, type);
+		super(name, type, false);
 	}
 
 	public NodeExpression(String name, int type, Token token) {
-		super(name, type, token);
+		super(name, type, token, false);
 	}
 
 	@Override

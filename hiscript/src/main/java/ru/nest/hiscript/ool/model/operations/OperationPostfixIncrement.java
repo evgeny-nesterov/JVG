@@ -23,6 +23,11 @@ public class OperationPostfixIncrement extends UnaryOperation {
 	}
 
 	@Override
+	public boolean isStatement() {
+		return true;
+	}
+
+	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
 		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
