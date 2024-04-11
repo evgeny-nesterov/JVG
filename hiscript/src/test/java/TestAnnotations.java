@@ -30,8 +30,35 @@ public class TestAnnotations extends HiTest {
 		assertSuccessSerialize("static class C1{final static int CONST=1;} static class C2{final static int CONST=C1.CONST;} @interface A{int value() default C2.CONST;}");
 		assertFailCompile("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
 		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
-		assertFailCompile("@ (value = \"x\") int x;} }");
 
 		// array arguments
+
+		// fails
+		assertFailCompile("@;");
+		assertFailCompile("@interface;");
+		assertFailCompile("@interface A;");
+		assertFailCompile("@interface A{");
+		assertFailCompile("@interface A{int value()}");
+		assertFailCompile("@interface A{int value() default;}");
+		assertFailCompile("@interface A{int value default 1;}");
+		assertFailCompile("@interface A{int value(int x);}");
+		assertFailCompile("@interface A{int value() default x;}");
+		assertFailCompile("@interface A{int value() default true;}");
+		assertFailCompile("@interface A{byte value() default 1L;}");
+		assertFailCompile("@interface A{String value() default 'a';}");
+		assertFailCompile("@interface A{int x;}");
+
+		assertFailCompile("@(value = \"x\") int x;");
+		assertFailCompile("@A(value}");
+		assertFailCompile("@A(value = }");
+		assertFailCompile("@A(value = null}");
+		assertFailCompile("@A(value = 0;}");
+		assertFailCompile("@A(value = \"x\") {};");
+		assertFailCompile("@interface A{} int x = 0; @A x;");
+		assertFailCompile("@interface A{int value()}");
+		assertFailCompile("@interface A{int value();} @A(a=\"a\") int x = 0;");
+		assertFailCompile("@interface A{int value();} @A(value=) int x = 0;");
+		assertFailCompile("@interface A{int value();} @A(value=\"a\") int x = 0;");
+		assertFailCompile("@interface A{int value();} @A(\"a\") int x = 0;");
 	}
 }

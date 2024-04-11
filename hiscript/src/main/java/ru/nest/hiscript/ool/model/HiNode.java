@@ -585,11 +585,10 @@ public abstract class HiNode implements HiNodeIF {
 			} else if (rctx.value.valueType == Value.VARIABLE) {
 				return rctx.value.variable;
 			}
-			return null;
 		} else {
 			validationInfo.error(rctx.getExceptionMessage(), token);
-			return null;
 		}
+		return null;
 	}
 
 	public byte byteValue(CompileClassContext ctx) {

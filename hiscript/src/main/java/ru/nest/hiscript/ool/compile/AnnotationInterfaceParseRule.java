@@ -105,6 +105,9 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					HiNode defaultValue = null;
 					if (visitWord(Words.DEFAULT, tokenizer) != null) {
 						defaultValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+						if (defaultValue == null) {
+							tokenizer.error("value expected", tokenizer.currentToken());
+						}
 					}
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 

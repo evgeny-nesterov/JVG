@@ -311,6 +311,20 @@ public class TestStatements extends HiTest {
 	}
 
 	@Test
+	public void testAsserts() {
+		assertSuccessSerialize("assert true;");
+		assertSuccessSerialize("assert true : \"failure\";");
+		assertFail("assert false;");
+		assertFail("assert false : \"failure\";");
+		assertFailCompile("assert;");
+		assertFailCompile("assert 1;");
+		assertFailCompile("assert \"\";");
+		assertFailCompile("assert : ;");
+		assertFailCompile("assert : \"\";");
+		// TODO test assert activity
+	}
+
+	@Test
 	public void testFails() {
 		assertFailCompile("class;");
 		assertFailCompile("true;");

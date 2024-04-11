@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -46,7 +47,14 @@ public class HiClassAnnotation extends HiClass {
 					validationInfo.error("invalid type '" + method.name + "' for annotation member", method.getToken());
 					valid = false;
 				} else if (method.isAnnotationArgument && method.body != null) {
-					if (method.body.getValueType(validationInfo, ctx).isConstant) {
+					NodeValueType valueType = method.body.getValueType(validationInfo, ctx);
+					valid &= valueType.valid;
+					if (valueType.isConstant) {
+						if (valueType.valid && !valueType.type.isInstanceof(method.returnClass)) {
+							validationInfo.error("incompatible types: " + valueType.type.fullName + " cannot be converted to " + method.returnClass.fullName, method.body.getToken());
+							valid = false;
+						}
+
 						HiClass outboundClass = ctx.clazz;
 						ctx.clazz = this;
 						method.annotationDefaultValue = method.body.getObjectValue(validationInfo, ctx, method.body.getToken());

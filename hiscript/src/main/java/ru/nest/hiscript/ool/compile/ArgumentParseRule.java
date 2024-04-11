@@ -10,6 +10,7 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
 
 // TODO delete (unused)
+@Deprecated
 public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	private final static ArgumentParseRule instance = new ArgumentParseRule();
 

@@ -48,6 +48,13 @@ public class NodeAnnotation extends HiNode {
 						if (method == null || !method.isAnnotationArgument) {
 							validationInfo.error("annotation argument with name '" + arg.name + "' is not found", arg.getToken());
 							valid = false;
+						} else {
+							NodeValueType argValueType = arg.getValueType(validationInfo, ctx);
+							valid &= argValueType.valid;
+							if (argValueType.valid && !argValueType.type.isInstanceof(method.returnClass)) {
+								validationInfo.error("incompatible types: " + argValueType.type.fullName + " cannot be converted to " + method.returnClass.fullName, arg.valueNode.getToken());
+								valid = false;
+							}
 						}
 					}
 				}
