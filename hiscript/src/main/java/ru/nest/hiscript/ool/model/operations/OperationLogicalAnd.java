@@ -17,7 +17,7 @@ public class OperationLogicalAnd extends BinaryOperation {
 	}
 
 	private OperationLogicalAnd() {
-		super("&&", LOGICAL_AND);
+		super(LOGICAL_AND);
 	}
 
 	@Override

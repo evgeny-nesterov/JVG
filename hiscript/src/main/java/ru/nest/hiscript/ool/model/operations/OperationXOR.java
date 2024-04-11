@@ -17,7 +17,7 @@ public class OperationXOR extends BinaryOperation {
 	}
 
 	private OperationXOR() {
-		super("^", XOR);
+		super(XOR);
 	}
 
 	@Override

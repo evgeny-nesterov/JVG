@@ -17,7 +17,7 @@ public class OperationBitwiseShiftLeft extends BinaryOperation {
 	}
 
 	private OperationBitwiseShiftLeft() {
-		super("<<", BITWISE_SHIFT_LEFT);
+		super(BITWISE_SHIFT_LEFT);
 	}
 
 	@Override

@@ -16,13 +16,13 @@ public class OperationPrefixExclamation extends UnaryOperation {
 	}
 
 	private OperationPrefixExclamation() {
-		super("!", PREFIX_EXCLAMATION);
+		super(PREFIX_EXCLAMATION);
 	}
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
-		if (!type.isPrimitive() && type.getPrimitiveType() != BOOLEAN) {
+		if (!type.isPrimitive() || type.getPrimitiveType() != BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);

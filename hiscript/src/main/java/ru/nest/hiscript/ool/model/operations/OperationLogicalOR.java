@@ -17,7 +17,7 @@ public class OperationLogicalOR extends BinaryOperation {
 	}
 
 	private OperationLogicalOR() {
-		super("||", LOGICAL_OR);
+		super(LOGICAL_OR);
 	}
 
 	@Override

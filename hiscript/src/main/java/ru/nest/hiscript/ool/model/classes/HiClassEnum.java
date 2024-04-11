@@ -3,8 +3,10 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -46,8 +48,24 @@ public class HiClassEnum extends HiClass {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = super.validate(validationInfo, ctx);
 		if (enumValues != null) {
-			for (int i1 = 0; i1 < enumValues.size() - 1; i1++) {
+			for (int i1 = 0; i1 < enumValues.size(); i1++) {
 				HiEnumValue enumValue1 = enumValues.get(i1);
+				HiClass[] argsClasses = new HiClass[enumValue1.getArguments() != null ? enumValue1.getArguments().length : 0];
+				for (int i = 0; i < argsClasses.length; i++) {
+					HiNode arg = enumValue1.getArguments()[i];
+					if (arg != null) {
+						valid &= arg.validate(validationInfo, ctx);
+						argsClasses[i] = arg.getValueClass(validationInfo, ctx);
+					} else {
+						valid = false;
+					}
+				}
+
+				HiConstructor constructor = searchConstructor(ctx, argsClasses);
+				if (constructor == null) {
+					validationInfo.error("invalid constructor arguments", enumValue1.getToken());
+				}
+
 				for (int i2 = i1 + 1; i2 < enumValues.size(); i2++) {
 					HiEnumValue enumValue2 = enumValues.get(i2);
 					if (enumValue1.getName().equals(enumValue2.getName())) {

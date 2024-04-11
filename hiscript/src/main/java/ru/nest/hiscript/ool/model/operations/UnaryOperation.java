@@ -10,8 +10,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public abstract class UnaryOperation extends HiOperation {
-	UnaryOperation(String name, int operation) {
-		super(name, 1, operation);
+	UnaryOperation(int operation) {
+		super(1, operation);
 	}
 
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {

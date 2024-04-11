@@ -18,7 +18,7 @@ public class OperationPlus extends BinaryOperation {
 	}
 
 	private OperationPlus() {
-		super("+", PLUS);
+		super(PLUS);
 	}
 
 	@Override

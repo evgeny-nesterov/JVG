@@ -361,32 +361,4 @@ public class HiConstructor implements HiNodeIF {
 	public void setToken(Token token) {
 		this.token = token;
 	}
-
-	public static void main(String[] a) {
-		class S {
-			{
-				System.out.println("S<init>");
-			}
-
-			S(String s) {
-				System.out.println("S(String s): " + s);
-			}
-		}
-		class A extends S {
-			{
-				System.out.println("A<init>");
-			}
-
-			A(int x) {
-				this("[" + (x + 1) + "]", x);
-				System.out.println("A(int x): " + x);
-			}
-
-			A(String v, int x) {
-				super(v);
-				System.out.println("A(String v, int x): " + v + ", " + x);
-			}
-		}
-		new A(1);
-	}
 }

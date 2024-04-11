@@ -17,7 +17,7 @@ public class OperationBitwiseShiftRightCyclic extends BinaryOperation {
 	}
 
 	private OperationBitwiseShiftRightCyclic() {
-		super(">>>", BITWISE_SHIFT_RIGHT_CYCLIC);
+		super(BITWISE_SHIFT_RIGHT_CYCLIC);
 	}
 
 	@Override

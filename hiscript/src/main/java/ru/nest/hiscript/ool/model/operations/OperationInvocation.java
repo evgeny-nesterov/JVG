@@ -34,7 +34,7 @@ public class OperationInvocation extends BinaryOperation {
 	}
 
 	private OperationInvocation() {
-		super(".", INVOCATION);
+		super(INVOCATION);
 	}
 
 	@Override

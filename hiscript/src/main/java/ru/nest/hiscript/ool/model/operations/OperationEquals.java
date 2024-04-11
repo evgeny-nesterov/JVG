@@ -17,7 +17,7 @@ public class OperationEquals extends BinaryOperation {
 	}
 
 	private OperationEquals() {
-		super("==", EQUALS);
+		super(EQUALS);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class OperationEquateAnd extends BinaryOperation {
 	}
 
 	private OperationEquateAnd() {
-		super("&=", EQUATE_AND);
+		super(EQUATE_AND);
 	}
 
 	@Override

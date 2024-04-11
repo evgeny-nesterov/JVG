@@ -20,7 +20,7 @@ public class OperationEquatePlus extends BinaryOperation {
 	}
 
 	private OperationEquatePlus() {
-		super("+=", EQUATE_PLUS);
+		super(EQUATE_PLUS);
 	}
 
 	@Override

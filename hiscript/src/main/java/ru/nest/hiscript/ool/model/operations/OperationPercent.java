@@ -17,7 +17,7 @@ public class OperationPercent extends BinaryOperation {
 	}
 
 	private OperationPercent() {
-		super("%", PERCENT);
+		super(PERCENT);
 	}
 
 	@Override

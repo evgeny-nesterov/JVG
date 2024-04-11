@@ -36,6 +36,7 @@ public class EnumParseRule extends ParserUtil {
 
 			String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (enumName == null) {
+				enumName = "";
 				tokenizer.error("enum name is expected");
 			}
 
@@ -60,6 +61,7 @@ public class EnumParseRule extends ParserUtil {
 		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (enumName != null) {
 			int ordinal = 0;
+			int errorPos = 0;
 			while (true) {
 				HiNode[] args = null;
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
@@ -72,7 +74,11 @@ public class EnumParseRule extends ParserUtil {
 				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
 					break;
 				} else {
+					if (errorPos == tokenizer.currentToken().getOffset()) {
+						break;
+					}
 					tokenizer.error("expected ',', '(' or ';'");
+					errorPos = tokenizer.currentToken().getOffset();
 				}
 
 				enumValueToken = startToken(tokenizer);

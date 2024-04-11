@@ -18,7 +18,7 @@ public class OperationEquateXOR extends BinaryOperation {
 	}
 
 	private OperationEquateXOR() {
-		super("^=", EQUATE_XOR);
+		super(EQUATE_XOR);
 	}
 
 	@Override

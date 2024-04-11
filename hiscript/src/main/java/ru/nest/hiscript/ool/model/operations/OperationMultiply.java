@@ -17,7 +17,7 @@ public class OperationMultiply extends BinaryOperation {
 	}
 
 	private OperationMultiply() {
-		super("*", MULTIPLY);
+		super(MULTIPLY);
 	}
 
 	@Override

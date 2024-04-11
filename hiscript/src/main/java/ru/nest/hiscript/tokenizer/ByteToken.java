@@ -1,5 +1,9 @@
 package ru.nest.hiscript.tokenizer;
 
+/**
+ * Used IntToken instead
+ */
+@Deprecated
 public class ByteToken extends NumberToken {
 	public ByteToken(byte number, int line, int offset, int length, int lineOffset, boolean hasSign) {
 		super(line, offset, length, lineOffset, hasSign);

@@ -18,7 +18,7 @@ public class OperationEquateDivide extends BinaryOperation {
 	}
 
 	private OperationEquateDivide() {
-		super("/=", EQUATE_DIVIDE);
+		super(EQUATE_DIVIDE);
 	}
 
 	@Override

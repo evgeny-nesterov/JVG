@@ -12,8 +12,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 public abstract class BinaryOperation extends HiOperation {
-	BinaryOperation(String name, int operation) {
-		super(name, 2, operation);
+	BinaryOperation(int operation) {
+		super(2, operation);
 	}
 
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {

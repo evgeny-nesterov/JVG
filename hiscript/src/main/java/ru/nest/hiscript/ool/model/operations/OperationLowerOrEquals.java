@@ -17,7 +17,7 @@ public class OperationLowerOrEquals extends BinaryOperation {
 	}
 
 	private OperationLowerOrEquals() {
-		super("<=", LOWER_OR_EQUALS);
+		super(LOWER_OR_EQUALS);
 	}
 
 	@Override

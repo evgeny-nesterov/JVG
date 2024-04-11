@@ -349,7 +349,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return "~";
 
 			case CAST:
-				return "(<type>)";
+				return "(cast)";
 
 			case MULTIPLY:
 				return "*";

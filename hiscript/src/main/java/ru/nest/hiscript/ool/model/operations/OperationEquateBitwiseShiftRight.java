@@ -18,7 +18,7 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 	}
 
 	private OperationEquateBitwiseShiftRight() {
-		super(">>=", EQUATE_BITWISE_SHIFT_RIGHT);
+		super(EQUATE_BITWISE_SHIFT_RIGHT);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class OperationArrayIndex extends BinaryOperation {
 	}
 
 	private OperationArrayIndex() {
-		super("[]", ARRAY_INDEX);
+		super(ARRAY_INDEX);
 	}
 
 	@Override

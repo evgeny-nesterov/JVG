@@ -11,8 +11,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
-	protected HiOperation(String name, int operandsCount, int operation) {
-		this.name = name;
+	protected HiOperation(int operandsCount, int operation) {
+		this.name = Operations.getName(operation);
 		this.operandsCount = operandsCount;
 		this.operation = operation;
 		this.priority = Operations.getPriority(operation);

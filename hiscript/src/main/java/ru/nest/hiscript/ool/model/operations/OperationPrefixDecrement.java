@@ -19,7 +19,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 	}
 
 	private OperationPrefixDecrement() {
-		super("--", PREFIX_DECREMENT);
+		super(PREFIX_DECREMENT);
 	}
 
 	@Override

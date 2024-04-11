@@ -17,7 +17,7 @@ public class OperationOR extends BinaryOperation {
 	}
 
 	private OperationOR() {
-		super("|", OR);
+		super(OR);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	private OperationCast() {
-		super("(cast)", CAST);
+		super(CAST);
 	}
 
 	@Override
@@ -28,7 +28,11 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		ctx.nodeValueType.returnType = node2.returnType;
 		if (c1.isVar() || c2.isVar()) {
 		} else if (c1.isPrimitive()) {
-			if (c2.type == BOOLEAN && c1.type != BOOLEAN) {
+			if (!c2.isPrimitive()) {
+				errorCast(validationInfo, node1.token, c2, c1);
+			} else if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
+				errorCast(validationInfo, node1.token, c2, c1);
+			} else if (c1.getPrimitiveType() == VOID || c2.getPrimitiveType() == VOID) {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		} else if (c1.isArray() && c2.isArray()) {
@@ -42,7 +46,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		}
-		if (node2.isCompileValue()) {
+		if (node2.isCompileValue() && c1.isPrimitive()) {
 			node1.valueType = c1;
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
@@ -223,6 +227,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 					}
 					break;
 			}
+		} else {
+
 		}
 		return node1.type;
 	}

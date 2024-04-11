@@ -19,7 +19,7 @@ public class OperationEquate extends BinaryOperation {
 	}
 
 	private OperationEquate() {
-		super("=", EQUATE);
+		super(EQUATE);
 	}
 
 	@Override

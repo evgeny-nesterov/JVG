@@ -18,7 +18,7 @@ public class OperationEquateMultiply extends BinaryOperation {
 	}
 
 	private OperationEquateMultiply() {
-		super("*=", EQUATE_MULTIPLY);
+		super(EQUATE_MULTIPLY);
 	}
 
 	@Override

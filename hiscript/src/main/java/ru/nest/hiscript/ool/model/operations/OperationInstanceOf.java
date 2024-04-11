@@ -22,7 +22,7 @@ public class OperationInstanceOf extends BinaryOperation {
 	}
 
 	private OperationInstanceOf() {
-		super("instanceof", INSTANCE_OF);
+		super(INSTANCE_OF);
 	}
 
 	@Override

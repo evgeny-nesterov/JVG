@@ -19,7 +19,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 	}
 
 	private OperationPostfixIncrement() {
-		super("++", POST_INCREMENT);
+		super(POST_INCREMENT);
 	}
 
 	@Override

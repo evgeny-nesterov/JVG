@@ -19,7 +19,7 @@ public class OperationPrefixIncrement extends UnaryOperation {
 	}
 
 	private OperationPrefixIncrement() {
-		super("++", PREFIX_INCREMENT);
+		super(PREFIX_INCREMENT);
 	}
 
 	@Override

@@ -207,7 +207,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 							operations.addPrefixOperation(OperationsIF.CAST);
 							return true;
 						} else {
-							// for case (A) it's not known whether A is a type or an variable
+							// for case (A) it's not known whether A is a type or a variable
 							// it's needs to check on (A)<value without prefixes for primitives>
 
 							boolean isCast = false;

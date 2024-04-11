@@ -17,7 +17,7 @@ public class OperationDivide extends BinaryOperation {
 	}
 
 	private OperationDivide() {
-		super("/", DIVIDE);
+		super(DIVIDE);
 	}
 
 	@Override

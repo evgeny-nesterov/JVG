@@ -18,7 +18,7 @@ public class OperationEquateMinus extends BinaryOperation {
 	}
 
 	private OperationEquateMinus() {
-		super("-=", EQUATE_MINUS);
+		super(EQUATE_MINUS);
 	}
 
 	@Override

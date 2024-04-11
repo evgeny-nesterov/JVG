@@ -17,7 +17,7 @@ public class OperationLower extends BinaryOperation {
 	}
 
 	private OperationLower() {
-		super("<", LOWER);
+		super(LOWER);
 	}
 
 	@Override

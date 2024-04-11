@@ -18,7 +18,7 @@ public class OperationEquateOR extends BinaryOperation {
 	}
 
 	private OperationEquateOR() {
-		super("|=", EQUATE_OR);
+		super(EQUATE_OR);
 	}
 
 	@Override

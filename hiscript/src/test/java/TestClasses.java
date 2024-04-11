@@ -311,6 +311,18 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("enum E{e1(\"e1\", 0), e2(\"e2\", 1); String name; int number; E(String name, int number){this.name = name; this.number = number;} String getName(){return name;} int getNumber(){return number;}} E e = E.e2; assert e.getName().equals(\"e2\"); assert e.getNumber() == 1;");
 		assertSuccessSerialize("enum E{e} assert E.e instanceof Enum; assert E.e instanceof E;");
 		assertSuccessSerialize("enum E{} E e = null;");
+		assertSuccessSerialize("enum E{A, a}");
+		assertSuccessSerialize("enum E{e1, e2(1); int x; E(){} E(int x){this.x = x;}} assert E.e1.x == 0; assert E.e2.x == 1;");
+		assertFailCompile("enum {}");
+		assertFailCompile("enum E{");
+		assertFailCompile("enum E{1}");
+		assertFailCompile("enum E{e(}");
+		assertFailCompile("enum E{e(1)}");
+		assertFailCompile("enum E{e(1,) E(int x, int y){}}");
+		assertFailCompile("enum E{e(1,); E(int x, int y){}}");
+		assertFailCompile("enum E{e(1,true) E(int x, int y){}}");
+		assertFailCompile("enum E{e(); E(int a){}}");
+		assertFailCompile("enum E{e(true); E(int a){}}");
 		assertFailCompile("enum E1{e1} enum E2 extends E1{e2}");
 		assertFailCompile("enum E1{e1} new E1();");
 		assertFailCompile("enum E1{e1} E1 e = new Object();");

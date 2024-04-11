@@ -19,7 +19,7 @@ public class OperationPostfixDecrement extends UnaryOperation {
 	}
 
 	private OperationPostfixDecrement() {
-		super("--", POST_DECREMENT);
+		super(POST_DECREMENT);
 	}
 
 	@Override

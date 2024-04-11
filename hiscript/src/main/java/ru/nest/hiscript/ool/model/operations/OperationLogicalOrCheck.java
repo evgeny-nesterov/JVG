@@ -16,7 +16,7 @@ public class OperationLogicalOrCheck extends UnaryOperation {
 	}
 
 	private OperationLogicalOrCheck() {
-		super("?||", LOGICAL_OR_CHECK);
+		super(LOGICAL_OR_CHECK);
 	}
 
 	@Override

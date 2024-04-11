@@ -17,7 +17,7 @@ public class OperationGreater extends BinaryOperation {
 	}
 
 	private OperationGreater() {
-		super(">", GREATER);
+		super(GREATER);
 	}
 
 	@Override

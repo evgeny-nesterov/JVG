@@ -16,7 +16,7 @@ public class OperationLogicalAndCheck extends UnaryOperation {
 	}
 
 	private OperationLogicalAndCheck() {
-		super("?&&", LOGICAL_AND_CHECK);
+		super(LOGICAL_AND_CHECK);
 	}
 
 	@Override

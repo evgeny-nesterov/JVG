@@ -17,7 +17,7 @@ public class OperationMinus extends BinaryOperation {
 	}
 
 	private OperationMinus() {
-		super("-", MINUS);
+		super(MINUS);
 	}
 
 	@Override

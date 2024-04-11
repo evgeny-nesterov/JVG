@@ -18,7 +18,7 @@ public class OperationEquatePercent extends BinaryOperation {
 	}
 
 	private OperationEquatePercent() {
-		super("%=", EQUATE_PERCENT);
+		super(EQUATE_PERCENT);
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 	}
 
 	private OperationPrefixBitwiseReverse() {
-		super("~", PREFIX_BITWISE_REVERSE);
+		super(PREFIX_BITWISE_REVERSE);
 	}
 
 	@Override

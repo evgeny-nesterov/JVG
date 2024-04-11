@@ -55,7 +55,10 @@ public class TestExpression extends HiTest {
 		assertFailCompile("int a = 1 + true;");
 		assertFailCompile("int a = true | 1;");
 		assertFailCompile("int a = true;");
+		assertFailCompile("int a = !0;");
 		assertFailCompile("boolean a = 1.0;");
+		assertFailCompile("boolean a = +true;");
+		assertFailCompile("boolean a = -true;");
 	}
 
 	@Test
@@ -352,6 +355,8 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testBoolean() {
+		assertSuccessSerialize("boolean x = !true; assert !x;");
+		assertSuccessSerialize("boolean x = !false; assert x;");
 		assertSuccessSerialize("boolean x = true; assert !x == false; assert !!x == true; assert !!!x == false; assert !!!!x == true; assert !!!!!x == false;");
 	}
 
@@ -388,5 +393,18 @@ public class TestExpression extends HiTest {
 		// TODO
 		// assertFailCompile("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20;};");
 		// assertFailCompile("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; case \"c\" -> 2;};");
+	}
+
+	@Test
+	public void testCast() {
+		for (String t : new String[] {"byte", "short", "int", "long", "float", "double", "char"}) {
+			assertSuccessSerialize(t + " x = (" + t + ")127.0; assert x == 127;");
+			assertSuccessSerialize(t + " x = (" + t + ")(double)(char)(long)(byte)127; assert x == 127;");
+			assertFailCompile(t + " x = (boolean)(byte)1;");
+			assertFailCompile(t + " x = (" + t + ")\"1\";");
+			assertFailCompile(t + " x = (void)1;");
+			assertFailCompile("String s = (String)(" + t + ")1;");
+			assertFailCompile("boolean b = (boolean)(" + t + ")1;");
+		}
 	}
 }

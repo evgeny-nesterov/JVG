@@ -16,7 +16,7 @@ public class OperationPrefixPlus extends UnaryOperation {
 	}
 
 	private OperationPrefixPlus() {
-		super("+", PREFIX_PLUS);
+		super(PREFIX_PLUS);
 	}
 
 	@Override

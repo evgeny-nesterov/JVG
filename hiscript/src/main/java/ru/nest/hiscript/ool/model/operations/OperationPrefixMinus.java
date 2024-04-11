@@ -16,7 +16,7 @@ public class OperationPrefixMinus extends UnaryOperation {
 	}
 
 	private OperationPrefixMinus() {
-		super("-", PREFIX_MINUS);
+		super(PREFIX_MINUS);
 	}
 
 	@Override

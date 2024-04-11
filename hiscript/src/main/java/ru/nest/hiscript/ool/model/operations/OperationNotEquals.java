@@ -17,7 +17,7 @@ public class OperationNotEquals extends BinaryOperation {
 	}
 
 	private OperationNotEquals() {
-		super("!=", NOT_EQUALS);
+		super(NOT_EQUALS);
 	}
 
 	@Override

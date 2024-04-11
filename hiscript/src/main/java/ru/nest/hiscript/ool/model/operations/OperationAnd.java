@@ -17,7 +17,7 @@ public class OperationAnd extends BinaryOperation {
 	}
 
 	private OperationAnd() {
-		super("&", AND);
+		super(AND);
 	}
 
 	@Override
