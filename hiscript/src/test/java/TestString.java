@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestString extends HiTest {
 	@Test
-	public void test() {
+	public void testString() {
 		// declaration
 		assertSuccessSerialize("String s = \"a\"; assert s.length() == 1; assert s.equals(\"a\");");
 		assertSuccessSerialize("String s; s = \"a\"; assert s.length() == 1; assert s.equals(\"a\");");
@@ -83,5 +83,43 @@ public class TestString extends HiTest {
 
 		// triple quotes
 		assertSuccessSerialize("String s = \"\"\"\nabc\nabc\"\"\"; assert s.equals(\"abc\nabc\");");
+		assertFailCompile("String s = \"\"\";");
+		assertFailCompile("String s = \"\"\"\";");
+		assertFailCompile("String s = \"\"\"\n;");
+		assertFailCompile("String s = \"\"\"\n\"\";");
+	}
+
+	@Test
+	public void testChars() {
+		assertSuccessSerialize("String s = \"\\n\"; assert s.charAt(0) == '\\n';");
+		assertSuccessSerialize("String s = \"\\t\"; assert s.charAt(0) == '\\t';");
+		assertSuccessSerialize("String s = \"\\r\"; assert s.charAt(0) == '\\r';");
+		assertSuccessSerialize("String s = \"\\b\"; assert s.charAt(0) == '\\b';");
+		assertSuccessSerialize("String s = \"\\f\"; assert s.charAt(0) == '\\f';");
+		assertSuccessSerialize("String s = \"\\\"\"; assert s.charAt(0) == '\\\"';");
+		assertSuccessSerialize("String s = \"\\'\"; assert s.charAt(0) == '\\'';");
+		assertSuccessSerialize("String s = \"\\\\\"; assert s.charAt(0) == '\\\\';");
+		assertFailCompile("String s = \"\\\";");
+
+		// octal
+		assertSuccessSerialize("String s = \"\\7\"; assert s.charAt(0) == '\\7';");
+		assertSuccessSerialize("String s = \"\\01\"; assert s.charAt(0) == '\\1';");
+		assertSuccessSerialize("String s = \"\\123\"; assert s.charAt(0) == '\\123';");
+		assertSuccessSerialize("String s = \"\\045\"; assert s.charAt(0) == '\\045';");
+		assertSuccessSerialize("String s = \"\\067\"; assert s.charAt(0) == '\\067';");
+		assertSuccessSerialize("String s = \"\\777\"; assert s.charAt(0) == '\\77' && s.charAt(1) == '7';");
+		assertSuccessSerialize("String s = \"\\1234\"; assert s.charAt(0) == '\\123' && s.charAt(1) == '4';");
+		assertFailCompile("String s = \"\\8\";"); // illegal escape character
+
+		// hex
+		assertSuccessSerialize("String s = \"\\u0123\"; assert s.charAt(0) == 0x123;");
+		assertSuccessSerialize("String s = \"\\u4567\"; assert s.charAt(0) == 0x4567;");
+		assertSuccessSerialize("String s = \"\\u89ab\"; assert s.charAt(0) == 0x89ab;");
+		assertSuccessSerialize("String s = \"\\ucdef\"; assert s.charAt(0) == 0xcdef;");
+		assertFailCompile("String s = \"\\u\";");
+		assertFailCompile("String s = \"\\u0\";");
+		assertFailCompile("String s = \"\\u01\";");
+		assertFailCompile("String s = \"\\u012\";");
+		assertFailCompile("String s = \"\\u000g\";");
 	}
 }

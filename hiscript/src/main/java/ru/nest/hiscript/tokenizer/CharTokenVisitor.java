@@ -104,16 +104,14 @@ public class CharTokenVisitor implements TokenVisitor {
 
 							next = tokenizer.lookForward();
 							if (next >= '0' && next <= '7') {
-								tokenizer.next();
-								value = 8 * value + next - '0';
+								int nextValue = 8 * value + next - '0';
+								if (nextValue < 256) {
+									tokenizer.next();
+									value = nextValue;
+								}
 							}
 						}
-
-						if (value < 256) {
-							c = (char) value;
-						} else {
-							tokenizer.error("illegal octal character definition", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
-						}
+						c = (char) value;
 					} else {
 						tokenizer.error("illegal escape character", tokenizer.getLine(), tokenizer.getOffset(), 1, tokenizer.getLineOffset());
 					}

@@ -96,7 +96,9 @@ public class StringTokenVisitor implements TokenVisitor {
 			tokenizer.error("'\"\"\"' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
 		}
 
-		lastLine.setLength(lastLine.length() - 2); // delete last two quotes
+		if (lastLine.length() >= 2) {
+			lastLine.setLength(lastLine.length() - 2); // delete last two quotes
+		}
 		if (startLineWhiteSpaces < minStartLineWhiteSpaces) {
 			minStartLineWhiteSpaces = startLineWhiteSpaces;
 		}
