@@ -47,6 +47,33 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		this.enterType = enterType;
 	}
 
+	public NodeReturn getReturnNode(ValidationInfo validationInfo, CompileClassContext ctx) {
+		NodeReturn firstReturnNode = null;
+		for (HiNode statement : statements) {
+			if (statement instanceof NodeReturn) {
+				NodeReturn returnNode = (NodeReturn) statement;
+				if (firstReturnNode == null) {
+					firstReturnNode = returnNode;
+				} else {
+					validationInfo.error("unreachable statement", returnNode.getToken());
+					break;
+				}
+			} else if (statement instanceof NodeBlock) {
+				NodeBlock block = (NodeBlock) statement;
+				NodeReturn returnNode = block.getReturnNode(validationInfo, ctx);
+				if (returnNode != null) {
+					if (firstReturnNode == null) {
+						firstReturnNode = returnNode;
+					} else {
+						validationInfo.error("unreachable statement", returnNode.getToken());
+						break;
+					}
+				}
+			}
+		}
+		return firstReturnNode;
+	}
+
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (enterType != RuntimeContext.SAME) {

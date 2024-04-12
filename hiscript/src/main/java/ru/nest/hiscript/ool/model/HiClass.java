@@ -63,6 +63,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public static String ROOT_CLASS_NAME = "@root";
 
+	public static String ROOT_CLASS_NAME_PREFIX = ROOT_CLASS_NAME + "$";
+
 	public static String OBJECT_CLASS_NAME = "Object";
 
 	public static String STRING_CLASS_NAME = "String";
@@ -451,11 +453,34 @@ public class HiClass implements HiNodeIF, HiType {
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
+
+			Map<MethodSignature, HiMethod> defaultMethods = null;
 			for (int i = 0; i < interfaceTypes.length; i++) {
 				HiClass intf = interfaceTypes[i].getClass(ctx);
 				if (intf != null) {
 					valid &= intf.validate(validationInfo, ctx);
 					interfaces[i] = intf;
+					if (interfaceTypes.length > 1 && intf.methods != null) {
+						for (int j = 0; j < intf.methods.length; j++) {
+							HiMethod method = intf.methods[j];
+							if (method.modifiers.isDefault()) {
+								if (defaultMethods == null) {
+									defaultMethods = new HashMap<>();
+								} else {
+									HiMethod existingMethod = defaultMethods.get(method.signature);
+									if (existingMethod != null) {
+										if (searchMethod(ctx, method.signature) == null) {
+											validationInfo.error(getNameDescr() + " inherits unrelated defaults for " + method + " from types " + existingMethod.clazz.getNameDescr() + " and " + intf.getNameDescr(), token);
+											valid = false;
+										} else {
+											continue;
+										}
+									}
+								}
+								defaultMethods.put(method.signature, method);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -933,7 +958,6 @@ public class HiClass implements HiNodeIF, HiType {
 		}
 
 		if (interfaces != null) {
-			HiClass id = null;
 			HiMethod md = null;
 			HiMethod m = null;
 			for (HiClass i : interfaces) {
@@ -941,10 +965,8 @@ public class HiClass implements HiNodeIF, HiType {
 				if (_m != null) {
 					if (_m.modifiers.isDefault()) {
 						if (md != null) {
-							classResolver.processResolverException("ambiguous method " + name + " for interfaces " + id.fullName + " and " + i.fullName + ".");
 							return null;
 						}
-						id = i;
 						md = _m;
 					} else {
 						m = _m;
@@ -1673,7 +1695,7 @@ public class HiClass implements HiNodeIF, HiType {
 	}
 
 	public boolean isTopLevel() {
-		return enclosingClass == null || enclosingClass.name.equals(HiClass.ROOT_CLASS_NAME);
+		return enclosingClass == null || enclosingClass.name.equals(ROOT_CLASS_NAME);
 	}
 
 	public Class getJavaClass() {
@@ -1912,5 +1934,20 @@ public class HiClass implements HiNodeIF, HiType {
 		if (lambdaMethod != null) {
 			lambdaMethod.applyLambdaImplementedMethod(classResolver, variableClass, variableNode);
 		}
+	}
+
+	public String getNameDescr() {
+		String descr = fullName;
+		int index = 0;
+		if (fullName.startsWith(ROOT_CLASS_NAME_PREFIX)) {
+			index = ROOT_CLASS_NAME_PREFIX.length();
+		}
+		while (index < descr.length() && Character.isDigit(descr.charAt(index))) {
+			index++;
+		}
+		if (index > 0) {
+			descr = descr.substring(index);
+		}
+		return descr;
 	}
 }

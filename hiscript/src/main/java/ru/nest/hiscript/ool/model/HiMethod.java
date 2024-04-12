@@ -222,19 +222,24 @@ public class HiMethod implements HiNodeIF {
 				valid &= body.validate(validationInfo, ctx);
 			}
 
+			NodeReturn returnNode = null;
+			if (body instanceof NodeBlock) {
+				NodeBlock block = (NodeBlock) body;
+				if (block.statements.size() > 0) {
+					returnNode = block.getReturnNode(validationInfo, ctx);
+					valid &= validationInfo.isValid();
+				}
+			}
+
 			// define returnType
 			if (returnType == null) {
 				if (body instanceof NodeBlock) {
-					NodeBlock block = (NodeBlock) body;
-					if (block.statements.size() > 0) {
-						HiNode lastStatement = block.statements.get(block.statements.size() - 1);
-						if (lastStatement instanceof NodeReturn) {
-							returnClass = lastStatement.getValueClass(validationInfo, ctx);
-							returnType = Type.getType(returnClass);
-						} else {
-							returnClass = HiClassPrimitive.VOID;
-							returnType = Type.voidType;
-						}
+					if (returnNode != null) {
+						returnClass = returnNode.getValueClass(validationInfo, ctx);
+						returnType = Type.getType(returnClass);
+					} else {
+						returnClass = HiClassPrimitive.VOID;
+						returnType = Type.voidType;
 					}
 				} else if (body != null) {
 					returnClass = body.getValueClass(validationInfo, ctx);

@@ -17,10 +17,11 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type.superClass : (ctx.clazz != null ? ctx.clazz.superClass : null);
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type : (ctx.clazz != null ? ctx.clazz : null);
+		HiClass superClass = invocationClass != null && !invocationClass.isInterface ? invocationClass.superClass : invocationClass;
 		ctx.nodeValueType.resolvedValueVariable = this;
-		ctx.nodeValueType.enclosingClass = invocationClass;
-		return invocationClass;
+		ctx.nodeValueType.enclosingClass = superClass;
+		return superClass;
 	}
 
 	@Override
@@ -39,26 +40,33 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx, HiClass clazz) {
-		HiObject currentObject = ctx.getCurrentObject();
-		if (currentObject == null || currentObject.getSuperObject() == null) {
-			ctx.throwRuntimeException("cannot access super class");
-			return;
-		}
+		HiObject object = ctx.getCurrentObject();
+		HiClass objectClass;
+		if (clazz == null || !clazz.isInterface) {
+			if (object == null || object.getSuperObject() == null) {
+				ctx.throwRuntimeException("cannot access super class");
+				return;
+			}
 
-		if (clazz != null && clazz != currentObject.clazz) {
-			while (currentObject != null) {
-				currentObject = currentObject.getSuperObject();
-				if (currentObject == null || currentObject.clazz == clazz) {
-					break;
+			if (clazz != null && clazz != object.clazz) {
+				while (object != null) {
+					object = object.getSuperObject();
+					if (object == null || object.clazz == clazz) {
+						break;
+					}
 				}
 			}
+
+			object = object.getSuperObject();
+			objectClass = object.clazz;
+		} else {
+			objectClass = clazz;
 		}
 
-		HiObject superObject = currentObject.getSuperObject();
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = superObject.clazz;
+		ctx.value.type = objectClass;
 		ctx.value.lambdaClass = null;
-		ctx.value.object = superObject;
+		ctx.value.object = object;
 	}
 
 	@Override

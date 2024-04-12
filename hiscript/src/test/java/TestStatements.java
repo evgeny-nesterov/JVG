@@ -282,6 +282,9 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{static{return; return;}}");
 
 		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
+
+		assertFailCompile("class C{int m(){{return 1;} return 2;}}");
+		assertFailCompile("class C{int m(){{{return 1;} return 3;} return 4;}}");
 	}
 
 	@Test

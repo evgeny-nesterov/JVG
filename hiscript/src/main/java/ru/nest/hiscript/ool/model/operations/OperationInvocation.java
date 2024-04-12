@@ -18,6 +18,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -57,6 +58,9 @@ public class OperationInvocation extends BinaryOperation {
 				node2.get(validationInfo, ctx);
 				if (node2.type == null) {
 					validationInfo.error("cannot resolve expression type", node2.node.getToken());
+				}
+				if (node1.returnType == NodeValueType.NodeValueReturnType.classValue && node1.type.isInterface && node2.node.getClass() == NodeThis.class) {
+					validationInfo.error("'" + node1.type.getNameDescr() + "' is not an enclosing class", node1.node.getToken());
 				}
 			}
 			ctx.exit();
@@ -322,6 +326,7 @@ public class OperationInvocation extends BinaryOperation {
 			}
 		}
 
+		HiMethod method = null;
 		if ((v1ValueType == Value.VARIABLE || v1ValueType == Value.VALUE) && clazz != v1Clazz) {
 			// find super method
 			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, argsClasses);
@@ -329,13 +334,18 @@ public class OperationInvocation extends BinaryOperation {
 				ctx.throwRuntimeException("cannot find method " + v1Clazz.fullName + "." + name);
 				return;
 			}
+			if (superMethod.modifiers.isDefault() && v1Clazz.isInterface) {
+				method = superMethod;
+			}
 		}
 
 		// find method
-		HiMethod method = clazz.searchMethod(ctx, name, argsClasses);
 		if (method == null) {
-			ctx.throwRuntimeException("cannot find method " + clazz.fullName + "." + name);
-			return;
+			method = clazz.searchMethod(ctx, name, argsClasses);
+			if (method == null) {
+				ctx.throwRuntimeException("cannot find method " + clazz.fullName + "." + name);
+				return;
+			}
 		}
 
 		if (!method.isJava()) {

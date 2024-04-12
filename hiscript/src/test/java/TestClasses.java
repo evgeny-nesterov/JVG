@@ -164,6 +164,12 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A1{int a1 = A2.A3.a3 + 1; interface A2{int a2 = a1 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 1; assert A1.A2.A3.a3 == 2;");
 		assertSuccessSerialize("interface A1{int a1 = A2.a2 + 1; interface A2{int a2 = A3.a3 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 2; assert A1.A2.A3.a3 == 1;");
 
+		// multiple implementations
+		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{}");
+		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{int get(){return B.this.get();}}");
+		assertSuccessSerialize("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{int get(){return B.super.get();}} assert new C().get() == 2;");
+
+		// failures
 		assertFailCompile("final interface A{}");
 		assertFailCompile("class A{void m(){static class B{}}}");
 
