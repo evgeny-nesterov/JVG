@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeDoWhile extends HiNode {
 	public NodeDoWhile(NodeBlock body, NodeExpression condition) {
@@ -19,9 +20,19 @@ public class NodeDoWhile extends HiNode {
 	private final NodeExpression condition;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return body != null && body.isReturnStatement(label, labels);
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		return body != null ? body.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.DO_WHILE, this);
-		boolean valid = true;
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}

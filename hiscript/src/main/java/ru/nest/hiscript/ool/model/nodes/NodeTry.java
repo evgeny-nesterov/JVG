@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class NodeTry extends HiNode {
 	public NodeTry(HiNode body, NodeCatch[] catches, HiNode finallyBody, NodeDeclaration[] resources) {
@@ -32,8 +33,46 @@ public class NodeTry extends HiNode {
 	private final HiNode finallyBody;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		if (finallyBody != null && finallyBody.isReturnStatement(label, labels)) {
+			return true;
+		}
+		if (body == null || !body.isReturnStatement(label, labels)) {
+			return false;
+		}
+		if (catches != null) {
+			for (NodeCatch catchNode : catches) {
+				if (!catchNode.isReturnStatement(label, labels)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		NodeReturn returnNode = null;
+		if (finallyBody != null) {
+			returnNode = finallyBody.getReturnNode();
+		}
+		if (returnNode == null && body != null) {
+			returnNode = body.getReturnNode();
+		}
+		if (returnNode == null && catches != null) {
+			for (NodeCatch catchNode : catches) {
+				returnNode = catchNode.getReturnNode();
+				if (returnNode == null) {
+					break;
+				}
+			}
+		}
+		return returnNode;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.TRY, this);
 		if (resources != null) {
 			for (NodeDeclaration resource : resources) {
@@ -67,6 +106,7 @@ public class NodeTry extends HiNode {
 			valid &= finallyBody.validateBlock(validationInfo, ctx);
 		}
 		ctx.exit();
+		checkStatementTermination(ctx);
 		return valid;
 	}
 

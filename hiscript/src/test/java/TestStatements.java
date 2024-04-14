@@ -146,8 +146,12 @@ public class TestStatements extends HiTest {
 		assertFailCompile("throw new Exception(1, 2, 3);");
 		assertFailSerialize("throw new RuntimeException(\"error\");");
 		assertFailCompile("throw new Object();");
+		assertFailCompile("throw \"\";");
+		assertFailCompile("throw 1;");
+		assertFailCompile("throw true;");
 		assertFailCompile("class E extends Exception{} throw new E();"); // unreported exception
 		assertFailSerialize("class E extends RuntimeException{} throw new E();");
+		assertFail("RuntimeException exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}");
 
 		// throw in try
 		assertSuccessSerialize("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
@@ -196,6 +200,9 @@ public class TestStatements extends HiTest {
 		assertFailCompile("try(Object x = new Object()) {}");
 		assertFailCompile("try {} catch(String | Integer e){}");
 		assertFailCompile("try {} catch(RuntimeException | Integer e){}");
+
+		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"1\");} catch(Exception e) {} finally{return 1;}}} assert new A().m() == 1;");
+		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;"); // cancel exception and return 1 in finally
 
 		// invalid format
 		assertFailCompile("throw Exception();");
@@ -265,6 +272,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{void m(){return 1;}}");
 
 		assertSuccessSerialize("class A{int m(){ if(true) {{{return 1;}}} else return 2; }} assert new A().m() == 1;");
+		assertSuccessSerialize("class A{int m(int x) {if(x == 3) return x; return 0;}} assert new A().m(3) == 3;");
 
 		// constructors
 		assertSuccessSerialize("class A{A(){return;}}");
@@ -280,11 +288,58 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{{return \"\";}}");
 		assertFailCompile("class A{{return; int x = 0;}}");
 		assertFailCompile("class A{static{return; return;}}");
+		assertFailCompile("class A{static{{return;} return;}}");
 
 		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
+		assertSuccessSerialize("class A{int m(){try {return 1;} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
+		assertSuccessSerialize("class A{int m(){try {throw new Exception();} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
+	}
 
+	@Test
+	public void testUnreachable() {
+		// return and throw
 		assertFailCompile("class C{int m(){{return 1;} return 2;}}");
+		assertFailCompile("class C{int m(){do {return 1;} while(true); return 2;}}");
+		assertFailCompile("class C{int m(){synchronized(this) {return 1;} return 2;}}");
+		assertFailCompile("class C{int m(){BLOCK:{return 1;} return 2;}}");
+		assertFailCompile("class C{int m(){if(false) while(true) {{return 1;} return 2;}}}");
+
 		assertFailCompile("class C{int m(){{{return 1;} return 3;} return 4;}}");
+		assertFailCompile("class C{void m() {{{{return;} return;} return;} return;}}");
+		assertFailCompile("class C{void m() throws Exception {{{{return;} return;} throw new Exception();} return;}}");
+
+		assertFailCompile("class C{void m(){BLOCK:{break BLOCK; return;} return;}}");
+		assertSuccessSerialize("class C{void m(){BLOCK:{break BLOCK;} return;}}");
+		assertFailCompile("class C{void m(){BLOCK:{continue BLOCK; return;} return;}}");
+
+		// break and continue
+		assertFailCompile("int x = 1; switch(x) {case 1: break; break;}");
+		assertFailCompile("int x = 1; switch(x) {case 1: {break;} break;}");
+		assertFailCompile("int x = 1; switch(x) {case 1: BLOCK:{break;} break;}");
+		assertFailCompile("int x = 1; switch(x) {case 1: synchronized(this){break;} break;}");
+		assertSuccessSerialize("int x = 1; switch(x) {case 1: do{break;}while(true); break;}");
+
+		// switch
+		assertSuccessSerialize("int x = 1; switch(x) {case 1: break; case 2: break;} return;");
+		assertSuccessSerialize("int x = 1; switch(x) {case 1: return; case 2: return;} return;");
+		assertSuccessSerialize("int x = 1; switch(x) {case 1: return; default: break;} return;");
+		assertFailCompile("int x = 1; switch(x) {case 1: return; default: return;} return;");
+		assertFailCompile("int x = 1; BLOCK:{switch(x) {case 1: break BLOCK; default: break BLOCK;} break BLOCK;}");
+		assertFailCompile("WHILE: while(true) {switch(x) {case 1: continue WHILE; default: continue WHILE;} int y = 0;}");
+
+		// if
+		assertSuccessSerialize("if(true) {return;} return;");
+		assertSuccessSerialize("if(true) {return;} else if(false) {return;} return;");
+		assertSuccessSerialize("if(true) {return;} else if(false) {return;} else {} return;");
+		assertFailCompile("if(true) {return;} else if(false) {return;} else {return;} return;");
+
+		// try
+		assertSuccessSerialize("try {return;} catch(Exception e){} return;");
+		assertSuccessSerialize("try {} catch(Exception e){return;} return;");
+		assertFailCompile("try {} catch(Exception e){} finally{return;} return;");
+		assertFailCompile("try {return;} catch(Exception e){} finally{return;} return;");
+		assertFailCompile("try {} catch(Exception e){return;} finally{return;} return;");
+		assertFailCompile("try {return;} catch(Exception e){return;} finally{return;} return;");
 	}
 
 	@Test

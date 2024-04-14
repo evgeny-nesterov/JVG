@@ -29,7 +29,9 @@ public class NodeClass extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return clazz.validate(validationInfo, ctx);
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+		valid &= clazz.validate(validationInfo, ctx);
+		return valid;
 	}
 
 	@Override

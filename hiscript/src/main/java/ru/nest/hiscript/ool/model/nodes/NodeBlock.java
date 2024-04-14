@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class NodeBlock extends HiNode implements NodeInitializer {
 	public NodeBlock() {
@@ -47,54 +48,39 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		this.enterType = enterType;
 	}
 
-	public NodeReturn getReturnNode(ValidationInfo validationInfo, CompileClassContext ctx) {
-		NodeReturn firstReturnNode = null;
+	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
 		for (HiNode statement : statements) {
-			if (statement instanceof NodeReturn) {
-				NodeReturn returnNode = (NodeReturn) statement;
-				if (firstReturnNode == null) {
-					firstReturnNode = returnNode;
-				} else {
-					validationInfo.error("unreachable statement", returnNode.getToken());
-					break;
-				}
-			} else if (statement instanceof NodeBlock) {
-				NodeBlock block = (NodeBlock) statement;
-				NodeReturn returnNode = block.getReturnNode(validationInfo, ctx);
-				if (returnNode != null) {
-					if (firstReturnNode == null) {
-						firstReturnNode = returnNode;
-					} else {
-						validationInfo.error("unreachable statement", returnNode.getToken());
-						break;
-					}
-				}
+			if (statement.isReturnStatement(label, labels)) {
+				return true;
 			}
 		}
-		return firstReturnNode;
+		return false;
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		for (HiNode statement : statements) {
+			NodeReturn returnNode = statement.getReturnNode();
+			if (returnNode != null) {
+				return returnNode;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (enterType != RuntimeContext.SAME) {
 			ctx.enter(RuntimeContext.BLOCK, this);
 		}
 
-		boolean valid = true;
-		// TODO check isStatic
-		boolean terminated = false;
-		boolean isUnreachable = false;
 		for (HiNode statement : statements) {
 			valid &= statement.validate(validationInfo, ctx);
-			if (terminated && !isUnreachable) {
-				validationInfo.error("unreachable statement", statement.getToken());
-				isUnreachable = true;
-				valid = false;
-			}
-			if (statement.isTerminal()) {
-				terminated = true;
-			}
 		}
+
+		// TODO check isStatic
 
 		if (enterType != RuntimeContext.SAME) {
 			ctx.exit();

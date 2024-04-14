@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class NodeSwitch extends HiNode {
 	public NodeSwitch(HiNode valueNode) {
@@ -41,12 +42,41 @@ public class NodeSwitch extends HiNode {
 	private List<HiNode> casesNodes;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		boolean hasDefault = false;
+		for (int i = 0; i < size; i++) {
+			HiNode caseNode = casesNodes.get(i);
+			if (caseNode != null) {
+				if (!caseNode.isReturnStatement(label, labels)) {
+					return false;
+				}
+			}
+			if (casesValues.get(i) == null) { // default
+				hasDefault = true;
+			}
+		}
+		return hasDefault;
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		for (int i = 0; i < size; i++) {
+			HiNode caseNode = casesNodes.get(i);
+			if (caseNode != null) {
+				return caseNode.getReturnNode();
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (valueNode == null) {
 			validationInfo.error("expression expected", getToken());
 			return false;
 		}
-		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
+		valid &= valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		HiClass valueClass = valueNode.getValueClass(validationInfo, ctx);
 		ctx.enter(RuntimeContext.SWITCH, this);
 		if (valueClass != null && valueClass.isEnum()) {
@@ -111,6 +141,7 @@ public class NodeSwitch extends HiNode {
 			}
 		}
 		ctx.exit();
+		checkStatementTermination(ctx);
 		return valid;
 	}
 

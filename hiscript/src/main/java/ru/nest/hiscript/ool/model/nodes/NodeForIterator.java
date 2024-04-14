@@ -27,9 +27,15 @@ public class NodeForIterator extends HiNode {
 	private final HiNode body;
 
 	@Override
+	public NodeReturn getReturnNode() {
+		return body != null ? body.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.FOR, this);
-		boolean valid = declaration.validate(validationInfo, ctx);
+		valid &= declaration.validate(validationInfo, ctx);
 		if (declaration.modifiers.hasModifiers()) {
 			validationInfo.error("modifiers not allowed", declaration.getToken());
 			valid = false;

@@ -28,7 +28,7 @@ public class NodeDeclarations extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		for (NodeDeclaration declaration : declarations) {
 			valid &= declaration.validate(validationInfo, ctx);
 		}

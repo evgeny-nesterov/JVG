@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeLabel extends HiNode {
 	public NodeLabel(String label, HiNode statement) {
@@ -19,30 +20,32 @@ public class NodeLabel extends HiNode {
 	private final HiNode statement;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return statement != null && statement.isReturnStatement(label, labels);
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		return statement != null ? statement.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (statement != null) {
-			CompileClassContext.CompileClassLevel level = ctx.level;
-			boolean found = false;
-			while (level != null) {
-				if (level.isLabel(label)) {
-					found = true;
-					break;
-				}
-				level = level.parent;
-			}
-			if (found) {
+			CompileClassContext.CompileClassLevel level = ctx.level.getLabelLevel(label);
+			if (level != null) {
 				validationInfo.error("label '" + label + "' already in use", token);
-				return false;
 			}
 
 			ctx.enterLabel(label, this);
 			try {
-				return statement.validate(validationInfo, ctx);
+				valid &= statement.validate(validationInfo, ctx);
 			} finally {
 				ctx.exit();
 			}
 		}
-		return true;
+		return valid;
 	}
 
 	@Override

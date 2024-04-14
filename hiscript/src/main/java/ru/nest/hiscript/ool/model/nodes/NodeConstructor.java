@@ -62,7 +62,7 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (argValues != null) {
 			int size = argValues.length;
 			argsClasses = new HiClass[size];

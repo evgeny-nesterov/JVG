@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeThrow extends HiNode {
 	public NodeThrow(HiNode exception) {
@@ -20,7 +21,8 @@ public class NodeThrow extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = exception.validate(validationInfo, ctx);
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+		valid &= exception.validate(validationInfo, ctx);
 		HiClass excClass = exception.getValueClass(validationInfo, ctx);
 		if (excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
 			if (!excClass.isInstanceof(HiClass.RUNTIME_EXCEPTION_CLASS_NAME)) {
@@ -59,6 +61,9 @@ public class NodeThrow extends HiNode {
 					validationInfo.error("unreported exception " + excClass.fullName + ": exception must be caught or declared to be thrown", exception.getToken());
 					valid = false;
 				}
+				if (level != null) {
+					ctx.level.terminate(level);
+				}
 			}
 		} else {
 			validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
@@ -84,7 +89,7 @@ public class NodeThrow extends HiNode {
 	}
 
 	@Override
-	public boolean isTerminal() {
-		return true;
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return label == null;
 	}
 }

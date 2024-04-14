@@ -25,8 +25,13 @@ public class NodeFor extends HiNode {
 	private final HiNode body;
 
 	@Override
+	public NodeReturn getReturnNode() {
+		return body != null ? body.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.FOR, this);
 		if (initialization != null) {
 			valid &= initialization.validate(validationInfo, ctx);

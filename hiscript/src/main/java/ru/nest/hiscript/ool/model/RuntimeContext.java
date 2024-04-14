@@ -15,13 +15,13 @@ import java.util.Map;
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
 
-	public final static int METHOD = 0;
+	public final static int METHOD = 0; // local context
 
-	public final static int CONSTRUCTOR = 1;
+	public final static int CONSTRUCTOR = 1; // local context
 
-	public final static int INITIALIZATION = 2;
+	public final static int INITIALIZATION = 2; // local context
 
-	public final static int BLOCK = 3;
+	public final static int BLOCK = 3; // transparent for return
 
 	public final static int FOR = 4;
 
@@ -29,23 +29,23 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public final static int IF = 6;
 
-	public final static int DO_WHILE = 7;
+	public final static int DO_WHILE = 7; // transparent for return
 
 	public final static int SWITCH = 8;
 
 	public final static int TRY = 9;
 
-	public final static int CATCH = 10;
+	public final static int CATCH = 10; // used with try
 
-	public final static int FINALLY = 11;
+	public final static int FINALLY = 11; // used with try
 
-	public final static int LABEL = 12;
+	public final static int LABEL = 12; // transparent for return
 
 	public final static int START = 13;
 
 	public final static int OBJECT = 14;
 
-	public final static int SYNCHRONIZED = 15;
+	public final static int SYNCHRONIZED = 15; // transparent for return
 
 	public final static int STATIC_CLASS = 16;
 

@@ -237,7 +237,7 @@ public class TestClasses extends HiTest {
 		// TODO check incompatible throws of rewrite method
 		assertSuccessSerialize("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1, E2 {throw new E1();}}");
 		assertFailCompile("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1 {throw new E2();}}");
-		assertFailCompile("class E extends Exception{};class A{void m() throws E {throw new E(); throw new E();}}");
+		assertFailCompile("class E extends Exception{}; class A{void m() throws E {throw new E(); throw new E();}}");
 
 		assertFailCompile("class A{void ()}");
 		assertFailCompile("class A{void m()}");

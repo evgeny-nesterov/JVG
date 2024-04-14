@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeCatch extends HiNode {
 	public NodeCatch(Type[] excTypes, HiNode catchBody, String excName, Modifiers modifiers, NodeAnnotation[] annotations) {
@@ -35,6 +36,16 @@ public class NodeCatch extends HiNode {
 	private final String excName;
 
 	public HiClass excClass;
+
+	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return catchBody != null && catchBody.isReturnStatement(label, labels);
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		return catchBody != null ? catchBody.getReturnNode() : null;
+	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

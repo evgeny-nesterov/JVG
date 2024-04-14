@@ -85,9 +85,10 @@ public class NodeInvocation extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass returnClass = getValueClass(validationInfo, ctx);
+		getValueClass(validationInfo, ctx);
 
-		boolean valid = method != null;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+		valid &= method != null;
 		if (arguments != null) {
 			if (method != null) {
 				int mainArgsCount = method.hasVarargs() ? method.argCount - 1 : method.argCount;
@@ -98,7 +99,7 @@ public class NodeInvocation extends HiNode {
 					ctx.level.enclosingClass = null;
 				}
 				if (method.hasVarargs()) {
-					HiClass varargClass = ((HiClassArray)method.argClasses[mainArgsCount]).cellClass;
+					HiClass varargClass = ((HiClassArray) method.argClasses[mainArgsCount]).cellClass;
 					for (int i = mainArgsCount; i < arguments.length; i++) {
 						HiNode argument = arguments[i];
 						ctx.level.enclosingClass = varargClass;

@@ -17,6 +17,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -80,6 +81,8 @@ public class CompileClassContext implements ClassResolver {
 	private final List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
 	public NodeValueType invocationNode;
+
+	public Set<String> breaksLabels = new HashSet<>();
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (this.nodesValueTypesCache.size() > 0) {
@@ -490,6 +493,10 @@ public class CompileClassContext implements ClassResolver {
 
 		String label;
 
+		boolean isTerminated;
+
+		boolean unreachableError;
+
 		public CompileClassLevel(int type, TokenAccessible node, CompileClassLevel parent) {
 			this.type = type;
 			this.node = node;
@@ -511,10 +518,6 @@ public class CompileClassContext implements ClassResolver {
 				classes = new HashMap<>(1);
 			}
 			classes.put(clazz.name, clazz);
-		}
-
-		public boolean isLabel(String label) {
-			return type == RuntimeContext.LABEL && label.equals(this.label);
 		}
 
 		public HiClass getClass(String name) {
@@ -584,6 +587,111 @@ public class CompileClassContext implements ClassResolver {
 			return localVariables != null ? localVariables.get(name) : null;
 		}
 
+		public CompileClassLevel getLabelLevel(String label) {
+			CompileClassLevel level = this;
+			while (level != null) {
+				if (level.type == RuntimeContext.LABEL && level.label.equals(label)) {
+					return level;
+				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+					break;
+				}
+				level = level.parent;
+			}
+			return null;
+		}
+
+		public boolean isBreakable(String label) {
+			if (label != null && label.length() > 0) {
+				return type == RuntimeContext.LABEL && label.equals(this.label);
+			} else {
+				return type == RuntimeContext.FOR || type == RuntimeContext.WHILE || type == RuntimeContext.DO_WHILE || type == RuntimeContext.SWITCH;
+			}
+		}
+
+		public CompileClassLevel getBreakLevel(String label) {
+			CompileClassLevel level = this;
+			while (level != null) {
+				if (level.isBreakable(label)) {
+					return level;
+				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+					break;
+				}
+				level = level.parent;
+			}
+			return null;
+		}
+
+		public boolean isContinuable(String label) {
+			if (label != null) {
+				return type == RuntimeContext.LABEL && label.equals(this.label);
+			} else {
+				return type == RuntimeContext.FOR || type == RuntimeContext.WHILE || type == RuntimeContext.DO_WHILE;
+			}
+		}
+
+		public CompileClassLevel getContinueLevel(String label) {
+			CompileClassLevel level = this;
+			while (level != null) {
+				if (level.isContinuable(label)) {
+					return level;
+				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+					break;
+				}
+				level = level.parent;
+			}
+			return null;
+		}
+
+		public CompileClassLevel getLocalContextLevel() {
+			CompileClassLevel terminateLevel = this;
+			while (terminateLevel != null) {
+				if (terminateLevel.type == RuntimeContext.METHOD || terminateLevel.type == RuntimeContext.CONSTRUCTOR || terminateLevel.type == RuntimeContext.INITIALIZATION) {
+					return terminateLevel;
+				}
+				terminateLevel = terminateLevel.parent;
+			}
+			return null;
+		}
+
+		public void terminate(boolean isReturn) {
+			CompileClassLevel toLevel = isReturn ? getLocalContextLevel() : null;
+			if (breaksLabels.size() > 0) {
+				for (String label : breaksLabels) {
+					CompileClassLevel labelLevel = getBreakLevel(label);
+					if (toLevel == null) {
+						toLevel = labelLevel;
+					} else if (labelLevel.deep > toLevel.deep) {
+						toLevel = labelLevel;
+					}
+				}
+			}
+			terminate(toLevel);
+		}
+
+		public void terminate(CompileClassLevel toLevel) {
+			CompileClassLevel terminateLevel = this;
+			while (terminateLevel != null) {
+				if (terminateLevel.type == RuntimeContext.BLOCK || terminateLevel.type == RuntimeContext.LABEL || terminateLevel.type == RuntimeContext.DO_WHILE || terminateLevel.type == RuntimeContext.SYNCHRONIZED) {
+					terminateLevel.isTerminated = true;
+					if (terminateLevel == toLevel) {
+						break;
+					}
+					terminateLevel = terminateLevel.parent;
+				} else {
+					break;
+				}
+			}
+		}
+
+		public boolean checkUnreachable(ValidationInfo validationInfo, Token token) {
+			if (isTerminated && !unreachableError) {
+				validationInfo.error("unreachable statement", token);
+				unreachableError = true;
+				return false;
+			}
+			return true;
+		}
+
 		public void clear() {
 			deep = 0;
 			parent = null;
@@ -594,6 +702,8 @@ public class CompileClassContext implements ClassResolver {
 			if (localVariables != null) {
 				localVariables.clear();
 			}
+			isTerminated = false;
+			unreachableError = false;
 		}
 	}
 

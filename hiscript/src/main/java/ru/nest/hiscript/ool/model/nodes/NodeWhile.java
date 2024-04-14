@@ -19,9 +19,20 @@ public class NodeWhile extends HiNode {
 	private final HiNode body;
 
 	@Override
+	public NodeReturn getReturnNode() {
+		return body != null ? body.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = condition != null && condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
-		valid &= body == null || body.validateBlock(validationInfo, ctx);
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+		ctx.enter(RuntimeContext.WHILE, this);
+		try {
+			valid &= condition != null && condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
+			valid &= body == null || body.validateBlock(validationInfo, ctx);
+		} finally {
+			ctx.exit();
+		}
 		return valid;
 	}
 

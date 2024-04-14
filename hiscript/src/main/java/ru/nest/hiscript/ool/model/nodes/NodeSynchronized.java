@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeSynchronized extends HiNode {
 	public NodeSynchronized(HiNode lock, HiNode body) {
@@ -20,9 +21,20 @@ public class NodeSynchronized extends HiNode {
 	private final HiNode body;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return body != null && body.isReturnStatement(label, labels);
+	}
+
+	@Override
+	public NodeReturn getReturnNode() {
+		return body != null ? body.getReturnNode() : null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.SYNCHRONIZED, this);
-		boolean valid = lock.validate(validationInfo, ctx) && lock.expectObjectValue(validationInfo, ctx);
+		valid &= lock.validate(validationInfo, ctx) && lock.expectObjectValue(validationInfo, ctx);
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}

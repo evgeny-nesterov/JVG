@@ -22,6 +22,7 @@ public class NodeAssert extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = conditionNode.validate(validationInfo, ctx) && conditionNode.expectBooleanValue(validationInfo, ctx);
+		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
 		if (messageNode != null) {
 			HiClass stringClass = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);
 			valid &= messageNode.validate(validationInfo, ctx) && messageNode.expectValueClass(validationInfo, ctx, stringClass);

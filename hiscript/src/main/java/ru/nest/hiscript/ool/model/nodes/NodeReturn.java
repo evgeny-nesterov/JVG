@@ -12,6 +12,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeReturn extends HiNode {
 	public NodeReturn(HiNode value) {
@@ -22,22 +23,27 @@ public class NodeReturn extends HiNode {
 	private final HiNode value;
 
 	@Override
+	public NodeReturn getReturnNode() {
+		return this;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (value != null) {
 			valid = value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx);
 		}
 
-		CompileClassContext.CompileClassLevel level = ctx.level;
+		CompileClassContext.CompileClassLevel localContextLevel = ctx.level.getLocalContextLevel();
 		HiMethod method = null;
-		while (level != null) {
-			if (level.type == RuntimeContext.METHOD) {
-				method = (HiMethod) level.node;
-				break;
+		if (localContextLevel != null) {
+			if (localContextLevel.node instanceof HiMethod) {
+				method = (HiMethod) localContextLevel.node;
 			}
-			level = level.parent;
+			valid &= validateReturn(validationInfo, ctx, method, value, token);
+
+			ctx.level.terminate(localContextLevel);
 		}
-		valid &= validateReturn(validationInfo, ctx, method, value, token);
 		return valid;
 	}
 
@@ -110,6 +116,7 @@ public class NodeReturn extends HiNode {
 			}
 		} finally {
 			ctx.isReturn = true;
+			ctx.exception = null;
 		}
 	}
 
@@ -124,7 +131,7 @@ public class NodeReturn extends HiNode {
 	}
 
 	@Override
-	public boolean isTerminal() {
-		return true;
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return label == null;
 	}
 }

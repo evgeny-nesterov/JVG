@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class NodeContinue extends HiNode {
 	public NodeContinue(String label) {
@@ -17,22 +18,19 @@ public class NodeContinue extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (label != null) {
-			CompileClassContext.CompileClassLevel level = ctx.level;
-			boolean found = false;
-			while (level != null) {
-				if (level.isLabel(label)) {
-					found = true;
-					break;
-				}
-				level = level.parent;
-			}
-			if (!found) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+		CompileClassContext.CompileClassLevel continueLevel = ctx.level.getContinueLevel(label);
+		if (continueLevel == null) {
+			if (label != null) {
 				validationInfo.error("undefined label '" + label + "'", token);
-				return false;
+			} else {
+				validationInfo.error("continue outside of loop", token);
 			}
+			valid = false;
+		} else {
+			ctx.level.terminate(continueLevel);
 		}
-		return true;
+		return valid;
 	}
 
 	@Override
@@ -52,7 +50,17 @@ public class NodeContinue extends HiNode {
 	}
 
 	@Override
-	public boolean isTerminal() {
-		return true;
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		if (labels != null) {
+			labels.add(this.label != null ? this.label : "");
+		}
+		if (label != null) {
+			if (this.label == null) {
+				return label.equals("");
+			} else {
+				return this.label.equals(label);
+			}
+		}
+		return false;
 	}
 }

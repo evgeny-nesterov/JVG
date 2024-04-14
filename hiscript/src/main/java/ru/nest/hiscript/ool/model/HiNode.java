@@ -57,7 +57,9 @@ import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public abstract class HiNode implements HiNodeIF {
 	public final static byte TYPE_EMPTY = -1;
@@ -175,7 +177,7 @@ public abstract class HiNode implements HiNodeIF {
 
 	protected String name;
 
-	protected int type;
+	public int type;
 
 	private HiClass valueClass;
 
@@ -556,8 +558,25 @@ public abstract class HiNode implements HiNodeIF {
 		return true;
 	}
 
-	public boolean isTerminal() {
+	public void checkStatementTermination(CompileClassContext ctx) {
+		ctx.breaksLabels.clear();
+		boolean isReturnStatement = isReturnStatement(null, ctx.breaksLabels);
+		for (Iterator<String> it = ctx.breaksLabels.iterator(); it.hasNext(); ) {
+			if (!isReturnStatement(it.next(), null)) {
+				it.remove();
+			}
+		}
+		if (isReturnStatement || ctx.breaksLabels.size() > 0) {
+			ctx.level.terminate(isReturnStatement);
+		}
+	}
+
+	public boolean isReturnStatement(String label, Set<String> labels) {
 		return false;
+	}
+
+	public NodeReturn getReturnNode() {
+		return null;
 	}
 
 	private RuntimeContext computeValue(CompileClassContext ctx) {
