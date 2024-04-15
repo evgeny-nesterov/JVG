@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
@@ -9,9 +10,11 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.tokenizer.Words;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -52,6 +55,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public final static Type nullType = new Type(-1, "null", false);
 
 	public final static Type varType = new Type(VAR, "var", false);
+
+	public final static Type invalidType = new Type(INVALID, "", false);
 
 	private final static Map<String, Type> primitiveTypes = new HashMap<>();
 
@@ -103,6 +108,17 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			this.fullName = name.intern();
 		}
+	}
+
+	private Type(Type type, Type[] parameters) {
+		this.id = type.id;
+		this.parent = type.parent;
+		this.name = type.name;
+		this.dimension = 0;
+		this.primitive = false;
+		this.path = type.path;
+		this.fullName = type.fullName;
+		this.parameters = parameters;
 	}
 
 	/**
@@ -165,6 +181,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	private final boolean primitive;
+
+	private Type[] parameters;
 
 	public boolean isPrimitive() {
 		return primitive;
@@ -239,15 +257,20 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			return HiClassVar.VAR;
 		}
 
-		HiClass clazz;
-		if (path != null) {
-			clazz = path[0].getClass(classResolver);
-			for (int i = 1; i < path.length; i++) {
-				clazz = clazz.getClass(classResolver, path[i].name);
+		HiClass clazz = null;
+		if (classResolver instanceof CompileClassContext) {
+			clazz = ((CompileClassContext) classResolver).level.resolveGeneric(name);
+		}
+		if (clazz == null) {
+			if (path != null) {
+				clazz = path[0].getClass(classResolver);
+				for (int i = 1; i < path.length; i++) {
+					clazz = clazz.getClass(classResolver, path[i].name);
+				}
+				clazz = clazz.getClass(classResolver, name);
+			} else {
+				clazz = classResolver.getClass(name);
 			}
-			clazz = clazz.getClass(classResolver, name);
-		} else {
-			clazz = classResolver.getClass(name);
 		}
 
 		if (clazz == null) {
@@ -284,6 +307,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			return getTopType(name);
 		}
+	}
+
+	public static Type getParameterizedType(Type type, Type[] parameters) {
+		return new Type(type, parameters);
 	}
 
 	public static Type getTopType(String name) {
@@ -400,7 +427,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	@Override
 	public String toString() {
-		return fullName;
+		String name = fullName;
+		if (parameters != null) {
+			name += "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
+		}
+		return name;
 	}
 
 	@Override

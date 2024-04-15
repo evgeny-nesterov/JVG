@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -222,6 +223,17 @@ public class NodeValueType implements PrimitiveTypes {
 			HiClass autoboxedPrimitiveClass = type.getAutoboxedPrimitiveClass();
 			if (autoboxedPrimitiveClass != null) {
 				type = autoboxedPrimitiveClass;
+			} else if (type.isGeneric()) {
+				HiClassGeneric genericType = (HiClassGeneric) type;
+				if (genericType.isSuper) {
+					return false;
+				} else if (genericType.clazz.isPrimitive()) {
+					type = genericType.clazz.getAutoboxClass();
+				} else if (genericType.clazz == HiClass.NUMBER_CLASS) {
+					return valueType.isNumber();
+				} else if (genericType.clazz == HiClass.OBJECT_CLASS) {
+					return true;
+				}
 			} else {
 				return false;
 			}

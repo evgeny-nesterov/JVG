@@ -14,7 +14,7 @@ public class HiConstructorJava extends HiConstructor {
 	private final Constructor constructor;
 
 	public HiConstructorJava(HiClass clazz, Constructor constructor) {
-		super(clazz, null, null, (NodeArgument[]) null, null, null, null, null);
+		super(clazz, null, null, null, (NodeArgument[]) null, null, null, null, null);
 		this.constructor = constructor;
 	}
 

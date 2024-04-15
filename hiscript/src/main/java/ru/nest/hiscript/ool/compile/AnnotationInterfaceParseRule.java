@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
@@ -91,6 +92,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			int dimension = visitDimension(tokenizer);
+			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			type = Type.getArrayType(type, dimension);
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -112,7 +114,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 					ctx.exit();
-					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), type, name, (NodeArgument[]) null, null, defaultValue);
+					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, type, name, (NodeArgument[]) null, null, defaultValue);
 					method.isAnnotationArgument = true;
 					method.setToken(tokenizer.getBlockToken(startToken));
 					return method;

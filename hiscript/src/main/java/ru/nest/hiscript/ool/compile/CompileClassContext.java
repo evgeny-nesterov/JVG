@@ -14,7 +14,9 @@ import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -325,6 +327,9 @@ public class CompileClassContext implements ClassResolver {
 
 	@Override
 	public HiClass getClass(String name) {
+		if (name.length() == 0) {
+			return HiClass.MOCK_CLASS;
+		}
 		int dimension = 0;
 		while (name.charAt(dimension) == '0') {
 			dimension++;
@@ -404,6 +409,11 @@ public class CompileClassContext implements ClassResolver {
 						return innerClass;
 					}
 					outerClass = outerClass.enclosingClass;
+				}
+
+				HiClass genericClass = this.clazz.getGenericClass(this, name);
+				if (genericClass != null) {
+					return genericClass;
 				}
 			}
 		}
@@ -649,6 +659,38 @@ public class CompileClassContext implements ClassResolver {
 					return terminateLevel;
 				}
 				terminateLevel = terminateLevel.parent;
+			}
+			return null;
+		}
+
+		public HiClassGeneric resolveGeneric(String name) {
+			CompileClassLevel level = this;
+			NodeGeneric generic = null;
+			while (level != null && generic == null) {
+				if (level.type == RuntimeContext.METHOD) {
+					HiMethod method = (HiMethod) level.node;
+					if (method.generics != null) {
+						generic = method.generics.getGeneric(name);
+					}
+				} else if (level.type == RuntimeContext.CONSTRUCTOR) {
+					HiConstructor constructor = (HiConstructor) level.node;
+					if (constructor.generics != null) {
+						generic = constructor.generics.getGeneric(name);
+					}
+				} else if (level.type == RuntimeContext.STATIC_CLASS) {
+					HiClass clazz = (HiClass) level.node;
+					if (clazz.generics != null) {
+						generic = clazz.generics.getGeneric(name);
+					}
+				}
+				level = level.parent;
+			}
+			if (generic != null) {
+				generic.clazz.init(CompileClassContext.this);
+				return generic.clazz;
+			}
+			if (parent != null) {
+				return parent.resolveGeneric(name);
 			}
 			return null;
 		}

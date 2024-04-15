@@ -38,7 +38,7 @@ public class NodeMainWrapper extends HiNode {
 		}
 		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
-			mainMethod = new HiMethod(rootClass, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), Type.getPrimitiveType("void"), "main", (NodeArgument[]) null, null, body);
+			mainMethod = new HiMethod(rootClass, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.STATIC), null, Type.voidType, "main", (NodeArgument[]) null, null, body);
 			if (body != null) {
 				mainMethod.setToken(body.getToken());
 			}

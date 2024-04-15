@@ -12,7 +12,6 @@ import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeAssert;
-import ru.nest.hiscript.ool.model.nodes.NodeByte;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
@@ -21,17 +20,14 @@ import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
-import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.tokenizer.AnnotationWordToken;
-import ru.nest.hiscript.tokenizer.ByteToken;
 import ru.nest.hiscript.tokenizer.CharToken;
 import ru.nest.hiscript.tokenizer.CommentToken;
 import ru.nest.hiscript.tokenizer.DoubleToken;
 import ru.nest.hiscript.tokenizer.FloatToken;
 import ru.nest.hiscript.tokenizer.IntToken;
 import ru.nest.hiscript.tokenizer.LongToken;
-import ru.nest.hiscript.tokenizer.ShortToken;
 import ru.nest.hiscript.tokenizer.StringToken;
 import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -47,7 +43,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParserUtil implements Words {
 	public static void skipComments(Tokenizer tokenizer) throws TokenizerException {
@@ -170,6 +168,7 @@ public class ParserUtil implements Words {
 
 	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException {
 		Type type = null;
+		tokenizer.start();
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
 			type = Type.getType(null, name);
@@ -183,7 +182,20 @@ public class ParserUtil implements Words {
 				}
 				type = Type.getType(type, name);
 			}
+
+			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
+				List<Type> parametersList = new ArrayList<>();
+				do {
+					parametersList.add(visitObjectType(tokenizer));
+				} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
+				if (visitSymbol(tokenizer, Symbols.GREATER) == -1) {
+					tokenizer.rollback();
+					return null;
+				}
+				type = Type.getParameterizedType(type, parametersList.toArray(new Type[parametersList.size()]));
+			}
 		}
+		tokenizer.commit();
 		return type;
 	}
 
@@ -208,14 +220,14 @@ public class ParserUtil implements Words {
 			tokenizer.nextToken();
 			return new NodeInt(token.getNumber(), token.hasSign(), token);
 			// TODO delete
-//		} else if (currentToken instanceof ShortToken) {
-//			ShortToken token = (ShortToken) currentToken;
-//			tokenizer.nextToken();
-//			return new NodeShort(token.getNumber(), token.hasSign(), token);
-//		} else if (currentToken instanceof ByteToken) {
-//			ByteToken token = (ByteToken) currentToken;
-//			tokenizer.nextToken();
-//			return NodeByte.getInstance(token.getNumber(), token.hasSign(), token);
+			//		} else if (currentToken instanceof ShortToken) {
+			//			ShortToken token = (ShortToken) currentToken;
+			//			tokenizer.nextToken();
+			//			return new NodeShort(token.getNumber(), token.hasSign(), token);
+			//		} else if (currentToken instanceof ByteToken) {
+			//			ByteToken token = (ByteToken) currentToken;
+			//			tokenizer.nextToken();
+			//			return NodeByte.getInstance(token.getNumber(), token.hasSign(), token);
 		}
 		return null;
 	}
@@ -279,6 +291,14 @@ public class ParserUtil implements Words {
 		if (visitSymbol(tokenizer, type) == -1) {
 			tokenizer.error("'" + SymbolToken.getSymbol(type) + "' is expected");
 		}
+	}
+
+	protected static int expectSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
+		int symbol = visitSymbol(tokenizer, types);
+		if (symbol == -1) {
+			tokenizer.error(Arrays.stream(types).mapToObj(type -> "'" + SymbolToken.getSymbol(type) + "'").collect(Collectors.joining(" or ")) + " is expected");
+		}
+		return symbol;
 	}
 
 	protected static int visitDimension(Tokenizer tokenizer) throws TokenizerException {

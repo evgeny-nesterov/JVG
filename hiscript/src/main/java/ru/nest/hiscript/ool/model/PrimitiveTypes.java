@@ -24,6 +24,8 @@ public interface PrimitiveTypes {
 
 	int VAR = 9;
 
+	int INVALID = 10;
+
 	Type[] primitiveTypes = {Type.charType, Type.byteType, Type.shortType, Type.intType, Type.longType, Type.floatType, Type.doubleType, Type.booleanType, Type.voidType, Type.varType};
 
 	HiClassPrimitive TYPE_CHAR = HiClassPrimitive.CHAR;

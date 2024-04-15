@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeNative;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
@@ -26,6 +28,8 @@ public class HiMethod implements HiNodeIF {
 	public NodeAnnotation[] annotations;
 
 	public Modifiers modifiers;
+
+	public NodeGenerics generics;
 
 	public Type returnType;
 
@@ -60,17 +64,17 @@ public class HiMethod implements HiNodeIF {
 
 	public HiMethod rewrittenMethod;
 
-	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
+	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, Type returnType, String name, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body) {
 		NodeArgument[] _arguments = null;
 		if (arguments != null) {
 			_arguments = new NodeArgument[arguments.size()];
 			arguments.toArray(_arguments);
 		}
-		set(clazz, annotations, modifiers, returnType, name, _arguments, throwsTypes, body);
+		set(clazz, annotations, modifiers, generics, returnType, name, _arguments, throwsTypes, body);
 	}
 
-	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
-		set(clazz, annotations, modifiers, returnType, name, arguments, throwsTypes, body);
+	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
+		set(clazz, annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
 	}
 
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
@@ -79,13 +83,14 @@ public class HiMethod implements HiNodeIF {
 	 * functional method
 	 */
 	public HiMethod(NodeArgument[] arguments, HiNode body) {
-		set(null, null, Modifiers.PUBLIC(), null, LAMBDA_METHOD_NAME, arguments, null, body);
+		set(null, null, Modifiers.PUBLIC(), null, null, LAMBDA_METHOD_NAME, arguments, null, body);
 	}
 
-	private void set(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
+	private void set(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers != null ? modifiers : new Modifiers();
+		this.generics = generics;
 		this.returnType = returnType;
 		this.name = name.intern();
 		this.arguments = arguments;
@@ -105,6 +110,23 @@ public class HiMethod implements HiNodeIF {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+
+		// generics
+		if (generics != null) {
+			if (generics.generics.length == 0) {
+				validationInfo.error("type parameter expected", generics.getToken());
+				valid = false;
+			} else {
+				valid &= generics.validate(validationInfo, ctx);
+			}
+			for (int i = 0; i < generics.generics.length; i++) {
+				NodeGeneric generic = generics.generics[i];
+				if (generic.isWildcard()) {
+					validationInfo.error("unexpected wildcard", generic.getToken());
+					valid = false;
+				}
+			}
+		}
 
 		// check arguments
 		if (arguments != null) {
@@ -262,8 +284,8 @@ public class HiMethod implements HiNodeIF {
 		lambdaClassName += lambdasCount.getAndIncrement();
 
 		Type[] interfaces = interfaceClass != null ? new Type[] {Type.getType(interfaceClass)} : null;
-		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
-		HiConstructor defaultConstructor = new HiConstructor(clazz, null, Modifiers.PUBLIC(), (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
+		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+		HiConstructor defaultConstructor = new HiConstructor(clazz, null, Modifiers.PUBLIC(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
 		clazz.modifiers = Modifiers.PUBLIC();
 		clazz.functionalMethod = this;
 		clazz.constructors = new HiConstructor[] {defaultConstructor};
@@ -394,6 +416,7 @@ public class HiMethod implements HiNodeIF {
 		os.writeToken(token);
 		os.writeShortArray(annotations);
 		modifiers.code(os);
+		os.writeNullable(generics);
 		os.writeType(returnType);
 		os.writeUTF(name);
 		os.writeByte(argCount);
@@ -407,13 +430,14 @@ public class HiMethod implements HiNodeIF {
 		Token token = os.readToken();
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
+		NodeGenerics generics = os.readNullable(NodeGenerics.class);
 		Type returnType = os.readType();
 		String name = os.readUTF();
 		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
 		HiNode body = os.readNullable(HiNode.class);
 
-		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, returnType, name, arguments, throwsTypes, body);
+		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
 		method.token = token;
 		return method;
 	}

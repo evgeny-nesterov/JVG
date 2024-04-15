@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassMix;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -17,6 +18,8 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 
@@ -48,6 +51,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public final static int CLASS_MIX = 8;
 
+	public final static int CLASS_GENERIC = 9;
+
 	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
 	public final static int CLASS_TYPE_INNER = 1; // static (NESTED) and not
@@ -60,6 +65,8 @@ public class HiClass implements HiNodeIF, HiType {
 	public static HiClass OBJECT_CLASS;
 
 	public static HiClass NUMBER_CLASS;
+
+	public static HiClass MOCK_CLASS = new HiClass(); // used in validations for invalid class names
 
 	public static String ROOT_CLASS_NAME = "@root";
 
@@ -117,7 +124,7 @@ public class HiClass implements HiNodeIF, HiType {
 			// object
 			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi"), false).get(0);
 			OBJECT_CLASS.superClassType = null;
-			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
+			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 			classes.add(OBJECT_CLASS);
 
@@ -177,25 +184,26 @@ public class HiClass implements HiNodeIF, HiType {
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(classLoader, classResolver, enclosingClass, name, type);
+		init(classLoader, classResolver, enclosingClass, name, null, type);
 	}
 
 	// for ClassParseRule and NewParseRule
-	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(classLoader, classResolver, enclosingClass, name, type);
+		init(classLoader, classResolver, enclosingClass, name, generics, type);
 	}
 
 	// for decode
-	private HiClass(Type superClassType, String name, int type) {
+	private HiClass(Type superClassType, String name, NodeGenerics generics, int type) {
 		this.superClassType = superClassType;
 		this.name = name.intern();
 		this.type = type;
+		this.generics = generics;
 		// init(...) is in decode
 	}
 
-	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, int type) {
+	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
 		this.enclosingClass = enclosingClass;
 		this.type = type;
 
@@ -208,6 +216,7 @@ public class HiClass implements HiNodeIF, HiType {
 		// intern name to optimize via a == b
 		this.name = name.intern();
 		this.fullName = getFullName(classLoader);
+		this.generics = generics;
 
 		if (classLoader == null) {
 			classLoader = userClassLoader;
@@ -399,6 +408,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public String name;
 
+	public NodeGenerics generics;
+
 	public String fullName;
 
 	public int type;
@@ -447,6 +458,23 @@ public class HiClass implements HiNodeIF, HiType {
 			if (classSameName != null && classSameName != this) {
 				validationInfo.error("duplicate class: " + name, token);
 				valid = false;
+			}
+		}
+
+		// generics
+		if (generics != null) {
+			if (generics.generics.length == 0) {
+				validationInfo.error("type parameter expected", generics.getToken());
+				valid = false;
+			} else {
+				valid &= generics.validate(validationInfo, ctx);
+			}
+			for (int i = 0; i < generics.generics.length; i++) {
+				NodeGeneric generic = generics.generics[i];
+				if (generic.isWildcard()) {
+					validationInfo.error("unexpected wildcard", generic.getToken());
+					valid = false;
+				}
 			}
 		}
 
@@ -729,8 +757,33 @@ public class HiClass implements HiNodeIF, HiType {
 			clazz = clazz.enclosingClass;
 		}
 
+		HiClassGeneric genericClass = getGenericClass(classResolver, name);
+		if (genericClass != null) {
+			return genericClass;
+		}
+
 		// registered classes
 		return forName(classResolver, name);
+	}
+
+	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {
+		NodeGeneric generic = getGeneric(classResolver, name);
+		if (generic != null) {
+			return generic.clazz;
+		}
+		return null;
+	}
+
+	public NodeGeneric getGeneric(ClassResolver classResolver, String name) {
+		if (generics != null) {
+			for (NodeGeneric generic : generics.generics) {
+				if (name.equals(generic.name)) {
+					generic.clazz.init(classResolver);
+					return generic;
+				}
+			}
+		}
+		return null;
 	}
 
 	public HiClass getInnerClass(ClassResolver classResolver, String name, boolean checkInheritance) {
@@ -797,6 +850,13 @@ public class HiClass implements HiNodeIF, HiType {
 				if (isInstanceof(c)) {
 					return true;
 				}
+			}
+		} else if (clazz.isGeneric()) {
+			HiClassGeneric genericClass = (HiClassGeneric) clazz;
+			if (genericClass.isSuper || genericClass.clazz.isFinal()) {
+				return isInstanceof(genericClass.clazz);
+			} else {
+				return false;
 			}
 		} else {
 			HiClass c = this;
@@ -1421,6 +1481,10 @@ public class HiClass implements HiNodeIF, HiType {
 		return false;
 	}
 
+	public boolean isGeneric() {
+		return false;
+	}
+
 	public HiClass getArrayType() {
 		return null;
 	}
@@ -1516,6 +1580,7 @@ public class HiClass implements HiNodeIF, HiType {
 		}
 
 		os.writeUTF(name);
+		os.writeNullable(generics);
 		os.writeByte(type);
 
 		// content
@@ -1578,30 +1643,26 @@ public class HiClass implements HiNodeIF, HiType {
 				outerClass = os.readClass();
 			} catch (HiNoClassException exc) {
 				initClass = false;
-				os.addClassLoadListener(new ClassLoadListener() {
-					@Override
-					public void classLoaded(HiClass clazz) {
-						classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].type);
-					}
-				}, exc.getIndex());
+				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
 			}
 		}
 
 		String name = os.readUTF();
+		NodeGenerics generics = os.readNullable(NodeGenerics.class);
 		int type = os.readByte();
 
 		HiClass clazz;
 		if (classType == CLASS_ENUM) {
 			clazz = new HiClassEnum(os.getClassLoader(), name, type);
 		} else if (classType == CLASS_RECORD) {
-			clazz = new HiClassRecord(os.getClassLoader(), name, type, null);
+			clazz = new HiClassRecord(os.getClassLoader(), name, generics, type, null);
 		} else {
-			clazz = new HiClass(superClassType, name, type);
+			clazz = new HiClass(superClassType, name, generics, type);
 		}
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(os.getClassLoader(), null, outerClass, name, type);
+			clazz.init(os.getClassLoader(), null, outerClass, name, generics, type);
 		}
 
 		HiClass oldClass = os.getHiClass();
@@ -1791,12 +1852,22 @@ public class HiClass implements HiNodeIF, HiType {
 				if (!src.isPrimitive()) {
 					if (src.getAutoboxedPrimitiveClass() != null) {
 						src = src.getAutoboxedPrimitiveClass();
+					} else if (src.isGeneric()) {
+						HiClassGeneric genericSrc = (HiClassGeneric) src;
+						return !genericSrc.isSuper && dst.getAutoboxClass() == genericSrc.clazz;
 					}
 				} else if (!dst.isPrimitive()) {
 					if (dst.getAutoboxedPrimitiveClass() != null) {
 						dst = dst.getAutoboxedPrimitiveClass();
 					} else if (dst == HiClass.NUMBER_CLASS) {
 						return src.isNumber();
+					} else if (dst.isGeneric()) {
+						HiClassGeneric genericDst = (HiClassGeneric) dst;
+						if (genericDst.isSuper) {
+							return genericDst.clazz.isInstanceof(src.getAutoboxClass());
+						} else {
+							return src.getAutoboxClass().isInstanceof(genericDst.clazz);
+						}
 					}
 				}
 			}
@@ -1818,6 +1889,15 @@ public class HiClass implements HiNodeIF, HiType {
 
 		if (dst == HiClass.OBJECT_CLASS) {
 			return true;
+		}
+
+		if (dst.isGeneric()) {
+			HiClassGeneric genericDst = (HiClassGeneric) dst;
+			if (genericDst.isSuper) {
+				return genericDst.clazz.isInstanceof(src);
+			} else {
+				return src.isInstanceof(genericDst.clazz);
+			}
 		}
 
 		if (src.isArray() || dst.isArray()) {

@@ -66,7 +66,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);

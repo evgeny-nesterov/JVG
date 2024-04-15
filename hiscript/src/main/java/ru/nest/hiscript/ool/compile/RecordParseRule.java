@@ -16,6 +16,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
@@ -53,6 +54,8 @@ public class RecordParseRule extends ParserUtil {
 				tokenizer.error("record name is expected");
 			}
 
+			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 			List<NodeArgument> arguments = new ArrayList<>();
@@ -71,9 +74,9 @@ public class RecordParseRule extends ParserUtil {
 				hasContent = true;
 			}
 
-			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, ctx.classType, ctx);
+			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, generics, ctx.classType, ctx);
 			record.annotations = annotatedModifiers.getAnnotations();
-			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), arguments, null, null, null, HiConstructor.BodyConstructorType.NONE);
+			record.defaultConstructor = new HiConstructor(record, null, Modifiers.PUBLIC(), null, arguments, null, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();
 			record.defaultConstructor.body = defaultConstructorBody;
 
@@ -87,7 +90,7 @@ public class RecordParseRule extends ParserUtil {
 					getMethodName += argument.getVariableName().substring(1);
 				}
 				HiNode getMethodBody = new NodeBlock(new NodeReturn(new NodeIdentifier(argument.getVariableName(), 0)));
-				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
+				HiMethod getMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), null, argument.getType(), getMethodName, (NodeArgument[]) null, null, getMethodBody);
 				getMethod.setToken(argument.getToken());
 				ctx.addMethod(getMethod);
 
@@ -100,7 +103,7 @@ public class RecordParseRule extends ParserUtil {
 				setExpression.setToken(argument.getToken());
 				// TODO support set methods?
 				HiNode setMethodBody = new NodeBlock(setExpression);
-				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
+				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), null, Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
 				setMethod.setToken(argument.getToken());
 				ctx.addMethod(setMethod);
 
@@ -111,12 +114,9 @@ public class RecordParseRule extends ParserUtil {
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
 
 			if (hasContent) {
-				ClassParseRule.getInstance().visitContent(tokenizer, ctx, new ParseVisitor() {
-					@Override
-					public boolean visit(Tokenizer tokenizer, CompileClassContext ctx) {
-						// TODO parse specific content
-						return false;
-					}
+				ClassParseRule.getInstance().visitContent(tokenizer, ctx, (tokenizer1, ctx1) -> {
+					// TODO parse specific content
+					return false;
 				});
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 			} else {

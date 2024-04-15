@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -52,6 +53,8 @@ public class ClassParseRule extends ParserUtil {
 				tokenizer.error("class name is expected");
 				className = "";
 			}
+
+			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 
 			// parse 'extends'
 			List<Type> superClassesList = null;
@@ -106,7 +109,7 @@ public class ClassParseRule extends ParserUtil {
 					tokenizer.error("interface cannot implements another interfaces");
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
 			} else {
 				Type superClassType = superClassesList != null ? superClassesList.get(0) : null;
 				if (superClassesList != null && superClassesList.size() > 1) {
@@ -119,7 +122,7 @@ public class ClassParseRule extends ParserUtil {
 					interfacesList.toArray(interfaces);
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
 			}
 			ctx.clazz.isInterface = isInterface;
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
@@ -141,7 +144,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (ctx.constructors == null && !ctx.clazz.isInterface) {
-			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), null, (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
 			ctx.addConstructor(defaultConstructor);
 		}
 
@@ -216,6 +219,8 @@ public class ClassParseRule extends ParserUtil {
 				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE);
 				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
 
+				NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
 				visitArgumentsDefinitions(tokenizer, arguments, ctx);
@@ -265,7 +270,7 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				ctx.exit();
 
-				HiConstructor constructor = new HiConstructor(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
+				HiConstructor constructor = new HiConstructor(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
 				constructor.setToken(tokenizer.getBlockToken(startToken));
 				return constructor;
 			}
@@ -281,10 +286,11 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		Type type = visitType(tokenizer, true);
 		if (type == null) {
 			if (visitWord(Words.VOID, tokenizer) != null) {
-				type = Type.getPrimitiveType("void");
+				type = Type.voidType;
 			}
 		} else {
 			int dimension = visitDimension(tokenizer);
@@ -328,7 +334,7 @@ public class ClassParseRule extends ParserUtil {
 
 					ctx.exit();
 
-					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), modifiers, type, name, arguments, exceptionTypes, body);
+					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), modifiers, generics, type, name, arguments, exceptionTypes, body);
 					method.setToken(tokenizer.getBlockToken(startToken));
 					return method;
 				}

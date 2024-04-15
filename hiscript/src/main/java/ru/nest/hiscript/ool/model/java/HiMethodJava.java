@@ -20,11 +20,11 @@ public class HiMethodJava extends HiMethod {
 	public Method method;
 
 	private HiMethodJava() {
-		super(null, null, null, null, "null", (NodeArgument[]) null, null, null);
+		super(null, null, null, null, null, "null", (NodeArgument[]) null, null, null);
 	}
 
 	public HiMethodJava(ClassResolver classResolver, HiClassJava clazz, Method method, String name) {
-		super(clazz, null, null, null, name, (NodeArgument[]) null, null, null);
+		super(clazz, null, null, null, null, name, (NodeArgument[]) null, null, null);
 		this.method = method;
 
 		Class[] argJavaClasses = method.getParameterTypes();

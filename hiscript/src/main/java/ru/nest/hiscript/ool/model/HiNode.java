@@ -30,6 +30,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeGetClass;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeIf;
@@ -161,6 +162,8 @@ public abstract class HiNode implements HiNodeIF {
 	public final static byte TYPE_METHOD_REFERENCE = 48;
 
 	public final static byte TYPE_GET_CLASS = 49;
+
+	public final static byte TYPE_GENERICS = 50;
 
 	public HiNode(String name, int type, boolean isStatement) {
 		this(name, type, null, isStatement);
@@ -474,6 +477,9 @@ public abstract class HiNode implements HiNodeIF {
 				break;
 			case TYPE_GET_CLASS:
 				node = NodeGetClass.decode(os);
+				break;
+			case TYPE_GENERICS:
+				node = NodeGenerics.decode(os);
 				break;
 		}
 		if (node != null) {

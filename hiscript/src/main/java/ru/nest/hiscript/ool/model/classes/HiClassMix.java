@@ -26,8 +26,8 @@ public class HiClassMix extends HiClass {
 
 	@Override
 	public void init(ClassResolver classResolver) {
-		for (HiClass clazz : classes) {
-			clazz.init(classResolver);
+		for (HiClass c : classes) {
+			c.init(classResolver);
 		}
 	}
 

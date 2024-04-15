@@ -10,6 +10,8 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -40,10 +42,11 @@ public class HiConstructor implements HiNodeIF {
 		}
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
+		this.generics = generics;
 
 		if (arguments != null) {
 			this.arguments = new NodeArgument[arguments.size()];
@@ -56,10 +59,11 @@ public class HiConstructor implements HiNodeIF {
 		this.bodyConstructorType = bodyConstructorType;
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
+		this.generics = generics;
 		this.arguments = arguments;
 		this.throwsTypes = throwsTypes;
 		this.body = body;
@@ -70,6 +74,8 @@ public class HiConstructor implements HiNodeIF {
 	public NodeAnnotation[] annotations;
 
 	public Modifiers modifiers;
+
+	public NodeGenerics generics;
 
 	public HiClass[] argClasses;
 
@@ -106,6 +112,21 @@ public class HiConstructor implements HiNodeIF {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+		if (generics != null) {
+			if (generics.generics.length == 0) {
+				validationInfo.error("type parameter expected", generics.getToken());
+				valid = false;
+			} else {
+				valid &= generics.validate(validationInfo, ctx);
+			}
+			for (int i = 0; i < generics.generics.length; i++) {
+				NodeGeneric generic = generics.generics[i];
+				if (generic.isWildcard()) {
+					validationInfo.error("unexpected wildcard", generic.getToken());
+					valid = false;
+				}
+			}
+		}
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);
@@ -328,6 +349,7 @@ public class HiConstructor implements HiNodeIF {
 		os.writeToken(token);
 		os.writeShortArray(annotations);
 		modifiers.code(os);
+		os.writeNullable(generics);
 		os.writeByte(arguments != null ? arguments.length : 0);
 		os.writeNullable(arguments);
 		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
@@ -341,13 +363,14 @@ public class HiConstructor implements HiNodeIF {
 		Token token = os.readToken();
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
+		NodeGenerics generics = os.readNullable(NodeGenerics.class);
 		NodeArgument[] arguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
 		Type[] throwsTypes = os.readNullableArray(Type.class, os.readByte());
 		HiNode body = os.readNullable(HiNode.class);
 		NodeConstructor bodyConstructor = (NodeConstructor) os.readNullable(HiNode.class);
 		BodyConstructorType constructorType = BodyConstructorType.get(os.readByte());
 
-		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, arguments, throwsTypes, body, bodyConstructor, constructorType);
+		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
 		constructor.token = token;
 		return constructor;
 	}
