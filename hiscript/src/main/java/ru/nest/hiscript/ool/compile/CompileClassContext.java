@@ -768,6 +768,11 @@ public class CompileClassContext implements ClassResolver {
 		return false;
 	}
 
+	public HiClass resolveGenericClass(HiClassGeneric genericClass) {
+		// TODO
+		return genericClass.clazz;
+	}
+
 	public String getTokenText(Token token) {
 		return token != null ? tokenizer.getText(token) : null;
 	}

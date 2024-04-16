@@ -31,6 +31,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 			}
 
 			List<NodeGeneric> generics = new ArrayList<>();
+			int index = 0;
 			do {
 				startToken = startToken(tokenizer);
 				String name;
@@ -54,7 +55,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 					isSuper = false;
 					type = Type.objectType;
 				}
-				NodeGeneric generic = new NodeGeneric(name, isSuper, type);
+				NodeGeneric generic = new NodeGeneric(name, isSuper, type, index++);
 				generic.setToken(tokenizer.getBlockToken(startToken));
 				generics.add(generic);
 			} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);

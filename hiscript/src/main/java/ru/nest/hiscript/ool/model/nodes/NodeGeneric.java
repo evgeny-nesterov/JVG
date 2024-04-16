@@ -11,11 +11,12 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeGeneric extends HiNode {
-	public NodeGeneric(String name, boolean isSuper, Type type) {
+	public NodeGeneric(String name, boolean isSuper, Type type, int index) {
 		super("generic", TYPE_GENERICS, false);
 		this.name = name;
 		this.isSuper = isSuper;
 		this.type = type;
+		this.index = index;
 	}
 
 	public final String name;
@@ -23,6 +24,15 @@ public class NodeGeneric extends HiNode {
 	public final boolean isSuper;
 
 	public final Type type;
+
+	public int index;
+
+	/**
+	 * RuntimeContext.METHOD
+	 * RuntimeContext.CONSTRUCTOR
+	 * RuntimeContext.STATIC_CLASS
+	 */
+	public int sourceType;
 
 	public HiClassGeneric clazz;
 
@@ -33,7 +43,7 @@ public class NodeGeneric extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass typeClass = type.getClass(ctx);
-		clazz = new HiClassGeneric(name, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, isSuper);
+		clazz = new HiClassGeneric(name, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, isSuper, sourceType, index);
 		return typeClass != null;
 	}
 
@@ -47,9 +57,13 @@ public class NodeGeneric extends HiNode {
 		os.writeNullableUTF(name);
 		os.writeBoolean(isSuper);
 		os.writeType(type);
+		os.writeInt(index);
+		os.writeInt(sourceType);
 	}
 
 	public static NodeGeneric decode(DecodeContext os) throws IOException {
-		return new NodeGeneric(os.readNullableUTF(), os.readBoolean(), os.readType());
+		NodeGeneric node = new NodeGeneric(os.readNullableUTF(), os.readBoolean(), os.readType(), os.readInt());
+		node.sourceType = os.readInt();
+		return node;
 	}
 }

@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -386,6 +387,63 @@ public class HiMethod implements HiNodeIF {
 			}
 			body.execute(ctx);
 		}
+	}
+
+	public HiClass getReturnClass(ClassResolver classResolver, HiClass invocationClass, HiClass[] argumentsClasses) {
+		if (returnClass != null && returnClass.isGeneric()) {
+			HiClassGeneric returnGenericClass = (HiClassGeneric) returnClass;
+			if (generics != null && argClasses.length > 0) {
+				for (int i = 0; i < argClasses.length; i++) {
+					HiClass argClass = argClasses[i];
+					if (argClass == returnGenericClass) {
+						HiClass actualClass = argumentsClasses[i];
+						return actualClass;
+					}
+				}
+			}
+			return invocationClass.resolveGenericClass(classResolver, clazz, returnGenericClass);
+		}
+		return returnClass;
+	}
+
+	// TODO delete
+	public HiClass resolveReturnClass(ClassResolver classResolver, HiClass invocationClass) {
+		if (returnClass.isGeneric()) {
+			HiClassGeneric returnGenericClass = (HiClassGeneric) returnClass;
+			if (invocationClass != null) {
+				while (invocationClass != clazz) {
+					if (clazz.generics != null) {
+						HiClassGeneric foundGenericClass = clazz.generics.getGenericClass(classResolver, returnGenericClass.name);
+						if (foundGenericClass != null) {
+							return foundGenericClass.clazz;
+						}
+					}
+					invocationClass = invocationClass.superClass;
+				}
+			}
+
+			if (generics != null) {
+				HiClassGeneric foundGenericClass = generics.getGenericClass(classResolver, returnGenericClass.name);
+				if (foundGenericClass != null) {
+					return foundGenericClass.clazz;
+				}
+
+				if (clazz.generics != null) {
+					foundGenericClass = clazz.generics.getGenericClass(classResolver, returnGenericClass.name);
+					if (foundGenericClass != null) {
+						return foundGenericClass.clazz;
+					}
+				}
+
+				if (rewrittenMethod != null) {
+					HiClass foundClass = rewrittenMethod.resolveReturnClass(classResolver, null);
+					if (foundClass != null) {
+						return foundClass;
+					}
+				}
+			}
+		}
+		return returnClass;
 	}
 
 	@Override

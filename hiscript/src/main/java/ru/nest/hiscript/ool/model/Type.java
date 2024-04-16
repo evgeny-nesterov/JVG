@@ -182,7 +182,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	private final boolean primitive;
 
-	private Type[] parameters;
+	public Type[] parameters;
 
 	public boolean isPrimitive() {
 		return primitive;

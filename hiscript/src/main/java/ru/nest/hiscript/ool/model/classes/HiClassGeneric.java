@@ -10,10 +10,16 @@ public class HiClassGeneric extends HiClass {
 
 	public boolean isSuper;
 
-	public HiClassGeneric(String name, HiClass clazz, boolean isSuper) {
+	public int sourceType;
+
+	public int index;
+
+	public HiClassGeneric(String name, HiClass clazz, boolean isSuper, int sourceType, int index) {
 		this.name = name;
 		this.clazz = clazz;
 		this.isSuper = isSuper;
+		this.sourceType = sourceType;
+		this.index = index;
 		this.type = CLASS_GENERIC;
 		this.fullName = name;
 	}

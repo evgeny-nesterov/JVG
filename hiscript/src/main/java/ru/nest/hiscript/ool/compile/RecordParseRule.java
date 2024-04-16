@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -55,6 +56,9 @@ public class RecordParseRule extends ParserUtil {
 			}
 
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+			if (generics != null) {
+				generics.setSourceType(RuntimeContext.STATIC_CLASS);
+			}
 
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 

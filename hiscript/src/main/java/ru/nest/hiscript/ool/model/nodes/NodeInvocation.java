@@ -65,8 +65,8 @@ public class NodeInvocation extends HiNode {
 		if (invocationClass != null) {
 			method = invocationClass.searchMethod(ctx, name, argumentsClasses);
 			if (method != null) {
-				ctx.nodeValueType.enclosingClass = method.returnClass;
-				return method.returnClass;
+				ctx.nodeValueType.enclosingClass = method.getReturnClass(ctx, invocationClass, argumentsClasses);
+				return ctx.nodeValueType.enclosingClass;
 			}
 		} else {
 			while (ctx != null) {

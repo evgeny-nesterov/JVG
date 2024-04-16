@@ -1,8 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -15,6 +17,23 @@ public class NodeGenerics extends HiNode {
 	}
 
 	public final NodeGeneric[] generics;
+
+	public void setSourceType(int sourceType) {
+		if (generics != null) {
+			for (NodeGeneric generic : generics) {
+				generic.sourceType = sourceType;
+			}
+		}
+	}
+
+	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {
+		NodeGeneric generic = getGeneric(name);
+		if (generic != null) {
+			generic.clazz.init(classResolver);
+			return generic.clazz;
+		}
+		return null;
+	}
 
 	public NodeGeneric getGeneric(String name) {
 		for (int i = 0; i < generics.length; i++) {

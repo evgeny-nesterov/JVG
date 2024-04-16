@@ -767,21 +767,8 @@ public class HiClass implements HiNodeIF, HiType {
 	}
 
 	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {
-		NodeGeneric generic = getGeneric(classResolver, name);
-		if (generic != null) {
-			return generic.clazz;
-		}
-		return null;
-	}
-
-	public NodeGeneric getGeneric(ClassResolver classResolver, String name) {
 		if (generics != null) {
-			for (NodeGeneric generic : generics.generics) {
-				if (name.equals(generic.name)) {
-					generic.clazz.init(classResolver);
-					return generic;
-				}
-			}
+			return generics.getGenericClass(classResolver, name);
 		}
 		return null;
 	}
@@ -1405,6 +1392,21 @@ public class HiClass implements HiNodeIF, HiType {
 				}
 		}
 		return null;
+	}
+
+	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass srcClass, HiClassGeneric genericClass) {
+		if (this == srcClass || genericClass.sourceType != RuntimeContext.STATIC_CLASS) {
+			return genericClass;
+		}
+		HiClass superClass = this.superClass;
+		while (superClass != srcClass) {
+			superClass = superClass.superClass;
+		}
+		if (superClassType != null && superClassType.parameters != null) {
+			Type definedGenericType = superClassType.parameters[genericClass.index];
+			return definedGenericType.getClass(classResolver);
+		}
+		return genericClass;
 	}
 
 	public boolean isPrimitive() {

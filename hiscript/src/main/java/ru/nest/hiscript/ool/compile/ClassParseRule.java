@@ -55,6 +55,9 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+			if (generics != null) {
+				generics.setSourceType(RuntimeContext.STATIC_CLASS);
+			}
 
 			// parse 'extends'
 			List<Type> superClassesList = null;
@@ -220,6 +223,9 @@ public class ClassParseRule extends ParserUtil {
 				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
 
 				NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+				if (generics != null) {
+					generics.setSourceType(RuntimeContext.CONSTRUCTOR);
+				}
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
@@ -286,7 +292,12 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+		if (generics != null) {
+			generics.setSourceType(RuntimeContext.METHOD);
+		}
+
 		Type type = visitType(tokenizer, true);
 		if (type == null) {
 			if (visitWord(Words.VOID, tokenizer) != null) {

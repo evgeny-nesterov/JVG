@@ -37,7 +37,7 @@ public class TestGenerics extends HiTest {
 	@Test
 	public void testMethods() {
 		 assertSuccessSerialize("class A{<O> void m() {}}");
-		// assertSuccessSerialize("class A{<O> O m(O x) {return x;}} assert new A().m(123) == 123;");
-		// assertSuccessSerialize("class A{<O> O m(O x) {return x;}} class B extends A<Integer>{} assert new B().m(123) == 123;");
+		 assertSuccessSerialize("class A{<O> O m(O x) {return x;}} assert new A().m(123) == 123;");
+		 assertSuccessSerialize("class A<O>{O m(O x) {return x;}} class B extends A<Integer>{} assert new B().m(123) == 123;");
 	}
 }
