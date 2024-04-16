@@ -393,6 +393,7 @@ public class HiMethod implements HiNodeIF {
 		return resolveGenericClass(classResolver, returnClass, invocationClass, argumentsClasses);
 	}
 
+	// generic
 	public HiClass resolveGenericClassByArgument(HiClass clazz, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
@@ -412,6 +413,7 @@ public class HiMethod implements HiNodeIF {
 		return clazz;
 	}
 
+	// generic
 	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass clazz, HiClass invocationClass, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClass resolvedClass = resolveGenericClassByArgument(clazz, invokeArgumentsClasses);

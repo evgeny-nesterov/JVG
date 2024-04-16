@@ -67,6 +67,7 @@ public class OperationInvocation extends BinaryOperation {
 			ctx.exit();
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
 
+			// generic
 			HiClass clazz = node2.type;
 			if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
 				HiClassGeneric genericClass = (HiClassGeneric) clazz;
@@ -217,6 +218,7 @@ public class OperationInvocation extends BinaryOperation {
 		if (field != null) {
 			v1.valueType = Value.VALUE;
 			v1.type = field.getClass(ctx);
+			// generic
 			if (v1.type.isGeneric()) {
 				v1.type = clazz.resolveGenericClass(ctx, (HiClassGeneric) v1.type);
 			}

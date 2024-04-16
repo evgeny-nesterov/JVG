@@ -1395,6 +1395,7 @@ public class HiClass implements HiNodeIF, HiType {
 		return null;
 	}
 
+	// generic
 	public HiClass resolveGenericClass(ClassResolver classResolver, HiClassGeneric genericClass) {
 		HiClass srcClass = genericClass.sourceClass;
 		HiClass enclosingClass = this;
@@ -1870,6 +1871,7 @@ public class HiClass implements HiNodeIF, HiType {
 
 		if (src.isPrimitive() || dst.isPrimitive()) {
 			// autobox
+			// generic
 			if (isAutobox) {
 				if (!src.isPrimitive()) {
 					if (src.getAutoboxedPrimitiveClass() != null) {
@@ -1913,6 +1915,7 @@ public class HiClass implements HiNodeIF, HiType {
 			return true;
 		}
 
+		// generic
 		if (dst.isGeneric()) {
 			HiClassGeneric genericDst = (HiClassGeneric) dst;
 			if (genericDst.isSuper) {
