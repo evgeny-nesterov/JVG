@@ -3,10 +3,12 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -34,22 +36,35 @@ public class NewParseRule extends ParseRule<HiNode> {
 			if (type == null) {
 				tokenizer.error("identifier is expected");
 			}
+			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+			if (generics != null) {
+				generics.setSourceType(RuntimeContext.STATIC_CLASS);
+			}
 
-			int brace_type = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
+			int braceType = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
 			HiNode node = null;
-			switch (brace_type) {
+			switch (braceType) {
 				case Symbols.PARENTHESES_LEFT:
+					// new Type<generics>(arg1, ...)
 					if (type.isPrimitive()) {
-						tokenizer.error("'[' expected");
+						tokenizer.error("'[' expected"); // primitive array expected
 					}
-					node = visitNewObject(tokenizer, type, ctx, startToken);
+					node = visitNewObject(tokenizer, type, generics, ctx, startToken);
 					break;
 
 				case Symbols.SQUARE_BRACES_LEFT:
+					// new Type[size1][size2]...[]...
+					if (generics != null) {
+						tokenizer.error("generic array creation", generics.getToken());
+					}
 					node = visitNewArray(tokenizer, type, ctx);
 					break;
 
 				case Symbols.MASSIVE:
+					// new Type[]...[]{{...},...}
+					if (generics != null) {
+						tokenizer.error("generic array creation", generics.getToken());
+					}
 					node = visitNewArrayValue(tokenizer, type, ctx);
 					break;
 			}
@@ -59,14 +74,14 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	// new <type>(<arguments>) {<body>}
-	private HiNode visitNewObject(Tokenizer tokenizer, Type type, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
+	private HiNode visitNewObject(Tokenizer tokenizer, Type type, NodeGenerics generics, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		HiNode[] arguments = visitArgumentsValues(tokenizer, ctx);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", generics, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);

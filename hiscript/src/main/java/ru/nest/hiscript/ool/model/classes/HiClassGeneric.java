@@ -14,13 +14,16 @@ public class HiClassGeneric extends HiClass {
 
 	public int index;
 
-	public HiClassGeneric(String name, HiClass clazz, boolean isSuper, int sourceType, int index) {
+	public HiClass sourceClass;
+
+	public HiClassGeneric(String name, HiClass clazz, boolean isSuper, int sourceType, int index, HiClass sourceClass) {
+		this.type = CLASS_GENERIC;
 		this.name = name;
 		this.clazz = clazz;
 		this.isSuper = isSuper;
 		this.sourceType = sourceType;
 		this.index = index;
-		this.type = CLASS_GENERIC;
+		this.sourceClass = sourceClass;
 		this.fullName = name;
 	}
 

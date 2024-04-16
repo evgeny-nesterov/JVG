@@ -189,6 +189,9 @@ public class HiObject {
 	public String toString(RuntimeContext ctx) {
 		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "toString");
+		if (method == null) {
+			throw new RuntimeException("method toString not found");
+		}
 		if (method.clazz.superClass == null) {
 			// is Object
 			return toStringNative();

@@ -128,6 +128,9 @@ public class HiClass implements HiNodeIF, HiType {
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 			classes.add(OBJECT_CLASS);
 
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
+
 			// TODO define classes initialization order automatically
 			NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0);
 			classes.add(NUMBER_CLASS);
@@ -147,8 +150,6 @@ public class HiClass implements HiNodeIF, HiType {
 				}
 			}
 
-			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
-			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Record.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"), false));
@@ -461,23 +462,6 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 		}
 
-		// generics
-		if (generics != null) {
-			if (generics.generics.length == 0) {
-				validationInfo.error("type parameter expected", generics.getToken());
-				valid = false;
-			} else {
-				valid &= generics.validate(validationInfo, ctx);
-			}
-			for (int i = 0; i < generics.generics.length; i++) {
-				NodeGeneric generic = generics.generics[i];
-				if (generic.isWildcard()) {
-					validationInfo.error("unexpected wildcard", generic.getToken());
-					valid = false;
-				}
-			}
-		}
-
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
@@ -516,6 +500,23 @@ public class HiClass implements HiNodeIF, HiType {
 		// init before enter
 		ctx.clazz = this;
 		init(ctx);
+
+		// generics (after init)
+		if (generics != null) {
+			if (generics.generics.length == 0) {
+				validationInfo.error("type parameter expected", generics.getToken());
+				valid = false;
+			} else {
+				valid &= generics.validate(validationInfo, ctx);
+			}
+			for (int i = 0; i < generics.generics.length; i++) {
+				NodeGeneric generic = generics.generics[i];
+				if (generic.isWildcard()) {
+					validationInfo.error("unexpected wildcard", generic.getToken());
+					valid = false;
+				}
+			}
+		}
 
 		ctx.enter(RuntimeContext.STATIC_CLASS, this);
 		valid &= HiNode.validateAnnotations(validationInfo, ctx, annotations);
@@ -1394,17 +1395,23 @@ public class HiClass implements HiNodeIF, HiType {
 		return null;
 	}
 
-	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass srcClass, HiClassGeneric genericClass) {
+	public HiClass resolveGenericClass(ClassResolver classResolver, HiClassGeneric genericClass) {
+		HiClass srcClass = genericClass.sourceClass;
 		if (this == srcClass || genericClass.sourceType != RuntimeContext.STATIC_CLASS) {
 			return genericClass;
 		}
-		HiClass superClass = this.superClass;
-		while (superClass != srcClass) {
-			superClass = superClass.superClass;
+		HiClass extendsClass = this;
+		while (extendsClass.superClass != srcClass) {
+			extendsClass = extendsClass.superClass;
 		}
-		if (superClassType != null && superClassType.parameters != null) {
-			Type definedGenericType = superClassType.parameters[genericClass.index];
-			return definedGenericType.getClass(classResolver);
+		if (extendsClass.superClassType != null && extendsClass.superClassType.parameters != null) {
+			Type definedGenericType = extendsClass.superClassType.parameters[genericClass.index];
+			HiClassGeneric rewrittenGenericClass = extendsClass.getGenericClass(classResolver, definedGenericType.name);
+			if (rewrittenGenericClass != null) {
+				return rewrittenGenericClass.clazz;
+			} else {
+				return definedGenericType.getClass(classResolver);
+			}
 		}
 		return genericClass;
 	}

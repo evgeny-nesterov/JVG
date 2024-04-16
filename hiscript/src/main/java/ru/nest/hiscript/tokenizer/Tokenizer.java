@@ -136,7 +136,19 @@ public class Tokenizer {
 		return c == ' ' || c == '\t' || c == '\r';
 	}
 
+	private int repeatCount;
+
+	public void repeat(SymbolToken token, int repeatCount) throws TokenizerException {
+		this.currentToken = token;
+		this.repeatCount = repeatCount;
+	}
+
 	public Token nextToken() throws TokenizerException {
+		if (repeatCount > 0) {
+			repeatCount--;
+			return currentToken;
+		}
+
 		if (offset == -1) {
 			next();
 		}

@@ -26,7 +26,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 	@Override
 	public NodeGenerics visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
-			if (visitSymbol(tokenizer, Symbols.GREATER) != -1) {
+			if (visitGreater(tokenizer, false)) {
 				return new NodeGenerics(new NodeGeneric[0]);
 			}
 
@@ -46,10 +46,13 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 				int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
 				if (extendsType != -1) {
 					isSuper = extendsType == Words.SUPER;
+					Token typeToken = startToken(tokenizer);
 					type = visitType(tokenizer, false);
 					if (type == null) {
-						tokenizer.error("identifier is expected");
+						tokenizer.error("identifier is expected", typeToken);
 						type = Type.invalidType;
+					} else if (type.isPrimitive() || type.isArray()) {
+						tokenizer.error("invalid type", typeToken);
 					}
 				} else {
 					isSuper = false;
@@ -60,7 +63,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 				generics.add(generic);
 			} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
 
-			expectSymbol(tokenizer, Symbols.GREATER);
+			visitGreater(tokenizer, true);
 			return new NodeGenerics(generics.toArray(new NodeGeneric[generics.size()]));
 		}
 		return null;

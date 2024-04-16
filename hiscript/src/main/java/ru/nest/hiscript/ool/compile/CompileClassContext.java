@@ -122,6 +122,11 @@ public class CompileClassContext implements ClassResolver {
 		return compiler.getClassLoader();
 	}
 
+	@Override
+	public HiClass getCurrentClass() {
+		return clazz;
+	}
+
 	public void addEnum(HiEnumValue enumValue) {
 		if (enumValues == null) {
 			enumValues = new ArrayList<>(1);
@@ -659,6 +664,17 @@ public class CompileClassContext implements ClassResolver {
 					return terminateLevel;
 				}
 				terminateLevel = terminateLevel.parent;
+			}
+			return null;
+		}
+
+		public HiClass getCurrentStaticClass() {
+			CompileClassLevel level = this;
+			while (level != null) {
+				if (level.type == RuntimeContext.STATIC_CLASS) {
+					return (HiClass) level.node;
+				}
+				level = level.parent;
 			}
 			return null;
 		}

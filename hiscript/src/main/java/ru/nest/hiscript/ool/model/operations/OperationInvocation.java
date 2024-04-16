@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
@@ -205,13 +206,19 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		if (field != null) {
-			HiClass fieldType = field.getClass(ctx);
 			v1.valueType = Value.VALUE;
-			v1.type = fieldType;
+			v1.type = field.getClass(ctx);
+			if (v1.type.isGeneric()) {
+				v1.type = clazz.resolveGenericClass(ctx, (HiClassGeneric) v1.type);
+			}
 
 			field.get(ctx, v1);
+			if (v1.type.isGeneric()) {
+				v1.type = clazz.resolveGenericClass(ctx, (HiClassGeneric) v1.type);
+			}
 
 			v1.valueType = Value.VARIABLE;
+			v1.name = name;
 			v1.variable = field;
 			return true;
 		} else if (clazz != null) {

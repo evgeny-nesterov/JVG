@@ -34,6 +34,8 @@ public class NodeGeneric extends HiNode {
 	 */
 	public int sourceType;
 
+	public HiClass sourceClass;
+
 	public HiClassGeneric clazz;
 
 	public boolean isWildcard() {
@@ -43,7 +45,7 @@ public class NodeGeneric extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass typeClass = type.getClass(ctx);
-		clazz = new HiClassGeneric(name, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, isSuper, sourceType, index);
+		clazz = new HiClassGeneric(name, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, isSuper, sourceType, index, sourceClass);
 		return typeClass != null;
 	}
 

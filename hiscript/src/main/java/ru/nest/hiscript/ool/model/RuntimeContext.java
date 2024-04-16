@@ -452,6 +452,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		return null;
 	}
 
+	@Override
 	public HiClass getCurrentClass() {
 		return level.clazz;
 	}

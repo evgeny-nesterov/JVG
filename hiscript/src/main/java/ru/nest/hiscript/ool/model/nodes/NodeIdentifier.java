@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -56,11 +57,14 @@ public class NodeIdentifier extends HiNode {
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			return clazz;
 		} else {
-			Object resolvedIdentifier = ctx.resolveIdentifier(name); // field priority is higher than class priority
+			Object resolvedIdentifier = this.resolvedIdentifier != null ? this.resolvedIdentifier : ctx.resolveIdentifier(name); // field priority is higher than class priority
 			if (resolvedIdentifier instanceof NodeVariable) {
 				HiNode resolvedValueVariable = (HiNode) resolvedIdentifier;
 				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
+				if (clazz.isGeneric()) {
+					clazz = ctx.level.enclosingClass.resolveGenericClass(ctx, (HiClassGeneric) clazz);
+				}
 				ctx.nodeValueType.enclosingClass = clazz;
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 				return clazz;
@@ -149,6 +153,10 @@ public class NodeIdentifier extends HiNode {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.type = field.getClass(ctx);
 			field.execute(ctx);
+			if (ctx.value.type.isGeneric()) {
+				HiClass objectClass = ctx.getCurrentObject().clazz;
+				ctx.value.type = objectClass.resolveGenericClass(ctx, (HiClassGeneric) ctx.value.type);
+			}
 
 			ctx.value.copyTo(value);
 			value.valueType = Value.VARIABLE;

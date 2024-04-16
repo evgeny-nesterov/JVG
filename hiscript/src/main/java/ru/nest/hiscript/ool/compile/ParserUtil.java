@@ -188,7 +188,7 @@ public class ParserUtil implements Words {
 				do {
 					parametersList.add(visitObjectType(tokenizer));
 				} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
-				if (visitSymbol(tokenizer, Symbols.GREATER) == -1) {
+				if (!visitGreater(tokenizer, false)) {
 					tokenizer.rollback();
 					return null;
 				}
@@ -254,6 +254,31 @@ public class ParserUtil implements Words {
 			return new NodeString(token.getString());
 		}
 		return null;
+	}
+
+	protected static boolean visitGreater(Tokenizer tokenizer, boolean expect) throws TokenizerException {
+		skipComments(tokenizer);
+
+		Token currentToken = tokenizer.currentToken();
+		if (currentToken instanceof SymbolToken) {
+			SymbolToken symbolToken = (SymbolToken) currentToken;
+			if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT) {
+				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 1);
+				tokenizer.nextToken();
+				return true;
+			} else if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT) {
+				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 2);
+				tokenizer.nextToken();
+				return true;
+			} else if (symbolToken.getType() == Symbols.GREATER) {
+				tokenizer.nextToken();
+				return true;
+			}
+		}
+		if (expect) {
+			tokenizer.error("'" + SymbolToken.getSymbol(Symbols.GREATER) + "' is expected");
+		}
+		return false;
 	}
 
 	protected static int visitSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
