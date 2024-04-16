@@ -66,7 +66,16 @@ public class OperationInvocation extends BinaryOperation {
 			}
 			ctx.exit();
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
-			return node2.type;
+
+			HiClass clazz = node2.type;
+			if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
+				HiClassGeneric genericClass = (HiClassGeneric) clazz;
+				HiClassGeneric genericEnclosingClass = (HiClassGeneric) enclosingClass;
+				if (genericClass.sourceClass == genericEnclosingClass.clazz) {
+					clazz = genericEnclosingClass.parametersClasses[genericClass.index];
+				}
+			}
+			return clazz;
 		}
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return null;

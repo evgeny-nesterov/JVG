@@ -90,8 +90,6 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public static String RUNTIME_EXCEPTION_CLASS_NAME = "RuntimeException";
 
-	private Token token;
-
 	public final static HiClassLoader systemClassLoader = new HiClassLoader("system");
 
 	public static HiClassLoader userClassLoader = new HiClassLoader("user", systemClassLoader);
@@ -100,12 +98,6 @@ public class HiClass implements HiNodeIF, HiType {
 		systemClassLoader.removeClassLoader(userClassLoader);
 		systemClassLoader.addClassLoader(classLoader);
 		userClassLoader = classLoader;
-	}
-
-	protected HiClassLoader classLoader;
-
-	public HiClassLoader getClassLoader() {
-		return classLoader;
 	}
 
 	static {
@@ -175,6 +167,52 @@ public class HiClass implements HiNodeIF, HiType {
 		}
 	}
 
+	// used to resolve super class in runtime after all classes will be loaded
+	public Type superClassType;
+
+	// used to resolve interfaces in runtime after all classes will be loaded
+	public Type[] interfaceTypes;
+
+	// main class properties
+	public Modifiers modifiers;
+
+	public HiClass superClass;
+
+	public HiClass[] interfaces;
+
+	public String name;
+
+	public NodeGenerics generics;
+
+	public String fullName;
+
+	public int type;
+
+	public HiClass enclosingClass;
+
+	public boolean isInterface = false;
+
+	// content
+	public NodeAnnotation[] annotations;
+
+	public HiField<?>[] fields;
+
+	public NodeInitializer[] initializers;
+
+	public HiConstructor[] constructors;
+
+	public HiMethod[] methods;
+
+	public HiMethod functionalMethod;
+
+	public HiClass[] innerClasses;
+
+	public Boolean valid;
+
+	public Token token;
+
+	public HiClassLoader classLoader;
+
 	// fox mix class
 	protected HiClass() {
 	}
@@ -215,7 +253,7 @@ public class HiClass implements HiNodeIF, HiType {
 		}
 
 		// intern name to optimize via a == b
-		this.name = name.intern();
+		this.name = (name != null ? name : "").intern();
 		this.fullName = getFullName(classLoader);
 		this.generics = generics;
 
@@ -394,47 +432,9 @@ public class HiClass implements HiNodeIF, HiType {
 		}
 	}
 
-	// used to resolve super class in runtime after all classes will be loaded
-	public Type superClassType;
-
-	// used to resolve interfaces in runtime after all classes will be loaded
-	public Type[] interfaceTypes;
-
-	// main class properties
-	public Modifiers modifiers;
-
-	public HiClass superClass;
-
-	public HiClass[] interfaces;
-
-	public String name;
-
-	public NodeGenerics generics;
-
-	public String fullName;
-
-	public int type;
-
-	public HiClass enclosingClass;
-
-	public boolean isInterface = false;
-
-	// content
-	public NodeAnnotation[] annotations;
-
-	public HiField<?>[] fields;
-
-	public NodeInitializer[] initializers;
-
-	public HiConstructor[] constructors;
-
-	public HiMethod[] methods;
-
-	public HiMethod functionalMethod;
-
-	public HiClass[] innerClasses;
-
-	public Boolean valid;
+	public HiClassLoader getClassLoader() {
+		return classLoader;
+	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -1397,10 +1397,19 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public HiClass resolveGenericClass(ClassResolver classResolver, HiClassGeneric genericClass) {
 		HiClass srcClass = genericClass.sourceClass;
-		if (this == srcClass || genericClass.sourceType != RuntimeContext.STATIC_CLASS) {
+		HiClass enclosingClass = this;
+		if (enclosingClass.isGeneric()) {
+			HiClassGeneric genericEnclosingClass = (HiClassGeneric) enclosingClass;
+			if (genericClass.sourceClass == genericEnclosingClass.clazz) {
+				return genericEnclosingClass.parametersClasses[genericClass.index];
+			} else {
+				enclosingClass = ((HiClassGeneric) enclosingClass).clazz;
+			}
+		}
+		if (enclosingClass == srcClass || genericClass.sourceType != RuntimeContext.STATIC_CLASS) {
 			return genericClass;
 		}
-		HiClass extendsClass = this;
+		HiClass extendsClass = enclosingClass;
 		while (extendsClass.superClass != srcClass) {
 			extendsClass = extendsClass.superClass;
 		}
@@ -1408,7 +1417,11 @@ public class HiClass implements HiNodeIF, HiType {
 			Type definedGenericType = extendsClass.superClassType.parameters[genericClass.index];
 			HiClassGeneric rewrittenGenericClass = extendsClass.getGenericClass(classResolver, definedGenericType.name);
 			if (rewrittenGenericClass != null) {
-				return rewrittenGenericClass.clazz;
+				if (rewrittenGenericClass.parametersClasses.length == 0) {
+					return rewrittenGenericClass.clazz;
+				} else {
+					return rewrittenGenericClass;
+				}
 			} else {
 				return definedGenericType.getClass(classResolver);
 			}

@@ -11,21 +11,21 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import java.io.IOException;
 
 public class NodeGeneric extends HiNode {
-	public NodeGeneric(String name, boolean isSuper, Type type, int index) {
+	public NodeGeneric(String genericName, boolean isSuper, Type genericType, int index) {
 		super("generic", TYPE_GENERICS, false);
-		this.name = name;
+		this.genericName = genericName;
 		this.isSuper = isSuper;
-		this.type = type;
+		this.genericType = genericType;
 		this.index = index;
 	}
 
-	public final String name;
+	public final String genericName;
 
 	public final boolean isSuper;
 
-	public final Type type;
+	public final Type genericType;
 
-	public int index;
+	public final int index;
 
 	/**
 	 * RuntimeContext.METHOD
@@ -38,14 +38,22 @@ public class NodeGeneric extends HiNode {
 
 	public HiClassGeneric clazz;
 
-	public boolean isWildcard() {
-		return name == null;
+	public HiClass[] parametersClasses;
+
+	public boolean  isWildcard() {
+		return genericName == null;
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass typeClass = type.getClass(ctx);
-		clazz = new HiClassGeneric(name, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, isSuper, sourceType, index, sourceClass);
+		HiClass typeClass = genericType.getClass(ctx);
+		parametersClasses = new HiClass[genericType.parameters != null ? genericType.parameters.length : 0];
+		for (int i = 0; i < parametersClasses.length; i++) {
+			Type parameter = genericType.parameters[i];
+			parametersClasses[i] = parameter.getClass(ctx);
+		}
+
+		clazz = new HiClassGeneric(genericName, genericType, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, parametersClasses, isSuper, sourceType, index, sourceClass, ctx);
 		return typeClass != null;
 	}
 
@@ -56,9 +64,9 @@ public class NodeGeneric extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeNullableUTF(name);
+		os.writeNullableUTF(genericName);
 		os.writeBoolean(isSuper);
-		os.writeType(type);
+		os.writeType(genericType);
 		os.writeInt(index);
 		os.writeInt(sourceType);
 	}

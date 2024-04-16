@@ -63,7 +63,8 @@ public class NodeIdentifier extends HiNode {
 				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
 				if (clazz.isGeneric()) {
-					clazz = ctx.level.enclosingClass.resolveGenericClass(ctx, (HiClassGeneric) clazz);
+					HiClass enclosingClass = ctx.level.enclosingClass != null ? ctx.level.enclosingClass : ctx.clazz;
+					clazz = enclosingClass.resolveGenericClass(ctx, (HiClassGeneric) clazz);
 				}
 				ctx.nodeValueType.enclosingClass = clazz;
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;

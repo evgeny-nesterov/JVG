@@ -3,10 +3,28 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class HiClassGeneric extends HiClass {
+	public HiClassGeneric(String genericName, Type genericType, HiClass clazz, HiClass[] parametersClasses, boolean isSuper, int sourceType, int index, HiClass sourceClass, ClassResolver classResolver) {
+		super(clazz.classLoader, Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
+		this.genericType = genericType;
+		this.clazz = clazz;
+		this.parametersClasses = parametersClasses;
+		this.isSuper = isSuper;
+		this.sourceType = sourceType;
+		this.index = index;
+		this.sourceClass = sourceClass;
+	}
+
+	public Type genericType;
+
 	public HiClass clazz;
+
+	public HiClass[] parametersClasses;
 
 	public boolean isSuper;
 
@@ -16,25 +34,29 @@ public class HiClassGeneric extends HiClass {
 
 	public HiClass sourceClass;
 
-	public HiClassGeneric(String name, HiClass clazz, boolean isSuper, int sourceType, int index, HiClass sourceClass) {
-		this.type = CLASS_GENERIC;
-		this.name = name;
-		this.clazz = clazz;
-		this.isSuper = isSuper;
-		this.sourceType = sourceType;
-		this.index = index;
-		this.sourceClass = sourceClass;
-		this.fullName = name;
-	}
-
 	@Override
 	public boolean isGeneric() {
 		return true;
 	}
 
 	@Override
+	public boolean isStatic() {
+		return false;
+	}
+
+	@Override
 	public void init(ClassResolver classResolver) {
 		clazz.init(classResolver);
+	}
+
+	@Override
+	public HiField<?> getField(ClassResolver classResolver, String name) {
+		return clazz.getField(classResolver, name);
+	}
+
+	@Override
+	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
+		return clazz.searchMethod(classResolver, name, argTypes);
 	}
 
 	@Override
@@ -48,11 +70,11 @@ public class HiClassGeneric extends HiClass {
 
 	@Override
 	protected boolean _validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return clazz.validate(validationInfo, ctx);
+		return true;
 	}
 
 	@Override
-	public boolean isStatic() {
-		return false;
+	public String toString() {
+		return super.toString() + (isSuper ? " super " : " extends ") + genericType;
 	}
 }

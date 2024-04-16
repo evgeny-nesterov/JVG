@@ -129,6 +129,11 @@ public class HiClassEnum extends HiClass {
 	}
 
 	@Override
+	public Class getJavaClass() {
+		return null;
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		code(os, CLASS_ENUM);
 		if (enumValues != null) {
@@ -143,10 +148,5 @@ public class HiClassEnum extends HiClass {
 		HiClassEnum enumClass = (HiClassEnum) HiClass.decodeObject(os, CLASS_ENUM);
 		enumClass.enumValues = os.readList(HiEnumValue.class, os.readShort());
 		return enumClass;
-	}
-
-	@Override
-	public Class getJavaClass() {
-		return null;
 	}
 }

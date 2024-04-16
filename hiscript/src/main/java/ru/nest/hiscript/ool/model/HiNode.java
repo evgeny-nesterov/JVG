@@ -501,7 +501,7 @@ public abstract class HiNode implements HiNodeIF {
 
 	public boolean expectBooleanValue(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass valueClass = getValueClass(validationInfo, ctx);
-		if (valueClass != HiClassPrimitive.BOOLEAN) {
+		if (valueClass == null || (valueClass != HiClassPrimitive.BOOLEAN && valueClass.getAutoboxedPrimitiveClass() != HiClassPrimitive.BOOLEAN)) {
 			validationInfo.error("boolean is expected", getToken());
 			return false;
 		}

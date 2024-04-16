@@ -39,7 +39,7 @@ public class NodeGenerics extends HiNode {
 	public NodeGeneric getGeneric(String name) {
 		for (int i = 0; i < generics.length; i++) {
 			NodeGeneric generic = generics[i];
-			if (name.equals(generic.name)) {
+			if (name.equals(generic.genericName)) {
 				return generic;
 			}
 		}
@@ -57,8 +57,8 @@ public class NodeGenerics extends HiNode {
 			if (!hasDuplicate) {
 				for (int j = i + 1; j < generics.length; j++) {
 					NodeGeneric generic2 = generics[j];
-					if (Objects.equals(generic.name, generic2.name)) {
-						validationInfo.error("duplicate type parameter: '" + generic.name + "'", generic2.getToken());
+					if (Objects.equals(generic.genericName, generic2.genericName)) {
+						validationInfo.error("duplicate type parameter: '" + generic.genericName + "'", generic2.getToken());
 						valid = false;
 						hasDuplicate = true;
 					}

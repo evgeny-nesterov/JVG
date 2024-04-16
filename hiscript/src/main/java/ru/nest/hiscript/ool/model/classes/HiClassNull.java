@@ -24,16 +24,6 @@ public class HiClassNull extends HiClass {
 	}
 
 	@Override
-	public void code(CodeContext os) throws IOException {
-		// write class type
-		os.writeByte(HiClass.CLASS_NULL);
-	}
-
-	public static HiClass decode(DecodeContext os) {
-		return NULL;
-	}
-
-	@Override
 	public Class getJavaClass() {
 		return null;
 	}
@@ -41,5 +31,15 @@ public class HiClassNull extends HiClass {
 	@Override
 	public boolean isInstanceof(HiClass clazz) {
 		return false;
+	}
+
+	@Override
+	public void code(CodeContext os) throws IOException {
+		// write class type
+		os.writeByte(HiClass.CLASS_NULL);
+	}
+
+	public static HiClass decode(DecodeContext os) {
+		return NULL;
 	}
 }
