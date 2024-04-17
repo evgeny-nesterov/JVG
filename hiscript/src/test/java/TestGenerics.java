@@ -20,6 +20,8 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O1,O2>{O1 o1; O2 o2;} class A1 extends A<Long,String>{}  class B<O extends A<Long,String>> extends A<Boolean, O>{} class C extends B<A1>{} " + //
 				"B<A<Long,String>> c = new C(); c.o1 = true; c.o2 = new A1(); c.o2.o1 = 1L; c.o2.o2 = \"abc\"; " + //
 				"assert c.o1; assert c.o2 instanceof A1; assert c.o2.o1 == 1L; assert c.o2.o2.equals(\"abc\");");
+		assertSuccessSerialize("class A<O extends HashMap<O, O>>{}");
+		assertSuccessSerialize("class A<O extends ArrayList<O>>{}");
 
 		// failures
 		assertFailCompile("class A<>{}");
@@ -35,7 +37,6 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<? extends Object>{}");
 		assertFailCompile("class A<? super Object>{}");
 		assertFailCompile("class A<O extends>{}");
-		// TODO assertFailCompile("class A<O extends O>{}"); // Cyclic inheritance involving 'O'
 		assertFailCompile("class A<O extends X>{}");
 		assertFailCompile("class A<O extends 1>{}");
 		assertFailCompile("class A<O extends true>{}");
@@ -43,6 +44,11 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O extends int>{}");
 		assertFailCompile("class A<O extends null>{}");
 		assertFailCompile("class A<O extends boolean>{}");
+
+		// cyclic
+		assertFailCompile("class A<O extends O>{}");
+		assertFailCompile("class A<O, X extends Y, Y extends Z, Z extends X>{}");
+		assertFailCompile("class A{<X extends Y, Y extends Z, Z extends X> X m(){}}");
 	}
 
 	@Test

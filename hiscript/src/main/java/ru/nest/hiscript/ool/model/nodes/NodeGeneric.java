@@ -19,7 +19,7 @@ public class NodeGeneric extends HiNode {
 		this.index = index;
 	}
 
-	public final String genericName;
+	public String genericName;
 
 	public final boolean isSuper;
 
@@ -40,13 +40,12 @@ public class NodeGeneric extends HiNode {
 
 	public HiClass[] parametersClasses;
 
-	public boolean  isWildcard() {
+	public boolean isWildcard() {
 		return genericName == null;
 	}
 
-	@Override
-	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass typeClass = genericType.getClass(ctx);
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx, boolean valid) {
+		HiClass typeClass = valid ? genericType.getClass(ctx) : HiClass.OBJECT_CLASS;
 		parametersClasses = new HiClass[genericType.parameters != null ? genericType.parameters.length : 0];
 		for (int i = 0; i < parametersClasses.length; i++) {
 			Type parameter = genericType.parameters[i];

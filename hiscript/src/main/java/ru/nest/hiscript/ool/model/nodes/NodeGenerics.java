@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class NodeGenerics extends HiNode {
@@ -46,14 +48,52 @@ public class NodeGenerics extends HiNode {
 		return null;
 	}
 
+	private boolean checkCyclic(NodeGeneric generic, List<String> processed, List<String> ignore) {
+		if (generic.genericName != null && generic.genericType != null && !ignore.contains(generic.genericName)) {
+			if (processed.contains(generic.genericName)) {
+				return false;
+			}
+			processed.add(generic.genericName);
+			for (NodeGeneric generic2 : generics) {
+				if (generic.genericType.name.equals(generic2.genericName)) {
+					if (!checkCyclic(generic2, processed, ignore)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private List<String> checkCyclic(ValidationInfo validationInfo) {
+		List<String> invalidGenerics = null;
+		List<String> ignore = new ArrayList<>();
+		for (NodeGeneric generic : generics) {
+			List<String> processed = new ArrayList<>();
+			if (!checkCyclic(generic, processed, ignore)) {
+				if (invalidGenerics == null) {
+					invalidGenerics = new ArrayList<>(1);
+				}
+				invalidGenerics.addAll(processed);
+				validationInfo.error("cyclic inheritance involving '" + generic.genericName + "'", generic.getToken());
+			}
+			ignore.addAll(processed);
+		}
+		return invalidGenerics;
+	}
+
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = true;
+
+		List<String> invalidGenerics = checkCyclic(validationInfo);
+		valid &= invalidGenerics == null || invalidGenerics.size() == 0;
+
 		boolean hasDuplicate = false;
 		for (int i = 0; i < generics.length; i++) {
 			NodeGeneric generic = generics[i];
 			generic.sourceClass = ctx.clazz;
-			valid &= generic.validate(validationInfo, ctx);
+			valid &= generic.validate(validationInfo, ctx, invalidGenerics == null || !invalidGenerics.contains(generic.genericName));
 			if (!hasDuplicate) {
 				for (int j = i + 1; j < generics.length; j++) {
 					NodeGeneric generic2 = generics[j];
