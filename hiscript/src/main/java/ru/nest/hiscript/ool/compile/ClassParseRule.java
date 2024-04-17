@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -56,7 +57,7 @@ public class ClassParseRule extends ParserUtil {
 
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
-				generics.setSourceType(RuntimeContext.STATIC_CLASS);
+				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
 			}
 
 			// parse 'extends'
@@ -224,7 +225,7 @@ public class ClassParseRule extends ParserUtil {
 
 				NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 				if (generics != null) {
-					generics.setSourceType(RuntimeContext.CONSTRUCTOR);
+					generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
 				}
 
 				// visit arguments
@@ -295,7 +296,7 @@ public class ClassParseRule extends ParserUtil {
 
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		if (generics != null) {
-			generics.setSourceType(RuntimeContext.METHOD);
+			generics.setSourceType(NodeGeneric.GenericSourceType.method);
 		}
 
 		Type type = visitType(tokenizer, true);

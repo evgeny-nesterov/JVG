@@ -125,6 +125,9 @@ public class HiMethod implements HiNodeIF {
 				if (generic.isWildcard()) {
 					validationInfo.error("unexpected wildcard", generic.getToken());
 					valid = false;
+				} else if (generic.isSuper) {
+					validationInfo.error("super is unsupported", generic.getToken());
+					valid = false;
 				}
 			}
 		}

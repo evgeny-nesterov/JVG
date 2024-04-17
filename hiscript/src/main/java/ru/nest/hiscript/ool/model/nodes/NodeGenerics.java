@@ -20,7 +20,7 @@ public class NodeGenerics extends HiNode {
 
 	public final NodeGeneric[] generics;
 
-	public void setSourceType(int sourceType) {
+	public void setSourceType(NodeGeneric.GenericSourceType sourceType) {
 		if (generics != null) {
 			for (NodeGeneric generic : generics) {
 				generic.sourceType = sourceType;
@@ -48,29 +48,35 @@ public class NodeGenerics extends HiNode {
 		return null;
 	}
 
-	private boolean checkCyclic(NodeGeneric generic, List<String> processed, List<String> ignore) {
-		if (generic.genericName != null && generic.genericType != null && !ignore.contains(generic.genericName)) {
-			if (processed.contains(generic.genericName)) {
-				return false;
-			}
-			processed.add(generic.genericName);
-			for (NodeGeneric generic2 : generics) {
-				if (generic.genericType.name.equals(generic2.genericName)) {
-					if (!checkCyclic(generic2, processed, ignore)) {
-						return false;
+	private boolean checkCyclic(NodeGeneric generic, List<String> processed, List<String> ignore, List<NodeGeneric> order) {
+		try {
+			if (generic.genericName != null && generic.genericType != null && !ignore.contains(generic.genericName)) {
+				if (processed.contains(generic.genericName)) {
+					return false;
+				}
+				processed.add(generic.genericName);
+				for (NodeGeneric generic2 : generics) {
+					if (generic.genericType.name.equals(generic2.genericName)) {
+						if (!checkCyclic(generic2, processed, ignore, order)) {
+							return false;
+						}
 					}
 				}
+			}
+		} finally {
+			if (!order.contains(generic)) {
+				order.add(generic);
 			}
 		}
 		return true;
 	}
 
-	private List<String> checkCyclic(ValidationInfo validationInfo) {
+	private List<String> checkCyclic(ValidationInfo validationInfo, List<NodeGeneric> order) {
 		List<String> invalidGenerics = null;
 		List<String> ignore = new ArrayList<>();
 		for (NodeGeneric generic : generics) {
 			List<String> processed = new ArrayList<>();
-			if (!checkCyclic(generic, processed, ignore)) {
+			if (!checkCyclic(generic, processed, ignore, order)) {
 				if (invalidGenerics == null) {
 					invalidGenerics = new ArrayList<>(1);
 				}
@@ -84,19 +90,23 @@ public class NodeGenerics extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = true;
+		if (generics.length == 0) {
+			return true;
+		}
 
-		List<String> invalidGenerics = checkCyclic(validationInfo);
+		boolean valid = true;
+		List<NodeGeneric> initOrder = new ArrayList<>();
+		List<String> invalidGenerics = checkCyclic(validationInfo, initOrder);
 		valid &= invalidGenerics == null || invalidGenerics.size() == 0;
 
 		boolean hasDuplicate = false;
-		for (int i = 0; i < generics.length; i++) {
-			NodeGeneric generic = generics[i];
+		for (int i = 0; i < initOrder.size(); i++) {
+			NodeGeneric generic = initOrder.get(i);
 			generic.sourceClass = ctx.clazz;
-			valid &= generic.validate(validationInfo, ctx, invalidGenerics == null || !invalidGenerics.contains(generic.genericName));
+			valid &= generic.validate(validationInfo, ctx, invalidGenerics == null || !invalidGenerics.contains(generic.genericName), 1);
 			if (!hasDuplicate) {
-				for (int j = i + 1; j < generics.length; j++) {
-					NodeGeneric generic2 = generics[j];
+				for (int j = i + 1; j < initOrder.size(); j++) {
+					NodeGeneric generic2 = initOrder.get(j);
 					if (Objects.equals(generic.genericName, generic2.genericName)) {
 						validationInfo.error("duplicate type parameter: '" + generic.genericName + "'", generic2.getToken());
 						valid = false;
@@ -104,6 +114,10 @@ public class NodeGenerics extends HiNode {
 					}
 				}
 			}
+		}
+		for (int i = 0; i < initOrder.size(); i++) {
+			NodeGeneric generic = initOrder.get(i);
+			valid &= generic.validate(validationInfo, ctx, true, 2);
 		}
 		return valid;
 	}

@@ -6,11 +6,12 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class HiClassGeneric extends HiClass {
-	public HiClassGeneric(String genericName, Type genericType, HiClass clazz, HiClass[] parametersClasses, boolean isSuper, int sourceType, int index, HiClass sourceClass, ClassResolver classResolver) {
-		super(clazz.classLoader, Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
+	public HiClassGeneric(String genericName, Type genericType, HiClass clazz, HiClass[] parametersClasses, boolean isSuper, NodeGeneric.GenericSourceType sourceType, int index, HiClass sourceClass, ClassResolver classResolver) {
+		super(classResolver.getClassLoader(), Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
 		this.genericType = genericType;
 		this.clazz = clazz;
 		this.parametersClasses = parametersClasses;
@@ -28,7 +29,7 @@ public class HiClassGeneric extends HiClass {
 
 	public boolean isSuper;
 
-	public int sourceType;
+	public NodeGeneric.GenericSourceType sourceType;
 
 	public int index;
 

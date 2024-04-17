@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -38,7 +39,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 			}
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
-				generics.setSourceType(RuntimeContext.STATIC_CLASS);
+				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
 			}
 
 			int braceType = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);

@@ -266,7 +266,7 @@ public class ParserUtil implements Words {
 				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 1);
 				tokenizer.nextToken();
 				return true;
-			} else if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT) {
+			} else if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT_CYCLIC) {
 				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 2);
 				tokenizer.nextToken();
 				return true;

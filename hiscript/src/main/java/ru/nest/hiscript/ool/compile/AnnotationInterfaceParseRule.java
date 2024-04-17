@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -94,7 +95,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			int dimension = visitDimension(tokenizer);
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
-				generics.setSourceType(RuntimeContext.METHOD);
+				generics.setSourceType(NodeGeneric.GenericSourceType.method);
 			}
 
 			type = Type.getArrayType(type, dimension);

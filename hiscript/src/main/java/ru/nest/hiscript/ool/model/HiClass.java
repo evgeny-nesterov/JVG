@@ -514,6 +514,9 @@ public class HiClass implements HiNodeIF, HiType {
 				if (generic.isWildcard()) {
 					validationInfo.error("unexpected wildcard", generic.getToken());
 					valid = false;
+				} else if (generic.isSuper) {
+					validationInfo.error("super is unsupported", generic.getToken());
+					valid = false;
 				}
 			}
 		}
@@ -1407,7 +1410,7 @@ public class HiClass implements HiNodeIF, HiType {
 				enclosingClass = ((HiClassGeneric) enclosingClass).clazz;
 			}
 		}
-		if (enclosingClass == srcClass || genericClass.sourceType != RuntimeContext.STATIC_CLASS) {
+		if (enclosingClass == srcClass || genericClass.sourceType != NodeGeneric.GenericSourceType.classSource) {
 			return genericClass;
 		}
 		HiClass extendsClass = enclosingClass;

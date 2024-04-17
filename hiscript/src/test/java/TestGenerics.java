@@ -2,13 +2,12 @@ import org.junit.jupiter.api.Test;
 
 public class TestGenerics extends HiTest {
 	@Test
-	public void testClasses() {
+	public void testClassesExtends() {
+		// simple
 		assertSuccessSerialize("class A<O>{}");
 		assertSuccessSerialize("class A<O1, O2, O3, O4, O5, O6>{}");
 		assertSuccessSerialize("class A<O extends Number>{}");
-		assertSuccessSerialize("class A<O super Integer>{}");
 		assertSuccessSerialize("class A<O extends A>{}");
-		assertSuccessSerialize("class A<O super A>{}");
 
 		assertSuccessSerialize("class A<O extends Number>{} class B extends A<Integer>{} A<Integer> b = new B();");
 		assertSuccessSerialize("class A<O extends Number>{} class B extends A<Integer>{} A<Number> b = new B<>();");
@@ -22,8 +21,12 @@ public class TestGenerics extends HiTest {
 				"assert c.o1; assert c.o2 instanceof A1; assert c.o2.o1 == 1L; assert c.o2.o2.equals(\"abc\");");
 		assertSuccessSerialize("class A<O extends HashMap<O, O>>{}");
 		assertSuccessSerialize("class A<O extends ArrayList<O>>{}");
+		assertSuccessSerialize("class A<X extends Y, Y extends Z, Z extends Object> {}");
+		assertSuccessSerialize("class A<X, Y> {} class B<X extends A<X, A<A, X>>> extends A<X, A<X, A>> {}");
+		assertSuccessSerialize("class A<O1 extends HashMap<O2, O2>, O2 extends HashMap<O1, O1>>{}");
+		assertSuccessSerialize("class A<O1 extends A<O2, O2>, O2 extends A<O1, O1>>{}");
 
-		// failures
+		// format failures
 		assertFailCompile("class A<>{}");
 		assertFailCompile("class A<{}");
 		assertFailCompile("class A<O,>{}");
@@ -34,8 +37,8 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<\"O\">{}");
 		assertFailCompile("class A<?>{}");
 
+		// structure failure
 		assertFailCompile("class A<? extends Object>{}");
-		assertFailCompile("class A<? super Object>{}");
 		assertFailCompile("class A<O extends>{}");
 		assertFailCompile("class A<O extends X>{}");
 		assertFailCompile("class A<O extends 1>{}");
@@ -44,8 +47,10 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O extends int>{}");
 		assertFailCompile("class A<O extends null>{}");
 		assertFailCompile("class A<O extends boolean>{}");
+		assertFailCompile("class A<O super Integer>{}");
+		assertFailCompile("class A<O super A>{}");
 
-		// cyclic
+		// cyclic failure
 		assertFailCompile("class A<O extends O>{}");
 		assertFailCompile("class A<O, X extends Y, Y extends Z, Z extends X>{}");
 		assertFailCompile("class A{<X extends Y, Y extends Z, Z extends X> X m(){}}");

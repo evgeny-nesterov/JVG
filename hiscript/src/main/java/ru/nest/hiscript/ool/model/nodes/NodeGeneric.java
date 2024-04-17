@@ -27,12 +27,11 @@ public class NodeGeneric extends HiNode {
 
 	public final int index;
 
-	/**
-	 * RuntimeContext.METHOD
-	 * RuntimeContext.CONSTRUCTOR
-	 * RuntimeContext.STATIC_CLASS
-	 */
-	public int sourceType;
+	public enum GenericSourceType {
+		method, constructor, classSource, field
+	}
+
+	public GenericSourceType sourceType;
 
 	public HiClass sourceClass;
 
@@ -44,16 +43,25 @@ public class NodeGeneric extends HiNode {
 		return genericName == null;
 	}
 
-	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx, boolean valid) {
-		HiClass typeClass = valid ? genericType.getClass(ctx) : HiClass.OBJECT_CLASS;
-		parametersClasses = new HiClass[genericType.parameters != null ? genericType.parameters.length : 0];
-		for (int i = 0; i < parametersClasses.length; i++) {
-			Type parameter = genericType.parameters[i];
-			parametersClasses[i] = parameter.getClass(ctx);
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx, boolean validType, int stage) {
+		if (stage == 1) {
+			parametersClasses = new HiClass[genericType.parameters != null ? genericType.parameters.length : 0];
+			HiClass typeClass = validType ? genericType.getClass(ctx) : HiClass.OBJECT_CLASS;
+			clazz = new HiClassGeneric(genericName, genericType, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, parametersClasses, isSuper, sourceType, index, sourceClass, ctx);
+			return typeClass != null;
+		} else if (stage == 2) {
+			boolean valid = true;
+			for (int i = 0; i < parametersClasses.length; i++) {
+				Type parameter = genericType.parameters[i];
+				parametersClasses[i] = parameter.getClass(ctx);
+				if (parametersClasses[i] == null) {
+					parametersClasses[i] = HiClass.OBJECT_CLASS;
+					valid = false;
+				}
+			}
+			return valid;
 		}
-
-		clazz = new HiClassGeneric(genericName, genericType, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, parametersClasses, isSuper, sourceType, index, sourceClass, ctx);
-		return typeClass != null;
+		return false;
 	}
 
 	@Override
@@ -67,12 +75,12 @@ public class NodeGeneric extends HiNode {
 		os.writeBoolean(isSuper);
 		os.writeType(genericType);
 		os.writeInt(index);
-		os.writeInt(sourceType);
+		os.writeInt(sourceType.ordinal());
 	}
 
 	public static NodeGeneric decode(DecodeContext os) throws IOException {
 		NodeGeneric node = new NodeGeneric(os.readNullableUTF(), os.readBoolean(), os.readType(), os.readInt());
-		node.sourceType = os.readInt();
+		node.sourceType = NodeGeneric.GenericSourceType.values()[os.readInt()];
 		return node;
 	}
 }
