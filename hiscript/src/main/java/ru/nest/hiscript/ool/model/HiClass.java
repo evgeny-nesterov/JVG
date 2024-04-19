@@ -413,7 +413,18 @@ public class HiClass implements HiNodeIF, HiType {
 					int size = initializers.length;
 					for (int i = 0; i < size; i++) {
 						NodeInitializer initializer = initializers[i];
+						if (initializer.isStatic() && initializer instanceof HiField) {
+							HiField<?> field = (HiField<?>) initializer;
+							field.declared = true;
+							field.initialized = true;
+						}
+					}
+					for (int i = 0; i < size; i++) {
+						NodeInitializer initializer = initializers[i];
 						if (initializer.isStatic()) {
+							if (initializer instanceof HiField) {
+								((HiField) initializer).initialized = false;
+							}
 							initializer.execute(ctx);
 							if (ctx.exitFromBlock()) {
 								return;

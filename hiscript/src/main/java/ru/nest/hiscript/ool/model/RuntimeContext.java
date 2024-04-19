@@ -49,6 +49,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public final static int STATIC_CLASS = 16;
 
+	public final static int MAX_STACK_SIZE = 1000;
+
 	public boolean isExit;
 
 	public boolean isReturn;
@@ -166,9 +168,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		args[0].initialized = true;
 
 		exception = excConstructor.newInstance(this, args, null);
-
-		// DEBUG
-		// new Exception("DEBUG").printStackTrace();
 	}
 
 	public boolean exitFromBlock() {
@@ -179,6 +178,11 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	// inside method, constructor and initializers
 	public void enter(int type, Token token) {
+		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
+			level.mainLevel = 0;
+			throwRuntimeException("stack overflow");
+			throw new StackOverflowError();
+		}
 		if (level != null) {
 			level = getStack(type, level, level.clazz, level.constructor, level.method, level.object, null, token);
 		} else {
@@ -196,14 +200,31 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void enterMethod(HiMethod method, HiObject object) {
+		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
+			level.mainLevel = 0;
+			throwRuntimeException("stack overflow");
+			throw new StackOverflowError();
+		}
 		level = getStack(METHOD, level, method.clazz, null, method, object, null, method.getToken());
+		level.mainLevel++;
 	}
 
 	public void enterConstructor(HiConstructor constructor, HiObject object, Token token) {
+		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
+			level.mainLevel = 0;
+			throwRuntimeException("stack overflow");
+			throw new StackOverflowError();
+		}
 		level = getStack(CONSTRUCTOR, level, constructor.clazz, constructor, null, object, null, token);
+		level.mainLevel++;
 	}
 
 	public void enterInitialization(HiClass clazz, HiObject object, Token token) {
+		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
+			level.mainLevel = 0;
+			throwRuntimeException("stack overflow");
+			throw new StackOverflowError();
+		}
 		level = getStack(INITIALIZATION, level, clazz, null, null, object, null, token);
 	}
 
@@ -212,8 +233,14 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void enter(StackLevel level) {
+		if (this.level != null && this.level.mainLevel == MAX_STACK_SIZE) {
+			level.mainLevel = 0;
+			throwRuntimeException("stack overflow");
+			throw new StackOverflowError();
+		}
 		level.parent = this.level;
 		level.level = this.level != null ? this.level.level + 1 : 0;
+		level.mainLevel = this.level != null ? this.level.mainLevel : 0;
 		this.level = level;
 
 		// String s = "";
@@ -517,6 +544,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		public int level;
 
+		public int mainLevel;
+
 		public Token token;
 
 		// TODO use fast map
@@ -532,6 +561,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			this.method = method;
 			this.object = object;
 			this.level = parent != null ? parent.level + 1 : 0;
+			this.mainLevel = parent != null ? parent.mainLevel : 0;
 			this.type = type;
 			this.label = label;
 			this.token = token;
@@ -848,8 +878,16 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			System.out.println(message);
 			HiField<?> stackTraceField = exception.getMainObject().getField(this, "stackTrace");
 			HiObject[] stackTraceElements = ((HiObject[]) stackTraceField.get());
-			for (HiObject stackTraceElement : stackTraceElements) {
+			int printLinesCount = Math.min(stackTraceElements.length, 50);
+			for (int i = 0; i < printLinesCount; i++) {
+				HiObject stackTraceElement = stackTraceElements[i];
 				String className = stackTraceElement.getField(this, "className").getStringValue(this);
+				if (className.startsWith(HiClass.ROOT_CLASS_NAME_PREFIX)) {
+					className = className.substring(HiClass.ROOT_CLASS_NAME_PREFIX.length());
+					while (Character.isDigit(className.charAt(0))) {
+						className = className.substring(1);
+					}
+				}
 				String methodName = stackTraceElement.getField(this, "methodName").getStringValue(this);
 				Integer line = (Integer) stackTraceElement.getField(this, "line").get();
 				System.out.print("\t" + className + "." + methodName);
@@ -857,6 +895,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					System.out.print(":" + line);
 				}
 				System.out.println();
+			}
+			if (printLinesCount < stackTraceElements.length) {
+				System.out.println("\t... (" + (stackTraceElements.length - printLinesCount) + ") lines");
 			}
 			return message;
 		}

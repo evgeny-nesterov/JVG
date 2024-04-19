@@ -170,6 +170,5 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
-		//assertSuccessSerialize("class C{static{x = 1;} static int x = 0; static {assert x == 0;}} assert C.x == 0;"); // initializer and field order
 	}
 }

@@ -274,13 +274,25 @@ public class HiConstructor implements HiNodeIF {
 					int size = clazz.initializers.length;
 					for (int i = 0; i < size; i++) {
 						NodeInitializer initializer = clazz.initializers[i];
+						if (!initializer.isStatic() && initializer instanceof HiField) {
+							HiField<?> field = (HiField<?>) initializer;
+							field = object.getField(ctx, field.name);
+							field.declared = true;
+							field.initialized = true;
+						}
+					}
+					for (int i = 0; i < size; i++) {
+						NodeInitializer initializer = clazz.initializers[i];
 						if (!initializer.isStatic()) {
 							if (initializer instanceof HiField<?>) {
 								HiField<?> field = (HiField<?>) initializer;
-								initializer = object.getField(ctx, field.name);
+								field = object.getField(ctx, field.name);
+								field.initialized = false;
+								field.execute(ctx);
+								field.initialized = true;
+							} else {
+								initializer.execute(ctx);
 							}
-
-							initializer.execute(ctx);
 							if (ctx.exitFromBlock()) {
 								break;
 							}
