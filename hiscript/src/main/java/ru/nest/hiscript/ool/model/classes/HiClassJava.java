@@ -227,7 +227,7 @@ public class HiClassJava extends HiClass {
 	}
 
 	@Override
-	protected HiField<?> _searchField(ClassResolver classResolver, String name) {
+	protected HiField<?> _searchField(ClassResolver classResolver, String name, boolean local) {
 		try {
 			Field field = javaClass.getDeclaredField(name);
 			//if (field.isAccessible()) {

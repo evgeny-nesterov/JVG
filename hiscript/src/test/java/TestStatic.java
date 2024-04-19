@@ -29,7 +29,8 @@ public class TestStatic extends HiTest {
 		assertSuccessSerialize("class A{static{}}");
 		assertSuccessSerialize("class C{static int x; static{x = 1;}} assert C.x == 1;");
 		assertSuccessSerialize("class C{static int x = 0; {x = 1;}} assert C.x == 0;"); // static field, non-static initializer
-		assertFailCompile("class C{static{x = 1;} static int x = 0;}"); // initializer and field order
+		assertSuccessSerialize("class C{static{x = 1;} static int x; static {assert x == 1;}} assert C.x == 1;"); // initializer and field order
+		// TODO assertSuccessSerialize("class C{static{x = 1;} static int x = 0; static {assert x == 0;}} assert C.x == 0;"); // initializer and field order
 		assertFailCompile("class C{int x = 1; static{x++;}};"); // non-static field, static initializer
 		assertFailCompile("int x = 1; class C{static{x++;}};");
 		// TODO allow static in inner classes??? assertFailCompile("class A{class B{static{}}}");

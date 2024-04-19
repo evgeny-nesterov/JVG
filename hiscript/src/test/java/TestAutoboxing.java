@@ -170,7 +170,6 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
-		//assertSuccessSerialize("class A <O extends Number>{O x; A(O x){this.x = x;} O getX(){return x;}} class B extends A<Integer>{B(Integer x){super(x);} int get() {return x;}} assert new B(1).x == 1; assert new B(2).getX() == 2;");
-		assertSuccessSerialize("class A {int x;} class B extends A{int get() {return x;}}");
+		//assertSuccessSerialize("class C{static{x = 1;} static int x = 0; static {assert x == 0;}} assert C.x == 0;"); // initializer and field order
 	}
 }

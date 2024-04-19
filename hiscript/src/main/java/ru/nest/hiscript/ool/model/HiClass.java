@@ -938,24 +938,38 @@ public class HiClass implements HiNodeIF, HiType {
 		return false;
 	}
 
+	protected Map<String, HiField<?>> localFieldsMap;
+
 	protected Map<String, HiField<?>> fieldsMap;
 
 	public HiField<?> getField(ClassResolver classResolver, String name) {
+		return getField(classResolver, name, false);
+	}
+
+	public HiField<?> getField(ClassResolver classResolver, String name, boolean local) {
+		Map<String, HiField<?>> fieldsMap = local ? this.localFieldsMap : this.fieldsMap;
 		if (fieldsMap != null && fieldsMap.containsKey(name)) {
 			return fieldsMap.get(name);
 		}
 
-		HiField<?> field = _searchField(classResolver, name);
+		HiField<?> field = _searchField(classResolver, name, local);
 		if (field != null) {
-			if (fieldsMap == null) {
-				fieldsMap = new ConcurrentHashMap<>();
+			if (local) {
+				if (this.localFieldsMap == null) {
+					this.localFieldsMap = new ConcurrentHashMap<>();
+					this.localFieldsMap.put(name, field);
+				}
+			} else {
+				if (this.fieldsMap == null) {
+					this.fieldsMap = new ConcurrentHashMap<>();
+					this.fieldsMap.put(name, field);
+				}
 			}
-			fieldsMap.put(name, field);
 		}
 		return field;
 	}
 
-	protected HiField<?> _searchField(ClassResolver classResolver, String name) {
+	protected HiField<?> _searchField(ClassResolver classResolver, String name, boolean local) {
 		init(classResolver);
 		HiField<?> field = null;
 
@@ -972,7 +986,7 @@ public class HiClass implements HiNodeIF, HiType {
 		// interfaces static fields
 		if (field == null && interfaces != null) {
 			for (HiClass i : interfaces) {
-				field = i.getField(classResolver, name);
+				field = i.getField(classResolver, name, local);
 				if (field != null) {
 					break;
 				}
@@ -981,12 +995,14 @@ public class HiClass implements HiNodeIF, HiType {
 
 		// super fields
 		if (field == null && superClass != null) {
-			field = superClass.getField(classResolver, name);
+			field = superClass.getField(classResolver, name, local);
 		}
 
 		// enclosing fields
-		if (field == null && enclosingClass != null) {
-			field = enclosingClass.getField(classResolver, name);
+		if (!local) {
+			if (field == null && enclosingClass != null) {
+				field = enclosingClass.getField(classResolver, name, local);
+			}
 		}
 		return field;
 	}

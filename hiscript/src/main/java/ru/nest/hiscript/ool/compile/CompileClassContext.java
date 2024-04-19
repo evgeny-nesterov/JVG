@@ -381,7 +381,7 @@ public class CompileClassContext implements ClassResolver {
 		CompileClassLevel level = this.level;
 		while (level != null) {
 			if (resolveVariable) {
-				NodeVariable variable = level.getField(name);
+				NodeVariable variable = level.getField(name, true);
 				if (variable != null) {
 					return variable;
 				}
@@ -432,7 +432,7 @@ public class CompileClassContext implements ClassResolver {
 
 		while (level != null) {
 			if (resolveVariable) {
-				NodeVariable variable = level.getField(name);
+				NodeVariable variable = level.getField(name, false);
 				if (variable != null) {
 					return variable;
 				}
@@ -583,7 +583,7 @@ public class CompileClassContext implements ClassResolver {
 			localVariables.put(localVariable.getVariableName(), localVariable);
 		}
 
-		public NodeVariable getField(String name) {
+		public NodeVariable getField(String name, boolean onlyLocal) {
 			if (enclosingClass != null) {
 				if (enclosingClass instanceof HiClassEnum) {
 					HiClassEnum classEnum = (HiClassEnum) enclosingClass;
@@ -599,7 +599,17 @@ public class CompileClassContext implements ClassResolver {
 					return field;
 				}
 			}
-			return localVariables != null ? localVariables.get(name) : null;
+			if (localVariables != null) {
+				NodeVariable variable = localVariables.get(name);
+				if (variable != null) {
+					return variable;
+				}
+			}
+			if (!onlyLocal && node instanceof HiClass) {
+				HiClass clazz = (HiClass) node;
+				return clazz.getField(CompileClassContext.this, name, true);
+			}
+			return null;
 		}
 
 		public CompileClassLevel getLabelLevel(String label) {
