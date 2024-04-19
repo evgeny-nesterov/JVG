@@ -32,7 +32,6 @@ public class NodeGenerics extends HiNode {
 		NodeGeneric generic = getGeneric(name);
 		if (generic != null && generic.clazz != null) {
 			generic.clazz.init(classResolver);
-			// TODO return HiClassParameterized
 			return generic.clazz;
 		}
 		return null;
@@ -103,7 +102,8 @@ public class NodeGenerics extends HiNode {
 		for (int i = 0; i < initOrder.size(); i++) {
 			NodeGeneric generic = initOrder.get(i);
 			generic.sourceClass = ctx.clazz;
-			valid &= generic.validate(validationInfo, ctx, invalidGenerics == null || !invalidGenerics.contains(generic.genericName), 1);
+			boolean validType =  invalidGenerics == null || !invalidGenerics.contains(generic.genericName);
+			valid &= generic.validate(validationInfo, ctx, validType, 1);
 			if (!hasDuplicate) {
 				for (int j = i + 1; j < initOrder.size(); j++) {
 					NodeGeneric generic2 = initOrder.get(j);

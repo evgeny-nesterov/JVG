@@ -184,6 +184,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public NodeGenerics generics;
 
+	public HiClass[] typeParameters;
+
 	public String fullName;
 
 	public int type;
@@ -518,6 +520,36 @@ public class HiClass implements HiNodeIF, HiType {
 					validationInfo.error("super is unsupported", generic.getToken());
 					valid = false;
 				}
+			}
+		}
+
+		// type generics (after generics)
+		if (superClassType != null && superClassType.parameters != null) {
+			typeParameters = new HiClass[superClassType.parameters.length];
+			for (int i = 0; i < typeParameters.length; i++) {
+				Type parameterType = superClassType.parameters[i];
+				HiClass parameterClass = parameterType.getClass(ctx);
+				if (parameterClass == null) {
+					parameterClass = OBJECT_CLASS;
+				}
+				typeParameters[i] = parameterClass;
+			}
+
+			// TODO use type (superClassType.parameters[i]) token
+			if (superClass.generics != null) {
+				if (superClass.generics.generics.length == typeParameters.length) {
+					for (int i = 0; i < typeParameters.length; i++) {
+						HiClass parameterClass = typeParameters[i];
+						HiClassGeneric definedClass = superClass.generics.generics[i].clazz;
+						if (!parameterClass.isInstanceof(definedClass.clazz)) {
+							validationInfo.error("type parameter '" + parameterClass.fullName + "' is not within its bound; should extend '" + definedClass.clazz.fullName + "'", getToken());
+						}
+					}
+				} else {
+					validationInfo.error("wrong number of type arguments: " + typeParameters.length + "; required: " + superClass.generics.generics.length, getToken());
+				}
+			} else {
+				validationInfo.error("type '" + superClass.fullName + "' does not have type parameters", getToken());
 			}
 		}
 

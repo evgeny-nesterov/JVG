@@ -52,9 +52,10 @@ public class NodeGeneric extends HiNode {
 		} else if (stage == 2) {
 			boolean valid = true;
 			for (int i = 0; i < parametersClasses.length; i++) {
-				Type parameter = genericType.parameters[i];
-				parametersClasses[i] = parameter.getClass(ctx);
-				if (parametersClasses[i] == null) {
+				Type parameterType = genericType.parameters[i];
+				parametersClasses[i] = parameterType.getClass(ctx);
+				HiClass parameterClass = parametersClasses[i];
+				if (parameterClass == null) {
 					parametersClasses[i] = HiClass.OBJECT_CLASS;
 					valid = false;
 				}
