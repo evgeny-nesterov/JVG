@@ -3,10 +3,13 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Words;
 
 import java.io.IOException;
@@ -153,6 +156,113 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 	}
 
+	private Type(Type extendedType, boolean isSuper) {
+		this.id = -1;
+		this.primitive = false;
+		this.parent = extendedType.parent;
+		this.name = extendedType.name;
+		this.dimension = extendedType.dimension;
+		this.path = extendedType.path;
+		this.fullName = extendedType.fullName;
+		this.isExtends = !isSuper;
+		this.isSuper = isSuper;
+	}
+
+	public boolean validateClass(HiClass clazz, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
+		if (parameters != null && parameters.length > 0) {
+			if (clazz.generics == null) {
+				validationInfo.error("type '" + clazz.getNameDescr() + "' does not have type parameters", token);
+				return false;
+			}
+			if (parameters.length != clazz.generics.generics.length) {
+				validationInfo.error("wrong number of type arguments: " + parameters.length + "; required: " + clazz.generics.generics.length, token);
+				return false;
+			}
+			for (int i = 0; i < parameters.length; i++) {
+				Type parameterType = parameters[i];
+				if (parameterType.isExtends) {
+					HiClass parameterClass = parameterType.getClass(ctx);
+					if (parameterClass != null) {
+						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
+						if (!definedClass.isGeneric() && !definedClass.isInstanceof(parameterClass)) {
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+						} else if (definedClass.isGeneric()) {
+							if (parameterType.isExtends) {
+								if (!definedClass.clazz.isInstanceof(parameterClass) && !parameterClass.isInstanceof(definedClass.clazz)) {
+									validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+								}
+							} else {
+								if (!parameterClass.isInstanceof(definedClass.clazz)) {
+									validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+								}
+							}
+						}
+					}
+				} else if (parameterType.isSuper) {
+					HiClass parameterClass = parameterType.getClass(ctx);
+					if (parameterClass != null) {
+						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
+						if (!parameterClass.isInstanceof(definedClass.clazz)) {
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+						}
+					}
+				} else {
+					HiClass parameterClass = parameterType.getClass(ctx);
+					if (parameterClass != null) {
+						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
+						if (!definedClass.isGeneric() && !parameterClass.isInstanceof(definedClass)) {
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+						} else if (definedClass.isGeneric() && !parameterClass.isInstanceof(definedClass.clazz)) {
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean validateMatch(Type type, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
+		if (parameters != null && parameters.length == 0) {
+			if (type.parameters == null) { // T<> => T
+				validationInfo.error("diamond operator is not applicable for non-parameterized types", token);
+				return false;
+			} else { // T<> => T<T1,...>
+				return true;
+			}
+		}
+		if (type.parameters != null && parameters != null) {
+			if (type.parameters.length > 0) {
+				for (int i = 0; i < parameters.length; i++) {
+					Type fromType = parameters[i];
+					HiClass fromClass = fromType.getClass(ctx);
+					Type toType = type.parameters[i];
+					HiClass toClass = toType.getClass(ctx);
+					if (fromClass != null && toClass != null) { // type is invalid
+						if (toType.isExtends) {
+							if (!fromClass.isInstanceof(toClass)) {
+								validationInfo.error("type parameter '" + fromClass.getNameDescr() + "' is not within its bound; should extend '" + toClass.getNameDescr() + "'", token);
+								return false;
+							}
+						} else if (toType.isSuper) {
+							if (!toClass.isInstanceof(fromClass)) {
+								validationInfo.error("type parameter '" + fromClass.getNameDescr() + "' is not within its bound; should extend '" + toClass.getNameDescr() + "'", token);
+								return false;
+							}
+						} else {
+							if (fromClass != toClass) {
+								// validationInfo.error("type parameter '" + fromClass.fullName + "' is not within its bound; should extend '" + toClass.fullName + "'", token);
+								validationInfo.error("incompatible types. Found: '" + fromClass.getNameDescr() + "' required: '" + toClass.getNameDescr() + "'", token);
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	public HiClass getArrayClass(ClassResolver classResolver, int dimensions) {
 		HiClass rootCellClass = getClass(classResolver);
 		return rootCellClass.getArrayClassIf(dimensions);
@@ -183,6 +293,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	private final boolean primitive;
 
 	public Type[] parameters;
+
+	public boolean isExtends;
+
+	public boolean isSuper;
 
 	public boolean isPrimitive() {
 		return primitive;
@@ -237,6 +351,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		// Нельзя кэшировать класс, т.к. имена разных классов могут совпадать в разных контекстах
 		if (isPrimitive()) {
 			return HiClass.getPrimitiveClass(name);
+		}
+
+		if (isSuper) {
+			return HiClass.OBJECT_CLASS;
 		}
 
 		if (isArray()) {
@@ -311,6 +429,14 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public static Type getParameterizedType(Type type, Type[] parameters) {
 		return new Type(type, parameters);
+	}
+
+	public static Type getExtendedType(Type extendedType, boolean isSuper) {
+		if (extendedType == null || extendedType == objectType) {
+			return anyType;
+		} else {
+			return new Type(extendedType, isSuper);
+		}
 	}
 
 	public static Type getTopType(String name) {
@@ -399,6 +525,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	public static Type getType(HiClass clazz) {
+		if (clazz == null) {
+			return null;
+		}
 		if (clazz.isPrimitive()) {
 			return getPrimitiveType(clazz.fullName);
 		}
@@ -430,6 +559,10 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		String name = fullName;
 		if (parameters != null) {
 			name += "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
+		} else if (isExtends) {
+			name = "? extends " + name;
+		} else if (isSuper) {
+			name = "? super " + name;
 		}
 		return name;
 	}
@@ -482,6 +615,13 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return typeClass;
 	}
 
+	public Type getParameterType(HiClassGeneric genericClass) {
+		if (parameters != null && genericClass.index < parameters.length) {
+			return parameters[genericClass.index];
+		}
+		return null;
+	}
+
 	@Override
 	public Type getType() {
 		return this;
@@ -504,6 +644,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	// has to be set at the end of class init
 	public final static Type objectType = getTopType(HiClass.OBJECT_CLASS_NAME);
+
+	public final static Type anyType = new Type(objectType, false); // used for case <? extends Type>
 
 	public final static Type enumType = getTopType(HiClass.ENUM_CLASS_NAME);
 

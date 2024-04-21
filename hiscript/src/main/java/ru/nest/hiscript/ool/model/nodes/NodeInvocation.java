@@ -9,8 +9,10 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -35,6 +37,8 @@ public class NodeInvocation extends HiNode {
 
 	private HiClass invocationClass;
 
+	private Type invocationType;
+
 	private boolean isEnclosingObject;
 
 	private HiMethod method;
@@ -45,6 +49,7 @@ public class NodeInvocation extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		invocationType = ctx.level.enclosingType;
 		invocationClass = ctx.consumeInvocationClass();
 		isEnclosingObject = invocationClass != null && ctx.level.isEnclosingObject;
 
@@ -66,6 +71,19 @@ public class NodeInvocation extends HiNode {
 			method = invocationClass.searchMethod(ctx, name, argumentsClasses);
 			if (method != null) {
 				ctx.nodeValueType.enclosingClass = method.getReturnClass(ctx, invocationClass, argumentsClasses);
+
+				// generic
+				Type type;
+				if (ctx.nodeValueType.enclosingClass.isGeneric() && invocationType.parameters != null) {
+					HiClassGeneric enclosingGenericClass = (HiClassGeneric) ctx.nodeValueType.enclosingClass;
+					type = invocationType.getParameterType(enclosingGenericClass);
+					ctx.nodeValueType.enclosingClass = type.getClass(ctx);
+				} else {
+					type = method.returnType;
+				}
+
+				ctx.nodeValueType.enclosingType = type;
+				ctx.nodeValueType.type = type;
 				return ctx.nodeValueType.enclosingClass;
 			}
 		} else {
@@ -74,6 +92,7 @@ public class NodeInvocation extends HiNode {
 					method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
 					if (method != null) {
 						ctx.nodeValueType.enclosingClass = method.returnClass;
+						ctx.nodeValueType.enclosingType = method.returnType;
 						return method.returnClass;
 					}
 				}
@@ -95,16 +114,21 @@ public class NodeInvocation extends HiNode {
 				for (int i = 0; i < mainArgsCount; i++) {
 					HiNode argument = arguments[i];
 					ctx.level.enclosingClass = method.argClasses[i];
+					ctx.level.enclosingType = method.arguments[i].getType();
 					valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, method.argClasses[i]);
 					ctx.level.enclosingClass = null;
+					ctx.level.enclosingType = null;
 				}
 				if (method.hasVarargs()) {
 					HiClass varargClass = ((HiClassArray) method.argClasses[mainArgsCount]).cellClass;
+					Type varargType = method.arguments[mainArgsCount].getType().cellType;
 					for (int i = mainArgsCount; i < arguments.length; i++) {
 						HiNode argument = arguments[i];
 						ctx.level.enclosingClass = varargClass;
+						ctx.level.enclosingType = varargType;
 						valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, varargClass);
 						ctx.level.enclosingClass = null;
+						ctx.level.enclosingType = null;
 					}
 				}
 			} else {
@@ -120,7 +144,7 @@ public class NodeInvocation extends HiNode {
 				valid = false;
 			}
 		} else {
-			validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.fullName + "'" : ""), token);
+			validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.getNameDescr() + "'" : ""), token);
 			valid = false;
 		}
 		return valid;
@@ -137,7 +161,7 @@ public class NodeInvocation extends HiNode {
 			try {
 				// v1 - contains value as object
 				ctx.value.object = ctx.level.object;
-				ctx.value.type = ctx.level.clazz;
+				ctx.value.valueClass = ctx.level.clazz;
 				ctx.value.lambdaClass = null;
 				if (ctx.value.object != null) {
 					ctx.value.valueType = Value.VALUE;
@@ -166,7 +190,7 @@ public class NodeInvocation extends HiNode {
 		try {
 			// v1 - contains value as object
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = object.clazz;
+			ctx.value.valueClass = object.clazz;
 			ctx.value.lambdaClass = null;
 			ctx.value.object = object;
 

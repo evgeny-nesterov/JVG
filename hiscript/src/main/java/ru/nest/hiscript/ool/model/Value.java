@@ -41,7 +41,7 @@ public class Value implements PrimitiveTypes {
 
 	public int valueType;
 
-	public HiClass type;
+	public HiClass valueClass;
 
 	public HiClass lambdaClass;
 
@@ -92,7 +92,7 @@ public class Value implements PrimitiveTypes {
 
 	public void clear() {
 		node = null;
-		type = null;
+		valueClass = null;
 		lambdaClass = null;
 		object = null;
 		array = null;
@@ -116,13 +116,13 @@ public class Value implements PrimitiveTypes {
 		}
 
 		// array
-		if (type.isArray()) {
+		if (valueClass.isArray()) {
 			return array;
 		}
 
 		// primitives
-		if (type.isPrimitive()) {
-			int typeIndex = type.getPrimitiveType();
+		if (valueClass.isPrimitive()) {
+			int typeIndex = valueClass.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					return bool;
@@ -151,11 +151,11 @@ public class Value implements PrimitiveTypes {
 			valueType = VALUE;
 			if (value != null) {
 				object = (HiObject) value;
-				type = object.clazz;
+				valueClass = object.clazz;
 				return true;
 			} else {
 				object = null;
-				type = HiClass.OBJECT_CLASS;
+				valueClass = HiClass.OBJECT_CLASS;
 				return true;
 			}
 		} else {
@@ -163,7 +163,7 @@ public class Value implements PrimitiveTypes {
 			Class<?> clazz = value.getClass();
 			if (clazz.isArray()) {
 				valueType = VALUE;
-				type = HiClass.getArrayType(clazz);
+				this.valueClass = HiClass.getArrayType(clazz);
 				array = value;
 				return true;
 			}
@@ -171,42 +171,42 @@ public class Value implements PrimitiveTypes {
 			else if (value instanceof Double) {
 				valueType = VALUE;
 				doubleNumber = (Double) value;
-				type = HiClassPrimitive.DOUBLE;
+				this.valueClass = HiClassPrimitive.DOUBLE;
 				return true;
 			} else if (value instanceof Float) {
 				valueType = VALUE;
 				floatNumber = (Float) value;
-				type = HiClassPrimitive.FLOAT;
+				this.valueClass = HiClassPrimitive.FLOAT;
 				return true;
 			} else if (value instanceof Long) {
 				valueType = VALUE;
 				longNumber = (Long) value;
-				type = HiClassPrimitive.LONG;
+				this.valueClass = HiClassPrimitive.LONG;
 				return true;
 			} else if (value instanceof Integer) {
 				valueType = VALUE;
 				intNumber = (Integer) value;
-				type = HiClassPrimitive.INT;
+				this.valueClass = HiClassPrimitive.INT;
 				return true;
 			} else if (value instanceof Short) {
 				valueType = VALUE;
 				shortNumber = (Short) value;
-				type = HiClassPrimitive.SHORT;
+				this.valueClass = HiClassPrimitive.SHORT;
 				return true;
 			} else if (value instanceof Byte) {
 				valueType = VALUE;
 				byteNumber = (Byte) value;
-				type = HiClassPrimitive.BYTE;
+				this.valueClass = HiClassPrimitive.BYTE;
 				return true;
 			} else if (value instanceof Character) {
 				valueType = VALUE;
 				character = (Character) value;
-				type = HiClassPrimitive.CHAR;
+				this.valueClass = HiClassPrimitive.CHAR;
 				return true;
 			} else if (value instanceof Boolean) {
 				valueType = VALUE;
 				bool = (Boolean) value;
-				type = HiClassPrimitive.BOOLEAN;
+				this.valueClass = HiClassPrimitive.BOOLEAN;
 				return true;
 			}
 			return false;
@@ -214,7 +214,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public HiObject getObject() {
-		if (type.isPrimitive() || type.isArray()) {
+		if (valueClass.isPrimitive() || valueClass.isArray()) {
 			ctx.throwRuntimeException("object is expected");
 			return null;
 		}
@@ -223,12 +223,12 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public HiObject getObject(HiClass dstClass) {
-		if (type.isArray()) {
+		if (valueClass.isArray()) {
 			ctx.throwRuntimeException("object is expected");
 			return null;
 		}
-		if (type.isPrimitive()) {
-			HiClassPrimitive primitiveClass = dstClass != null && dstClass.getAutoboxedPrimitiveClass() != null ? dstClass.getAutoboxedPrimitiveClass() : (HiClassPrimitive) type;
+		if (valueClass.isPrimitive()) {
+			HiClassPrimitive primitiveClass = dstClass != null && dstClass.getAutoboxedPrimitiveClass() != null ? dstClass.getAutoboxedPrimitiveClass() : (HiClassPrimitive) valueClass;
 			return primitiveClass.autobox(ctx, this); // changes ctx
 		} else {
 			return object;
@@ -244,8 +244,8 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public Object getArray() {
-		if (!type.isArray() && !type.isNull()) {
-			ctx.throwRuntimeException("array is expected: " + type.fullName);
+		if (!valueClass.isArray() && !valueClass.isNull()) {
+			ctx.throwRuntimeException("array is expected: " + valueClass.getNameDescr());
 			return null;
 		}
 		return array;
@@ -253,17 +253,17 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public boolean getAutoboxPrimitiveValue(int expectedTypeIndex) {
-		if (type.isPrimitive()) {
-			int typeIndex = type.getPrimitiveType();
+		if (valueClass.isPrimitive()) {
+			int typeIndex = valueClass.getPrimitiveType();
 			if (typeIndex == expectedTypeIndex) {
 				return true;
 			}
-		} else if (type.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = type.getAutoboxedPrimitiveClass().getPrimitiveType();
+		} else if (valueClass.getAutoboxedPrimitiveClass() != null) {
+			int typeIndex = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
 			if (typeIndex == expectedTypeIndex) {
 				if (object != null) {
 					object.getAutoboxedValue(ctx, this);
-					int autoboxTypeIndex = type.getPrimitiveType();
+					int autoboxTypeIndex = valueClass.getPrimitiveType();
 					if (autoboxTypeIndex == expectedTypeIndex) {
 						return true;
 					}
@@ -278,22 +278,22 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public int getAutoboxValues(int... expectedTypesIndexes) {
-		if (type.isPrimitive()) {
-			int typeIndex = type.getPrimitiveType();
+		if (valueClass.isPrimitive()) {
+			int typeIndex = valueClass.getPrimitiveType();
 			for (int i = 0; i < expectedTypesIndexes.length; i++) {
 				int expectedTypeIndex = expectedTypesIndexes[i];
 				if (typeIndex == expectedTypeIndex) {
 					return typeIndex;
 				}
 			}
-		} else if (type.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = type.getAutoboxedPrimitiveClass().getPrimitiveType();
+		} else if (valueClass.getAutoboxedPrimitiveClass() != null) {
+			int typeIndex = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
 			for (int i = 0; i < expectedTypesIndexes.length; i++) {
 				int expectedTypeIndex = expectedTypesIndexes[i];
 				if (typeIndex == expectedTypeIndex) {
 					if (object != null) {
 						object.getAutoboxedValue(ctx, this);
-						int autoboxTypeIndex = type.getPrimitiveType();
+						int autoboxTypeIndex = valueClass.getPrimitiveType();
 						if (autoboxTypeIndex == expectedTypeIndex) {
 							return autoboxTypeIndex;
 						}
@@ -309,10 +309,10 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public void unbox() {
-		if (type.getAutoboxedPrimitiveClass() != null) {
+		if (valueClass.getAutoboxedPrimitiveClass() != null) {
 			if (object != null) {
 				substitutePrimitiveValueFromAutoboxValue();
-				type = type.getAutoboxedPrimitiveClass();
+				valueClass = valueClass.getAutoboxedPrimitiveClass();
 			} else {
 				ctx.throwRuntimeException("null pointer");
 			}
@@ -321,7 +321,7 @@ public class Value implements PrimitiveTypes {
 
 	// autobox
 	public void substitutePrimitiveValueFromAutoboxValue() {
-		int t = type.getAutoboxedPrimitiveClass().getPrimitiveType();
+		int t = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
 		if (object == null) {
 			ctx.throwRuntimeException("null pointer");
 			return;
@@ -489,14 +489,14 @@ public class Value implements PrimitiveTypes {
 		}
 
 		dst.valueType = valueType;
-		dst.type = type;
+		dst.valueClass = valueClass;
 		dst.lambdaClass = lambdaClass;
 		dst.name = name;
 		dst.nameDimensions = nameDimensions;
 
 		// VALUE
-		if (type.isPrimitive()) {
-			switch (type.getPrimitiveType()) {
+		if (valueClass.isPrimitive()) {
+			switch (valueClass.getPrimitiveType()) {
 				case CHAR:
 					dst.character = character;
 					break;
@@ -560,7 +560,7 @@ public class Value implements PrimitiveTypes {
 	public void copyToArray(Value value) {
 		// TODO: copy array and object
 
-		int typeIndex = type.getPrimitiveType();
+		int typeIndex = valueClass.getPrimitiveType();
 		switch (typeIndex) {
 			case BOOLEAN:
 				Array.setBoolean(parentArray, arrayIndex, value.bool);
@@ -590,8 +590,8 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public char[] getString(RuntimeContext ctx) {
-		if (type.isPrimitive()) {
-			int t = type.getPrimitiveType();
+		if (valueClass.isPrimitive()) {
+			int t = valueClass.getPrimitiveType();
 			switch (t) {
 				case BOOLEAN:
 					return Boolean.toString(bool).toCharArray();
@@ -612,16 +612,16 @@ public class Value implements PrimitiveTypes {
 			}
 		}
 
-		if (type.isArray()) {
+		if (valueClass.isArray()) {
 			if (array == null) {
 				return NULL;
 			} else {
-				HiClassArray arrayType = (HiClassArray) type;
+				HiClassArray arrayType = (HiClassArray) valueClass;
 				return (arrayType.className + "@" + Integer.toHexString(array.hashCode())).toCharArray();
 			}
 		}
 
-		if (type.isNull() || object == null) {
+		if (valueClass.isNull() || object == null) {
 			return NULL;
 		}
 
@@ -642,17 +642,17 @@ public class Value implements PrimitiveTypes {
 	public String toString() {
 		switch (valueType) {
 			case VALUE:
-				return "VALUE: type=" + type + ", value=" + get();
+				return "VALUE: type=" + valueClass + ", value=" + get();
 			case TYPE:
 				return "TYPE: variableType=" + variableType;
 			case VARIABLE:
 				return "VARIABLE: name=" + name + ", variable=" + variable;
 			case CLASS:
-				return "CLASS: type=" + type + ", name=" + name;
+				return "CLASS: type=" + valueClass + ", name=" + name;
 			case METHOD_INVOCATION:
 				return "METHOD: name=" + name + ", arguments=" + arguments;
 			case ARRAY_INDEX:
-				return "ARRAY INDEX: type=" + type + ", parent array=" + parentArray + ", ara index=" + arrayIndex;
+				return "ARRAY INDEX: type=" + valueClass + ", parent array=" + parentArray + ", ara index=" + arrayIndex;
 			case NAME:
 				return "NAME: name=" + name + (nameDimensions > 0 ? "[]" : "");
 			case EXECUTE:
@@ -664,13 +664,13 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public HiClass getOperationClass() {
-		if (type.getAutoboxedPrimitiveClass() != null) {
+		if (valueClass.getAutoboxedPrimitiveClass() != null) {
 			// autobox
 			substitutePrimitiveValueFromAutoboxValue();
-			return type.getAutoboxedPrimitiveClass();
-		} else if (object != null && type.isObject()) {
+			return valueClass.getAutoboxedPrimitiveClass();
+		} else if (object != null && valueClass.isObject()) {
 			return object.clazz;
 		}
-		return type;
+		return valueClass;
 	}
 }

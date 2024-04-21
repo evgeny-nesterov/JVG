@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -17,10 +18,13 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type : (ctx.clazz != null ? ctx.clazz : null);
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.clazz : (ctx.clazz != null ? ctx.clazz : null);
+		Type invocationType = ctx.invocationNode != null ? ctx.invocationNode.type : Type.getType(ctx.clazz);
 		HiClass superClass = invocationClass != null && !invocationClass.isInterface ? invocationClass.superClass : invocationClass;
+		Type superType = invocationClass != null && !invocationClass.isInterface ? invocationClass.superClassType : invocationType;
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = superClass;
+		ctx.nodeValueType.enclosingType = superType;
 		return superClass;
 	}
 
@@ -64,7 +68,7 @@ public class NodeSuper extends HiNode {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = objectClass;
+		ctx.value.valueClass = objectClass;
 		ctx.value.lambdaClass = null;
 		ctx.value.object = object;
 	}

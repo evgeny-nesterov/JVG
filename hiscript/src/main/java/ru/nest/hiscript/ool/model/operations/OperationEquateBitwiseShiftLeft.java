@@ -27,18 +27,18 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		if (node1.type == HiClassPrimitive.BYTE.getAutoboxClass() || node1.type == HiClassPrimitive.SHORT.getAutoboxClass()) {
-			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		if (node1.clazz == HiClassPrimitive.BYTE.getAutoboxClass() || node1.clazz == HiClassPrimitive.SHORT.getAutoboxClass()) {
+			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 			return null;
 		}
 
-		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
+		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 		// TODO check
 
 		HiNodeIF node = node1.node != null ? node1.node : node1.resolvedValueVariable;
 		checkFinal(validationInfo, ctx, node, true);
-		return node1.type;
+		return node1.clazz;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
 				case BOOLEAN:
 				case FLOAT:
 				case DOUBLE:
-					errorInvalidOperator(ctx, v1.type, v2.type);
+					errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 					return;
 			}
 
@@ -65,7 +65,7 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
 				case BOOLEAN:
 				case FLOAT:
 				case DOUBLE:
-					errorInvalidOperator(ctx, v1.type, v2.type);
+					errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 					return;
 			}
 
@@ -172,8 +172,8 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
 			}
 
 			// autobox
-			if (v1.type.isObject()) {
-				v1.type = c1;
+			if (v1.valueClass.isObject()) {
+				v1.valueClass = c1;
 				v1.object = ((HiClassPrimitive) c1).autobox(ctx, v1);
 			}
 
@@ -185,6 +185,6 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
 			return;
 		}
 
-		errorInvalidOperator(ctx, v1.type, v2.type);
+		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

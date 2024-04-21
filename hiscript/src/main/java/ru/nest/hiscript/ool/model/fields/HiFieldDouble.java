@@ -16,7 +16,7 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type.isNumber();
+		return valueType.clazz.isNumber();
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 		if (valueType == DOUBLE) {
 			value.doubleNumber = this.value;
 		} else {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 		}
 	}
 

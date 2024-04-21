@@ -93,7 +93,6 @@ public class ExpressionParser {
 		if (id != null) {
 			ctx.addVariable(id, value);
 		}
-
 		return value;
 	}
 
@@ -204,7 +203,6 @@ public class ExpressionParser {
 
 				return new SwitchValue(valueCondition, valueTrue, valueFalse);
 			}
-
 			break;
 		}
 

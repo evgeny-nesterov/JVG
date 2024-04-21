@@ -33,7 +33,7 @@ public class HiJava {
 
 	private static HiObject convertMapFromJava(RuntimeContext ctx, Map<?, ?> javaMap) {
 		HiClass type = HiClass.forName(ctx, HiClass.HASHMAP_CLASS_NAME);
-		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null);
+		HiObject object = type.getConstructor(ctx).newInstance(ctx, Type.getType(type), null, null);
 		Map map = (Map) object.userObject;
 		for (Map.Entry e : javaMap.entrySet()) {
 			map.put(convertFromJava(ctx, e.getKey()), convertFromJava(ctx, e.getValue()));
@@ -43,7 +43,7 @@ public class HiJava {
 
 	private static HiObject convertListFromJava(RuntimeContext ctx, List javaList) {
 		HiClass type = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
-		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null);
+		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null, null);
 		List list = (List) object.userObject;
 		for (Object o : javaList) {
 			list.add(convertFromJava(ctx, o));

@@ -92,19 +92,19 @@ public class StringImpl extends ImplUtil {
 
 	public static void String_char_charAt_int(RuntimeContext ctx, int index) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.CHAR.getArrayClass();
+		ctx.value.valueClass = HiClassPrimitive.CHAR.getArrayClass();
 		ctx.value.array = getString(ctx, ctx.value.object).charAt(index);
 	}
 
 	public static void String_0char_toCharArray(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.CHAR.getArrayClass();
+		ctx.value.valueClass = HiClassPrimitive.CHAR.getArrayClass();
 		ctx.value.array = getString(ctx, ctx.value.object).toCharArray();
 	}
 
 	public static void String_0byte_getBytes(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BYTE.getArrayClass();
+		ctx.value.valueClass = HiClassPrimitive.BYTE.getArrayClass();
 		ctx.value.array = getString(ctx, ctx.value.object).getBytes();
 	}
 
@@ -129,7 +129,7 @@ public class StringImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = equals;
 	}
 

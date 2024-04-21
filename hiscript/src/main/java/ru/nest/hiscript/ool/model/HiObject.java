@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
@@ -11,13 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 public class HiObject {
-	public HiObject(HiClass clazz, HiObject outboundObject) {
+	public HiObject(HiClass clazz, Type type, HiObject outboundObject) {
 		this.clazz = clazz;
+		this.type = type;
 		this.outboundObject = outboundObject;
 		mainObject = this;
 	}
 
 	public HiClass clazz;
+
+	public Type type;
 
 	public HiField<?>[] fields = null;
 
@@ -328,7 +332,7 @@ public class HiObject {
 		if (clazz.isJava()) {
 			return userObject;
 		}
-		ctx.throwRuntimeException("cannot convert to java value: " + clazz.fullName);
+		ctx.throwRuntimeException("cannot convert to java value: " + clazz.getNameDescr());
 		return null;
 	}
 

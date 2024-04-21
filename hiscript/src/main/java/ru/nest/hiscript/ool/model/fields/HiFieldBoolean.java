@@ -18,13 +18,13 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type == HiClassPrimitive.BOOLEAN;
+		return valueType.clazz == HiClassPrimitive.BOOLEAN;
 	}
 
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		value.valueType = Value.VALUE;
-		value.type = getClass(ctx);
+		value.valueClass = getClass(ctx);
 		value.bool = this.value;
 	}
 
@@ -32,11 +32,11 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
 
-		if (value.type.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
+		if (value.valueClass.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
 			// autobox
 			value.substitutePrimitiveValueFromAutoboxValue();
-		} else if (value.type != HiClassPrimitive.BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+		} else if (value.valueClass != HiClassPrimitive.BOOLEAN) {
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 		}
 
 		this.value = value.bool;

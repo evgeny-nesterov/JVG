@@ -58,7 +58,7 @@ public class NodeMainWrapper extends HiNode {
 			if (this.ctx != null) {
 				ctx = this.ctx;
 			} else {
-				ctx = new CompileClassContext(validationInfo.getCompiler(), null, HiClass.CLASS_TYPE_TOP);
+				ctx = new CompileClassContext(validationInfo.getCompiler(), null, null, HiClass.CLASS_TYPE_TOP);
 			}
 		}
 		this.ctx = ctx;

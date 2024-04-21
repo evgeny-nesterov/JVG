@@ -10,11 +10,11 @@ import java.util.Objects;
 
 public class RecordImpl extends ImplUtil {
 	public static void Record_boolean_equals_Object(RuntimeContext ctx, HiObject o2) {
-		if (!(ctx.value.type instanceof HiClassRecord)) {
+		if (!(ctx.value.valueClass instanceof HiClassRecord)) {
 			returnBoolean(ctx, false);
 			return;
 		}
-		HiClassRecord clazz = (HiClassRecord) ctx.value.type;
+		HiClassRecord clazz = (HiClassRecord) ctx.value.valueClass;
 		if (clazz != o2.clazz) {
 			returnBoolean(ctx, false);
 			return;
@@ -59,7 +59,7 @@ public class RecordImpl extends ImplUtil {
 	}
 
 	public static void Record_int_hashCode(RuntimeContext ctx) {
-		HiClassRecord clazz = (HiClassRecord) ctx.value.type;
+		HiClassRecord clazz = (HiClassRecord) ctx.value.valueClass;
 		HiObject object = ctx.value.object;
 		int[] hashCodes = new int[clazz.defaultConstructor.arguments.length];
 		for (int i = 0; i < clazz.defaultConstructor.arguments.length; i++) {

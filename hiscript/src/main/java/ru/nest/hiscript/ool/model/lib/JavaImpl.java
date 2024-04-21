@@ -127,11 +127,11 @@ public class JavaImpl extends ImplUtil {
 		if (matchedJavaConstructor != null) {
 			Object javaObject = matchedJavaConstructor.newInstance(javaArgs);
 
-			HiObject object = new HiObject(clazz, null);
+			HiObject object = new HiObject(clazz, null, null);
 			object.userObject = javaObject;
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = clazz;
+			ctx.value.valueClass = clazz;
 			ctx.value.object = object;
 		} else {
 			ctx.throwRuntimeException("cannot find constructor for java class '" + hiClassName + "'");

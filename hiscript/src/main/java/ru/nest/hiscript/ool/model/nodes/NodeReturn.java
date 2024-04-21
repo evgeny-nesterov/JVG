@@ -77,9 +77,9 @@ public class NodeReturn extends HiNode {
 			expectedType = method.returnClass == null ? HiClassVar.VAR : method.returnClass;
 		}
 		if (value != null) {
-			NodeValueType returnValueType = value.getValueType(validationInfo, ctx);
-			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.type, expectedType, returnValueType.isCompileValue(), true)) {
-				validationInfo.error("incompatible types; found " + returnValueType.type + ", required " + expectedType, value.getToken());
+			NodeValueType returnValueType = value.getNodeValueType(validationInfo, ctx);
+			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true)) {
+				validationInfo.error("incompatible types; found " + returnValueType.clazz + ", required " + expectedType, value.getToken());
 				return false;
 			}
 		} else if (expectedType != HiClassPrimitive.VOID) {
@@ -112,7 +112,7 @@ public class NodeReturn extends HiNode {
 				// TODO: check on void return value
 			} else {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.type = HiClassPrimitive.VOID;
+				ctx.value.valueClass = HiClassPrimitive.VOID;
 			}
 		} finally {
 			ctx.isReturn = true;

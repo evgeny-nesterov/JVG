@@ -19,7 +19,7 @@ public class ArrayListImpl extends ImplUtil {
 		o.userObject = new ArrayList<>(initialCapacity);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void ArrayList_void_init_ArrayList(RuntimeContext ctx, HiObject list) {
@@ -28,21 +28,21 @@ public class ArrayListImpl extends ImplUtil {
 		o.userObject = new ArrayList<>(a);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
-	public static void ArrayList_boolean_add_Object(RuntimeContext ctx, Object element) {
+	public static void ArrayList_boolean_add_O(RuntimeContext ctx, Object element) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).add(element);
 	}
 
-	public static void ArrayList_Object_get_int(RuntimeContext ctx, int index) {
+	public static void ArrayList_O_get_int(RuntimeContext ctx, int index) {
 		Object element = getArrayList(ctx).get(index);
 		ctx.value.set(element);
 	}
 
-	public static void ArrayList_Object_set_int_Object(RuntimeContext ctx, int index, Object value) {
+	public static void ArrayList_O_set_int_O(RuntimeContext ctx, int index, Object value) {
 		Object element = getArrayList(ctx).set(index, value);
 		ctx.value.set(element);
 	}
@@ -50,16 +50,16 @@ public class ArrayListImpl extends ImplUtil {
 	public static void ArrayList_void_ensureCapacity_int(RuntimeContext ctx, int minCapacity) {
 		getArrayList(ctx).ensureCapacity(minCapacity);
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
-	public static void ArrayList_Object_remove_Object(RuntimeContext ctx, Object element) {
+	public static void ArrayList_O_remove_O(RuntimeContext ctx, Object element) {
 		if (element instanceof HiObject) {
 			// for HiObject.equals(Object)
 			((HiObject) element).ctx = ctx;
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).remove(element);
 	}
 
@@ -70,37 +70,37 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_int_size(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
+		ctx.value.valueClass = HiClassPrimitive.INT;
 		ctx.value.intNumber = getArrayList(ctx).size();
 	}
 
-	public static void ArrayList_int_indexOf_Object(RuntimeContext ctx, Object element) {
+	public static void ArrayList_int_indexOf_O(RuntimeContext ctx, Object element) {
 		if (element instanceof HiObject) {
 			// for HiObject.equals(Object)
 			((HiObject) element).ctx = ctx;
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
+		ctx.value.valueClass = HiClassPrimitive.INT;
 		ctx.value.intNumber = getArrayList(ctx).indexOf(element);
 	}
 
-	public static void ArrayList_int_lastIndexOf_Object(RuntimeContext ctx, Object element) {
+	public static void ArrayList_int_lastIndexOf_O(RuntimeContext ctx, Object element) {
 		if (element instanceof HiObject) {
 			// for HiObject.equals(Object)
 			((HiObject) element).ctx = ctx;
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
+		ctx.value.valueClass = HiClassPrimitive.INT;
 		ctx.value.intNumber = getArrayList(ctx).lastIndexOf(element);
 	}
 
-	public static void ArrayList_boolean_contains_Object(RuntimeContext ctx, Object element) {
+	public static void ArrayList_boolean_contains_O(RuntimeContext ctx, Object element) {
 		if (element instanceof HiObject) {
 			// for HiObject.equals(Object)
 			((HiObject) element).ctx = ctx;
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).contains(element);
 	}
 
@@ -112,7 +112,7 @@ public class ArrayListImpl extends ImplUtil {
 	public static void ArrayList_void_clear(RuntimeContext ctx) {
 		getArrayList(ctx).clear();
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void ArrayList_void_clone(RuntimeContext ctx) {
@@ -123,14 +123,14 @@ public class ArrayListImpl extends ImplUtil {
 	public static void ArrayList_boolean_addAll_ArrayList(RuntimeContext ctx, HiObject list) {
 		List a = (List) list.userObject;
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).addAll(a);
 	}
 
 	public static void ArrayList_boolean_addAll_int_ArrayList(RuntimeContext ctx, int index, HiObject list) {
 		List a = (List) list.userObject;
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).addAll(index, a);
 	}
 
@@ -143,7 +143,7 @@ public class ArrayListImpl extends ImplUtil {
 			}
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).removeAll(a);
 	}
 
@@ -156,7 +156,7 @@ public class ArrayListImpl extends ImplUtil {
 			}
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).retainAll(a);
 	}
 
@@ -169,7 +169,7 @@ public class ArrayListImpl extends ImplUtil {
 			}
 		}
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = getArrayList(ctx).containsAll(a);
 	}
 }

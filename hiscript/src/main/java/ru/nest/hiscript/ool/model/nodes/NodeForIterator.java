@@ -77,7 +77,7 @@ public class NodeForIterator extends HiNode {
 				return;
 			}
 
-			if (ctx.value.type.isArray()) {
+			if (ctx.value.valueClass.isArray()) {
 				HiField<?> forVariable = ctx.getVariable(declaration.name);
 				Object array = ctx.value.array;
 				int size = Array.getLength(array);
@@ -87,7 +87,7 @@ public class NodeForIterator extends HiNode {
 						break;
 					}
 				}
-			} else if (ctx.value.type.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME)) { // TODO isInstanceof Iterable
+			} else if (ctx.value.valueClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME)) { // TODO isInstanceof Iterable
 				HiField<?> forVariable = ctx.getVariable(declaration.name);
 				List list = (List) ctx.value.object.userObject;
 				for (Object value : list) {

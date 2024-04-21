@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
@@ -13,15 +14,15 @@ import java.lang.reflect.Constructor;
 public class HiConstructorJava extends HiConstructor {
 	private final Constructor constructor;
 
-	public HiConstructorJava(HiClass clazz, Constructor constructor) {
-		super(clazz, null, null, null, (NodeArgument[]) null, null, null, null, null);
+	public HiConstructorJava(HiClass clazz, Type type, Constructor constructor) {
+		super(clazz, type, null, null, null, (NodeArgument[]) null, null, null, null, null);
 		this.constructor = constructor;
 	}
 
 	@Override
-	public HiObject newInstance(RuntimeContext ctx, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
+	public HiObject newInstance(RuntimeContext ctx, Type type, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
 		if (object == null) {
-			object = new HiObject(clazz, null);
+			object = new HiObject(clazz, type, null);
 		}
 
 		try {
@@ -38,7 +39,7 @@ public class HiConstructorJava extends HiConstructor {
 			object.userObject = constructor.newInstance(javaArgs);
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = clazz;
+			ctx.value.valueClass = clazz;
 			ctx.value.object = object;
 			ctx.value.lambdaClass = null;
 			return object;

@@ -60,6 +60,7 @@ public class NodeGeneric extends HiNode {
 					valid = false;
 				}
 			}
+			valid &= genericType.validateClass(clazz.clazz, validationInfo, ctx, getToken());
 			return valid;
 		}
 		return false;

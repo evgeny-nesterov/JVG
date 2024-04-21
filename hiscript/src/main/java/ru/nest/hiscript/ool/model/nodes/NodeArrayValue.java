@@ -32,6 +32,7 @@ public class NodeArrayValue extends HiNode {
 		HiClass clazz = type.getArrayClass(ctx, dimensions);
 		// TODO compileValue for arrays
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = type;
 		return clazz;
 	}
 
@@ -69,7 +70,7 @@ public class NodeArrayValue extends HiNode {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = cellClass.getArrayClass();
+		ctx.value.valueClass = cellClass.getArrayClass();
 		ctx.value.array = value;
 	}
 

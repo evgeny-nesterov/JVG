@@ -71,10 +71,10 @@ public class NodeCatch extends HiNode {
 						continue;
 					}
 					if (excClass1.isInstanceof(excClass2)) {
-						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass1.fullName + "' is a subclass of '" + excClass2.fullName + "'", getToken());
+						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass1.getNameDescr() + "' is a subclass of '" + excClass2.getNameDescr() + "'", getToken());
 						valid = false;
 					} else if (excClass2.isInstanceof(excClass1)) {
-						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass2.fullName + "' is a subclass of '" + excClass1.fullName + "'", getToken());
+						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass2.getNameDescr() + "' is a subclass of '" + excClass1.getNameDescr() + "'", getToken());
 						valid = false;
 					}
 				}
@@ -90,12 +90,12 @@ public class NodeCatch extends HiNode {
 			HiClassMix excClassMax = (HiClassMix) excClass;
 			for (HiClass clazz : excClassMax.classes) {
 				if (!clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-					validationInfo.error("incompatible types: " + clazz.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					validationInfo.error("incompatible types: " + clazz.getNameDescr() + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 					valid = false;
 				}
 			}
 		} else if (!excClass.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-			validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+			validationInfo.error("incompatible types: " + excClass.getNameDescr() + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 			valid = false;
 		}
 

@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -174,7 +175,8 @@ public class NodeExpressionNoLS extends NodeExpression {
 		nodes[0].copyTo(ctx.nodeValueType);
 		ctx.putNodesValueTypesCache(nodes);
 		ctx.nodeValueType.resolvedValueVariable = this;
-		ctx.nodeValueType.enclosingClass = ctx.nodeValueType.type;
+		ctx.nodeValueType.enclosingClass = ctx.nodeValueType.clazz;
+		ctx.nodeValueType.enclosingType = ctx.nodeValueType.type;
 
 		if (!validValue && validationInfo.messages.size() == 0) {
 			validationInfo.error("invalid expression", getToken());
@@ -183,7 +185,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		NodeValueType resultValueType = getValueType(validationInfo, ctx);
+		NodeValueType resultValueType = getNodeValueType(validationInfo, ctx);
 		boolean valid = resultValueType.valid;
 		if (resultValueType.isCompileValue()) {
 			// TODO simplify expression
@@ -206,7 +208,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 
 		// autobox
-		if (value.type.getAutoboxedPrimitiveClass() != null) {
+		if (value.valueClass.getAutoboxedPrimitiveClass() != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
 		}
 
@@ -214,11 +216,19 @@ public class NodeExpressionNoLS extends NodeExpression {
 		return true;
 	}
 
+	public <N extends HiNodeIF> N getSingleNode() {
+		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
+			return (N) operands[0];
+		}
+		return null;
+	}
+
 	@Override
 	public void execute(RuntimeContext ctx) {
 		// optimization
-		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
-			operands[0].execute(ctx);
+		HiNodeIF singleNode = getSingleNode();
+		if (singleNode != null) {
+			singleNode.execute(ctx);
 			resolveValue(ctx, ctx.value);
 			return;
 		}

@@ -21,13 +21,13 @@ public class OperationLower extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
-		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
+		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 		if (c1.isNumber() && c2.isNumber()) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {
-			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 			return null;
 		}
 	}
@@ -39,7 +39,7 @@ public class OperationLower extends BinaryOperation {
 		if (c1.isPrimitive() && c2.isPrimitive()) {
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
-			v1.type = TYPE_BOOLEAN;
+			v1.valueClass = TYPE_BOOLEAN;
 			switch (t1) {
 				case CHAR:
 					switch (t2) {
@@ -225,6 +225,6 @@ public class OperationLower extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(ctx, v1.type, v2.type);
+		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

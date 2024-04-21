@@ -15,18 +15,23 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 		execute(ctx);
 	}
 
-	default NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	default NodeValueType getNodeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.node = this;
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-		ctx.nodeValueType.type = getValueClass(validationInfo, ctx);
+		ctx.nodeValueType.clazz = getValueClass(validationInfo, ctx);
 		ctx.nodeValueType.valid = validate(validationInfo, ctx);
 		ctx.nodeValueType.resolvedValueVariable = null;
 		ctx.nodeValueType.enclosingClass = null;
+		ctx.nodeValueType.enclosingType = null;
 		return ctx.nodeValueType;
 	}
 
 	default HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return getValueType(validationInfo, ctx).type;
+		return getNodeValueType(validationInfo, ctx).clazz;
+	}
+
+	default Type getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return getNodeValueType(validationInfo, ctx).type;
 	}
 
 	default NodeValueType.NodeValueReturnType getReturnValueType() {

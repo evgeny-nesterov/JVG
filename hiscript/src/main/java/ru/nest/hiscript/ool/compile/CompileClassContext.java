@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.TokenAccessible;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
@@ -32,19 +33,21 @@ import java.util.Map;
 import java.util.Set;
 
 public class CompileClassContext implements ClassResolver {
-	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, int classType) {
+	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, int classType) {
 		this.compiler = compiler;
 		this.tokenizer = compiler.getTokenizer();
 		this.parent = null;
 		this.enclosingClass = enclosingClass;
+		this.enclosingType = enclosingType;
 		this.classType = classType;
 	}
 
-	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, int classType) {
+	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, Type enclosingType, int classType) {
 		this.compiler = parent.getCompiler();
 		this.tokenizer = compiler.getTokenizer();
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
+		this.enclosingType = enclosingType;
 		this.classType = classType;
 	}
 
@@ -54,7 +57,11 @@ public class CompileClassContext implements ClassResolver {
 
 	public HiClass clazz;
 
+	public Type type;
+
 	public HiClass enclosingClass;
+
+	public Type enclosingType;
 
 	public int classType;
 
@@ -252,9 +259,10 @@ public class CompileClassContext implements ClassResolver {
 		level.label = label;
 	}
 
-	public void enterObject(HiClass enclosingClass, boolean isEnclosingObject) {
+	public void enterObject(HiClass enclosingClass, Type enclosingType, boolean isEnclosingObject) {
 		level = new CompileClassLevel(RuntimeContext.OBJECT, enclosingClass, level);
 		level.enclosingClass = enclosingClass;
+		level.enclosingType = enclosingType;
 		level.isEnclosingObject = isEnclosingObject;
 	}
 
@@ -265,13 +273,14 @@ public class CompileClassContext implements ClassResolver {
 	public HiClass consumeInvocationClass() {
 		HiClass clazz = this.level.enclosingClass;
 		this.level.enclosingClass = null;
+		this.level.enclosingType = null;
 		return clazz;
 	}
 
 	public boolean addLocalClass(HiClass clazz) {
 		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
-			compiler.getValidationInfo().error("Duplicated nested type " + clazz.fullName, clazz.getToken());
+			compiler.getValidationInfo().error("Duplicated nested type " + clazz.getNameDescr(), clazz.getToken());
 			valid = false;
 		}
 		level.addClass(clazz);
@@ -497,6 +506,8 @@ public class CompileClassContext implements ClassResolver {
 		CompileClassLevel child;
 
 		public HiClass enclosingClass;
+
+		public Type enclosingType;
 
 		public boolean isEnclosingObject;
 

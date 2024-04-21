@@ -33,7 +33,7 @@ public class HiFieldObject extends HiField<HiObject> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		HiClass valueClass = valueType.type;
+		HiClass valueClass = valueType.clazz;
 
 		// autobox
 		if (valueClass.isPrimitive() && valueClass != HiClassPrimitive.VOID) {
@@ -45,7 +45,7 @@ public class HiFieldObject extends HiField<HiObject> {
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		value.valueType = Value.VALUE;
-		value.type = getClass(ctx);
+		value.valueClass = getClass(ctx);
 		value.lambdaClass = lambdaClass;
 		value.object = object;
 	}
@@ -53,11 +53,11 @@ public class HiFieldObject extends HiField<HiObject> {
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (value.type.isNull()) {
+		if (value.valueClass.isNull()) {
 			object = null;
 			lambdaClass = null;
 		} else {
-			lambdaClass = value.type.isLambda() ? value.type : null;
+			lambdaClass = value.valueClass.isLambda() ? value.valueClass : null;
 			object = value.getObject(getClass(ctx));
 		}
 		initialized = true;

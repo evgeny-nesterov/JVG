@@ -29,25 +29,25 @@ public class OperationPrefixIncrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
-			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
+			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		return node.type;
+		return node.clazz;
 	}
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value value) {
 		HiClass c = value.getOperationClass();
 		if (!c.isPrimitive()) {
-			errorInvalidOperator(ctx, value.type);
+			errorInvalidOperator(ctx, value.valueClass);
 			return;
 		}
 
 		int t = c.getPrimitiveType();
 		if (t == BOOLEAN) {
-			errorInvalidOperator(ctx, value.type);
+			errorInvalidOperator(ctx, value.valueClass);
 			return;
 		}
 
@@ -76,14 +76,14 @@ public class OperationPrefixIncrement extends UnaryOperation {
 		}
 
 		// autobox
-		if (value.type.isObject()) {
-			value.type = c;
+		if (value.valueClass.isObject()) {
+			value.valueClass = c;
 			value.object = ((HiClassPrimitive) c).autobox(ctx, value);
 		}
 
 		HiField<?> var = value.variable;
 		if (value.valueType == Value.ARRAY_INDEX) {
-			HiArrays.setArrayIndex(value.type, value.parentArray, value.arrayIndex, value, ctx.value);
+			HiArrays.setArrayIndex(value.valueClass, value.parentArray, value.arrayIndex, value, ctx.value);
 		} else {
 			var.set(ctx, value);
 		}

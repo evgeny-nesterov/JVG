@@ -22,9 +22,9 @@ public class OperationPlus extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type.getAutoboxedPrimitiveClass() == null ? node1.type : node1.type.getAutoboxedPrimitiveClass();
-		HiClass c2 = node2.type.getAutoboxedPrimitiveClass() == null ? node2.type : node2.type.getAutoboxedPrimitiveClass();
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
+		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 
 		boolean isS1 = c1 != null && HiClass.STRING_CLASS_NAME.equals(c1.fullName);
 		boolean isS2 = c2 != null && HiClass.STRING_CLASS_NAME.equals(c2.fullName);
@@ -33,7 +33,7 @@ public class OperationPlus extends BinaryOperation {
 		}
 
 		if (!c1.isNumber() || !c2.isNumber()) {
-			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 			return null;
 		}
 
@@ -45,169 +45,169 @@ public class OperationPlus extends BinaryOperation {
 					switch (t2) {
 						case CHAR:
 							node1.intValue = node1.charValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.intValue = node1.charValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.intValue = node1.charValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.intValue = node1.charValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.charValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.charValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.charValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case BYTE:
 					switch (t2) {
 						case CHAR:
 							node1.intValue = node1.byteValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.intValue = node1.byteValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.intValue = node1.byteValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.intValue = node1.byteValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.byteValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.byteValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.byteValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case SHORT:
 					switch (t2) {
 						case CHAR:
 							node1.intValue = node1.shortValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.intValue = node1.shortValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.intValue = node1.shortValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.intValue = node1.shortValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.shortValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.shortValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.shortValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case INT:
 					switch (t2) {
 						case CHAR:
 							node1.intValue = node1.intValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.intValue = node1.intValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.intValue = node1.intValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.intValue = node1.intValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.intValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.intValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.intValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case LONG:
 					switch (t2) {
 						case CHAR:
 							node1.longValue = node1.longValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.longValue = node1.longValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.longValue = node1.longValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.longValue = node1.longValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.longValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.longValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.longValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case FLOAT:
 					switch (t2) {
 						case CHAR:
 							node1.floatValue = node1.floatValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.floatValue = node1.floatValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.floatValue = node1.floatValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.floatValue = node1.floatValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.floatValue = node1.floatValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.floatValue = node1.floatValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.floatValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 				case DOUBLE:
 					switch (t2) {
 						case CHAR:
 							node1.doubleValue = node1.doubleValue + node2.charValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case BYTE:
 							node1.doubleValue = node1.doubleValue + node2.byteValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case SHORT:
 							node1.doubleValue = node1.doubleValue + node2.shortValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case INT:
 							node1.doubleValue = node1.doubleValue + node2.intValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.doubleValue = node1.doubleValue + node2.longValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case FLOAT:
 							node1.doubleValue = node1.doubleValue + node2.floatValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 						case DOUBLE:
 							node1.doubleValue = node1.doubleValue + node2.doubleValue;
-							return node1.valueType = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.INT;
 					}
 			}
 		} else {
@@ -269,7 +269,7 @@ public class OperationPlus extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		return null;
 	}
 
@@ -288,7 +288,7 @@ public class OperationPlus extends BinaryOperation {
 			System.arraycopy(chars2, 0, chars, chars1.length, chars2.length);
 			NodeString.createString(ctx, chars);
 
-			v1.type = ctx.value.type;
+			v1.valueClass = ctx.value.valueClass;
 			v1.lambdaClass = null;
 			v1.object = ctx.value.object;
 			return;
@@ -317,11 +317,11 @@ public class OperationPlus extends BinaryOperation {
 								autoCastLong(v1, v1.character + v2.longNumber);
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.character + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.character + v2.doubleNumber;
 								return;
 						}
@@ -339,18 +339,18 @@ public class OperationPlus extends BinaryOperation {
 								autoCastInt(v1, v1.byteNumber + v2.shortNumber);
 								return;
 							case INT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								autoCastInt(v1, v1.byteNumber + v2.intNumber);
 								return;
 							case LONG:
 								autoCastLong(v1, v1.byteNumber + v2.longNumber);
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.byteNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.byteNumber + v2.doubleNumber;
 								return;
 						}
@@ -374,11 +374,11 @@ public class OperationPlus extends BinaryOperation {
 								autoCastLong(v1, v1.shortNumber + v2.longNumber);
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.shortNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.shortNumber + v2.doubleNumber;
 								return;
 						}
@@ -402,11 +402,11 @@ public class OperationPlus extends BinaryOperation {
 								autoCastLong(v1, v1.intNumber + v2.longNumber);
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.intNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.intNumber + v2.doubleNumber;
 								return;
 						}
@@ -430,11 +430,11 @@ public class OperationPlus extends BinaryOperation {
 								autoCastLong(v1, v1.longNumber + v2.longNumber);
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.longNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.longNumber + v2.doubleNumber;
 								return;
 						}
@@ -443,31 +443,31 @@ public class OperationPlus extends BinaryOperation {
 					case FLOAT:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.floatNumber + v2.doubleNumber;
 								return;
 						}
@@ -476,31 +476,31 @@ public class OperationPlus extends BinaryOperation {
 					case DOUBLE:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.doubleNumber;
 								return;
 						}
@@ -511,31 +511,31 @@ public class OperationPlus extends BinaryOperation {
 					case CHAR:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.character + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.character + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.character + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.character + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.character + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.character + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.character + v2.doubleNumber;
 								return;
 						}
@@ -545,30 +545,30 @@ public class OperationPlus extends BinaryOperation {
 						switch (t2) {
 							case CHAR:
 								v1.intNumber = v1.byteNumber + v2.character;
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								return;
 							case BYTE:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.byteNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.byteNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.byteNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.byteNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.byteNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.byteNumber + v2.doubleNumber;
 								return;
 						}
@@ -577,31 +577,31 @@ public class OperationPlus extends BinaryOperation {
 					case SHORT:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.shortNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.shortNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.shortNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.shortNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.shortNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.shortNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.shortNumber + v2.doubleNumber;
 								return;
 						}
@@ -610,31 +610,31 @@ public class OperationPlus extends BinaryOperation {
 					case INT:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.intNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.intNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.intNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_INT;
+								v1.valueClass = TYPE_INT;
 								v1.intNumber = v1.intNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.intNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.intNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.intNumber + v2.doubleNumber;
 								return;
 						}
@@ -643,31 +643,31 @@ public class OperationPlus extends BinaryOperation {
 					case LONG:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.longNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.longNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.longNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.longNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_LONG;
+								v1.valueClass = TYPE_LONG;
 								v1.longNumber = v1.longNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.longNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.longNumber + v2.doubleNumber;
 								return;
 						}
@@ -676,31 +676,31 @@ public class OperationPlus extends BinaryOperation {
 					case FLOAT:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_FLOAT;
+								v1.valueClass = TYPE_FLOAT;
 								v1.floatNumber = v1.floatNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.floatNumber + v2.doubleNumber;
 								return;
 						}
@@ -709,31 +709,31 @@ public class OperationPlus extends BinaryOperation {
 					case DOUBLE:
 						switch (t2) {
 							case CHAR:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.character;
 								return;
 							case BYTE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.byteNumber;
 								return;
 							case SHORT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.shortNumber;
 								return;
 							case INT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.intNumber;
 								return;
 							case LONG:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.longNumber;
 								return;
 							case FLOAT:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.floatNumber;
 								return;
 							case DOUBLE:
-								v1.type = TYPE_DOUBLE;
+								v1.valueClass = TYPE_DOUBLE;
 								v1.doubleNumber = v1.doubleNumber + v2.doubleNumber;
 								return;
 						}
@@ -742,6 +742,6 @@ public class OperationPlus extends BinaryOperation {
 			}
 		}
 
-		errorInvalidOperator(ctx, v1.type, v2.type);
+		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

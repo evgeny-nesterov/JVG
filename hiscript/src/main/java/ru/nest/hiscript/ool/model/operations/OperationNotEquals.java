@@ -21,9 +21,9 @@ public class OperationNotEquals extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type;
-		HiClass c2 = node2.type;
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass c1 = node1.clazz;
+		HiClass c2 = node2.clazz;
 		if (c1.isVar() || c2.isVar()) {
 			return HiClassPrimitive.BOOLEAN;
 		}
@@ -46,15 +46,15 @@ public class OperationNotEquals extends BinaryOperation {
 			return HiClassPrimitive.BOOLEAN;
 		}
 		if (node1.valid && node2.valid) {
-			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		}
 		return null;
 	}
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.type;
-		HiClass c2 = v2.type;
+		HiClass c1 = v1.valueClass;
+		HiClass c2 = v2.valueClass;
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
 
@@ -73,7 +73,7 @@ public class OperationNotEquals extends BinaryOperation {
 			}
 		}
 
-		v1.type = TYPE_BOOLEAN;
+		v1.valueClass = TYPE_BOOLEAN;
 		if (isP1 && isP2) {
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
@@ -286,6 +286,6 @@ public class OperationNotEquals extends BinaryOperation {
 			return;
 		}
 
-		errorInvalidOperator(ctx, v1.type, v2.type);
+		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

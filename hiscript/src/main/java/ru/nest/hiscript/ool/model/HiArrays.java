@@ -131,7 +131,7 @@ public class HiArrays implements PrimitiveTypes {
 				throw new HiIllegalArgumentException("array cell: " + value, null);
 			}
 		} else {
-			HiClassArray arrayClass = (HiClassArray) v.type;
+			HiClassArray arrayClass = (HiClassArray) v.valueClass;
 			HiClass cellType = arrayClass.cellClass;
 			int typeIndex = cellType.getPrimitiveType();
 			switch (typeIndex) {
@@ -164,7 +164,7 @@ public class HiArrays implements PrimitiveTypes {
 	}
 
 	public static void setArrayIndex(HiClass type, Object parentArray, int index, Value value, Value dst) {
-		dst.type = type;
+		dst.valueClass = type;
 
 		if (type.isArray()) {
 			dst.array = value.getArray();
@@ -209,9 +209,9 @@ public class HiArrays implements PrimitiveTypes {
 			}
 		} else {
 			// autobox
-			if (value.type.isPrimitive()) {
-				value.object = ((HiClassPrimitive) value.type).autobox(value.ctx, value);
-				value.type = value.type.getAutoboxClass();
+			if (value.valueClass.isPrimitive()) {
+				value.object = ((HiClassPrimitive) value.valueClass).autobox(value.ctx, value);
+				value.valueClass = value.valueClass.getAutoboxClass();
 			}
 			dst.object = value.getObject();
 			dst.lambdaClass = null;

@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -29,7 +30,9 @@ public class NodeLogicalSwitch extends NodeExpression {
 		if (type1 != null && type2 != null) {
 			HiClass commonClass = type1.getCommonClass(type2);
 			ctx.nodeValueType.enclosingClass = commonClass;
+			ctx.nodeValueType.enclosingType = commonClass != null ? commonClass.superClassType : null;
 			ctx.nodeValueType.returnType = commonClass != null && commonClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.type = Type.getType(commonClass);
 			return commonClass;
 		}
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;

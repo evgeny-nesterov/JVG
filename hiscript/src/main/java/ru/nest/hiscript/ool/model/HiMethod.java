@@ -195,10 +195,10 @@ public class HiMethod implements HiNodeIF {
 				if (variableClass.isInterface) {
 					int methodsCount = variableClass.getAbstractMethodsCount(ctx);
 					if (methodsCount > 1) {
-						validationInfo.error("multiple non-overriding abstract methods found in interface " + variableClass.fullName, variableNode.getToken());
+						validationInfo.error("multiple non-overriding abstract methods found in interface " + variableClass.getNameDescr(), variableNode.getToken());
 						valid = false;
 					} else if (methodsCount == 0) {
-						validationInfo.error("no abstract methods found in interface " + variableClass.fullName, variableNode.getToken());
+						validationInfo.error("no abstract methods found in interface " + variableClass.getNameDescr(), variableNode.getToken());
 						valid = false;
 					}
 				} else {
@@ -237,7 +237,7 @@ public class HiMethod implements HiNodeIF {
 			for (int i = 0; i < throwsTypes.length; i++) {
 				throwsClasses[i] = throwsTypes[i].getClass(ctx);
 				if (throwsClasses[i] != null && !throwsClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-					validationInfo.error("incompatible types: " + throwsClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					validationInfo.error("incompatible types: " + throwsClasses[i].getNameDescr() + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 					valid = false;
 				}
 			}
@@ -287,9 +287,10 @@ public class HiMethod implements HiNodeIF {
 		}
 		lambdaClassName += lambdasCount.getAndIncrement();
 
-		Type[] interfaces = interfaceClass != null ? new Type[] {Type.getType(interfaceClass)} : null;
-		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
-		HiConstructor defaultConstructor = new HiConstructor(clazz, null, Modifiers.PUBLIC(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
+		Type type = Type.getType(interfaceClass);
+		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
+		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, ctx.level.enclosingType, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+		HiConstructor defaultConstructor = new HiConstructor(clazz, type, null, Modifiers.PUBLIC(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
 		clazz.modifiers = Modifiers.PUBLIC();
 		clazz.functionalMethod = this;
 		clazz.constructors = new HiConstructor[] {defaultConstructor};
@@ -340,13 +341,13 @@ public class HiMethod implements HiNodeIF {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		execute(ctx, clazz, null);
+		execute(ctx, clazz, null, null);
 	}
 
-	public static void execute(RuntimeContext ctx, HiClass clazz, HiObject object) {
+	public static void execute(RuntimeContext ctx, HiClass clazz, Type type, HiObject object) {
 		ctx.addClass(clazz);
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
-		NodeConstructor.invokeConstructor(ctx, clazz, null, object, outboundObject);
+		NodeConstructor.invokeConstructor(ctx, clazz, type, null, object, outboundObject);
 	}
 
 	public boolean hasVarargs() {
@@ -380,7 +381,7 @@ public class HiMethod implements HiNodeIF {
 		if (body != null) {
 			if (modifiers.isNative()) {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.type = type;
+				ctx.value.valueClass = type;
 				ctx.value.lambdaClass = null;
 				if (type.isArray()) {
 					ctx.value.array = object;
@@ -500,9 +501,9 @@ public class HiMethod implements HiNodeIF {
 	}
 
 	@Override
-	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.nodeValueType.type = getValueClass(validationInfo, ctx);
-		if (ctx.nodeValueType.type == null || ctx.nodeValueType.type == HiClassPrimitive.VOID) {
+	public NodeValueType getNodeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.clazz = getValueClass(validationInfo, ctx);
+		if (ctx.nodeValueType.clazz == null || ctx.nodeValueType.clazz == HiClassPrimitive.VOID) {
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.noValue;
 		} else {
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;

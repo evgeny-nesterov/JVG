@@ -26,7 +26,7 @@ public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
 
 	public HiClassEnum(HiClassLoader classLoader, String name, int type) {
-		super(classLoader, Type.enumType, null, null, name, null, type, null);
+		super(classLoader, Type.enumType, null, null, null, name, null, type, null);
 	}
 
 	private Map<String, HiField> enumsMap;
@@ -36,7 +36,7 @@ public class HiClassEnum extends HiClass {
 		HiObject outboundObject = ctx.getOutboundObject(this);
 		for (HiEnumValue enumValue : enumValues) {
 			ctx.initializingEnumValue = enumValue;
-			NodeConstructor.invokeConstructor(ctx, this, enumValue.getArguments(), null, outboundObject);
+			NodeConstructor.invokeConstructor(ctx, this, null, enumValue.getArguments(), null, outboundObject);
 			if (ctx.exitFromBlock()) {
 				return;
 			}

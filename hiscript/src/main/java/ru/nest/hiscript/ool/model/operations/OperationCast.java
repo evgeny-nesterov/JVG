@@ -22,9 +22,9 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type;
-		HiClass c2 = node2.type;
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass c1 = node1.clazz;
+		HiClass c2 = node2.clazz;
 		ctx.nodeValueType.returnType = node2.returnType;
 		if (c1.isVar() || c2.isVar()) {
 		} else if (c1.isPrimitive()) {
@@ -47,7 +47,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			}
 		}
 		if (node2.isCompileValue() && c1.isPrimitive()) {
-			node1.valueType = c1;
+			node1.valueClass = c1;
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
 			switch (t1) {
@@ -230,7 +230,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		} else {
 
 		}
-		return node1.type;
+		return node1.clazz;
 	}
 
 	@Override
@@ -240,7 +240,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			return;
 		}
 
-		HiClass c1 = v1.type = v1.variableType.getClass(ctx);
+		HiClass c1 = v1.valueClass = v1.variableType.getClass(ctx);
 		if (ctx.exitFromBlock()) {
 			return;
 		}
@@ -248,8 +248,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
 		} else if (c1.isArray()) {
-			if (!canCastArray((HiClassArray) c1, v2.type)) {
-				errorCast(ctx, v2.type, v1.type);
+			if (!canCastArray((HiClassArray) c1, v2.valueClass)) {
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 				return;
 			}
 			v1.array = v2.array;
@@ -287,13 +287,13 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	private void castPrimitive(RuntimeContext ctx, Value v1, Value v2) {
-		if (!v2.type.isPrimitive()) {
-			errorCast(ctx, v2.type, v1.type);
+		if (!v2.valueClass.isPrimitive()) {
+			errorCast(ctx, v2.valueClass, v1.valueClass);
 			return;
 		}
 
-		int type1 = v1.type.getPrimitiveType();
-		int type2 = v2.type.getPrimitiveType();
+		int type1 = v1.valueClass.getPrimitiveType();
+		int type2 = v2.valueClass.getPrimitiveType();
 		switch (type1) {
 			case BOOLEAN:
 				castBoolean(ctx, v1, v2, type2);
@@ -324,7 +324,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 	private void castBoolean(RuntimeContext ctx, Value v1, Value v2, int type) {
 		if (type != BOOLEAN) {
-			errorCast(ctx, v2.type, v1.type);
+			errorCast(ctx, v2.valueClass, v1.valueClass);
 			return;
 		}
 		v1.bool = v2.bool;
@@ -354,7 +354,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.character = (char) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -382,7 +382,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.byteNumber = (byte) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -410,7 +410,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.shortNumber = (short) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -438,7 +438,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.intNumber = (int) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -466,7 +466,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.floatNumber = (float) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -494,7 +494,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.longNumber = (long) v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 
@@ -522,7 +522,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				v1.doubleNumber = v2.doubleNumber;
 				break;
 			default:
-				errorCast(ctx, v2.type, v1.type);
+				errorCast(ctx, v2.valueClass, v1.valueClass);
 		}
 	}
 }

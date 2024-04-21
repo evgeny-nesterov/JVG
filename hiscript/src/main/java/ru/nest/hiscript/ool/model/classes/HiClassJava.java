@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.MethodSignature;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.java.HiConstructorJava;
 import ru.nest.hiscript.ool.model.java.HiFieldJava;
 import ru.nest.hiscript.ool.model.java.HiMethodJava;
@@ -33,7 +34,7 @@ public class HiClassJava extends HiClass {
 
 	private final Map<Integer, HiConstructorJava> javaConstructorsMap = new ConcurrentHashMap<>();
 
-	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null);
+	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null, null);
 
 	@Override
 	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
@@ -45,7 +46,7 @@ public class HiClassJava extends HiClass {
 			}
 			Class argTypeJavaClass = argType.getJavaClass();
 			if (argTypeJavaClass == null) {
-				classResolver.processResolverException("inconvertible java class argument: " + argType.fullName);
+				classResolver.processResolverException("inconvertible java class argument: " + argType.getNameDescr());
 				return null;
 			}
 			javaArgClasses[i] = argTypeJavaClass;
@@ -74,7 +75,11 @@ public class HiClassJava extends HiClass {
 				}
 			}
 			if (matchedConstructor != null) {
-				javaConstructor = new HiConstructorJava(this, matchedConstructor);
+				Type type = null;
+				if (interfaces != null && interfaces.length == 1) {
+					type = Type.getType(interfaces[0]);
+				}
+				javaConstructor = new HiConstructorJava(this, type, matchedConstructor);
 				javaConstructorsMap.put(signatureId, javaConstructor);
 				return javaConstructor;
 			} else {
@@ -183,7 +188,7 @@ public class HiClassJava extends HiClass {
 			}
 			Class argTypeJavaClass = argType.getJavaClass();
 			if (argTypeJavaClass == null) {
-				classResolver.processResolverException("Inconvertible java class argument: " + argType.fullName);
+				classResolver.processResolverException("Inconvertible java class argument: " + argType.getNameDescr());
 				return null;
 			}
 			javaArgClasses[i] = argTypeJavaClass;

@@ -166,7 +166,7 @@ public class ParserUtil implements Words {
 		return type;
 	}
 
-	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException {
+	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		Type type = null;
 		tokenizer.start();
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -186,7 +186,17 @@ public class ParserUtil implements Words {
 			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
 				List<Type> parametersList = new ArrayList<>();
 				do {
-					parametersList.add(visitObjectType(tokenizer));
+					Token parameterTypeToken = startToken(tokenizer);
+					Type parameterType = visitType(tokenizer, true);
+					if (parameterType != null) {
+						if (parameterType.isPrimitive()) {
+							tokenizer.error("type argument cannot be of primitive type", parameterTypeToken);
+						} else {
+							parametersList.add(parameterType);
+						}
+					} else {
+						break;
+					}
 				} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
 				if (!visitGreater(tokenizer, false)) {
 					tokenizer.rollback();
@@ -194,6 +204,13 @@ public class ParserUtil implements Words {
 				}
 				type = Type.getParameterizedType(type, parametersList.toArray(new Type[parametersList.size()]));
 			}
+		} else if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+			Type extendedType = Type.objectType;
+			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
+			if (extendsType != -1) {
+				extendedType = visitObjectType(tokenizer);
+			}
+			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
 		}
 		tokenizer.commit();
 		return type;

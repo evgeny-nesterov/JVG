@@ -17,7 +17,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type == HiClassPrimitive.INT || valueType.type == HiClassPrimitive.BYTE || valueType.type == HiClassPrimitive.SHORT || valueType.type == HiClassPrimitive.CHAR;
+		return valueType.clazz == HiClassPrimitive.INT || valueType.clazz == HiClassPrimitive.BYTE || valueType.clazz == HiClassPrimitive.SHORT || valueType.clazz == HiClassPrimitive.CHAR;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -65,7 +65,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}

@@ -167,7 +167,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		args[0].set(this, value);
 		args[0].initialized = true;
 
-		exception = excConstructor.newInstance(this, args, null);
+		exception = excConstructor.newInstance(this, null, args, null);
 	}
 
 	public boolean exitFromBlock() {
@@ -261,7 +261,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		// s += "  ";
 		// System.out.println(s + "EXIT: " + level);
 
-		if (level.type == START) {
+		if (level.classType == START) {
 			if (exception != null) {
 				HiMethod method = exception.clazz.getMethod(this, "printStackTrace");
 				enterMethod(method, exception);
@@ -276,7 +276,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		if (isBroken) {
-			switch (level.type) {
+			switch (level.classType) {
 				case WHILE:
 				case DO_WHILE:
 				case FOR:
@@ -315,7 +315,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			if (var != null) {
 				break;
 			}
-			switch (level.type) {
+			switch (level.classType) {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
@@ -354,7 +354,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				if (var != null) {
 					break;
 				}
-				switch (level.type) {
+				switch (level.classType) {
 					case METHOD:
 					case CONSTRUCTOR:
 					case INITIALIZATION:
@@ -411,7 +411,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				break;
 			}
 
-			switch (level.type) {
+			switch (level.classType) {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
@@ -530,11 +530,13 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public class StackLevel {
 		public StackLevel parent;
 
-		public int type;
+		public int classType;
 
 		public String label;
 
 		public HiClass clazz;
+
+		public Type type;
 
 		public HiMethod method;
 
@@ -562,7 +564,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			this.object = object;
 			this.level = parent != null ? parent.level + 1 : 0;
 			this.mainLevel = parent != null ? parent.mainLevel : 0;
-			this.type = type;
+			this.classType = type;
 			this.label = label;
 			this.token = token;
 
@@ -638,7 +640,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					}
 				}
 
-				switch (level.type) {
+				switch (level.classType) {
 					case METHOD:
 					case CONSTRUCTOR:
 					case INITIALIZATION:
@@ -686,7 +688,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		@Override
 		public String toString() {
-			return "[" + level + "] " + type + ", class=" + clazz + ", method=" + method + ", object=" + object;
+			return "[" + level + "] " + classType + ", class=" + clazz + ", method=" + method + ", object=" + object;
 		}
 	}
 
@@ -786,7 +788,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		while (level != null) {
-			switch (level.type) {
+			switch (level.classType) {
 				case INITIALIZATION:
 				case CONSTRUCTOR:
 				case METHOD:
@@ -814,9 +816,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		for (int i = 0; i < size; i++) {
 			RuntimeContext.StackLevel level = list.get(i);
 
-			array[i] = steConstructor.newInstance(this, null, null);
+			array[i] = steConstructor.newInstance(this, null, null, null);
 
-			NodeString.createString(this, level.clazz.fullName);
+			NodeString.createString(this, level.clazz.getNameDescr());
 			array[i].getField(this, "className").set(this, value);
 
 			if (level.method != null) {

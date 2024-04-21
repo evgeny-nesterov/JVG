@@ -1,4 +1,4 @@
-public class ArrayList { // TODO implements Iterable
+public class ArrayList<O> { // TODO implements Iterable
     static {
         System.loadLib("ArrayListImpl.class");
     }
@@ -11,41 +11,41 @@ public class ArrayList { // TODO implements Iterable
         init(initialCapacity);
     }
 
-    public ArrayList(ArrayList list) {
+    public ArrayList(ArrayList<O> list) {
         init(list);
     }
 
     private native void init(int initialCapacity);
 
-    private native void init(ArrayList list);
+    private native void init(ArrayList<O> list);
 
-    public native boolean add(Object element);
+    public native boolean add(O element);
 
-    public native boolean addAll(ArrayList list);
+    public native boolean addAll(ArrayList<O> list);
 
-    public native boolean addAll(int index, ArrayList list);
+    public native boolean addAll(int index, ArrayList<O> list);
 
-    public native Object get(int index);
+    public native O get(int index);
 
-    public native Object set(int index, Object value);
+    public native O set(int index, O value);
 
-    public native Object remove(Object element);
+    public native O remove(O element);
 
     public native void remove(int index);
 
-    public native boolean removeAll(ArrayList list);
+    public native boolean removeAll(ArrayList<?> list);
 
-    public native boolean retainAll(ArrayList list);
+    public native boolean retainAll(ArrayList<?> list);
 
     public native int size();
 
-    public native int indexOf(Object element);
+    public native int indexOf(O element);
 
-    public native int lastIndexOf(Object o);
+    public native int lastIndexOf(O o);
 
     public native boolean contains(Object element);
 
-    public native boolean containsAll(ArrayList list);
+    public native boolean containsAll(ArrayList<?> list);
 
     public native Object[] toArray();
 

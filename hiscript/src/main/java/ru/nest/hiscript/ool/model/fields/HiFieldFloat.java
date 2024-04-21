@@ -17,7 +17,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type.isNumber() && valueType.type != HiClassPrimitive.DOUBLE;
+		return valueType.clazz.isNumber() && valueType.clazz != HiClassPrimitive.DOUBLE;
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -65,7 +65,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 				break;
 
 			case DOUBLE:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}

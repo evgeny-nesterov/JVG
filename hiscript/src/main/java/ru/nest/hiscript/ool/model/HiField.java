@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -126,6 +127,23 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		return clazz;
 	}
 
+	// generic
+	public void setGenericClass(ClassResolver ctx, Type objectType) {
+		if (objectType == null) {
+			// type is direct class type
+			return;
+		}
+		HiClass fieldClass = getClass(ctx);
+		if (fieldClass.isGeneric()) {
+			HiClassGeneric fieldGenericClass = (HiClassGeneric) fieldClass;
+			Type realFieldType = objectType.getParameterType(fieldGenericClass);
+			if (realFieldType != null) {
+				this.type = realFieldType;
+				this.clazz = realFieldType.getClass(ctx);
+			}
+		}
+	}
+
 	@Override
 	public boolean isConstant(CompileClassContext ctx) {
 		return modifiers.isStatic() && modifiers.isFinal();
@@ -134,6 +152,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = type;
 		return getClass(ctx);
 	}
 
@@ -142,18 +161,19 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initializer != null) {
 			valid &= initializer.validate(validationInfo, ctx) && initializer.expectValue(validationInfo, ctx);
-			NodeValueType valueType = initializer.getValueType(validationInfo, ctx);
+			NodeValueType valueType = initializer.getNodeValueType(validationInfo, ctx);
 			if (type == Type.varType) {
-				clazz = valueType.type;
-				type = Type.getType(clazz);
-			} else if (valueType.type != getClass(ctx) && !validateType(validationInfo, ctx, getClass(ctx), valueType)) {
-				validationInfo.error("incompatible types; found " + valueType.type + ", required " + getClass(ctx), token);
+				clazz = valueType.clazz;
+				type = valueType.type;
+			} else if (valueType.clazz != getClass(ctx) && !validateType(validationInfo, ctx, getClass(ctx), valueType)) {
+				validationInfo.error("incompatible types; found " + valueType.clazz + ", required " + getClass(ctx), token);
 				valid = false;
 			}
 		} else if (type == Type.varType) {
 			validationInfo.error("var is not initialized", token);
 			valid = false;
 			clazz = HiClassPrimitive.VOID;
+			type = Type.voidType;
 		}
 		getClass(ctx);
 		valid &= ctx.addLocalVariable(this);
@@ -197,7 +217,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = getClass(ctx);
+		ctx.value.valueClass = getClass(ctx);
 		get(ctx, ctx.value);
 	}
 
@@ -268,7 +288,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		HiField field;
 		if (clazz.isArray()) {
 			field = new HiFieldArray(clazz, name);
-		} else if (clazz.isPrimitive()) {
+		} else if (clazz.isPrimitive() && clazz != HiClassPrimitive.VOID) {
 			java.lang.reflect.Constructor<HiField<?>> constructor = getConstructor(clazz.name);
 			try {
 				field = constructor.newInstance(name);

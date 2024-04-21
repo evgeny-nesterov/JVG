@@ -58,7 +58,7 @@ public class NodeThrow extends HiNode {
 					level = level.parent;
 				}
 				if (!checked) {
-					validationInfo.error("unreported exception " + excClass.fullName + ": exception must be caught or declared to be thrown", exception.getToken());
+					validationInfo.error("unreported exception " + excClass.getNameDescr() + ": exception must be caught or declared to be thrown", exception.getToken());
 					valid = false;
 				}
 				if (level != null) {
@@ -66,7 +66,7 @@ public class NodeThrow extends HiNode {
 				}
 			}
 		} else {
-			validationInfo.error("incompatible types: " + excClass.fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+			validationInfo.error("incompatible types: " + excClass.getNameDescr() + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 			valid = false;
 		}
 		return valid;

@@ -42,8 +42,12 @@ public class HiConstructor implements HiNodeIF {
 		}
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, Type type, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, List<NodeArgument> arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+		if (type == null) {
+			type = Type.getType(clazz);
+		}
 		this.clazz = clazz;
+		this.type = type;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
 		this.generics = generics;
@@ -59,8 +63,9 @@ public class HiConstructor implements HiNodeIF {
 		this.bodyConstructorType = bodyConstructorType;
 	}
 
-	public HiConstructor(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+	public HiConstructor(HiClass clazz, Type type, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
 		this.clazz = clazz;
+		this.type = type;
 		this.annotations = annotations;
 		this.modifiers = modifiers;
 		this.generics = generics;
@@ -91,6 +96,8 @@ public class HiConstructor implements HiNodeIF {
 	}
 
 	public HiClass clazz;
+
+	public Type type;
 
 	public NodeArgument[] arguments;
 
@@ -141,7 +148,7 @@ public class HiConstructor implements HiNodeIF {
 			for (int i = 0; i < throwsTypes.length; i++) {
 				throwsClasses[i] = throwsTypes[i].getClass(ctx);
 				if (throwsClasses[i] != null && !throwsClasses[i].isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
-					validationInfo.error("incompatible types: " + throwsClasses[i].fullName + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
+					validationInfo.error("incompatible types: " + throwsClasses[i].getNameDescr() + " cannot be converted to " + HiClass.EXCEPTION_CLASS_NAME, token);
 					valid = false;
 				}
 			}
@@ -170,13 +177,13 @@ public class HiConstructor implements HiNodeIF {
 		// not supported
 	}
 
-	public HiObject newInstance(RuntimeContext ctx, HiField<?>[] arguments, HiObject outboundObject) {
-		return newInstance(ctx, arguments, null, outboundObject);
+	public HiObject newInstance(RuntimeContext ctx, Type type, HiField<?>[] arguments, HiObject outboundObject) {
+		return newInstance(ctx, type, arguments, null, outboundObject);
 	}
 
-	public HiObject newInstance(RuntimeContext ctx, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
+	public HiObject newInstance(RuntimeContext ctx, Type type, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
 		if (object == null) {
-			object = new HiObject(clazz, outboundObject);
+			object = new HiObject(clazz, type, outboundObject);
 		}
 
 		// enter in constructor
@@ -187,7 +194,7 @@ public class HiConstructor implements HiNodeIF {
 
 			// execute constructor this(...)
 			if (bodyConstructorType == BodyConstructorType.THIS) {
-				NodeConstructor.invokeConstructor(ctx, clazz, bodyConstructor.argValues, object, outboundObject);
+				NodeConstructor.invokeConstructor(ctx, clazz, type, bodyConstructor.argValues, object, outboundObject);
 				if (ctx.exitFromBlock()) {
 					return null;
 				}
@@ -198,7 +205,7 @@ public class HiConstructor implements HiNodeIF {
 				HiObject superOutboundObject = ctx.getOutboundObject(clazz.superClass);
 				HiObject superObject;
 				if (bodyConstructorType == BodyConstructorType.SUPER) {
-					NodeConstructor.invokeConstructor(ctx, clazz.superClass, bodyConstructor.argValues, null, superOutboundObject);
+					NodeConstructor.invokeConstructor(ctx, clazz.superClass, null, bodyConstructor.argValues, null, superOutboundObject);
 					if (ctx.exitFromBlock()) {
 						return null;
 					}
@@ -211,7 +218,7 @@ public class HiConstructor implements HiNodeIF {
 
 						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
 						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());
-						superObject = enumDefaultConstructor.newInstance(ctx, new HiField<?>[] {enumName, enumOrdinal}, null);
+						superObject = enumDefaultConstructor.newInstance(ctx, null, new HiField<?>[] {enumName, enumOrdinal}, null);
 						if (ctx.exitFromBlock()) {
 							return null;
 						}
@@ -222,7 +229,7 @@ public class HiConstructor implements HiNodeIF {
 						} else {
 							superDefaultConstructor = clazz.superClass.getConstructor(ctx);
 							if (superDefaultConstructor == null) {
-								ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.fullName, null) + " not found");
+								ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.getNameDescr(), null) + " not found");
 								return null;
 							}
 
@@ -232,7 +239,7 @@ public class HiConstructor implements HiNodeIF {
 							}
 						}
 
-						superObject = superDefaultConstructor.newInstance(ctx, null, superOutboundObject);
+						superObject = superDefaultConstructor.newInstance(ctx, null, null, superOutboundObject);
 						if (ctx.exitFromBlock()) {
 							return null;
 						}
@@ -261,7 +268,12 @@ public class HiConstructor implements HiNodeIF {
 					int index = 0;
 					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
-							object.fields[index++] = (HiField<?>) clazz.fields[i].clone();
+							HiField<?> field = (HiField<?>) clazz.fields[i].clone();
+
+							// generic
+							field.setGenericClass(ctx, type);
+
+							object.fields[index++] = field;
 						}
 					}
 
@@ -325,7 +337,7 @@ public class HiConstructor implements HiNodeIF {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = clazz;
+		ctx.value.valueClass = clazz;
 		ctx.value.lambdaClass = null;
 		ctx.value.object = object;
 		return object;
@@ -362,6 +374,7 @@ public class HiConstructor implements HiNodeIF {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		os.writeToken(token);
+		os.writeType(type);
 		os.writeShortArray(annotations);
 		modifiers.code(os);
 		os.writeNullable(generics);
@@ -376,6 +389,7 @@ public class HiConstructor implements HiNodeIF {
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
 		Token token = os.readToken();
+		Type type = os.readType();
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		NodeGenerics generics = os.readNullable(NodeGenerics.class);
@@ -385,7 +399,7 @@ public class HiConstructor implements HiNodeIF {
 		NodeConstructor bodyConstructor = (NodeConstructor) os.readNullable(HiNode.class);
 		BodyConstructorType constructorType = BodyConstructorType.get(os.readByte());
 
-		HiConstructor constructor = new HiConstructor(os.getHiClass(), annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
+		HiConstructor constructor = new HiConstructor(os.getHiClass(), type, annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
 		constructor.token = token;
 		return constructor;
 	}

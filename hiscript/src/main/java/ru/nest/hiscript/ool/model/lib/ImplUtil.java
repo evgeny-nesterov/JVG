@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 
@@ -45,7 +46,7 @@ public class ImplUtil {
 	public static HiObject getClassObject(RuntimeContext ctx, HiClass clazz) {
 		HiObject classObject = classes.get(clazz);
 		if (classObject == null) {
-			classObject = getClassConstructor(ctx).newInstance(ctx, null, null);
+			classObject = getClassConstructor(ctx).newInstance(ctx, null, null, null);
 			classObject.userObject = clazz;
 			classes.put(clazz, classObject);
 		}
@@ -68,26 +69,26 @@ public class ImplUtil {
 
 	protected static void returnVoid(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	protected static void returnInt(RuntimeContext ctx, int value) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
+		ctx.value.valueClass = HiClassPrimitive.INT;
 		ctx.value.intNumber = value;
 	}
 
 	protected static void returnBoolean(RuntimeContext ctx, boolean value) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = value;
 	}
 
 	protected static void returnArrayList(RuntimeContext ctx, Collection value) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
+		ctx.value.valueClass = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
 		ctx.value.lambdaClass = null;
-		ctx.value.object = ctx.value.type.searchConstructor(ctx).newInstance(ctx, null, null);
+		ctx.value.object = ctx.value.valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
 		((List) ctx.value.object.userObject).addAll(value);
 	}
 }

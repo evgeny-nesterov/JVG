@@ -26,12 +26,12 @@ public class OperationInstanceOf extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.type;
-		HiClass c2 = node2.type;
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass c1 = node1.clazz;
+		HiClass c2 = node2.clazz;
 		if (!c1.isVar()) {
 			if (c1.isPrimitive()) {
-				validationInfo.error("inconvertible types; cannot cast " + c1.fullName + " to " + c2.fullName, node2.node.getToken());
+				validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node.getToken());
 			}
 			if (node2.node instanceof NodeCastedIdentifier) {
 				NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) node2.node;
@@ -46,11 +46,11 @@ public class OperationInstanceOf extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c2 = v2.type;
-		if (!v1.type.isPrimitive()) {
+		HiClass c2 = v2.valueClass;
+		if (!v1.valueClass.isPrimitive()) {
 			HiClass c1;
-			if (v1.type.isArray()) {
-				c1 = v1.array != null ? v1.type : HiClassNull.NULL;
+			if (v1.valueClass.isArray()) {
+				c1 = v1.array != null ? v1.valueClass : HiClassNull.NULL;
 			} else {
 				c1 = v1.object != null ? v1.object.clazz : HiClassNull.NULL;
 			}
@@ -69,7 +69,7 @@ public class OperationInstanceOf extends BinaryOperation {
 				}
 				if (v2.castedRecordArguments != null) {
 					if (!c2.isRecord()) {
-						ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.fullName + " to Record");
+						ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.getNameDescr() + " to Record");
 						return;
 					}
 					for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
@@ -79,10 +79,10 @@ public class OperationInstanceOf extends BinaryOperation {
 				}
 			}
 
-			v1.type = TYPE_BOOLEAN;
+			v1.valueClass = TYPE_BOOLEAN;
 			v1.bool = isInstanceof;
 			return;
 		}
-		ctx.throwRuntimeException("inconvertible types; cannot cast " + v1.type.fullName + " to " + c2.fullName);
+		ctx.throwRuntimeException("inconvertible types; cannot cast " + v1.valueClass.getNameDescr() + " to " + c2.getNameDescr());
 	}
 }

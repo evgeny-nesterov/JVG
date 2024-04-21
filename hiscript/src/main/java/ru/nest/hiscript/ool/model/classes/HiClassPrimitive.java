@@ -28,11 +28,11 @@ public class HiClassPrimitive extends HiClass {
 			super.setAutoboxClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(null);
-			ctx.value.type = this;
+			ctx.value.valueClass = this;
 			ctx.value.bool = true;
 			trueValue = super.autobox(ctx, ctx.value);
 
-			ctx.value.type = this;
+			ctx.value.valueClass = this;
 			ctx.value.bool = false;
 			falseValue = super.autobox(ctx, ctx.value);
 		}
@@ -52,7 +52,7 @@ public class HiClassPrimitive extends HiClass {
 
 			RuntimeContext ctx = new RuntimeContext(null);
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.type = this;
+				ctx.value.valueClass = this;
 				ctx.value.byteNumber = (byte) intValue;
 				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
 			}
@@ -77,7 +77,7 @@ public class HiClassPrimitive extends HiClass {
 
 			RuntimeContext ctx = new RuntimeContext(null);
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.type = this;
+				ctx.value.valueClass = this;
 				ctx.value.shortNumber = (short) intValue;
 				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
 			}
@@ -102,7 +102,7 @@ public class HiClassPrimitive extends HiClass {
 
 			RuntimeContext ctx = new RuntimeContext(null);
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.type = this;
+				ctx.value.valueClass = this;
 				ctx.value.intNumber = intValue;
 				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
 			}
@@ -129,7 +129,7 @@ public class HiClassPrimitive extends HiClass {
 
 			RuntimeContext ctx = new RuntimeContext(null);
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.type = this;
+				ctx.value.valueClass = this;
 				ctx.value.longNumber = intValue;
 				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
 			}
@@ -219,7 +219,7 @@ public class HiClassPrimitive extends HiClass {
 		HiField valueField = HiField.getField(this, "value", null);
 		valueField.set(ctx, value);
 		HiConstructor constructor = autoboxClass.getConstructor(ctx, this);
-		return constructor.newInstance(ctx, new HiField[] {valueField}, null);
+		return constructor.newInstance(ctx, null, new HiField[] {valueField}, null);
 	}
 
 	@Override

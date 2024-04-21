@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -31,13 +32,14 @@ public class NodeNull extends HiNode {
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO compileValue
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = Type.nullType;
 		return HiClassNull.NULL;
 	}
 
 	@Override
 	public void execute(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassNull.NULL;
+		ctx.value.valueClass = HiClassNull.NULL;
 		ctx.value.object = null;
 		ctx.value.array = null;
 	}

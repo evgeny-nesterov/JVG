@@ -113,7 +113,7 @@ public class ClassParseRule extends ParserUtil {
 					tokenizer.error("interface cannot implements another interfaces");
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, ctx.enclosingType, interfaces, className, generics, ctx.classType, ctx);
 			} else {
 				Type superClassType = superClassesList != null ? superClassesList.get(0) : null;
 				if (superClassesList != null && superClassesList.size() > 1) {
@@ -126,7 +126,7 @@ public class ClassParseRule extends ParserUtil {
 					interfacesList.toArray(interfaces);
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, ctx.enclosingType, interfaces, className, generics, ctx.classType, ctx);
 			}
 			ctx.clazz.isInterface = isInterface;
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
@@ -148,7 +148,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (ctx.constructors == null && !ctx.clazz.isInterface) {
-			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, null, new Modifiers(), null, (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
+			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, ctx.type, null, new Modifiers(), null, (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
 			ctx.addConstructor(defaultConstructor);
 		}
 
@@ -157,22 +157,24 @@ public class ClassParseRule extends ParserUtil {
 
 	public boolean visitContentElement(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, HiScriptParseException {
 		HiClass clazz = ctx.clazz;
+		Type type = ctx.type;
 
 		if (visitor != null && visitor.visit(tokenizer, ctx)) {
 			return true;
 		}
 
 		// inner class / interface
-		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
 		if (innerClass == null) {
-			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass == null) {
-			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, HiClass.CLASS_TYPE_INNER));
+			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
 		}
 		if (innerClass != null) {
 			// TODO keep in class only runtime annotations
 			innerClass.enclosingClass = clazz;
+			innerClass.enclosingType = type;
 			ctx.addClass(innerClass);
 			return true;
 		}
@@ -210,6 +212,7 @@ public class ClassParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
+		Type type = ctx.type;
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -251,7 +254,6 @@ public class ClassParseRule extends ParserUtil {
 							expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 							expectSymbol(tokenizer, Symbols.SEMICOLON);
 
-							Type type;
 							if (constructorType == SUPER) {
 								type = clazz.superClassType;
 								bodyConstructorType = BodyConstructorType.SUPER;
@@ -277,7 +279,7 @@ public class ClassParseRule extends ParserUtil {
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 				ctx.exit();
 
-				HiConstructor constructor = new HiConstructor(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
+				HiConstructor constructor = new HiConstructor(clazz, type, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
 				constructor.setToken(tokenizer.getBlockToken(startToken));
 				return constructor;
 			}

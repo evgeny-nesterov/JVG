@@ -116,7 +116,7 @@ public class HiClass implements HiNodeIF, HiType {
 			// object
 			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi"), false).get(0);
 			OBJECT_CLASS.superClassType = null;
-			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, null, new Modifiers(), null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
+			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, Type.objectType, null, new Modifiers(), null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
 			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
 			classes.add(OBJECT_CLASS);
 
@@ -158,7 +158,7 @@ public class HiClass implements HiNodeIF, HiType {
 			HiCompiler compiler = new HiCompiler(systemClassLoader, null);
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+				CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();
@@ -191,6 +191,8 @@ public class HiClass implements HiNodeIF, HiType {
 	public int type;
 
 	public HiClass enclosingClass;
+
+	public Type enclosingType;
 
 	public boolean isInterface = false;
 
@@ -225,14 +227,14 @@ public class HiClass implements HiNodeIF, HiType {
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(classLoader, classResolver, enclosingClass, name, null, type);
+		init(classLoader, classResolver, enclosingClass, Type.getType(enclosingClass), name, null, type);
 	}
 
 	// for ClassParseRule and NewParseRule
-	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type enclosingType, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(classLoader, classResolver, enclosingClass, name, generics, type);
+		init(classLoader, classResolver, enclosingClass, enclosingType, name, generics, type);
 	}
 
 	// for decode
@@ -244,8 +246,9 @@ public class HiClass implements HiNodeIF, HiType {
 		// init(...) is in decode
 	}
 
-	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
+	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, Type enclosingType, String name, NodeGenerics generics, int type) {
 		this.enclosingClass = enclosingClass;
+		this.enclosingType = enclosingType;
 		this.type = type;
 
 		// try resolve super class if needed
@@ -336,13 +339,13 @@ public class HiClass implements HiNodeIF, HiType {
 
 				// check super class on static
 				if (!superClass.isStatic() && !superClass.isTopLevel() && isStatic()) {
-					classResolver.processResolverException("static class " + fullName + " can not extend not static and not top level class");
+					classResolver.processResolverException("static class " + getNameDescr() + " can not extend not static and not top level class");
 					return;
 				}
 
 				// check super class on final
 				if (superClass.isFinal()) {
-					classResolver.processResolverException("the type " + fullName + " cannot subclass the final class " + superClass.fullName);
+					classResolver.processResolverException("the type " + getNameDescr() + " cannot subclass the final class " + superClass.getNameDescr());
 					return;
 				}
 			}
@@ -438,7 +441,7 @@ public class HiClass implements HiNodeIF, HiType {
 				}
 			} catch (Throwable exc) {
 				exc.printStackTrace();
-				ctx.throwRuntimeException("cannot initialize class " + fullName + ": " + exc.getMessage());
+				ctx.throwRuntimeException("cannot initialize class " + getNameDescr() + ": " + exc.getMessage());
 			} finally {
 				ctx.exit();
 			}
@@ -553,14 +556,14 @@ public class HiClass implements HiNodeIF, HiType {
 						HiClass parameterClass = typeParameters[i];
 						HiClassGeneric definedClass = superClass.generics.generics[i].clazz;
 						if (!parameterClass.isInstanceof(definedClass.clazz)) {
-							validationInfo.error("type parameter '" + parameterClass.fullName + "' is not within its bound; should extend '" + definedClass.clazz.fullName + "'", getToken());
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", getToken());
 						}
 					}
 				} else {
 					validationInfo.error("wrong number of type arguments: " + typeParameters.length + "; required: " + superClass.generics.generics.length, getToken());
 				}
 			} else {
-				validationInfo.error("type '" + superClass.fullName + "' does not have type parameters", getToken());
+				validationInfo.error("type '" + superClass.getNameDescr() + "' does not have type parameters", getToken());
 			}
 		}
 
@@ -643,14 +646,14 @@ public class HiClass implements HiNodeIF, HiType {
 			for (HiClass innerClass : innerClasses) {
 				if (!isStaticRootClassTop) {
 					if (innerClass.isInterface) {
-						validationInfo.error("the member interface " + innerClass.fullName + " can only be defined inside a top-level class or interface", innerClass.token);
+						validationInfo.error("the member interface " + innerClass.getNameDescr() + " can only be defined inside a top-level class or interface", innerClass.token);
 						isStaticRootClassTop();
 						valid = false;
 					}
 
 					// check on valid static modifier (includes annotations)
 					if (innerClass.isStatic()) {
-						validationInfo.error("the member type " + innerClass.fullName + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
+						validationInfo.error("the member type " + innerClass.getNameDescr() + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
 						valid = false;
 					}
 				}
@@ -1728,7 +1731,7 @@ public class HiClass implements HiNodeIF, HiType {
 				outerClass = os.readClass();
 			} catch (HiNoClassException exc) {
 				initClass = false;
-				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
+				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, Type.getType(clazz), classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
 			}
 		}
 
@@ -1747,7 +1750,7 @@ public class HiClass implements HiNodeIF, HiType {
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(os.getClassLoader(), null, outerClass, name, generics, type);
+			clazz.init(os.getClassLoader(), null, outerClass, Type.getType(outerClass), name, generics, type);
 		}
 
 		HiClass oldClass = os.getHiClass();

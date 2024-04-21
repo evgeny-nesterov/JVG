@@ -18,16 +18,16 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		if (valueType.isCompileValue()) {
-			if (valueType.type == HiClassPrimitive.INT) {
+			if (valueType.clazz == HiClassPrimitive.INT) {
 				return valueType.intValue >= Short.MIN_VALUE && valueType.intValue <= Short.MAX_VALUE;
-			} else if (valueType.type == HiClassPrimitive.BYTE) {
+			} else if (valueType.clazz == HiClassPrimitive.BYTE) {
 				return true;
-			} else if (valueType.type == HiClassPrimitive.CHAR) {
+			} else if (valueType.clazz == HiClassPrimitive.CHAR) {
 				return valueType.charValue <= Short.MAX_VALUE;
 			}
 			return false;
 		} else {
-			return valueType.type == HiClassPrimitive.BYTE;
+			return valueType.clazz == HiClassPrimitive.BYTE;
 		}
 	}
 
@@ -50,7 +50,7 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 				value.doubleNumber = this.value;
 				break;
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -72,7 +72,7 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 						return;
 					}
 				}
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}

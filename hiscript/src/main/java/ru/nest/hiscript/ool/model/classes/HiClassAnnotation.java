@@ -47,11 +47,11 @@ public class HiClassAnnotation extends HiClass {
 					validationInfo.error("invalid type '" + method.name + "' for annotation member", method.getToken());
 					valid = false;
 				} else if (method.isAnnotationArgument && method.body != null) {
-					NodeValueType valueType = method.body.getValueType(validationInfo, ctx);
+					NodeValueType valueType = method.body.getNodeValueType(validationInfo, ctx);
 					valid &= valueType.valid;
 					if (valueType.isConstant) {
-						if (valueType.valid && !valueType.type.isInstanceof(method.returnClass)) {
-							validationInfo.error("incompatible types: " + valueType.type.fullName + " cannot be converted to " + method.returnClass.fullName, method.body.getToken());
+						if (valueType.valid && !valueType.clazz.isInstanceof(method.returnClass)) {
+							validationInfo.error("incompatible types: " + valueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), method.body.getToken());
 							valid = false;
 						}
 

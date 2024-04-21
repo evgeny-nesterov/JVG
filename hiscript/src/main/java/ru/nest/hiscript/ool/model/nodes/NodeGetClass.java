@@ -33,7 +33,7 @@ public class NodeGetClass extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx, HiClass clazz) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = ImplUtil.getClassClass(ctx);
+		ctx.value.valueClass = ImplUtil.getClassClass(ctx);
 		ctx.value.object = ImplUtil.getClassObject(ctx, clazz);
 	}
 

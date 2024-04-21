@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -39,10 +40,12 @@ public class NodeString extends HiNode {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		HiClass clazz = ctx.getClassLoader().getClass(HiClass.STRING_CLASS_NAME);;
-		ctx.nodeValueType.enclosingClass =  clazz;
+		HiClass clazz = ctx.getClassLoader().getClass(HiClass.STRING_CLASS_NAME);
+		ctx.nodeValueType.enclosingClass = clazz;
+		ctx.nodeValueType.enclosingType = Type.getType(clazz);
 		// TODO compileValue
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = ctx.nodeValueType.enclosingType;
 		return clazz;
 	}
 
@@ -62,7 +65,7 @@ public class NodeString extends HiNode {
 			constructor = clazz.getConstructor(ctx);
 		}
 
-		HiObject obj = constructor.newInstance(ctx, null, null);
+		HiObject obj = constructor.newInstance(ctx, null, null, null);
 		if (obj != null) {
 			HiFieldArray chars = (HiFieldArray) obj.getField(ctx, "chars");
 			chars.array = text;

@@ -23,8 +23,8 @@ public class NodeAnnotationArgument extends HiNode {
 	public Object value;
 
 	@Override
-	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return valueNode.getValueType(validationInfo, ctx);
+	public NodeValueType getNodeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return valueNode.getNodeValueType(validationInfo, ctx);
 	}
 
 	@Override

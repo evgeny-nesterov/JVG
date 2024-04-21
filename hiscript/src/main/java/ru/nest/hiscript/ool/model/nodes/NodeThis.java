@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -17,9 +18,11 @@ public class NodeThis extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.type : ctx.clazz;
+		HiClass invocationClass = ctx.invocationNode != null ? ctx.invocationNode.clazz : ctx.clazz;
+		Type invocationType = ctx.invocationNode != null ? ctx.invocationNode.type : Type.getType(ctx.clazz);
 		ctx.nodeValueType.resolvedValueVariable = this;
 		ctx.nodeValueType.enclosingClass = invocationClass;
+		ctx.nodeValueType.enclosingType = invocationType;
 		return invocationClass;
 	}
 
@@ -56,11 +59,11 @@ public class NodeThis extends HiNode {
 
 		if (currentObject != null) {
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = currentObject.clazz;
+			ctx.value.valueClass = currentObject.clazz;
 			ctx.value.lambdaClass = null;
 			ctx.value.object = currentObject;
 		} else {
-			ctx.throwRuntimeException("can not find this for class '" + clazz.fullName + "'");
+			ctx.throwRuntimeException("can not find this for class '" + clazz.getNameDescr() + "'");
 		}
 	}
 

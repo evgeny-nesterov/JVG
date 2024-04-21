@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
@@ -16,7 +17,7 @@ public abstract class BinaryOperation extends HiOperation {
 		super(2, operation);
 	}
 
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		return null;
 	}
 
@@ -34,33 +35,35 @@ public abstract class BinaryOperation extends HiOperation {
 		}
 		ctx.nodeValueType.resolvedValueVariable = null;
 		ctx.nodeValueType.enclosingClass = null;
+		ctx.nodeValueType.enclosingType = null;
 
-		HiClass clazz = getOperationResultType(validationInfo, ctx, node1, node2);
+		HiClass clazz = getOperationResultClass(validationInfo, ctx, node1, node2);
 		NodeValueType.NodeValueReturnType returnType = null;
+		Type type = ctx.nodeValueType.type;
 		if (clazz != null) {
 			returnType = ctx.nodeValueType.returnType != null ? ctx.nodeValueType.returnType : node1.returnType;
 			if (returnType == null) {
 				returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			}
 		}
-		node1.get(node1.node, clazz, clazz != null, returnType, clazz != null && node1.isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
+		node1.get(node1.node, clazz, type, clazz != null, returnType, clazz != null && node1.isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass, ctx.nodeValueType.enclosingType);
 		node1.apply(node2);
 	}
 
 	protected boolean prepareOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		boolean valid = true;
-		if (node1.type == null) {
+		if (node1.clazz == null) {
 			node1.get(validationInfo, ctx);
-			if (node1.type != null) {
+			if (node1.clazz != null) {
 				valid = node1.valid;
 			} else {
 				validationInfo.error("cannot resolve expression type", node1.node.getToken());
 				valid = false;
 			}
 		}
-		if (node2.type == null && this != OperationInvocation.getInstance()) {
+		if (node2.clazz == null && this != OperationInvocation.getInstance()) {
 			node2.get(validationInfo, ctx);
-			if (node2.type != null) {
+			if (node2.clazz != null) {
 				valid &= node2.valid;
 			} else {
 				validationInfo.error("cannot resolve expression type", node2.node.getToken());
@@ -114,13 +117,13 @@ public abstract class BinaryOperation extends HiOperation {
 
 	protected void autoCastInt(Value v1, int value) {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			v1.type = TYPE_BYTE;
+			v1.valueClass = TYPE_BYTE;
 			v1.byteNumber = (byte) value;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			v1.type = TYPE_SHORT;
+			v1.valueClass = TYPE_SHORT;
 			v1.shortNumber = (short) value;
 		} else {
-			v1.type = TYPE_INT;
+			v1.valueClass = TYPE_INT;
 			v1.intNumber = value;
 		}
 	}
@@ -137,16 +140,16 @@ public abstract class BinaryOperation extends HiOperation {
 
 	protected void autoCastLong(Value v1, long value) {
 		if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-			v1.type = TYPE_BYTE;
+			v1.valueClass = TYPE_BYTE;
 			v1.byteNumber = (byte) value;
 		} else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-			v1.type = TYPE_SHORT;
+			v1.valueClass = TYPE_SHORT;
 			v1.shortNumber = (short) value;
 		} else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-			v1.type = TYPE_INT;
+			v1.valueClass = TYPE_INT;
 			v1.intNumber = (int) value;
 		} else {
-			v1.type = TYPE_LONG;
+			v1.valueClass = TYPE_LONG;
 			v1.longNumber = value;
 		}
 	}
@@ -164,17 +167,17 @@ public abstract class BinaryOperation extends HiOperation {
 	}
 
 	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
-		String text = "operator '" + name + "' can not be applied to " + type1.fullName + ", " + type2.fullName;
+		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
 		ctx.throwRuntimeException(text);
 	}
 
 	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type1, HiClass type2) {
-		String text = "operator '" + name + "' can not be applied to " + type1.fullName + ", " + type2.fullName;
+		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
 		validationInfo.error(text, token);
 	}
 
 	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type) {
-		String text = "operator '" + name + "' can not be applied to " + type.fullName;
+		String text = "operator '" + name + "' can not be applied to " + type.getNameDescr();
 		validationInfo.error(text, token);
 	}
 

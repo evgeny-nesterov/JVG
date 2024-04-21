@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -55,25 +56,39 @@ public class NodeIdentifier extends HiNode {
 				clazz = clazz.getArrayClass(dimension);
 			}
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.type = Type.getType(clazz);
 			return clazz;
 		} else {
 			Object resolvedIdentifier = this.resolvedIdentifier != null ? this.resolvedIdentifier : ctx.resolveIdentifier(name); // field priority is higher than class priority
 			if (resolvedIdentifier instanceof NodeVariable) {
 				HiNode resolvedValueVariable = (HiNode) resolvedIdentifier;
 				HiClass clazz = resolvedValueVariable.getValueClass(validationInfo, ctx);
+				Type type = ctx.nodeValueType.type;
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
 
 				// generic
 				if (clazz.isGeneric()) {
 					HiClass enclosingClass = ctx.level.enclosingClass != null ? ctx.level.enclosingClass : ctx.clazz;
+					Type enclosingType = ctx.level.enclosingType != null ? ctx.level.enclosingType : ctx.type;
 					clazz = enclosingClass.resolveGenericClass(ctx, (HiClassGeneric) clazz);
+					type = ctx.nodeValueType.type;
+					if (clazz.isGeneric() && enclosingType != null && enclosingType.parameters != null) {
+						Type parameterType = enclosingType.getParameterType((HiClassGeneric) clazz);
+						if (parameterType != null) {
+							clazz = parameterType.getClass(ctx);
+							type = parameterType;
+						}
+					}
 				}
 
 				ctx.nodeValueType.enclosingClass = clazz;
+				ctx.nodeValueType.enclosingType = type;
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+				ctx.nodeValueType.type = type;
 				return clazz;
 			} else if (resolvedIdentifier instanceof HiClass) {
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
+				ctx.nodeValueType.type = Type.getType((HiClass) resolvedIdentifier);
 				return (HiClass) resolvedIdentifier;
 			}
 		}
@@ -155,13 +170,13 @@ public class NodeIdentifier extends HiNode {
 			}
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = field.getClass(ctx);
+			ctx.value.valueClass = field.getClass(ctx);
 			field.execute(ctx);
 
 			// generic
-			if (ctx.value.type.isGeneric()) {
+			if (ctx.value.valueClass.isGeneric()) {
 				HiClass objectClass = ctx.getCurrentObject().clazz;
-				ctx.value.type = objectClass.resolveGenericClass(ctx, (HiClassGeneric) ctx.value.type);
+				ctx.value.valueClass = objectClass.resolveGenericClass(ctx, (HiClassGeneric) ctx.value.valueClass);
 			}
 
 			ctx.value.copyTo(value);
@@ -184,7 +199,7 @@ public class NodeIdentifier extends HiNode {
 				clazz = clazz.getArrayClass(v.nameDimensions);
 			}
 			v.valueType = Value.CLASS;
-			v.type = clazz;
+			v.valueClass = clazz;
 			v.name = name;
 			return true;
 		}

@@ -81,8 +81,8 @@ public class NewParseRule extends ParseRule<HiNode> {
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", generics, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_ANONYMOUS);
+			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, ctx.type, null, "", generics, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);
@@ -90,7 +90,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
 
 			innerCtx.clazz.setToken(tokenizer.getBlockToken(startToken));
-			return new NodeConstructor(innerCtx.clazz, arguments);
+			return new NodeConstructor(innerCtx.clazz, type, arguments);
 		} else {
 			NodeType nodeType = new NodeType(type);
 			return new NodeConstructor(nodeType, arguments);

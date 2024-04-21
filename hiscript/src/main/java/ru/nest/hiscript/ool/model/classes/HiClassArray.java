@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -51,7 +52,7 @@ public class HiClassArray extends HiClass {
 		constructors = new HiConstructor[1];
 		Modifiers constructorModifiers = new Modifiers();
 		constructorModifiers.setAccess(ModifiersIF.ACCESS_PUBLIC);
-		constructors[0] = new HiConstructor(this, null, constructorModifiers, null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
+		constructors[0] = new HiConstructor(this, Type.getType(this), null, constructorModifiers, null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
 
 		fields = new HiField[1];
 		fields[0] = HiField.getField(HiClassPrimitive.INT, "length", null);

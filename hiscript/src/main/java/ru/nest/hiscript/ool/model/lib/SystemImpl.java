@@ -4,8 +4,8 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.HiNative;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
@@ -74,7 +74,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_print_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.print(chars);
@@ -83,7 +83,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_println_String(RuntimeContext ctx, HiObject string) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.println(chars);
@@ -92,7 +92,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_void_sleep_long(RuntimeContext ctx, long time) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException exc) {
@@ -102,7 +102,7 @@ public class SystemImpl extends ImplUtil {
 
 	public static void System_long_time(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.LONG;
+		ctx.value.valueClass = HiClassPrimitive.LONG;
 		ctx.value.longNumber = System.currentTimeMillis();
 	}
 
@@ -110,7 +110,7 @@ public class SystemImpl extends ImplUtil {
 		ctx.isExit = true;
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {
@@ -126,9 +126,9 @@ public class SystemImpl extends ImplUtil {
 
 			CompileClassContext compileCtx;
 			if (newInstance) {
-				compileCtx = new CompileClassContext(ctx.compiler, null, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx.compiler, null, null, HiClass.CLASS_TYPE_TOP);
 			} else {
-				compileCtx = new CompileClassContext(ctx.compiler, ctx.level.clazz, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx.compiler, ctx.level.clazz, ctx.level.type, HiClass.CLASS_TYPE_TOP);
 			}
 
 			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false, false).visit(tokenizer, compileCtx);
@@ -182,7 +182,7 @@ public class SystemImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void System_Object_getVariable_String(RuntimeContext ctx, HiObject name) {

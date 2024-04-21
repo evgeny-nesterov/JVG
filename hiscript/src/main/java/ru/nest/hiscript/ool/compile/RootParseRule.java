@@ -39,7 +39,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 			createMainMethod = wrapped;
 		}
 		if (ctx == null) {
-			ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+			ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
 
 			rootClass = compiler.getClassLoader().getClass(HiClass.ROOT_CLASS_NAME);
 			if (rootClass == null) {

@@ -170,5 +170,6 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
+		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;} O get(){return value;}} assert new A<Boolean>(true).value; assert new A<Integer>(123).value == 123;");
 	}
 }

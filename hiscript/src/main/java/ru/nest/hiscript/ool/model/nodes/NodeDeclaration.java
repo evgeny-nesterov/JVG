@@ -45,11 +45,21 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		HiClass clazz;
 		if (type == Type.varType) {
 			// assume initialization is not null
-			clazz = initialization.getValueClass(validationInfo, ctx);
+			if (initialization != null) {
+				clazz = initialization.getValueClass(validationInfo, ctx);
+				if (clazz.isNull()) {
+					clazz = HiClass.OBJECT_CLASS;
+					validationInfo.error("invalid var initialization", initialization.getToken());
+				}
+			} else {
+				clazz = HiClass.OBJECT_CLASS;
+				validationInfo.error("var is not initialized", getToken());
+			}
 		} else {
 			clazz = type.getClass(ctx);
 		}
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = type;
 		return clazz;
 	}
 
@@ -58,6 +68,14 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
 		clazz = getValueClass(validationInfo, ctx);
+		if (type.parameters != null) {
+			if (type.parameters.length > 0) {
+				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
+			} else {
+				validationInfo.error("type parameter expected", getToken());
+				valid = false;
+			}
+		}
 		if (initialization != null && ctx.nodeValueType.valid) {
 			if (type == Type.varType) {
 				type = Type.getType(clazz);
@@ -65,26 +83,34 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 			} else {
 				ctx.level.variableClass = clazz;
 				ctx.level.variableNode = this;
-				NodeValueType initializationValueType = initialization.getValueType(validationInfo, ctx);
+				NodeValueType initializationValueType = initialization.getNodeValueType(validationInfo, ctx);
 				if (initializationValueType.valid) {
 					boolean canBeCasted = false;
 					if (initializationValueType.isCompileValue()) {
 						canBeCasted = initializationValueType.autoCastValue(clazz);
 					} else if (initializationValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
-						canBeCasted = HiClass.autoCast(ctx, initializationValueType.type, clazz, false, true);
+						canBeCasted = HiClass.autoCast(ctx, initializationValueType.clazz, clazz, false, true);
 					}
 					if (!canBeCasted) {
-						validationInfo.error("incompatible types: " + initializationValueType.type.fullName + " cannot be converted to " + clazz.fullName, initialization.getToken());
+						validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
 						valid = false;
 					}
 				}
 			}
 
 			ctx.level.enclosingClass = clazz;
+			ctx.level.enclosingType = type;
 			valid &= initialization.validate(validationInfo, ctx);
+
 			ctx.level.enclosingClass = null;
+			ctx.level.enclosingType = null;
 
 			ctx.initializedNodes.add(this);
+
+			NodeConstructor newNode = initialization.getSingleNode(NodeConstructor.class);
+			if (newNode != null) {
+				valid &= newNode.validateGenericType(type, validationInfo, ctx);
+			}
 		}
 
 		// TODO check name, modifiers, annotations

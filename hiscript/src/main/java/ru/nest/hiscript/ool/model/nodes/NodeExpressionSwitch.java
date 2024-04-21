@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -39,17 +40,19 @@ public class NodeExpressionSwitch extends HiNode {
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		if (size > 0) {
-			HiClass topType = null;
+			HiClass topClass = null;
 			for (int i = 0; i < size; i++) {
 				HiClass caseValueType = casesNodes.get(i).getValueClass(validationInfo, ctx);
-				topType = caseValueType.getCommonClass(topType);
-				if (topType == null) {
+				topClass = caseValueType.getCommonClass(topClass);
+				if (topClass == null) {
 					break;
 				}
 			}
-			ctx.nodeValueType.enclosingClass = topType;
-			ctx.nodeValueType.returnType = topType != null && topType.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
-			return topType;
+			ctx.nodeValueType.enclosingClass = topClass;
+			ctx.nodeValueType.enclosingType = Type.getType(topClass);
+			ctx.nodeValueType.returnType = topClass != null && topClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.type = Type.getType(topClass);
+			return topClass;
 		}
 		return null;
 	}

@@ -62,25 +62,25 @@ public class TestNodes extends HiTest {
 
 	private void assertByte(Value value, int n) {
 		Assertions.assertTrue(value.valueType == Value.VALUE);
-		Assertions.assertTrue(value.type == HiClassPrimitive.BYTE);
+		Assertions.assertTrue(value.valueClass == HiClassPrimitive.BYTE);
 		Assertions.assertTrue(value.byteNumber == (byte) n);
 	}
 
 	private void assertShort(Value value, int n) {
 		Assertions.assertTrue(value.valueType == Value.VALUE);
-		Assertions.assertTrue(value.type == HiClassPrimitive.SHORT);
+		Assertions.assertTrue(value.valueClass == HiClassPrimitive.SHORT);
 		Assertions.assertTrue(value.shortNumber == (short) n);
 	}
 
 	private void assertInt(Value value, int n) {
 		Assertions.assertTrue(value.valueType == Value.VALUE);
-		Assertions.assertTrue(value.type == HiClassPrimitive.INT);
+		Assertions.assertTrue(value.valueClass == HiClassPrimitive.INT);
 		Assertions.assertTrue(value.intNumber == n);
 	}
 
 	private void assertLong(Value value, long n) {
 		Assertions.assertTrue(value.valueType == Value.VALUE);
-		Assertions.assertTrue(value.type == HiClassPrimitive.LONG);
+		Assertions.assertTrue(value.valueClass == HiClassPrimitive.LONG);
 		Assertions.assertTrue(value.longNumber == n);
 	}
 

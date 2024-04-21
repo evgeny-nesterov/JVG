@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -31,6 +32,7 @@ public class NodeMethodReference extends NodeExpression {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = Type.varType;
 		return HiClassVar.VAR;
 	}
 
@@ -42,7 +44,7 @@ public class NodeMethodReference extends NodeExpression {
 		HiClass clazz = node.getValueClass(validationInfo, ctx);
 		methods = clazz.searchMethodsByName(ctx, name);
 		if (methods.size() == 0) {
-			validationInfo.error("method with name '" + name + "' not found in " + clazz.fullName, token);
+			validationInfo.error("method with name '" + name + "' not found in " + clazz.getNameDescr(), token);
 			valid = false;
 		}
 
@@ -70,20 +72,20 @@ public class NodeMethodReference extends NodeExpression {
 					if (matchedMethod != null) {
 						lambdaClass = matchedMethod.createLambdaClass(ctx, functionalInterface);
 						if (!HiClass.autoCast(ctx, matchedMethod.returnClass, functionalMethod.returnClass, false, true)) {
-							validationInfo.error("incompatible return type '" + matchedMethod.returnClass.fullName + "' of method " + matchedMethod.clazz.fullName + "." + matchedMethod + "; expected return type '" + functionalMethod.returnClass.fullName + "'", getToken());
+							validationInfo.error("incompatible return type '" + matchedMethod.returnClass.getNameDescr() + "' of method " + matchedMethod.clazz.getNameDescr() + "." + matchedMethod + "; expected return type '" + functionalMethod.returnClass.fullName + "'", getToken());
 							valid = false;
 						}
 					} else {
-						validationInfo.error("method '" + name + "' of class '" + methods.get(0).clazz + "' doesn't match to the method '" + functionalMethod + "' of functional interface '" + functionalInterface.fullName + "'", getToken());
+						validationInfo.error("method '" + name + "' of class '" + methods.get(0).clazz.getNameDescr() + "' doesn't match to the method '" + functionalMethod + "' of functional interface '" + functionalInterface.getNameDescr() + "'", getToken());
 						valid = false;
 					}
 				}
 			} else {
-				validationInfo.error("functional interface not match to '" + functionalInterface.fullName + "'", getToken());
+				validationInfo.error("functional interface not match to '" + functionalInterface.getNameDescr() + "'", getToken());
 				valid = false;
 			}
 		} else {
-			validationInfo.error("functional interface not match to '" + functionalInterface.fullName + "'", getToken());
+			validationInfo.error("functional interface not match to '" + functionalInterface.getNameDescr() + "'", getToken());
 			valid = false;
 		}
 		return valid;
@@ -100,7 +102,7 @@ public class NodeMethodReference extends NodeExpression {
 		if (ctx.value.valueType == Value.VALUE) {
 			object = ctx.value.object;
 		}
-		HiMethod.execute(ctx, lambdaClass, object);
+		HiMethod.execute(ctx, lambdaClass, null, object);
 	}
 
 	@Override

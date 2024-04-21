@@ -23,7 +23,7 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type == HiClassPrimitive.BYTE || valueType.type == HiClassPrimitive.SHORT || valueType.type == HiClassPrimitive.CHAR;
+		return valueType.clazz == HiClassPrimitive.BYTE || valueType.clazz == HiClassPrimitive.SHORT || valueType.clazz == HiClassPrimitive.CHAR;
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 				value.doubleNumber = this.value;
 				break;
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}
@@ -67,7 +67,7 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 				this.value = value.intNumber;
 				break;
 			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}

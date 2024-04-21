@@ -21,7 +21,7 @@ public class OperationLogicalAndCheck extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		return node.type;
+		return node.clazz;
 	}
 
 	@Override

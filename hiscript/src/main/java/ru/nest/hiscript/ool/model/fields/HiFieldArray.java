@@ -28,25 +28,25 @@ public class HiFieldArray extends HiField<Object> {
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
-		return valueType.type.isNull() || (valueType.type.isArray() && HiClass.autoCast(ctx, valueType.type, fieldClass, false, true));
+		return valueType.clazz.isNull() || (valueType.clazz.isArray() && HiClass.autoCast(ctx, valueType.clazz, fieldClass, false, true));
 	}
 
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
 		value.valueType = Value.VALUE;
-		value.type = arrayType != null ? arrayType : getClass(ctx);
+		value.valueClass = arrayType != null ? arrayType : getClass(ctx);
 		value.array = array;
 	}
 
 	@Override
 	public void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (value.type == HiClassNull.NULL) {
+		if (value.valueClass == HiClassNull.NULL) {
 			array = null;
 			arrayType = getClass(ctx);
 		} else {
 			array = value.array;
-			arrayType = value.type;
+			arrayType = value.valueClass;
 		}
 		initialized = true;
 	}

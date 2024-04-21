@@ -25,23 +25,23 @@ public class HashMapImpl extends ImplUtil {
 		returnVoid(ctx);
 	}
 
-	public static void HashMap_Object_get_Object(RuntimeContext ctx, Object key) {
+	public static void HashMap_V_get_K(RuntimeContext ctx, Object key) {
 		setCtx(ctx, key);
 		ctx.value.set(getMap(ctx).get(key));
 	}
 
-	public static void HashMap_Object_put_Object_Object(RuntimeContext ctx, Object key, Object value) {
+	public static void HashMap_V_put_K_V(RuntimeContext ctx, Object key, Object value) {
 		setCtx(ctx, key);
 		setCtx(ctx, value);
 		ctx.value.set(getMap(ctx).put(key, value));
 	}
 
-	public static void HashMap_boolean_containsKey_Object(RuntimeContext ctx, Object key) {
+	public static void HashMap_boolean_containsKey_K(RuntimeContext ctx, Object key) {
 		setCtx(ctx, key);
 		returnBoolean(ctx, getMap(ctx).containsKey(key));
 	}
 
-	public static void HashMap_boolean_containsValue_Object(RuntimeContext ctx, Object value) {
+	public static void HashMap_boolean_containsValue_V(RuntimeContext ctx, Object value) {
 		setCtx(ctx, value);
 		returnBoolean(ctx, getMap(ctx).containsValue(value));
 	}
@@ -50,7 +50,7 @@ public class HashMapImpl extends ImplUtil {
 		returnInt(ctx, getMap(ctx).size());
 	}
 
-	public static void HashMap_Object_remove_Object(RuntimeContext ctx, Object key) {
+	public static void HashMap_V_remove_K(RuntimeContext ctx, Object key) {
 		setCtx(ctx, key);
 		ctx.value.set(getMap(ctx).remove(key));
 	}

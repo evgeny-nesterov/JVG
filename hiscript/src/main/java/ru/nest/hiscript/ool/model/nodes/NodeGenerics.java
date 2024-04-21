@@ -102,7 +102,7 @@ public class NodeGenerics extends HiNode {
 		for (int i = 0; i < initOrder.size(); i++) {
 			NodeGeneric generic = initOrder.get(i);
 			generic.sourceClass = ctx.clazz;
-			boolean validType =  invalidGenerics == null || !invalidGenerics.contains(generic.genericName);
+			boolean validType = invalidGenerics == null || !invalidGenerics.contains(generic.genericName);
 			valid &= generic.validate(validationInfo, ctx, validType, 1);
 			if (!hasDuplicate) {
 				for (int j = i + 1; j < initOrder.size(); j++) {

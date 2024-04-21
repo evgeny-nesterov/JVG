@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
@@ -25,11 +26,11 @@ public class OperationArrayIndex extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass type = node1.type;
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		HiClass clazz = node1.clazz;
 		boolean validIndex = false;
-		if (node2.type.isPrimitive()) {
-			switch (node2.type.getPrimitiveType()) {
+		if (node2.clazz.isPrimitive()) {
+			switch (node2.clazz.getPrimitiveType()) {
 				case VAR:
 				case CHAR:
 				case BYTE:
@@ -40,35 +41,36 @@ public class OperationArrayIndex extends BinaryOperation {
 			}
 		}
 		boolean validArray = false;
-		if (node1.type.isVar()) {
-			type = HiClassVar.VAR;
+		if (node1.clazz.isVar()) {
+			clazz = HiClassVar.VAR;
 			validArray = true;
-		} else if (node1.type.isArray()) {
-			type = ((HiClassArray) type).cellClass;
+		} else if (node1.clazz.isArray()) {
+			clazz = ((HiClassArray) clazz).cellClass;
 			validArray = true;
 		}
 		if (!validIndex || !validArray) {
-			errorInvalidOperator(validationInfo, node1.token, node1.type, node2.type);
+			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		}
 		if (validIndex && node2.isCompileValue() && node2.getIntValue() < 0) {
 			validationInfo.error("negative array index", node2.token);
 		}
 		ctx.nodeValueType.resolvedValueVariable = node1.resolvedValueVariable;
-		ctx.nodeValueType.enclosingClass = type;
-		ctx.nodeValueType.returnType = type.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
-		return type;
+		ctx.nodeValueType.enclosingClass = clazz;
+		ctx.nodeValueType.enclosingType = Type.getType(clazz);
+		ctx.nodeValueType.returnType = clazz.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
+		return clazz;
 	}
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.ARRAY_INDEX || (v1.valueType == Value.VALUE && v1.type.isArray())) {
+		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.ARRAY_INDEX || (v1.valueType == Value.VALUE && v1.valueClass.isArray())) {
 			// OK
 		} else {
 			errorUnexpectedType(ctx);
 			return;
 		}
 
-		HiClassArray type = (HiClassArray) v1.type;
+		HiClassArray type = (HiClassArray) v1.valueClass;
 		Object array = v1.getArray();
 		if (array == null) {
 			ctx.throwRuntimeException("null pointer");
@@ -89,7 +91,7 @@ public class OperationArrayIndex extends BinaryOperation {
 		HiArrays.getArrayIndex(v1, array, index);
 
 		v1.valueType = Value.ARRAY_INDEX;
-		v1.type = type.cellClass;
+		v1.valueClass = type.cellClass;
 		v1.parentArray = array;
 		v1.arrayIndex = index;
 		v1.variable = null; // for cases (new int[1])[0]

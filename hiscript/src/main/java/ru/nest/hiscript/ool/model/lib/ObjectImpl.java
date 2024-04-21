@@ -13,8 +13,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 public class ObjectImpl extends ImplUtil {
 	public static void Object_int_hashCode(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.INT;
-		if (ctx.value.type.isArray()) {
+		ctx.value.valueClass = HiClassPrimitive.INT;
+		if (ctx.value.valueClass.isArray()) {
 			ctx.value.intNumber = ctx.value.array.hashCode();
 		} else {
 			ctx.value.intNumber = ctx.value.object.hashCode(ctx);
@@ -23,9 +23,9 @@ public class ObjectImpl extends ImplUtil {
 
 	public static void Object_String_toString(RuntimeContext ctx) {
 		String text;
-		if (ctx.value.type.isArray()) {
+		if (ctx.value.valueClass.isArray()) {
 			if (ctx.value.array != null) {
-				HiClassArray type = (HiClassArray) ctx.value.type;
+				HiClassArray type = (HiClassArray) ctx.value.valueClass;
 				text = type.className + "@" + Integer.toHexString(ctx.value.array.hashCode());
 			} else {
 				text = "null";
@@ -45,13 +45,13 @@ public class ObjectImpl extends ImplUtil {
 		HiObject clone = clone(src);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.OBJECT_CLASS;
+		ctx.value.valueClass = HiClass.OBJECT_CLASS;
 		ctx.value.lambdaClass = null;
 		ctx.value.object = clone;
 	}
 
 	public static HiObject clone(HiObject src) {
-		HiObject clone = new HiObject(src.clazz, src.outboundObject);
+		HiObject clone = new HiObject(src.clazz, src.type, src.outboundObject);
 		if (src.getSuperObject() != null) {
 			clone.setSuperObject(clone(src.getSuperObject()));
 		}
@@ -67,14 +67,14 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static void Object_boolean_equals_Object(RuntimeContext ctx, Object obj) {
-		if (ctx.value.type.isArray()) {
+		if (ctx.value.valueClass.isArray()) {
 			ctx.value.bool = ctx.value.array == obj;
 		} else {
 			ctx.value.bool = ctx.value.object == obj;
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 	}
 
 	public static void Object_void_wait(RuntimeContext ctx) {
@@ -114,10 +114,10 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static void Object_Class_getClass(RuntimeContext ctx) {
-		HiObject clazzObj = getClassObject(ctx, ctx.value.type);
+		HiObject clazzObj = getClassObject(ctx, ctx.value.valueClass);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = clazzObj.clazz;
+		ctx.value.valueClass = clazzObj.clazz;
 		ctx.value.lambdaClass = null;
 		ctx.value.object = clazzObj;
 	}

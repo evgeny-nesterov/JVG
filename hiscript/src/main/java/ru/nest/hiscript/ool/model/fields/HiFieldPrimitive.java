@@ -17,6 +17,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		ctx.nodeValueType.type = type;
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 

@@ -135,7 +135,7 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 	}
 
 	public void errorIncompatibleTypes(RuntimeContext ctx, HiClass type1, HiClass type2) {
-		String text = "incompatible types; found " + type1.fullName + ", required " + type2.fullName;
+		String text = "incompatible types; found " + type1.getNameDescr() + ", required " + type2.getNameDescr();
 		ctx.throwRuntimeException(text);
 	}
 

@@ -28,8 +28,8 @@ public class OperationEquate extends BinaryOperation {
 	}
 
 	@Override
-	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		return node1.type;
+	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		return node1.clazz;
 	}
 
 	@Override
@@ -69,11 +69,11 @@ public class OperationEquate extends BinaryOperation {
 			// DEBUG
 			// System.out.println(v1.variable.name + " (" + v1.variable.getClazz(ctx)+ ") = " + v1.variable.get() + ", " + v1.get() + ", " + v1.type);
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
-			if (!HiClass.autoCast(ctx, v2.type, v1.type, v2.valueType == Value.VALUE, true)) {
-				ctx.throwRuntimeException("incompatible types; found " + v2.type + ", required " + v1.type);
+			if (!HiClass.autoCast(ctx, v2.valueClass, v1.valueClass, v2.valueType == Value.VALUE, true)) {
+				ctx.throwRuntimeException("incompatible types; found " + v2.valueClass + ", required " + v1.valueClass);
 				return;
 			}
-			HiArrays.setArrayIndex(v1.type, v1.parentArray, v1.arrayIndex, v2, v1);
+			HiArrays.setArrayIndex(v1.valueClass, v1.parentArray, v1.arrayIndex, v2, v1);
 		} else {
 			errorUnexpectedType(ctx);
 		}

@@ -94,7 +94,7 @@ public class NodeTry extends HiNode {
 				if (catchNode.excClass != null) {
 					for (HiClass prevExcClass : excClasses) {
 						if (catchNode.excClass.isInstanceof(prevExcClass)) {
-							validationInfo.error("Exception '" + catchNode.excClass.fullName + "' has already been caught", catchNode.getToken());
+							validationInfo.error("Exception '" + catchNode.excClass.getNameDescr() + "' has already been caught", catchNode.getToken());
 							valid = false;
 						}
 					}

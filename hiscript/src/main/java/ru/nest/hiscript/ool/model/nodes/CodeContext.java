@@ -417,7 +417,7 @@ public class CodeContext {
 		dos_all.write(bos.toByteArray());
 
 		// DEBUG
-		// System.out.println((clazz != null ? (clazz.fullName + ": ") : "") + "size=" + bos_all.size());
+		// System.out.println((clazz != null ? (clazz.getNameDescr() + ": ") : "") + "size=" + bos_all.size());
 		return bos_all.toByteArray();
 	}
 }

@@ -49,7 +49,7 @@ public class NodeSynchronized extends HiNode {
 			return;
 		}
 
-		HiClass clazz = ctx.value.type;
+		HiClass clazz = ctx.value.valueClass;
 		if (clazz.isNull()) {
 			ctx.throwRuntimeException("null pointer");
 			return;

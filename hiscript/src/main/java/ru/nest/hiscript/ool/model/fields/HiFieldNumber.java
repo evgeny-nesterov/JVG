@@ -14,20 +14,20 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	public final void get(RuntimeContext ctx, Value value) {
 		HiClass valueClass = value.getOperationClass();
 		if (!valueClass.isPrimitive()) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 			return;
 		}
 
 		int valueType = valueClass.getPrimitiveType();
 		if (valueType == BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 			return;
 		}
 
 		get(ctx, value, valueType);
 
 		value.valueType = Value.VALUE;
-		value.type = getClass(ctx);
+		value.valueClass = getClass(ctx);
 	}
 
 	public abstract void get(RuntimeContext ctx, Value value, int valueType);
@@ -35,17 +35,17 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	@Override
 	public final void set(RuntimeContext ctx, Value value) {
 		declared = true;
-		if (value.type.getAutoboxedPrimitiveClass() != null) {
+		if (value.valueClass.getAutoboxedPrimitiveClass() != null) {
 			// autobox
 			value.substitutePrimitiveValueFromAutoboxValue();
-		} else if (!value.type.isPrimitive()) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+		} else if (!value.valueClass.isPrimitive()) {
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 			return;
 		}
 
-		int valueType = HiFieldPrimitive.getAutoType(value.type);
+		int valueType = HiFieldPrimitive.getAutoType(value.valueClass);
 		if (valueType == BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.type.fullName + ", required " + type.fullName);
+			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 			return;
 		}
 

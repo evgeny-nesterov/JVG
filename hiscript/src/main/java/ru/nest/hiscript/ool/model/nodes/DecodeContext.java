@@ -246,7 +246,7 @@ public class DecodeContext {
 			classes[index] = HiClass.decode(ctx);
 
 			// DEBUG
-			// System.out.println("class loaded: " + classes[index].fullName);
+			// System.out.println("class loaded: " + classes[index].getNameDescr());
 
 			// fire event
 			fireClassLoaded(classes[index], index);

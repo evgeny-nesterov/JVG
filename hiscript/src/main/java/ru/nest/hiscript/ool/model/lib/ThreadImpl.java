@@ -19,11 +19,11 @@ public class ThreadImpl extends ImplUtil {
 			}
 		}
 
-		HiObject object = new HiObject(threadClass, null);
+		HiObject object = new HiObject(threadClass, null, null);
 		object.userObject = Thread.currentThread();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = threadClass;
+		ctx.value.valueClass = threadClass;
 		ctx.value.lambdaClass = null;
 		ctx.value.object = object;
 		ctx.currentThread = object;
@@ -61,7 +61,7 @@ public class ThreadImpl extends ImplUtil {
 		o.userObject = n != null ? new Thread(new Run(ctx, o), n) : new Thread(new Run(ctx, o));
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void Thread_void_start(RuntimeContext ctx) {
@@ -71,7 +71,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.start();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (Exception exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -84,7 +84,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.interrupt();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (Exception exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -97,7 +97,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.join();
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -110,7 +110,7 @@ public class ThreadImpl extends ImplUtil {
 			thread.join(timeMillis);
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -120,7 +120,7 @@ public class ThreadImpl extends ImplUtil {
 		try {
 			Thread.sleep(timeMillis);
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (InterruptedException exc) {
 			ctx.throwRuntimeException(exc.toString());
 		}
@@ -131,13 +131,13 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isInterrupted();
 	}
 
 	public static void Thread_boolean_interrupted(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = Thread.interrupted();
 	}
 
@@ -146,7 +146,7 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isAlive();
 	}
 
@@ -156,7 +156,7 @@ public class ThreadImpl extends ImplUtil {
 		thread.setDaemon(on);
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.VOID;
+		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
 	public static void Thread_boolean_isDaemon(RuntimeContext ctx) {
@@ -164,13 +164,13 @@ public class ThreadImpl extends ImplUtil {
 		Thread thread = (Thread) o.getUserObject();
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = thread.isDaemon();
 	}
 
 	public static void Thread_Thread_currentThread(RuntimeContext ctx) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClass.forName(ctx, "Thread");
+		ctx.value.valueClass = HiClass.forName(ctx, "Thread");
 		ctx.value.lambdaClass = null;
 		ctx.value.object = ctx.currentThread;
 	}
@@ -179,7 +179,7 @@ public class ThreadImpl extends ImplUtil {
 		try {
 			Thread.yield();
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.type = HiClassPrimitive.VOID;
+			ctx.value.valueClass = HiClassPrimitive.VOID;
 		} catch (Throwable exc) {
 			ctx.throwRuntimeException(exc.getMessage());
 		}
@@ -187,7 +187,7 @@ public class ThreadImpl extends ImplUtil {
 
 	public static void Thread_boolean_holdsLock_Object(RuntimeContext ctx, Object obj) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.type = HiClassPrimitive.BOOLEAN;
+		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = Thread.holdsLock(obj);
 	}
 }

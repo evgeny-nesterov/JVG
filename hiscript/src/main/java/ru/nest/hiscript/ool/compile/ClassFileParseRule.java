@@ -61,6 +61,6 @@ public class ClassFileParseRule extends ParseRule<HiNode> {
 	}
 
 	private CompileClassContext getContext(HiCompiler compiler) {
-		return new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+		return new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
 	}
 }

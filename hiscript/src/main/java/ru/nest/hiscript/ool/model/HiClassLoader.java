@@ -40,7 +40,7 @@ public class HiClassLoader {
 		HiClass currentClass = classes.get(clazz.fullName);
 		if (currentClass != null) {
 			if (isRuntime && currentClass != clazz) {
-				throw new HiDuplicateClassException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+				throw new HiDuplicateClassException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
 			} else {
 				return;
 			}
@@ -78,7 +78,7 @@ public class HiClassLoader {
 				if (i != origClazz) {
 					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
 				} else {
-					validationInfo.error("cyclic inheritance involving " + i.fullName, i.getToken());
+					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), i.getToken());
 					valid = false;
 				}
 			}
@@ -91,7 +91,7 @@ public class HiClassLoader {
 				if (i != origClazz) {
 					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
 				} else {
-					validationInfo.error("cyclic inheritance involving " + i.fullName, null);
+					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), null);
 					valid = false;
 				}
 			}
@@ -104,7 +104,7 @@ public class HiClassLoader {
 			HiClass currentClass = this.classes.get(clazz.fullName);
 			if (currentClass != null) {
 				if (currentClass != clazz) {
-					throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.fullName + "' already loaded to '" + name + "'");
+					throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
 				} else {
 					return;
 				}
@@ -225,7 +225,7 @@ public class HiClassLoader {
 		if (validate) {
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, HiClass.CLASS_TYPE_TOP);
+				CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();

@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -41,6 +42,7 @@ public class NodeCastedIdentifier extends HiNode {
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
 		}
+		ctx.nodeValueType.type = Type.getType(clazz);
 		return clazz;
 	}
 
@@ -61,8 +63,8 @@ public class NodeCastedIdentifier extends HiNode {
 				}
 				for (int i = 0; i < castedRecordArguments.length; i++) {
 					NodeArgument castedRecordArgument = castedRecordArguments[i];
-					NodeValueType castedRecordArgumentValueType = castedRecordArgument.getValueType(validationInfo, ctx);
-					HiClass castedRecordArgumentClass = castedRecordArgumentValueType.type;
+					NodeValueType castedRecordArgumentValueType = castedRecordArgument.getNodeValueType(validationInfo, ctx);
+					HiClass castedRecordArgumentClass = castedRecordArgumentValueType.clazz;
 					boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isCompileValue();
 
 					NodeArgument recordArgument = null;

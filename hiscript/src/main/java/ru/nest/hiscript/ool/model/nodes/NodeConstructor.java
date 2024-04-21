@@ -21,16 +21,18 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 
 public class NodeConstructor extends HiNode {
-	public NodeConstructor(NodeType type, HiNode[] argValues) {
+	public NodeConstructor(NodeType nodeType, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
-		this.type = type;
+		this.nodeType = nodeType;
+		this.type = nodeType.getType();
 		this.argValues = argValues;
 		name = type.getType().fullName;
 	}
 
-	public NodeConstructor(HiClass clazz, HiNode[] argValues) {
+	public NodeConstructor(HiClass clazz, Type type, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.clazz = clazz;
+		this.type = type;
 		this.argValues = argValues;
 		name = clazz.getFullName(clazz.getClassLoader());
 	}
@@ -40,7 +42,7 @@ public class NodeConstructor extends HiNode {
 		this.argValues = argValues;
 	}
 
-	public NodeType type;
+	public NodeType nodeType;
 
 	public HiClass[] argsClasses;
 
@@ -50,13 +52,27 @@ public class NodeConstructor extends HiNode {
 
 	private HiClass clazz;
 
+	private Type type;
+
 	private HiConstructor constructor;
+
+	public boolean validateGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (this.type.parameters != null && this.type.parameters.length == 0) {
+			this.type = type;
+			return true;
+		} else {
+			return this.type.validateMatch(type, validationInfo, ctx, getToken());
+		}
+	}
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		ctx.nodeValueType.enclosingClass = clazz != null ? clazz : type.getType().getClass(ctx);
+		ctx.nodeValueType.enclosingClass = clazz != null ? clazz : type.getClass(ctx);
+		ctx.nodeValueType.enclosingType = type;
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+
+		ctx.nodeValueType.type = ctx.nodeValueType.enclosingType;
 		return ctx.nodeValueType.enclosingClass;
 	}
 
@@ -85,13 +101,20 @@ public class NodeConstructor extends HiNode {
 		}
 
 		if (clazz == null) {
-			validationInfo.error("class not found: " + name, type.getToken());
+			validationInfo.error("class not found: " + name, nodeType.getToken());
 			return false;
 		} else if (clazz.isInterface) {
 			validationInfo.error("cannot create object from interface '" + name + "'", getToken());
 			return false;
 		} else if (clazz.isEnum()) {
-			validationInfo.error("Enum types cannot be instantiated", getToken());
+			validationInfo.error("enum types cannot be instantiated", getToken());
+		}
+
+		if (clazz.generics != null) {
+			valid &= type.validateClass(clazz, validationInfo, ctx, nodeType.getToken());
+		} else if (nodeType != null && type.parameters != null) {
+			validationInfo.error("type '" + type.fullName + "' does not have type parameters", nodeType.getToken());
+			valid = false;
 		}
 
 		if (clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
@@ -99,10 +122,10 @@ public class NodeConstructor extends HiNode {
 		}
 
 		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
-			validationInfo.error("qualified new of static class", type.getToken());
+			validationInfo.error("qualified new of static class", nodeType.getToken());
 			valid = false;
 		} else if (!clazz.isStatic() && ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
-			validationInfo.error("'" + name + "' is not an enclosing class", type.getToken());
+			validationInfo.error("'" + name + "' is not an enclosing class", nodeType.getToken());
 			valid = false;
 		}
 
@@ -119,11 +142,11 @@ public class NodeConstructor extends HiNode {
 					level = level.parent;
 				}
 			} else {
-				validationInfo.error("constructor not found: " + clazz.fullName, getToken());
+				validationInfo.error("constructor not found: " + clazz.getNameDescr(), getToken());
 				valid = false;
 			}
 		} else {
-			validationInfo.error("'" + clazz.fullName + "' is abstract; cannot be instantiated", getToken());
+			validationInfo.error("'" + clazz.getNameDescr() + "' is abstract; cannot be instantiated", getToken());
 			valid = false;
 		}
 		return valid;
@@ -141,10 +164,10 @@ public class NodeConstructor extends HiNode {
 		ctx.addClass(clazz);
 
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
-		invokeConstructor(ctx, clazz, constructor, argsClasses, argValues, null, outboundObject);
+		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argValues, null, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, HiNode[] argValues, HiObject object, HiObject outboundObject) {
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiNode[] argValues, HiObject object, HiObject outboundObject) {
 		// build argument class array and evaluate method arguments
 		HiClass[] argsClasses = null;
 		if (argValues != null) {
@@ -155,30 +178,30 @@ public class NodeConstructor extends HiNode {
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-				argsClasses[i] = ctx.value.type;
+				argsClasses[i] = ctx.value.valueClass;
 			}
 		}
 
 		// get constructor
 		HiConstructor constructor = clazz.searchConstructor(ctx, argsClasses);
 		if (constructor == null) {
-			ctx.throwRuntimeException("constructor not found: " + clazz.fullName);
+			ctx.throwRuntimeException("constructor not found: " + clazz.getNameDescr());
 			return;
 		}
 
 		RuntimeContext.StackLevel level = ctx.level;
 		while (level != null) {
-			if (level.type == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
+			if (level.classType == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
 				ctx.throwRuntimeException("recursive constructor invocation");
 				return;
 			}
 			level = level.parent;
 		}
 
-		invokeConstructor(ctx, clazz, constructor, argsClasses, argValues, object, outboundObject);
+		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argValues, object, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, HiConstructor constructor, HiClass[] argsClasses, HiNode[] argValues, HiObject object, HiObject outboundObject) {
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiConstructor constructor, HiClass[] argsClasses, HiNode[] argValues, HiObject object, HiObject outboundObject) {
 		HiField[] argsFields = getArgumentsFields(ctx, clazz, constructor, argValues);
 		if (ctx.exitFromBlock()) {
 			return;
@@ -198,12 +221,12 @@ public class NodeConstructor extends HiNode {
 				Class<?> _varargClass = HiArrays.getClass(varargsClass, 0);
 				Object array = Array.newInstance(_varargClass, varargsSize);
 				for (int i = 0; i < varargsSize; i++) {
-					ctx.value.type = argsClasses[mainSize + i];
+					ctx.value.valueClass = argsClasses[mainSize + i];
 					argsFields[mainSize + i].get(ctx, ctx.value);
 					HiArrays.setArray(varargsClass, array, i, ctx.value);
 				}
 
-				ctx.value.type = varargsArrayClass;
+				ctx.value.valueClass = varargsArrayClass;
 				ctx.value.array = array;
 				varargsField.set(ctx, ctx.value);
 
@@ -221,10 +244,10 @@ public class NodeConstructor extends HiNode {
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
 					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
-					ctx.value.type = HiClassNull.NULL;
+					ctx.value.valueClass = HiClassNull.NULL;
 					argsFields[i].set(ctx, ctx.value);
 				} else if (!argClass.isArray()) {
-					ctx.value.type = argClass;
+					ctx.value.valueClass = argClass;
 					argsFields[i].get(ctx, ctx.value);
 					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
 					argsFields[i].set(ctx, ctx.value);
@@ -238,7 +261,7 @@ public class NodeConstructor extends HiNode {
 			}
 		}
 
-		constructor.newInstance(ctx, argsFields, object, outboundObject);
+		constructor.newInstance(ctx, type, argsFields, object, outboundObject);
 	}
 
 	/**
@@ -256,7 +279,7 @@ public class NodeConstructor extends HiNode {
 				}
 
 				HiField argField = null;
-				HiClass argClass = ctx.value.type;
+				HiClass argClass = ctx.value.valueClass;
 
 				// autobox
 				if (argClass.isPrimitive()) {
@@ -271,7 +294,7 @@ public class NodeConstructor extends HiNode {
 				if (argField == null) {
 					argField = HiField.getField(argClass, null, argValues[i].getToken());
 					if (argField == null) {
-						ctx.throwRuntimeException("argument with type '" + argClass.fullName + "' is not found");
+						ctx.throwRuntimeException("argument with type '" + argClass.getNameDescr() + "' is not found");
 						return null;
 					}
 					argField.set(ctx, ctx.value);
@@ -295,12 +318,13 @@ public class NodeConstructor extends HiNode {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 
-		os.writeBoolean(type != null);
-		if (type != null) {
-			os.write(type);
+		os.writeBoolean(nodeType != null);
+		if (nodeType != null) {
+			os.write(nodeType);
 		} else {
 			os.writeClass(clazz);
 		}
+		os.writeType(type);
 
 		os.writeByte(argValues != null ? argValues.length : 0);
 		os.writeArray(argValues);
@@ -315,8 +339,9 @@ public class NodeConstructor extends HiNode {
 		} else {
 			try {
 				HiClass clazz = os.readClass();
+				Type type = os.readType();
 				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-				return new NodeConstructor(clazz, argValues);
+				return new NodeConstructor(clazz, type, argValues);
 			} catch (HiNoClassException exc) {
 				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 				final NodeConstructor node = new NodeConstructor(argValues);

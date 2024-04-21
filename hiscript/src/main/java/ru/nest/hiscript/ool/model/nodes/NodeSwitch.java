@@ -176,7 +176,7 @@ public class NodeSwitch extends HiNode {
 			return -2;
 		}
 
-		if (ctx.value.type.isPrimitive()) {
+		if (ctx.value.valueClass.isPrimitive()) {
 			int value = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {
 				return -2;
@@ -191,7 +191,7 @@ public class NodeSwitch extends HiNode {
 							return -2;
 						}
 
-						if (ctx.value.type == HiClassPrimitive.BOOLEAN) {
+						if (ctx.value.valueClass == HiClassPrimitive.BOOLEAN) {
 							if (ctx.value.bool) {
 								return i;
 							}
@@ -210,7 +210,7 @@ public class NodeSwitch extends HiNode {
 					return i;
 				}
 			}
-		} else if (ctx.value.type.isObject()) {
+		} else if (ctx.value.valueClass.isObject()) {
 			HiObject object = ctx.value.object;
 			if (object != null && object.clazz.isEnum()) {
 				HiClassEnum enumClass = (HiClassEnum) object.clazz;
@@ -256,7 +256,7 @@ public class NodeSwitch extends HiNode {
 
 							if (ctx.value.valueType == Value.CLASS) {
 								HiClass c1 = object.clazz;
-								HiClass c2 = ctx.value.type;
+								HiClass c2 = ctx.value.valueClass;
 								boolean isInstanceof = c1.isInstanceof(c2);
 								if (isInstanceof) {
 									if (ctx.value.castedVariableName != null) {
@@ -271,7 +271,7 @@ public class NodeSwitch extends HiNode {
 									}
 									if (ctx.value.castedRecordArguments != null) {
 										if (!c2.isRecord()) {
-											ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.fullName + " to Record");
+											ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.getNameDescr() + " to Record");
 											return -2;
 										}
 										for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
@@ -287,11 +287,11 @@ public class NodeSwitch extends HiNode {
 									}
 									return i;
 								}
-							} else if (ctx.value.type.isPrimitive() && ctx.value.type == HiClassPrimitive.BOOLEAN) {
+							} else if (ctx.value.valueClass.isPrimitive() && ctx.value.valueClass == HiClassPrimitive.BOOLEAN) {
 								if (ctx.value.getBoolean()) {
 									return i;
 								}
-							} else if (ctx.value.type.isObject()) {
+							} else if (ctx.value.valueClass.isObject()) {
 								if (object == null) {
 									if (ctx.value.object == null) {
 										return i;
@@ -302,7 +302,7 @@ public class NodeSwitch extends HiNode {
 								if (ctx.exitFromBlock()) {
 									return -2;
 								}
-							} else if (ctx.value.type.isNull()) {
+							} else if (ctx.value.valueClass.isNull()) {
 								if (object == null) {
 									return i;
 								}

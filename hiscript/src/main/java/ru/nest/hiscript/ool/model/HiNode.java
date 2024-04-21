@@ -184,6 +184,8 @@ public abstract class HiNode implements HiNodeIF {
 
 	private HiClass valueClass;
 
+	private Type valueType;
+
 	private boolean valid;
 
 	private NodeValueType.NodeValueReturnType returnType;
@@ -193,6 +195,8 @@ public abstract class HiNode implements HiNodeIF {
 	private HiNodeIF resolvedValueVariable;
 
 	private HiClass enclosingClass;
+
+	private Type enclosingType;
 
 	private boolean isStatement;
 
@@ -211,24 +215,32 @@ public abstract class HiNode implements HiNodeIF {
 	}
 
 	public HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		getValueType(validationInfo, ctx);
+		getNodeValueType(validationInfo, ctx);
 		return valueClass;
 	}
 
-	public NodeValueType getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+	public Type getValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
+		getNodeValueType(validationInfo, ctx);
+		return valueType;
+	}
+
+	public NodeValueType getNodeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (valueClass == null) {
 			ctx.nodeValueType.resolvedValueVariable = null;
 			ctx.nodeValueType.enclosingClass = null;
+			ctx.nodeValueType.enclosingType = null;
 			ctx.nodeValueType.returnType = null;
 
 			computeValueType(validationInfo, ctx);
 
-			valueClass = ctx.nodeValueType.type;
+			valueClass = ctx.nodeValueType.clazz;
+			valueType = ctx.nodeValueType.type;
 			valid = ctx.nodeValueType.valid;
 			returnType = ctx.nodeValueType.returnType;
 			isConstant = ctx.nodeValueType.isConstant;
 			resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
 			enclosingClass = ctx.nodeValueType.enclosingClass;
+			enclosingType = ctx.nodeValueType.enclosingType;
 
 			if (valueClass != null) {
 				valueClass.init(ctx);
@@ -236,7 +248,7 @@ public abstract class HiNode implements HiNodeIF {
 				valueClass = HiClassPrimitive.VOID;
 			}
 		} else {
-			ctx.nodeValueType.get(this, valueClass, valid, returnType, isConstant, resolvedValueVariable, enclosingClass);
+			ctx.nodeValueType.get(this, valueClass, valueType, valid, returnType, isConstant, resolvedValueVariable, enclosingClass, enclosingType);
 		}
 		return ctx.nodeValueType;
 	}
@@ -271,10 +283,12 @@ public abstract class HiNode implements HiNodeIF {
 	protected void computeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = null;
 		ctx.nodeValueType.enclosingClass = null;
-		ctx.nodeValueType.valueType = null;
+		ctx.nodeValueType.enclosingType = null;
+		ctx.nodeValueType.valueClass = null;
 		ctx.nodeValueType.returnType = null;
 
 		HiClass clazz = computeValueClass(validationInfo, ctx);
+		Type type = ctx.nodeValueType.type != null ? ctx.nodeValueType.type : Type.getType(clazz);
 		boolean valid = clazz != null;
 		NodeValueType.NodeValueReturnType returnType = null;
 		if (valid) {
@@ -288,11 +302,12 @@ public abstract class HiNode implements HiNodeIF {
 			}
 		}
 		boolean isConstant = valid && clazz != HiClassPrimitive.VOID && isConstant(ctx);
-		ctx.nodeValueType.get(this, clazz, valid, returnType, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass);
+		ctx.nodeValueType.get(this, clazz, type, valid, returnType, isConstant, ctx.nodeValueType.resolvedValueVariable, ctx.nodeValueType.enclosingClass, ctx.nodeValueType.enclosingType);
 	}
 
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.noValue;
+		ctx.nodeValueType.type = Type.voidType;
 		return HiClassPrimitive.VOID;
 	}
 
@@ -518,7 +533,7 @@ public abstract class HiNode implements HiNodeIF {
 	}
 
 	public boolean expectConstant(ValidationInfo validationInfo, CompileClassContext ctx) {
-		NodeValueType valueType = getValueType(validationInfo, ctx);
+		NodeValueType valueType = getNodeValueType(validationInfo, ctx);
 		if (valueType == null || !valueType.isConstant) {
 			validationInfo.error("constant expected", getToken());
 			return false;
@@ -527,21 +542,21 @@ public abstract class HiNode implements HiNodeIF {
 	}
 
 	public boolean expectValueClass(ValidationInfo validationInfo, CompileClassContext ctx, HiClass valueClass) {
-		NodeValueType castedConditionValueType = getValueType(validationInfo, ctx);
+		NodeValueType castedConditionValueType = getNodeValueType(validationInfo, ctx);
 		if (castedConditionValueType.isCompileValue()) {
 			if (!castedConditionValueType.autoCastValue(valueClass)) {
-				validationInfo.error(valueClass.fullName + " is expected", getToken());
+				validationInfo.error(valueClass.getNameDescr() + " is expected", getToken());
 				return false;
 			}
 			return true;
 		} else if (castedConditionValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
-			if (!HiClass.autoCast(ctx, castedConditionValueType.type, valueClass, false, true)) {
-				validationInfo.error(valueClass.fullName + " is expected", getToken());
+			if (!HiClass.autoCast(ctx, castedConditionValueType.clazz, valueClass, false, true)) {
+				validationInfo.error(valueClass.getNameDescr() + " is expected", getToken());
 				return false;
 			}
 			return true;
 		}
-		validationInfo.error(valueClass.fullName + " is expected", getToken());
+		validationInfo.error(valueClass.getNameDescr() + " is expected", getToken());
 		return false;
 	}
 
@@ -667,5 +682,18 @@ public abstract class HiNode implements HiNodeIF {
 
 	public boolean computeBooleanValue(CompileClassContext ctx) {
 		return computeValue(ctx).value.getBoolean();
+	}
+
+	public <N extends HiNodeIF> N getSingleNode(Class<N> clazz) {
+		if (getClass() == clazz) {
+			return (N) this;
+		} else if (this instanceof NodeExpressionNoLS) {
+			NodeExpressionNoLS expressionNode = (NodeExpressionNoLS) this;
+			HiNodeIF expressionSingleNode = expressionNode.getSingleNode();
+			if (expressionSingleNode != null && expressionSingleNode.getClass() == clazz) {
+				return (N) expressionSingleNode;
+			}
+		}
+		return null;
 	}
 }

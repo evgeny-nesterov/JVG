@@ -22,7 +22,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		if (type.isPrimitive()) {
 			int t = type.getPrimitiveType();
@@ -36,8 +36,8 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 					return t == LONG ? type : HiClassPrimitive.INT;
 			}
 		}
-		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
-		return node.type;
+		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+		return node.clazz;
 	}
 
 	@Override
@@ -53,15 +53,15 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 		int t = c.getPrimitiveType();
 		switch (t) {
 			case CHAR:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = ~v.character;
 				return;
 			case BYTE:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = ~v.byteNumber;
 				return;
 			case SHORT:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = ~v.shortNumber;
 				return;
 			case INT:

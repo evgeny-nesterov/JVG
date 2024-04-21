@@ -21,12 +21,12 @@ public class OperationPrefixPlus extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.type.getAutoboxedPrimitiveClass() == null ? node.type : node.type.getAutoboxedPrimitiveClass();
+		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
-			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.type.fullName + "'", node.node.getToken());
+			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		return node.type;
+		return node.clazz;
 	}
 
 	@Override
@@ -47,15 +47,15 @@ public class OperationPrefixPlus extends UnaryOperation {
 
 		switch (t) {
 			case CHAR:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = v.character;
 				break;
 			case BYTE:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = v.byteNumber;
 				break;
 			case SHORT:
-				v.type = TYPE_INT;
+				v.valueClass = TYPE_INT;
 				v.intNumber = v.shortNumber;
 				break;
 		}
