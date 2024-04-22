@@ -890,10 +890,10 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 		} else if (clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
-			if (genericClass.isSuper || genericClass.clazz.isFinal()) {
-				return isInstanceof(genericClass.clazz);
-			} else {
+			if (genericClass.isSuper) {
 				return false;
+			} else {
+				return isInstanceof(genericClass.clazz);
 			}
 		} else {
 			HiClass c = this;

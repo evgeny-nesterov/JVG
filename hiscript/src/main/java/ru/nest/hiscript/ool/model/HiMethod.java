@@ -172,17 +172,34 @@ public class HiMethod implements HiNodeIF {
 				validationInfo.error("interface abstract methods cannot have body", token);
 				valid = false;
 			}
+			boolean rewriteValid = true;
 			if (clazz.superClass != null) {
 				resolve(ctx);
 				rewrittenMethod = clazz.superClass.getMethod(ctx, signature);
 				if (rewrittenMethod != null) {
-					if (rewrittenMethod.returnClass != returnClass) {
-						validationInfo.error("cannot rewrite method with another return type", getToken());
+					if (!returnClass.isInstanceof(rewrittenMethod.returnClass)) {
+						validationInfo.error("incompatible return type", getToken());
+						rewriteValid = false;
 						valid = false;
 					}
 					if (rewrittenMethod.modifiers.isFinal()) {
 						validationInfo.error("cannot rewrite final method", getToken());
 						valid = false;
+					}
+					valid &= modifiers.validateRewriteAccess(rewrittenMethod.modifiers, validationInfo, getToken());
+				}
+			}
+			if (rewriteValid && clazz.interfaces != null) {
+				for (HiClass intf : clazz.interfaces) {
+					resolve(ctx);
+					rewrittenMethod = intf.getMethod(ctx, signature);
+					if (rewrittenMethod != null) {
+						if (!returnClass.isInstanceof(rewrittenMethod.returnClass)) {
+							validationInfo.error("incompatible return type", getToken());
+							valid = false;
+							break;
+						}
+						valid &= modifiers.validateRewriteAccess(rewrittenMethod.modifiers, validationInfo, getToken());
 					}
 				}
 			}

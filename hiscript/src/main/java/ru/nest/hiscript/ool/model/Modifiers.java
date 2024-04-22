@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -60,6 +61,18 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 	public int getAccess() {
 		return access;
+	}
+
+	public boolean isPublic() {
+		return (access & ACCESS_PUBLIC) != 0;
+	}
+
+	public boolean isProtected() {
+		return (access & ACCESS_PROTECTED) != 0;
+	}
+
+	public boolean isDefaultAccess() {
+		return (access & ACCESS_DEFAULT) != 0;
 	}
 
 	public boolean isPrivate() {
@@ -310,5 +323,25 @@ public class Modifiers implements ModifiersIF, Codeable {
 		}
 		String modifierName = Modifiers.getName(modifier);
 		return modifiersToken.getInnerToken(tokenizer, modifierName);
+	}
+
+	public boolean validateRewriteAccess(Modifiers rewrittenModifiers, ValidationInfo validationInfo, Token token) {
+		if (rewrittenModifiers.isPublic()) {
+			if (!isPublic()) {
+				validationInfo.error("attempting to assign weaker access privileges: was public", token);
+				return false;
+			}
+		} else if (rewrittenModifiers.isProtected()) {
+			if (!isPublic() && !isProtected()) {
+				validationInfo.error("attempting to assign weaker access privileges: was protected", token);
+				return false;
+			}
+		} else if (rewrittenModifiers.isDefaultAccess()) {
+			if (!isPublic() && !isProtected() && !isDefaultAccess()) {
+				validationInfo.error("attempting to assign weaker access privileges: was packageLocal", token);
+				return false;
+			}
+		}
+		return true;
 	}
 }

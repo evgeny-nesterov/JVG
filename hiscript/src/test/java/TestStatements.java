@@ -223,7 +223,7 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testNew() {
 		assertSuccessSerialize("new Object().toString();");
-		assertSuccessSerialize("assert new Object(){String toString(){return \"a\";}}.toString().equals(\"a\");");
+		assertSuccessSerialize("assert new Object(){public String toString(){return \"a\";}}.toString().equals(\"a\");");
 		assertSuccessSerialize("assert (new int[]{1})[0] == 1;");
 		assertSuccessSerialize("class A{} A a = new A(); assert a instanceof A;");
 		assertSuccessSerialize("class A{A(int x){}} new A(1);");

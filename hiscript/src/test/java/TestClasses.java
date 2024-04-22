@@ -249,6 +249,15 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class A{void m(){return;return;}}");
 		assertFailCompile("class A{void m() throws {}}");
 		assertFailCompile("class A{void m() throws Exception, {}}");
+
+		// rewrite
+		assertSuccessSerialize("class A{Number get(){return 1;}} class B extends A{Integer get(){return 2;}}");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{String get(){return null;}}");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{Number get(){return null;}}");
+
+		assertSuccessSerialize("interface A{Number get();} class B implements A{Integer get(){return 2;}}");
+		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}");
+		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
 	}
 
 	@Test
@@ -353,7 +362,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"abc\").equals(new Rec(1, \"abc\"));");
 		assertSuccessSerialize("class O{} O o = new O(); record Rec(O o); assert new Rec(o).equals(new Rec(o));");
 		assertFailSerialize("class O{} record Rec(O o); assert new Rec(new O()).equals(new Rec(new O()));");
-		assertSuccessSerialize("class O{int a; O(int a){this.a = a;} boolean equals(Object o){return a == ((O)o).a;}} record Rec(O o); assert new Rec(new O(1)).equals(new Rec(new O(1)));");
+		assertSuccessSerialize("class O{int a; O(int a){this.a = a;} public boolean equals(Object o){return a == ((O)o).a;}} record Rec(O o); assert new Rec(new O(1)).equals(new Rec(new O(1)));");
 
 		// hashcode
 		assertSuccessSerialize("class O{} record Rec(O o, int x, String a); new Rec(new O(), 1, \"x\").hashCode();");

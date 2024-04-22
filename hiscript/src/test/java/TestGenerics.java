@@ -117,6 +117,7 @@ public class TestGenerics extends HiTest {
 
 	@Test
 	public void testAnonymousClasses() {
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Integer>(){Integer get(){return 123;}}.get() == 123;");
 	}
 
 	@Test

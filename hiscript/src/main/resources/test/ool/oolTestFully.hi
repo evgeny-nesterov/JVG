@@ -705,7 +705,7 @@ Util.header("METHOD VARARG");
         V (int value) {
             this.value = value;
         }
-        String toString() {
+        public String toString() {
             return "" + value;
         }
     }
