@@ -375,6 +375,6 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testStackOverflow() {
-		assertFail("class A{\nvoid m1(){\nm2();\n}\n\nvoid m2(){\nm1();\n}\n}\n new A().m1();");
+		assertFail("class A {\n\tvoid m1(int i) {\n\t\tm2(i+1);\n\t}\n\n\tvoid m2(int i) {\n\t\tm1(i+1);\n\t}\n}\nnew A().m1(1);", StackOverflowError.class);
 	}
 }
