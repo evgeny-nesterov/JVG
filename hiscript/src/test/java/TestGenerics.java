@@ -8,6 +8,11 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O1, O2, O3, O4, O5, O6>{}");
 		assertSuccessSerialize("class A<O extends Number>{}");
 		assertSuccessSerialize("class A<O extends A>{}");
+		assertSuccessSerialize("class A<O extends A<O>>{}");
+		assertSuccessSerialize("class A<O extends A<?>>{}");
+		assertSuccessSerialize("class A<O extends A<? extends A>>{}");
+		assertSuccessSerialize("class A<O extends A<? extends Object>>{}");
+		assertSuccessSerialize("class A<O extends A<? extends A<? extends A<? extends A<? extends A<? extends A<? extends A<? extends A<? extends A<? extends A>>>>>>>>>>{}");
 
 		assertSuccessSerialize("class A<O extends Number>{} class B extends A<Integer>{} A<Integer> b = new B();");
 		assertSuccessSerialize("class A<O extends Number>{} class B extends A<Integer>{} A<? extends Number> b = new B();");
@@ -59,6 +64,10 @@ public class TestGenerics extends HiTest {
 		// extends failure
 		assertFailCompile("class A <O extends Number>{} class B extends A<String>{}");
 		assertFailCompile("class A{} class B<O>{} class C<X extends A>{} class D<Z extends B> extends C<Z>{}");
+
+		assertFailCompile("class A<O extends A<O extends A>>{}");
+		assertFailCompile("class A<O1 extends A<O2 extends A>>{}");
+		assertFailCompile("class A<O extends A<? extends String>>{}");
 	}
 
 	@Test
@@ -66,11 +75,19 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A{<O> void m() {}}");
 		assertSuccessSerialize("class A{<O> O m(O x) {return x;}} assert new A().m(123) == 123;");
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;} O get(){return value;}} assert new A<Boolean>(true).get();");
+		assertSuccessSerialize("class A<O extends Number>{O x; O m(O x){this.x = x; return x;}} assert new A<Long>().m(1L) == 1;");
+
+		assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
+		assertFailCompile("class A{void m(O extends Number x){}}");
+		assertFailCompile("class A{<O> void m(O extends Number x){}}");
 	}
 
 	@Test
 	public void testFields() {
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;}} assert new A<Boolean>(true).value; assert new A<Integer>(123).value == 123;");
+
+		assertFailCompile("class A{O extends Object x;}");
+		assertFailCompile("class A{? extends Object x;}");
 	}
 
 	@Test

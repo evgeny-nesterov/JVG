@@ -56,6 +56,7 @@ public class NodeConstructor extends HiNode {
 
 	private HiConstructor constructor;
 
+	// generic
 	public boolean validateGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (this.type.parameters != null && this.type.parameters.length == 0) {
 			this.type = type;
