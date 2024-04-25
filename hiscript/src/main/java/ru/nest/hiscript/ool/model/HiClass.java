@@ -188,6 +188,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public String fullName;
 
+	public int hashCode;
+
 	public int type;
 
 	public HiClass enclosingClass;
@@ -217,7 +219,7 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public HiClassLoader classLoader;
 
-	// fox mix class
+	// for mix class
 	protected HiClass() {
 	}
 
@@ -260,6 +262,7 @@ public class HiClass implements HiNodeIF, HiType {
 		// intern name to optimize via a == b
 		this.name = (name != null ? name : "").intern();
 		this.fullName = getFullName(classLoader);
+		this.hashCode = fullName.hashCode();
 		this.generics = generics;
 
 		if (classLoader == null) {
@@ -303,6 +306,7 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 			// intern name to optimize via a == b
 			this.fullName = fullName.intern();
+			this.hashCode = fullName.hashCode();
 		}
 		return this.fullName;
 	}
@@ -1441,16 +1445,18 @@ public class HiClass implements HiNodeIF, HiType {
 
 	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		if (constructors != null) {
-			for (HiConstructor c : constructors)
+			int size = constructors.length;
+			for (int i = 0; i < size; i++)
 				FOR:{
+					HiConstructor c = constructors[i];
 					int argCount = c.arguments != null ? c.arguments.length : 0;
 					if (argCount != argTypes.length) {
 						continue;
 					}
 
 					c.resolve(classResolver);
-					for (int i = 0; i < argCount; i++) {
-						if (argTypes[i] != c.argClasses[i]) {
+					for (int j = 0; j < argCount; j++) {
+						if (argTypes[j] != c.argClasses[j]) {
 							break FOR;
 						}
 					}
@@ -1802,7 +1808,7 @@ public class HiClass implements HiNodeIF, HiType {
 
 	@Override
 	public int hashCode() {
-		return fullName.hashCode();
+		return hashCode;
 	}
 
 	@Override

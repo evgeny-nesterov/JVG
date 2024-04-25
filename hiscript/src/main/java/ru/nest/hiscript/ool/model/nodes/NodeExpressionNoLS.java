@@ -9,7 +9,6 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -238,7 +237,8 @@ public class NodeExpressionNoLS extends NodeExpression {
 		try {
 			int bufSize = 0;
 			int valuePos = 0;
-			for (int i = 0; i < operations.length; i++) {
+			int operationsCount = operations.length;
+			for (int i = 0; i < operationsCount; i++) {
 				if (operations[i] == null) {
 					// get value
 					try {
@@ -247,7 +247,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 						// Check for a.new B()
 						boolean executeLater = false;
-						if (bufSize > 0 && i < operations.length - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
+						if (bufSize > 0 && i < operationsCount - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
 							if (valueNode.getInvocationValueType() != -1) {
 								executeLater = true;
 								// Previous operand may be not calculated yet
@@ -296,7 +296,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 							}
 							i++;
 						}
-						while (i < operations.length && operations[i].getOperation() == skipToOperation) {
+						while (i < operationsCount && operations[i].getOperation() == skipToOperation) {
 							bufSize = operations[i].getOperationBufIndex(bufSize);
 							i++;
 						}

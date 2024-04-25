@@ -17,6 +17,7 @@ public class HiClassMix extends HiClass {
 		} else {
 			this.fullName = name;
 		}
+		this.hashCode = fullName.hashCode();
 	}
 
 	@Override

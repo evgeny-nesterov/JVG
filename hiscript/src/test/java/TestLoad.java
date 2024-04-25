@@ -39,10 +39,51 @@ public class TestLoad extends HiTest {
 
 		time = System.currentTimeMillis();
 		HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
-		for (int i = 0; i < 100_000; i++) {
-			script.execute().printError();
+		for (int i = 0; i < 1_000_000; i++) {
+			script.execute();
 		}
 		System.out.println("t2: " + (System.currentTimeMillis() - time));
-		// ~250 times slower
+		// ~200 times slower
+	}
+
+	@Test
+	public void testClassLoad2() throws Exception {
+		boolean[] started = {false};
+		boolean[] ready = {false};
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
+					started[0] = true;
+					for (int i = 0; i < 100_000; i++) {
+						script.execute();
+					}
+				} catch (Exception e) {
+				}
+				ready[0] = true;
+			}
+		});
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (!ready[0]) {
+					try {
+						Thread.sleep(1);
+						if (started[0]) {
+							System.out.println("---------------------------");
+							for (StackTraceElement e : t1.getStackTrace()) {
+								System.out.println("\t" + e);
+							}
+						}
+					} catch (Exception e) {
+					}
+				}
+			}
+		});
+		t1.start();
+		t2.start();
+		t1.join();
+		t2.join();
 	}
 }

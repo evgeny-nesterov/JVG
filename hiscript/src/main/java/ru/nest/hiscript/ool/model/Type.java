@@ -111,6 +111,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			this.fullName = name.intern();
 		}
+		this.hashCode = Objects.hash(fullName, dimension);
 	}
 
 	private Type(Type type, Type[] parameters) {
@@ -121,6 +122,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.primitive = false;
 		this.path = type.path;
 		this.fullName = type.fullName;
+		this.hashCode = type.hashCode;
 		this.parameters = parameters;
 	}
 
@@ -135,6 +137,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.dimension = 0;
 		this.primitive = primitive;
 		this.fullName = name.intern();
+		this.hashCode = Objects.hash(fullName, dimension);
 	}
 
 	/**
@@ -148,6 +151,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.dimension = cellType.dimension + 1;
 		this.primitive = false;
 		this.fullName = ("0" + cellType.fullName).intern();
+		this.hashCode = Objects.hash(fullName, dimension);
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;
@@ -164,6 +168,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.dimension = extendedType.dimension;
 		this.path = extendedType.path;
 		this.fullName = extendedType.fullName;
+		this.hashCode = extendedType.hashCode;
 		this.isExtends = !isSuper;
 		this.isSuper = isSuper;
 	}
@@ -280,6 +285,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	public String fullName;
 
+	public int hashCode;
+
 	private final int dimension;
 
 	public int getDimension() {
@@ -312,7 +319,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fullName, dimension);
+		return hashCode;
 	}
 
 	@Override
