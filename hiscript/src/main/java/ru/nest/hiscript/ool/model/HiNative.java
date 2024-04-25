@@ -12,16 +12,14 @@ public class HiNative {
 
 	private static final Set<Class<?>> registered = ConcurrentHashMap.newKeySet();
 
-	public static void register(Object o) {
-		if (o != null) {
-			register(o.getClass(), o);
-		}
-	}
-
 	public static void register(Class<?> c) {
 		if (c != null) {
 			register(c, null);
 		}
+	}
+
+	public static void registerObject(Object o) {
+		register(o.getClass(), o);
 	}
 
 	private static void register(Class<?> c, Object o) {
@@ -36,13 +34,13 @@ public class HiNative {
 		methodNamePrefix += "_";
 
 		Method[] methods = c.getMethods();
-		for (Method m : methods) {
-			String name = m.getName();
-			Class<?>[] argClasses = m.getParameterTypes();
-			if (argClasses.length > 0 && argClasses[0] == RuntimeContext.class && name.startsWith(methodNamePrefix)) {
-				HiNative.methods.put(name, m);
-
-				if (java.lang.reflect.Modifier.isStatic(m.getModifiers())) {
+		for (Method method : methods) {
+			String name = method.getName();
+			Class<?>[] argClasses = method.getParameterTypes();
+			if (argClasses.length > 0 && argClasses[0] == RuntimeContext.class && (name.startsWith(methodNamePrefix) || name.startsWith("root$"))) {
+				method.setAccessible(true);
+				HiNative.methods.put(name, method);
+				if (java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
 					objects.put(name, c);
 				} else {
 					objects.put(name, o);

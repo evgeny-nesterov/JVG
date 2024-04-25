@@ -1,4 +1,6 @@
 import org.junit.jupiter.api.Test;
+import ru.nest.hiscript.ool.model.HiNative;
+import ru.nest.hiscript.ool.model.RuntimeContext;
 
 public class TestClasses extends HiTest {
 	@Test
@@ -258,6 +260,25 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A{Number get();} class B implements A{Integer get(){return 2;}}");
 		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}");
 		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
+	}
+
+	@Test
+	public void testNativeMethod() {
+		assertSuccessSerialize("class A{native void m();}");
+		assertFailMessage("class A{native void m();} new A().m();", "native method 'root$0A_void_m' not found");
+
+		class A {
+			public void root$0A_int_m_int(RuntimeContext ctx, int value) {
+				ctx.value.set(value + 1);
+			}
+
+			public void root$0A_void_m(RuntimeContext ctx) {
+				ctx.throwRuntimeException("test error");
+			}
+		}
+		HiNative.registerObject(new A());
+		assertSuccessSerialize("class A{native int m(int value);} assert new A().m(1) == 2;");
+		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
 	}
 
 	@Test

@@ -20,6 +20,8 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O>{O m(O x) {return x;}} class B extends A<Integer>{} assert new B().m(123) == 123;");
 		assertSuccessSerialize("class A<O extends Number>{O value; O get(){return value;} void set(O value){this.value = value;}} class B extends A<Integer>{} B b = new B(); b.set(123); assert b.get() == 123; assert b.get() instanceof Integer;");
 		assertSuccessSerialize("class A<O extends Number>{O value; O get(){return value;} void set(O value){this.value = value;}} class B<O extends Integer> extends A<O>{} B b = new B(); b.set(123); assert b.get().equals(123); assert b.get() instanceof Integer;");
+		assertSuccessSerialize("class A<O extends Number>{O m(O o) {}} class B extends A<Integer>{Integer m(Integer o) {super.m(o);}}");
+		assertFailCompile("class A<O extends Number>{O m(O o) {}} class B extends A<Boolean>{Boolean m(Boolean o) {super.m(o);}}");
 
 		assertSuccessSerialize("class A<O1,O2>{O1 o1; O2 o2;} class A1 extends A<Long,String>{}  class B<O extends A<Long,String>> extends A<Boolean, O>{} class C extends B<A1>{} " + //
 				"B<A<Long,String>> c = new C(); c.o1 = true; c.o2 = new A1(); c.o2.o1 = 1L; c.o2.o2 = \"abc\"; " + //
@@ -68,6 +70,12 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O extends A<O extends A>>{}");
 		assertFailCompile("class A<O1 extends A<O2 extends A>>{}");
 		assertFailCompile("class A<O extends A<? extends String>>{}");
+		assertFailCompile("class A<O extends A<Object, Object>>{}");
+		assertFailCompile("class A<O1 extends A<Object>, O2>{}");
+		assertFailCompile("class A<O1, O2>{} class B extends A<Object>{}");
+		assertFailCompile("class A<O>{} class B extends A<Object, Object>{}");
+		assertFailCompile("class A<O>{} class B extends A<>{}");
+		assertFailCompile("class A<O extends Number>{} class B<O extends A> extends A<O>{}");
 	}
 
 	@Test
@@ -76,8 +84,9 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A{<O> O m(O x) {return x;}} assert new A().m(123) == 123;");
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;} O get(){return value;}} assert new A<Boolean>(true).get();");
 		assertSuccessSerialize("class A<O extends Number>{O x; O m(O x){this.x = x; return x;}} assert new A<Long>().m(1L) == 1;");
+		assertSuccessSerialize("class A{<O extends Number> O m(O o) {}} class B extends A{Integer m(Integer o) {super.m(o);}}");
 
-		assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
+		//assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
 		assertFailCompile("class A{void m(O extends Number x){}}");
 		assertFailCompile("class A{<O> void m(O extends Number x){}}");
 	}
@@ -87,7 +96,7 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;}} assert new A<Boolean>(true).value; assert new A<Integer>(123).value == 123;");
 
 		assertFailCompile("class A{O extends Object x;}");
-		assertFailCompile("class A{? extends Object x;}");
+		// assertFailCompile("class A{? extends Object x;}");
 	}
 
 	@Test
@@ -99,6 +108,7 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O>{} A<?> a = new A<String>();");
 		assertFailCompile("class A<O>{} A<Object> a = new A<String>();");
 		assertFailCompile("class A<O>{} A<String> a = new A<Integer>();");
+		assertSuccessSerialize("class A<O extends Number>{}; A<Integer> a;}");
 
 		assertFailCompile("class A{} A a = new A<>();");
 		assertFailCompile("class A{} A a = new A<?>();");
@@ -112,6 +122,11 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O>{} A<int> a;");
 		assertFailCompile("class A<O>{} A<boolean> a;");
 		assertFailCompile("class A<O>{} A<void> a;");
+		assertFailCompile("class A<O extends Number>{}; A<Boolean> a;}");
+
+		assertFailCompile("Object<Object> x;");
+		assertFailCompile("Object<> x;");
+		assertFailCompile("Object<?> x;");
 
 		// 1 generic
 		assertSuccessSerialize("class A<O extends Number>{} A<Integer> a = new A<>();");

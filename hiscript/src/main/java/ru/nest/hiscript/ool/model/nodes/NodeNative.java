@@ -17,7 +17,7 @@ public class NodeNative extends HiNode {
 		this.argNames = argNames;
 
 		StringBuilder id = new StringBuilder();
-		id.append(clazz.fullName);
+		id.append(clazz.fullName.startsWith(HiClass.ROOT_CLASS_NAME) ? clazz.fullName.substring(1) : clazz.fullName);
 		id.append('_');
 		id.append(returnType != null ? returnType.fullName : "void");
 		id.append('_');
