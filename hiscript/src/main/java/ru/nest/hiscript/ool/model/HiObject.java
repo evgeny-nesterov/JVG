@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
@@ -193,9 +192,6 @@ public class HiObject {
 	public String toString(RuntimeContext ctx) {
 		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "toString");
-		if (method == null) {
-			throw new RuntimeException("method toString not found");
-		}
 		if (method.clazz.superClass == null) {
 			// is Object
 			return toStringNative();
@@ -224,9 +220,6 @@ public class HiObject {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof HiObject)) {
-			return false;
-		}
 		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
 		return equals(ctx, (HiObject) object);
 	}
@@ -239,9 +232,6 @@ public class HiObject {
 
 		HiClass objectClass = HiClass.forName(ctx, HiClass.OBJECT_CLASS_NAME);
 		HiMethod equalsMethod = clazz.searchMethod(ctx, "equals", objectClass);
-		if (equalsMethod == null) {
-			return false;
-		}
 
 		// enter into method
 		ctx.enterMethod(equalsMethod, this);
