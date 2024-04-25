@@ -122,4 +122,11 @@ public class TestString extends HiTest {
 		assertFailCompile("String s = \"\\u012\";");
 		assertFailCompile("String s = \"\\u000g\";");
 	}
+
+	@Test
+	public void testCharsMethods() {
+		assertSuccessSerialize("String s = \"abc\"; assert s.length() == 3;");
+		assertSuccessSerialize("String s = \"abc\"; assert s.indexOf(\"bc\") == 1; assert s.indexOf(\"d\") == -1;");
+		assertSuccessSerialize("String s = \"abc\"; assert s.lastIndexOf(\"bc\") == 1; assert s.lastIndexOf(\"d\") == -1;");
+	}
 }

@@ -181,6 +181,19 @@ public class TestClasses extends HiTest {
 		assertFailCompile("interface A extends");
 		assertFailCompile("interface A extends {}");
 		assertFailCompile("interface A extends B, {}");
+
+		// private methods
+		assertSuccessSerialize("interface A{private void m(){}}");
+		assertSuccessSerialize("interface A{private int m(){return 1;} default int get(){this.m(); return m();}} assert new A(){}.get() == 1;");
+		assertFailCompile("interface A{private void m(){}} new A(){}.m();");
+		assertFailCompile("interface A{private void m();}");
+		assertFailCompile("interface A{protected void m();}");
+		assertFailCompile("interface A{protected void m(){}}");
+		assertFailCompile("interface A{void m(){}}");
+		assertFailCompile("interface A{public void m(){}}");
+
+		// static methods
+		assertSuccessSerialize("interface A{static int m(){return 1;}} assert A.m() == 1;");
 	}
 
 	@Test

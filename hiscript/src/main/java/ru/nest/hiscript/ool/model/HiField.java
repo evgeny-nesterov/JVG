@@ -175,6 +175,10 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 			clazz = HiClassPrimitive.VOID;
 			type = Type.voidType;
 		}
+		if (type.isExtends || type.isSuper) {
+			validationInfo.error("invalid field type", token);
+			valid = false;
+		}
 		getClass(ctx);
 		valid &= ctx.addLocalVariable(this);
 		return valid;
@@ -294,7 +298,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				field = constructor.newInstance(name);
 				field.clazz = clazz;
 			} catch (Exception exc) {
-				throw new HiScriptRuntimeException("Undefined field type: " + clazz.name, exc);
+				throw new HiScriptRuntimeException("undefined field type: " + clazz.name, exc);
 			}
 		} else {
 			field = new HiFieldObject(clazz, name);

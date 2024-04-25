@@ -214,6 +214,11 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 		Type type = ctx.type;
 
+		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
+		if (generics != null) {
+			generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
+		}
+
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
@@ -225,11 +230,6 @@ public class ClassParseRule extends ParserUtil {
 				tokenizer.commit();
 				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE);
 				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
-
-				NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
-				if (generics != null) {
-					generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
-				}
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
@@ -387,9 +387,9 @@ public class ClassParseRule extends ParserUtil {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		Token startToken = startToken(tokenizer);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
-			Token startToken = startToken(tokenizer);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
 				int addDimension = visitDimension(tokenizer);

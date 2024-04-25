@@ -127,6 +127,18 @@ public class NodeGenerics extends HiNode {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		for (NodeGeneric generic : generics) {
+			if (s.length() > 0) {
+				s.append(", ");
+			}
+			s.append(generic);
+		}
+		return s.toString();
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeInt(generics.length);

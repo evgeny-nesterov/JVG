@@ -160,16 +160,34 @@ public class HiMethod implements HiNodeIF {
 				validationInfo.error("invalid 'default' modification", token);
 				valid = false;
 			}
-			if (clazz.isInterface && modifiers.isNative()) {
-				validationInfo.error("interface methods cannot be native", token);
-				valid = false;
+			if (clazz.isInterface) {
+				if (modifiers.isNative()) {
+					validationInfo.error("interface methods cannot be native", token);
+					valid = false;
+				}
+				if (!modifiers.isStatic() && !modifiers.isDefault()) {
+					if (modifiers.isAbstract()) {
+						if (modifiers.isPrivate()) {
+							validationInfo.error("modifier 'private' not allowed here", token);
+							valid = false;
+						} else if (modifiers.isProtected()) {
+							validationInfo.error("modifier 'protected' not allowed here", token);
+							valid = false;
+						}
+					} else {
+						if (!modifiers.isPrivate() && !clazz.isAnnotation()) {
+							validationInfo.error("modifier 'private' is expected", token);
+							valid = false;
+						}
+					}
+				}
+				if (!clazz.isAnnotation() && !modifiers.isAbstract() && !modifiers.isDefault() && !modifiers.isStatic() && !modifiers.isPrivate()) {
+					validationInfo.error("interface abstract methods cannot have body", token);
+					valid = false;
+				}
 			}
 			if (modifiers.isAbstract() && modifiers.isStatic()) {
 				validationInfo.error("static method cannot be abstract", token);
-				valid = false;
-			}
-			if (clazz.isInterface && !clazz.isAnnotation() && !modifiers.isAbstract() && !modifiers.isDefault() && !modifiers.isStatic()) {
-				validationInfo.error("interface abstract methods cannot have body", token);
 				valid = false;
 			}
 			boolean rewriteValid = true;

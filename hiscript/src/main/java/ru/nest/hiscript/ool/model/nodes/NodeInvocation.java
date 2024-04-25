@@ -110,6 +110,10 @@ public class NodeInvocation extends HiNode {
 		valid &= method != null;
 		if (arguments != null) {
 			if (method != null) {
+				if (method.clazz.isInterface && method.modifiers.isPrivate() && invocationClass != null && invocationClass != method.clazz) {
+					validationInfo.error("private method '" + method + "' is not accessible from outside of interface " + method.clazz.getNameDescr(), token);
+					valid = false;
+				}
 				int mainArgsCount = method.hasVarargs() ? method.argCount - 1 : method.argCount;
 				for (int i = 0; i < mainArgsCount; i++) {
 					HiNode argument = arguments[i];

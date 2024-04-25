@@ -58,7 +58,12 @@ public class NodeArgument extends HiNode implements NodeVariable {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO check modifiers (access)
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
-		clazz = typeArgument.getType().getClass(ctx);
+		Type type = typeArgument.getType();
+		clazz = type.getClass(ctx);
+		if (type.isExtends || type.isSuper) {
+			validationInfo.error("invalid argument type", getToken());
+			valid = false;
+		}
 		valid &= clazz != null;
 		valid &= ctx.addLocalVariable(this);
 		ctx.initializedNodes.add(this);

@@ -136,18 +136,12 @@ public class Modifiers implements ModifiersIF, Codeable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		switch (access) {
-			case ACCESS_PUBLIC:
-				sb.append("public ");
-				break;
-
-			case ACCESS_PROTECTED:
-				sb.append("protected ");
-				break;
-
-			case ACCESS_PRIVATE:
-				sb.append("private ");
-				break;
+		if (isPublic()) {
+			sb.append("public ");
+		} else if (isProtected()) {
+			sb.append("protected ");
+		} else if (isPrivate()) {
+			sb.append("private ");
 		}
 		if (isFinal) {
 			sb.append("final ");

@@ -89,6 +89,29 @@ public class TestGenerics extends HiTest {
 		//assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
 		assertFailCompile("class A{void m(O extends Number x){}}");
 		assertFailCompile("class A{<O> void m(O extends Number x){}}");
+		assertFailCompile("class A{<> void m(){}}");
+		assertFailCompile("class A{<?> void m(){}}");
+		assertFailCompile("class A{<? extends Object> void m(){}}");
+		assertFailCompile("class A{<? super Object> void m(){}}");
+		assertFailCompile("class X<O>{} class A{void m(){X<> x}}");
+		assertFailCompile("class X<O>{} class A{void m(){X<int> x}}");
+		assertFailCompile("class X<O>{} class A{<X extends int> void m(){}}");
+	}
+
+	@Test
+	public void testConstructors() {
+		assertSuccessSerialize("class A{<O> A(O o) {}} new A(1); new A(true);");
+		assertSuccessSerialize("class A<O>{} class B{<O extends Number> B(A<O> a){}} new B(new A<Integer>());");
+
+		assertFailCompile("class A{A(O extends Number x){}}");
+		assertFailCompile("class A{<O> A(O extends Number x){}}");
+		assertFailCompile("class A{<> A(){}}");
+		assertFailCompile("class A{<?> A(){}}");
+		assertFailCompile("class A{<? extends Object> A(){}}");
+		assertFailCompile("class A{<? super Object> A(){}}");
+		assertFailCompile("class X<O>{} class A{A(){X<> x}}");
+		assertFailCompile("class X<O>{} class A{A(){X<int> x}}");
+		assertFailCompile("class X<O>{} class A{<X extends int> A(){}}");
 	}
 
 	@Test

@@ -71,6 +71,15 @@ public class NodeGeneric extends HiNode {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		s.append(genericName != null && genericName.length() > 0 ? genericName : "?");
+		s.append(isSuper ? " super " : " extends ");
+		s.append(genericType);
+		return s.toString();
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullableUTF(genericName);
