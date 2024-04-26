@@ -34,6 +34,12 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O1 extends A<O2, O2>, O2 extends A<O1, O1>>{}");
 		assertSuccessSerialize("class A <O extends Number>{O x; A(O x){this.x = x;} O getX(){return x;}} class B extends A<Integer>{B(Integer x){super(x);}} assert new B(1).x == 1; assert new B(2).getX() == 2;");
 
+		assertSuccessSerialize("class A<X, Y>{} class B extends A{} new B();");
+		assertSuccessSerialize("class A<X extends Number, Y extends A>{} class B<Y extends A, X extends Integer> extends A<X, Y>{} new B<A, Integer>();");
+		assertSuccessSerialize("class A<O>{} new A<A<A<A>>>();");
+		assertFailCompile("class A<O>{} new A<Object<Object>>();");
+		assertSuccessSerialize("class A<O>{O x;} class B extends A<Integer>{int get(){x = 1; return x;}} assert new B().get() == 1;");
+
 		// format failures
 		assertFailCompile("class A<>{}");
 		assertFailCompile("class A<{}");

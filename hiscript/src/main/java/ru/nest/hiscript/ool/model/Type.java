@@ -223,6 +223,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 						} else if (definedClass.isGeneric() && !parameterClass.isInstanceof(definedClass.clazz)) {
 							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
 						}
+
+						parameterType.validateClass(parameterClass, validationInfo, ctx, token);
 					}
 				}
 			}
