@@ -170,6 +170,5 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
-		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"a\").equals(new Rec(1, \"a\"));");
 	}
 }

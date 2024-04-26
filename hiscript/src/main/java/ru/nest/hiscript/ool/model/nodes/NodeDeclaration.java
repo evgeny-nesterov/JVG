@@ -68,6 +68,10 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
 		clazz = getValueClass(validationInfo, ctx);
+		if (type.isExtends || type.isSuper) {
+			validationInfo.error("invalid field type", token);
+			valid = false;
+		}
 		if (type.parameters != null) {
 			if (type.parameters.length > 0) {
 				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
@@ -121,7 +125,15 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		HiField<?> field = clazz != null ? HiField.getField(clazz, name, initialization, token) : HiField.getField(type, name, initialization, token);
+		HiField<?> field;
+		if (clazz != null) {
+			field = HiField.getField(clazz, name, initialization, token);
+			if (clazz.isGeneric()) {
+				field.setGenericClass(ctx, ctx.level.object.type);
+			}
+		} else {
+			field = HiField.getField(type, name, initialization, token);
+		}
 		field.setModifiers(modifiers);
 
 		try {

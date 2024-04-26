@@ -1484,8 +1484,10 @@ public class HiClass implements HiNodeIF, HiType {
 			return genericClass;
 		}
 		HiClass extendsClass = enclosingClass;
-		while (extendsClass.superClass != srcClass) {
-			extendsClass = extendsClass.superClass;
+		if (extendsClass.superClass != null) {
+			while (extendsClass.superClass != srcClass) {
+				extendsClass = extendsClass.superClass;
+			}
 		}
 		if (classType != null && classType.parameters != null) {
 			Type resolvedType = classType.getParameterType(genericClass);

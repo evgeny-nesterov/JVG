@@ -412,16 +412,13 @@ public class HiMethod implements HiNodeIF {
 		}
 	}
 
-	public void invoke(RuntimeContext ctx, HiClass returnClass, Object object, HiField<?>[] arguments) {
+	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
 		if (body != null) {
-			if (returnClass == null) {
-				returnClass = this.returnClass;
-			}
 			if (modifiers.isNative()) {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.valueClass = returnClass;
+				ctx.value.valueClass = type;
 				ctx.value.lambdaClass = null;
-				if (returnClass.isArray()) {
+				if (type.isArray()) {
 					ctx.value.array = object;
 				} else {
 					ctx.value.object = (HiObject) object;
@@ -430,11 +427,9 @@ public class HiMethod implements HiNodeIF {
 			body.execute(ctx);
 
 			// autobox
-			if (this.returnClass != HiClassPrimitive.VOID) {
-				if (!ctx.value.valueClass.isArray() && ctx.value.valueClass.isPrimitive() && returnClass.isObject()) {
-					ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);
-					ctx.value.valueClass = returnClass;
-				}
+			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {
+				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);
+				ctx.value.valueClass = returnClass;
 			}
 		}
 	}

@@ -117,9 +117,16 @@ public class TestGenerics extends HiTest {
 	@Test
 	public void testFields() {
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;}} assert new A<Boolean>(true).value; assert new A<Integer>(123).value == 123;");
+		assertSuccessSerialize("class A<O1 extends Number>{O1 x;} class B<O2 extends Integer> extends A<O2>{} new B<Integer>().x = new Integer(1);");
+		assertSuccessSerialize("class A<O extends Number>{O x;} class B<O extends Integer> extends A<O>{} B<Integer> b = new B<>(); b.x = new Integer(1); assert b.x == 1; assert b.x instanceof Integer;");
+		assertSuccessSerialize("class A<O>{O m(O x) {O y = x; return y;}} assert new A<Integer>().m(1) == 1;");
+		assertSuccessSerialize("class A<O>{O m(O x) {O y = x != null ? x : null; return y;}} assert new A<Boolean>().m(true);");
 
 		assertFailCompile("class A{O extends Object x;}");
-		// assertFailCompile("class A{? extends Object x;}");
+		assertFailCompile("class A{? extends Object x;}");
+		assertFailCompile("class A{void m(){? extends Object x;}}");
+		assertFailCompile("class A{A(){? extends Object x;}}");
+		assertFailCompile("class A{{? extends Object x;}}");
 	}
 
 	@Test

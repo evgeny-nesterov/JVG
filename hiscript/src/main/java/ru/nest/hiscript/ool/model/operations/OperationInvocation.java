@@ -462,7 +462,7 @@ public class OperationInvocation extends BinaryOperation {
 			Value oldValue = ctx.value;
 			try {
 				ctx.value = v1;
-				method.invoke(ctx, v2.valueClass, object, argsFields);
+				method.invoke(ctx, clazz, object, argsFields);
 
 				// autobox
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
