@@ -114,6 +114,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.hashCode = Objects.hash(fullName, dimension);
 	}
 
+	/**
+	 * Parameterized type for generic class
+	 */
 	private Type(Type type, Type[] parameters) {
 		this.id = type.id;
 		this.parent = type.parent;
@@ -299,6 +302,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	private final boolean primitive;
 
+	// generic
 	public Type[] parameters;
 
 	public boolean isExtends;
@@ -434,6 +438,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 	}
 
+	// generic
 	public static Type getParameterizedType(Type type, Type[] parameters) {
 		return new Type(type, parameters);
 	}
@@ -565,13 +570,17 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public String toString() {
 		String name = fullName;
 		if (parameters != null) {
-			name += "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
+			return fullName + "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
 		} else if (isExtends) {
-			name = "? extends " + name;
+			if (!fullName.equals(objectType.fullName)) {
+				return "? extends " + fullName;
+			} else {
+				return "?";
+			}
 		} else if (isSuper) {
-			name = "? super " + name;
+			return "? super " + fullName;
 		}
-		return name;
+		return fullName;
 	}
 
 	@Override
@@ -622,11 +631,17 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return typeClass;
 	}
 
+	// generic
 	public Type getParameterType(HiClassGeneric genericClass) {
 		if (parameters != null && genericClass.index < parameters.length) {
 			return parameters[genericClass.index];
 		}
 		return null;
+	}
+
+	// generic
+	public boolean isWildcard() {
+		return isExtends || isSuper;
 	}
 
 	@Override

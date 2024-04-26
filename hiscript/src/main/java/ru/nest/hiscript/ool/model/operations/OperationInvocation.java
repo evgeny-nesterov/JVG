@@ -79,6 +79,7 @@ public class OperationInvocation extends BinaryOperation {
 			}
 			return clazz;
 		}
+
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return null;
 	}
@@ -221,12 +222,12 @@ public class OperationInvocation extends BinaryOperation {
 			v1.valueClass = field.getClass(ctx);
 			// generic
 			if (v1.valueClass.isGeneric()) {
-				v1.valueClass = clazz.resolveGenericClass(ctx, (HiClassGeneric) v1.valueClass);
+				v1.valueClass = clazz.resolveGenericClass(ctx, null, (HiClassGeneric) v1.valueClass);
 			}
 
 			field.get(ctx, v1);
 			if (v1.valueClass.isGeneric()) {
-				v1.valueClass = clazz.resolveGenericClass(ctx, (HiClassGeneric) v1.valueClass);
+				v1.valueClass = clazz.resolveGenericClass(ctx, null, (HiClassGeneric) v1.valueClass);
 			}
 
 			v1.valueType = Value.VARIABLE;
@@ -461,7 +462,7 @@ public class OperationInvocation extends BinaryOperation {
 			Value oldValue = ctx.value;
 			try {
 				ctx.value = v1;
-				method.invoke(ctx, clazz, object, argsFields);
+				method.invoke(ctx, v2.valueClass, object, argsFields);
 
 				// autobox
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {

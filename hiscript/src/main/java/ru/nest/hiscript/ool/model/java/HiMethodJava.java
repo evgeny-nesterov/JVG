@@ -47,7 +47,7 @@ public class HiMethodJava extends HiMethod {
 	}
 
 	@Override
-	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
+	public void invoke(RuntimeContext ctx, HiClass clazz, Object object, HiField<?>[] arguments) {
 		Object javaObject = ((HiObject) object).userObject;
 
 		Object[] javaArgs = new Object[arguments.length - 1];

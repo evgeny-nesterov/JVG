@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// generics
 public class NodeGenerics extends HiNode {
 	public NodeGenerics(NodeGeneric[] generics) {
 		super("generics", TYPE_GENERICS, false);

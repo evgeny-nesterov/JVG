@@ -412,24 +412,35 @@ public class HiMethod implements HiNodeIF {
 		}
 	}
 
-	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
+	public void invoke(RuntimeContext ctx, HiClass returnClass, Object object, HiField<?>[] arguments) {
 		if (body != null) {
+			if (returnClass == null) {
+				returnClass = this.returnClass;
+			}
 			if (modifiers.isNative()) {
 				ctx.value.valueType = Value.VALUE;
-				ctx.value.valueClass = type;
+				ctx.value.valueClass = returnClass;
 				ctx.value.lambdaClass = null;
-				if (type.isArray()) {
+				if (returnClass.isArray()) {
 					ctx.value.array = object;
 				} else {
 					ctx.value.object = (HiObject) object;
 				}
 			}
 			body.execute(ctx);
+
+			// autobox
+			if (this.returnClass != HiClassPrimitive.VOID) {
+				if (!ctx.value.valueClass.isArray() && ctx.value.valueClass.isPrimitive() && returnClass.isObject()) {
+					ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);
+					ctx.value.valueClass = returnClass;
+				}
+			}
 		}
 	}
 
-	public HiClass getReturnClass(ClassResolver classResolver, HiClass invocationClass, HiClass[] argumentsClasses) {
-		return resolveGenericClass(classResolver, returnClass, invocationClass, argumentsClasses);
+	public HiClass getReturnClass(ClassResolver classResolver, HiClass invocationClass, Type invocationType, HiClass[] argumentsClasses) {
+		return resolveGenericClass(classResolver, returnClass, invocationClass, invocationType, argumentsClasses);
 	}
 
 	// generic
@@ -453,7 +464,7 @@ public class HiMethod implements HiNodeIF {
 	}
 
 	// generic
-	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass clazz, HiClass invocationClass, HiClass[] invokeArgumentsClasses) {
+	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass clazz, HiClass invocationClass, Type invocationType, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClass resolvedClass = resolveGenericClassByArgument(clazz, invokeArgumentsClasses);
 			if (resolvedClass != clazz) {
@@ -462,7 +473,11 @@ public class HiMethod implements HiNodeIF {
 			if (invocationClass == null) {
 				invocationClass = this.clazz;
 			}
-			return invocationClass.resolveGenericClass(classResolver, (HiClassGeneric) clazz);
+			if (resolvedClass.isGeneric() && invocationType != null && invocationType.parameters != null) {
+				Type resolvedType = invocationType.getParameterType((HiClassGeneric) resolvedClass);
+				return resolvedType.getClass(classResolver);
+			}
+			return invocationClass.resolveGenericClass(classResolver, invocationType, (HiClassGeneric) clazz);
 		}
 		return clazz;
 	}

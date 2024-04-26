@@ -28,4 +28,8 @@ public final class Long extends Number {
     public boolean equals(Object o) {
         return o instanceof Long && ((Long)o).value == value;
     }
+
+    public int hashCode() {
+        return (int)value;
+    }
 }

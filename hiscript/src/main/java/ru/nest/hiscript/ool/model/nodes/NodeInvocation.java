@@ -41,7 +41,7 @@ public class NodeInvocation extends HiNode {
 
 	private boolean isEnclosingObject;
 
-	private HiMethod method;
+	public HiMethod method;
 
 	public void setInner(boolean innerInvocation) {
 		this.innerInvocation = innerInvocation;
@@ -70,21 +70,65 @@ public class NodeInvocation extends HiNode {
 		if (invocationClass != null) {
 			method = invocationClass.searchMethod(ctx, name, argumentsClasses);
 			if (method != null) {
-				ctx.nodeValueType.enclosingClass = method.getReturnClass(ctx, invocationClass, argumentsClasses);
+				HiClass returnClass = method.getReturnClass(ctx, invocationClass, invocationType, argumentsClasses);
 
 				// generic
-				Type type;
-				if (ctx.nodeValueType.enclosingClass.isGeneric() && invocationType.parameters != null) {
-					HiClassGeneric enclosingGenericClass = (HiClassGeneric) ctx.nodeValueType.enclosingClass;
-					type = invocationType.getParameterType(enclosingGenericClass);
-					ctx.nodeValueType.enclosingClass = type.getClass(ctx);
-				} else {
-					type = method.returnType;
+				if (invocationType.parameters != null) {
+					boolean validArguments = true;
+					for (int i = 0; i < method.argClasses.length; i++) {
+						HiClass methodArgumentClass = method.argClasses[i];
+						if (methodArgumentClass.isGeneric()) {
+							Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
+							HiClass argumentClass = argumentsClasses[i];
+							if (argumentType.isWildcard() && argumentClass.isPrimitive()) {
+								validArguments = false;
+								break;
+							} else {
+								methodArgumentClass = argumentType.getClass(ctx);
+
+								// autobox
+								if (argumentClass.isPrimitive()) {
+									argumentClass = argumentClass.getAutoboxClass();
+								}
+								if (methodArgumentClass.isPrimitive()) {
+									methodArgumentClass = methodArgumentClass.getAutoboxClass();
+								}
+
+								if (!argumentClass.isInstanceof(methodArgumentClass)) {
+									validArguments = false;
+									break;
+								}
+							}
+						}
+					}
+					if (!validArguments) {
+						String message = "'" + method.toString() + "' in '" + method.clazz.fullName + "' cannot be applied to '(";
+						for (int i = 0; i < argumentsClasses.length; i++) {
+							if (i > 0) {
+								message += ", ";
+							}
+							message += argumentsClasses[i].fullName;
+						}
+						message += "')";
+						validationInfo.error(message, getToken());
+					}
 				}
 
+				// generic
+				Type type = method.returnType;
+				if (returnClass.generics != null && invocationType.parameters != null) {
+					NodeGeneric nodeGeneric = returnClass.generics.getGeneric(type.name);
+					if (nodeGeneric != null) {
+						if (invocationType.parameters != null && nodeGeneric.index < invocationType.parameters.length) {
+							type = invocationType.parameters[nodeGeneric.index];
+						}
+					}
+				}
+
+				ctx.nodeValueType.enclosingClass = returnClass;
 				ctx.nodeValueType.enclosingType = type;
 				ctx.nodeValueType.type = type;
-				return ctx.nodeValueType.enclosingClass;
+				return returnClass;
 			}
 		} else {
 			while (ctx != null) {
@@ -160,6 +204,7 @@ public class NodeInvocation extends HiNode {
 			ctx.value.valueType = Value.METHOD_INVOCATION;
 			ctx.value.name = name;
 			ctx.value.arguments = arguments;
+			ctx.value.valueClass = valueClass;
 		} else {
 			Value[] vs = ctx.getValues(1);
 			try {

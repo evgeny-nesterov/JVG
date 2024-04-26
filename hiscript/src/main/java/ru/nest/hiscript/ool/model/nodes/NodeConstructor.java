@@ -57,7 +57,7 @@ public class NodeConstructor extends HiNode {
 	private HiConstructor constructor;
 
 	// generic
-	public boolean validateGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
+	public boolean validateDeclarationGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (this.type.parameters != null && this.type.parameters.length == 0) {
 			this.type = type;
 			return true;
@@ -102,7 +102,7 @@ public class NodeConstructor extends HiNode {
 		}
 
 		if (clazz == null) {
-			validationInfo.error("class not found: " + name, nodeType.getToken());
+			validationInfo.error("class not found: " + name, getToken());
 			return false;
 		} else if (clazz.isInterface) {
 			validationInfo.error("cannot create object from interface '" + name + "'", getToken());
@@ -111,11 +111,21 @@ public class NodeConstructor extends HiNode {
 			validationInfo.error("enum types cannot be instantiated", getToken());
 		}
 
+		// generics
 		if (clazz.generics != null) {
-			valid &= type.validateClass(clazz, validationInfo, ctx, nodeType.getToken());
+			valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
 		} else if (nodeType != null && type.parameters != null) {
-			validationInfo.error("type '" + type.fullName + "' does not have type parameters", nodeType.getToken());
+			validationInfo.error("type '" + type.fullName + "' does not have type parameters", getToken());
 			valid = false;
+		}
+		if (type != null && type.parameters != null) {
+			for (int i = 0; i < type.parameters.length; i++) {
+				Type parameterType = type.parameters[i];
+				if (parameterType.isWildcard()) {
+					validationInfo.error("wildcard type '" + parameterType + "' cannot be instantiated directly", getToken());
+					valid = false;
+				}
+			}
 		}
 
 		if (clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
@@ -123,10 +133,10 @@ public class NodeConstructor extends HiNode {
 		}
 
 		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
-			validationInfo.error("qualified new of static class", nodeType.getToken());
+			validationInfo.error("qualified new of static class", getToken());
 			valid = false;
 		} else if (!clazz.isStatic() && ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
-			validationInfo.error("'" + name + "' is not an enclosing class", nodeType.getToken());
+			validationInfo.error("'" + name + "' is not an enclosing class", getToken());
 			valid = false;
 		}
 

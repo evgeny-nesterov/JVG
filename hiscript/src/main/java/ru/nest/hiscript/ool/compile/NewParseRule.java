@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
@@ -37,6 +36,8 @@ public class NewParseRule extends ParseRule<HiNode> {
 			if (type == null) {
 				tokenizer.error("identifier is expected");
 			}
+
+			// generics
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);

@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
@@ -70,7 +71,7 @@ public class NodeIdentifier extends HiNode {
 				if (clazz.isGeneric()) {
 					HiClass enclosingClass = ctx.level.enclosingClass != null ? ctx.level.enclosingClass : ctx.clazz;
 					Type enclosingType = ctx.level.enclosingType != null ? ctx.level.enclosingType : ctx.type;
-					clazz = enclosingClass.resolveGenericClass(ctx, (HiClassGeneric) clazz);
+					clazz = enclosingClass.resolveGenericClass(ctx, null, (HiClassGeneric) clazz);
 					type = ctx.nodeValueType.type;
 					if (clazz.isGeneric() && enclosingType != null && enclosingType.parameters != null) {
 						Type parameterType = enclosingType.getParameterType((HiClassGeneric) clazz);
@@ -175,8 +176,10 @@ public class NodeIdentifier extends HiNode {
 
 			// generic
 			if (ctx.value.valueClass.isGeneric()) {
-				HiClass objectClass = ctx.getCurrentObject().clazz;
-				ctx.value.valueClass = objectClass.resolveGenericClass(ctx, (HiClassGeneric) ctx.value.valueClass);
+				HiObject currentObject = ctx.getCurrentObject();
+				HiClass objectClass = currentObject.clazz;
+				Type objectType = currentObject.type;
+				ctx.value.valueClass = objectClass.resolveGenericClass(ctx, objectType, (HiClassGeneric) ctx.value.valueClass);
 			}
 
 			ctx.value.copyTo(value);

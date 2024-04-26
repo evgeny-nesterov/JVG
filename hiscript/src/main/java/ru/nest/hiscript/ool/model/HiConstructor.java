@@ -119,6 +119,8 @@ public class HiConstructor implements HiNodeIF {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
+
+		// generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
 				validationInfo.error("type parameter expected", generics.getToken());
@@ -137,6 +139,7 @@ public class HiConstructor implements HiNodeIF {
 				}
 			}
 		}
+
 		if (arguments != null) {
 			for (NodeArgument argument : arguments) {
 				valid &= argument.validate(validationInfo, ctx);

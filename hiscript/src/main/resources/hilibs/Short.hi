@@ -32,4 +32,8 @@ public final class Short extends Number {
     public boolean equals(Object o) {
         return o instanceof Short && ((Short)o).value == value;
     }
+
+    public int hashCode() {
+        return value;
+    }
 }

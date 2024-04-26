@@ -14,6 +14,10 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	private double value;
 
+	public double getValue() {
+		return value;
+	}
+
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		return valueType.clazz.isNumber();

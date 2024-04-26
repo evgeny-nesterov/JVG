@@ -109,7 +109,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 			NodeConstructor newNode = initialization.getSingleNode(NodeConstructor.class);
 			if (newNode != null) {
-				valid &= newNode.validateGenericType(type, validationInfo, ctx);
+				valid &= newNode.validateDeclarationGenericType(type, validationInfo, ctx);
 			}
 		}
 

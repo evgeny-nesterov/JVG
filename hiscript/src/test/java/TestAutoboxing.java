@@ -170,7 +170,6 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
-		assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
-		assertFailCompile("class A{void m(O extends Integer x){}}"); // Wildcards may be used only as reference parameters
+		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"a\").equals(new Rec(1, \"a\"));");
 	}
 }

@@ -182,9 +182,9 @@ public abstract class HiNode implements HiNodeIF {
 
 	public int type;
 
-	private HiClass valueClass;
+	public HiClass valueClass;
 
-	private Type valueType;
+	public Type valueType;
 
 	private boolean valid;
 

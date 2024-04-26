@@ -553,6 +553,7 @@ public class HiClass implements HiNodeIF, HiType {
 				typeParameters[i] = parameterClass;
 			}
 
+			// generics
 			// TODO use type (superClassType.parameters[i]) token
 			if (superClass.generics != null) {
 				if (superClass.generics.generics.length == typeParameters.length) {
@@ -820,6 +821,7 @@ public class HiClass implements HiNodeIF, HiType {
 		return forName(classResolver, name);
 	}
 
+	// generics
 	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {
 		if (generics != null) {
 			return generics.getGenericClass(classResolver, name);
@@ -1467,7 +1469,7 @@ public class HiClass implements HiNodeIF, HiType {
 	}
 
 	// generic
-	public HiClass resolveGenericClass(ClassResolver classResolver, HiClassGeneric genericClass) {
+	public HiClass resolveGenericClass(ClassResolver classResolver, Type classType, HiClassGeneric genericClass) {
 		HiClass srcClass = genericClass.sourceClass;
 		HiClass enclosingClass = this;
 		if (enclosingClass.isGeneric()) {
@@ -1484,6 +1486,10 @@ public class HiClass implements HiNodeIF, HiType {
 		HiClass extendsClass = enclosingClass;
 		while (extendsClass.superClass != srcClass) {
 			extendsClass = extendsClass.superClass;
+		}
+		if (classType != null && classType.parameters != null) {
+			Type resolvedType = classType.getParameterType(genericClass);
+			return resolvedType.getClass(classResolver);
 		}
 		if (extendsClass.superClassType != null && extendsClass.superClassType.parameters != null) {
 			Type definedGenericType = extendsClass.superClassType.parameters[genericClass.index];

@@ -44,6 +44,8 @@ public class OperationNotEquals extends BinaryOperation {
 			}
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			return HiClassPrimitive.BOOLEAN;
+		} else if (c1.isNumber() && c2.isNumber()) {
+			return HiClassPrimitive.BOOLEAN;
 		}
 		if (node1.valid && node2.valid) {
 			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);

@@ -1,4 +1,8 @@
 public final class Float extends Number {
+    static {
+        System.loadLib("FloatImpl.class");
+    }
+
     private float value;
 
     public Float(float value) {
@@ -28,4 +32,6 @@ public final class Float extends Number {
     public boolean equals(Object o) {
         return o instanceof Float && ((Float)o).value == value;
     }
+
+    public native int hashCode();
 }

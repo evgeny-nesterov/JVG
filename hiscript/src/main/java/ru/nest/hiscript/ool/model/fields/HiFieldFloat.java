@@ -15,6 +15,10 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 
 	private float value;
 
+	public float getValue() {
+		return value;
+	}
+
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		return valueType.clazz.isNumber() && valueType.clazz != HiClassPrimitive.DOUBLE;

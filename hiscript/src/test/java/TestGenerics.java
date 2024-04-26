@@ -178,14 +178,23 @@ public class TestGenerics extends HiTest {
 	@Test
 	public void testMethodInvocation() {
 		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; A<Integer> a = new A<>(); a.set(1); assert a.get() == 1;");
-		//assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; class B<O extends Number> extends A<O>{} B<Integer> b = new B<>(); b.set(1); assert b.get() == 1;");
+		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; class B<O extends Number> extends A<O>{} B<Integer> b = new B<>(); b.set(1); assert b.get() == 1;");
 
 		// HashMap
 		assertSuccessSerialize("HashMap<String, Integer> map = new HashMap<>(); map.put(\"a\", 1); assert map.get(\"a\") == 1;");
 		assertSuccessSerialize("HashMap<String, Object> map = new HashMap<>(); map.put(\"a\", 1); map.put(\"b\", true); assert map.get(\"a\").equals(new Integer(1)); assert map.get(\"b\").equals(Boolean.TRUE);");
+		assertSuccessSerialize("HashMap<?, ?> map = new HashMap<>(); map.put(\"a\", new Integer(1)); map.put(\"b\", Boolean.TRUE); assert map.get(\"a\").equals(new Integer(1)); assert map.get(\"b\").equals(Boolean.TRUE);");
+		assertFailCompile("HashMap<?, ?> map = new HashMap<>(); map.put(\"a\", 1);");
+		assertFailCompile("HashMap<?, ?> map = new HashMap<? extends Integer, ?>();");
 
 		// ArrayList
 		assertSuccessSerialize("ArrayList<Number> list = new ArrayList<>(); list.add(1); list.add(1.23); assert list.get(0).equals(new Integer(1)); assert list.get(0) instanceof Integer; assert list.get(1).equals(new Double(1.23)); assert list.get(1) instanceof Double;");
+		assertSuccessSerialize("ArrayList<?> list = new ArrayList<>(); list.add(new Integer(1)); list.add(new Double(1.23)); assert list.get(0).equals(new Integer(1)); assert list.get(0) instanceof Integer; assert list.get(1).equals(new Double(1.23)); assert list.get(1) instanceof Double;");
+		assertFailCompile("ArrayList<?> list = new ArrayList<>(); list.add(1);");
+		assertFailCompile("ArrayList<? extends Number> list = new ArrayList<>(); list.add(1);");
+		assertFailCompile("ArrayList<? extends Number> list = new ArrayList<>(); list.add(\"abc\");");
+		assertFailCompile("ArrayList<?> list = new ArrayList<?>();");
+		assertFailCompile("ArrayList<? extends Number> list = new ArrayList<? extends Number>();");
 		assertSuccessSerialize("ArrayList<Integer> list1 = new ArrayList<>(); list1.add(1); ArrayList<ArrayList<Integer>> list2 = new ArrayList<>(); list2.add(list1); assert list2.get(0).get(0) == 1;");
 	}
 }

@@ -93,6 +93,8 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			int dimension = visitDimension(tokenizer);
+
+			// generics
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
 				generics.setSourceType(NodeGeneric.GenericSourceType.method);

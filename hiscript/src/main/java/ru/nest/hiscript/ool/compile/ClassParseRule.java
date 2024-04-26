@@ -55,6 +55,7 @@ public class ClassParseRule extends ParserUtil {
 				className = "";
 			}
 
+			// generics
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
@@ -214,6 +215,7 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 		Type type = ctx.type;
 
+		// generics
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		if (generics != null) {
 			generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
@@ -296,6 +298,7 @@ public class ClassParseRule extends ParserUtil {
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
 
+		// generics
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		if (generics != null) {
 			generics.setSourceType(NodeGeneric.GenericSourceType.method);
