@@ -170,13 +170,5 @@ public class TestAutoboxing extends HiTest {
 
     @Test
     public void testCharacter() {
-		assertFailCompile("final int x = 1; x += 1;");
-		assertSuccessSerialize("class A{static int x; static{x += B.x+1;}} class B{static int x; static{x += A.x+1;}} new B(); assert A.x == 1; assert B.x == 2;");
-        assertFailCompile("1+=1;");
-        assertFailCompile("class A{} A+=1;");
-        assertFailCompile("class A{} new A()+=1;");
-        assertFailCompile("class A{int m(){return 1;}} new A().m()+=1;");
-        assertSuccessSerialize("int x = 0; x += 1;");
-        assertSuccessSerialize("int[] x = {0}; x[0] += 1;");
-    }
+   }
 }

@@ -179,6 +179,14 @@ public class TestExpression extends HiTest {
         assertFailCompile("++1;");
         assertFailCompile("--1;");
         assertFailCompile("boolean x = !1;");
+        assertFailCompile("boolean x = true; x++;");
+        assertFailCompile("boolean x = true; x--+;");
+        assertFailCompile("boolean x = true; ++x;");
+        assertFailCompile("boolean x = true; --x;");
+        assertFailCompile("String x = \"\"; x++;");
+        assertFailCompile("String x = \"\"; x--+;");
+        assertFailCompile("String x = \"\"; ++x;");
+        assertFailCompile("String x = \"\"; --x;");
 
         for (int i = 0; i < priIntTypesALl.length; i++) {
             String pt = priIntTypesALl[i];
@@ -364,6 +372,22 @@ public class TestExpression extends HiTest {
         assertSuccessSerialize("int x = -1; assert x-- + x-- == -3;");
         assertSuccessSerialize("int x = -1; assert --x + --x == -5;");
         assertSuccessSerialize("int x = -1; int y = --x + x-- + x; assert x == -3; assert y == -7;");
+
+        for (String t : new String[]{"byte", "short", "char", "int", "long", "float", "double"}) {
+            assertSuccessSerialize(t + " x = 1; x++; assert x == 2;");
+            assertSuccessSerialize(t + " x = 1; x--; assert x == 0;");
+            assertSuccessSerialize(t + " x = 1; ++x; assert x == 2;");
+            assertSuccessSerialize(t + " x = 1; --x; assert x == 0;");
+        }
+
+        assertFailCompile("String s = \"\"; s++;");
+        assertFailCompile("String s = \"\"; s--;");
+        assertFailCompile("String s = \"\"; ++s;");
+        assertFailCompile("String s = \"\"; --s;");
+        assertFailCompile("boolean s = true; s++;");
+        assertFailCompile("boolean s = true; s--;");
+        assertFailCompile("boolean s = true; ++s;");
+        assertFailCompile("boolean s = true; --s;");
     }
 
     @Test
@@ -412,12 +436,66 @@ public class TestExpression extends HiTest {
     public void testCast() {
         for (String t : new String[]{"byte", "short", "int", "long", "float", "double", "char"}) {
             assertSuccessSerialize(t + " x = (" + t + ")127.0; assert x == 127;");
+            for (String t2 : new String[]{"byte", "short", "int", "long", "float", "double", "char"}) {
+                assertSuccessSerialize(t + " x = (" + t + ")(" + t2 + ")127; assert x == 127;");
+            }
             assertSuccessSerialize(t + " x = (" + t + ")(double)(char)(long)(byte)127; assert x == 127;");
             assertFailCompile(t + " x = (boolean)(byte)1;");
             assertFailCompile(t + " x = (" + t + ")\"1\";");
+            assertFailCompile(t + " x = (" + t + ")true;");
+            assertFailCompile(t + " x = (" + t + ");");
+            assertFailCompile(t + " x = (" + t + ")new int[0];");
+            assertFailCompile(t + " x = (" + t + ")new String[1];");
             assertFailCompile(t + " x = (void)1;");
             assertFailCompile("String s = (String)(" + t + ")1;");
             assertFailCompile("boolean b = (boolean)(" + t + ")1;");
+            assertFailCompile("String s = (" + t + ")\"\";");
+            assertFailCompile("void s = (" + t + ")1;");
+            assertFailCompile("boolean b = (" + t + ")true;");
+            assertFailCompile("class A{} " + t + " x = (" + t + ")A;");
+
+            assertSuccessSerialize(t + "[] x = (" + t + "[])new " + t + "[]{127}; assert x[0] == 127;");
+            for (String t2 : new String[]{"byte", "short", "int", "long", "float", "double", "char"}) {
+                if (!t.equals(t2)) {
+                    assertFailCompile(t + "[] x = (" + t2 + "[])new " + t + "[]{127}; assert x[0] == 127;");
+                    assertFailCompile(t + "[] x = (" + t + "[])new " + t2 + "[]{127}; assert x[0] == 127;");
+                }
+            }
         }
+
+        // autocast
+        assertSuccessSerialize("byte x = 1; assert x == (byte)1;");
+        assertSuccessSerialize("byte x = 'a'; assert x == (byte)'a';");
+        assertFailCompile("byte x = 1l;");
+        assertFailCompile("byte x = 1f;");
+        assertFailCompile("byte x = 1d;");
+        assertFailCompile("byte x = 129;");
+
+        assertSuccessSerialize("short x = 1; assert x == (short)1;");
+        assertSuccessSerialize("short x = 'a'; assert x == (short)'a';");
+        assertFailCompile("short x = 1l;");
+        assertFailCompile("short x = 1f;");
+        assertFailCompile("short x = 1d;");
+        assertFailCompile("short x = " + (Short.MAX_VALUE + 1) + ";");
+
+        assertSuccessSerialize("int x = 1; assert x == (int)1;");
+        assertSuccessSerialize("int x = 'a'; assert x == (int)'a';");
+        assertFailCompile("int x = 1l;");
+        assertFailCompile("int x = 1f;");
+        assertFailCompile("int x = 1d;");
+
+        assertSuccessSerialize("long x = 1; assert x == 1L;");
+        assertSuccessSerialize("long x = 'a'; assert x == (long)'a';");
+        assertFailCompile("long x = 1f;");
+        assertFailCompile("long x = 1d;");
+
+        assertSuccessSerialize("float x = 1; assert x == 1f;");
+        assertSuccessSerialize("float x = 'a'; assert x == (float)'a';");
+        assertFailCompile("float x = 1d;");
+
+        assertSuccessSerialize("double x = 1; assert x == 1d;");
+        assertSuccessSerialize("double x = 'a'; assert x == (double)'a';");
+        assertSuccessSerialize("double x = 1L; assert x == 1d;");
+        assertSuccessSerialize("double x = 1f; assert x == 1d;");
     }
 }

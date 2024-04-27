@@ -273,6 +273,16 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A{Number get();} class B implements A{Integer get(){return 2;}}");
 		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}");
 		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
+
+		// primitives
+		assertFailCompile("boolean x = 1; x.toString();");
+		assertFailCompile("byte x = 1; x.toString();");
+		assertFailCompile("short x = 1; x.toString();");
+		assertFailCompile("char x = 1; x.toString();");
+		assertFailCompile("int x = 1; x.toString();");
+		assertFailCompile("long x = 1; x.toString();");
+		assertFailCompile("float x = 1; x.toString();");
+		assertFailCompile("double x = 1; x.toString();");
 	}
 
 	@Test

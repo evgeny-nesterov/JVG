@@ -230,7 +230,15 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("assert (new int[1])[0] == 0;");
 		assertSuccessSerialize("assert (new int[]{1,2,3})[2] == 3;");
 		assertSuccessSerialize("assert (new int[1][1])[0][0] == 0;");
-		assertSuccessSerialize("assert new int[][]{{1,2},{3,4}}[1][1] == 4;");
+
+		assertSuccessSerialize("assert new boolean[][]{{false,false},{false,true}}[(byte)1][(char)1];");
+		assertSuccessSerialize("assert new byte[][]{{(byte)1,(short)2},{(char)3,4}}[(byte)1][(char)1] == 4;");
+		assertSuccessSerialize("assert new short[][]{{(byte)1,(short)2},{(char)3,4}}[(short)1][1] == 4;");
+		assertSuccessSerialize("assert new char[][]{{(byte)1,(short)2},{3,4}}[1][1] == 4;");
+		assertSuccessSerialize("assert new int[][]{{(byte)1,(short)2},{(char)3,4}}[1][1] == 4;");
+		assertSuccessSerialize("assert new long[][]{{(byte)1,(short)2},{(char)3,4,5L}}[1][1] == 4;");
+		assertSuccessSerialize("assert new float[][]{{(byte)1,(short)2},{(char)3,4,5f}}[1][1] == 4;");
+		assertSuccessSerialize("assert new double[][]{{1d,2f},{3L,4,(byte)5,(short)6}}[(byte)1][(short)1] == 4;");
 	}
 
 	@Test
