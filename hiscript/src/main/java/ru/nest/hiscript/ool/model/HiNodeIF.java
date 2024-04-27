@@ -50,6 +50,10 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 		return false;
 	}
 
+	default boolean isVariable() {
+		return false;
+	}
+
 	default int getInvocationValueType() {
 		return -1;
 	}

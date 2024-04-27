@@ -288,10 +288,15 @@ public class TestClasses extends HiTest {
 			public void root$0A_void_m(RuntimeContext ctx) {
 				ctx.throwRuntimeException("test error");
 			}
+
+			public void root$0A_void_error(RuntimeContext ctx) {
+				throw new RuntimeException("error");
+			}
 		}
 		HiNative.registerObject(new A());
 		assertSuccessSerialize("class A{native int m(int value);} assert new A().m(1) == 2;");
 		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
+		assertFailMessage("class A{native void error();} new A().error();", "error");
 	}
 
 	@Test

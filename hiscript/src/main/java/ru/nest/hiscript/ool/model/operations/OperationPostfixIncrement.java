@@ -1,12 +1,7 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.HiArrays;
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -29,6 +24,9 @@ public class OperationPostfixIncrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
+        if (!node.isVariable()) {
+            validationInfo.error("variable expected", node.token);
+        }
 		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());

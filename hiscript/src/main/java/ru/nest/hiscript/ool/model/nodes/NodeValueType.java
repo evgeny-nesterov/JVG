@@ -2,11 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.HiNodeIF;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
-import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -56,6 +52,10 @@ public class NodeValueType implements PrimitiveTypes {
 	public boolean booleanValue;
 
 	public HiNodeIF resolvedValueVariable;
+
+	public boolean isVariable() {
+		return resolvedValueVariable != null && resolvedValueVariable.isVariable();
+	}
 
 	public HiClass enclosingClass;
 
