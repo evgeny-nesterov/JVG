@@ -26,7 +26,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			boolean vararg = visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1;

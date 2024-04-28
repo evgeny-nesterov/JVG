@@ -41,7 +41,7 @@ public class ClassParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		int classType = visitWordType(tokenizer, Words.CLASS, Words.INTERFACE);
 		if (classType != -1) {
 			tokenizer.commit();
@@ -221,7 +221,7 @@ public class ClassParseRule extends ParserUtil {
 			generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
 		}
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, true);
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
@@ -296,7 +296,7 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, true);
 
 		// generics
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
@@ -389,7 +389,7 @@ public class ClassParseRule extends ParserUtil {
 	public boolean visitFields(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Token startToken = startToken(tokenizer);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {

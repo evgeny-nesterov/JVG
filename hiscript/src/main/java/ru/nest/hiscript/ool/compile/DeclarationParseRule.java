@@ -27,7 +27,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	public NodeDeclarations visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -111,7 +111,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type baseType = visitType(tokenizer, true);
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);

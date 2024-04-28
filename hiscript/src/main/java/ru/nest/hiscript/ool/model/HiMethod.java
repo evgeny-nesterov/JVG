@@ -424,7 +424,13 @@ public class HiMethod implements HiNodeIF {
 					ctx.value.object = (HiObject) object;
 				}
 			}
-			body.execute(ctx);
+			if (modifiers.isSynchronized()) {
+				synchronized (object) {
+					body.execute(ctx);
+				}
+			} else {
+				body.execute(ctx);
+			}
 
 			// autobox
 			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {

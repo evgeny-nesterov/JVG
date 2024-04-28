@@ -25,7 +25,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 	public NodeArgument visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);

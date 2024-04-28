@@ -33,7 +33,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 			startToken = startToken(tokenizer);
-			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 			Type type = visitType(tokenizer, true);
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);

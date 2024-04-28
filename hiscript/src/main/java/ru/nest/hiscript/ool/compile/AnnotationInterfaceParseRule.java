@@ -32,7 +32,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
 
@@ -83,13 +83,15 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 		ctx.initClass();
 	}
+@interface A {
 
+}
 	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type type = visitType(tokenizer, true);
 		if (type != null) {
 			int dimension = visitDimension(tokenizer);

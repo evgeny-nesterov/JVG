@@ -67,7 +67,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				if (visitWord(Words.CATCH, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
-					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
 					Type excType = visitObjectType(tokenizer);

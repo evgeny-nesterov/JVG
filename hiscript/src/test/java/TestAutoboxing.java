@@ -170,5 +170,6 @@ public class TestAutoboxing extends HiTest {
 
     @Test
     public void testCharacter() {
+        assertSuccessSerialize("class A{synchronized void m(){}} new A().m();");
    }
 }

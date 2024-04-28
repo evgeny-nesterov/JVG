@@ -133,6 +133,16 @@ public class Modifiers implements ModifiersIF, Codeable {
 		this.isDefault = isDefault;
 	}
 
+	private boolean isSynchronized = false;
+
+	public boolean isSynchronized() {
+		return isSynchronized;
+	}
+
+	public void setSynchronized(boolean isSynchronized) {
+		this.isSynchronized = isSynchronized;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

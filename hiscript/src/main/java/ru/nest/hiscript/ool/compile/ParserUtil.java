@@ -391,7 +391,7 @@ public class ParserUtil implements Words {
 		return expression;
 	}
 
-	protected static AnnotatedModifiers visitAnnotatedModifiers(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+	protected static AnnotatedModifiers visitAnnotatedModifiers(Tokenizer tokenizer, CompileClassContext ctx, boolean sync) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
 		Modifiers modifiers = null;
 		List<NodeAnnotation> annotations = null;
@@ -490,6 +490,15 @@ public class ParserUtil implements Words {
 				}
 
 				modifiers.setDefault(true);
+				continue;
+			}
+
+			if (sync && visitWordType(tokenizer, SYNCHRONIZED) != -1) {
+				if (modifiers == null) {
+					modifiers = new Modifiers();
+				}
+
+				modifiers.setSynchronized(true);
 				continue;
 			}
 			break;

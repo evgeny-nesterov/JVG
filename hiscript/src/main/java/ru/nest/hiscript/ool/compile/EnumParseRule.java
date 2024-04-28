@@ -26,7 +26,7 @@ public class EnumParseRule extends ParserUtil {
 	public HiClass visit(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx);
+		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		if (visitWord(Words.ENUM, tokenizer) != null) {
 			tokenizer.commit();
 			Modifiers modifiers = annotatedModifiers.getModifiers();

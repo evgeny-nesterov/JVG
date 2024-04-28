@@ -274,6 +274,9 @@ public class TestClasses extends HiTest {
 		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}");
 		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
 
+		// synchronized
+		assertSuccessSerialize("class A{synchronized void m(){}} new A().m();");
+
 		// primitives
 		assertFailCompile("boolean x = 1; x.toString();");
 		assertFailCompile("byte x = 1; x.toString();");

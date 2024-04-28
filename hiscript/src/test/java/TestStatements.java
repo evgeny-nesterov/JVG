@@ -391,6 +391,19 @@ public class TestStatements extends HiTest {
 	}
 
 	@Test
+	public void testSynchronized() {
+		assertSuccessSerialize("Object o = new Object(); synchronized(o){}");
+		assertSuccessSerialize("synchronized(new int[0]){}");
+		assertFailCompile("Object o = new Object(); synchronized(o);");
+		assertFailCompile("Object o; synchronized(o){}");
+		assertFailCompile("synchronized(){}");
+		assertFailCompile("int x = 0; synchronized(x){}");
+		assertFailCompile("synchronized(1){}");
+		assertFailCompile("synchronized(null){}");
+		assertFailMessage("Object o = null; synchronized(o){}", "null pointer");
+	}
+
+	@Test
 	public void testFails() {
 		assertFailCompile("class;");
 		assertFailCompile("true;");
