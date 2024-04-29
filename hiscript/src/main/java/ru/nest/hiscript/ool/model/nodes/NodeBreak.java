@@ -40,16 +40,6 @@ public class NodeBreak extends HiNode {
 	}
 
 	@Override
-	public void code(CodeContext os) throws IOException {
-		super.code(os);
-		os.writeNullableUTF(label);
-	}
-
-	public static NodeBreak decode(DecodeContext os) throws IOException {
-		return new NodeBreak(os.readNullableUTF());
-	}
-
-	@Override
 	public boolean isReturnStatement(String label, Set<String> labels) {
 		if (labels != null) {
 			labels.add(this.label != null ? this.label : "");
@@ -62,5 +52,15 @@ public class NodeBreak extends HiNode {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void code(CodeContext os) throws IOException {
+		super.code(os);
+		os.writeNullableUTF(label);
+	}
+
+	public static NodeBreak decode(DecodeContext os) throws IOException {
+		return new NodeBreak(os.readNullableUTF());
 	}
 }

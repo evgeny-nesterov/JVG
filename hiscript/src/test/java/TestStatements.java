@@ -151,7 +151,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("throw true;");
 		assertFailCompile("class E extends Exception{} throw new E();"); // unreported exception
 		assertFailSerialize("class E extends RuntimeException{} throw new E();");
-		assertFail("RuntimeException exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}");
+		assertFail("Exception exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}");
 
 		// throw in try
 		assertSuccessSerialize("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
@@ -237,8 +237,32 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("assert new char[][]{{(byte)1,(short)2},{3,4}}[1][1] == 4;");
 		assertSuccessSerialize("assert new int[][]{{(byte)1,(short)2},{(char)3,4}}[1][1] == 4;");
 		assertSuccessSerialize("assert new long[][]{{(byte)1,(short)2},{(char)3,4,5L}}[1][1] == 4;");
-		assertSuccessSerialize("assert new float[][]{{(byte)1,(short)2},{(char)3,4,5f}}[1][1] == 4;");
-		assertSuccessSerialize("assert new double[][]{{1d,2f},{3L,4,(byte)5,(short)6}}[(byte)1][(short)1] == 4;");
+		assertSuccessSerialize("assert new float[][]{{(byte)1,(short)2},{(char)3,4,5f,6L}}[1][1] == 4;");
+		assertSuccessSerialize("assert new double[][]{{1d,2f},{3L,4,(byte)5,(short)6,(char)7}}[(byte)1][(short)1] == 4;");
+
+		assertFailCompile("boolean[] x = new boolean[]{1};");
+		assertFailCompile("byte[] x = new byte[]{true};");
+		assertFailCompile("byte[] x = new byte[]{1L};");
+		assertFailCompile("byte[] x = new byte[]{1D};");
+		assertFailCompile("byte[] x = new byte[]{1F};");
+		assertFailCompile("short[] x = new short[]{true};");
+		assertFailCompile("short[] x = new short[]{1L};");
+		assertFailCompile("short[] x = new short[]{1D};");
+		assertFailCompile("short[] x = new short[]{1F};");
+		assertFailCompile("char[] x = new char[]{true};");
+		assertFailCompile("char[] x = new char[]{1L};");
+		assertFailCompile("char[] x = new char[]{1D};");
+		assertFailCompile("char[] x = new char[]{1F};");
+		assertFailCompile("int[] x = new int[]{true};");
+		assertFailCompile("int[] x = new int[]{1L};");
+		assertFailCompile("int[] x = new int[]{1D};");
+		assertFailCompile("int[] x = new int[]{1F};");
+		assertFailCompile("long[] x = new long[]{true};");
+		assertFailCompile("long[] x = new long[]{1D};");
+		assertFailCompile("long[] x = new long[]{1F};");
+		assertFailCompile("float[] x = new float[]{true};");
+		assertFailCompile("float[] x = new float[]{1D};");
+		assertFailCompile("double[] x = new double[]{true};");
 	}
 
 	@Test

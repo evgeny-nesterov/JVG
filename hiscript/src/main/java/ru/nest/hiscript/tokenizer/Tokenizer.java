@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -202,9 +203,9 @@ public class Tokenizer {
 
 	private final List<Token> buffer = new ArrayList<>();
 
-	private final List<Integer> startOffsets = new ArrayList<>();
+	private final LinkedList<Integer> startOffsets = new LinkedList<>();
 
-	private final List<Token> startPrevTokens = new ArrayList<>();
+	private final LinkedList<Token> startPrevTokens = new LinkedList<>();
 
 	private int tokenOffset = 0;
 
@@ -214,10 +215,10 @@ public class Tokenizer {
 	}
 
 	public void commit() {
-		startOffsets.remove(startOffsets.size() - 1);
+		startOffsets.removeLast();
 
 		// clear old info
-		startPrevTokens.remove(startPrevTokens.size() - 1);
+		startPrevTokens.removeLast();
 
 		// We may clear buffer up to position equals startOffset
 		// but to improve performance it's better clear buffer fully.
@@ -225,8 +226,8 @@ public class Tokenizer {
 	}
 
 	public void rollback() {
-		tokenOffset = startOffsets.remove(startOffsets.size() - 1);
-		currentToken = startPrevTokens.remove(startPrevTokens.size() - 1);
+		tokenOffset = startOffsets.removeLast();
+		currentToken = startPrevTokens.removeLast();
 	}
 
 	private final List<TokenVisitor> visitors = new ArrayList<>();

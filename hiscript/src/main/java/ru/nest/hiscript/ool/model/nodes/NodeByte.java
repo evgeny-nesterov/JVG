@@ -65,6 +65,11 @@ public class NodeByte extends NodeNumber {
 	}
 
 	@Override
+	public String toString() {
+		return super.name + "=" + value;
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeByte(value);
@@ -73,10 +78,5 @@ public class NodeByte extends NodeNumber {
 
 	public static NodeByte decode(DecodeContext os, Token token) throws IOException {
 		return getInstance(os.readByte(), os.readBoolean(), token);
-	}
-
-	@Override
-	public String toString() {
-		return super.name + "=" + value;
 	}
 }

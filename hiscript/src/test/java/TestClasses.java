@@ -40,6 +40,14 @@ public class TestClasses extends HiTest {
 		assertFailCompile("abstract class A{} new A();");
 		assertFailCompile("final abstract class A{}");
 
+		// inner classes
+		assertSuccessSerialize("class A{class B{}} A.B b = new A().new B();");
+		assertSuccessSerialize("class A{class B{class C{}}} A.B.C c = new A().new B().new C();");
+		assertFailCompile("class A{class B{}} A.B b = new B();");
+		assertFailCompile("class A{class B{}} A.B b = new A.B();");
+		assertFailCompile("class A{class B{}} A.B b = A.new B();");
+		assertFailCompile("class A{class B{static class C{}}}");
+
 		// invalid format
 		assertFailCompile("class {}");
 		assertFailCompile("class 1A{}");
@@ -275,7 +283,7 @@ public class TestClasses extends HiTest {
 		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
 
 		// synchronized
-		assertSuccessSerialize("class A{synchronized void m(){}} new A().m();");
+		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
 
 		// primitives
 		assertFailCompile("boolean x = 1; x.toString();");

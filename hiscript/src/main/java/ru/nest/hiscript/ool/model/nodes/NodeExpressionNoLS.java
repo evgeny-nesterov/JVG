@@ -318,6 +318,27 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 	}
 
+	public NodeIdentifier checkIdentifier() {
+		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeIdentifier) {
+			return (NodeIdentifier) operands[0];
+		}
+		return null;
+	}
+
+	public NodeCastedIdentifier checkCastedIdentifier() {
+		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeCastedIdentifier) {
+			return (NodeCastedIdentifier) operands[0];
+		}
+		return null;
+	}
+
+	public HiMethod checkMethod() {
+		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof HiMethod) {
+			return (HiMethod) operands[0];
+		}
+		return null;
+	}
+
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
@@ -341,26 +362,5 @@ public class NodeExpressionNoLS extends NodeExpression {
 			}
 		}
 		return new NodeExpressionNoLS(operands, operations);
-	}
-
-	public NodeIdentifier checkIdentifier() {
-		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeIdentifier) {
-			return (NodeIdentifier) operands[0];
-		}
-		return null;
-	}
-
-	public NodeCastedIdentifier checkCastedIdentifier() {
-		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof NodeCastedIdentifier) {
-			return (NodeCastedIdentifier) operands[0];
-		}
-		return null;
-	}
-
-	public HiMethod checkMethod() {
-		if (operations.length == 1 && operations[0] == null && operands.length == 1 && operands[0] instanceof HiMethod) {
-			return (HiMethod) operands[0];
-		}
-		return null;
 	}
 }

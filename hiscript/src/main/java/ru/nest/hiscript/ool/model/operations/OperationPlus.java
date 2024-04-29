@@ -234,6 +234,7 @@ public class OperationPlus extends BinaryOperation {
 						case DOUBLE:
 							return HiClassPrimitive.DOUBLE;
 					}
+					break;
 
 				case LONG:
 					switch (t2) {

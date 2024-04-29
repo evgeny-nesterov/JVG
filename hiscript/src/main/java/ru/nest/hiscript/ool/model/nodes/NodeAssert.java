@@ -15,7 +15,7 @@ public class NodeAssert extends HiNode {
 		this.messageNode = messageNode;
 	}
 
-	private final HiNode conditionNode;
+	private final NodeExpression conditionNode;
 
 	private final NodeExpression messageNode;
 
@@ -65,7 +65,6 @@ public class NodeAssert extends HiNode {
 	}
 
 	public static NodeAssert decode(DecodeContext os) throws IOException {
-		NodeAssert node = new NodeAssert(os.read(NodeExpression.class), os.readNullable(NodeExpression.class));
-		return node;
+		return new NodeAssert(os.read(NodeExpression.class), os.readNullable(NodeExpression.class));
 	}
 }

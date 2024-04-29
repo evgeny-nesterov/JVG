@@ -121,6 +121,11 @@ public class NodeReturn extends HiNode {
 	}
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return label == null;
+	}
+
+	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(value);
@@ -128,10 +133,5 @@ public class NodeReturn extends HiNode {
 
 	public static NodeReturn decode(DecodeContext os) throws IOException {
 		return new NodeReturn(os.readNullable(HiNode.class));
-	}
-
-	@Override
-	public boolean isReturnStatement(String label, Set<String> labels) {
-		return label == null;
 	}
 }

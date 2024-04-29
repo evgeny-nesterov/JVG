@@ -25,15 +25,15 @@ public class NodeCatch extends HiNode {
 		this.annotations = annotations;
 	}
 
-	public Modifiers modifiers;
-
-	public NodeAnnotation[] annotations;
-
 	public Type[] excTypes;
 
 	private final HiNode catchBody;
 
 	private final String excName;
+
+	public Modifiers modifiers;
+
+	public NodeAnnotation[] annotations;
 
 	public HiClass excClass;
 
@@ -137,14 +137,17 @@ public class NodeCatch extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		modifiers.code(os);
-		os.writeShortArray(annotations);
 		os.writeTypes(excTypes);
 		os.writeNullable(catchBody);
 		os.writeUTF(excName);
+		modifiers.code(os);
+		os.writeShortArray(annotations);
+		os.writeClass(excClass);
 	}
 
 	public static NodeCatch decode(DecodeContext os) throws IOException {
-		return new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		NodeCatch node = new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		node.excClass = os.readClass();
+		return node;
 	}
 }

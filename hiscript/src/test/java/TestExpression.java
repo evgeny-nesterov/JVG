@@ -253,7 +253,7 @@ public class TestExpression extends HiTest {
                         for (String suffix1 : suffixes) {
                             for (String suffix2 : suffixes) {
                                 String script = "assert " + prefix1 + prefix2 + prefix3 + successNumber + suffix1 + " == " + successNumber + suffix2 + ";";
-                                assertSuccessSerialize(script);
+                                assertSuccess(script);
                             }
                         }
                     }

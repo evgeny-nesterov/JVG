@@ -99,7 +99,7 @@ public class TestAutoboxing extends HiTest {
         // statements
         assertSuccessSerialize("for(Byte i = 0; i < 127; i++) {assert i instanceof Byte;}");
         assertSuccessSerialize("Byte i = 0; while(i < 10) i++; assert i == 10;");
-        assertFail("byte i = 0; while(i < 10) i = null;");
+        assertFailCompile("byte i = 0; while(i < 10) i = null;");
     }
 
     @Test
@@ -170,6 +170,6 @@ public class TestAutoboxing extends HiTest {
 
     @Test
     public void testCharacter() {
-        assertSuccessSerialize("class A{synchronized void m(){}} new A().m();");
+        assertSuccess("Byte a = null; a = 127; assert a.toString().equals(\"127\");");
    }
 }

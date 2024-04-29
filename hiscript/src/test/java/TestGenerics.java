@@ -82,6 +82,7 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O>{} class B extends A<Object, Object>{}");
 		assertFailCompile("class A<O>{} class B extends A<>{}");
 		assertFailCompile("class A<O extends Number>{} class B<O extends A> extends A<O>{}");
+		assertFailCompile("class A<O>{} class B extends A<Object, Object>{}");
 	}
 
 	@Test
@@ -149,6 +150,7 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A{} A a = new A<>();");
 		assertFailCompile("class A{} A a = new A<?>();");
 		assertFailCompile("class A{} A a = new A<Integer>();");
+		assertFailCompile("class A{} A a = new A<Object, Object>();");
 
 		assertFailCompile("class A{} A<> a;");
 		assertFailCompile("class A{} A<?> a;");
@@ -159,6 +161,7 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O>{} A<boolean> a;");
 		assertFailCompile("class A<O>{} A<void> a;");
 		assertFailCompile("class A<O extends Number>{}; A<Boolean> a;}");
+		assertFailCompile("class A<O>{} A a = new A<Object, Object>();");
 
 		assertFailCompile("Object<Object> x;");
 		assertFailCompile("Object<> x;");
@@ -209,5 +212,34 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("ArrayList<?> list = new ArrayList<?>();");
 		assertFailCompile("ArrayList<? extends Number> list = new ArrayList<? extends Number>();");
 		assertSuccessSerialize("ArrayList<Integer> list1 = new ArrayList<>(); list1.add(1); ArrayList<ArrayList<Integer>> list2 = new ArrayList<>(); list2.add(list1); assert list2.get(0).get(0) == 1;");
+	}
+
+	@Test
+	public void testSuper() {
+		// super in field
+		assertSuccessSerialize("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} " + //
+				"A<C1> x_ = new A<>(); x_.m(new C1()); x_.m(new C2()); x_.m(new C3()); " + //
+				"A<? super C1> x = new A<>(); x = new A<C1>(); x = x_; x.m(new C1()); x.m(new C2()); x.m(new C3());");
+		assertSuccessSerialize("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} " + //
+				"A<C1> x_ = new A<>(); x_.m(new C1()); x_.m(new C2()); x_.m(new C3()); " + //
+				"A<? super C2> x = new A<>(); x = new A<C1>(); x = new A<C2>(); x = x_; x.m(new C2()); x.m(new C3());");
+		assertSuccessSerialize("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} " + //
+				"A<C1> x_ = new A<>(); x_.m(new C1()); x_.m(new C2()); x_.m(new C3()); " + //
+				"A<? super C3> x = new A<>(); x = new A<C1>(); x = new A<C2>(); x = new A<C3>(); x = x_; x.m(new C3());");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C1> x = new A<C2>();");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C2> x = new A<C3>();");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C2> x = new A<C1>(); x.m(new C1());");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C3> x = new A<C1>(); x.m(new C1());");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C3> x = new A<C1>(); x.m(new C2());");
+		assertFailCompile("class C1{} class C2 extends C1{} class C3 extends C2{} class A<O>{void m(O o){}} A<? super C3> x = new A<String>();");
+
+		assertSuccessSerialize("class C<O>{O o; C(O o){this.o=o;} O get(O o){return o;}} C<? super Integer> c = new C<Integer>(1); c.get(1);");
+		assertSuccessSerialize("class C1{} class C2 extends C1{} HashMap<? super C2, ? super C2> map = new HashMap<C1, C1>();");
+
+		// fails
+		assertFailCompile("class A<O>{} A<? super Number> x = new A<Integer>();");
+		assertFailCompile("class A<O extends Integer>{} A<? super Number> x;");
+		assertFailCompile("class A<O super Integer>{}");
+		assertFailCompile("class A{<O super Integer> void m(O x){}}");
 	}
 }

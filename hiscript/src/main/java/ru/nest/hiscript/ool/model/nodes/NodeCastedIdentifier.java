@@ -23,10 +23,6 @@ public class NodeCastedIdentifier extends HiNode {
 
 	public int dimension;
 
-	public String getName() {
-		return name;
-	}
-
 	public NodeArgument[] castedRecordArguments;
 
 	public String castedVariableName;

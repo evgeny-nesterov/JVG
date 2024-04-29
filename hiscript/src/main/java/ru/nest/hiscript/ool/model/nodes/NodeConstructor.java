@@ -135,9 +135,15 @@ public class NodeConstructor extends HiNode {
 		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
 			validationInfo.error("qualified new of static class", getToken());
 			valid = false;
-		} else if (!clazz.isStatic() && ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
-			validationInfo.error("'" + name + "' is not an enclosing class", getToken());
-			valid = false;
+		} else if (!clazz.isStatic()) {
+			if (ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
+				validationInfo.error("'" + name + "' is not an enclosing class", getToken());
+				valid = false;
+			}
+			if (ctx.level.enclosingClass != null && !ctx.level.isEnclosingObject) {
+				validationInfo.error("cannot create", getToken());
+				valid = false;
+			}
 		}
 
 		// resolve constructor

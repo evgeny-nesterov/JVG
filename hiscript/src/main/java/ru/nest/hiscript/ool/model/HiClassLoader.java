@@ -1,12 +1,16 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.ClassFileParseRule;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParserUtil;
+import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Tokenizer;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
@@ -193,31 +197,31 @@ public class HiClassLoader {
 		return name;
 	}
 
-	public List<HiClass> load(URL url) throws Exception {
+	public List<HiClass> load(URL url) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(url.openStream());
 	}
 
-	public List<HiClass> load(InputStream is) throws Exception {
+	public List<HiClass> load(InputStream is) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(ParserUtil.readString(is));
 	}
 
-	public List<HiClass> load(Reader r) throws Exception {
+	public List<HiClass> load(Reader r) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(ParserUtil.readString(r));
 	}
 
-	public List<HiClass> load(String classCode) throws Exception {
+	public List<HiClass> load(String classCode) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(classCode, true);
 	}
 
-	public List<HiClass> load(URL url, boolean validate) throws Exception {
+	public List<HiClass> load(URL url, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(url.openStream(), validate);
 	}
 
-	public List<HiClass> load(InputStream is, boolean validate) throws Exception {
+	public List<HiClass> load(InputStream is, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return load(ParserUtil.readString(is), validate);
 	}
 
-	public List<HiClass> load(String classCode, boolean validate) throws Exception {
+	public List<HiClass> load(String classCode, boolean validate) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
 		HiCompiler compiler = new HiCompiler(this, tokenizer);
 		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);

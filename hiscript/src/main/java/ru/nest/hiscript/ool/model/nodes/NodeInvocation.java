@@ -80,7 +80,7 @@ public class NodeInvocation extends HiNode {
 						if (methodArgumentClass.isGeneric()) {
 							Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
 							HiClass argumentClass = argumentsClasses[i];
-							if (argumentType.isWildcard() && argumentClass.isPrimitive()) {
+							if (argumentType.isWildcard() && !argumentType.isSuper && argumentClass.isPrimitive()) {
 								validArguments = false;
 								break;
 							} else {

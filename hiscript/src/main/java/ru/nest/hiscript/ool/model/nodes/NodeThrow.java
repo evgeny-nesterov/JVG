@@ -20,6 +20,11 @@ public class NodeThrow extends HiNode {
 	private final HiNode exception;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		return label == null;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		valid &= exception.validate(validationInfo, ctx);
@@ -86,10 +91,5 @@ public class NodeThrow extends HiNode {
 
 	public static NodeThrow decode(DecodeContext os) throws IOException {
 		return new NodeThrow(os.read(HiNode.class));
-	}
-
-	@Override
-	public boolean isReturnStatement(String label, Set<String> labels) {
-		return label == null;
 	}
 }

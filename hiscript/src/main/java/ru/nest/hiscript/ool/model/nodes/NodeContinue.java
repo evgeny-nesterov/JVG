@@ -17,6 +17,21 @@ public class NodeContinue extends HiNode {
 	private final String label;
 
 	@Override
+	public boolean isReturnStatement(String label, Set<String> labels) {
+		if (labels != null) {
+			labels.add(this.label != null ? this.label : "");
+		}
+		if (label != null) {
+			if (this.label == null) {
+				return label.equals("");
+			} else {
+				return this.label.equals(label);
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		CompileClassContext.CompileClassLevel continueLevel = ctx.level.getContinueLevel(label);
@@ -47,20 +62,5 @@ public class NodeContinue extends HiNode {
 
 	public static NodeContinue decode(DecodeContext os) throws IOException {
 		return new NodeContinue(os.readNullableUTF());
-	}
-
-	@Override
-	public boolean isReturnStatement(String label, Set<String> labels) {
-		if (labels != null) {
-			labels.add(this.label != null ? this.label : "");
-		}
-		if (label != null) {
-			if (this.label == null) {
-				return label.equals("");
-			} else {
-				return this.label.equals(label);
-			}
-		}
-		return false;
 	}
 }

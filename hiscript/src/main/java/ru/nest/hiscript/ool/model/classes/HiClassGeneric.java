@@ -62,11 +62,7 @@ public class HiClassGeneric extends HiClass {
 
 	@Override
 	public boolean isInstanceof(HiClass clazz) {
-		if (isSuper) {
-			return clazz == HiClass.OBJECT_CLASS;
-		} else {
-			return this.clazz.isInstanceof(clazz);
-		}
+		return this.clazz.isInstanceof(clazz);
 	}
 
 	@Override

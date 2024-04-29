@@ -206,14 +206,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 							}
 						}
 					}
-				} else if (parameterType.isSuper) {
-					HiClass parameterClass = parameterType.getClass(ctx);
-					if (parameterClass != null) {
-						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
-						if (!parameterClass.isInstanceof(definedClass.clazz)) {
-							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
-						}
-					}
 				} else {
 					HiClass parameterClass = parameterType.getClass(ctx);
 					if (parameterClass != null) {
@@ -366,10 +358,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			return HiClass.getPrimitiveClass(name);
 		}
 
-		if (isSuper) {
-			return HiClass.OBJECT_CLASS;
-		}
-
 		if (isArray()) {
 			HiClass cellClass = cellType.getClass(classResolver);
 			if (cellClass == null) {
@@ -404,7 +392,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			}
 		}
 
-		if (clazz == null) {
+		if (clazz == null && classResolver != null) {
 			classResolver.processResolverException("class '" + fullName + "' can not be resolved");
 		}
 		return clazz;

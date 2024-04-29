@@ -1,8 +1,10 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
+import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
@@ -10,6 +12,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassMix;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
@@ -20,8 +23,10 @@ import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
+import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
+import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -162,7 +167,7 @@ public class HiClass implements HiNodeIF, HiType {
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();
-		} catch (Exception exc) {
+		} catch (IOException | TokenizerException | HiScriptParseException | HiScriptValidationException exc) {
 			exc.printStackTrace();
 		}
 	}
@@ -649,6 +654,7 @@ public class HiClass implements HiNodeIF, HiType {
 		if (innerClasses != null) {
 			boolean isStaticRootClassTop = isStaticRootClassTop();
 			for (HiClass innerClass : innerClasses) {
+				valid &= innerClass.validate(validationInfo, ctx);
 				if (!isStaticRootClassTop) {
 					if (innerClass.isInterface) {
 						validationInfo.error("the member interface " + innerClass.getNameDescr() + " can only be defined inside a top-level class or interface", innerClass.token);
@@ -662,7 +668,6 @@ public class HiClass implements HiNodeIF, HiType {
 						valid = false;
 					}
 				}
-				valid &= innerClass.validate(validationInfo, ctx);
 			}
 		}
 
@@ -896,11 +901,7 @@ public class HiClass implements HiNodeIF, HiType {
 			}
 		} else if (clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
-			if (genericClass.isSuper) {
-				return false;
-			} else {
-				return isInstanceof(genericClass.clazz);
-			}
+			return isInstanceof(genericClass.clazz);
 		} else {
 			HiClass c = this;
 			while (c != null) {
@@ -1722,8 +1723,17 @@ public class HiClass implements HiNodeIF, HiType {
 			case CLASS_RECORD:
 				return HiClassRecord.decode(os);
 
+			case CLASS_ANNOTATION:
+				return HiClassAnnotation.decode(os);
+
 			case CLASS_NULL:
 				return HiClassNull.decode(os);
+
+			case CLASS_VAR:
+				return HiClassVar.decode(os);
+
+			case CLASS_GENERIC:
+				return HiClassGeneric.decode(os);
 		}
 		throw new HiScriptRuntimeException("unknown class type: " + classType);
 	}
@@ -1809,7 +1819,8 @@ public class HiClass implements HiNodeIF, HiType {
 
 		// try resolve super class
 		if (superClassType != null) {
-			clazz.superClass = superClassType.getClass(/*no context*/ null);
+			clazz.superClass = os.getClassLoader().getClass(superClassType.fullName);
+			// clazz.superClass = superClassType.getClass(/*no context*/ null);
 		}
 		return clazz;
 	}
@@ -1957,7 +1968,7 @@ public class HiClass implements HiNodeIF, HiType {
 						src = src.getAutoboxedPrimitiveClass();
 					} else if (src.isGeneric()) {
 						HiClassGeneric genericSrc = (HiClassGeneric) src;
-						return !genericSrc.isSuper && dst.getAutoboxClass() == genericSrc.clazz;
+						return dst.getAutoboxClass() == genericSrc.clazz;
 					}
 				} else if (!dst.isPrimitive()) {
 					if (dst.getAutoboxedPrimitiveClass() != null) {
