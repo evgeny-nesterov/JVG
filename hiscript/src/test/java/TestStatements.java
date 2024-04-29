@@ -182,11 +182,14 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{A() {throw new Exception();}}");
 		assertFailCompile("class A{A() throws RuntimeException {throw new Exception();}}");
 		assertFailCompile("class A{A() throws Exception {throw new Exception(); super();}}");
+		assertFailCompile("class A{A() throws String {}}");
 		assertFail("class A{A(){throw new RuntimeException();}} new A();");
+		assertFail("class A{A(){throw new RuntimeException();}} class B extends A{B(){super();}} new B();");
 
 		// in method
 		assertFailCompile("class A{void m() {throw new Exception();}}");
 		assertFailCompile("class A{void m() throws RuntimeException {throw new Exception();}}");
+		assertFailCompile("class A{void m() throws String {}}");
 		assertFail("class A{void m(){throw new RuntimeException();}} new A().m();");
 
 		// in initialization

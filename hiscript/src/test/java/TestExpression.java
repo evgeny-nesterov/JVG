@@ -301,6 +301,7 @@ public class TestExpression extends HiTest {
                 "} else {" + //
                 "	assert false;" + //
                 "}");
+        assertSuccessSerialize("interface A{} interface B extends A{} class C implements B{} assert new C() instanceof A;");
     }
 
     @Test

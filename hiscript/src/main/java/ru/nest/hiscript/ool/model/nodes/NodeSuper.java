@@ -30,11 +30,12 @@ public class NodeSuper extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (ctx.clazz == null || ctx.clazz.superClass == null) {
 			validationInfo.error("cannot resolve super class", token);
-			return false;
+			valid = false;
 		}
-		return true;
+		return valid;
 	}
 
 	@Override

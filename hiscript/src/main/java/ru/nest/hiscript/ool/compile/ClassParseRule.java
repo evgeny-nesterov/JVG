@@ -257,7 +257,7 @@ public class ClassParseRule extends ParserUtil {
 							expectSymbol(tokenizer, Symbols.SEMICOLON);
 
 							if (constructorType == SUPER) {
-								type = clazz.superClassType;
+								type = clazz.superClassType != null ? clazz.superClassType : Type.objectType;
 								bodyConstructorType = BodyConstructorType.SUPER;
 							} else {
 								type = Type.getType(clazz);

@@ -241,5 +241,21 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O extends Integer>{} A<? super Number> x;");
 		assertFailCompile("class A<O super Integer>{}");
 		assertFailCompile("class A{<O super Integer> void m(O x){}}");
+		assertFailCompile("class A{<O super Integer> A(O o){}}");
+		assertFailCompile("class A<O>{} class B extends A<>{}");
+
+		assertFailCompile("class A<>{}");
+		assertFailCompile("class A<O>{} class B{A<> void m(){}}");
+		assertFailCompile("class A<O>{} class B{A<?,?> void m(){}}");
+		assertFailCompile("class A<O>{} class B{A<int> void m(){}}");
+		assertFailCompile("class A<O>{} class B{void m(A<> x){}}");
+		assertFailCompile("class A<O>{} class B{void m(A<?,?> x){}}");
+		assertFailCompile("class A<O>{} class B{void m(A<int> x){}}");
+		assertFailCompile("class A<O>{} class B{B(A<> x){}}");
+		assertFailCompile("class A<O>{} class B{B(A<?,?> x){}}");
+		assertFailCompile("class A<O>{} class B{B(A<int> x){}}");
+		assertFailCompile("class A<O>{} class B{A<> x;}");
+		assertFailCompile("class A<O>{} class B{A<?,?> x;}");
+		assertFailCompile("class A<O>{} class B{A<int> x;}");
 	}
 }

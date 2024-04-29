@@ -202,6 +202,10 @@ public class TestClasses extends HiTest {
 
 		// static methods
 		assertSuccessSerialize("interface A{static int m(){return 1;}} assert A.m() == 1;");
+
+		// failures
+		assertFailCompile("interface A{A(){}}");
+		assertFailCompile("interface A{void m(){}}");
 	}
 
 	@Test
@@ -294,6 +298,28 @@ public class TestClasses extends HiTest {
 		assertFailCompile("long x = 1; x.toString();");
 		assertFailCompile("float x = 1; x.toString();");
 		assertFailCompile("double x = 1; x.toString();");
+
+		// failures
+		assertFailCompile("class A{void m(){return; int x = 1;}}");
+		assertFailCompile("class A{void m1(){} void m2(){return; m1();}}");
+		assertFailCompile("class A{void m(){}} class B extends A{void m(){return; super.m();}} ");
+		assertFailCompile("class A{void m(int x, String x){}}");
+		assertFailCompile("class A{abstract void m();}");
+		assertFailCompile("abstract class A{abstract void m(){}}");
+		assertFailCompile("interface A{native void m();}");
+		assertFailCompile("class A{abstract static void m();}");
+	}
+
+	@Test
+	public void testMethodPriority() {
+		assertSuccessSerialize("class A{void m(int x){} void m(int... x){assert false;} void m(Integer x){assert false;}} new A().m(1);");
+		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){} void m(Integer x){assert false;}} new A().m(1, 2);");
+		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){} void m(Integer x){assert false;}} new A().m(new Integer(1), new Integer(2));");
+		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){assert false;} void m(Integer x){}} new A().m(new Integer(1));");
+
+		assertSuccessSerialize("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, 2);");
+		assertSuccessSerialize("class A{void m(int x1, int x2){assert false;} void m(int... x){assert false;} void m(Integer x1, Integer x2){}} new A().m(new Integer(1), new Integer(2));");
+		// assertSuccessSerialize("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));"); // Ambiguous method call. Both
 	}
 
 	@Test
@@ -375,8 +401,15 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class A{A(){this(1);} A(byte x){}} new A();");
 
 		// super
+		assertSuccessSerialize("class A{A(){super();}} new A();");
 		assertSuccessSerialize("class A{A(int x){this.x = x;} int x;} class B extends A{B(int y){super(y);}} A a = new B(1); assert a.x == 1;");
 		assertSuccessSerialize("class A{A(int x, int y){}} class B extends A{B(int x, byte y){super(x, y);}} new B(1, (byte)1);");
+
+		// failures
+		assertFailCompile("class A{A(){return; super();}}");
+		assertFailCompile("class A{A(){super(1);}}");
+		assertFailCompile("class A{A(){this(1);}}");
+		assertFailCompile("class A{A(int x, String x){}}");
 	}
 
 	@Test

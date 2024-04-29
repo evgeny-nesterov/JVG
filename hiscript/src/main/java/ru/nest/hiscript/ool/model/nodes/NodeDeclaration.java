@@ -87,6 +87,8 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 			validationInfo.error("invalid field type", token);
 			valid = false;
 		}
+
+		// generics
 		if (type.parameters != null) {
 			if (type.parameters.length > 0) {
 				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
@@ -95,6 +97,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 				valid = false;
 			}
 		}
+
 		if (initialization != null && ctx.nodeValueType.valid) {
 			if (type == Type.varType) {
 				type = Type.getType(clazz);
