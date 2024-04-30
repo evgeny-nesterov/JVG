@@ -60,5 +60,8 @@ public class TestAnnotations extends HiTest {
 		assertFailCompile("@interface A{int value();} @A(value=) int x = 0;");
 		assertFailCompile("@interface A{int value();} @A(value=\"a\") int x = 0;");
 		assertFailCompile("@interface A{int value();} @A(\"a\") int x = 0;");
+		assertFailCompile("class A{} @A int x = 0;");
+		assertFailCompile("interface A{} @A int x = 0;");
+		assertFailCompile("public @interface A{int value();} @A(value=\"a\", value=\"b\") int x;");
 	}
 }

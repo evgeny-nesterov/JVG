@@ -126,6 +126,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}");
 		assertSuccessSerialize("Object s = null; switch(s){case \"a\": assert true;break; case \"b\": assert false;break; case null: assert s == null;break;}");
 		assertFailCompile("int x = 1; switch(x){case 1,:break;}");
+		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
+		assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}"); // cannot resolve symbol 'd'
 
 		assertFailCompile("switch(){}");
 		assertFailCompile("switch(1);");
@@ -166,7 +168,8 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("class A implements AutoCloseable{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
-		assertFailSerialize("class A implements AutoCloseable{public void close(){throw new RuntimeException();}} try(A a = new A()) {} catch(RuntimeException e){}");
+		assertFailMessage("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", "close error");
+		assertFailMessage("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", "null pointer");
 
 		// Exception has already been caught
 		assertFailCompile("try{} catch(Exception e){} catch(Exception e){}"); // Exception 'java.lang.Exception' has already been caught
@@ -217,6 +220,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("try{} catch(Exception | e){}");
 		assertFailCompile("try{} catch(Exception e){} finally");
 		assertFailCompile("try(Object x) {}");
+		assertFailCompile("try(Object x = new Object()) {}");
+		assertFailCompile("try(String x = \"abc\") {}");
 	}
 
 	@Test
@@ -273,9 +278,11 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("A:{break A;};");
 		assertSuccessSerialize("A:{{{break A;}}};");
 		assertSuccessSerialize("A:break A;");
-		assertSuccessSerialize("A:{continue A;};");
-		assertSuccessSerialize("A:{{{continue A;}}};");
-		assertSuccessSerialize("A:continue A;");
+		assertSuccessSerialize("A:for(int i=0; i< 3; i++){continue A;};");
+		assertFailCompile("A:{continue A;};");
+		assertSuccessSerialize("A:for(int i=0; i< 3; i++){{{continue A;}}};");
+		assertSuccessSerialize("A:for(int i=0; i< 3; i++) continue A;");
+		assertFailCompile("A:continue A;");
 		assertSuccessSerialize("A:B:C:D:{break B;}");
 		assertFailCompile("break A;");
 		assertFailCompile("A:{} break A;");
@@ -285,7 +292,7 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("A:{if(true) break A; assert false;};");
 		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
 		assertSuccessSerialize("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
-		assertSuccessSerialize("for (int i = 0; i < 10; i++) BLOCK: {if(i<10) continue BLOCK; assert false;}");
+		assertSuccessSerialize("BLOCK: for (int i = 0; i < 10; i++) {if(i<10) continue BLOCK; assert false;}");
 	}
 
 	@Test
@@ -428,6 +435,16 @@ public class TestStatements extends HiTest {
 		assertFailCompile("synchronized(1){}");
 		assertFailCompile("synchronized(null){}");
 		assertFailMessage("Object o = null; synchronized(o){}", "null pointer");
+	}
+
+	@Test
+	public void testLabels() {
+		assertSuccessSerialize("LABEL: {}");
+		assertSuccessSerialize("LABEL: {break LABEL;}");
+		assertFailCompile("LABEL: {break;}");
+		assertSuccessSerialize("LABEL: for(int i = 0; i < 10; i++) {continue LABEL;}");
+		assertFailCompile("LABEL: {continue LABEL;}");
+		assertFailCompile("LABEL1: {LABEL1: {}}");
 	}
 
 	@Test

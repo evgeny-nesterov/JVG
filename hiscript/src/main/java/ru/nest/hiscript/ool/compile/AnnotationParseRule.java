@@ -65,8 +65,8 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 					}
 				}
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-				return new NodeAnnotation(name, args.toArray(new NodeAnnotationArgument[args.size()]));
 			}
+			return new NodeAnnotation(name, args.toArray(new NodeAnnotationArgument[args.size()]));
 		}
 		return null;
 	}

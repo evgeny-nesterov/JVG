@@ -180,7 +180,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 			clazz = HiClassPrimitive.VOID;
 			type = Type.voidType;
 		}
-		if (type.isExtends || type.isSuper) {
+		if (type.isWildcard()) {
 			validationInfo.error("invalid field type", token);
 			valid = false;
 		}

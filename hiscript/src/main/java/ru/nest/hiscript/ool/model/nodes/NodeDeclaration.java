@@ -83,7 +83,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
 		clazz = getValueClass(validationInfo, ctx);
-		if (type.isExtends || type.isSuper) {
+		if (type.isWildcard()) {
 			validationInfo.error("invalid field type", token);
 			valid = false;
 		}

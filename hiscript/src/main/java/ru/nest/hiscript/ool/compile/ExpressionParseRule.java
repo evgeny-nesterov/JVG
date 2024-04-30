@@ -49,8 +49,8 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 	@Override
 	public NodeExpression visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		List<HiNodeIF> operands = new ArrayList<>();
-		List<OperationsGroup> allOperations = new ArrayList<>();
+		List<HiNodeIF> operands = new ArrayList<>(2);
+		List<OperationsGroup> allOperations = new ArrayList<>(1);
 
 		int operation;
 		OperationsGroup operations = new OperationsGroup();

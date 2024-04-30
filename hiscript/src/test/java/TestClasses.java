@@ -410,6 +410,7 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class A{A(){super(1);}}");
 		assertFailCompile("class A{A(){this(1);}}");
 		assertFailCompile("class A{A(int x, String x){}}");
+		assertFailCompile("class A{A(int x){this(x);}}");
 	}
 
 	@Test
@@ -421,6 +422,10 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("enum E{} E e = null;");
 		assertSuccessSerialize("enum E{A, a}");
 		assertSuccessSerialize("enum E{e1, e2(1); int x; E(){} E(int x){this.x = x;}} assert E.e1.x == 0; assert E.e2.x == 1;");
+		assertFailMessage("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", "error");
+		assertFailMessage("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", "error");
+
+		// failures
 		assertFailCompile("enum {}");
 		assertFailCompile("enum E{");
 		assertFailCompile("enum E{1}");
@@ -440,14 +445,10 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testRecords() {
 		assertSuccessSerialize("record Rec(int a); Rec r = new Rec(1);");
-		assertFailCompile("record Rec(int a, long a);");
-		assertFailCompile("record (int a);");
 		assertSuccessSerialize("class A{}; record Rec(A a, A b); new Rec(new A(), new A());");
-
 		assertSuccessSerialize("record Rec(int a, String field); Rec rec = new Rec(1, \"abc\"); assert rec.getA() == 1; assert rec.getField().equals(\"abc\");");
 		assertSuccessSerialize("record Rec(int a, int b){Rec(int a){this.a = a; b = 2;}}; Rec rec1 = new Rec(1, 2); Rec rec2 = new Rec(1); assert rec2.getA() == 1; assert rec2.getB() == 2;");
-		assertFailCompile("record Rec();");
-		assertFailCompile("record Rec(){int a;};");
+		assertSuccessSerialize("record Rec(int a, int b){int c; Rec(int c){a = 1; b = 2; this.c = c;} int getC(){return c;}}; Rec rec = new Rec(3); assert rec.getA() == 1; assert rec.getB() == 2; assert rec.getC() == 3;");
 
 		// equals
 		assertSuccessSerialize("record Rec(int a, String b); assert new Rec(1, \"a\").equals(new Rec(1, \"a\"));");
@@ -463,16 +464,26 @@ public class TestClasses extends HiTest {
 		// instanceof
 		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(long a, Object b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
+		assertSuccessSerialize("record Rec(int a){int b; Rec(int b){a = 1; this.b = b;} int getB(){return b;}}; Rec r = new Rec(3); if(r instanceof Rec(int b) rec) {} else {assert false;}}");
 		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a) rec);");
 		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(String b, String a) rec);");
 		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int _a, String b) rec);");
+		assertFailCompile("class Rec{Rec(int a){}} Object r = new Rec(a); if(r instanceof Rec(int a) rec);");
 
 		// switch-case
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
-		// Duplicated local variable a
+		// duplicated local variable a
 		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		assertFailCompile("record R1(int x); record R2(int x) extends R1;");
+
+		// failures
+		assertFailCompile("record;");
+		assertFailCompile("record Rec;");
+		assertFailCompile("record Rec(int a, long a);");
+		assertFailCompile("record (int a);");
+		assertFailCompile("record Rec();");
+		assertFailCompile("record Rec(){int a;};");
 	}
 
 	@Test

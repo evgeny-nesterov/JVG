@@ -59,33 +59,38 @@ public class NodeExpressionSwitch extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
+		boolean valid = valueNode != null && valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		HiClass topCaseClass = null;
 		HiClass topResultClass = null;
 		for (int i = 0; i < size; i++) {
 			HiNode[] caseValueNodes = casesValues.get(i);
 			if (caseValueNodes != null) {
-				for (HiNode caseValueNode : caseValueNodes) {
-					if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
-						HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
-						if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
-							HiClass c = caseValueClass.getCommonClass(topCaseClass);
-							if (c != null) {
-								topCaseClass = c;
-							} else {
-								validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
-								valid = false;
+				if (caseValueNodes.length > 0) {
+					for (HiNode caseValueNode : caseValueNodes) {
+						if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
+							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
+							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
+								HiClass c = caseValueClass.getCommonClass(topCaseClass);
+								if (c != null) {
+									topCaseClass = c;
+								} else {
+									validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
+									valid = false;
+								}
+							}
+						} else {
+							valid = false;
+						}
+						if (caseValueNode instanceof NodeExpressionNoLS) {
+							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+							if (identifier != null) {
+								ctx.initializedNodes.add(identifier.declarationNode);
 							}
 						}
-					} else {
-						valid = false;
 					}
-					if (caseValueNode instanceof NodeExpressionNoLS) {
-						NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
-						if (identifier != null) {
-							ctx.initializedNodes.add(identifier.declarationNode);
-						}
-					}
+				} else {
+					validationInfo.error("empty case value", getToken());
+					valid = false;
 				}
 			}
 

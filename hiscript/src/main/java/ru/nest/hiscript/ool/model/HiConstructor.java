@@ -188,6 +188,9 @@ public class HiConstructor implements HiNodeIF {
 		if (object == null) {
 			object = new HiObject(clazz, type, outboundObject);
 		}
+		if (type == null) {
+			type = this.type;
+		}
 
 		// enter in constructor
 		ctx.enterConstructor(this, object, null);
@@ -221,7 +224,7 @@ public class HiConstructor implements HiNodeIF {
 
 						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
 						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());
-						superObject = enumDefaultConstructor.newInstance(ctx, null, new HiField<?>[] {enumName, enumOrdinal}, null);
+						superObject = enumDefaultConstructor.newInstance(ctx, type, new HiField<?>[] {enumName, enumOrdinal}, null);
 						if (ctx.exitFromBlock()) {
 							return null;
 						}
@@ -232,17 +235,19 @@ public class HiConstructor implements HiNodeIF {
 						} else {
 							superDefaultConstructor = clazz.superClass.getConstructor(ctx);
 							if (superDefaultConstructor == null) {
+								// checked in validate
 								ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.getNameDescr(), null) + " not found");
 								return null;
 							}
 
 							if (superDefaultConstructor == this) {
+								// checked in validate
 								ctx.throwRuntimeException("cyclic dependence for constructor " + superDefaultConstructor);
 								return null;
 							}
 						}
 
-						superObject = superDefaultConstructor.newInstance(ctx, null, null, superOutboundObject);
+						superObject = superDefaultConstructor.newInstance(ctx, type, null, superOutboundObject);
 						if (ctx.exitFromBlock()) {
 							return null;
 						}

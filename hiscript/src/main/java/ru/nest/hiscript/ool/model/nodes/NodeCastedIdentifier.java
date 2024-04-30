@@ -53,45 +53,27 @@ public class NodeCastedIdentifier extends HiNode {
 
 			HiClass recordClass = ctx.getLocalClass(name);
 			if (recordClass != null) {
-				if (!recordClass.isRecord()) {
-					validationInfo.error("Inconvertible types; cannot cast " + name + " to Record", getToken());
-					valid = false;
-				}
-				for (int i = 0; i < castedRecordArguments.length; i++) {
-					NodeArgument castedRecordArgument = castedRecordArguments[i];
-					NodeValueType castedRecordArgumentValueType = castedRecordArgument.getNodeValueType(validationInfo, ctx);
-					HiClass castedRecordArgumentClass = castedRecordArgumentValueType.clazz;
-					boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isCompileValue();
-
-					NodeArgument recordArgument = null;
-					for (NodeArgument argument : ((HiClassRecord) recordClass).defaultConstructor.arguments) {
-						if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
-							recordArgument = argument;
-							break;
-						}
-					}
-					if (recordArgument == null && recordClass.constructors != null) {
-						for (HiConstructor constructor : recordClass.constructors) {
-							if (constructor.arguments != null) {
-								for (NodeArgument argument : constructor.arguments) {
-									if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
-										recordArgument = argument;
-										break;
-									}
-								}
+				if (recordClass.isRecord()) {
+					for (int i = 0; i < castedRecordArguments.length; i++) {
+						NodeArgument castedRecordArgument = castedRecordArguments[i];
+						NodeValueType castedRecordArgumentValueType = castedRecordArgument.getNodeValueType(validationInfo, ctx);
+						HiClass castedRecordArgumentClass = castedRecordArgumentValueType.clazz;
+						boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isCompileValue();
+						NodeArgument recordArgument = getNodeArgument(recordClass, castedRecordArgument);
+						if (recordArgument != null) {
+							HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
+							if (recordArgumentClass != null && !HiClass.autoCast(ctx, recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue, true)) {
+								validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' has invalid type, expected '" + recordArgumentClass.fullName + "'", castedRecordArgument.getToken());
+								valid = false;
 							}
-						}
-					}
-					if (recordArgument != null) {
-						HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
-						if (recordArgumentClass != null && !HiClass.autoCast(ctx, recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue, true)) {
+						} else {
 							validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
 							valid = false;
 						}
-					} else {
-						validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
-						valid = false;
 					}
+				} else {
+					validationInfo.error("inconvertible types; cannot cast " + name + " to Record", getToken());
+					valid = false;
 				}
 			} else {
 				valid = false;
@@ -107,6 +89,29 @@ public class NodeCastedIdentifier extends HiNode {
 			valid &= castedCondition.validate(validationInfo, ctx) && castedCondition.expectBooleanValue(validationInfo, ctx);
 		}
 		return valid;
+	}
+
+	private static NodeArgument getNodeArgument(HiClass recordClass, NodeArgument castedRecordArgument) {
+		NodeArgument recordArgument = null;
+		for (NodeArgument argument : ((HiClassRecord) recordClass).defaultConstructor.arguments) {
+			if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
+				recordArgument = argument;
+				break;
+			}
+		}
+		if (recordArgument == null && recordClass.constructors != null) {
+			for (HiConstructor constructor : recordClass.constructors) {
+				if (constructor.arguments != null) {
+					for (NodeArgument argument : constructor.arguments) {
+						if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
+							recordArgument = argument;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return recordArgument;
 	}
 
 	@Override

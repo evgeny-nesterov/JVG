@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -65,7 +66,7 @@ public class NodeArgument extends HiNode implements NodeVariable {
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		Type type = typeArgument.getType();
 		clazz = type.getClass(ctx);
-		if (type.isExtends || type.isSuper) {
+		if (type.isWildcard()) {
 			validationInfo.error("invalid argument type", getToken());
 			valid = false;
 		}

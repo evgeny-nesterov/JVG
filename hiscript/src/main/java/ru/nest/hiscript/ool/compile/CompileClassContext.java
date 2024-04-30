@@ -659,7 +659,7 @@ public class CompileClassContext implements ClassResolver {
 
 		public boolean isContinuable(String label) {
 			if (label != null) {
-				return type == RuntimeContext.LABEL && label.equals(this.label);
+				return type == RuntimeContext.LABEL && label.equals(this.label) && child != null && (child.type == RuntimeContext.FOR || child.type == RuntimeContext.WHILE || child.type == RuntimeContext.DO_WHILE);
 			} else {
 				return type == RuntimeContext.FOR || type == RuntimeContext.WHILE || type == RuntimeContext.DO_WHILE;
 			}
