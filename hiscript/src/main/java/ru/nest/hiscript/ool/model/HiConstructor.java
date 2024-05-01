@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldInt;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.HasModifiers;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -19,7 +20,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
-public class HiConstructor implements HiNodeIF {
+public class HiConstructor implements HiNodeIF, HasModifiers {
 	public final static String METHOD_NAME = "<init>";
 
 	public enum BodyConstructorType {
@@ -78,7 +79,12 @@ public class HiConstructor implements HiNodeIF {
 
 	public NodeAnnotation[] annotations;
 
-	public Modifiers modifiers;
+	private Modifiers modifiers;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
 
 	public NodeGenerics generics;
 

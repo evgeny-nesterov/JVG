@@ -196,12 +196,8 @@ public class NodeValueType implements PrimitiveTypes {
 				doubleValue = ((NodeDouble) node).getValue();
 			} else if (node instanceof NodeChar) {
 				charValue = ((NodeChar) node).getValue();
-			} else if (node instanceof NodeByte) {
-				byteValue = ((NodeByte) node).getValue();
 			} else if (node instanceof NodeFloat) {
 				floatValue = ((NodeFloat) node).getValue();
-			} else if (node instanceof NodeShort) {
-				shortValue = ((NodeShort) node).getValue();
 			}
 		}
 	}

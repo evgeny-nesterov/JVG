@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeDeclarations extends HiNode {
+public class NodeDeclarations extends HiNode implements HasModifiers {
 	public NodeDeclarations() {
 		super("declarations", TYPE_DECLARATIONS, true);
 	}
@@ -59,5 +59,10 @@ public class NodeDeclarations extends HiNode {
 		NodeDeclarations node = new NodeDeclarations();
 		node.declarations = os.readNodesList(NodeDeclaration.class, os.readShort());
 		return node;
+	}
+
+	@Override
+	public Modifiers getModifiers() {
+		return declarations.size() > 0 ? declarations.get(0).getModifiers() : null;
 	}
 }

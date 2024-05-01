@@ -15,7 +15,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeBreak;
-import ru.nest.hiscript.ool.model.nodes.NodeByte;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeCatch;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
@@ -45,7 +44,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeMethodReference;
 import ru.nest.hiscript.ool.model.nodes.NodeNative;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
-import ru.nest.hiscript.ool.model.nodes.NodeShort;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeSuper;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
@@ -374,9 +372,6 @@ public abstract class HiNode implements HiNodeIF {
 			case TYPE_BREAK:
 				node = NodeBreak.decode(os);
 				break;
-			case TYPE_BYTE:
-				node = NodeByte.decode(os, token);
-				break;
 			case TYPE_CHAR:
 				node = NodeChar.decode(os, token);
 				break;
@@ -442,9 +437,6 @@ public abstract class HiNode implements HiNodeIF {
 				break;
 			case TYPE_RETURN:
 				node = NodeReturn.decode(os);
-				break;
-			case TYPE_SHORT:
-				node = NodeShort.decode(os);
 				break;
 			case TYPE_STRING:
 				node = NodeString.decode(os);
@@ -645,20 +637,6 @@ public abstract class HiNode implements HiNodeIF {
 		return null;
 	}
 
-	public byte byteValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.BYTE) {
-			return ((NodeByte) this).getValue();
-		}
-		return computeValue(ctx).value.getByte();
-	}
-
-	public short shortValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.SHORT) {
-			return ((NodeShort) this).getValue();
-		}
-		return computeValue(ctx).value.getShort();
-	}
-
 	public int intValue(CompileClassContext ctx) {
 		if (type == PrimitiveTypes.INT) {
 			return ((NodeInt) this).getValue();
@@ -704,7 +682,7 @@ public abstract class HiNode implements HiNodeIF {
 		} else if (this instanceof NodeExpressionNoLS) {
 			NodeExpressionNoLS expressionNode = (NodeExpressionNoLS) this;
 			HiNodeIF expressionSingleNode = expressionNode.getSingleNode();
-			if (expressionSingleNode != null && expressionSingleNode.getClass() == clazz) {
+			if (expressionSingleNode != null && clazz.isAssignableFrom(expressionSingleNode.getClass())) {
 				return (N) expressionSingleNode;
 			}
 		}

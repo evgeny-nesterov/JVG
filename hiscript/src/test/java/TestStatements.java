@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 public class TestStatements extends HiTest {
 	@Test
 	public void testDeclaration() {
@@ -38,7 +40,7 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
 		assertSuccessSerialize("String[] x = {\"a\", \"b\", \"c\"}; for (String i : x) {i += i;};");
 		assertSuccessSerialize("int[] arr = {1, 2, 3}; int i = 0; for (int x : arr) assert x == arr[i++];");
-		assertSuccessSerialize("ArrayList l = new ArrayList(); l.add(\"a\"); l.add(\"b\"); l.add(\"c\"); int i = 0; for (String s : l) {assert s.equals(l.get(i++));}");
+		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); l.add(\"c\"); int i = 0; for (String s : l) {assert s.equals(l.get(i++));}");
 
 		assertSuccessSerialize("for(;;) {break;}");
 		assertSuccessSerialize("for(int i = 0;;) {break;}");
@@ -47,10 +49,17 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
 		assertSuccessSerialize("for(long x : new int[]{1, 2, 3}){}");
 		assertSuccessSerialize("int x = 0; for(int y : new int[]{1, 2, 3}){x=y; break;} assert x == 1;");
+		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); for(String x : l){assert x.equals(\"a\");}");
+		assertSuccessSerialize("for(int x : new ArrayList<Integer>()){}");
+		assertSuccessSerialize("for(Object x : new ArrayList()){}");
 
 		assertFailCompile("for(private int x = 0; x < 10; x++){}");
+		assertFailCompile("for(private int x : new long[]{1}){}");
 		assertFailCompile("for(int x : new String[]{\"a\", \"b\"}){}");
 		assertFailCompile("for(int x : new long[]{1L, 2L, 3L}){}");
+		assertFailCompile("for(int x : new ArrayList()){}");
+		assertFailCompile("for(int x : new ArrayList<String>()){}");
+		assertFailCompile("for(Boolean x : new ArrayList<String>()){}");
 
 		assertFailCompile("for() {}");
 		assertFailCompile("for(;) {}");
@@ -222,6 +231,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("try(Object x) {}");
 		assertFailCompile("try(Object x = new Object()) {}");
 		assertFailCompile("try(String x = \"abc\") {}");
+		assertFailCompile("try{} catch(Object e){}");
+		assertFailCompile("try{} catch(Integer | Long | Byte e){}");
 	}
 
 	@Test
@@ -445,6 +456,10 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("LABEL: for(int i = 0; i < 10; i++) {continue LABEL;}");
 		assertFailCompile("LABEL: {continue LABEL;}");
 		assertFailCompile("LABEL1: {LABEL1: {}}");
+		assertFailCompile("break;");
+		assertFailCompile("continue;");
+		assertFailCompile("break LABEL;");
+		assertFailCompile("continue LABEL;");
 	}
 
 	@Test

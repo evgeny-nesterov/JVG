@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
@@ -13,7 +12,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeArgument extends HiNode implements NodeVariable {
+public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 	public NodeArgument(TypeArgumentIF typeArgument, String name, Modifiers modifiers, NodeAnnotation[] annotations) {
 		super("argument", TYPE_ARGUMENT, false);
 		this.typeArgument = typeArgument;
@@ -38,7 +37,12 @@ public class NodeArgument extends HiNode implements NodeVariable {
 
 	public String name;
 
-	public Modifiers modifiers;
+	private Modifiers modifiers;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
 
 	public NodeAnnotation[] annotations;
 

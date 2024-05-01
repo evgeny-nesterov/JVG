@@ -19,6 +19,7 @@ import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.HasModifiers;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HiClass implements HiNodeIF, HiType {
+public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
 
 	public final static int CLASS_PRIMITIVE = 1;
@@ -180,6 +181,11 @@ public class HiClass implements HiNodeIF, HiType {
 
 	// main class properties
 	public Modifiers modifiers;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
 
 	public HiClass superClass;
 
@@ -500,7 +506,7 @@ public class HiClass implements HiNodeIF, HiType {
 					if (interfaceTypes.length > 1 && intf.methods != null) {
 						for (int j = 0; j < intf.methods.length; j++) {
 							HiMethod method = intf.methods[j];
-							if (method.modifiers.isDefault()) {
+							if (method.isDefault()) {
 								if (defaultMethods == null) {
 									defaultMethods = new HashMap<>();
 								} else {
@@ -638,7 +644,7 @@ public class HiClass implements HiNodeIF, HiType {
 					}
 
 					HiField field = (HiField) initializer;
-					if (field.getModifiers().isFinal() && field.initializer == null) {
+					if (field.isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors
 						validationInfo.error("variable '" + field.name + "' might not have been initialized", field.getToken());
 						valid = false;
@@ -724,9 +730,9 @@ public class HiClass implements HiNodeIF, HiType {
 
 		if (methods != null) {
 			for (HiMethod method : methods) {
-				if (!method.modifiers.isStatic()) {
+				if (!method.isStatic()) {
 					method.resolve(classResolver);
-					if (method.modifiers.isAbstract()) {
+					if (method.isAbstract()) {
 						if (!implementedMethods.containsKey(method.signature)) {
 							abstractMethods.put(method.signature, method);
 						}
@@ -1083,7 +1089,7 @@ public class HiClass implements HiNodeIF, HiType {
 			for (HiClass i : interfaces) {
 				HiMethod _m = i.searchMethod(classResolver, signature);
 				if (_m != null) {
-					if (_m.modifiers.isDefault()) {
+					if (_m.isDefault()) {
 						if (md != null) {
 							return null;
 						}
@@ -1116,7 +1122,7 @@ public class HiClass implements HiNodeIF, HiType {
 		if (methods != null && methods.length > 0) {
 			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
 				for (HiMethod m : methods) {
-					if (m.modifiers.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes, matchType)) {
+					if (m.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes, matchType)) {
 						return m;
 					}
 				}

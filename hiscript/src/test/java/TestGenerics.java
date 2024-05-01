@@ -263,4 +263,13 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class A<O>{} class B{A<?,?> x;}");
 		assertFailCompile("class A<O>{} class B{A<int> x;}");
 	}
+
+	@Test
+	public void testArrays() {
+		assertSuccessSerialize("class C<O>{} C<Integer>[] a = new C[1]; a[0] = new C<>(); a[0] = new C<Integer>();");
+		assertSuccessSerialize("class C<O>{} C<? extends Number>[] a = new C[1]; a[0] = new C<>(); a[0] = new C<Integer>();");
+		assertFailCompile("class C<O>{} C<Integer>[] a = new C<>[1];");
+		assertFailCompile("class C<O>{} C<Integer>[] a = new C<Integer>[1];");
+		assertFailCompile("class C<O>{} C<? extends Integer>[] a = new C[1]; a[0] = new C<Number>();");
+	}
 }

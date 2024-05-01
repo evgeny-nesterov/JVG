@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.HasModifiers;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
@@ -20,7 +21,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class HiField<T> extends HiNode implements NodeInitializer, NodeVariable, Cloneable {
+public abstract class HiField<T> extends HiNode implements NodeInitializer, NodeVariable, HasModifiers, Cloneable {
 	private final static String packageName = HiField.class.getPackage().getName() + ".fields";
 
 	private static Map<String, Constructor<HiField<?>>> primitiveBuilders;

@@ -12,6 +12,8 @@ import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
+import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.ByteArrayOutputStream;
@@ -132,6 +134,20 @@ public class SystemImpl extends ImplUtil {
 			}
 
 			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false, false).visit(tokenizer, compileCtx);
+
+			ValidationInfo validationInfo = new ValidationInfo(ctx.compiler);
+			boolean valid = node != null;
+			if (node != null) {
+				valid &= node.validate(validationInfo, compileCtx);
+				valid &= ctx.getClassLoader().validate(validationInfo);
+			}
+
+			if (validationInfo.messages.size() > 0) {
+				validationInfo.throwExceptionIf();
+			} else if (!valid && !ctx.compiler.isVerbose()) {
+				throw new HiScriptValidationException("Validation error", null);
+			}
+
 			node.setEnterType(RuntimeContext.SAME);
 
 			if (!separateThread) {

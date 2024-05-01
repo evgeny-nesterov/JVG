@@ -105,11 +105,11 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 				fieldNode = field;
 			} else if (resolvedIdentifier instanceof NodeDeclaration) {
 				NodeDeclaration declaration = ((NodeDeclaration) resolvedIdentifier);
-				modifiers = declaration.modifiers;
+				modifiers = declaration.getModifiers();
 				fieldNode = declaration;
 			} else if (resolvedIdentifier instanceof NodeArgument) {
 				NodeArgument argument = ((NodeArgument) resolvedIdentifier);
-				modifiers = argument.modifiers;
+				modifiers = argument.getModifiers();
 				fieldNode = argument;
 			} else if (resolvedIdentifier instanceof HiNode) {
 				if (initialize) {

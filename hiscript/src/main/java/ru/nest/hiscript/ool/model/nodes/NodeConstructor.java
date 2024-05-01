@@ -290,7 +290,8 @@ public class NodeConstructor extends HiNode {
 			int size = argValues.length;
 			argsFields = new HiField<?>[size + (constructor.hasVarargs() ? 1 : 0)]; //
 			for (int i = 0; i < size; i++) {
-				argValues[i].execute(ctx);
+				HiNode argValue = argValues[i];
+				argValue.execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return null;
 				}
@@ -303,13 +304,13 @@ public class NodeConstructor extends HiNode {
 					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass();
 					if (dstArgClass.isObject()) {
 						HiObject autoboxValue = ((HiClassPrimitive) argClass).autobox(ctx, ctx.value);
-						argField = HiField.getField(argClass.getAutoboxClass(), null, argValues[i].getToken());
+						argField = HiField.getField(argClass.getAutoboxClass(), null, argValue.getToken());
 						((HiFieldObject) argField).set(autoboxValue);
 					}
 				}
 
 				if (argField == null) {
-					argField = HiField.getField(argClass, null, argValues[i].getToken());
+					argField = HiField.getField(argClass, null, argValue.getToken());
 					if (argField == null) {
 						ctx.throwRuntimeException("argument with type '" + argClass.getNameDescr() + "' is not found");
 						return null;

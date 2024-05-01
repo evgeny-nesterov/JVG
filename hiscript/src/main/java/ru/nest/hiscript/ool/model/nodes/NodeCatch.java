@@ -62,14 +62,8 @@ public class NodeCatch extends HiNode {
 			}
 			for (int i = 0; i < excClassMix.classes.length - 1; i++) {
 				HiClass excClass1 = excClassMix.classes[i];
-				if (excClass1 == null) {
-					continue;
-				}
 				for (int j = i + 1; j < excClassMix.classes.length; j++) {
 					HiClass excClass2 = excClassMix.classes[j];
-					if (excClass2 == null) {
-						continue;
-					}
 					if (excClass1.isInstanceof(excClass2)) {
 						validationInfo.error("Types in multi-catch must be disjoint: '" + excClass1.getNameDescr() + "' is a subclass of '" + excClass2.getNameDescr() + "'", getToken());
 						valid = false;

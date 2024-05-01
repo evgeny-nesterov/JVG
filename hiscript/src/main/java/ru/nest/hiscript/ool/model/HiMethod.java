@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.HasModifiers;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
@@ -21,14 +22,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HiMethod implements HiNodeIF {
+public class HiMethod implements HiNodeIF, HasModifiers {
 	public int argCount;
 
 	public HiClass clazz;
 
 	public NodeAnnotation[] annotations;
 
-	public Modifiers modifiers;
+	private Modifiers modifiers;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
 
 	public NodeGenerics generics;
 

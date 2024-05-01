@@ -236,15 +236,6 @@ public class ParserUtil implements Words {
 			IntToken token = (IntToken) currentToken;
 			tokenizer.nextToken();
 			return new NodeInt(token.getNumber(), token.hasSign(), token);
-			// TODO delete
-			//		} else if (currentToken instanceof ShortToken) {
-			//			ShortToken token = (ShortToken) currentToken;
-			//			tokenizer.nextToken();
-			//			return new NodeShort(token.getNumber(), token.hasSign(), token);
-			//		} else if (currentToken instanceof ByteToken) {
-			//			ByteToken token = (ByteToken) currentToken;
-			//			tokenizer.nextToken();
-			//			return NodeByte.getInstance(token.getNumber(), token.hasSign(), token);
 		}
 		return null;
 	}

@@ -124,7 +124,7 @@ public class HiObject {
 			HiField<?> privateField = null;
 			if (field == null && superObject != null) {
 				field = superObject.getField(ctx, name);
-				if (field != null && field.getModifiers().isPrivate()) {
+				if (field != null && field.isPrivate()) {
 					privateField = field;
 					field = null;
 				}

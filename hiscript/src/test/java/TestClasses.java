@@ -80,6 +80,8 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
 		assertSuccessSerialize("interface I{static int x = 1;} assert I.x == 1;");
 		assertSuccessSerialize("interface I{static int get(){return 1;}} assert I.get() == 1;");
+		assertFailCompile("class A{int x = y + 1;}");
+		assertFailCompile("int x; class A{x = 1;}");
 	}
 
 	@Test

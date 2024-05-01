@@ -155,6 +155,9 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.primitive = false;
 		this.fullName = ("0" + cellType.fullName).intern();
 		this.hashCode = Objects.hash(fullName, dimension);
+		this.parameters = cellType.parameters;
+		this.isSuper = cellType.isSuper;
+		this.isExtends = cellType.isExtends;
 
 		if (dimension == 1) {
 			cellTypeRoot = cellType;
@@ -176,11 +179,16 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.isSuper = isSuper;
 	}
 
+	// generic
 	public boolean validateClass(HiClass clazz, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
 		if (parameters != null && parameters.length > 0) {
 			if (clazz.generics == null) {
-				validationInfo.error("type '" + clazz.getNameDescr() + "' does not have type parameters", token);
-				return false;
+				if (!clazz.isArray()) {
+					validationInfo.error("type '" + clazz.getNameDescr() + "' does not have type parameters", token);
+					return false;
+				} else {
+					return true;
+				}
 			}
 			if (parameters.length != clazz.generics.generics.length) {
 				validationInfo.error("wrong number of type arguments: " + parameters.length + "; required: " + clazz.generics.generics.length, token);
@@ -224,6 +232,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return true;
 	}
 
+	// generic
 	public boolean validateMatch(Type type, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
 		if (parameters != null && parameters.length == 0) {
 			if (type.parameters == null) { // T<> => T
@@ -558,9 +567,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	@Override
 	public String toString() {
-		String name = fullName;
 		if (parameters != null) {
-			return fullName + "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
+			return fullName + getParametersDescr();
 		} else if (isExtends) {
 			if (!fullName.equals(objectType.fullName)) {
 				return "? extends " + fullName;
@@ -571,6 +579,14 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			return "? super " + fullName;
 		}
 		return fullName;
+	}
+
+	public String getParametersDescr() {
+		if (parameters != null) {
+			return "<" + Arrays.stream(parameters).map(Object::toString).collect(Collectors.joining(", ")) + ">";
+		} else {
+			return "";
+		}
 	}
 
 	@Override

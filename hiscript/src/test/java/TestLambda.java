@@ -83,6 +83,9 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface A{int get();} interface B extends A{} abstract class C{abstract int get();}; class D extends C{int get(){return 1;}}; D d = new D(); B b = d::get; assert b.get() == 1;");
 		assertSuccessSerialize("interface A{int get();} interface B extends A{} class C implements A{int get(){return 1;}}; C c = new C(); B b = c::get; assert b.get() == 1;");
 		assertSuccessSerialize("interface A{int get(); int get2();} interface B extends A{default int get2(){return 2;}} class C{int get1(){return 1;}}; B b = new C()::get1; assert b.get() == 1;");
+
+		// failures
+		assertFailCompile("interface A{int notExists();} A a = \"abc\"::notExists;");
 	}
 
 	@Test

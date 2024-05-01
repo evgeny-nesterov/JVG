@@ -15,7 +15,6 @@ import java.lang.reflect.Array;
 public class NodeArrayValue extends HiNode {
 	public NodeArrayValue(Type type, int dimensions, HiNode[] array) {
 		super("array-value", TYPE_ARRAY_VALUE, false);
-
 		this.type = type;
 		this.dimensions = dimensions;
 		this.array = array;
@@ -32,7 +31,7 @@ public class NodeArrayValue extends HiNode {
 		HiClass clazz = type.getArrayClass(ctx, dimensions);
 		// TODO compileValue for arrays
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-		ctx.nodeValueType.type = type;
+		ctx.nodeValueType.type = Type.getType(clazz);
 		return clazz;
 	}
 

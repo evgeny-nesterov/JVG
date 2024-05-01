@@ -35,7 +35,7 @@ public class NodeFor extends HiNode {
 		ctx.enter(RuntimeContext.FOR, this);
 		if (initialization != null) {
 			valid &= initialization.validate(validationInfo, ctx);
-			if (initialization instanceof NodeDeclaration && ((NodeDeclaration) initialization).modifiers.hasModifiers()) {
+			if (initialization instanceof HasModifiers && ((HasModifiers) initialization).hasModifiers()) {
 				validationInfo.error("modifiers not allowed", initialization.getToken());
 				valid = false;
 			}

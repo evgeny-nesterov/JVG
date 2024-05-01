@@ -794,7 +794,7 @@ public class CompileClassContext implements ClassResolver {
 		CompileClassLevel level = this.level;
 		while (level != null) {
 			if (level.type == RuntimeContext.METHOD) {
-				return ((HiMethod) level.node).modifiers.isStatic();
+				return ((HiMethod) level.node).isStatic();
 			} else if (level.type == RuntimeContext.INITIALIZATION) {
 				return ((NodeBlock) level.node).isStatic();
 			}

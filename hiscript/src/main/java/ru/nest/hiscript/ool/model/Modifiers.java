@@ -54,7 +54,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 	}
 
 	public boolean hasModifiers() {
-		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative;
+		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative || isSynchronized;
 	}
 
 	private int access = ACCESS_DEFAULT;

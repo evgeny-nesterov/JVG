@@ -116,12 +116,26 @@ public class NodeInvocation extends HiNode {
 
 				// generic
 				Type type = method.returnType;
-				if (returnClass.generics != null && invocationType.parameters != null) {
-					NodeGeneric nodeGeneric = returnClass.generics.getGeneric(type.name);
-					if (nodeGeneric != null) {
-						if (invocationType.parameters != null && nodeGeneric.index < invocationType.parameters.length) {
-							type = invocationType.parameters[nodeGeneric.index];
+				if (invocationType.parameters != null) {
+					Type resolvedType = null;
+					if (returnClass.generics != null) {
+						NodeGeneric nodeGeneric = returnClass.generics.getGeneric(type.name);
+						if (nodeGeneric != null) {
+							resolvedType = invocationType.getParameterType(nodeGeneric.clazz);
 						}
+						if (resolvedType == null) {
+							for (int i = 0; i < type.parameters.length; i++) {
+								if (invocationClass.generics.getGenericClass(ctx, type.parameters[i].name) != null) {
+									type.parameters[i] = invocationType.getParameterType(returnClass.generics.generics[i].clazz);
+								}
+							}
+						}
+					}
+					if (resolvedType == null && method.returnClass.isGeneric()) {
+						resolvedType = invocationType.getParameterType((HiClassGeneric) method.returnClass);
+					}
+					if (resolvedType != null) {
+						type = resolvedType;
 					}
 				}
 
@@ -154,7 +168,7 @@ public class NodeInvocation extends HiNode {
 		valid &= method != null;
 		if (arguments != null) {
 			if (method != null) {
-				if (method.clazz.isInterface && method.modifiers.isPrivate() && invocationClass != null && invocationClass != method.clazz) {
+				if (method.clazz.isInterface && method.isPrivate() && invocationClass != null && invocationClass != method.clazz) {
 					validationInfo.error("private method '" + method + "' is not accessible from outside of interface " + method.clazz.getNameDescr(), token);
 					valid = false;
 				}
@@ -187,7 +201,7 @@ public class NodeInvocation extends HiNode {
 		}
 
 		if (method != null) {
-			if (!innerInvocation && !method.modifiers.isStatic() && !isEnclosingObject) {
+			if (!innerInvocation && !method.isStatic() && !isEnclosingObject) {
 				validationInfo.error("non-static method '" + method + "' cannot be referenced from a static context", token);
 				valid = false;
 			}

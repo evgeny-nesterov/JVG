@@ -15,6 +15,12 @@ public class TestArrays extends HiTest {
 		assertFailCompile("char[] x = {-1};");
 		assertFailCompile("class A{} class B extends A{} B[] x = new A[]{new B()};");
 		assertFailCompile("class A{} class B extends A{} B[] x = new B[]{new A()};");
+		assertFailCompile("int[][][] x = new int[1][][1];");
+		assertFailCompile("int[][][] x = new int[][][];");
+		assertFailCompile("int[][][] x = new int[1][1];");
+		assertFailCompile("int[][][] x = new int[1][];");
+		assertFailCompile("int[][][] x = new int[1];");
+		assertFailCompile("int[][][] x = new int[];");
 	}
 
 	@Test

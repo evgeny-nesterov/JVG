@@ -12,7 +12,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 
-public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTypes {
+public class NodeDeclaration extends HiNode implements NodeVariable, HasModifiers, PrimitiveTypes {
 	public NodeDeclaration(Type type, String name, HiNode initialization, Modifiers modifiers, NodeAnnotation[] annotations) {
 		super("declaration", TYPE_DECLARATION, true);
 		this.type = type;
@@ -34,7 +34,12 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 	public HiNode initialization;
 
-	public Modifiers modifiers;
+	private Modifiers modifiers;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
 
 	public NodeAnnotation[] annotations;
 
@@ -129,9 +134,15 @@ public class NodeDeclaration extends HiNode implements NodeVariable, PrimitiveTy
 
 			ctx.initializedNodes.add(this);
 
+			// generic
 			NodeConstructor newNode = initialization.getSingleNode(NodeConstructor.class);
 			if (newNode != null) {
 				valid &= newNode.validateDeclarationGenericType(type, validationInfo, ctx);
+			} else {
+				NodeArray arrayNode = initialization.getSingleNode(NodeArray.class);
+				if (arrayNode != null) {
+					valid &= arrayNode.validateDeclarationGenericType(type, validationInfo, ctx);
+				}
 			}
 		}
 

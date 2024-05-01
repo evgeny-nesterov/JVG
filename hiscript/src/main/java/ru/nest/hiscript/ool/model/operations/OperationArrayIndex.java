@@ -1,7 +1,12 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiArrays;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
@@ -23,6 +28,7 @@ public class OperationArrayIndex extends BinaryOperation {
 	@Override
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass clazz = node1.clazz;
+		Type type = node1.type;
 		boolean validIndex = false;
 		if (node2.clazz.isPrimitive()) {
 			switch (node2.clazz.getPrimitiveType()) {
@@ -40,6 +46,7 @@ public class OperationArrayIndex extends BinaryOperation {
 			validArray = true;
 		} else if (node1.clazz.isArray()) {
 			clazz = ((HiClassArray) clazz).cellClass;
+			type = type.cellType;
 			validArray = true;
 		}
 		if (!validIndex || !validArray) {
@@ -48,6 +55,7 @@ public class OperationArrayIndex extends BinaryOperation {
 		if (validIndex && node2.isCompileValue() && node2.getIntValue() < 0) {
 			validationInfo.error("negative array index", node2.token);
 		}
+		ctx.nodeValueType.type = type;
 		ctx.nodeValueType.resolvedValueVariable = node1.resolvedValueVariable;
 		ctx.nodeValueType.enclosingClass = clazz;
 		ctx.nodeValueType.enclosingType = Type.getType(clazz);

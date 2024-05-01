@@ -9,6 +9,8 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeArray;
+import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -273,7 +275,15 @@ public class OperationEquate extends BinaryOperation {
 								return HiClassPrimitive.DOUBLE;
 						}
 					}
-				} else if (c2.isNull() || c2.isInstanceof(c1)) {
+				} else if (node2.clazz.isNull()) {
+					return c1;
+				} else if (node2.clazz.isInstanceof(node1.clazz)) {
+					// generic
+					if (node2.node instanceof NodeConstructor) {
+						((NodeConstructor) node2.node).validateDeclarationGenericType(node1.type, validationInfo, ctx);
+					} else if (node2.node instanceof NodeArray) {
+						((NodeArray) node2.node).validateDeclarationGenericType(node1.type, validationInfo, ctx);
+					}
 					return c1;
 				}
 			}
@@ -301,7 +311,7 @@ public class OperationEquate extends BinaryOperation {
 		if (v1.valueType == Value.VARIABLE) {
 			// 1. copy variable from v1
 			HiField<?> variable = v1.variable;
-			if (variable.initialized && variable.getModifiers().isFinal()) {
+			if (variable.initialized && variable.isFinal()) {
 				ctx.throwRuntimeException("cannot assign a value to final variable '" + variable.name + "'");
 				return;
 			}

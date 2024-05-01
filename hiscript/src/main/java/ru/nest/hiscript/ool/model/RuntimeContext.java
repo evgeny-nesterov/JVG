@@ -634,7 +634,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 				if (level.variables != null) {
 					for (HiField<?> f : level.variables.values()) {
-						if (f.getModifiers().isFinal()) {
+						if (f.isFinal()) {
 							addLocalField(putClass, f);
 						}
 					}
