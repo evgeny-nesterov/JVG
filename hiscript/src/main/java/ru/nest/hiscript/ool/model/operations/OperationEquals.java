@@ -271,18 +271,14 @@ public class OperationEquals extends BinaryOperation {
 			}
 		} else if (!isP1 && !isP2) {
 			Object o1;
-			if (c1.isArray()) {
-				o1 = v1.array;
-			} else if (c1.isNull()) {
+			if (c1.isNull()) {
 				o1 = null;
 			} else {
 				o1 = v1.object;
 			}
 
 			Object o2;
-			if (c2.isArray()) {
-				o2 = v2.array;
-			} else if (c2.isNull()) {
+			if (c2.isNull()) {
 				o2 = null;
 			} else {
 				o2 = v2.object;

@@ -1354,13 +1354,13 @@ public class Braces {
 
 		System.println("blocks: " + blocksCount);
 
-		recuse(0, 0, 0);
+		recurse(0, 0, 0);
 
 		System.println("count: " + count + ", time: " + (System.time() - time) + " ms");
 		System.println("==============================================");
 	}
 
-	private void recuse(int index, int leftCount, int leftUnclosedCount) {
+	private void recurse(int index, int leftCount, int leftUnclosedCount) {
 		for(int i = leftCount; i < blocksCount; i++) {
 			braces[index++] = BRACE_LEFT;
 			leftCount++;
@@ -1372,7 +1372,7 @@ public class Braces {
 				if(index == bracesCount) {
 					processBraces();
 				} else {
-					recuse(index, leftCount, j);
+					recurse(index, leftCount, j);
 				}
 			}
 			index -= leftUnclosedCount;

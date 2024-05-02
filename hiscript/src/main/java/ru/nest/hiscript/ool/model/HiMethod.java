@@ -415,11 +415,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
                 ctx.value.valueType = Value.VALUE;
                 ctx.value.valueClass = type;
                 ctx.value.lambdaClass = null;
-                if (type.isArray()) {
-                    ctx.value.array = object;
-                } else {
-                    ctx.value.object = (HiObject) object;
-                }
+                ctx.value.object = object;
             }
             if (modifiers.isSynchronized()) {
                 synchronized (object) {

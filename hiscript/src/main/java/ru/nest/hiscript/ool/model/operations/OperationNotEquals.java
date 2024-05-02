@@ -270,21 +270,7 @@ public class OperationNotEquals extends BinaryOperation {
 					break;
 			}
 		} else if (!isP1 && !isP2) {
-			Object o1;
-			if (c1.isArray()) {
-				o1 = v1.array;
-			} else {
-				o1 = v1.object;
-			}
-
-			Object o2;
-			if (c2.isArray()) {
-				o2 = v2.array;
-			} else {
-				o2 = v2.object;
-			}
-
-			v1.bool = o1 != o2;
+			v1.bool = v1.object != v2.object;
 			return;
 		}
 

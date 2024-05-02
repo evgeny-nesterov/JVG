@@ -70,7 +70,7 @@ public class NodeArrayValue extends HiNode {
 
         ctx.value.valueType = Value.VALUE;
         ctx.value.valueClass = cellClass.getArrayClass();
-        ctx.value.array = value;
+        ctx.value.object = value;
     }
 
     @Override

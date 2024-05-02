@@ -120,7 +120,7 @@ public class NodeArray extends HiNode {
 
         ctx.value.valueType = Value.VALUE;
         ctx.value.valueClass = clazz;
-        ctx.value.array = Array.newInstance(arrayJavaClass, dim);
+        ctx.value.object = Array.newInstance(arrayJavaClass, dim);
     }
 
     @Override

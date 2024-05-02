@@ -217,7 +217,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
                         return null;
                     }
 
-                    superObject = ctx.value.getObject();
+                    superObject = (HiObject) ctx.value.getObject();
                 } else {
                     // get default constructor from super classes
                     if (HiClass.ENUM_CLASS_NAME.equals(clazz.superClass.fullName)) {

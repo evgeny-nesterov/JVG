@@ -170,5 +170,6 @@ public class TestAutoboxing extends HiTest {
 
     @Test
     public void testCharacter() {
-   }
+        assertSuccessSerialize("Object x = new int[1]; int[] y = (int[])x; assert y instanceof int[]; assert y == x;");
+    }
 }

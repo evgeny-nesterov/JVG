@@ -9,86 +9,86 @@ import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ClassImpl extends ImplUtil {
-	public static void Class_String_getName(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeString.createString(ctx, clazz.name);
-	}
+    public static void Class_String_getName(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeString.createString(ctx, clazz.name);
+    }
 
-	public static void Class_String_getFullName(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeString.createString(ctx, clazz.fullName);
-	}
+    public static void Class_String_getFullName(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeString.createString(ctx, clazz.fullName);
+    }
 
-	public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {
-		String name = getString(ctx, string);
-		HiClass clazz = HiClass.forName(ctx, name);
-		if (clazz == null) {
-			String prefix = HiClass.ROOT_CLASS_NAME + "$0";
-			if (!name.startsWith(prefix)) {
-				clazz = HiClass.forName(ctx, prefix + name);
-			}
-		}
+    public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {
+        String name = getString(ctx, string);
+        HiClass clazz = HiClass.forName(ctx, name);
+        if (clazz == null) {
+            String prefix = HiClass.ROOT_CLASS_NAME + "$0";
+            if (!name.startsWith(prefix)) {
+                clazz = HiClass.forName(ctx, prefix + name);
+            }
+        }
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = getClassClass(ctx);
-		ctx.value.lambdaClass = null;
-		if (clazz != null) {
-			ctx.value.object = getClassObject(ctx, clazz);
-		} else {
-			ctx.value.object = null;
-		}
-	}
+        ctx.value.valueType = Value.VALUE;
+        ctx.value.valueClass = getClassClass(ctx);
+        ctx.value.lambdaClass = null;
+        if (clazz != null) {
+            ctx.value.object = getClassObject(ctx, clazz);
+        } else {
+            ctx.value.object = null;
+        }
+    }
 
-	public static void Class_boolean_isArray(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isArray(), null).execute(ctx);
-	}
+    public static void Class_boolean_isArray(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isArray(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isPrimitive(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isPrimitive(), null).execute(ctx);
-	}
+    public static void Class_boolean_isPrimitive(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isPrimitive(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isInterface(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isInterface, null).execute(ctx);
-	}
+    public static void Class_boolean_isInterface(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isInterface, null).execute(ctx);
+    }
 
-	public static void Class_boolean_isEnum(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isEnum(), null).execute(ctx);
-	}
+    public static void Class_boolean_isEnum(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isEnum(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isAnnotation(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isAnnotation(), null).execute(ctx);
-	}
+    public static void Class_boolean_isAnnotation(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isAnnotation(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isAnonymousClass(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isAnonymous(), null).execute(ctx);
-	}
+    public static void Class_boolean_isAnonymousClass(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isAnonymous(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isLocalClass(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isLocal(), null).execute(ctx);
-	}
+    public static void Class_boolean_isLocalClass(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isLocal(), null).execute(ctx);
+    }
 
-	public static void Class_boolean_isMemberClass(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		NodeBoolean.getInstance(clazz.isInner(), null).execute(ctx);
-	}
+    public static void Class_boolean_isMemberClass(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        NodeBoolean.getInstance(clazz.isInner(), null).execute(ctx);
+    }
 
-	public static void Class_Class_getComponentType(RuntimeContext ctx) {
-		HiClass clazz = (HiClass) ctx.value.object.userObject;
-		if (!clazz.isArray()) {
-			ctx.throwRuntimeException("class is not represent an array");
-		}
+    public static void Class_Class_getComponentType(RuntimeContext ctx) {
+        HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
+        if (!clazz.isArray()) {
+            ctx.throwRuntimeException("class is not represent an array");
+        }
 
-		HiClassArray arrayClazz = (HiClassArray) clazz;
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = getClassClass(ctx);
-		ctx.value.lambdaClass = null;
-		ctx.value.object = getClassObject(ctx, arrayClazz.cellClass);
-	}
+        HiClassArray arrayClazz = (HiClassArray) clazz;
+        ctx.value.valueType = Value.VALUE;
+        ctx.value.valueClass = getClassClass(ctx);
+        ctx.value.lambdaClass = null;
+        ctx.value.object = getClassObject(ctx, arrayClazz.cellClass);
+    }
 }

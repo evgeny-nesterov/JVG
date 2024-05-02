@@ -11,6 +11,10 @@ public class TestJava extends HiTest {
 		public int getX() {
 			return x;
 		}
+
+		public String getText() {
+			return "abc";
+		}
 	}
 
 	@Test
@@ -21,5 +25,8 @@ public class TestJava extends HiTest {
 				"assert x.indexOf('b') == 1; " + //
 				"assert x.toUpperCase().equals(\"ABC\");");
 		assertSuccessSerialize("interface B{int getX();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getX() == 1;");
+
+		// TODO fix B duplicate
+		assertSuccessSerialize("interface B{String getText();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getText());");
 	}
 }
