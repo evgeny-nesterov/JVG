@@ -21,239 +21,246 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassLoader {
-	private final String name;
+    private final String name;
 
-	private HiClassLoader parent;
+    private HiClassLoader parent;
 
-	private List<HiClassLoader> classLoaders;
+    private List<HiClassLoader> classLoaders;
 
-	private final Map<String, HiClass> classes = new ConcurrentHashMap<>();
+    private final Map<String, HiClass> classes = new ConcurrentHashMap<>();
 
-	public HiClassLoader(String name) {
-		this.name = name;
-	}
+    public HiClassLoader(String name) {
+        this.name = name;
+    }
 
-	public HiClassLoader(String name, HiClassLoader parent) {
-		this(name);
-		if (parent != null) {
-			parent.addClassLoader(this);
-		}
-	}
+    public HiClassLoader(String name, HiClassLoader parent) {
+        this(name);
+        if (parent != null) {
+            parent.addClassLoader(this);
+        }
+    }
 
-	public synchronized void addClass(HiClass clazz, boolean isRuntime) {
-		HiClass currentClass = classes.get(clazz.fullName);
-		if (currentClass != null) {
-			if (isRuntime && currentClass != clazz) {
-				throw new HiDuplicateClassException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
-			} else {
-				return;
-			}
-		}
+    public synchronized void addClass(HiClass clazz, boolean isRuntime) {
+        if (clazz.isGeneric()) {
+            return;
+        }
 
-		classes.put(clazz.fullName, clazz);
-		clazz.classLoader = this;
-	}
+        HiClass currentClass = classes.get(clazz.fullName);
+        if (currentClass != null) {
+            if (isRuntime && currentClass != clazz) {
+                throw new HiDuplicateClassException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
+            } else {
+                return;
+            }
+        }
 
-	public boolean validate(ValidationInfo validationInfo) {
-		boolean valid = true;
-		for (HiClass clazz : classes.values()) {
-			valid &= checkCyclicDependencies(clazz, clazz, validationInfo);
-		}
-		return valid;
-	}
+        classes.put(clazz.fullName, clazz);
+        clazz.classLoader = this;
+    }
 
-	private boolean checkCyclicDependencies(HiClass origClazz, HiClass clazz, ValidationInfo validationInfo) {
-		boolean valid = true;
-		HiClass superClass = clazz.superClass != null ? clazz.superClass : clazz.superClassType != null ? getClass(clazz.superClassType.fullName) : null;
-		if (superClass != null && !superClass.fullName.equals(HiClass.OBJECT_CLASS_NAME)) {
-			if (superClass != origClazz) {
-				valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
-			} else {
-				validationInfo.error("cyclic inheritance involving " + superClass, superClass.getToken());
-				valid = false;
-			}
-		}
+    public boolean validate(ValidationInfo validationInfo) {
+        boolean valid = true;
+        for (HiClass clazz : classes.values()) {
+            valid &= checkCyclicDependencies(clazz, clazz, validationInfo);
+        }
+        return valid;
+    }
 
-		if (clazz.interfaces != null) {
-			for (HiClass i : clazz.interfaces) {
-				if (i == null) {
-					continue;
-				}
-				if (i != origClazz) {
-					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
-				} else {
-					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), i.getToken());
-					valid = false;
-				}
-			}
-		} else if (clazz.interfaceTypes != null) {
-			for (Type it : clazz.interfaceTypes) {
-				HiClass i = getClass(it.fullName);
-				if (i == null) {
-					continue;
-				}
-				if (i != origClazz) {
-					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
-				} else {
-					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), null);
-					valid = false;
-				}
-			}
-		}
-		return valid;
-	}
+    private boolean checkCyclicDependencies(HiClass origClazz, HiClass clazz, ValidationInfo validationInfo) {
+        boolean valid = true;
+        HiClass superClass = clazz.superClass != null ? clazz.superClass : clazz.superClassType != null ? getClass(clazz.superClassType.fullName) : null;
+        if (superClass != null && !superClass.fullName.equals(HiClass.OBJECT_CLASS_NAME)) {
+            if (superClass != origClazz) {
+                valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
+            } else {
+                validationInfo.error("cyclic inheritance involving " + superClass, superClass.getToken());
+                valid = false;
+            }
+        }
 
-	public synchronized void addClasses(Collection<HiClass> classes) {
-		for (HiClass clazz : classes) {
-			HiClass currentClass = this.classes.get(clazz.fullName);
-			if (currentClass != null) {
-				if (currentClass != clazz) {
-					throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
-				} else {
-					return;
-				}
-			}
-		}
-		for (HiClass clazz : classes) {
-			this.classes.put(clazz.fullName, clazz);
-			clazz.classLoader = this;
-		}
-	}
+        if (clazz.interfaces != null) {
+            for (HiClass i : clazz.interfaces) {
+                if (i == null) {
+                    continue;
+                }
+                if (i != origClazz) {
+                    valid &= checkCyclicDependencies(origClazz, i, validationInfo);
+                } else {
+                    validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), i.getToken());
+                    valid = false;
+                }
+            }
+        } else if (clazz.interfaceTypes != null) {
+            for (Type it : clazz.interfaceTypes) {
+                HiClass i = getClass(it.fullName);
+                if (i == null) {
+                    continue;
+                }
+                if (i != origClazz) {
+                    valid &= checkCyclicDependencies(origClazz, i, validationInfo);
+                } else {
+                    validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), null);
+                    valid = false;
+                }
+            }
+        }
+        return valid;
+    }
 
-	public synchronized boolean removeClass(HiClass clazz) {
-		if (classes.get(clazz.fullName) == clazz) {
-			classes.remove(clazz.fullName);
-			clazz.classLoader = null;
-			return true;
-		}
-		return false;
-	}
+    public synchronized void addClasses(Collection<HiClass> classes) {
+        for (HiClass clazz : classes) {
+            HiClass currentClass = this.classes.get(clazz.fullName);
+            if (currentClass != null) {
+                if (currentClass != clazz) {
+                    throw new HiScriptRuntimeException("cannot add class to class loader: another class with the same name '" + clazz.getNameDescr() + "' already loaded to '" + name + "'");
+                } else {
+                    return;
+                }
+            }
+        }
+        for (HiClass clazz : classes) {
+            if (clazz.isGeneric()) {
+                continue;
+            }
+            this.classes.put(clazz.fullName, clazz);
+            clazz.classLoader = this;
+        }
+    }
 
-	public synchronized void addClassLoader(HiClassLoader classLoader) {
-		if (classLoader.parent != null) {
-			throw new HiScriptRuntimeException("cannot add class loader");
-		}
-		if (classLoader == HiClass.systemClassLoader) {
-			throw new HiScriptRuntimeException("cannot add system class loader");
-		}
+    public synchronized boolean removeClass(HiClass clazz) {
+        if (classes.get(clazz.fullName) == clazz) {
+            classes.remove(clazz.fullName);
+            clazz.classLoader = null;
+            return true;
+        }
+        return false;
+    }
 
-		HiClassLoader parent = this;
-		while (parent != null) {
-			if (parent == classLoader) {
-				throw new HiScriptRuntimeException("cannot add class loader: cyclic dependency");
-			}
-			parent = parent.parent;
-		}
+    public synchronized void addClassLoader(HiClassLoader classLoader) {
+        if (classLoader.parent != null) {
+            throw new HiScriptRuntimeException("cannot add class loader");
+        }
+        if (classLoader == HiClass.systemClassLoader) {
+            throw new HiScriptRuntimeException("cannot add system class loader");
+        }
 
-		if (classLoaders == null) {
-			classLoaders = new ArrayList<>();
-		}
-		classLoader.parent = this;
-		classLoaders.add(classLoader);
-	}
+        HiClassLoader parent = this;
+        while (parent != null) {
+            if (parent == classLoader) {
+                throw new HiScriptRuntimeException("cannot add class loader: cyclic dependency");
+            }
+            parent = parent.parent;
+        }
 
-	public synchronized boolean removeClassLoader(HiClassLoader classLoader) {
-		if (classLoaders != null && classLoaders.remove(classLoader)) {
-			classLoader.parent = null;
-			return true;
-		}
-		return false;
-	}
+        if (classLoaders == null) {
+            classLoaders = new ArrayList<>();
+        }
+        classLoader.parent = this;
+        classLoaders.add(classLoader);
+    }
 
-	public synchronized HiClass getClass(String name) {
-		HiClassLoader parent = this.parent;
-		boolean hasSystem = false;
-		while (parent != null) {
-			if (parent == HiClass.systemClassLoader) {
-				hasSystem = true;
-			}
-			HiClass clazz = parent.classes.get(name);
-			if (clazz != null) {
-				return clazz;
-			}
-			parent = parent.parent;
-		}
+    public synchronized boolean removeClassLoader(HiClassLoader classLoader) {
+        if (classLoaders != null && classLoaders.remove(classLoader)) {
+            classLoader.parent = null;
+            return true;
+        }
+        return false;
+    }
 
-		if (!hasSystem && this != HiClass.systemClassLoader) {
-			HiClass clazz = HiClass.systemClassLoader.classes.get(name);
-			if (clazz != null) {
-				return clazz;
-			}
-		}
+    public synchronized HiClass getClass(String name) {
+        HiClassLoader parent = this.parent;
+        boolean hasSystem = false;
+        while (parent != null) {
+            if (parent == HiClass.systemClassLoader) {
+                hasSystem = true;
+            }
+            HiClass clazz = parent.classes.get(name);
+            if (clazz != null) {
+                return clazz;
+            }
+            parent = parent.parent;
+        }
 
-		HiClass clazz = classes.get(name);
-		if (clazz == null && classLoaders != null) {
-			for (HiClassLoader classLoader : classLoaders) {
-				clazz = classLoader.getClass(name);
-				if (clazz != null) {
-					break;
-				}
-			}
-		}
-		return clazz;
-	}
+        if (!hasSystem && this != HiClass.systemClassLoader) {
+            HiClass clazz = HiClass.systemClassLoader.classes.get(name);
+            if (clazz != null) {
+                return clazz;
+            }
+        }
 
-	public String getName() {
-		return name;
-	}
+        HiClass clazz = classes.get(name);
+        if (clazz == null && classLoaders != null) {
+            for (HiClassLoader classLoader : classLoaders) {
+                clazz = classLoader.getClass(name);
+                if (clazz != null) {
+                    break;
+                }
+            }
+        }
+        return clazz;
+    }
 
-	public List<HiClass> load(URL url) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(url.openStream());
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<HiClass> load(InputStream is) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(ParserUtil.readString(is));
-	}
+    public List<HiClass> load(URL url) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(url.openStream());
+    }
 
-	public List<HiClass> load(Reader r) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(ParserUtil.readString(r));
-	}
+    public List<HiClass> load(InputStream is) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(ParserUtil.readString(is));
+    }
 
-	public List<HiClass> load(String classCode) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(classCode, true);
-	}
+    public List<HiClass> load(Reader r) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(ParserUtil.readString(r));
+    }
 
-	public List<HiClass> load(URL url, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(url.openStream(), validate);
-	}
+    public List<HiClass> load(String classCode) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(classCode, true);
+    }
 
-	public List<HiClass> load(InputStream is, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
-		return load(ParserUtil.readString(is), validate);
-	}
+    public List<HiClass> load(URL url, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(url.openStream(), validate);
+    }
 
-	public List<HiClass> load(String classCode, boolean validate) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
-		HiCompiler compiler = new HiCompiler(this, tokenizer);
-		List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
-		addClasses(classes);
-		if (validate) {
-			ValidationInfo validationInfo = new ValidationInfo(compiler);
-			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
-				clazz.validate(validationInfo, ctx);
-			}
-			validationInfo.throwExceptionIf();
-		}
-		return classes;
-	}
+    public List<HiClass> load(InputStream is, boolean validate) throws IOException, TokenizerException, HiScriptParseException, HiScriptValidationException {
+        return load(ParserUtil.readString(is), validate);
+    }
 
-	public void clear() {
-		clearClassLoaders();
-		clearClasses();
-	}
+    public List<HiClass> load(String classCode, boolean validate) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
+        Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(classCode);
+        HiCompiler compiler = new HiCompiler(this, tokenizer);
+        List<HiClass> classes = ClassFileParseRule.getInstance().visit(tokenizer, compiler);
+        addClasses(classes);
+        if (validate) {
+            ValidationInfo validationInfo = new ValidationInfo(compiler);
+            for (HiClass clazz : classes) {
+                CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
+                clazz.validate(validationInfo, ctx);
+            }
+            validationInfo.throwExceptionIf();
+        }
+        return classes;
+    }
 
-	public void clearClassLoaders() {
-		if (classLoaders != null) {
-			classLoaders.clear();
-		}
-	}
+    public void clear() {
+        clearClassLoaders();
+        clearClasses();
+    }
 
-	public void clearClasses() {
-		classes.clear();
-	}
+    public void clearClassLoaders() {
+        if (classLoaders != null) {
+            classLoaders.clear();
+        }
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    public void clearClasses() {
+        classes.clear();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

@@ -8,7 +8,7 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("int[] x = new int[]{1,2}; boolean y[] = new boolean[]{true,false}; String[] z[] = new String[][]{{\"a\", \"b\"},{\"c\", \"d\"}};");
 		assertSuccessSerialize("int [] [] x = {new int[]{1, 2, new Integer(3)}};");
 		assertSuccessSerialize("class A{} class B extends A{} A[] x = new A[]{new A(), new B(), null}; assert x[1] instanceof B; assert x[2] == null; x[2] = new B(); assert x[2] instanceof B;");
-		assertSuccessSerialize("Object x[] = {1, \"\"};");
+
 		assertFailCompile("int x[] = {1, true};");
 		assertFailCompile("byte x[] = {128};");
 		assertFailCompile("short[] x = {" + (Short.MAX_VALUE + 1) + "};");
@@ -21,6 +21,35 @@ public class TestArrays extends HiTest {
 		assertFailCompile("int[][][] x = new int[1][];");
 		assertFailCompile("int[][][] x = new int[1];");
 		assertFailCompile("int[][][] x = new int[];");
+		assertFailCompile("int x = new int[0];");
+		assertFailCompile("int x = {};");
+		assertFailCompile("int[] x = {{}};");
+		assertFailCompile("int[] x = {1, {2}};");
+		assertFailCompile("int[][] x = {{}, {{}}};");
+		assertFailCompile("int[] x = {true};");
+		assertFailCompile("String[] x = {1};");
+
+		// Object
+		assertSuccessSerialize("Object[] x = {1, \"\", true, 1L, 1f, 1d, new Object(), new Integer(1), new boolean[][]{{true}}, new Object[0], null, new String[]{\"abc\"}};");
+		assertSuccessSerialize("Object[] x = new Object[1][1];");
+		assertSuccessSerialize("Object[] x = new Object[1][1][][];");
+		assertSuccessSerialize("Object[] x = new Object[][]{};");
+		assertSuccessSerialize("Object[] x = new Object[][]{{}};");
+		assertSuccessSerialize("Object[][] x = {null, new Object[1], new Object[1][1], {}, {1, 2, 3}};");
+		assertSuccessSerialize("Object[] x = null;");
+		assertSuccessSerialize("Object[] x = {null};");
+		assertSuccessSerialize("Object[][] x = {null};");
+		assertSuccessSerialize("Object[][][] x = {null};");
+		assertSuccessSerialize("Object[][][] x = {{null, null}};");
+
+		assertFailCompile("Object[] x = {{}};");
+		assertFailCompile("Object[] x = new Object[1]{null};");
+		assertFailCompile("Object[] x = new Object[1]{null};");
+		assertFailCompile("Object[] x = new Object[][]{{{}}};");
+		assertFailCompile("Object[] x = 1;");
+		assertFailCompile("Object[] x = new Object();");
+		assertFailCompile("Object[][] x = {1};");
+		assertFailCompile("Object[][][] x = {{1}};");
 	}
 
 	@Test
@@ -178,6 +207,7 @@ public class TestArrays extends HiTest {
 
 	@Test
 	public void testStatements() {
-		assertSuccessSerialize("int[] x = {1, 1, 1, 1}; int c = 0; for (int i : x) c++; assert c == x.length;");
+		assertSuccessSerialize("int[] x = {1, 1, 1, 1}; int c = 0; for(int i : x) c++; assert c == x.length;");
+		assertSuccessSerialize("int[] x = {1, 1, 1, 1}; for(int i = 0; i < x.length; i++) x[i]++; for(int i = 0; i < 4; i++) assert x[i] == 2;");
 	}
 }

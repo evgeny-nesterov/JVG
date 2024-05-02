@@ -214,7 +214,7 @@ public class Value implements PrimitiveTypes {
     }
 
     public HiObject getObject() {
-        if (valueClass.isPrimitive() || valueClass.isArray()) {
+        if (valueClass.isPrimitive()) {
             ctx.throwRuntimeException("object is expected");
             return null;
         }
@@ -223,10 +223,6 @@ public class Value implements PrimitiveTypes {
 
     // autobox
     public HiObject getObject(HiClass dstClass) {
-        if (valueClass.isArray()) {
-            ctx.throwRuntimeException("object is expected");
-            return null;
-        }
         if (valueClass.isPrimitive()) {
             HiClassPrimitive primitiveClass = dstClass != null && dstClass.getAutoboxedPrimitiveClass() != null ? dstClass.getAutoboxedPrimitiveClass() : (HiClassPrimitive) valueClass;
             return primitiveClass.autobox(ctx, this); // changes ctx

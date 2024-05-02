@@ -72,7 +72,7 @@ public class HiArrays implements PrimitiveTypes {
                             break;
                     }
                 } else {
-                    c = Class.forName(prefix + "L" + HiObject.class.getName() + ";");
+                    c = Class.forName(prefix + "L" + Object.class.getName() + ";");
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

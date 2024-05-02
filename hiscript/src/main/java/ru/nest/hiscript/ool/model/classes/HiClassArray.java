@@ -1,13 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiClassLoader;
-import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.ModifiersIF;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -19,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HiClassArray extends HiClass {
 	public HiClass cellClass;
 
+	private HiClass rootCellClass;
+
 	public int dimension;
 
 	public HiClassArray(HiClassLoader classLoader, HiClass cellClass) {
@@ -27,15 +23,12 @@ public class HiClassArray extends HiClass {
 	}
 
 	public HiClass getRootCellClass() {
-		HiClass cellClass = this.cellClass;
-		while (cellClass.isArray()) {
-			cellClass = ((HiClassArray) cellClass).cellClass;
-		}
-		return cellClass;
+		return rootCellClass;
 	}
 
 	private void init(HiClass cellClass) {
 		this.cellClass = cellClass;
+		this.rootCellClass = cellClass.isArray() ? ((HiClassArray)cellClass).rootCellClass : cellClass;
 
 		if (cellClass.isArray()) {
 			className = "[" + ((HiClassArray) cellClass).className;
