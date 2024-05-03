@@ -17,7 +17,7 @@ public abstract class NodeNumber extends HiNode {
 	}
 
 	@Override
-	public NodeValueType.NodeValueReturnType getReturnValueType() {
+	public NodeValueType.NodeValueReturnType getValueReturnType() {
 		return NodeValueType.NodeValueReturnType.compileValue;
 	}
 

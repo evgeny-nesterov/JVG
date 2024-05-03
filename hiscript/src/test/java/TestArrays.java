@@ -203,10 +203,13 @@ public class TestArrays extends HiTest {
         assertSuccessSerialize("int[] x = {0, 1, 2}; assert x.length == 3; assert x[0] == 0; assert x[1] == 1; assert x[2] == 2; assert x[x[x[x[x[2]-1]]]] == 1;");
         assertSuccessSerialize("int[][] x = {{0, 1, 2}, {3, 5, 6}, {7, 8, 9}}; int y = x[0][0] + x[2][2]; assert y == 9;");
         assertSuccessSerialize("String[][] s = {null}; assert !(s[0] instanceof String[]);");
-        assertSuccessSerialize("int[][] x = {null}; assert !(x[0] instanceof int[]);");
-        assertSuccessSerialize("String[] x = {null}; assert x[0] == null;");
+        assertSuccessSerialize("int[][] x = {null}; assert x[0] == null; assert !(x[0] instanceof int[]);");
+        assertSuccessSerialize("String[] x = {null}; assert x[0] == null; assert !(x[0] instanceof String);");
         assertSuccessSerialize("String[][] x = {null}; assert x[0] == null;");
-        assertSuccessSerialize("int[][][][][][][][][][] x = {null, {null, {null, {null, {null, {null, {null, {null, {null, { 1 }}}}}}}}}}; assert x[1] != null;");
+        assertSuccessSerialize("int[][][][][][][][][][] x = {null, {null, {null, {null, {null, {null, {null, {null, {null, { 1 }}}}}}}}}}; assert x[1] != null; assert x[1][1][1][1][1][1][1][1][1][0] == 1;");
+        assertFailMessage("String[][] x = {null}; String s = x[0][0]", "null pointer");
+        assertFailMessage("int[] x = {1,2,3}; int i = x[3]", "array index out of bound: array length = 3, index = 3");
+        assertFailMessage("int[][] x = {{1,2},{3,4}}; int i = x[1][2]", "array index out of bound: array length = 2, index = 2");
 
         assertSuccessSerialize("int[] x = new int[]{0}; x[0]++; assert x[0] == 1;");
         assertSuccessSerialize("int[] x = new int[]{1}; x[0] = 0; assert x[0] == 0;");
@@ -217,5 +220,6 @@ public class TestArrays extends HiTest {
     public void testStatements() {
         assertSuccessSerialize("int[] x = {1, 1, 1, 1}; int c = 0; for(int i : x) c++; assert c == x.length;");
         assertSuccessSerialize("int[] x = {1, 1, 1, 1}; for(int i = 0; i < x.length; i++) x[i]++; for(int i = 0; i < 4; i++) assert x[i] == 2;");
+        assertSuccessSerialize("int[][] x = {{1,2},{3,4}}; for(int i = 0; i < x.length; i++) for(int j = 0; j < x[i].length; j++) x[i][j]++; assert x[0][0] == 2; assert x[0][1] == 3; assert x[1][0] == 4; assert x[1][1] == 5;");
     }
 }

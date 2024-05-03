@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -72,10 +73,24 @@ public class NodeSwitch extends HiNode {
             return false;
         }
         valid &= valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
+
         HiClass valueClass = valueNode.getValueClass(validationInfo, ctx);
+
+        // autobox
+        HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
+
+        if (checkValueClass == HiClassPrimitive.LONG || checkValueClass == HiClassPrimitive.FLOAT || checkValueClass == HiClassPrimitive.DOUBLE || checkValueClass == HiClassPrimitive.BOOLEAN) {
+            validationInfo.error("invalid switch value type: '" + valueClass.getNameDescr() + "'", valueNode.getToken());
+            valid = false;
+        } else if (valueNode.getValueReturnType() == NodeValueType.NodeValueReturnType.classValue) {
+            validationInfo.error("Expression expected", valueNode.getToken());
+            valid = false;
+        }
+
         ctx.enter(RuntimeContext.SWITCH, this);
         if (valueClass != null && valueClass.isEnum()) {
             HiClassEnum enumClass = (HiClassEnum) valueClass;
+            boolean[] enumProcessedValues = new boolean[enumClass.enumValues.size()];
             for (int i = 0; i < size; i++) {
                 HiNode[] caseValueNodes = casesValues.get(i);
                 if (caseValueNodes != null) { // not default
@@ -83,12 +98,20 @@ public class NodeSwitch extends HiNode {
                         HiNode caseValueNode = caseValueNodes[j];
                         if (caseValueNode instanceof NodeExpressionNoLS) {
                             NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
+
                             NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
                             if (identifier != null) {
                                 int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
                                 if (enumOrdinal == -1) {
                                     validationInfo.error("cannot resolve symbol '" + identifier.getName() + "'", caseValueNode.getToken());
                                     valid = false;
+                                } else {
+                                    if (enumProcessedValues[enumOrdinal]) {
+                                        validationInfo.error("case enum value '" + identifier.getName() + "' is duplicated", caseValueNode.getToken());
+                                        valid = false;
+                                    } else {
+                                        enumProcessedValues[enumOrdinal] = true;
+                                    }
                                 }
                             }
                         }
@@ -97,6 +120,7 @@ public class NodeSwitch extends HiNode {
             }
         } else {
             HiClass topCaseClass = null;
+            Set<Object> processedValues = new HashSet<>();
             for (int i = 0; i < size; i++) {
                 HiNode[] caseValueNodes = casesValues.get(i);
                 if (caseValueNodes != null) { // not default
@@ -104,6 +128,15 @@ public class NodeSwitch extends HiNode {
                         HiNode caseValueNode = caseValueNodes[j];
                         if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
                             HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
+                            Object caseValue = ctx.nodeValueType.getCompileValue();
+                            if (caseValue != null) {
+                                if (processedValues.contains(caseValue)) {
+                                    validationInfo.error("case value '" + caseValue + "' is duplicated", caseValueNode.getToken());
+                                    valid = false;
+                                } else {
+                                    processedValues.add(caseValue);
+                                }
+                            }
                             if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
                                 HiClass c = caseValueClass.getCommonClass(topCaseClass);
                                 if (c != null) {

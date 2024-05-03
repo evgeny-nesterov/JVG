@@ -28,7 +28,7 @@ public class OperationEquateBitwiseShiftLeft extends BinaryOperation {
             validationInfo.error("variable expected", node1.token);
         }
 
-        if (node1.clazz == HiClassPrimitive.BYTE.getAutoboxClass() || node1.clazz == HiClassPrimitive.SHORT.getAutoboxClass()) {
+        if (node1.clazz == HiClassPrimitive.BYTE.getAutoboxClass() || node1.clazz == HiClassPrimitive.SHORT.getAutoboxClass() || node1.clazz == HiClassPrimitive.CHAR.getAutoboxClass()) {
             errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
             return null;
         }

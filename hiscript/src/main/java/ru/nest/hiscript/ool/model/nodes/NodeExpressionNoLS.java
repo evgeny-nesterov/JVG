@@ -174,6 +174,7 @@ public class NodeExpressionNoLS extends NodeExpression {
         }
         nodes[0].copyTo(ctx.nodeValueType);
         ctx.putNodesValueTypesCache(nodes);
+        ctx.nodeValueType.node = this;
         ctx.nodeValueType.resolvedValueVariable = this;
         ctx.nodeValueType.enclosingClass = ctx.nodeValueType.clazz;
         ctx.nodeValueType.enclosingType = ctx.nodeValueType.type;

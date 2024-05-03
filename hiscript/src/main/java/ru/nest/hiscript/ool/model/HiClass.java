@@ -53,6 +53,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
     public static HiClass NUMBER_CLASS;
 
+    public static HiClass STRING_CLASS;
+
     public static HiClass MOCK_CLASS = new HiClass(); // used in validations for invalid class names
 
     public static String ROOT_CLASS_NAME = "@root";
@@ -107,12 +109,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
             OBJECT_CLASS.constructors = new HiConstructor[]{emptyConstructor};
             classes.add(OBJECT_CLASS);
 
-            classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false));
+            classes.add(STRING_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false).get(0));
             classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
 
             // TODO define classes initialization order automatically
-            NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0);
-            classes.add(NUMBER_CLASS);
+            classes.add(NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0));
             HiClassPrimitive.BYTE.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
             HiClassPrimitive.SHORT.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
             HiClassPrimitive.INT.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));

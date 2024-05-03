@@ -51,6 +51,8 @@ public class NodeValueType implements PrimitiveTypes {
 
     public boolean booleanValue;
 
+    public String stringValue;
+
     public HiNodeIF resolvedValueVariable;
 
     public boolean isVariable() {
@@ -107,34 +109,39 @@ public class NodeValueType implements PrimitiveTypes {
         nodeValueType.resolvedValueVariable = resolvedValueVariable;
         nodeValueType.enclosingClass = enclosingClass;
         nodeValueType.enclosingType = enclosingType;
+        // do not copy isConstant!
 
         if (isCompileValue() && valueClass != null) { // not void
             nodeValueType.valueClass = valueClass;
-            switch (valueClass.getPrimitiveType()) {
-                case CHAR:
-                    nodeValueType.charValue = charValue;
-                    break;
-                case BYTE:
-                    nodeValueType.byteValue = byteValue;
-                    break;
-                case SHORT:
-                    nodeValueType.shortValue = shortValue;
-                    break;
-                case INT:
-                    nodeValueType.intValue = intValue;
-                    break;
-                case LONG:
-                    nodeValueType.longValue = longValue;
-                    break;
-                case FLOAT:
-                    nodeValueType.floatValue = floatValue;
-                    break;
-                case DOUBLE:
-                    nodeValueType.doubleValue = doubleValue;
-                    break;
-                case BOOLEAN:
-                    nodeValueType.booleanValue = booleanValue;
-                    break;
+            if (valueClass.isPrimitive()) {
+                switch (valueClass.getPrimitiveType()) {
+                    case CHAR:
+                        nodeValueType.charValue = charValue;
+                        break;
+                    case BYTE:
+                        nodeValueType.byteValue = byteValue;
+                        break;
+                    case SHORT:
+                        nodeValueType.shortValue = shortValue;
+                        break;
+                    case INT:
+                        nodeValueType.intValue = intValue;
+                        break;
+                    case LONG:
+                        nodeValueType.longValue = longValue;
+                        break;
+                    case FLOAT:
+                        nodeValueType.floatValue = floatValue;
+                        break;
+                    case DOUBLE:
+                        nodeValueType.doubleValue = doubleValue;
+                        break;
+                    case BOOLEAN:
+                        nodeValueType.booleanValue = booleanValue;
+                        break;
+                }
+            } else if (valueClass == HiClass.STRING_CLASS) {
+                nodeValueType.stringValue = stringValue;
             }
         }
     }
@@ -144,7 +151,7 @@ public class NodeValueType implements PrimitiveTypes {
         this.valid = false;
     }
 
-    public void get(HiNodeIF node, HiClass clazz, Type type, boolean valid, NodeValueReturnType returnType, boolean isConstant, HiNodeIF resolvedValueVariable, HiClass enclosingClass, Type enclosingType) {
+    public void get(HiNodeIF node, HiClass clazz, Type type, boolean valid, NodeValueReturnType returnType, HiClass valueClass, boolean isConstant, HiNodeIF resolvedValueVariable, HiClass enclosingClass, Type enclosingType) {
         if (clazz == null) {
             clazz = HiClassPrimitive.VOID;
             returnType = NodeValueReturnType.noValue;
@@ -158,7 +165,11 @@ public class NodeValueType implements PrimitiveTypes {
         this.resolvedValueVariable = resolvedValueVariable;
         this.enclosingClass = enclosingClass;
         this.enclosingType = enclosingType;
-        getValue();
+        if (valueClass != null) {
+            this.valueClass = valueClass;
+        } else {
+            getCompileValueFromNode();
+        }
     }
 
     public NodeValueType get(ValidationInfo validationInfo, CompileClassContext ctx, HiNodeIF node) {
@@ -170,24 +181,20 @@ public class NodeValueType implements PrimitiveTypes {
         HiNodeIF node = this.node;
         boolean valid = node.validate(validationInfo, ctx);
         node.getNodeValueType(validationInfo, ctx); // after validation
-        this.node = node;
-        this.clazz = ctx.nodeValueType.clazz;
-        this.type = ctx.nodeValueType.type;
-        this.valid = valid;
-        this.returnType = ctx.nodeValueType.returnType;
-        this.isConstant = ctx.nodeValueType.isConstant;
-        this.resolvedValueVariable = ctx.nodeValueType.resolvedValueVariable;
-        this.enclosingClass = ctx.nodeValueType.enclosingClass;
-        this.enclosingType = ctx.nodeValueType.enclosingType;
-        getValue();
+        ctx.nodeValueType.copyTo(this);
+        if (valueClass == null) {
+            getCompileValueFromNode();
+        }
         return this;
     }
 
-    private void getValue() {
+    public void getCompileValueFromNode() {
         if (valid && node != null && node.isCompileValue()) {
             valueClass = clazz;
             if (node instanceof NodeInt) {
                 intValue = ((NodeInt) node).getValue();
+            } else if (node instanceof NodeString) {
+                stringValue = ((NodeString) node).text;
             } else if (node instanceof NodeBoolean) {
                 booleanValue = ((NodeBoolean) node).getValue();
             } else if (node instanceof NodeLong) {
@@ -220,6 +227,31 @@ public class NodeValueType implements PrimitiveTypes {
         throw new HiScriptRuntimeException("integer expected");
     }
 
+    public Object getCompileValue() {
+        if (valid && isCompileValue()) {
+            if (valueClass == HiClassPrimitive.INT) {
+                return intValue;
+            } else if (valueClass == HiClass.STRING_CLASS) {
+                return stringValue;
+            } else if (valueClass == HiClassPrimitive.BOOLEAN) {
+                return booleanValue;
+            } else if (valueClass == HiClassPrimitive.LONG) {
+                return longValue;
+            } else if (valueClass == HiClassPrimitive.DOUBLE) {
+                return doubleValue;
+            } else if (valueClass == HiClassPrimitive.CHAR) {
+                return charValue;
+            } else if (valueClass == HiClassPrimitive.BYTE) {
+                return byteValue;
+            } else if (valueClass == HiClassPrimitive.FLOAT) {
+                return floatValue;
+            } else if (valueClass == HiClassPrimitive.SHORT) {
+                return shortValue;
+            }
+        }
+        return null;
+    }
+
     public boolean autoCastValue(HiClass type) {
         // autobox
         // generic
@@ -228,6 +260,8 @@ public class NodeValueType implements PrimitiveTypes {
                 return true;
             } else if (type == HiClass.NUMBER_CLASS) {
                 return valueClass.isNumber();
+            } else if (type == HiClass.STRING_CLASS) {
+                return valueClass == HiClass.STRING_CLASS;
             }
 
             HiClass autoboxedPrimitiveClass = type.getAutoboxedPrimitiveClass();
@@ -247,6 +281,13 @@ public class NodeValueType implements PrimitiveTypes {
             } else {
                 return false;
             }
+        }
+
+        if (!valueClass.isPrimitive()) {
+            if (valueClass == HiClass.OBJECT_CLASS) {
+                return type == HiClass.OBJECT_CLASS;
+            }
+            return false;
         }
 
         int t1 = valueClass.getPrimitiveType();

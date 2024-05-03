@@ -42,189 +42,191 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
                 errorCast(validationInfo, node1.token, c2, c1);
             }
         }
-        if (node2.isCompileValue() && c1.isPrimitive()) {
+        if (node2.isCompileValue()) {
             node1.valueClass = c1;
-            int t1 = c1.getPrimitiveType();
-            int t2 = c2.getPrimitiveType();
-            switch (t1) {
-                case BYTE:
-                    switch (t2) {
-                        case BYTE:
-                            node1.byteValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.byteValue = (byte) node2.shortValue;
-                            break;
-                        case INT:
-                            node1.byteValue = (byte) node2.intValue;
-                            break;
-                        case LONG:
-                            node1.byteValue = (byte) node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.byteValue = (byte) node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.byteValue = (byte) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.byteValue = (byte) node2.charValue;
-                            break;
-                    }
-                    break;
-                case SHORT:
-                    switch (t2) {
-                        case BYTE:
-                            node1.shortValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.shortValue = node2.shortValue;
-                            break;
-                        case INT:
-                            node1.shortValue = (short) node2.intValue;
-                            break;
-                        case LONG:
-                            node1.shortValue = (short) node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.shortValue = (short) node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.shortValue = (short) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.shortValue = (short) node2.charValue;
-                            break;
-                    }
-                    break;
-                case INT:
-                    switch (t2) {
-                        case BYTE:
-                            node1.intValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.intValue = node2.shortValue;
-                            break;
-                        case INT:
-                            node1.intValue = node2.intValue;
-                            break;
-                        case LONG:
-                            node1.intValue = (int) node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.intValue = (int) node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.intValue = (int) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.intValue = node2.charValue;
-                            break;
-                    }
-                    break;
-                case LONG:
-                    switch (t2) {
-                        case BYTE:
-                            node1.longValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.longValue = node2.shortValue;
-                            break;
-                        case INT:
-                            node1.longValue = node2.intValue;
-                            break;
-                        case LONG:
-                            node1.longValue = node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.longValue = (long) node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.longValue = (long) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.longValue = node2.charValue;
-                            break;
-                    }
-                    break;
-                case FLOAT:
-                    switch (t2) {
-                        case BYTE:
-                            node1.floatValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.floatValue = node2.shortValue;
-                            break;
-                        case INT:
-                            node1.floatValue = node2.intValue;
-                            break;
-                        case LONG:
-                            node1.floatValue = node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.floatValue = node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.floatValue = (float) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.floatValue = node2.charValue;
-                            break;
-                    }
-                    break;
-                case DOUBLE:
-                    switch (t2) {
-                        case BYTE:
-                            node1.doubleValue = node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.doubleValue = node2.shortValue;
-                            break;
-                        case INT:
-                            node1.doubleValue = node2.intValue;
-                            break;
-                        case LONG:
-                            node1.doubleValue = node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.doubleValue = node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.doubleValue = node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.doubleValue = node2.charValue;
-                            break;
-                    }
-                    break;
-                case CHAR:
-                    switch (t2) {
-                        case BYTE:
-                            node1.charValue = (char) node2.byteValue;
-                            break;
-                        case SHORT:
-                            node1.charValue = (char) node2.shortValue;
-                            break;
-                        case INT:
-                            node1.charValue = (char) node2.intValue;
-                            break;
-                        case LONG:
-                            node1.charValue = (char) node2.longValue;
-                            break;
-                        case FLOAT:
-                            node1.charValue = (char) node2.floatValue;
-                            break;
-                        case DOUBLE:
-                            node1.charValue = (char) node2.doubleValue;
-                            break;
-                        case CHAR:
-                            node1.charValue = node2.charValue;
-                            break;
-                    }
-                    break;
+            if (c1.isPrimitive() && c2.isPrimitive()) {
+                int t1 = c1.getPrimitiveType();
+                int t2 = c2.getPrimitiveType();
+                switch (t1) {
+                    case BYTE:
+                        switch (t2) {
+                            case BYTE:
+                                node1.byteValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.byteValue = (byte) node2.shortValue;
+                                break;
+                            case INT:
+                                node1.byteValue = (byte) node2.intValue;
+                                break;
+                            case LONG:
+                                node1.byteValue = (byte) node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.byteValue = (byte) node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.byteValue = (byte) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.byteValue = (byte) node2.charValue;
+                                break;
+                        }
+                        break;
+                    case SHORT:
+                        switch (t2) {
+                            case BYTE:
+                                node1.shortValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.shortValue = node2.shortValue;
+                                break;
+                            case INT:
+                                node1.shortValue = (short) node2.intValue;
+                                break;
+                            case LONG:
+                                node1.shortValue = (short) node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.shortValue = (short) node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.shortValue = (short) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.shortValue = (short) node2.charValue;
+                                break;
+                        }
+                        break;
+                    case INT:
+                        switch (t2) {
+                            case BYTE:
+                                node1.intValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.intValue = node2.shortValue;
+                                break;
+                            case INT:
+                                node1.intValue = node2.intValue;
+                                break;
+                            case LONG:
+                                node1.intValue = (int) node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.intValue = (int) node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.intValue = (int) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.intValue = node2.charValue;
+                                break;
+                        }
+                        break;
+                    case LONG:
+                        switch (t2) {
+                            case BYTE:
+                                node1.longValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.longValue = node2.shortValue;
+                                break;
+                            case INT:
+                                node1.longValue = node2.intValue;
+                                break;
+                            case LONG:
+                                node1.longValue = node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.longValue = (long) node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.longValue = (long) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.longValue = node2.charValue;
+                                break;
+                        }
+                        break;
+                    case FLOAT:
+                        switch (t2) {
+                            case BYTE:
+                                node1.floatValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.floatValue = node2.shortValue;
+                                break;
+                            case INT:
+                                node1.floatValue = node2.intValue;
+                                break;
+                            case LONG:
+                                node1.floatValue = node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.floatValue = node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.floatValue = (float) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.floatValue = node2.charValue;
+                                break;
+                        }
+                        break;
+                    case DOUBLE:
+                        switch (t2) {
+                            case BYTE:
+                                node1.doubleValue = node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.doubleValue = node2.shortValue;
+                                break;
+                            case INT:
+                                node1.doubleValue = node2.intValue;
+                                break;
+                            case LONG:
+                                node1.doubleValue = node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.doubleValue = node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.doubleValue = node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.doubleValue = node2.charValue;
+                                break;
+                        }
+                        break;
+                    case CHAR:
+                        switch (t2) {
+                            case BYTE:
+                                node1.charValue = (char) node2.byteValue;
+                                break;
+                            case SHORT:
+                                node1.charValue = (char) node2.shortValue;
+                                break;
+                            case INT:
+                                node1.charValue = (char) node2.intValue;
+                                break;
+                            case LONG:
+                                node1.charValue = (char) node2.longValue;
+                                break;
+                            case FLOAT:
+                                node1.charValue = (char) node2.floatValue;
+                                break;
+                            case DOUBLE:
+                                node1.charValue = (char) node2.doubleValue;
+                                break;
+                            case CHAR:
+                                node1.charValue = node2.charValue;
+                                break;
+                        }
+                        break;
+                }
+            } else if (c1 == HiClass.STRING_CLASS && c2 == HiClass.STRING_CLASS) {
+                node1.stringValue = node2.stringValue;
             }
-        } else {
-
         }
         return node1.clazz;
     }

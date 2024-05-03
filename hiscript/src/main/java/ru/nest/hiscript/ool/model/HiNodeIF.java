@@ -35,16 +35,16 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
         return getNodeValueType(validationInfo, ctx).type;
     }
 
-    default NodeValueType.NodeValueReturnType getReturnValueType() {
+    default NodeValueType.NodeValueReturnType getValueReturnType() {
         return null;
     }
 
     default boolean isCompileValue() {
-        return getReturnValueType() == NodeValueType.NodeValueReturnType.compileValue;
+        return getValueReturnType() == NodeValueType.NodeValueReturnType.compileValue;
     }
 
     default boolean isRuntimeValue() {
-        return getReturnValueType() == NodeValueType.NodeValueReturnType.runtimeValue;
+        return getValueReturnType() == NodeValueType.NodeValueReturnType.runtimeValue;
     }
 
     default boolean isStatement() {

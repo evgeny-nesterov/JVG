@@ -45,7 +45,7 @@ public class NodeForIterator extends HiNode {
             if (iterableClass.isArray()) {
                 iterableElementClass = ((HiClassArray) iterableClass).cellClass;
             } else {
-                Type iterableType = iterable.valueType;
+                Type iterableType = iterable.getReturnValueType();
                 Type iterableElementType = null;
                 if (iterableType != null && iterableType.parameters != null && iterableType.parameters.length > 0) {
                     iterableElementType = iterableType.parameters[0];

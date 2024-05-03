@@ -538,7 +538,7 @@ Util.header("SWITCH");
         case "b":
             System.println("[1] fail");
             break;
-        case "a", "b":
+        case "a", "c":
             System.println("[1] success");
             break;
     }
@@ -549,7 +549,7 @@ Util.header("SWITCH");
         case "b":
             System.println("[2] fail");
             break;
-        case "a1":
+        case "a2":
             System.println("[2] success 2");
             break;
     }

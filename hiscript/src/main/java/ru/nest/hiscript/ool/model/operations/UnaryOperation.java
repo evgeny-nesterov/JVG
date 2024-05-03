@@ -33,7 +33,7 @@ public abstract class UnaryOperation extends HiOperation {
 		if (node.clazz == null) {
 			node.clazz = node.get(validationInfo, ctx).clazz;
 			if (node.clazz != null) {
-				node.returnType = node.node.getReturnValueType();
+				node.returnType = node.node.getValueReturnType();
 				if (node.returnType == null) {
 					node.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 				}
