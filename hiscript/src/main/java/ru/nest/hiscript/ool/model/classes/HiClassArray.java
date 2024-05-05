@@ -1,7 +1,13 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.Modifiers;
+import ru.nest.hiscript.ool.model.ModifiersIF;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -11,11 +17,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassArray extends HiClass {
+	private static final Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
+
 	public HiClass cellClass;
 
 	private HiClass rootCellClass;
 
 	public int dimension;
+
+	// name for array generation from java
+	public String className;
 
 	public HiClassArray(HiClassLoader classLoader, HiClass cellClass) {
 		super(classLoader, OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
@@ -28,7 +39,7 @@ public class HiClassArray extends HiClass {
 
 	private void init(HiClass cellClass) {
 		this.cellClass = cellClass;
-		this.rootCellClass = cellClass.isArray() ? ((HiClassArray)cellClass).rootCellClass : cellClass;
+		this.rootCellClass = cellClass.isArray() ? ((HiClassArray) cellClass).rootCellClass : cellClass;
 
 		if (cellClass.isArray()) {
 			className = "[" + ((HiClassArray) cellClass).className;
@@ -67,24 +78,6 @@ public class HiClassArray extends HiClass {
 	public int getArrayDimension() {
 		return dimension;
 	}
-
-	// name for array generation from java
-	public String className;
-
-	@Override
-	public void code(CodeContext os) throws IOException {
-		// write class type
-		os.writeByte(HiClass.CLASS_ARRAY);
-		os.writeClass(cellClass);
-	}
-
-	public static HiClass decode(DecodeContext os) throws IOException {
-		// assumed cell class is already read
-		HiClass cellClass = os.readClass();
-		return cellClass.getArrayClass();
-	}
-
-	private static final Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
 
 	@Override
 	public Class getJavaClass() {
@@ -166,5 +159,18 @@ public class HiClassArray extends HiClass {
 			name = "[L" + componentType.getName() + ";";
 		}
 		return classLoader != null ? classLoader.loadClass(name) : Class.forName(name);
+	}
+
+	@Override
+	public void code(CodeContext os) throws IOException {
+		// write class type
+		os.writeByte(HiClass.CLASS_ARRAY);
+		os.writeClass(cellClass);
+	}
+
+	public static HiClass decode(DecodeContext os) throws IOException {
+		// assumed cell class is already read
+		HiClass cellClass = os.readClass();
+		return cellClass.getArrayClass();
 	}
 }

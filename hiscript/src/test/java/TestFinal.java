@@ -3,47 +3,70 @@ import org.junit.jupiter.api.Test;
 public class TestFinal extends HiTest {
 	@Test
 	public void testField() {
-		assertSuccessSerialize("final int x; x = 1; assert x == 1;");
-		assertSuccessSerialize("final String x; x = \"a\"; assert x.equals(\"a\");");
-		assertSuccessSerialize("final String x; x = null; assert x == null;");
-		assertSuccessSerialize("final int x = 1; class A{int y; A(){this.y = x;}} new A();");
-		assertSuccessSerialize("final int x = 1; class A{int y = x;} new A();");
-		assertSuccessSerialize("try{int x = 0;}catch(final Exception e){}");
-		assertSuccessSerialize("class A{final int x = 1; {int y = x + 1;}}");
-		assertSuccessSerialize("class A{final static int x = 1; static{int y = x + 1;}}");
-		assertSuccessSerialize("class A{int get(final int x){final int y = x + 1; return y;}}");
+		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};
+		boolean[] intNumbers = {true, true, true, true, true, false, false};
+		boolean[] allowEquatePlus_ = {false, false, false, true, true, true, true};
+		for (int i = 0; i < primitiveNumberTypes.length; i++) {
+			String t = primitiveNumberTypes[i];
+			boolean intNumber = intNumbers[i];
+			boolean allowEquatePlus = allowEquatePlus_[i];
 
-		assertFailCompile("final int x = 1; x = 1;");
-		assertFailCompile("final int x; x = 1; x = 2;");
-		assertFailCompile("final String x = \"\"; x = null;");
+			assertSuccessSerialize("final " + t + " x; x = 1; assert x == 1;");
+			assertSuccessSerialize("final String x; x = \"a\"; assert x.equals(\"a\");");
+			assertSuccessSerialize("final String x; x = null; assert x == null;");
+			assertSuccessSerialize("final " + t + " x = 1; class A{" + t + " y; A(){this.y = x;}} new A();");
+			assertSuccessSerialize("final " + t + " x = 1; class A{" + t + " y = x;} new A();");
+			assertSuccessSerialize("try{" + t + " x = 0;} catch(final Exception e){}");
+			assertSuccessSerialize("class A{final " + t + " x = 1; {" + t + " y = (" + t + ")(x + 1);}}");
+			assertSuccessSerialize("class A{final static " + t + " x = 1; static{" + t + " y = (" + t + ")(x + 1);}}");
+			assertSuccessSerialize("class A{" + t + " get(final " + t + " x){final " + t + " y = (" + t + ")(x + 1); return y;}}");
+
+			assertFailCompile("final " + t + " x = 1; x = 1;");
+			assertFailCompile("final " + t + " x; x = 1; x = 2;");
+			assertFailCompile("final String x = \"\"; x = null;");
+			assertFailCompile("final " + t + " x = 1; " + t + " y = 2; x = y;");
+
+			assertFailCompile("class A{final " + t + " x; {x = 1;}}");
+			assertFailCompile("class A{final " + t + " x = 1; {x = 1;}}");
+			assertFailCompile("class A{final static " + t + " x = 1; static{x = 1;}}");
+			assertFailCompile("class A{void a(final " + t + " a){a = 1;}}");
+			assertFailCompile("class A{A(final " + t + " a){a = 1;}}");
+			assertFailCompile("try{" + t + " x = 0;} catch(final Exception e){e = null;}");
+			assertFailCompile("class A{void a(final " + t + "... a){a = null;}}");
+			assertFailCompile("final " + t + " x = 1; class A{{x = 1;}}");
+
+			// number operations which changes value
+			if (allowEquatePlus) {
+				assertFailCompile("final " + t + " x; x += 1;");
+				assertFailCompile("final " + t + " x; x -= 1;");
+				assertFailCompile("final " + t + " x; x %= 1;");
+
+				assertFailCompile("final " + t + " x = 1; x += 1;");
+				assertFailCompile("final " + t + " x = 1; x -= 1;");
+				assertFailCompile("final " + t + " x = 1; x %= 1;");
+			}
+			if (intNumber) {
+				assertFailCompile("final " + t + " x = 1; x |= 1;");
+				assertFailCompile("final " + t + " x = 1; x &= 1;");
+				assertFailCompile("final " + t + " x = 1; x ^= 1;");
+				assertFailCompile("final " + t + " x = 1; x ~= 1;");
+				assertFailCompile("final " + t + " x = 1; x >>= 1;");
+				assertFailCompile("final " + t + " x = 1; x <<= 1;");
+				assertFailCompile("final " + t + " x = 1; x >>>= 1;");
+			}
+			assertFailCompile("final " + t + " x = 1; x++;");
+			assertFailCompile("final " + t + " x = 1; ++x;");
+			assertFailCompile("final " + t + " x = 1; x--;");
+			assertFailCompile("final " + t + " x = 1; --x;");
+			assertFailCompile("for(final " + t + " i = 0; i < 10; i++){}");
+
+			// interface field is final on default
+			assertFailCompile("interface I{" + t + " x = 1;} I.x = 2;");
+			assertFailCompile("interface I{static " + t + " x = 1;} I.x = 2;");
+		}
+
+		// var
 		assertFailCompile("final var x = 1; x = 2;");
-
-		assertFailCompile("class A{final int x; {x = 1;}}");
-		assertFailCompile("class A{final int x = 1; {x = 1;}}");
-		assertFailCompile("class A{final static int x = 1; static{x = 1;}}");
-		assertFailCompile("class A{void a(final int a){a = 1;}}");
-		assertFailCompile("class A{A(final int a){a = 1;}}");
-		assertFailCompile("try{int x = 0;}catch(final Exception e){e = null;}");
-		assertFailCompile("class A{void a(final int... a){a = null;}}");
-		assertFailCompile("final int x = 1; class A{{x = 1;}}");
-
-		// number operations which changes value
-		assertFailCompile("final int x; x += 1;");
-		assertFailCompile("final int x = 1; x += 1;");
-		assertFailCompile("final int x = 1; x -= 1;");
-		assertFailCompile("final int x = 1; x |= 1;");
-		assertFailCompile("final int x = 1; x &= 1;");
-		assertFailCompile("final int x = 1; x ^= 1;");
-		assertFailCompile("final int x = 1; x ~= 1;");
-		assertFailCompile("final int x = 1; x >>= 1;");
-		assertFailCompile("final int x = 1; x <<= 1;");
-		assertFailCompile("final int x = 1; x >>>= 1;");
-		assertFailCompile("final int x = 1; x %= 1;");
-		assertFailCompile("final int x = 1; x++;");
-		assertFailCompile("final int x = 1; ++x;");
-		assertFailCompile("final int x = 1; x--;");
-		assertFailCompile("final int x = 1; --x;");
-		assertFailCompile("for(final int i = 0; i < 10; i++){}");
 
 		// boolean operations which changes value
 		assertFailCompile("final boolean x = false; x &= true;");
@@ -52,10 +75,6 @@ public class TestFinal extends HiTest {
 		assertFailCompile("final boolean x = false; x ||= true;");
 		assertFailCompile("final boolean x = false; x ^= true;");
 		assertFailCompile("final boolean x = false; x ~= true;");
-
-		// interface field is final on default
-		assertFailCompile("interface I{int x = 1;} I.x = 2;");
-		assertFailCompile("interface I{static int x = 1;} I.x = 2;");
 	}
 
 	@Test

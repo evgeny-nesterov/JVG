@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class NodeGetClass extends HiNode {
 
 	@Override
 	public HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		return ImplUtil.getClassClass(ctx);
+		return ctx.getClassLoader().getClassClass(ctx);
 	}
 
 	@Override
@@ -33,8 +32,8 @@ public class NodeGetClass extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx, HiClass clazz) {
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = ImplUtil.getClassClass(ctx);
-		ctx.value.object = ImplUtil.getClassObject(ctx, clazz);
+		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
+		ctx.value.object = ctx.getClassLoader().getClassObject(ctx, clazz);
 	}
 
 	@Override

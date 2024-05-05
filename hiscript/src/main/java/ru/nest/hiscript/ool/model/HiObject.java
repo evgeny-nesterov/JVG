@@ -45,10 +45,6 @@ public class HiObject {
         mainObject = childObject.mainObject;
     }
 
-    public HiObject getChildObject() {
-        return childObject;
-    }
-
     // object created with operator new
     private HiObject mainObject;
 

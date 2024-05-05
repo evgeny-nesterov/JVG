@@ -15,6 +15,38 @@ public class TestJava extends HiTest {
 		public String getText() {
 			return "abc";
 		}
+
+		public byte getByte(byte x) {
+			return x;
+		}
+
+		public short getShort(short x) {
+			return x;
+		}
+
+		public char getCharacter(char x) {
+			return x;
+		}
+
+		public int getInteger(int x) {
+			return x;
+		}
+
+		public long getLong(long x) {
+			return x;
+		}
+
+		public float getFloat(float x) {
+			return x;
+		}
+
+		public double getDouble(double x) {
+			return x;
+		}
+
+		public boolean getBoolean(boolean x) {
+			return x;
+		}
 	}
 
 	@Test
@@ -25,8 +57,17 @@ public class TestJava extends HiTest {
 				"assert x.indexOf('b') == 1; " + //
 				"assert x.toUpperCase().equals(\"ABC\");");
 		assertSuccessSerialize("interface B{int getX();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getX() == 1;");
-
-		// TODO fix B duplicate
 		assertSuccessSerialize("interface B{String getText();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getText());");
+		assertSuccessSerialize("interface B{String getText();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getText());");
+
+		// primitive types
+		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};
+		String[] primitiveNumberBoxedTypes = {"Byte", "Short", "Character", "Integer", "Long", "Float", "Double"};
+		for (int i = 0; i < primitiveNumberTypes.length; i++) {
+			String t = primitiveNumberTypes[i];
+			String T = primitiveNumberBoxedTypes[i];
+			assertSuccessSerialize("interface B{" + t + " get" + T + "(" + t + " x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.get" + T + "((" + t + ")127) == 127;");
+		}
+		assertSuccessSerialize("interface B{boolean getBoolean(boolean x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getBoolean(true);");
 	}
 }

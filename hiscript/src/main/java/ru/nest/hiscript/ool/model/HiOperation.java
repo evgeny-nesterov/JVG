@@ -134,11 +134,6 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 		return false;
 	}
 
-	public void errorIncompatibleTypes(RuntimeContext ctx, HiClass type1, HiClass type2) {
-		String text = "incompatible types; found " + type1.getNameDescr() + ", required " + type2.getNameDescr();
-		ctx.throwRuntimeException(text);
-	}
-
 	public void code(CodeContext os) throws IOException {
 		// TODO: write start operation data block
 		os.writeByte(operation);

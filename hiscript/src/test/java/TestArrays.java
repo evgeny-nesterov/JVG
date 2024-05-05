@@ -214,6 +214,8 @@ public class TestArrays extends HiTest {
         assertSuccessSerialize("int[] x = new int[]{0}; x[0]++; assert x[0] == 1;");
         assertSuccessSerialize("int[] x = new int[]{1}; x[0] = 0; assert x[0] == 0;");
         assertSuccessSerialize("String[] x = {null}; x[0] = \"\"; x[0] += 0.000; x[0] += 3L; assert x[0].equals(\"0.03\");");
+
+        assertFailMessage("int[] x = null; int length = x.length", "null pointer");
     }
 
     @Test

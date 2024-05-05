@@ -246,6 +246,7 @@ public class NodeExpressionNoLS extends NodeExpression {
                     try {
                         ctx.value = values[bufSize];
                         HiNodeIF valueNode = operands[valuePos];
+                        ctx.value.node = valueNode;
 
                         // Check for a.new B()
                         boolean executeLater = false;
@@ -255,7 +256,6 @@ public class NodeExpressionNoLS extends NodeExpression {
                                 // Previous operand may be not calculated yet
                                 // For example, in the case of Value.NAME
                                 ctx.value.valueType = valueNode.getInvocationValueType();
-                                ctx.value.node = valueNode;
                             }
                         }
 

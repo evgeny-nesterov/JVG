@@ -229,6 +229,7 @@ public class NodeInvocation extends HiNode {
 				v.valueType = Value.METHOD_INVOCATION;
 				v.name = name;
 				v.arguments = arguments;
+				v.node = this;
 
 				HiOperation o = Operations.getOperation(OperationsIF.INVOCATION);
 				o.doOperation(ctx, ctx.value, v);
