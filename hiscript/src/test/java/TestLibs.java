@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-
 public class TestLibs extends HiTest {
 	@Test
 	public void testCollections() {
@@ -15,5 +13,12 @@ public class TestLibs extends HiTest {
 	public void testMath() {
 		assertSuccessSerialize("double pi = Math.PI;");
 		assertSuccessSerialize("assert Math.sqrt(256) == 16;");
+	}
+
+	@Test
+	public void testSystemExec() {
+		assertSuccessSerialize("Integer v = System.exec(\"1 + 2\"); assert v == 3;");
+		assertSuccessSerialize("Boolean v = System.exec(\"int x = 1; int y = 2; return x < y;\"); assert v;");
+		assertFail("Integer v = System.exec(\"1 < 2\");");
 	}
 }

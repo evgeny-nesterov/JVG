@@ -140,7 +140,6 @@ public class NodeExpressionNoLS extends NodeExpression {
             return;
         }
 
-        NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
         if (isStatement() && operations[operations.length - 1] != null && !operations[operations.length - 1].isStatement()) {
             validationInfo.error("not a statement", getToken());
             return;
@@ -150,6 +149,7 @@ public class NodeExpressionNoLS extends NodeExpression {
             return;
         }
 
+        NodeValueType[] nodes = ctx.getNodesValueTypesCache(operands.length);
         int bufSize = 0;
         int valuePos = 0;
         boolean validValue = true;

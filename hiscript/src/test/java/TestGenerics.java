@@ -272,4 +272,10 @@ public class TestGenerics extends HiTest {
 		assertFailCompile("class C<O>{} C<Integer>[] a = new C<Integer>[1];");
 		assertFailCompile("class C<O>{} C<? extends Integer>[] a = new C[1]; a[0] = new C<Number>();");
 	}
+
+	@Test
+	public void testAssignments() {
+		assertSuccessSerialize("class C{<O> O get(){return 1;}} Integer v = new C().get(); assert v == 1;");
+		assertFailMessage("class C{<O> O get(){return 1;}} Boolean v = new C().get();", "cannot convert 'Integer' to 'Boolean'");
+	}
 }

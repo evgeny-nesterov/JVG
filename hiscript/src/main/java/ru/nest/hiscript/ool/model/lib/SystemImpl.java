@@ -11,6 +11,8 @@ import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
+import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
+import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -121,9 +123,14 @@ public class SystemImpl extends ImplUtil {
 		NodeString.createString(ctx, format.format(new Date(time)));
 	}
 
-	public static void System_void_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {
+	public static void System_V_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {
+		HiClass returnClass = HiClass.OBJECT_CLASS;
+		Object returnValue = null;
 		try {
 			String text = getString(ctx, code);
+			if (!text.endsWith(";")) {
+				text += ";";
+			}
 			Tokenizer tokenizer = Tokenizer.getDefaultTokenizer(text);
 
 			CompileClassContext compileCtx;
@@ -138,6 +145,11 @@ public class SystemImpl extends ImplUtil {
 			ValidationInfo validationInfo = new ValidationInfo(ctx.compiler);
 			boolean valid = node != null;
 			if (node != null) {
+				if (node.statements.size() == 1 && node.statements.get(0) instanceof NodeExpressionNoLS) {
+					NodeExpressionNoLS expressionNode = (NodeExpressionNoLS) node.statements.get(0);
+					expressionNode.setStatement(false);
+					node.statements.set(0, new NodeReturn(expressionNode));
+				}
 				valid &= node.validate(validationInfo, compileCtx);
 				valid &= ctx.getClassLoader().validate(validationInfo);
 			}
@@ -163,6 +175,13 @@ public class SystemImpl extends ImplUtil {
 				}
 
 				node.execute(newCtx);
+				if (newCtx.exception == null) {
+					if (newCtx.value.valueClass.isPrimitive()) {
+						returnValue = ((HiClassPrimitive) newCtx.value.valueClass).autobox(ctx, ctx.value);
+					} else if (!newCtx.value.valueClass.isNull()) {
+						returnValue = newCtx.value.object;
+					}
+				}
 
 				if (!newInstance) {
 					// enter to method as OperationInvocation after method invocation perform ctx.exit()
@@ -198,7 +217,8 @@ public class SystemImpl extends ImplUtil {
 		}
 
 		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
+		ctx.value.valueClass = returnClass;
+		ctx.value.object = returnValue;
 	}
 
 	public static void System_Object_getVariable_String(RuntimeContext ctx, HiObject name) {
