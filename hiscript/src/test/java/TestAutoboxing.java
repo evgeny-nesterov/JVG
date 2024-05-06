@@ -224,5 +224,6 @@ public class TestAutoboxing extends HiTest {
 
     @Test
     public void testCharacter() {
+        assertSuccessSerialize("interface A<O>{O get();} assert new A<Integer>(){Integer get(){return 123;}}.get() == 123;");
     }
 }

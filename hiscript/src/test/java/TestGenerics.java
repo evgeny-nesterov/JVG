@@ -276,6 +276,14 @@ public class TestGenerics extends HiTest {
 	@Test
 	public void testAssignments() {
 		assertSuccessSerialize("class C{<O> O get(){return 1;}} Integer v = new C().get(); assert v == 1;");
+		assertFailCompile("class C<O>{O get(){return 1;}} Integer v = new C().get(); assert v == 1;");
+
+		assertSuccessSerialize("class C{<O extends Number> O get(){return 1.23;}} Double v = new C().get(); assert v == 1.23;");
+		assertFailCompile("class C<O extends Number>{O get(){return 1.23;}} Double v = new C().get(); assert v == 1.23;");
+
+		assertSuccessSerialize("class C{<O extends Double> O get(){return 1.23;}} Number v = new C().get(); assert v.equals(new Double(1.23));");
+		assertSuccessSerialize("class C<O extends Double>{O get(){return 1.23;}} Number v = new C().get(); assert v.equals(new Double(1.23));");
+
 		assertFailMessage("class C{<O> O get(){return 1;}} Boolean v = new C().get();", "cannot convert 'Integer' to 'Boolean'");
 	}
 }

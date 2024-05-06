@@ -9,7 +9,6 @@ import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
-import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -115,22 +114,14 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 				NodeValueType initializationValueType = initialization.getNodeValueType(validationInfo, ctx);
 				if (initializationValueType.valid) {
 					if (initializationValueType.isCompileValue()) {
-						boolean canBeCasted = initializationValueType.autoCastValue(clazz);
-						if (!canBeCasted) {
+						if (!initializationValueType.autoCastValue(clazz)) {
 							validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
 							valid = false;
 						}
 					} else if (initializationValueType.clazz.isArray() && clazz.isArray()) {
 						valid &= HiClass.validateCastArray(validationInfo, ctx, initialization, (HiClassArray) initializationValueType.clazz, (HiClassArray) clazz);
 					} else if (initializationValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
-						boolean canBeCasted;
-						if (initializationValueType.clazz.isGeneric()) {
-							HiClassGeneric initializationGenericClass = (HiClassGeneric) initializationValueType.clazz;
-							canBeCasted = HiClass.autoCast(ctx, clazz, initializationGenericClass.clazz, false, true);
-						} else {
-							canBeCasted = HiClass.autoCast(ctx, initializationValueType.clazz, clazz, false, true);
-						}
-						if (!canBeCasted) {
+						if (!HiClass.autoCast(ctx, initializationValueType.clazz, clazz, false, true)) {
 							validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
 							valid = false;
 						}

@@ -62,7 +62,7 @@ public class HiClassGeneric extends HiClass {
 
 	@Override
 	public boolean isInstanceof(HiClass clazz) {
-		return this.clazz.isInstanceof(clazz);
+		return this.clazz.isInstanceof(clazz) || (sourceType != NodeGeneric.GenericSourceType.classSource && clazz.isInstanceof(this.clazz));
 	}
 
 	@Override
