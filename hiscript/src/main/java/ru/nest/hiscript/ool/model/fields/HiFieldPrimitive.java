@@ -76,9 +76,9 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	public static boolean autoCast(HiClass src, HiClass dst) {
 		int srcType = src.getPrimitiveType();
 		int dstType = dst.getPrimitiveType();
-		if (srcType == VAR || dstType == VAR) {
-			return true;
-		}
+//		if (srcType == VAR || dstType == VAR) {
+//			return true;
+//		}
 		switch (srcType) {
 			case CHAR:
 				switch (dstType) {

@@ -10,6 +10,7 @@ public class TestVar extends HiTest {
 		assertSuccessSerialize("class A{} var x = new A(); assert x instanceof A;");
 		assertSuccessSerialize("var x = new int[]{1, 2}; assert x instanceof int[]; assert x.length == 2; assert x[1] == 2;");
 		assertSuccessSerialize("var x = 1; var y = x; assert y == 1;");
+		assertSuccessSerialize("var x = \"abc\"; var y = x; assert y.equals(\"abc\"); assert y == x;");
 		assertSuccessSerialize("var x = new String(\"abc\"); var y = x; assert x == y; assert y.getClass() == String.class; assert y.length() == 3;");
 		assertFailCompile("var x;");
 		assertFailCompile("var x; x = 1;");

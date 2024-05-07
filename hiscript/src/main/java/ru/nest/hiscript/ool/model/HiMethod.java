@@ -220,7 +220,14 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					resolve(ctx);
 					rewrittenMethod = intf.getMethod(ctx, signature);
 					if (rewrittenMethod != null) {
-						if (!returnClass.isInstanceof(rewrittenMethod.returnClass)) {
+						boolean match;
+						if (returnClass.isGeneric() && rewrittenMethod.returnClass.isGeneric()) {
+							// generic
+							match = ((HiClassGeneric) returnClass).clazz.isInstanceof(((HiClassGeneric) rewrittenMethod.returnClass).clazz);
+						} else {
+							match = returnClass.isInstanceof(rewrittenMethod.returnClass);
+						}
+						if (!match) {
 							validationInfo.error("incompatible return type", getToken());
 							valid = false;
 							break;

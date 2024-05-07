@@ -82,14 +82,15 @@ public class NodeReturn extends HiNode {
 			if (returnValueType.valid) {
 				boolean match = false;
 				if (expectedType.isGeneric()) {
+					// generic
 					if (returnValueType.clazz == expectedType) {
 						match = true;
-					} else if (returnValueType.clazz.isGeneric()) {
-						HiClassGeneric srcGenericClass = (HiClassGeneric) returnValueType.clazz;
-						HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
-						if (dstGenericClass.clazz.isInstanceof(srcGenericClass.clazz)) {
-							match = true;
-						}
+//					} else if (returnValueType.clazz.isGeneric()) {
+//						HiClassGeneric srcGenericClass = (HiClassGeneric) returnValueType.clazz;
+//						HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
+//						if (dstGenericClass.clazz.isInstanceof(srcGenericClass.clazz)) {
+//							match = true;
+//						}
 					}
 				} else {
 					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true);

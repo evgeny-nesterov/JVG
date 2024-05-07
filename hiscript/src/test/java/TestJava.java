@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 public class TestJava extends HiTest {
 	public static class B {
 		int x;
@@ -47,6 +49,11 @@ public class TestJava extends HiTest {
 		public boolean getBoolean(boolean x) {
 			return x;
 		}
+
+		public HashMap getHashMap(HashMap x) {
+			x.put("k", "v");
+			return x;
+		}
 	}
 
 	@Test
@@ -59,6 +66,7 @@ public class TestJava extends HiTest {
 		assertSuccessSerialize("interface B{int getX();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getX() == 1;");
 		assertSuccessSerialize("interface B{String getText();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getText());");
 		assertSuccessSerialize("interface B{String getText();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getText());");
+		assertSuccessSerialize("interface B{HashMap getHashMap(HashMap m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); HashMap m = b.getHashMap(new HashMap()); assert \"v\".equals(m.get(\"k\"));");
 
 		// primitive types
 		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};

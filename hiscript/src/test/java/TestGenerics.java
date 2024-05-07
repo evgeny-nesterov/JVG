@@ -296,7 +296,23 @@ public class TestGenerics extends HiTest {
 
 		assertSuccess("class C{<O> O get(){return (O)\"abc\";}} String abc = new C().get(); assert abc.equals(\"abc\");");
 
-		assertSuccess("class C{<O> O get(){return (O)\"abc\";}}");
+		assertSuccess("class C{<O> O get(){return (O)\"abc\";}} String s = new C().get(); assert s.equals(\"abc\");");
 		assertFailCompile("class C{<O> O get(){return \"abc\";}}");
+		assertFailMessage("class C{<O> O get(){return (O)\"abc\";}} Boolean s = new C().get();", "cannot convert 'String' to 'Boolean'");
+
+		assertSuccess("class C{<O> O get(O o){return o;}} C c = new C().get(new C()) assert c instanceof C;");
+		assertSuccess("class C{<O extends Number> Number get(O o){return o;}} Number n = new C().get(1d); assert n.equals(new Double(1));");
+		assertSuccess("class C{<O extends Number> O get(O o){return o;}} Float f = new C().get(1.23f); assert f == 1.23F;");
+		assertSuccess("class C{<O1, O2> O1 get(O2 o2){return (O1)o2;}} String a = new C().get(\"a\"); assert a.equals(\"a\");");
+		assertFailCompile("class C{<O1, O2> O1 get(O2 o2){return o2;}}");
+		assertFailCompile("class C{<O1 extends Number, O2 extends Integer> O1 get(O2 o2){return o2;}}");
+
+		assertSuccess("class A1{} class A2 extends A1{} interface I<O extends A1>{O get();} class B<O extends A2> implements I<O>{public O get(){return (O)new A2();}} assert new B<A2>().get() instanceof A2;");
+		assertSuccess("class A1{} class A2 extends A1{} interface I<O1 extends A1>{O1 get();} class B<O2 extends A2> implements I<O2>{public O2 get(){return (O2)new A2();}} assert new B<A2>().get() instanceof A2;");
+	}
+
+	@Test
+	public void testArguments() {
+		assertSuccess("class A<O>{O o; A(O o){this.o=o;} O get(){return o;}} class B{<O> O get(A<O> a){return a.get();}} A<Integer> a = new A<>(1); Integer v = new B().get(a); assert v == 1;");
 	}
 }

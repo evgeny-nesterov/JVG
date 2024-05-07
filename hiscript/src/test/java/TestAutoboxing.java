@@ -220,6 +220,8 @@ public class TestAutoboxing extends HiTest {
 		assertSuccessSerialize("Boolean a = true; Boolean b = null; assert (a || b) == true;");
 		assertFail("Boolean a = true; Boolean b = null; assert a && b;"); // null pointer in b
 		assertFail("boolean a = false; Boolean b = null; assert a || b;"); // null pointer in b
+
+		assertSuccessSerialize("Boolean[] a = new Boolean[3]; a[0] = (boolean)true; a[0] = !a[0]; a[1] = true; assert a[0]; assert a[1]; assert a[2] == null;");
 	}
 
 	@Test
