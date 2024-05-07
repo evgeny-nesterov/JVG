@@ -219,4 +219,21 @@ public class TestNumbers extends HiTest {
 		assertSuccessSerialize("assert 1+1>0+0;");
 		assertSuccessSerialize("assert 1+1<2*2;");
 	}
+
+	@Test
+	public void testNumbersExpressionLimits() {
+		assertSuccessSerialize("byte a = 20 * 6 + 7; assert a == 127;");
+		assertFailCompile("byte a = 127 + 1;");
+		assertFailCompile("byte a = 20 * 20;");
+		assertFailCompile("byte a = -128 - 1;");
+		assertFailCompile("byte a = -20 * 20;");
+
+		assertFailCompile("short a = 32767 + 1;");
+		assertFailCompile("short a = -32768 - 1;");
+		assertFailCompile("short a = 200 * 200;");
+		assertFailCompile("short a = -200 * 200;");
+
+		assertSuccessSerialize("int a = 1_000_000 * 1_000_000 * 1_000_000;");
+		assertSuccessSerialize("int a = -1_000_000 * 1_000_000 * 1_000_000;");
+	}
 }

@@ -71,7 +71,7 @@ public abstract class HiTest {
 	public void assertFail(String script) {
 		try {
 			execute(script);
-			onFail(script, "fail");
+			onFail(script, "executed successfully");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {
@@ -83,7 +83,7 @@ public abstract class HiTest {
 	public void assertFailMessage(String script, String expectMessage) {
 		try {
 			execute(script);
-			onFail(script, "fail");
+			onFail(script, "executed successfully");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {
@@ -92,7 +92,7 @@ public abstract class HiTest {
 				System.out.println("Success! Expected failure: " + e.getMessage());
 			} else {
 				e.printStackTrace();
-				onFail(script, "Failure! Expected message: " + expectMessage);
+				onFail(script, "Failure! Expected message: " + expectMessage + ". Real message: " + e.getMessage());
 			}
 		}
 	}

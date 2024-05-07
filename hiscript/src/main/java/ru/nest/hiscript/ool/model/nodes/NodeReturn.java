@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -78,9 +79,25 @@ public class NodeReturn extends HiNode {
 		}
 		if (value != null) {
 			NodeValueType returnValueType = value.getNodeValueType(validationInfo, ctx);
-			if (returnValueType.valid && !HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true)) {
-				validationInfo.error("incompatible types; found " + returnValueType.clazz + ", required " + expectedType, value.getToken());
-				return false;
+			if (returnValueType.valid) {
+				boolean match = false;
+				if (expectedType.isGeneric()) {
+					if (returnValueType.clazz == expectedType) {
+						match = true;
+					} else if (returnValueType.clazz.isGeneric()) {
+						HiClassGeneric srcGenericClass = (HiClassGeneric) returnValueType.clazz;
+						HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
+						if (dstGenericClass.clazz.isInstanceof(srcGenericClass.clazz)) {
+							match = true;
+						}
+					}
+				} else {
+					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true);
+				}
+				if (!match) {
+					validationInfo.error("incompatible types; found " + returnValueType.clazz + ", required " + expectedType, value.getToken());
+					return false;
+				}
 			}
 		} else if (expectedType != HiClassPrimitive.VOID) {
 			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType, token);

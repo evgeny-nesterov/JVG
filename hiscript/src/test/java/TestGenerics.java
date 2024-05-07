@@ -275,15 +275,28 @@ public class TestGenerics extends HiTest {
 
 	@Test
 	public void testAssignments() {
-		assertSuccessSerialize("class C{<O> O get(){return 1;}} Integer v = new C().get(); assert v == 1;");
-		assertFailCompile("class C<O>{O get(){return 1;}} Integer v = new C().get(); assert v == 1;");
+		assertSuccessSerialize("class C{<O> O get(){return (O)new Integer(1);}} Integer v = new C().get(); assert v == 1;");
+		assertFailCompile("class C<O>{O get(){return (O)new Integer(1);}} Integer v = new C().get(); assert v == 1;");
 
-		assertSuccessSerialize("class C{<O extends Number> O get(){return 1.23;}} Double v = new C().get(); assert v == 1.23;");
-		assertFailCompile("class C<O extends Number>{O get(){return 1.23;}} Double v = new C().get(); assert v == 1.23;");
+		assertSuccessSerialize("class C{<O extends Number> O get(){return (O)new Double(1.23);}} Double v = new C().get(); assert v == 1.23;");
+		assertFailCompile("class C<O extends Number>{O get(){return (O)new Double(1.23);}} Double v = new C().get(); assert v == 1.23;");
 
-		assertSuccessSerialize("class C{<O extends Double> O get(){return 1.23;}} Number v = new C().get(); assert v.equals(new Double(1.23));");
-		assertSuccessSerialize("class C<O extends Double>{O get(){return 1.23;}} Number v = new C().get(); assert v.equals(new Double(1.23));");
+		assertSuccessSerialize("class C{<O extends Double> O get(){return (O)new Double(1.23);}} Number v = new C().get(); assert v.equals(new Double(1.23));");
+		assertSuccessSerialize("class C<O extends Double>{O get(){return (O)new Double(1.23);}} Number v = new C().get(); assert v.equals(new Double(1.23));");
 
-		assertFailMessage("class C{<O> O get(){return 1;}} Boolean v = new C().get();", "cannot convert 'Integer' to 'Boolean'");
+		assertFailMessage("class C{<O> O get(){return (O)new Integer(1);}} Boolean v = new C().get();", "cannot convert 'Integer' to 'Boolean'");
+	}
+
+	@Test
+	public void testReturn() {
+		assertSuccess("class C{<O extends Number> O get(){return (O)new Double(1.23);}}");
+		assertFailCompile("class C{<O extends Number> O get(){return 1.23;}}");
+		assertFailCompile("class C<O extends Number>{O get(){return 1.23;}}");
+		assertFailCompile("class C<O extends Number>{O get(){return (O)1.23;}}");
+
+		assertSuccess("class C{<O> O get(){return (O)\"abc\";}} String abc = new C().get(); assert abc.equals(\"abc\");");
+
+		assertSuccess("class C{<O> O get(){return (O)\"abc\";}}");
+		assertFailCompile("class C{<O> O get(){return \"abc\";}}");
 	}
 }

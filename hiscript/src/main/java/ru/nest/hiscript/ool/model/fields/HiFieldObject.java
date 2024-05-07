@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
@@ -58,10 +59,16 @@ public class HiFieldObject extends HiField<Object> {
 			lambdaClass = null;
 		} else {
 			// generic
-			if (value.valueClass.isGeneric() && value.object != null) {
+			if (!value.valueClass.isPrimitive() && !value.valueClass.isLambda() && value.object != null) {
 				if (value.object instanceof HiObject) {
 					HiClass dstClass = getClass(ctx);
 					HiClass srcClass = ((HiObject) value.object).clazz;
+
+					// generic
+					if (dstClass.isGeneric()) {
+						dstClass = ((HiClassGeneric) dstClass).clazz;
+					}
+
 					if (!srcClass.isInstanceof(dstClass)) {
 						ctx.throwRuntimeException("cannot convert '" + srcClass.getNameDescr() + "' to '" + dstClass.getNameDescr() + "'");
 					}

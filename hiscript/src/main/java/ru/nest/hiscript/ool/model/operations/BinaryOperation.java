@@ -1,8 +1,11 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -113,54 +116,32 @@ public abstract class BinaryOperation extends HiOperation {
     public abstract void doOperation(RuntimeContext ctx, Value v1, Value v2);
 
     protected void autoCastInt(Value v1, int value) {
-        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-            v1.valueClass = TYPE_BYTE;
-            v1.byteNumber = (byte) value;
-        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-            v1.valueClass = TYPE_SHORT;
-            v1.shortNumber = (short) value;
-        } else {
+//        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
+//            v1.valueClass = TYPE_BYTE;
+//            v1.byteNumber = (byte) value;
+//        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+//            v1.valueClass = TYPE_SHORT;
+//            v1.shortNumber = (short) value;
+//        } else {
             v1.valueClass = TYPE_INT;
             v1.intNumber = value;
-        }
-    }
-
-    protected HiClassPrimitive autoCastInt(int value) {
-        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-            return TYPE_BYTE;
-        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-            return TYPE_SHORT;
-        } else {
-            return TYPE_INT;
-        }
+//        }
     }
 
     protected void autoCastLong(Value v1, long value) {
-        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-            v1.valueClass = TYPE_BYTE;
-            v1.byteNumber = (byte) value;
-        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-            v1.valueClass = TYPE_SHORT;
-            v1.shortNumber = (short) value;
-        } else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-            v1.valueClass = TYPE_INT;
-            v1.intNumber = (int) value;
-        } else {
+//        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
+//            v1.valueClass = TYPE_BYTE;
+//            v1.byteNumber = (byte) value;
+//        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+//            v1.valueClass = TYPE_SHORT;
+//            v1.shortNumber = (short) value;
+//        } else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
+//            v1.valueClass = TYPE_INT;
+//            v1.intNumber = (int) value;
+//        } else {
             v1.valueClass = TYPE_LONG;
             v1.longNumber = value;
-        }
-    }
-
-    protected HiClassPrimitive autoCastLong(long value) {
-        if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-            return TYPE_BYTE;
-        } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-            return TYPE_SHORT;
-        } else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-            return TYPE_INT;
-        } else {
-            return TYPE_LONG;
-        }
+//        }
     }
 
     public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
