@@ -52,7 +52,6 @@ public class NodeDoWhile extends HiNode {
 					if (ctx.exitFromBlock()) {
 						return;
 					}
-
 					if (ctx.isBreak || (ctx.isContinue && !ctx.isCurrentLabel())) {
 						break;
 					}

@@ -65,6 +65,9 @@ public class NodeArrayValue extends HiNode {
         Object value = Array.newInstance(javaClass, array.length);
         for (int i = 0; i < size; i++) {
             array[i].execute(ctx);
+            if (ctx.exitFromBlock()) {
+                return;
+            }
             HiArrays.setArray(cellClass, value, i, ctx.value);
         }
 

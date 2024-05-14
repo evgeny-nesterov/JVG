@@ -28,8 +28,10 @@ public class NodeAnnotation extends HiNode {
 		boolean valid = true;
 		HiClass clazz = ctx.getClass(name);
 		if (clazz == null) {
-			validationInfo.error("cannot resolve class '" + name + "'", getToken());
-			valid = false;
+			if (!validationInfo.hasMessage("annotation name is expected")) {
+				validationInfo.error("cannot resolve class '" + name + "'", getToken());
+				valid = false;
+			}
 		} else if (!clazz.isAnnotation()) {
 			validationInfo.error("annotation class expected", getToken());
 			valid = false;

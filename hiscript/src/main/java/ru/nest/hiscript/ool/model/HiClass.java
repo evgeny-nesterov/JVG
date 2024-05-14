@@ -899,9 +899,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (this == clazz || clazz == HiClass.OBJECT_CLASS) {
 			return true;
 		}
-		if (clazz == null) {
-			return false;
-		}
 		if (clazz.isMix()) {
 			HiClassMix mixClass = (HiClassMix) clazz;
 			for (HiClass c : mixClass.classes) {
@@ -913,10 +910,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			// generic
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
 			return genericClass.isInstanceof(this);
-		} else if (isGeneric()) {
-			// generic
-			HiClassGeneric genericClass = (HiClassGeneric) this;
-			return genericClass.isInstanceof(clazz);
 		} else {
 			HiClass c = this;
 			while (c != null) {
@@ -2108,24 +2101,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			}
 		}
 		return false;
-	}
-
-	@Deprecated
-	public boolean isRootClassTop() {
-		HiClass rootClass = getRootClass();
-		return rootClass.isTopLevel() || rootClass.name.equals(ROOT_CLASS_NAME);
-	}
-
-	@Deprecated
-	public HiClass getRootClass() {
-		HiClass clazz = this;
-		while (clazz.enclosingClass != null) {
-			if (!clazz.enclosingClass.hasInnerClass(clazz)) {
-				break;
-			}
-			clazz = clazz.enclosingClass;
-		}
-		return clazz;
 	}
 
 	private byte isStaticRootClassTop = -1;

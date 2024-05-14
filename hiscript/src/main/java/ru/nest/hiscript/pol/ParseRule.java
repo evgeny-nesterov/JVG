@@ -1,18 +1,15 @@
 package ru.nest.hiscript.pol;
 
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.pol.model.ByteNode;
 import ru.nest.hiscript.pol.model.CharacterNode;
 import ru.nest.hiscript.pol.model.DoubleNode;
 import ru.nest.hiscript.pol.model.FloatNode;
 import ru.nest.hiscript.pol.model.IntNode;
 import ru.nest.hiscript.pol.model.LongNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.pol.model.ShortNode;
 import ru.nest.hiscript.pol.model.StringNode;
 import ru.nest.hiscript.pol.model.Types;
 import ru.nest.hiscript.pol.model.VariableNode;
-import ru.nest.hiscript.tokenizer.ByteToken;
 import ru.nest.hiscript.tokenizer.CharToken;
 import ru.nest.hiscript.tokenizer.CommentToken;
 import ru.nest.hiscript.tokenizer.DoubleToken;
@@ -20,7 +17,6 @@ import ru.nest.hiscript.tokenizer.FloatToken;
 import ru.nest.hiscript.tokenizer.IntToken;
 import ru.nest.hiscript.tokenizer.LongToken;
 import ru.nest.hiscript.tokenizer.OperationSymbols;
-import ru.nest.hiscript.tokenizer.ShortToken;
 import ru.nest.hiscript.tokenizer.StringToken;
 import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -179,14 +175,6 @@ public abstract class ParseRule<N extends Node> {
 			IntToken token = (IntToken) currentToken;
 			tokenizer.nextToken();
 			return new IntNode(token.getNumber());
-		} else if (currentToken instanceof ShortToken) {
-			ShortToken token = (ShortToken) currentToken;
-			tokenizer.nextToken();
-			return new ShortNode(token.getNumber());
-		} else if (currentToken instanceof ByteToken) {
-			ByteToken token = (ByteToken) currentToken;
-			tokenizer.nextToken();
-			return new ByteNode(token.getNumber());
 		}
 		return null;
 	}
@@ -196,7 +184,7 @@ public abstract class ParseRule<N extends Node> {
 			skipComments(tokenizer);
 
 			Token currentToken = tokenizer.currentToken();
-			if (currentToken instanceof DoubleToken || currentToken instanceof FloatToken || currentToken instanceof LongToken || currentToken instanceof IntToken || currentToken instanceof ShortToken || currentToken instanceof ByteToken) {
+			if (currentToken instanceof DoubleToken || currentToken instanceof FloatToken || currentToken instanceof LongToken || currentToken instanceof IntToken) {
 				tokenizer.nextToken();
 				return true;
 			}

@@ -54,7 +54,7 @@ public class NodeIdentifier extends HiNode {
             if (dimension > 0) {
                 clazz = clazz.getArrayClass(dimension);
             }
-            ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+            ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
             ctx.nodeValueType.type = Type.getType(clazz);
             return clazz;
         } else {
@@ -168,6 +168,9 @@ public class NodeIdentifier extends HiNode {
             ctx.value.valueType = Value.VALUE;
             ctx.value.valueClass = field.getClass(ctx);
             field.execute(ctx);
+            if (ctx.exitFromBlock()) {
+                return true;
+            }
 
             // generic
             if (ctx.value.valueClass.isGeneric()) {

@@ -25,6 +25,9 @@ public class OperationInstanceOf extends BinaryOperation {
     public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
         HiClass c1 = node1.clazz;
         HiClass c2 = node2.clazz;
+        if (node2.returnType != NodeValueType.NodeValueReturnType.classValue) {
+            validationInfo.error("type expected", node2.node.getToken());
+        }
         if (!c1.isVar()) {
             if (c1.isPrimitive()) {
                 validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node.getToken());

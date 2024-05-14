@@ -13,4 +13,15 @@ public class HiScriptValidationException extends Exception {
 	public Token getToken() {
 		return token;
 	}
+
+	private ValidationInfo validationInfo;
+
+	public ValidationInfo getValidationInfo() {
+		return validationInfo;
+	}
+
+	public HiScriptValidationException setValidationInfo(ValidationInfo validationInfo) {
+		this.validationInfo = validationInfo;
+		return this;
+	}
 }

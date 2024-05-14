@@ -1,7 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
@@ -13,24 +17,8 @@ public class NodeChar extends HiNode {
 
 	private final static HiClass type = HiClass.getPrimitiveClass(name);
 
-	private static final NodeChar[] cache = new NodeChar[256];
-
-	public static NodeChar getInstance(char value, Token token) {
-		if (token != null) {
-			NodeChar node = new NodeChar(value);
-			node.token = token;
-			return node;
-		}
-
-		int index = value & 0xFF;
-		if (cache[index] == null) {
-			cache[index] = new NodeChar(value);
-		}
-		return cache[index];
-	}
-
-	private NodeChar(char value) {
-		super(name, TYPE_CHAR, false);
+	public NodeChar(char value, Token token) {
+		super(name, TYPE_CHAR, token, false);
 		this.value = value;
 	}
 
@@ -81,6 +69,6 @@ public class NodeChar extends HiNode {
 	}
 
 	public static NodeChar decode(DecodeContext os, Token token) throws IOException {
-		return getInstance(os.readChar(), token);
+		return new NodeChar(os.readChar(), token);
 	}
 }

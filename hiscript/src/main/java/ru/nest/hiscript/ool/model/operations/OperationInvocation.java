@@ -66,7 +66,7 @@ public class OperationInvocation extends BinaryOperation {
 				}
 			}
 			ctx.exit();
-			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
+			ctx.nodeValueType.returnType = node2.returnType != NodeValueType.NodeValueReturnType.noValue ? node2.returnType : NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
 
 			// generic
 			HiClass clazz = node2.clazz;

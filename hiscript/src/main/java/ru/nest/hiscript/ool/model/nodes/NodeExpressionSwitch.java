@@ -53,8 +53,10 @@ public class NodeExpressionSwitch extends HiNode {
 			ctx.nodeValueType.returnType = topClass != null && topClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = Type.getType(topClass);
 			return topClass;
+		} else {
+			validationInfo.error("expression switch without cases", getToken());
+			return null;
 		}
-		return null;
 	}
 
 	@Override

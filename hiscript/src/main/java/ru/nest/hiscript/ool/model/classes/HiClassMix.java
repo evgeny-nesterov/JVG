@@ -53,7 +53,7 @@ public class HiClassMix extends HiClass {
 					superClass = clazz.getCommonClass(superClass);
 				}
 			} else {
-				validationInfo.error("Invalid class '" + clazz.getNameDescr() + "' in mix class: object class expected", getToken());
+				validationInfo.error("invalid class '" + clazz.getNameDescr() + "' in mix class: object class expected", getToken());
 				valid = false;
 			}
 		}

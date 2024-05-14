@@ -7,10 +7,10 @@ public class TestAnnotations extends HiTest {
 		assertSuccessSerialize("abstract @interface Field{String value() default \"x=\" + 1;}");
 		assertSuccessSerialize("static @interface Field{int value();}");
 		assertSuccessSerialize("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
-		assertFailCompile("@interface {String value();}");
+		assertFailCompile("@interface {String value();}", "annotation class name is expected");
 
 		assertSuccessSerialize("@interface A{int value() default y + 1; int x = 1; int y = x + 1;} @A(value=2) class C{} C c = new C();");
-		assertFailCompile("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}"); // division by zero while compiling
+		assertFailCompile("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}", "divide by zero");
 		assertSuccessSerialize("enum E{e1,e2} @interface A{E value() default e2; E e1 = E.e1; E e2 = e1;}; @A(E.e2) class C{@A(value=E.e2) void get(){}};");
 		assertSuccessSerialize("static class C{final static int CONST=1;} @interface A{int value() default C.CONST;}");
 
@@ -28,40 +28,40 @@ public class TestAnnotations extends HiTest {
 		assertSuccessSerialize("@interface NonNull{} for(@NonNull Object o : new Object[]{}){} for(@NonNull int i=0; i < 3; i++);");
 
 		assertSuccessSerialize("static class C1{final static int CONST=1;} static class C2{final static int CONST=C1.CONST;} @interface A{int value() default C2.CONST;}");
-		assertFailCompile("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
-		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}"); // constant expected
+		assertFailCompile("static class C{static int CONST=1;} @interface A{int value() default C.CONST;}", "constant expected");
+		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}", "constant expected");
 
 		// array arguments
 
 		// fails
-		assertFailCompile("@;");
-		assertFailCompile("@interface;");
-		assertFailCompile("@interface A;");
-		assertFailCompile("@interface A{");
-		assertFailCompile("@interface A{int value()}");
-		assertFailCompile("@interface A{int value() default;}");
-		assertFailCompile("@interface A{int value default 1;}");
-		assertFailCompile("@interface A{int value(int x);}");
-		assertFailCompile("@interface A{int value() default x;}");
-		assertFailCompile("@interface A{int value() default true;}");
-		assertFailCompile("@interface A{byte value() default 1L;}");
-		assertFailCompile("@interface A{String value() default 'a';}");
-		assertFailCompile("@interface A{int x;}");
+		assertFailCompile("@;", "unexpected token");
+		assertFailCompile("@interface;", "annotation class name is expected");
+		assertFailCompile("@interface A;", "'{' is expected");
+		assertFailCompile("@interface A{", "'}' is expected");
+		assertFailCompile("@interface A{int value()}", "';' is expected");
+		assertFailCompile("@interface A{int value() default;}", "value expected");
+		assertFailCompile("@interface A{int value default 1;}", "'}' is expected");
+		assertFailCompile("@interface A{int value(int x);}", "')' is expected");
+		assertFailCompile("@interface A{int value() default x;}", "cannot resolve symbol 'x'");
+		assertFailCompile("@interface A{int value() default true;}", "boolean cannot be converted to int");
+		assertFailCompile("@interface A{byte value() default 1L;}", "long cannot be converted to byte");
+		assertFailCompile("@interface A{String value() default 'a';}", "char cannot be converted to String");
+		assertFailCompile("@interface A{int x;}", "variable 'x' might not have been initialized");
 
-		assertFailCompile("@(value = \"x\") int x;");
-		assertFailCompile("@A(value}");
-		assertFailCompile("@A(value = }");
-		assertFailCompile("@A(value = null}");
-		assertFailCompile("@A(value = 0;}");
-		assertFailCompile("@A(value = \"x\") {};");
-		assertFailCompile("@interface A{} int x = 0; @A x;");
-		assertFailCompile("@interface A{int value()}");
-		assertFailCompile("@interface A{int value();} @A(a=\"a\") int x = 0;");
-		assertFailCompile("@interface A{int value();} @A(value=) int x = 0;");
-		assertFailCompile("@interface A{int value();} @A(value=\"a\") int x = 0;");
-		assertFailCompile("@interface A{int value();} @A(\"a\") int x = 0;");
-		assertFailCompile("class A{} @A int x = 0;");
-		assertFailCompile("interface A{} @A int x = 0;");
-		assertFailCompile("public @interface A{int value();} @A(value=\"a\", value=\"b\") int x;");
+		assertFailCompile("@(value = \"x\") int x;", "annotation name is expected");
+		assertFailCompile("@A(value}", "')' is expected");
+		assertFailCompile("@A(value = }", "argument value expected");
+		assertFailCompile("@A(value = null}", "';' is expected");
+		assertFailCompile("@A(value = 0;}", "')' is expected");
+		assertFailCompile("@A(value = \"x\") {};", "cannot resolve symbol 'value'");
+		assertFailCompile("@interface A{} int x = 0; @A x;", "not a statement");
+		assertFailCompile("@interface A{int value()}", "';' is expected");
+		assertFailCompile("@interface A{int value();} @A(a=\"a\") int x = 0;", "annotation argument with name 'a' is not found");
+		assertFailCompile("@interface A{int value();} @A(value=) int x = 0;", "argument value expected");
+		assertFailCompile("@interface A{int value();} @A(value=\"a\") int x = 0;", "String cannot be converted to int");
+		assertFailCompile("@interface A{int value();} @A(\"a\") int x = 0;", "String cannot be converted to int");
+		assertFailCompile("class A{} @A int x = 0;", "annotation class expected");
+		assertFailCompile("interface A{} @A int x = 0;", "annotation class expected");
+		assertFailCompile("public @interface A{int value();} @A(value=\"a\", value=\"b\") int x;", "duplicate annotation argument");
 	}
 }

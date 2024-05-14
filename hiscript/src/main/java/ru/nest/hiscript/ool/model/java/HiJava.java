@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.lang.reflect.Array;
@@ -16,8 +17,30 @@ public class HiJava {
 	public static Object convertFromJava(RuntimeContext ctx, Object javaObject) {
 		if (javaObject == null) {
 			return null;
-		} else if (javaObject instanceof Number || javaObject instanceof Boolean || javaObject instanceof Character) {
-			return javaObject;
+		} else if (javaObject instanceof Integer) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.INT.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Boolean) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.BOOLEAN.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Long) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.LONG.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Double) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.DOUBLE.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Character) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.CHAR.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Byte) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.BYTE.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Short) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.SHORT.autobox(ctx, ctx.value);
+		} else if (javaObject instanceof Float) {
+			ctx.value.set(javaObject);
+			return HiClassPrimitive.FLOAT.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof String) {
 			return NodeString.createString(ctx, (String) javaObject);
 		} else if (javaObject instanceof Map) {

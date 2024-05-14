@@ -205,7 +205,7 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		if (classesMap.containsKey(clazz.name)) {
-			tokenizer.error("Duplicate nested type " + clazz.name);
+			tokenizer.error("duplicate nested type " + clazz.name);
 		}
 
 		classes.add(clazz);
@@ -280,7 +280,7 @@ public class CompileClassContext implements ClassResolver {
 	public boolean addLocalClass(HiClass clazz) {
 		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
-			compiler.getValidationInfo().error("Duplicated nested type " + clazz.getNameDescr(), clazz.getToken());
+			compiler.getValidationInfo().error("duplicated nested type " + clazz.getNameDescr(), clazz.getToken());
 			valid = false;
 		}
 		level.addClass(clazz);
@@ -368,10 +368,10 @@ public class CompileClassContext implements ClassResolver {
 		return null;
 	}
 
-	public boolean addLocalVariable(NodeVariable localVariable) {
+	public boolean addLocalVariable(NodeVariable localVariable, boolean checkDuplicate) {
 		boolean valid = true;
 		if (hasLocalVariable(localVariable.getVariableName())) {
-			compiler.getValidationInfo().error("Duplicated local variable " + localVariable.getVariableName(), ((HiNode) localVariable).getToken());
+			compiler.getValidationInfo().error("duplicated local variable " + localVariable.getVariableName(), ((HiNode) localVariable).getToken());
 			valid = false;
 		}
 		level.addField(localVariable);

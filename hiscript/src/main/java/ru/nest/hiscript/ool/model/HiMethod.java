@@ -443,6 +443,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				body.execute(ctx);
 			}
 
+			if (ctx.exitFromBlock()) {
+				return;
+			}
+
 			// autobox
 			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {
 				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);

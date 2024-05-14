@@ -33,11 +33,11 @@ public class NodeCastedIdentifier extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
 		}
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
 		ctx.nodeValueType.type = Type.getType(clazz);
 		return clazz;
 	}
@@ -75,14 +75,12 @@ public class NodeCastedIdentifier extends HiNode {
 					validationInfo.error("inconvertible types; cannot cast " + name + " to Record", getToken());
 					valid = false;
 				}
-			} else {
-				valid = false;
 			}
 		}
 		if (castedVariableName != null) {
 			declarationNode = new NodeDeclaration(name, castedVariableName);
 			declarationNode.setToken(token);
-			valid &= ctx.addLocalVariable(declarationNode);
+			valid &= ctx.addLocalVariable(declarationNode, true);
 			ctx.initializedNodes.add(declarationNode);
 		}
 		if (castedCondition != null) {

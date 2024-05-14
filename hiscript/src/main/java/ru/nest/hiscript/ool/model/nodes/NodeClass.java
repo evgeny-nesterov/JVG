@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
@@ -15,10 +14,6 @@ public class NodeClass extends HiNode {
 	public NodeClass(HiClass clazz) {
 		super("class", TYPE_CLASS, true);
 		this.clazz = clazz;
-
-		if (clazz == null) {
-			throw new HiScriptRuntimeException("class is null");
-		}
 	}
 
 	private NodeClass() {

@@ -105,7 +105,6 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-
 				if (ctx.isBreak || ctx.isContinue) {
 					break;
 				}

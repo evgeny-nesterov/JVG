@@ -152,7 +152,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 		// TODO check name, modifiers, annotations
 		// TODO keep in field only runtime annotations
-		valid &= ctx.addLocalVariable(this);
+		valid &= ctx.addLocalVariable(this, true);
 		return valid;
 	}
 

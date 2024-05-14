@@ -114,6 +114,10 @@ public class TestClasses extends HiTest {
 
 		// interfaces
 		assertSuccessSerialize("interface I{interface I1{}} class X implements I {I1 m() {I1 i = new I1(){}; return i;}} assert new X().m() instanceof I.I1;");
+
+		// super class
+		assertSuccessSerialize("class C1 {class C2{}} class X extends C1 {C2 m() {C2 c2 = new C2(); return c2;}} assert new X().m() instanceof C1.C2;");
+		assertSuccessSerialize("class C1 {class C2{class C3{}}} class X extends C1 {C1.C2.C3 m() {C1.C2.C3 c3 = new C1().new C2().new C3(); return c3;}} assert new X().m() instanceof C1.C2.C3;");
 	}
 
 	@Test
@@ -269,48 +273,63 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1 {throw new E2();}}");
 		assertFailCompile("class E extends Exception{}; class A{void m() throws E {throw new E(); throw new E();}}");
 
-		assertFailCompile("class A{void ()}");
-		assertFailCompile("class A{void m()}");
-		assertFailCompile("class A{void m(){}");
-		assertFailCompile("class A{m(){}}");
-		assertFailCompile("class A{void m(){return 1;}}");
-		assertFailCompile("class A{int m(){return;}}");
-		assertFailCompile("class A{int m(){return 1;return 1;}}");
-		assertFailCompile("class A{void m(){return;return;}}");
-		assertFailCompile("class A{void m() throws {}}");
-		assertFailCompile("class A{void m() throws Exception, {}}");
+		assertFailCompile("class A{void ()}", "'}' is expected", "unexpected token");
+		assertFailCompile("class A{void m()}", "'{' is expected", "'}' is expected");
+		assertFailCompile("class A{void m(){}", "'}' is expected");
+		assertFailCompile("class A{m(){}}", "invalid method declaration; return type is expected");
+		assertFailCompile("class A{void m(){return 1;}}", "incompatible types; found int, required void");
+		assertFailCompile("class A{int m(){return;}}", "incompatible types; found void, required int");
+		assertFailCompile("class A{int m(){return 1;return 1;}}", "unreachable statement");
+		assertFailCompile("class A{void m(){return;return;}}", "unreachable statement");
+		assertFailCompile("class A{void m() throws {}}", "identifier expected");
+		assertFailCompile("class A{void m() throws Exception, {}}", "identifier expected");
 
 		// rewrite
 		assertSuccessSerialize("class A{Number get(){return 1;}} class B extends A{Integer get(){return 2;}}");
-		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{String get(){return null;}}");
-		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{Number get(){return null;}}");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{String get(){return null;}}", "incompatible return type");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{Number get(){return null;}}", "incompatible return type");
 
 		assertSuccessSerialize("interface A{Number get();} class B implements A{Integer get(){return 2;}}");
-		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}");
-		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}");
+		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}", "incompatible return type");
+		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}", "incompatible return type");
 
 		// synchronized
 		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
 
 		// primitives
-		assertFailCompile("boolean x = 1; x.toString();");
-		assertFailCompile("byte x = 1; x.toString();");
-		assertFailCompile("short x = 1; x.toString();");
-		assertFailCompile("char x = 1; x.toString();");
-		assertFailCompile("int x = 1; x.toString();");
-		assertFailCompile("long x = 1; x.toString();");
-		assertFailCompile("float x = 1; x.toString();");
-		assertFailCompile("double x = 1; x.toString();");
+		assertFailCompile("boolean x = true; x.toString();", "cannot resolve method 'toString' in 'boolean'");
+		assertFailCompile("byte x = 1; x.toString();", "cannot resolve method 'toString' in 'byte'");
+		assertFailCompile("short x = 1; x.toString();", "cannot resolve method 'toString' in 'short'");
+		assertFailCompile("char x = 1; x.toString();", "cannot resolve method 'toString' in 'char'");
+		assertFailCompile("int x = 1; x.toString();", "cannot resolve method 'toString' in 'int'");
+		assertFailCompile("long x = 1; x.toString();", "cannot resolve method 'toString' in 'long'");
+		assertFailCompile("float x = 1; x.toString();", "cannot resolve method 'toString' in 'float'");
+		assertFailCompile("double x = 1; x.toString();", "cannot resolve method 'toString' in 'double'");
 
 		// failures
-		assertFailCompile("class A{void m(){return; int x = 1;}}");
-		assertFailCompile("class A{void m1(){} void m2(){return; m1();}}");
-		assertFailCompile("class A{void m(){}} class B extends A{void m(){return; super.m();}} ");
-		assertFailCompile("class A{void m(int x, String x){}}");
-		assertFailCompile("class A{abstract void m();}");
-		assertFailCompile("abstract class A{abstract void m(){}}");
-		assertFailCompile("interface A{native void m();}");
-		assertFailCompile("class A{abstract static void m();}");
+		assertFailCompile("class A{void m(){return; int x = 1;}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m1(){} void m2(){return; m1();}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m(){}} class B extends A{void m(){return; super.m();}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m(int x, String x){}}", //
+				"duplicated argument 'x'", //
+				"argument with name 'x' already exists");
+		assertFailCompile("class A{abstract void m();}", //
+				"abstract method in non-abstract class", //
+				"abstract method m() is implemented in non-abstract class");
+		assertFailCompile("abstract class A{abstract void m(){}}", //
+				"';' is expected");
+		assertFailCompile("interface A{native void m();}", //
+				"interface methods cannot be native", //
+				"modifier 'private' is expected", //
+				"interface abstract methods cannot have body");
+		assertFailCompile("class A{abstract static void m();}", //
+				"illegal combination of modifiers: 'static' and 'abstract'", //
+				"abstract method in non-abstract class", //
+				"static method cannot be abstract");
+		assertFailCompile("int x = 1; x.m();", "cannot resolve method 'm' in 'int'");
 	}
 
 	@Test
@@ -354,6 +373,7 @@ public class TestClasses extends HiTest {
 		// signature
 		assertSuccessSerialize("class C{C(){}} new C();");
 		assertSuccessSerialize("class A{A(int x, String arg){}} new A(0, \"a\"); new A(0, null);");
+		assertSuccessSerialize("class C{C(int x, int y){assert false;} C(int x){}} new C(1);");
 
 		assertFailCompile("class C{C(byte x){}} new C((short)1);");
 		assertFailCompile("class C{C(byte x){}} new C('1');");

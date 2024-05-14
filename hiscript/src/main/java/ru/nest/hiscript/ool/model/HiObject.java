@@ -306,14 +306,14 @@ public class HiObject {
                     Object value = getJavaValue(ctx, e.getValue());
                     javaMap.put(key, value);
                 }
-                return map;
+                return javaMap;
             case "ArrayList":
                 List<?> list = (List<?>) userObject;
                 List javaList = new ArrayList(list.size());
                 for (Object value : list) {
                     javaList.add(getJavaValue(ctx, value));
                 }
-                return list;
+                return javaList;
         }
         if (clazz.isJava()) {
             return userObject;

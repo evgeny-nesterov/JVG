@@ -41,7 +41,6 @@ public class NodeDeclarations extends HiNode implements HasModifiers {
 		for (int i = 0; i < size; i++) {
 			NodeDeclaration declaration = declarations.get(i);
 			declaration.execute(ctx);
-
 			if (ctx.exitFromBlock()) {
 				return;
 			}

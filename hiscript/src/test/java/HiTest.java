@@ -64,7 +64,7 @@ public abstract class HiTest {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {
 			// expected
-			System.out.println("Success! Expected failure: " + e.getMessage());
+			System.err.println("Success! Expected failure: " + e.getMessage());
 		}
 	}
 
@@ -76,7 +76,7 @@ public abstract class HiTest {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {
 			// expected
-			System.out.println("Success! Expected failure: " + e.getMessage());
+			System.err.println("Success! Expected failure: " + e.getMessage());
 		}
 	}
 
@@ -89,7 +89,7 @@ public abstract class HiTest {
 		} catch (Throwable e) {
 			if (e.getMessage() != null && e.getMessage().indexOf(expectMessage) != -1) {
 				// expected
-				System.out.println("Success! Expected failure: " + e.getMessage());
+				System.err.println("Success! Expected failure: " + e.getMessage());
 			} else {
 				e.printStackTrace();
 				onFail(script, "Failure! Expected message: " + expectMessage + ". Real message: " + e.getMessage());
@@ -106,9 +106,9 @@ public abstract class HiTest {
 		} catch (Throwable e) {
 			// expected
 			if (e.getClass() == exceptionClass) {
-				System.out.println("Success! Expected failure: " + e);
+				System.err.println("Success! Expected failure: " + e);
 			} else {
-				System.out.println("Failure! Expected exception: " + exceptionClass);
+				System.err.println("Failure! Expected exception: " + exceptionClass);
 				e.printStackTrace();
 			}
 		}
@@ -122,7 +122,7 @@ public abstract class HiTest {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {
 			// expected
-			System.out.println("Success! Expected failure: " + e.getMessage());
+			System.err.println("Success! Expected failure: " + e.getMessage());
 		}
 	}
 
@@ -132,7 +132,32 @@ public abstract class HiTest {
 			onFail(script, "fail (actual success)");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			// expected
-			System.out.println("Success! Expected compile failure: " + e.getMessage());
+			System.err.println("Success! Expected compile failure: " + e.getMessage());
+		} catch (Throwable e) {
+			e.printStackTrace();
+			onFail(script, "Expected compile failure");
+		}
+	}
+
+	public void assertFailCompile(String script, String... expectMessages) {
+		try {
+			compile(script);
+			onFail(script, "fail (actual success)");
+		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
+			boolean match = true;
+			for (String expectMessage : expectMessages) {
+				boolean matchMessage = e.getMessage() != null && e.getMessage().indexOf(expectMessage) != -1;
+				if (!matchMessage && e instanceof HiScriptValidationException) {
+					matchMessage = ((HiScriptValidationException) e).getValidationInfo().hasMessage(expectMessage);
+				}
+				if (!matchMessage) {
+					onFail(script, "Failure! Expected compile message: " + expectMessage + ". Real message: " + e.getMessage());
+					match = false;
+				}
+			}
+			if (!match) {
+				e.printStackTrace();
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 			onFail(script, "Expected compile failure");
@@ -156,9 +181,9 @@ public abstract class HiTest {
 	}
 
 	private void onFail(String script, String message) {
-		System.out.println("==================== FAIL ======================");
-		System.out.println(script);
-		System.out.println("================================================");
+		System.err.println("==================== FAIL ======================");
+		System.err.println(script);
+		System.err.println("================================================");
 		fail(message);
 	}
 }

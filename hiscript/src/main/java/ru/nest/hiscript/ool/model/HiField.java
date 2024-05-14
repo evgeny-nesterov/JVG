@@ -197,7 +197,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 			}
 		}
 
-		valid &= ctx.addLocalVariable(this);
+		valid &= ctx.addLocalVariable(this, true);
 		return valid;
 	}
 

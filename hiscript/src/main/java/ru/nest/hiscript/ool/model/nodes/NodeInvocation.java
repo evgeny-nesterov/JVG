@@ -1,9 +1,19 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.Operations;
+import ru.nest.hiscript.ool.model.OperationsIF;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -130,6 +140,7 @@ public class NodeInvocation extends HiNode {
 					}
 				}
 
+				ctx.nodeValueType.returnType = returnClass != HiClassPrimitive.VOID ? NodeValueType.NodeValueReturnType.runtimeValue : NodeValueType.NodeValueReturnType.noValue;
 				ctx.nodeValueType.enclosingClass = returnClass;
 				ctx.nodeValueType.enclosingType = type;
 				ctx.nodeValueType.type = type;
@@ -140,6 +151,7 @@ public class NodeInvocation extends HiNode {
 				if (ctx.clazz != null) {
 					method = ctx.clazz.searchMethod(ctx, name, argumentsClasses);
 					if (method != null) {
+						ctx.nodeValueType.returnType = method.returnClass != HiClassPrimitive.VOID ? NodeValueType.NodeValueReturnType.runtimeValue : NodeValueType.NodeValueReturnType.noValue;
 						ctx.nodeValueType.enclosingClass = method.returnClass;
 						ctx.nodeValueType.enclosingType = method.returnType;
 						return method.returnClass;

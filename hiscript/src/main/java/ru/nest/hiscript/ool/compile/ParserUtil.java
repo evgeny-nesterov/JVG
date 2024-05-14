@@ -247,7 +247,7 @@ public class ParserUtil implements Words {
 		if (currentToken instanceof CharToken) {
 			CharToken token = (CharToken) currentToken;
 			tokenizer.nextToken();
-			return NodeChar.getInstance(token.getChar(), token);
+			return new NodeChar(token.getChar(), token);
 		}
 		return null;
 	}
@@ -392,7 +392,7 @@ public class ParserUtil implements Words {
 
 			if ((word = visitWordType(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != -1) {
 				if (modifiers != null && modifiers.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
-					tokenizer.error("Illegal combination of modifiers: 'public' and 'public'");
+					tokenizer.error("illegal combination of modifiers: 'public' and 'public'");
 				}
 
 				if (modifiers == null) {
@@ -405,7 +405,7 @@ public class ParserUtil implements Words {
 
 			if (visitWordType(tokenizer, FINAL) != -1) {
 				if (modifiers != null && modifiers.isFinal()) {
-					tokenizer.error("Illegal combination of modifiers: 'final' and 'final'");
+					tokenizer.error("illegal combination of modifiers: 'final' and 'final'");
 				}
 
 				if (modifiers == null) {
@@ -418,11 +418,11 @@ public class ParserUtil implements Words {
 
 			if (visitWordType(tokenizer, STATIC) != -1) {
 				if (modifiers != null && modifiers.isStatic()) {
-					tokenizer.error("Illegal combination of modifiers: 'static' and 'static'");
+					tokenizer.error("illegal combination of modifiers: 'static' and 'static'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
-					tokenizer.error("Illegal combination of modifiers: 'static' and 'abstract'");
+					tokenizer.error("illegal combination of modifiers: 'static' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					tokenizer.error("Illegal combination of modifiers: 'static' and 'default'");
+					tokenizer.error("illegal combination of modifiers: 'static' and 'default'");
 				}
 
 				if (modifiers == null) {
@@ -435,9 +435,9 @@ public class ParserUtil implements Words {
 
 			if (visitWordType(tokenizer, NATIVE) != -1) {
 				if (modifiers != null && modifiers.isNative()) {
-					tokenizer.error("Illegal combination of modifiers: 'native' and 'native'");
+					tokenizer.error("illegal combination of modifiers: 'native' and 'native'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					tokenizer.error("Illegal combination of modifiers: 'native' and 'default'");
+					tokenizer.error("illegal combination of modifiers: 'native' and 'default'");
 				}
 
 				if (modifiers == null) {
@@ -450,11 +450,11 @@ public class ParserUtil implements Words {
 
 			if (visitWordType(tokenizer, ABSTRACT) != -1) {
 				if (modifiers != null && modifiers.isAbstract()) {
-					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'abstract'");
+					tokenizer.error("illegal combination of modifiers: 'abstract' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
-					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'default'");
+					tokenizer.error("illegal combination of modifiers: 'abstract' and 'default'");
 				} else if (modifiers != null && modifiers.isStatic()) {
-					tokenizer.error("Illegal combination of modifiers: 'abstract' and 'static'");
+					tokenizer.error("illegal combination of modifiers: 'abstract' and 'static'");
 				}
 
 				if (modifiers == null) {
@@ -467,13 +467,13 @@ public class ParserUtil implements Words {
 
 			if (visitWordType(tokenizer, DEFAULT) != -1) {
 				if (modifiers != null && modifiers.isDefault()) {
-					tokenizer.error("Illegal combination of modifiers: 'default' and 'default'");
+					tokenizer.error("illegal combination of modifiers: 'default' and 'default'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
-					tokenizer.error("Illegal combination of modifiers: 'default' and 'abstract'");
+					tokenizer.error("illegal combination of modifiers: 'default' and 'abstract'");
 				} else if (modifiers != null && modifiers.isStatic()) {
-					tokenizer.error("Illegal combination of modifiers: 'default' and 'static'");
+					tokenizer.error("illegal combination of modifiers: 'default' and 'static'");
 				} else if (modifiers != null && modifiers.isNative()) {
-					tokenizer.error("Illegal combination of modifiers: 'default' and 'native'");
+					tokenizer.error("illegal combination of modifiers: 'default' and 'native'");
 				}
 
 				if (modifiers == null) {
@@ -540,7 +540,7 @@ public class ParserUtil implements Words {
 				if (arg != null) {
 					if (arg.isVarargs()) {
 						if (hasVarargs) {
-							tokenizer.error("Varargs parameter must be the last in the list");
+							tokenizer.error("varargs parameter must be the last in the list");
 						}
 						hasVarargs = true;
 					}

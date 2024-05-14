@@ -21,6 +21,15 @@ public class ValidationInfo {
 
 	public List<ValidationMessage> messages = new ArrayList<>();
 
+	public boolean hasMessage(String messageText) {
+		for (ValidationMessage message : messages) {
+			if (message.message.indexOf(messageText) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void error(String message, Token token) {
 		ValidationMessage validationMessage = new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token);
 		if (!messages.contains(validationMessage)) {
@@ -64,7 +73,7 @@ public class ValidationInfo {
 		}
 		for (ValidationMessage message : messages) {
 			if (message.level == ValidationMessage.ValidationLevel.error) {
-				throw new HiScriptValidationException(message.message, message.token);
+				throw new HiScriptValidationException(message.message, message.token).setValidationInfo(this);
 			}
 		}
 	}

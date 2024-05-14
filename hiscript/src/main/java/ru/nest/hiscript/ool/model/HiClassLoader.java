@@ -106,7 +106,7 @@ public class HiClassLoader {
 			if (superClass != origClazz) {
 				valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
 			} else {
-				validationInfo.error("cyclic inheritance involving " + superClass, superClass.getToken());
+				validationInfo.error("cyclic inheritance involving " + superClass.getNameDescr(), superClass.getToken());
 				valid = false;
 			}
 		}

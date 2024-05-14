@@ -16,7 +16,7 @@ public class AnnotationTokenVisitor implements TokenVisitor {
 
 			String word = tokenizer.getText(offset + 1, tokenizer.getOffset());
 			if (word.length() == 0) {
-				tokenizer.error("Unexpected token", line, offset, 1, lineOffset);
+				tokenizer.error("unexpected token", line, offset, 1, lineOffset);
 			}
 			return new AnnotationWordToken(word, line, offset, tokenizer.getOffset() - offset, lineOffset);
 		}

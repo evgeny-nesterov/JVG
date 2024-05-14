@@ -60,7 +60,7 @@ public class HiClassEnum extends HiClass {
                 for (int i2 = i1 + 1; i2 < enumValues.size(); i2++) {
                     HiEnumValue enumValue2 = enumValues.get(i2);
                     if (enumValue1.getName().equals(enumValue2.getName())) {
-                        validationInfo.error("Variable '" + enumValue1.getName() + "' is already defined in the scope", enumValue2.getToken());
+                        validationInfo.error("variable '" + enumValue1.getName() + "' is already defined in the scope", enumValue2.getToken());
                         valid = false;
                     }
                 }

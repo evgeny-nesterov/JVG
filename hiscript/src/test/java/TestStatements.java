@@ -204,7 +204,7 @@ public class TestStatements extends HiTest {
                 "class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
                 "try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
         assertSuccessSerialize("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
-        assertSuccessSerialize("class A implements AutoCloseable{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
+        assertSuccessSerialize("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
         assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
         assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
         assertFailMessage("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", "close error");
@@ -501,5 +501,10 @@ public class TestStatements extends HiTest {
         assertFailCompile("(1);");
         assertFailCompile("(1+2);");
         assertFailCompile("{1}");
+    }
+
+    @Test
+    public void testNPE() {
+        assertFailMessage("class A{int b;} A a = null; int b = a.b;", "null pointer");
     }
 }
