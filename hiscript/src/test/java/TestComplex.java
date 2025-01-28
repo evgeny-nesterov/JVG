@@ -15,5 +15,9 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+//		assertFailCompile("switch(\"\"){case Integer i, String s: break;}"); // several types in one case
+//		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
+//		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
+//		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
 	}
 }

@@ -235,6 +235,7 @@ public class HiClassPrimitive extends HiClass {
 
 	@Override
 	public Class getJavaClass() {
+		// TODO use typeId
 		switch (name) {
 			case "short":
 				return short.class;

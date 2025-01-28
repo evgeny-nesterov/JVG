@@ -149,6 +149,14 @@ public class TestStatements extends HiTest {
         assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
         assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}"); // cannot resolve symbol 'd'
 
+        // switch object class
+		assertSuccess("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
+		assertSuccess("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
+//		assertFailCompile("switch(\"\"){case Integer i, String s: break;}"); // several types in one case
+//		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
+//		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
+//		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
+
         // format failure
         assertFailCompile("switch(){}");
         assertFailCompile("switch(1);");
