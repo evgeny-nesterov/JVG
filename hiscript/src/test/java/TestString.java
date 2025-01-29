@@ -10,9 +10,16 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = null; assert s == null;");
 		assertSuccessSerialize("String s = new String(\"abc\"); assert s.equals(\"abc\");");
 		assertSuccessSerialize("String s1 = \"abc\"; String s2 = new String(s1); assert s2.equals(\"abc\");");
+		assertSuccessSerialize("String s = \"xxx\\nyyy\"; assert s.indexOf(\"\\n\") == 3;");
 		assertFailCompile("String s = 1;");
 		assertFailCompile("String s = 'a';");
 		assertFailCompile("String s = true;");
+		assertFailCompile("String s = \"\\s\";");
+
+		// special symbols
+		assertSuccessSerialize("String s = \"quote=\\\"\"; assert s.indexOf('\"') == 6;");
+		assertFailCompile("String s = \"a\nb\";");
+		assertFailCompile("String s = \"a\rb\";");
 
 		// plus
 		assertSuccessSerialize("String s = \"\" + 1; assert s.equals(\"1\");");
@@ -80,13 +87,26 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("assert \"\\u0000\".charAt(0) == 0;");
 		assertSuccessSerialize("assert \"\\uffff\".charAt(0) == '\\uffff';");
 		assertSuccessSerialize("assert \"\\n\".charAt(0) == '\\n';");
+	}
 
-		// triple quotes
-		assertSuccessSerialize("String s = \"\"\"\nabc\nabc\"\"\"; assert s.equals(\"abc\nabc\");");
+	@Test
+	public void testBlocks() {
+		assertSuccessSerialize("String s = \"\"\"\nabc\nabc\"\"\"; assert s.equals(\"abc\\nabc\");");
+		assertSuccessSerialize("String s = \"\"\"\n   abc\n   abc\"\"\"; assert s.equals(\"abc\\nabc\");");
+		assertSuccessSerialize("String s = \"\"\"\nabc\n abc\"\"\"; assert s.equals(\"abc\\n abc\");");
+		assertSuccessSerialize("String s = \"\"\"\n abc\n  abc\"\"\"; assert s.equals(\"abc\\n abc\");");
+		assertSuccessSerialize("String s = \"\"\"\n abc\nabc\"\"\"; assert s.equals(\" abc\\nabc\");");
+		assertSuccessSerialize("String s = \"\"\"\n  abc\n abc\"\"\"; assert s.equals(\" abc\\nabc\");");
+		assertSuccessSerialize("String s = \"\"\"\nabc   \nabc   \"\"\"; assert s.equals(\"abc\\nabc\");");
+		assertSuccessSerialize("String s = \"\"\"\nabc   \\s\nabc   \\s  \"\"\"; assert s.equals(\"abc   \\nabc   \");");
+		assertSuccessSerialize("String s = \"\"\"\n   \\\"\"\"   \"\"\"; assert s.equals(\"\\\"\\\"\\\"\");");
+		assertSuccessSerialize("String s = \"\"\"\n a_\n b_ \n c \"\"\"; assert s.equals(\"abc\");");
 		assertFailCompile("String s = \"\"\";");
 		assertFailCompile("String s = \"\"\"\";");
 		assertFailCompile("String s = \"\"\"\n;");
+		assertFailCompile("String s = \"\"\"\n\";");
 		assertFailCompile("String s = \"\"\"\n\"\";");
+		assertFailCompile("String s = \"\"\"\n\\\"\"\";");
 	}
 
 	@Test

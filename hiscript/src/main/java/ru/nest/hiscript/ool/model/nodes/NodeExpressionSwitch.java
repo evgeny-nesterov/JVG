@@ -69,7 +69,7 @@ public class NodeExpressionSwitch extends HiNode {
 			if (caseValueNodes != null) {
 				if (caseValueNodes.length > 0) {
 					for (HiNode caseValueNode : caseValueNodes) {
-						if (caseValueNode.validate(validationInfo, ctx) && caseValueNode.expectValue(validationInfo, ctx)) {
+						if (caseValueNode.validate(validationInfo, ctx) && expectCaseValue(validationInfo, ctx, caseValueNode)) {
 							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
 							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
 								HiClass c = caseValueClass.getCommonClass(topCaseClass);
@@ -86,6 +86,9 @@ public class NodeExpressionSwitch extends HiNode {
 						if (caseValueNode instanceof NodeExpressionNoLS) {
 							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
+								if (caseValueNodes.length > 1) {
+									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
+								}
 								ctx.initializedNodes.add(identifier.declarationNode);
 							}
 						}
@@ -111,8 +114,27 @@ public class NodeExpressionSwitch extends HiNode {
 			} else {
 				valid = false;
 			}
+
+			if (caseValueNodes != null) {
+				for (HiNode caseValueNode : caseValueNodes) {
+					NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+					if (identifier != null) {
+						identifier.removeLocalVariable(ctx);
+						ctx.initializedNodes.remove(identifier.declarationNode);
+					}
+				}
+			}
 		}
 		return valid;
+	}
+
+	private boolean expectCaseValue(ValidationInfo validationInfo, CompileClassContext ctx, HiNode caseValueNode) {
+		HiClass valueClass = caseValueNode.getValueClass(validationInfo, ctx);
+		if ((valueClass == null || valueClass == HiClassPrimitive.VOID) && !(caseValueNode.getExpressionSingleNode() instanceof NodeCastedIdentifier)) {
+			validationInfo.error("value or casted identifier is expected", getToken());
+			return false;
+		}
+		return true;
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 public abstract class Record {
-    static {
-        System.loadLib("RecordImpl.class");
-    }
+	static {
+		System.loadLib("RecordImpl.class");
+	}
 
-    public native boolean equals(Object o);
+	public native boolean equals(Object o);
 
-    public native int hashCode();
+	public native int hashCode();
 }

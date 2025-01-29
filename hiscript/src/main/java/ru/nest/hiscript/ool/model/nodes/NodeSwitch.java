@@ -122,6 +122,14 @@ public class NodeSwitch extends HiNode {
 						}
 					}
 				}
+
+				HiNode caseNode = casesNodes.get(i);
+				if (caseNode != null) {
+					valid &= caseNode.validate(validationInfo, ctx);
+				} else {
+					validationInfo.error("expression expected", getToken());
+					valid = false;
+				}
 			}
 		} else {
 			HiClass topCaseClass = null;
@@ -155,22 +163,34 @@ public class NodeSwitch extends HiNode {
 							valid = false;
 						}
 						if (caseValueNode instanceof NodeExpressionNoLS) {
-							NodeCastedIdentifier castedIdentifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
-							if (castedIdentifier != null) {
-								ctx.initializedNodes.add(castedIdentifier.declarationNode);
+							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+							if (identifier != null) {
+								if (caseValueNodes.length > 1) {
+									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
+								}
+								ctx.initializedNodes.add(identifier.declarationNode);
 							}
 						}
 					}
 				}
-			}
-		}
-		for (int i = 0; i < size; i++) {
-			HiNode caseNode = casesNodes.get(i);
-			if (caseNode != null) {
-				valid &= caseNode.validate(validationInfo, ctx);
-			} else {
-				validationInfo.error("expression expected", getToken());
-				valid = false;
+
+				HiNode caseNode = casesNodes.get(i);
+				if (caseNode != null) {
+					valid &= caseNode.validate(validationInfo, ctx);
+				} else {
+					validationInfo.error("expression expected", getToken());
+					valid = false;
+				}
+
+				if (caseValueNodes != null) { // not default
+					for (HiNode caseValueNode : caseValueNodes) {
+						NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+						if (identifier != null) {
+							identifier.removeLocalVariable(ctx);
+							ctx.initializedNodes.remove(identifier.declarationNode);
+						}
+					}
+				}
 			}
 		}
 		ctx.exit();
@@ -195,14 +215,25 @@ public class NodeSwitch extends HiNode {
 			try {
 				for (int i = index; i < size; i++) {
 					HiNode caseBody = casesNodes.get(i);
-					if (caseBody != null) {
-						caseBody.execute(ctx);
-						if (ctx.exitFromBlock()) {
-							return;
-						}
+					HiNode[] caseValueNodes = casesValues.get(i);
+					NodeCastedIdentifier identifier = null;
+					if (caseValueNodes != null && caseValueNodes.length == 1) {
+						identifier = caseValueNodes[0].getSingleNode(NodeCastedIdentifier.class);
+					}
+					try {
+						if (caseBody != null) {
+							caseBody.execute(ctx);
+							if (ctx.exitFromBlock()) {
+								return;
+							}
 
-						if (ctx.isBreak) {
-							break;
+							if (ctx.isBreak) {
+								break;
+							}
+						}
+					} finally {
+						if (identifier != null) {
+							ctx.removeVariable(identifier.name);
 						}
 					}
 				}
@@ -302,11 +333,6 @@ public class NodeSwitch extends HiNode {
 								boolean isInstanceof = c1.isInstanceof(c2);
 								if (isInstanceof) {
 									if (ctx.value.castedVariableName != null) {
-										if (ctx.getVariable(ctx.value.castedVariableName) != null) {
-											ctx.throwRuntimeException("variable '" + ctx.value.castedVariableName + "' is already defined in the scope");
-											return -2;
-										}
-
 										HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, ctx.value.castedVariableName, null);
 										castedField.set(object);
 										ctx.addVariable(castedField);

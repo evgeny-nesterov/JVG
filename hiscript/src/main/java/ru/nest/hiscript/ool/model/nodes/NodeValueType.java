@@ -182,6 +182,7 @@ public class NodeValueType implements PrimitiveTypes {
         boolean valid = node.validate(validationInfo, ctx);
         node.getNodeValueType(validationInfo, ctx); // after validation
         ctx.nodeValueType.copyTo(this);
+        this.valid = valid;
         if (valueClass == null) {
             getCompileValueFromNode();
         }

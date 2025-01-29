@@ -454,12 +454,12 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("String x = \"b\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 1;");
 		assertSuccessSerialize("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; default -> 2;}; assert y == 2;");
 
-		// TODO
-		// assertSuccessSerialize("class O{int x; O(int x){this.x = x;}} int x = switch(new O(2)){case O o when o.x == 1 -> 1; case O o when o.x == 2 -> o.x + 1;} assert x == 3;");
+		assertSuccessSerialize("int x = switch(\"a\"){case String s when s.length() == 1 -> 1; case String s when s.length() == 0 -> 2;}; assert x == 1;");
+		assertSuccessSerialize("class O{int x; O(int x){this.x = x;}} int x = switch(new O(2)){case O o when o.x == 1 -> 1; case O o when o.x == 2 -> o.x + 1;} assert x == 3;");
 
 		// TODO
-		// assertFailCompile("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20;};");
-		// assertFailCompile("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; case \"c\" -> 2;};");
+		// assertFailCompile("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20;};"); // not all cases
+		// assertFailCompile("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; case \"c\" -> 2;};"); // not all cases
 		assertFailCompile("int x = 1; int y = switch(x){case 1 -> 10; case 2 -> true;};");
 		assertFailCompile("int x = switch(1){case 1 -> 1; case \"\" -> 2;};");
 

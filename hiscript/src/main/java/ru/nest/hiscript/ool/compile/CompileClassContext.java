@@ -370,12 +370,16 @@ public class CompileClassContext implements ClassResolver {
 
 	public boolean addLocalVariable(NodeVariable localVariable, boolean checkDuplicate) {
 		boolean valid = true;
-		if (hasLocalVariable(localVariable.getVariableName())) {
+		if (checkDuplicate && hasLocalVariable(localVariable.getVariableName())) {
 			compiler.getValidationInfo().error("duplicated local variable " + localVariable.getVariableName(), ((HiNode) localVariable).getToken());
 			valid = false;
 		}
 		level.addField(localVariable);
 		return valid;
+	}
+
+	public void removeLocalVariable(NodeVariable localVariable) {
+		level.removeField(localVariable);
 	}
 
 	public boolean hasLocalVariable(String name) {
@@ -594,6 +598,12 @@ public class CompileClassContext implements ClassResolver {
 			localVariables.put(localVariable.getVariableName(), localVariable);
 		}
 
+		public void removeField(NodeVariable localVariable) {
+			if (localVariables != null) {
+				localVariables.remove(localVariable.getVariableName());
+			}
+		}
+
 		public NodeVariable getField(String name, boolean onlyLocal) {
 			if (enclosingClass != null) {
 				if (enclosingClass instanceof HiClassEnum) {
@@ -634,6 +644,10 @@ public class CompileClassContext implements ClassResolver {
 				level = level.parent;
 			}
 			return null;
+		}
+
+		public boolean isInsideBlock() {
+			return type != RuntimeContext.METHOD && type != RuntimeContext.CONSTRUCTOR && type != RuntimeContext.STATIC_CLASS;
 		}
 
 		public boolean isBreakable(String label) {

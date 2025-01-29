@@ -1,23 +1,23 @@
 public final class Character extends Object {
-    private char value;
+	private char value;
 
-    public Character(char value) {
-        this.value = value;
-    }
+	public Character(char value) {
+		this.value = value;
+	}
 
-    public char charValue() {
-        return value;
-    }
+	public char charValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "" + value;
-    }
+	public String toString() {
+		return "" + value;
+	}
 
-    public boolean equals(Object o) {
-        return o instanceof Character && ((Character)o).value == value;
-    }
+	public boolean equals(Object o) {
+		return o instanceof Character && ((Character) o).value == value;
+	}
 
-    public int hashCode() {
-        return value;
-    }
+	public int hashCode() {
+		return value;
+	}
 }

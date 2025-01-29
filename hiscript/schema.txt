@@ -29,7 +29,7 @@ text block                                                                      
 annotation                                                                      +
 throw                                                                           +
 throws                                                                          +
-generics
+generics                                                                        +
 
 expression	...operations, ...expressions
 operations	+ - * / %			    numeric

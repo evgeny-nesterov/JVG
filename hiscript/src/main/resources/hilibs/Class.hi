@@ -1,29 +1,29 @@
 public final class Class {
-    static {
-        System.loadLib("ClassImpl.class");
-    }
+	static {
+		System.loadLib("ClassImpl.class");
+	}
 
-    public native String getName();
+	public native String getName();
 
-    public native String getFullName();
+	public native String getFullName();
 
-    public native boolean isArray();
+	public native boolean isArray();
 
-    public native boolean isPrimitive();
+	public native boolean isPrimitive();
 
-    public native boolean isInterface();
+	public native boolean isInterface();
 
-    public native boolean isEnum();
+	public native boolean isEnum();
 
-    public native boolean isAnnotation();
+	public native boolean isAnnotation();
 
-    public native boolean isAnonymousClass();
+	public native boolean isAnonymousClass();
 
-    public native boolean isLocalClass();
+	public native boolean isLocalClass();
 
-    public native boolean isMemberClass();
+	public native boolean isMemberClass();
 
-    public native Class getComponentType();
+	public native Class getComponentType();
 
-    public static native Class forName(String name);
+	public static native Class forName(String name);
 }

@@ -197,6 +197,12 @@ public class TestGenerics extends HiTest {
 	}
 
 	@Test
+	public void testInnerClasses() {
+//		assertSuccessSerialize("class A<O>{O get(O v);} class B<O>{class C extends A<O>{O get(O v){return v;}}}");
+		assertSuccessSerialize("interface A<O1>{} class B<O2>{class C implements A<O2>{}}");
+	}
+
+	@Test
 	public void testMethodInvocation() {
 		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; A<Integer> a = new A<>(); a.set(1); assert a.get() == 1;");
 		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; class B<O extends Number> extends A<O>{} B<Integer> b = new B<>(); b.set(1); assert b.get() == 1;");
@@ -309,6 +315,8 @@ public class TestGenerics extends HiTest {
 
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O extends A1>{O get();} class B<O extends A2> implements I<O>{public O get(){return (O)new A2();}} assert new B<A2>().get() instanceof A2;");
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O1 extends A1>{O1 get();} class B<O2 extends A2> implements I<O2>{public O2 get(){return (O2)new A2();}} assert new B<A2>().get() instanceof A2;");
+
+		assertFail("class C{<O> O get(){return (O)\"\";}} Integer i = new C().get();", "cannot convert 'String' to 'Integer'");
 	}
 
 	@Test

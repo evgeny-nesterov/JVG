@@ -205,6 +205,10 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			throwRuntimeException("stack overflow");
 			throw new StackOverflowError();
 		}
+		while (object != null && !object.clazz.isInstanceof(method.clazz)) {
+			// method called from local class
+			object = object.outboundObject;
+		}
 		level = getStack(METHOD, level, method.clazz, null, method, object, null, method.getToken());
 		level.mainLevel++;
 	}
@@ -494,6 +498,10 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 	}
 
+	public void removeVariable(String name) {
+		level.removeVariable(name);
+	}
+
 	public void addClass(HiClass clazz) {
 		level.putClass(clazz);
 	}
@@ -609,6 +617,13 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		public HiField<?> getVariable(String name) {
 			if (variables != null) {
 				return variables.get(name);
+			}
+			return null;
+		}
+
+		public HiField<?> removeVariable(String name) {
+			if (variables != null) {
+				return variables.remove(name);
 			}
 			return null;
 		}

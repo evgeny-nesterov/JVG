@@ -86,7 +86,7 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		}
 
 		valid &= clazz != null;
-		valid &= ctx.addLocalVariable(this, false);
+		valid &= ctx.addLocalVariable(this, ctx.level.isInsideBlock());
 		ctx.initializedNodes.add(this);
 		return valid;
 	}

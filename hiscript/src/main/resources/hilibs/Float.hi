@@ -1,37 +1,37 @@
 public final class Float extends Number {
-    static {
-        System.loadLib("FloatImpl.class");
-    }
+	static {
+		System.loadLib("FloatImpl.class");
+	}
 
-    private float value;
+	private float value;
 
-    public Float(float value) {
-        this.value = value;
-    }
+	public Float(float value) {
+		this.value = value;
+	}
 
-    public int intValue() {
-        return (int)value;
-    }
+	public int intValue() {
+		return (int) value;
+	}
 
-    public long longValue() {
-        return (long)value;
-    }
+	public long longValue() {
+		return (long) value;
+	}
 
-    public float floatValue() {
-        return value;
-    }
+	public float floatValue() {
+		return value;
+	}
 
-    public double doubleValue() {
-        return value;
-    }
+	public double doubleValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "" + value;
-    }
+	public String toString() {
+		return "" + value;
+	}
 
-    public boolean equals(Object o) {
-        return o instanceof Float && ((Float)o).value == value;
-    }
+	public boolean equals(Object o) {
+		return o instanceof Float && ((Float) o).value == value;
+	}
 
-    public native int hashCode();
+	public native int hashCode();
 }

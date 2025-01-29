@@ -1,35 +1,35 @@
 public final class Long extends Number {
-    private long value;
+	private long value;
 
-    public Long(long value) {
-        this.value = value;
-    }
+	public Long(long value) {
+		this.value = value;
+	}
 
-    public int intValue() {
-        return (int)value;
-    }
+	public int intValue() {
+		return (int) value;
+	}
 
-    public long longValue() {
-        return value;
-    }
+	public long longValue() {
+		return value;
+	}
 
-    public float floatValue() {
-        return (float)value;
-    }
+	public float floatValue() {
+		return (float) value;
+	}
 
-    public double doubleValue() {
-        return value;
-    }
+	public double doubleValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "" + value;
-    }
+	public String toString() {
+		return "" + value;
+	}
 
-    public boolean equals(Object o) {
-        return o instanceof Long && ((Long)o).value == value;
-    }
+	public boolean equals(Object o) {
+		return o instanceof Long && ((Long) o).value == value;
+	}
 
-    public int hashCode() {
-        return (int)value;
-    }
+	public int hashCode() {
+		return (int) value;
+	}
 }

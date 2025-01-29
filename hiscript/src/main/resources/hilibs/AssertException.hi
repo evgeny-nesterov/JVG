@@ -1,5 +1,5 @@
 public final class AssertException extends RuntimeException {
-    public AssertException(String msg) {
-        super(msg);
-    }
+	public AssertException(String msg) {
+		super(msg);
+	}
 }

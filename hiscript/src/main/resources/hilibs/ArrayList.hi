@@ -1,57 +1,94 @@
 public class ArrayList<O> { // TODO implements Iterable
-    static {
-        System.loadLib("ArrayListImpl.class");
-    }
+	static {
+		System.loadLib("ArrayListImpl.class");
+	}
 
-    public ArrayList() {
-        init(10);
-    }
+	public ArrayList() {
+		init(10);
+	}
 
-    public ArrayList(int initialCapacity) {
-        init(initialCapacity);
-    }
+	public ArrayList(int initialCapacity) {
+		init(initialCapacity);
+	}
 
-    public ArrayList(ArrayList<O> list) {
-        init(list);
-    }
+	public ArrayList(ArrayList<O> list) {
+		init(list);
+	}
 
-    private native void init(int initialCapacity);
+	private native void init(int initialCapacity);
 
-    private native void init(ArrayList<O> list);
+	private native void init(ArrayList<O> list);
 
-    public native boolean add(O element);
+	public native boolean add(O element);
 
-    public native boolean addAll(ArrayList<O> list);
+	public native boolean addAll(ArrayList<O> list);
 
-    public native boolean addAll(int index, ArrayList<O> list);
+	public native boolean addAll(int index, ArrayList<O> list);
 
-    public native O get(int index);
+	public native O get(int index);
 
-    public native O set(int index, O value);
+	public native O set(int index, O value);
 
-    public native O remove(O element);
+	public native boolean remove(O element);
 
-    public native void remove(int index);
+	public native O remove(int index);
 
-    public native boolean removeAll(ArrayList<?> list);
+	public native boolean removeAll(ArrayList<?> list);
 
-    public native boolean retainAll(ArrayList<?> list);
+	public native boolean retainAll(ArrayList<?> list);
 
-    public native int size();
+	public native int size();
 
-    public native int indexOf(O element);
+	public native int indexOf(O element);
 
-    public native int lastIndexOf(O o);
+	public native int lastIndexOf(O o);
 
-    public native boolean contains(Object element);
+	public native boolean contains(Object element);
 
-    public native boolean containsAll(ArrayList<?> list);
+	public native boolean containsAll(ArrayList<?> list);
 
-    public native Object[] toArray();
+	public native Object[] toArray();
 
-    public native void ensureCapacity(int minCapacity);
+	public native void ensureCapacity(int minCapacity);
 
-    public native void clear();
+	public native void clear();
 
-    public native Object clone();
+	private class ArrayListIterator implements Iterator<O> {
+		int size;
+
+		int index;
+
+		boolean removed;
+
+		ArrayListIterator() {
+			size = size();
+		}
+
+		public boolean hasNext() {
+			return index < size;
+		}
+
+		public O next() {
+			if (removed) {
+				removed = false;
+				return get(index);
+			} else {
+				return get(index++);
+			}
+		}
+
+		public void remove() {
+			if (!removed && index < size) {
+				remove(index);
+				removed = true;
+				size--;
+			}
+		}
+	}
+
+	public Iterator<O> iterator() {
+		return new ArrayListIterator();
+	}
+
+	public native Object clone();
 }

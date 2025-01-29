@@ -1,37 +1,37 @@
 public final class Double extends Number {
-    static {
-        System.loadLib("DoubleImpl.class");
-    }
+	static {
+		System.loadLib("DoubleImpl.class");
+	}
 
-    private double value;
+	private double value;
 
-    public Double(double value) {
-        this.value = value;
-    }
+	public Double(double value) {
+		this.value = value;
+	}
 
-    public int intValue() {
-        return (int)value;
-    }
+	public int intValue() {
+		return (int) value;
+	}
 
-    public long longValue() {
-        return (long)value;
-    }
+	public long longValue() {
+		return (long) value;
+	}
 
-    public float floatValue() {
-        return (float)value;
-    }
+	public float floatValue() {
+		return (float) value;
+	}
 
-    public double doubleValue() {
-        return value;
-    }
+	public double doubleValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "" + value;
-    }
+	public String toString() {
+		return "" + value;
+	}
 
-    public boolean equals(Object o) {
-        return o instanceof Double && ((Double)o).value == value;
-    }
+	public boolean equals(Object o) {
+		return o instanceof Double && ((Double) o).value == value;
+	}
 
-    public native int hashCode();
+	public native int hashCode();
 }

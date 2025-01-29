@@ -143,7 +143,7 @@ public class TestStatements extends HiTest {
         assertSuccessSerialize("int x = 4; switch(x) {case 0: x=0; break; case 1: x--; break; case 2: x++; break; default: x += 2;} assert x == 6;");
         assertSuccessSerialize("String s = \"c\"; switch(s) {case \"a\", \"x\": s = \"\"; break; case \"b\": break; case \"c\": s += 1; break;} assert s.equals(\"c1\");");
         assertSuccessSerialize("class A {}; class B{}; A a = new A(); Object b = new B(); switch(b) {case a: break; case new A(): break; case b: b = a;} assert b == a && b.equals(a);");
-        assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case o.a == 1: assert o.a == 1;return;} assert false : \"case 2\";");
+        assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case O o when o.a == 1: assert o.a == 1; return;} assert false : \"case 2\";");
         assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}");
         assertSuccessSerialize("Object s = null; switch(s){case \"a\": assert true;break; case \"b\": assert false;break; case null: assert s == null;break;}");
         assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
@@ -152,7 +152,7 @@ public class TestStatements extends HiTest {
         // switch object class
 		assertSuccess("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
 		assertSuccess("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
-//		assertFailCompile("switch(\"\"){case Integer i, String s: break;}"); // several types in one case
+		assertFailCompile("switch(\"\"){case Integer i, String s: break;}"); // several types in one case
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases

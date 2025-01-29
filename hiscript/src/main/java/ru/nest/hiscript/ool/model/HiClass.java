@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,6 +91,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public static String ENUM_CLASS_NAME = "Enum";
 
 	public static String RECORD_CLASS_NAME = "Record";
+
+	public static String ITERATOR_CLASS_NAME = "Iterator";
 
 	public static String HASHMAP_CLASS_NAME = "HashMap";
 
@@ -160,6 +163,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Exception.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/AssertException.hi"), false));
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Iterator.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/ArrayList.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/HashMap.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Thread.hi"), false));
@@ -577,13 +581,16 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 						HiClassGeneric definedClass = superClass.generics.generics[i].clazz;
 						if (!parameterClass.isInstanceof(definedClass.clazz)) {
 							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", getToken());
+							valid = false;
 						}
 					}
 				} else {
 					validationInfo.error("wrong number of type arguments: " + typeParameters.length + "; required: " + superClass.generics.generics.length, getToken());
+					valid = false;
 				}
 			} else {
 				validationInfo.error("type '" + superClass.getNameDescr() + "' does not have type parameters", getToken());
+				valid = false;
 			}
 		}
 
@@ -1492,19 +1499,18 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (enclosingClass == srcClass || genericClass.sourceType != NodeGeneric.GenericSourceType.classSource) {
 			return genericClass;
 		}
-		HiClass extendsClass = enclosingClass;
-		if (extendsClass.superClass != null) {
-			while (extendsClass.superClass != srcClass) {
-				extendsClass = extendsClass.superClass;
-			}
-		}
 		if (classType != null && classType.parameters != null) {
 			Type resolvedType = classType.getParameterType(genericClass);
 			return resolvedType.getClass(classResolver);
 		}
-		if (extendsClass.superClassType != null && extendsClass.superClassType.parameters != null) {
-			Type definedGenericType = extendsClass.superClassType.parameters[genericClass.index];
-			HiClassGeneric rewrittenGenericClass = extendsClass.getGenericClass(classResolver, definedGenericType.name);
+
+		HiClass upperClass = enclosingClass;
+		if (upperClass.superClass != null && upperClass.superClass != srcClass) {
+			upperClass = upperClass.superClass;
+		}
+		if (upperClass != null && upperClass.superClassType != null && upperClass.superClassType.parameters != null) {
+			Type definedGenericType = upperClass.superClassType.parameters[genericClass.index];
+			HiClassGeneric rewrittenGenericClass = upperClass.getGenericClass(classResolver, definedGenericType.name);
 			if (rewrittenGenericClass != null) {
 				if (rewrittenGenericClass.parametersClasses.length == 0) {
 					return rewrittenGenericClass.clazz;
@@ -1888,6 +1894,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return HashMap.class;
 			case "ArrayList":
 				return ArrayList.class;
+			case "Iterator":
+				return Iterator.class;
 		}
 		return null;
 	}

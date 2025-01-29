@@ -30,7 +30,7 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
-					HiNode[] caseValue = visitArgumentsValues(tokenizer, ctx);
+					HiNode[] caseValue = SwitchParseRule.visitCaseValue(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.REFERENCE);
 					NodeExpression caseBody = expectExpression(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.SEMICOLON);

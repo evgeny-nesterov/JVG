@@ -1,33 +1,33 @@
 public class HashMap<K, V> {
-    static {
-        System.loadLib("HashMapImpl.class");
-    }
+	static {
+		System.loadLib("HashMapImpl.class");
+	}
 
-    public HashMap() {
-        init();
-    }
+	public HashMap() {
+		init();
+	}
 
-    private native void init();
+	private native void init();
 
-    public native V get(K key);
+	public native V get(K key);
 
-    public native V put(K key, V value);
+	public native V put(K key, V value);
 
-    public native boolean containsKey(K key);
+	public native boolean containsKey(K key);
 
-    public native boolean containsValue(V value);
+	public native boolean containsValue(V value);
 
-    public native int size();
+	public native int size();
 
-    public native V remove(K key);
+	public native V remove(K key);
 
-    public native ArrayList<K> keys();
+	public native ArrayList<K> keys();
 
-    public native ArrayList<V> values();
+	public native ArrayList<V> values();
 
-    public native void putAll(HashMap<K, V> map);
+	public native void putAll(HashMap<K, V> map);
 
-    public native void clear();
+	public native void clear();
 
-    public native Object clone();
+	public native Object clone();
 }

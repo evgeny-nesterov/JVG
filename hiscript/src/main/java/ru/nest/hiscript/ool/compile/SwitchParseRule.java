@@ -60,7 +60,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 		return null;
 	}
 
-	protected HiNode[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+	protected static HiNode[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		List<HiNode> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {

@@ -1,39 +1,39 @@
 public final class Byte extends Number {
-    private byte value;
+	private byte value;
 
-    public Byte(byte value) {
-        this.value = value;
-    }
+	public Byte(byte value) {
+		this.value = value;
+	}
 
-    public byte byteValue() {
-        return value;
-    }
+	public byte byteValue() {
+		return value;
+	}
 
-    public int intValue() {
-        return value;
-    }
+	public int intValue() {
+		return value;
+	}
 
-    public long longValue() {
-        return value;
-    }
+	public long longValue() {
+		return value;
+	}
 
-    public float floatValue() {
-        return value;
-    }
+	public float floatValue() {
+		return value;
+	}
 
-    public double doubleValue() {
-        return value;
-    }
+	public double doubleValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "" + value;
-    }
+	public String toString() {
+		return "" + value;
+	}
 
-    public boolean equals(Object o) {
-        return o instanceof Byte && ((Byte)o).value == value;
-    }
+	public boolean equals(Object o) {
+		return o instanceof Byte && ((Byte) o).value == value;
+	}
 
-    public int hashCode() {
-        return value;
-    }
+	public int hashCode() {
+		return value;
+	}
 }
