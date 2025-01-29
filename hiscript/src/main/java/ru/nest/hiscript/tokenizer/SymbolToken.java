@@ -166,6 +166,9 @@ public class SymbolToken extends Token implements Symbols {
 
 			case REFERENCE:
 				return "->";
+
+			case TILDA:
+				return "~";
 		}
 		return "";
 	}

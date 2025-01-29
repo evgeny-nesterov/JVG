@@ -59,15 +59,19 @@ public class OperationPrefixMinus extends UnaryOperation {
 				v.intNumber = -v.shortNumber;
 				break;
 			case INT:
+				v.valueClass = TYPE_INT; // switch to primitive from boxed type
 				v.intNumber = -v.intNumber;
 				break;
 			case LONG:
+				v.valueClass = TYPE_LONG; // switch to primitive from boxed type
 				v.longNumber = -v.longNumber;
 				break;
 			case FLOAT:
+				v.valueClass = TYPE_FLOAT; // switch to primitive from boxed type
 				v.floatNumber = -v.floatNumber;
 				break;
 			case DOUBLE:
+				v.valueClass = TYPE_DOUBLE; // switch to primitive from boxed type
 				v.doubleNumber = -v.doubleNumber;
 				break;
 		}

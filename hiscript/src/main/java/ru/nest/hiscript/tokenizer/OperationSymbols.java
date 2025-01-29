@@ -50,6 +50,7 @@ public class OperationSymbols implements Symbols {
 			case MINUS:
 			case MINUS_MINUS:
 			case EXCLAMATION:
+			case TILDA:
 				return true;
 		}
 		return false;

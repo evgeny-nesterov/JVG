@@ -125,7 +125,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		boolean isNumber = false;
 		tokenizer.start();
 		while (true) {
-			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
+			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION, Symbols.TILDA);
 			if (operation != -1) {
 				switch (operation) {
 					case Symbols.PLUS:
@@ -153,6 +153,15 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 						}
 						operation = OperationsIF.PREFIX_EXCLAMATION;
 						isBoolean = true;
+						break;
+
+					case Symbols.TILDA:
+						if (isBoolean) {
+							tokenizer.rollback();
+							return false;
+						}
+						operation = OperationsIF.PREFIX_BITWISE_REVERSE;
+						isNumber = true;
 						break;
 				}
 

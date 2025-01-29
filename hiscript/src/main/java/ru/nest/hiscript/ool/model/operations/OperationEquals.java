@@ -39,8 +39,6 @@ public class OperationEquals extends BinaryOperation {
 		if (c1.isPrimitive() == c2.isPrimitive()) {
 			if (c1.isNumber() == c2.isNumber()) {
 				return HiClassPrimitive.BOOLEAN;
-			} else if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
-				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			return HiClassPrimitive.BOOLEAN;

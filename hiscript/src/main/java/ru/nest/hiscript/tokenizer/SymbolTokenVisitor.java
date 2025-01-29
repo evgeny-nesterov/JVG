@@ -252,6 +252,10 @@ public class SymbolTokenVisitor implements TokenVisitor {
 			case ']':
 				type = Symbols.SQUARE_BRACES_RIGHT;
 				break;
+
+			case '~':
+				type = Symbols.TILDA;
+				break;
 		}
 		tokenizer.next();
 

@@ -65,9 +65,11 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 				v.intNumber = ~v.shortNumber;
 				return;
 			case INT:
+				v.valueClass = TYPE_INT; // switch to primitive from boxed type
 				v.intNumber = ~v.intNumber;
 				return;
 			case LONG:
+				v.valueClass = TYPE_LONG; // switch to primitive from boxed type
 				v.longNumber = ~v.longNumber;
 				return;
 		}

@@ -104,4 +104,6 @@ public interface Symbols {
 	int REFERENCE = 51;
 
 	int DOUBLE_COLON = 52;
+
+	int TILDA = 53;
 }

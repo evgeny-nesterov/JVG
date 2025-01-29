@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -74,6 +75,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public HiObject currentThread;
 
 	public boolean validating;
+
+	public Map<JavaString, HiObject> strings = new ConcurrentHashMap<>();
 
 	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;

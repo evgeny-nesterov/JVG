@@ -121,6 +121,10 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize("assert ((" + pt2 + ")63 " + o + " new " + bt1 + "((" + pt1 + ")3)) == (63 " + o + " 3);");
 				}
 			}
+
+			for (String o : new String[] {"-", "+", "~"}) {
+				assertSuccessSerialize("assert " + o + "new " + bt1 + "((" + pt1 + ")63) == " + o + "63;");
+			}
 		}
 
 		// test +=, -= ...
@@ -204,6 +208,8 @@ public class TestExpression extends HiTest {
 		assertFailCompile("String x = \"\"; x--+;");
 		assertFailCompile("String x = \"\"; ++x;");
 		assertFailCompile("String x = \"\"; --x;");
+		assertFailCompile("float x = ~10f;");
+		assertFailCompile("double x = ~10f;");
 
 		for (int i = 0; i < priIntTypesALl.length; i++) {
 			String pt = priIntTypesALl[i];
@@ -245,6 +251,8 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert (1 > 2 ? 3 > 4 ? 5 : 6 : 7 > 8 ? 9 : 10) == 10;");
 		assertSuccessSerialize("assert 16/-2/2/-2/+2*2/2 == 1;");
 		assertSuccessSerialize("assert 2/+ -2 == -100000000000L/100000000000L;");
+		assertSuccessSerialize("assert ~~ ~~ ~~ ~~ ~~123 == 123;");
+		assertSuccessSerialize("assert ~~~123 == ~123;");
 	}
 
 	@Test
@@ -602,5 +610,28 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("long a = 1; double x = a; assert x == 1D;");
 		assertSuccessSerialize("float a = 1; double x = a; assert x == 1D;");
 		assertSuccessSerialize("double a = 1; double x = a; assert x == 1D;");
+	}
+
+	@Test
+	public void testNotEquals() {
+		assertSuccessSerialize("assert 1 != 2;");
+		assertSuccessSerialize("assert 1.0 != 2.0;");
+		assertSuccessSerialize("assert 1f != 2.0;");
+		assertSuccessSerialize("assert 1 != 1.1f;");
+		assertSuccessSerialize("assert true != false;");
+
+		assertSuccessSerialize("assert \"a\" != \"b\";");
+		assertSuccessSerialize("assert new Integer(1) != new Integer(2);");
+
+		assertSuccessSerialize("var x = 1; var y = 2; assert x != y;");
+		assertSuccessSerialize("var x = 1; int y = 2; assert x != y;");
+
+		assertFailCompile("assert true != 2;");
+		assertFailSerialize("assert \"a\" != \"a\";");
+		assertSuccessSerialize("assert new Integer(1) != new Integer(1);");
+
+		// equals
+		assertSuccessSerialize("assert \"a\" == \"a\";");
+		assertFailSerialize("assert \"a\" == \"b\";");
 	}
 }
