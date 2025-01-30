@@ -510,6 +510,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			for (int i = 0; i < interfaceTypes.length; i++) {
 				HiClass intf = interfaceTypes[i].getClass(ctx);
 				if (intf != null) {
+					if (!intf.isInterface) {
+						validationInfo.error("interface expected", token);
+						valid = false;
+					}
 					valid &= intf.validate(validationInfo, ctx);
 					interfaces[i] = intf;
 					if (interfaceTypes.length > 1 && intf.methods != null) {
@@ -612,6 +616,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (superClass != null) {
 			if (!isInterface && superClass.isInterface && !isAnonymous()) {
 				validationInfo.error("cannot extends interface", token);
+				valid = false;
+			} else if (superClass.isPrimitive()) {
+				validationInfo.error("can not extends primitive class", token);
 				valid = false;
 			} else if (superClass.modifiers.isFinal()) {
 				validationInfo.error("cannot extends final class", token);
@@ -1206,11 +1213,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public enum MatchMethodArgumentsType {
-		strict(false, false, false),
-		autobox(false, false, true),
-		noCast(false, true, true),
-		noVarargs(true, false, true),
-		soft(true, true, true);
+		strict(false, false, false), autobox(false, false, true), noCast(false, true, true), noVarargs(true, false, true), soft(true, true, true);
 
 		private final boolean isCast;
 
@@ -2102,7 +2105,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 				} else if (!dst.isPrimitive()) {
 					if (dst.getAutoboxedPrimitiveClass() != null) {
-						if (src.isPrimitive()) {
+						if (isValue) {
+							dst = dst.getAutoboxedPrimitiveClass();
+						} else if (src.isPrimitive()) {
 							return src == dst.getAutoboxedPrimitiveClass();
 						} else {
 							return src == dst;

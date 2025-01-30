@@ -101,9 +101,6 @@ public class NodeExpressionNoLS extends NodeExpression {
         while (stackSize != 0 && pos < operations.length) {
             operations[pos++] = stack[--stackSize];
         }
-
-        // DEBUG
-        // print();
     }
 
     @SuppressWarnings("unused")

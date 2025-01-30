@@ -105,8 +105,8 @@ public class TestAutoboxing extends HiTest {
 			assertFail("class C{C(" + t + " a){}} " + T + " b = null; new C(b);");
 
 			// arrays
-//			TODO assertSuccessSerialize(T + "[] a = new " + T + "[3]; a[0] = (" + t + ")1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
-//			TODO assertSuccessSerialize(T + "[][] a = new " + T + "[3][3]; a[0][0] = (" + t + ")1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
+			assertSuccessSerialize(T + "[] a = new " + T + "[3]; a[0] = (" + t + ")1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
+			assertSuccessSerialize(T + "[][] a = new " + T + "[3][3]; a[0][0] = (" + t + ")1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
 			assertSuccessSerialize("" + t + "[] a = new " + t + "[2]; a[1] = new " + T + "((" + t + ")127); assert a[1] == 127;");
 			assertSuccessSerialize("" + t + "[][] a = new " + t + "[2][2]; a[1][1] = new " + T + "((" + t + ")127); assert a[1][1] == 127;");
 			assertFail("" + t + "[][] a = new " + t + "[1][1]; " + T + " b = null; a[0][0] = b;");

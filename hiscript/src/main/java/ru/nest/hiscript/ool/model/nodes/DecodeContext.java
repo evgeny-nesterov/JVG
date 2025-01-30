@@ -172,9 +172,6 @@ public class DecodeContext {
 		for (int i = 0; i < count; i++) {
 			int index = readShort();
 			types[index] = Type.decode(this);
-
-			// DEBUG
-			// System.out.println(index + ": " + types[index].name);
 		}
 	}
 
@@ -245,9 +242,6 @@ public class DecodeContext {
 			DecodeContext ctx = new DecodeContext(classLoader, is, this);
 			classes[index] = HiClass.decode(ctx);
 
-			// DEBUG
-			// System.out.println("class loaded: " + classes[index].getNameDescr());
-
 			// fire event
 			fireClassLoaded(classes[index], index);
 		}
@@ -258,10 +252,6 @@ public class DecodeContext {
 		HiClass clazz;
 		if (isHasIndex) {
 			int clazzIndex = is.readShort();
-
-			// DEBUG
-			// System.out.println("read class: " + clazzIndex);
-
 			clazz = getClass(clazzIndex);
 		} else {
 			String classFullName = is.readUTF();

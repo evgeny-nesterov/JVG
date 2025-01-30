@@ -155,10 +155,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			message = "";
 		}
 
-		// DEBUG
-		// System.out.println(message);
-		// new Exception().printStackTrace();
-
 		if (excClass == null) {
 			excClass = HiClass.forName(this, exceptionClass);
 			excConstructor = excClass.getConstructor(this, HiClass.forName(this, HiClass.STRING_CLASS_NAME));

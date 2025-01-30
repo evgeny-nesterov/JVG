@@ -184,9 +184,6 @@ public class CodeContext {
 			index = ctx.stringsHash.size();
 			ctx.stringsHash.put(value, index);
 			ctx.strings.add(value);
-
-			// DEBUG
-			// System.out.println("string: '" + value + "', index = " + index);
 		}
 		return index;
 	}
@@ -399,16 +396,10 @@ public class CodeContext {
 			for (ClassCodeContext classCode : classesCode) {
 				dos_all.write(classCode.code);
 			}
-
-			// DEBUG
-			// System.out.println("types count: " + typesHash.size());
 		}
 
 		// body data
 		dos_all.write(bos.toByteArray());
-
-		// DEBUG
-		// System.out.println((clazz != null ? (clazz.getNameDescr() + ": ") : "") + "size=" + bos_all.size());
 		return bos_all.toByteArray();
 	}
 }

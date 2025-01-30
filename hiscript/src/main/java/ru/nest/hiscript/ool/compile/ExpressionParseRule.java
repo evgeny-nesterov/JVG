@@ -82,9 +82,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 		allOperations.add(operations);
 
-		// DEBUG
-		// System.out.println(allOperations);
-
 		if (operands.size() > 0) {
 			HiNodeIF[] operandsArray = new HiNodeIF[operands.size()];
 			operands.toArray(operandsArray);

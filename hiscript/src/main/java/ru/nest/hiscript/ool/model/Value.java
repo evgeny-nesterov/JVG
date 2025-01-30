@@ -596,34 +596,36 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public void copyToArray(Value value) {
-		// TODO: copy array and object
-
-		int typeIndex = valueClass.getPrimitiveType();
-		switch (typeIndex) {
-			case BOOLEAN:
-				Array.setBoolean(parentArray, arrayIndex, value.bool);
-				break;
-			case CHAR:
-				Array.setChar(parentArray, arrayIndex, value.character);
-				break;
-			case BYTE:
-				Array.setByte(parentArray, arrayIndex, value.byteNumber);
-				break;
-			case SHORT:
-				Array.setShort(parentArray, arrayIndex, value.shortNumber);
-				break;
-			case INT:
-				Array.setInt(parentArray, arrayIndex, value.intNumber);
-				break;
-			case LONG:
-				Array.setLong(parentArray, arrayIndex, value.longNumber);
-				break;
-			case FLOAT:
-				Array.setFloat(parentArray, arrayIndex, value.floatNumber);
-				break;
-			case DOUBLE:
-				Array.setDouble(parentArray, arrayIndex, value.doubleNumber);
-				break;
+		if (parentArray.getClass().getComponentType().isPrimitive()) {
+			int typeIndex = valueClass.getPrimitiveType();
+			switch (typeIndex) {
+				case BOOLEAN:
+					Array.setBoolean(parentArray, arrayIndex, value.bool);
+					break;
+				case CHAR:
+					Array.setChar(parentArray, arrayIndex, value.character);
+					break;
+				case BYTE:
+					Array.setByte(parentArray, arrayIndex, value.byteNumber);
+					break;
+				case SHORT:
+					Array.setShort(parentArray, arrayIndex, value.shortNumber);
+					break;
+				case INT:
+					Array.setInt(parentArray, arrayIndex, value.intNumber);
+					break;
+				case LONG:
+					Array.setLong(parentArray, arrayIndex, value.longNumber);
+					break;
+				case FLOAT:
+					Array.setFloat(parentArray, arrayIndex, value.floatNumber);
+					break;
+				case DOUBLE:
+					Array.setDouble(parentArray, arrayIndex, value.doubleNumber);
+					break;
+			}
+		} else {
+			Array.set(parentArray, arrayIndex, value.object);
 		}
 	}
 

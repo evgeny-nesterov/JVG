@@ -96,6 +96,10 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					// arrays
+					assertSuccessSerialize(bt1 + "[] x1={63}; " + bt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + "[] x1={63}; " + pt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + "[] x1={63}; " + bt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					// assert (new Integer((int)63) + (byte)3) == (63 + 3);
 					assertSuccessSerialize("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
@@ -115,6 +119,10 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					// arrays
+					assertSuccessSerialize(bt1 + "[] x1={63}; " + bt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + "[] x1={63}; " + pt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + "[] x1={63}; " + bt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					// assert (new Integer((int)63) + (byte)3) == (63 + 3);
 					assertSuccessSerialize("assert (new " + bt1 + "((" + pt1 + ")63) " + o + " (" + pt2 + ")3) == (63 " + o + " 3);");
@@ -140,6 +148,10 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")63; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")63); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					// arrays
+					assertSuccessSerialize(bt1 + "[] x1 = {new " + bt1 + "((" + pt1 + ")63)}; x1[0] " + o + "= (" + pt2 + ")3; assert x1[0] == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + "[] x1 = {(" + pt1 + ")63}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + "[] x1 = {new " + bt1 + "((" + pt1 + ")63)}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 				}
 			}
 		}
@@ -155,6 +167,10 @@ public class TestExpression extends HiTest {
 					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					// arrays
+					assertFailCompile(bt1 + "[] x1 = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= (" + pt2 + ")3; assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + "[] x1 = {(" + pt1 + ")15}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + " x1[] = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 				}
 			}
 		}
@@ -172,6 +188,10 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize(bt1 + " x1=63; " + pt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(pt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 					assertSuccessSerialize(bt1 + " x1=63; " + bt2 + " x2=3; assert (x1 " + o + " x2) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					// arrays
+					assertSuccessSerialize(bt1 + "[] x1={63}; " + pt2 + "[] x2={3}; assert (x1[0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(pt1 + "[][] x1={{63}}; " + bt2 + "[] x2={3}; assert (x1[0][0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
+					assertSuccessSerialize(bt1 + "[][][] x1={{{63}}}; " + bt2 + "[] x2={3}; assert (x1[0][0][0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					if (bt1.equals("Byte") || bt1.equals("Short") || bt1.equals("Character")) {
 						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
@@ -633,5 +653,10 @@ public class TestExpression extends HiTest {
 		// equals
 		assertSuccessSerialize("assert \"a\" == \"a\";");
 		assertFailSerialize("assert \"a\" == \"b\";");
+	}
+
+	@Test
+	public void testArrays() {
+		assertSuccessSerialize("int[] x = {2}; x[0] *= 2; assert x[0] == 4;");
 	}
 }
