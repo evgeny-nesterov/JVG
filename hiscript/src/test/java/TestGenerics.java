@@ -198,7 +198,7 @@ public class TestGenerics extends HiTest {
 
 	@Test
 	public void testInnerClasses() {
-//		assertSuccessSerialize("class A<O>{O get(O v);} class B<O>{class C extends A<O>{O get(O v){return v;}}}");
+//		TODO assertSuccessSerialize("class A<O>{O get(O v);} class B<O>{class C extends A<O>{O get(O v){return v;}}}");
 		assertSuccessSerialize("interface A<O1>{} class B<O2>{class C implements A<O2>{}}");
 	}
 

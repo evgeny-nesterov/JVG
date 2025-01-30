@@ -61,6 +61,7 @@ public class NodeExpressionSwitch extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = valueNode != null && valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 		HiClass topCaseClass = null;
 		HiClass topResultClass = null;

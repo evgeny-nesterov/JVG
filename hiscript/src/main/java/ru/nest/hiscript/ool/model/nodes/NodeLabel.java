@@ -31,6 +31,7 @@ public class NodeLabel extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (statement != null) {
 			CompileClassContext.CompileClassLevel level = ctx.level.getLabelLevel(label);

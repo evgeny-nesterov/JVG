@@ -44,6 +44,7 @@ public class NodeCastedIdentifier extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = true;
 		if (castedRecordArguments != null) {
 			for (int i = 0; i < castedRecordArguments.length; i++) {

@@ -90,6 +90,7 @@ public class NodeGenerics extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		if (generics.length == 0) {
 			return true;
 		}

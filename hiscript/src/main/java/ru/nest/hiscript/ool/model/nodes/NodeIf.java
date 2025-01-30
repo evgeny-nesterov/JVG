@@ -46,6 +46,7 @@ public class NodeIf extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		valid &= validateIf(validationInfo, ctx);
 		checkStatementTermination(ctx);

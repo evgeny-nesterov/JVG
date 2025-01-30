@@ -165,6 +165,7 @@ public class NodeInvocation extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		getValueClass(validationInfo, ctx);
 
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());

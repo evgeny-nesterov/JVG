@@ -164,6 +164,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		if (initializer != null) {
 			valid &= initializer.validate(validationInfo, ctx) && initializer.expectValue(validationInfo, ctx);

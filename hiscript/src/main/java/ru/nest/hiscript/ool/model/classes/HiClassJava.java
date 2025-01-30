@@ -19,6 +19,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -178,7 +180,7 @@ public class HiClassJava extends HiClass {
 	private final Map<MethodSignature, HiMethodJava> javaMethodsMap = new ConcurrentHashMap<>();
 
 	@Override
-	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {
+	protected List<HiMethod> _searchMethods(ClassResolver classResolver, MethodSignature signature) {
 		HiClass[] argTypes = signature.argClasses;
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
@@ -196,7 +198,7 @@ public class HiClassJava extends HiClass {
 		try {
 			HiMethodJava javaMethod = javaMethodsMap.get(signature);
 			if (javaMethod != null) {
-				return javaMethod != HiMethodJava.NULL ? javaMethod : null;
+				return javaMethod != HiMethodJava.NULL ? Collections.singletonList(javaMethod) : null;
 			}
 			Method matchedMethod = null;
 			Method nullMatchedMethod = null;
@@ -221,7 +223,7 @@ public class HiClassJava extends HiClass {
 			if (matchedMethod != null) {
 				javaMethod = new HiMethodJava(classResolver, this, matchedMethod, signature.name);
 				javaMethodsMap.put(signature, javaMethod);
-				return javaMethod;
+				return Collections.singletonList(javaMethod);
 			} else {
 				javaMethodsMap.put(signature, HiMethodJava.NULL);
 			}

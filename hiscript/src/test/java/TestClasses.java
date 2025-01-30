@@ -171,7 +171,7 @@ public class TestClasses extends HiTest {
 
 		// default
 		assertSuccessSerialize("interface I{default int get(){return 1;}} class C implements I{}; assert new C().get() == 1;");
-		assertFailCompile("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{}; new C().get();");
+		assertFailCompile("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{};");
 		assertFailCompile("interface I1{int get();} interface I2{int get();} class C implements I1, I2{}; new C().get();");
 		assertSuccessSerialize("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{int get(){return 3;}}; assert new C().get() == 3;");
 		assertSuccessSerialize("interface I1{int get();} interface I2{default int get(){return 2;}} class C implements I1, I2{}; assert new C().get() == 2;");
@@ -333,18 +333,48 @@ public class TestClasses extends HiTest {
 				"abstract method in non-abstract class", //
 				"static method cannot be abstract");
 		assertFailCompile("int x = 1; x.m();", "cannot resolve method 'm' in 'int'");
+
+		assertFailCompile("class A {void m(Float x){}} new A().m(1);");
 	}
 
 	@Test
 	public void testMethodPriority() {
+		// varargs
 		assertSuccessSerialize("class A{void m(int x){} void m(int... x){assert false;} void m(Integer x){assert false;}} new A().m(1);");
 		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){} void m(Integer x){assert false;}} new A().m(1, 2);");
 		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){} void m(Integer x){assert false;}} new A().m(new Integer(1), new Integer(2));");
 		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){assert false;} void m(Integer x){}} new A().m(new Integer(1));");
+		assertSuccessSerialize("class A{void m(int x, int y){} void m(int... x){assert false;} void m(Integer x, Integer y){assert false;}} new A().m(1, 2);");
+
+		// primitive -> box+primitive
+		assertSuccessSerialize("class A {void m(Float x){assert false;} void m(float x){}} new A().m(1);");
+		assertSuccessSerialize("class A {void m(Float x){assert false;} void m(double x){}} new A().m(1);");
+		assertSuccessSerialize("class A {void m(Float x){assert false;} void m(byte x){}} new A().m((byte)1);");
+		assertSuccessSerialize("class A {void m(Double x){assert false;} void m(double x){}} new A().m(1.1);");
 
 		assertSuccessSerialize("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, 2);");
 		assertSuccessSerialize("class A{void m(int x1, int x2){assert false;} void m(int... x){assert false;} void m(Integer x1, Integer x2){}} new A().m(new Integer(1), new Integer(2));");
-		// assertSuccessSerialize("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));"); // Ambiguous method call. Both
+		assertSuccessSerialize("class A{void m(int x1, int x2){assert true;} void m(float x1, float x2){assert false;}} new A().m(1, 2);");
+		assertSuccessSerialize("class A{void m(int x1, int x2){assert false;} void m(float x1, float x2){assert true;}} new A().m(1, 2f);");
+
+		// Ambiguous method call
+		assertFailCompile("class A{void m(int x, int... y){} void m(int... x){}} new A().m(1, 2);", "Ambiguous method call. Both");
+		assertFailCompile("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));", "Ambiguous method call. Both");
+
+		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority strict primitives over cast primitives
+		assertSuccessSerialize("class A {void m(int x, Integer y){assert true;} void m(Integer x, int y){assert false;}} new A().m(1, new Integer(2));"); // priority strict over autoboxing
+		assertSuccessSerialize("class A {void m(String x, Integer y){assert true;} void m(Object x, Object y){assert false;}} new A().m(\"a\", new Integer(1));"); // priority strict over cast Object
+		assertSuccessSerialize("class A {void m(Double x, Integer y){assert true;} void m(Number x, Number y){assert false;}} new A().m(1.0, 1);"); // priority strict over cast
+
+		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(new Integer(1), 2);"); // priority autoboxing (box->primitive) over primitive cast
+		assertSuccessSerialize("class A {void m(Integer x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority autoboxing(primitive->box) over primitive cast
+		assertFailCompile("class A {void m(Integer x, int y){} void m(int x, int y){}} new A().m(1, new Integer(2));");
+		assertFailCompile("class A {void m(Integer x, Integer y){} void m(Integer x,  int y){}} new A().m(1, new Integer(2));");
+
+		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(Integer x, Integer y){assert false;}} new A().m(1, 2);");
+		assertSuccessSerialize("class A {void m(Integer x, Integer y){assert true;} void m(int x, int y){assert false;}} new A().m(new Integer(1), new Integer(2));");
+		assertSuccessSerialize("class A {void m(Integer x, int y){assert true;} void m(int x, int y){assert false;}} new A().m(new Integer(1), 2);");
+		assertFailCompile("class A {void m(int x, int y){} void m(Integer x, Integer y){}} new A().m(new Integer(1), 2);");
 	}
 
 	@Test

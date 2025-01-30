@@ -18,6 +18,7 @@ public class NodeBreak extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		CompileClassContext.CompileClassLevel breakLevel = ctx.level.getBreakLevel(label);
 		if (breakLevel == null) {

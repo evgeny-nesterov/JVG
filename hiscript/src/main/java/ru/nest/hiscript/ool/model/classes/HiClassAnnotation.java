@@ -30,6 +30,7 @@ public class HiClassAnnotation extends HiClass {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = super.validate(validationInfo, ctx);
 		ctx.enter(RuntimeContext.INITIALIZATION, this);
 		if (fields != null) {

@@ -201,7 +201,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			boolean rewriteValid = true;
 			if (clazz.superClass != null) {
 				resolve(ctx);
-				rewrittenMethod = clazz.superClass.getMethod(ctx, signature);
+				rewrittenMethod = clazz.superClass.searchMethod(ctx, signature);
 				if (rewrittenMethod != null) {
 					if (rewrittenMethod.returnClass.isGeneric() ? !returnClass.isInstanceof(((HiClassGeneric) rewrittenMethod.returnClass).clazz) : !returnClass.isInstanceof(rewrittenMethod.returnClass)) {
 						validationInfo.error("incompatible return type", getToken());
@@ -218,7 +218,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			if (rewriteValid && clazz.interfaces != null) {
 				for (HiClass intf : clazz.interfaces) {
 					resolve(ctx);
-					rewrittenMethod = intf.getMethod(ctx, signature);
+					rewrittenMethod = intf.searchMethod(ctx, signature);
 					if (rewrittenMethod != null) {
 						boolean match;
 						if (returnClass.isGeneric() && rewrittenMethod.returnClass.isGeneric()) {
@@ -264,15 +264,19 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					argCount = implementedMethod.argCount;
 					argClasses = implementedMethod.argClasses;
 					arguments = implementedMethod.arguments;
+					boolean isVarargs = false;
 					if (arguments != null) {
 						for (NodeArgument argument : arguments) {
 							ctx.level.addField(argument);
 							ctx.initializedNodes.add(argument);
 						}
+						if (arguments.length > 0) {
+							isVarargs = arguments[arguments.length - 1].isVarargs();
+						}
 					}
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
-					signature = new MethodSignature(name, argClasses);
+					signature = new MethodSignature(name, argClasses, isVarargs);
 				} else {
 					validationInfo.error("incompatible parameters signature in lambda expression", variableNode.getToken());
 					valid = false;
@@ -369,7 +373,8 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					arguments = implementedMethod.arguments;
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
-					signature = new MethodSignature(name, argClasses);
+					boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
+					signature = new MethodSignature(name, argClasses, isVarargs);
 
 					if (body != null && classResolver instanceof CompileClassContext) {
 						CompileClassContext ctx = (CompileClassContext) classResolver;
@@ -415,7 +420,8 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					argNames[i] = arguments[i].name;
 				}
 			}
-			signature = new MethodSignature(name, argClasses);
+			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
+			signature = new MethodSignature(name, argClasses, isVarargs);
 
 			if (returnType != null) {
 				returnClass = returnType.getClass(classResolver);

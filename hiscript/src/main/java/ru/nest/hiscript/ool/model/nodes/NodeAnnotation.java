@@ -25,6 +25,7 @@ public class NodeAnnotation extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = true;
 		HiClass clazz = ctx.getClass(name);
 		if (clazz == null) {
@@ -46,7 +47,7 @@ public class NodeAnnotation extends HiNode {
 				} else {
 					argsNames.add(arg.name);
 					if (clazz != null && clazz.isAnnotation()) {
-						HiMethod method = clazz.getMethod(ctx, arg.name);
+						HiMethod method = clazz.searchMethod(ctx, arg.name);
 						if (method == null || !method.isAnnotationArgument) {
 							validationInfo.error("annotation argument with name '" + arg.name + "' is not found", arg.getToken());
 							valid = false;

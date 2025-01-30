@@ -29,6 +29,7 @@ public class NodeAnnotationArgument extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = valueNode.validate(validationInfo, ctx) && valueNode.expectConstant(validationInfo, ctx);
 		if (valid) {
 			value = valueNode.getObjectValue(validationInfo, ctx, getToken());

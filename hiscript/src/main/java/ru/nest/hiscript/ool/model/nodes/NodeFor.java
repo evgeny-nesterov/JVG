@@ -31,6 +31,7 @@ public class NodeFor extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.FOR, this);
 		if (initialization != null) {

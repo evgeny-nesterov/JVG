@@ -72,6 +72,7 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (valueNode == null) {
 			validationInfo.error("expression expected", getToken());

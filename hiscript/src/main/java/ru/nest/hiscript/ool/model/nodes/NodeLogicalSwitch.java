@@ -41,6 +41,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 		boolean trueValid = trueValueNode != null ? trueValueNode.validate(validationInfo, ctx) && trueValueNode.expectValue(validationInfo, ctx) : false;
 		boolean falseValid = falseValueNode != null ? falseValueNode.validate(validationInfo, ctx) && falseValueNode.expectValue(validationInfo, ctx) : false;

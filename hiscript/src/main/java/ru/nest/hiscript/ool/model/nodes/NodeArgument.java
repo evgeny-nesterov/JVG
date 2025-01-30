@@ -66,6 +66,7 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		// TODO check modifiers (access)
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		Type type = typeArgument.getType();

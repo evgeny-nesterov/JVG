@@ -32,6 +32,7 @@ public class NodeSynchronized extends HiNode {
 
     @Override
     public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
         boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
         ctx.enter(RuntimeContext.SYNCHRONIZED, this);
         valid &= lock.validate(validationInfo, ctx) && lock.expectObjectValue(validationInfo, ctx);

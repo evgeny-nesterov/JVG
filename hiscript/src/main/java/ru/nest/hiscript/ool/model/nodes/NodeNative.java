@@ -48,6 +48,7 @@ public class NodeNative extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		// TODO check whether native method exists
 		return true;
 	}

@@ -28,6 +28,7 @@ public class NodeThis extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (ctx.clazz == null) {
 			validationInfo.error("cannot resolve this", token);

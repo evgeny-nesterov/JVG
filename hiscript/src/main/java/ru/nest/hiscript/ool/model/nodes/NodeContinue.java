@@ -33,6 +33,7 @@ public class NodeContinue extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		CompileClassContext.CompileClassLevel continueLevel = ctx.level.getContinueLevel(label);
 		if (continueLevel == null) {

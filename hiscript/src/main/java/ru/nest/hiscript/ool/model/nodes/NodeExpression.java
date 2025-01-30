@@ -17,6 +17,7 @@ public abstract class NodeExpression extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		return NodeReturn.validateLambdaReturn(validationInfo, ctx, this, token);
 	}
 

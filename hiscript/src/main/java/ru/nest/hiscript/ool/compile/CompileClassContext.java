@@ -65,6 +65,8 @@ public class CompileClassContext implements ClassResolver {
 
 	public int classType;
 
+	public TokenAccessible currentNode;
+
 	public CompileClassLevel level = new CompileClassLevel(RuntimeContext.BLOCK, null, null);
 
 	public List<HiField<?>> fields = null;
@@ -268,6 +270,9 @@ public class CompileClassContext implements ClassResolver {
 
 	public void exit() {
 		level = level.parent;
+		if (level != null) {
+			currentNode = level.node;
+		}
 	}
 
 	public HiClass consumeInvocationClass() {
@@ -358,6 +363,9 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public Token getCurrentToken() {
+		if (currentNode != null && currentNode.getToken() != null) {
+			return currentNode.getToken();
+		}
 		CompileClassLevel l = level;
 		while (l != null) {
 			if (l.node != null && l.node.getToken() != null) {
@@ -531,6 +539,7 @@ public class CompileClassContext implements ClassResolver {
 			this.type = type;
 			this.node = node;
 			setParent(parent);
+			currentNode = node;
 		}
 
 		public void setParent(CompileClassLevel parent) {

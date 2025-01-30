@@ -86,6 +86,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
 		clazz = getValueClass(validationInfo, ctx);

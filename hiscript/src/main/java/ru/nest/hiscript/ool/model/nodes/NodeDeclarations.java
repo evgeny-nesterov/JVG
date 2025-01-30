@@ -28,6 +28,7 @@ public class NodeDeclarations extends HiNode implements HasModifiers {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		for (NodeDeclaration declaration : declarations) {
 			valid &= declaration.validate(validationInfo, ctx);

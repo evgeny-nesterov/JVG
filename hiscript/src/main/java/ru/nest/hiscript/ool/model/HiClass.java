@@ -34,6 +34,7 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -520,7 +521,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 								} else {
 									HiMethod existingMethod = defaultMethods.get(method.signature);
 									if (existingMethod != null) {
-										if (searchMethod(ctx, method.signature) == null) {
+										HiMethod executeMethod = searchMethod(ctx, method.signature);
+										if (executeMethod == null || defaultMethods.containsValue(executeMethod)) {
 											validationInfo.error(getNameDescr() + " inherits unrelated defaults for " + method + " from types " + existingMethod.clazz.getNameDescr() + " and " + intf.getNameDescr(), token);
 											valid = false;
 										} else {
@@ -1043,42 +1045,92 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return field;
 	}
 
-	private final Map<MethodSignature, HiMethod> methodsHash = new HashMap<>();
+	private final Map<MethodSignature, List<HiMethod>> methodsHash = new HashMap<>();
 
 	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
-		signature.set(name, argTypes);
+		signature.set(name, argTypes, false);
 		return searchMethod(classResolver, signature);
 	}
 
 	public HiMethod searchMethod(ClassResolver classResolver, MethodSignature signature) {
-		HiMethod method = methodsHash.get(signature);
-		if (method == null) {
-			method = _searchMethod(classResolver, signature);
-			if (method != null) {
-				methodsHash.put(new MethodSignature(signature), method);
+		List<HiMethod> methods = methodsHash.get(signature);
+		if (methods == null) {
+			methods = _searchMethods(classResolver, signature);
+			if (methods != null) {
+				if (methods.size() > 1) {
+					HiMethod m1 = methods.get(0);
+					HiMethod m2 = methods.get(1);
+					classResolver.processResolverException("Ambiguous method call. Both " + m1 + " in " + m1.clazz.getNameDescr() + " and " + m2 + " in " + m2.clazz.getNameDescr() + " match.");
+				}
+				methodsHash.put(new MethodSignature(signature), methods);
 			}
 		}
-		return method;
+		return methods != null && methods.size() > 0 ? methods.get(0) : null;
 	}
 
-	protected HiMethod _searchMethod(ClassResolver classResolver, MethodSignature signature) {
+	protected List<HiMethod> searchMethods(ClassResolver classResolver, MethodSignature signature) {
+		List<HiMethod> methods = methodsHash.get(signature);
+		if (methods == null) {
+			methods = _searchMethods(classResolver, signature);
+			if (methods != null) {
+				if (methods.size() > 1) {
+					HiMethod m1 = methods.get(0);
+					HiMethod m2 = methods.get(1);
+					classResolver.processResolverException("Ambiguous method call. Both " + m1 + " in " + m1.clazz.getNameDescr() + " and " + m2 + " in " + m2.clazz.getNameDescr() + " match.");
+				}
+				methodsHash.put(new MethodSignature(signature), methods);
+			}
+		}
+		return methods;
+	}
+
+	private List<HiMethod> addFoundMethod(HiMethod method, MethodSignature searchSignature, List<HiMethod> foundMethods, boolean mayRewite) {
+		if (foundMethods != null) {
+			for (int i = foundMethods.size() - 1; i >= 0; i--) {
+				HiMethod foundMethod = foundMethods.get(i);
+				if (foundMethod.isAbstract() != method.isAbstract()) {
+					if (foundMethod.isAbstract()) {
+						foundMethods.remove(i);
+					} else {
+						return foundMethods;
+					}
+				} else {
+					ArgClassPriorityType argPriority = foundMethod.signature.getArgsPriority(method.signature, searchSignature);
+					if (argPriority == ArgClassPriorityType.higher) {
+						return foundMethods;
+					} else if (argPriority == ArgClassPriorityType.lower) {
+						foundMethods.remove(i);
+					} else if (argPriority == ArgClassPriorityType.equals && mayRewite) {
+						return foundMethods;
+					}
+				}
+			}
+		} else {
+			foundMethods = new ArrayList<>(1);
+		}
+		foundMethods.add(method);
+		return foundMethods;
+	}
+
+	protected List<HiMethod> _searchMethods(ClassResolver classResolver, MethodSignature signature) {
 		String name = signature.name;
 		HiClass[] argTypes = signature.argClasses;
+		List<HiMethod> matchedMethods = null;
 
+		// functional method
 		if (functionalMethod != null) {
-			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes, MatchMethodArgumentsType.soft)) {
-				return functionalMethod;
+			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes)) {
+				matchedMethods = addFoundMethod(functionalMethod, signature, matchedMethods, false);
 			}
 		}
 
+		// current class methods
 		if (methods != null && methods.length > 0) {
-			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
-				for (HiMethod m : methods) {
-					if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
-						if (isMatchMethodArguments(classResolver, m, argTypes, matchType)) {
-							return m;
-						}
+			for (HiMethod m : methods) {
+				if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
+					if (isMatchMethodArguments(classResolver, m, argTypes)) {
+						matchedMethods = addFoundMethod(m, signature, matchedMethods, false);
 					}
 				}
 			}
@@ -1086,45 +1138,50 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		// super methods
 		if (superClass != null) {
-			HiMethod m = superClass.searchMethod(classResolver, signature);
-			if (m != null) {
-				return m;
+			List<HiMethod> superMethods = superClass.searchMethods(classResolver, signature);
+			if (superMethods != null) {
+				for (HiMethod m : superMethods) {
+					matchedMethods = addFoundMethod(m, signature, matchedMethods, true);
+				}
 			}
 		}
 
+		if (matchedMethods != null) {
+			if (!matchedMethods.get(0).isAbstract()) {
+				return matchedMethods;
+			}
+		}
+
+		// interfaces methods
 		if (interfaces != null) {
-			HiMethod md = null;
-			HiMethod m = null;
 			for (HiClass i : interfaces) {
-				HiMethod _m = i.searchMethod(classResolver, signature);
-				if (_m != null) {
-					if (_m.isDefault()) {
-						if (md != null) {
-							return null;
-						}
-						md = _m;
-					} else {
-						m = _m;
+				List<HiMethod> interfaceMethods = i.searchMethods(classResolver, signature);
+				if (interfaceMethods != null) {
+					for (HiMethod m : interfaceMethods) {
+						matchedMethods = addFoundMethod(m, signature, matchedMethods, true);
 					}
 				}
 			}
-			if (md != null) {
-				return md;
-			} else if (m != null) {
-				return m;
-			}
+		}
+		if (matchedMethods != null) {
+			return matchedMethods;
 		}
 
 		// enclosing methods
 		if (!isTopLevel()) {
-			HiMethod m = enclosingClass.searchMethod(classResolver, signature);
-			if (m != null) {
-				return m;
+			List<HiMethod> enclosingMethods = enclosingClass.searchMethods(classResolver, signature);
+			if (enclosingMethods != null) {
+				for (HiMethod m : enclosingMethods) {
+					matchedMethods = addFoundMethod(m, signature, matchedMethods, false);
+				}
 			}
 		}
+		return matchedMethods;
+	}
 
-		// not found
-		return null;
+	private void ambiguousMethodCall(ClassResolver classResolver, MethodSignature signature, HiMethod m1, HiMethod m2) {
+		// Ambiguous method call. Both
+		// m(int, int,int...) in A and m(int, int...) in I match
 	}
 
 	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
@@ -1149,15 +1206,26 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public enum MatchMethodArgumentsType {
-		strict(false, false), noAutobox(true, false), soft(true, true);
+		strict(false, false, false),
+		autobox(false, false, true),
+		noCast(false, true, true),
+		noVarargs(true, false, true),
+		soft(true, true, true);
+
+		private final boolean isCast;
 
 		private final boolean isVarargs;
 
 		private final boolean isAutobox;
 
-		MatchMethodArgumentsType(boolean isVarargs, boolean isAutobox) {
+		MatchMethodArgumentsType(boolean isCast, boolean isVarargs, boolean isAutobox) {
+			this.isCast = isCast;
 			this.isVarargs = isVarargs;
 			this.isAutobox = isAutobox;
+		}
+
+		public boolean isCast() {
+			return isCast;
 		}
 
 		public boolean isVarargs() {
@@ -1169,35 +1237,24 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 	}
 
-	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
-		if (matchType.isVarargs() && method.hasVarargs()) {
+	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
+		if (method.hasVarargs()) {
 			int mainArgCount = method.argCount - 1;
-			if (mainArgCount > argTypes.length) {
+			if (!isMatchMethodArgumentsPartially(classResolver, method, argTypes, mainArgCount)) {
 				return false;
-			}
-
-			method.resolve(classResolver);
-
-			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
-					return false;
-				}
-			}
-			for (int i = 0; i < mainArgCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
 			}
 
 			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
 			NodeArgument vararg = method.arguments[mainArgCount];
 			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
 				HiClass argType = argTypes[mainArgCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, argType, varargsType, false, matchType.isAutobox())) {
+				if (!HiClass.autoCast(classResolver, argType, varargsType, false, true)) {
 					return false;
 				}
 				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			} else {
 				for (int i = mainArgCount; i < argTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
+					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, true)) {
 						return false;
 					}
 				}
@@ -1210,17 +1267,27 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			if (argCount != argTypes.length) {
 				return false;
 			}
-
-			method.resolve(classResolver);
-
-			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
-					return false;
-				}
+			if (!isMatchMethodArgumentsPartially(classResolver, method, argTypes, argCount)) {
+				return false;
 			}
-			for (int i = 0; i < argCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+		}
+		return true;
+	}
+
+	private boolean isMatchMethodArgumentsPartially(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, int argCount) {
+		if (argCount > argTypes.length) {
+			return false;
+		}
+
+		method.resolve(classResolver);
+
+		for (int i = 0; i < argCount; i++) {
+			if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, true)) {
+				return false;
 			}
+		}
+		for (int i = 0; i < argCount; i++) {
+			argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
 		}
 		return true;
 	}
@@ -1308,19 +1375,20 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
-		signature.set(name, argTypes);
+		signature.set(name, argTypes, false);
 		return getMethod(classResolver, signature);
 	}
 
-	public HiMethod getMethod(ClassResolver classResolver, MethodSignature signature) {
-		HiMethod method = methodsHash.get(signature);
-		if (method == null) {
-			method = _getMethod(classResolver, signature);
+	private HiMethod getMethod(ClassResolver classResolver, MethodSignature signature) {
+		List<HiMethod> methods = methodsHash.get(signature);
+		if (methods == null) {
+			HiMethod method = _getMethod(classResolver, signature);
 			if (method != null) {
-				methodsHash.put(new MethodSignature(signature), method);
+				methodsHash.put(new MethodSignature(signature), Collections.singletonList(method));
 			}
+			return method;
 		}
-		return method;
+		return methods.get(0);
 	}
 
 	private HiMethod _getMethod(ClassResolver classResolver, MethodSignature signature) {
@@ -1390,7 +1458,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
-		signature.set(HiConstructor.METHOD_NAME, argTypes);
+		signature.set(HiConstructor.METHOD_NAME, argTypes, false);
 		HiConstructor constructor = constructorsHash.get(signature);
 		if (constructor == null) {
 			constructor = _searchConstructor(classResolver, argTypes);
@@ -2034,7 +2102,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 				} else if (!dst.isPrimitive()) {
 					if (dst.getAutoboxedPrimitiveClass() != null) {
-						dst = dst.getAutoboxedPrimitiveClass();
+						if (src.isPrimitive()) {
+							return src == dst.getAutoboxedPrimitiveClass();
+						} else {
+							return src == dst;
+						}
 					} else if (dst == HiClass.NUMBER_CLASS) {
 						return src.isNumber();
 					} else if (dst.isGeneric()) {
@@ -2188,5 +2260,72 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			descr = descr.substring(index);
 		}
 		return descr;
+	}
+
+	/**
+	 * It is assumed this class and clazz are matched to argClass
+	 */
+	enum ArgClassPriorityType {
+		higher, lower, equals, nonComparable
+	}
+
+	public ArgClassPriorityType getArgPriority(HiClass clazz, HiClass argClass) {
+		HiClass c1 = this;
+		HiClass c2 = clazz;
+		if (c1 == c2) {
+			return ArgClassPriorityType.equals;
+		}
+		if (argClass.isPrimitive() || argClass.getAutoboxedPrimitiveClass() != null) {
+			HiClassPrimitive pc1 = c1.isPrimitive() ? (HiClassPrimitive) c1 : c1.getAutoboxedPrimitiveClass();
+			HiClassPrimitive pc2 = c2.isPrimitive() ? (HiClassPrimitive) c2 : c2.getAutoboxedPrimitiveClass();
+			if (pc1 == pc2) {
+				return ArgClassPriorityType.equals;
+			}
+		}
+		if (c1 == argClass) {
+			return ArgClassPriorityType.higher;
+		} else if (c2 == argClass) {
+			return ArgClassPriorityType.lower;
+		}
+
+		if (argClass.isPrimitive()) {
+			if (c1.isPrimitive() && c2.isPrimitive()) {
+				boolean isIntArg = argClass.isIntNumber();
+				boolean isInt1 = c1.isIntNumber();
+				boolean isInt2 = c2.isIntNumber();
+				if (isInt1 != isInt2) {
+					if (isInt1 == isIntArg) {
+						return ArgClassPriorityType.higher;
+					} else {
+						return ArgClassPriorityType.lower;
+					}
+				}
+			} else if (c1.isPrimitive() || c1.getAutoboxedPrimitiveClass() == argClass) {
+				return ArgClassPriorityType.higher;
+			} else if (c2.isPrimitive() || c2.getAutoboxedPrimitiveClass() == argClass) {
+				return ArgClassPriorityType.lower;
+			}
+		} else {
+			if (c1.isPrimitive()) {
+				c1 = c1.getAutoboxClass();
+			}
+			if (c2.isPrimitive()) {
+				c2 = c2.getAutoboxClass();
+			}
+			if (c1 == argClass) {
+				return ArgClassPriorityType.higher;
+			} else if (c2 == argClass) {
+				return ArgClassPriorityType.lower;
+			}
+		}
+
+		// object - object
+		if (c1.isInstanceof(c2)) {
+			return ArgClassPriorityType.higher;
+		}
+		if (c2.isInstanceof(c1)) {
+			return ArgClassPriorityType.lower;
+		}
+		return ArgClassPriorityType.nonComparable;
 	}
 }

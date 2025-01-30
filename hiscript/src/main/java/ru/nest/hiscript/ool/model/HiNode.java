@@ -241,6 +241,7 @@ public abstract class HiNode implements HiNodeIF {
 
     @Override
     public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
         return true;
     }
 

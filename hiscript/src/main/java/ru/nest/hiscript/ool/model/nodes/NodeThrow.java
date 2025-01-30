@@ -27,6 +27,7 @@ public class NodeThrow extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		valid &= exception.validate(validationInfo, ctx);
 		HiClass excClass = exception.getValueClass(validationInfo, ctx);

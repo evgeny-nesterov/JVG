@@ -21,6 +21,7 @@ public class NodeGetClass extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		return true;
 	}
 

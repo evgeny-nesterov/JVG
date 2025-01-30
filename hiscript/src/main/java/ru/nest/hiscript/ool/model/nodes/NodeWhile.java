@@ -25,6 +25,7 @@ public class NodeWhile extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.WHILE, this);
 		try {
