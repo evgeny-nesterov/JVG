@@ -63,6 +63,7 @@ public class StringTokenVisitor implements TokenVisitor {
 		int minStartLineWhiteSpaces = Integer.MAX_VALUE;
 		int startLineWhiteSpaces = 0;
 		boolean trimLine = true;
+		boolean splitLine = false;
 		while (tokenizer.hasNext()) {
 			boolean slashedQuote = false;
 			if (tokenizer.getCurrent() == '\\') {
@@ -72,6 +73,9 @@ public class StringTokenVisitor implements TokenVisitor {
 					tokenizer.next();
 					tokenizer.skipLineWhitespaces();
 					trimLine = false;
+				} else if (nextChar == '\n') {
+					tokenizer.next();
+					splitLine = true;
 				} else if (nextChar == '"') {
 					tokenizer.next();
 					slashedQuote = true;
@@ -83,12 +87,15 @@ public class StringTokenVisitor implements TokenVisitor {
 				startLine = true;
 
 				// remove whitespaces at the end of line
-				if (trimLine) {
+				if (splitLine) {
+					lastLine.append('\u0000');
+				} else if (trimLine) {
 					while (lastLine.length() > 0 && Tokenizer.isWhiteSpace(lastLine.charAt(lastLine.length() - 1))) {
 						lastLine.setLength(lastLine.length() - 1);
 					}
 				}
 				trimLine = true;
+				splitLine = false;
 
 				lines.add(lastLine);
 				lastLine = new StringBuilder();
@@ -106,9 +113,6 @@ public class StringTokenVisitor implements TokenVisitor {
 						break;
 					}
 				} else {
-					if (!trimLine) {
-						tokenizer.error("illegal escape character", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
-					}
 					quotesCount = 0;
 				}
 			}
@@ -126,17 +130,14 @@ public class StringTokenVisitor implements TokenVisitor {
 			minStartLineWhiteSpaces = startLineWhiteSpaces;
 		}
 		// remove whitespaces at the end of line (if not ends with \s)
-		if (trimLine) {
+		if (splitLine) {
+			lastLine.append('\u0000');
+		} else if (trimLine) {
 			while (lastLine.length() > startLineWhiteSpaces && Tokenizer.isWhiteSpace(lastLine.charAt(lastLine.length() - 1))) {
 				lastLine.setLength(lastLine.length() - 1);
 			}
 		}
-		// line ends with _
-		if (lastLine.length() >= 1 && lastLine.charAt(lastLine.length() - 1) == '_' && lines.size() > 0) {
-			lines.get(lines.size() - 1).append(lastLine, 0, lastLine.length() - 1);
-		} else {
-			lines.add(lastLine);
-		}
+		lines.add(lastLine);
 
 		StringBuilder buf = new StringBuilder();
 		boolean appendPrevLine = false;
@@ -145,7 +146,7 @@ public class StringTokenVisitor implements TokenVisitor {
 
 			// line ends with _
 			boolean appendLine = false;
-			if (lineBuf.length() > 0 && lineBuf.charAt(lineBuf.length() - 1) == '_') {
+			if (lineBuf.length() > 0 && lineBuf.charAt(lineBuf.length() - 1) == '\u0000') {
 				lineBuf.setLength(lineBuf.length() - 1);
 				appendLine = true;
 			}

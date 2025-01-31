@@ -14,10 +14,10 @@ public class TestString extends HiTest {
 		assertFailCompile("String s = 1;");
 		assertFailCompile("String s = 'a';");
 		assertFailCompile("String s = true;");
-		assertFailCompile("String s = \"\\s\";");
 
 		// special symbols
 		assertSuccessSerialize("String s = \"quote=\\\"\"; assert s.indexOf('\"') == 6;");
+		assertFailCompile("String s = \"\\s\";");
 		assertFailCompile("String s = \"a\nb\";");
 		assertFailCompile("String s = \"a\rb\";");
 
@@ -100,7 +100,7 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = \"\"\"\nabc   \nabc   \"\"\"; assert s.equals(\"abc\\nabc\");");
 		assertSuccessSerialize("String s = \"\"\"\nabc   \\s\nabc   \\s  \"\"\"; assert s.equals(\"abc   \\nabc   \");");
 		assertSuccessSerialize("String s = \"\"\"\n   \\\"\"\"   \"\"\"; assert s.equals(\"\\\"\\\"\\\"\");");
-		assertSuccessSerialize("String s = \"\"\"\n a_\n b_ \n c \"\"\"; assert s.equals(\"abc\");");
+		assertSuccessSerialize("String s = \"\"\"\n a\\\n b \\\n c \"\"\"; assert s.equals(\"ab c\");");
 		assertFailCompile("String s = \"\"\";");
 		assertFailCompile("String s = \"\"\"\";");
 		assertFailCompile("String s = \"\"\"\n;");
