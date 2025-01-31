@@ -65,8 +65,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.character >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case BYTE:
 					switch (t2) {
 						case CHAR:
@@ -91,8 +89,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.byteNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case SHORT:
 					switch (t2) {
 						case CHAR:
@@ -117,8 +113,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.shortNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case INT:
 					switch (t2) {
 						case CHAR:
@@ -143,8 +137,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.intNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case LONG:
 					switch (t2) {
 						case CHAR:
@@ -169,8 +161,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.longNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case FLOAT:
 					switch (t2) {
 						case CHAR:
@@ -195,8 +185,6 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.floatNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case DOUBLE:
 					switch (t2) {
 						case CHAR:
@@ -221,10 +209,7 @@ public class OperationGreaterOrEquals extends BinaryOperation {
 							v1.bool = v1.doubleNumber >= v2.doubleNumber;
 							return;
 					}
-					break;
 			}
 		}
-
-		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

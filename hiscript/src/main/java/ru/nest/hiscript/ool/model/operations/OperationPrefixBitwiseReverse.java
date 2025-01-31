@@ -36,6 +36,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 					return t == LONG ? type : HiClassPrimitive.INT;
 			}
 		}
+
 		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		return node.clazz;
 	}
@@ -43,15 +44,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		HiClass c = v.getOperationClass();
-
-		boolean isP = c.isPrimitive();
-		if (!isP) {
-			errorInvalidOperator(ctx, c);
-			return;
-		}
-
-		int t = c.getPrimitiveType();
-		switch (t) {
+		switch (c.getPrimitiveType()) {
 			case CHAR:
 				v.valueClass = TYPE_INT;
 				v.intNumber = ~v.character;
@@ -73,7 +66,5 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 				v.longNumber = ~v.longNumber;
 				return;
 		}
-
-		errorInvalidOperator(ctx, c);
 	}
 }

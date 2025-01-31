@@ -45,9 +45,6 @@ public class OperationEquate extends BinaryOperation {
 				if (c1.isPrimitive() && c2.isPrimitive()) {
 					int t1 = c1.getPrimitiveType();
 					int t2 = c2.getPrimitiveType();
-					if (t1 == VAR) {
-						t1 = t2;
-					}
 					if (t1 == BOOLEAN || t2 == BOOLEAN) {
 						if (t1 == t2) {
 							if (node2.isCompileValue()) {
@@ -225,19 +222,16 @@ public class OperationEquate extends BinaryOperation {
 									return HiClassPrimitive.CHAR;
 								}
 								break;
-
 							case BYTE:
 								if (t2 == BYTE) {
 									return HiClassPrimitive.BYTE;
 								}
 								break;
-
 							case SHORT:
 								if (t2 == BYTE || t2 == SHORT) {
 									return HiClassPrimitive.SHORT;
 								}
 								break;
-
 							case INT:
 								switch (t2) {
 									case CHAR:
@@ -247,7 +241,6 @@ public class OperationEquate extends BinaryOperation {
 										return HiClassPrimitive.INT;
 								}
 								break;
-
 							case LONG:
 								switch (t2) {
 									case CHAR:
@@ -258,7 +251,6 @@ public class OperationEquate extends BinaryOperation {
 										return HiClassPrimitive.LONG;
 								}
 								break;
-
 							case FLOAT:
 								switch (t2) {
 									case CHAR:
@@ -270,13 +262,10 @@ public class OperationEquate extends BinaryOperation {
 										return HiClassPrimitive.FLOAT;
 								}
 								break;
-
 							case DOUBLE:
 								return HiClassPrimitive.DOUBLE;
 						}
 					}
-				} else if (node2.clazz.isNull()) {
-					return c1;
 				} else if (node2.clazz.isInstanceof(node1.clazz)) {
 					// generic
 					if (node2.node instanceof NodeConstructor) {
@@ -288,7 +277,6 @@ public class OperationEquate extends BinaryOperation {
 				}
 			}
 		}
-
 		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		return null;
 	}
@@ -303,18 +291,9 @@ public class OperationEquate extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		if (v2.valueType == Value.VARIABLE && !v2.variable.isInitialized(ctx)) {
-			ctx.throwRuntimeException("variable not initialized: " + v2.variable.name);
-			return;
-		}
-
 		if (v1.valueType == Value.VARIABLE) {
 			// 1. copy variable from v1
 			HiField<?> variable = v1.variable;
-			if (variable.initialized && variable.isFinal()) {
-				ctx.throwRuntimeException("cannot assign a value to final variable '" + variable.name + "'");
-				return;
-			}
 
 			// 2. copy v2 to v1
 			v2.copyTo(v1);
@@ -327,13 +306,7 @@ public class OperationEquate extends BinaryOperation {
 			variable.set(ctx, v2);
 			variable.initialized = true;
 		} else if (v1.valueType == Value.ARRAY_INDEX) {
-			if (!HiClass.autoCast(ctx, v2.valueClass, v1.valueClass, v2.valueType == Value.VALUE, true)) {
-				ctx.throwRuntimeException("incompatible types; found " + v2.valueClass + ", required " + v1.valueClass);
-				return;
-			}
 			HiArrays.setArrayIndex(v1.valueClass, v1.parentArray, v1.arrayIndex, v2, v1);
-		} else {
-			errorUnexpectedType(ctx);
 		}
 	}
 }

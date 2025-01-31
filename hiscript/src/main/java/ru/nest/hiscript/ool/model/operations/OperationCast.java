@@ -28,13 +28,10 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		HiClass c1 = node1.clazz;
 		HiClass c2 = node2.clazz;
 		ctx.nodeValueType.returnType = node2.returnType;
-		if (c1.isVar() || c2.isVar()) {
-		} else if (c1.isPrimitive()) {
+		if (c1.isPrimitive()) {
 			if (!c2.isPrimitive()) {
 				errorCast(validationInfo, node1.token, c2, c1);
 			} else if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
-				errorCast(validationInfo, node1.token, c2, c1);
-			} else if (c1.getPrimitiveType() == VOID || c2.getPrimitiveType() == VOID) {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		} else if (c1.isArray() && c2.isArray()) {
@@ -239,11 +236,6 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		if (v1.valueType != Value.TYPE) {
-			ctx.throwRuntimeException("type is expected");
-			return;
-		}
-
 		HiClass c1 = null;
 		if (v1.node instanceof NodeType) {
 			c1 = ((NodeType) v1.node).getReturnValueClass();

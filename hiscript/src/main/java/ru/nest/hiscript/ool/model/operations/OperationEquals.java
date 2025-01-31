@@ -22,27 +22,20 @@ public class OperationEquals extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
-		HiClass c1 = node1.clazz;
-		HiClass c2 = node2.clazz;
-		if (c1.isVar() || c2.isVar()) {
-			return HiClassPrimitive.BOOLEAN;
+		HiClass c1;
+		HiClass c2;
+		if (node1.clazz.isPrimitive() || node2.clazz.isPrimitive()) {
+			c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
+			c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
+		} else {
+			c1 = node1.clazz;
+			c2 = node2.clazz;
 		}
-		if (c1.isPrimitive() && !c2.isPrimitive()) {
-			if (c2.getAutoboxedPrimitiveClass() != null) {
-				c2 = c2.getAutoboxedPrimitiveClass();
-			}
-		} else if (!c1.isPrimitive() && c2.isPrimitive()) {
-			if (c1.getAutoboxedPrimitiveClass() != null) {
-				c1 = c1.getAutoboxedPrimitiveClass();
-			}
-		}
-		if (c1.isPrimitive() == c2.isPrimitive()) {
+		if (c1.isPrimitive() && c2.isPrimitive()) {
 			if (c1.isNumber() == c2.isNumber()) {
 				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
-			return HiClassPrimitive.BOOLEAN;
-		} else if (c1.isNumber() && c2.isNumber()) {
 			return HiClassPrimitive.BOOLEAN;
 		}
 		if (node1.valid && node2.valid) {
@@ -53,25 +46,17 @@ public class OperationEquals extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.valueClass;
-		HiClass c2 = v2.valueClass;
+		HiClass c1;
+		HiClass c2;
+		if (v1.valueClass.isPrimitive() || v2.valueClass.isPrimitive()) {
+			c1 = v1.getOperationClass();
+			c2 = v2.getOperationClass();
+		} else {
+			c1 = v1.valueClass;
+			c2 = v2.valueClass;
+		}
 		boolean isP1 = c1.isPrimitive();
 		boolean isP2 = c2.isPrimitive();
-
-		// autobox
-		if (isP1 && !isP2) {
-			if (c2.getAutoboxedPrimitiveClass() != null) {
-				c2 = c2.getAutoboxedPrimitiveClass();
-				v2.substitutePrimitiveValueFromAutoboxValue();
-				isP2 = true;
-			}
-		} else if (!isP1 && isP2) {
-			if (c1.getAutoboxedPrimitiveClass() != null) {
-				c1 = c1.getAutoboxedPrimitiveClass();
-				v1.substitutePrimitiveValueFromAutoboxValue();
-				isP1 = true;
-			}
-		}
 
 		v1.valueClass = TYPE_BOOLEAN;
 		if (isP1 && isP2) {
@@ -79,12 +64,8 @@ public class OperationEquals extends BinaryOperation {
 			int t2 = c2.getPrimitiveType();
 			switch (t1) {
 				case BOOLEAN:
-					if (t2 == BOOLEAN) {
-						v1.bool = v1.bool == v2.bool;
-						return;
-					}
-					break;
-
+					v1.bool = v1.bool == v2.bool;
+					return;
 				case CHAR:
 					switch (t2) {
 						case CHAR:
@@ -109,8 +90,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.character == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case BYTE:
 					switch (t2) {
 						case CHAR:
@@ -135,8 +114,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.byteNumber == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case SHORT:
 					switch (t2) {
 						case CHAR:
@@ -161,8 +138,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.shortNumber == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case INT:
 					switch (t2) {
 						case CHAR:
@@ -187,8 +162,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.intNumber == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case LONG:
 					switch (t2) {
 						case CHAR:
@@ -213,8 +186,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.longNumber == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case FLOAT:
 					switch (t2) {
 						case CHAR:
@@ -239,8 +210,6 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.floatNumber == v2.doubleNumber;
 							return;
 					}
-					break;
-
 				case DOUBLE:
 					switch (t2) {
 						case CHAR:
@@ -265,9 +234,8 @@ public class OperationEquals extends BinaryOperation {
 							v1.bool = v1.doubleNumber == v2.doubleNumber;
 							return;
 					}
-					break;
 			}
-		} else if (!isP1 && !isP2) {
+		} else {
 			Object o1;
 			if (c1.isNull()) {
 				o1 = null;
@@ -283,9 +251,6 @@ public class OperationEquals extends BinaryOperation {
 			}
 
 			v1.bool = o1 == o2;
-			return;
 		}
-
-		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

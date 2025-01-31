@@ -24,7 +24,7 @@ public class OperationLogicalAnd extends BinaryOperation {
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
 		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
-		if ((c1 == HiClassPrimitive.BOOLEAN || c1.isVar()) && (c2 == HiClassPrimitive.BOOLEAN || c2.isVar())) {
+		if (c1 == HiClassPrimitive.BOOLEAN && c2 == HiClassPrimitive.BOOLEAN) {
 			return HiClassPrimitive.BOOLEAN;
 		} else {
 			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
@@ -36,11 +36,7 @@ public class OperationLogicalAnd extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
-		if (c1 == TYPE_BOOLEAN && c2 == TYPE_BOOLEAN) {
-			v1.valueClass = TYPE_BOOLEAN;
-			v1.bool = v1.bool && v2.bool;
-		} else {
-			errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
-		}
+		v1.valueClass = TYPE_BOOLEAN;
+		v1.bool = v1.bool && v2.bool;
 	}
 }

@@ -29,12 +29,6 @@ public class OperationXOR extends BinaryOperation {
 			return null;
 		}
 
-		if (c1.isVar()) {
-			return c2;
-		} else if (c2.isVar()) {
-			return c1;
-		}
-
 		int t1 = c1.getPrimitiveType();
 		int t2 = c2.getPrimitiveType();
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {
@@ -148,12 +142,7 @@ public class OperationXOR extends BinaryOperation {
 							return HiClassPrimitive.INT;
 						case LONG:
 							return HiClassPrimitive.LONG;
-						case FLOAT:
-							return HiClassPrimitive.FLOAT;
-						case DOUBLE:
-							return HiClassPrimitive.DOUBLE;
 					}
-
 				case LONG:
 					switch (t2) {
 						case CHAR:
@@ -162,32 +151,9 @@ public class OperationXOR extends BinaryOperation {
 						case INT:
 						case LONG:
 							return HiClassPrimitive.LONG;
-						case FLOAT:
-							return HiClassPrimitive.FLOAT;
-						case DOUBLE:
-							return HiClassPrimitive.DOUBLE;
 					}
-					break;
-
-				case FLOAT:
-					switch (t2) {
-						case CHAR:
-						case BYTE:
-						case SHORT:
-						case INT:
-						case LONG:
-						case FLOAT:
-							return HiClassPrimitive.FLOAT;
-						case DOUBLE:
-							return HiClassPrimitive.DOUBLE;
-					}
-					break;
-
-				case DOUBLE:
-					return HiClassPrimitive.DOUBLE;
 			}
 		}
-
 		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		return null;
 	}
@@ -196,248 +162,225 @@ public class OperationXOR extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
-		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = c1.getPrimitiveType();
-			int t2 = c2.getPrimitiveType();
-			if (t1 == BOOLEAN || t2 == BOOLEAN) {
-				if (t1 == BOOLEAN && t2 == BOOLEAN) {
-					v1.valueClass = TYPE_BOOLEAN;
-					v1.bool = v1.bool ^ v2.bool;
-					return;
-				}
-			} else if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
-				switch (t1) {
-					case CHAR:
-						switch (t2) {
-							case CHAR:
-								autoCastInt(v1, v1.character ^ v2.character);
-								return;
-							case BYTE:
-								autoCastInt(v1, v1.character ^ v2.byteNumber);
-								return;
-							case SHORT:
-								autoCastInt(v1, v1.character ^ v2.shortNumber);
-								return;
-							case INT:
-								autoCastInt(v1, v1.character ^ v2.intNumber);
-								return;
-							case LONG:
-								autoCastLong(v1, v1.character ^ v2.longNumber);
-								return;
-						}
-						break;
-
-					case BYTE:
-						switch (t2) {
-							case CHAR:
-								autoCastInt(v1, v1.byteNumber ^ v2.character);
-								return;
-							case BYTE:
-								autoCastInt(v1, v1.byteNumber ^ v2.byteNumber);
-								return;
-							case SHORT:
-								autoCastInt(v1, v1.byteNumber ^ v2.shortNumber);
-								return;
-							case INT:
-								v1.valueClass = TYPE_INT;
-								autoCastInt(v1, v1.byteNumber ^ v2.intNumber);
-								return;
-							case LONG:
-								autoCastLong(v1, v1.byteNumber ^ v2.longNumber);
-								return;
-						}
-						break;
-
-					case SHORT:
-						switch (t2) {
-							case CHAR:
-								autoCastInt(v1, v1.shortNumber ^ v2.character);
-								return;
-							case BYTE:
-								autoCastInt(v1, v1.shortNumber ^ v2.byteNumber);
-								return;
-							case SHORT:
-								autoCastInt(v1, v1.shortNumber ^ v2.shortNumber);
-								return;
-							case INT:
-								autoCastInt(v1, v1.shortNumber ^ v2.intNumber);
-								return;
-							case LONG:
-								autoCastLong(v1, v1.shortNumber ^ v2.longNumber);
-								return;
-						}
-						break;
-
-					case INT:
-						switch (t2) {
-							case CHAR:
-								autoCastInt(v1, v1.intNumber ^ v2.character);
-								return;
-							case BYTE:
-								autoCastInt(v1, v1.intNumber ^ v2.byteNumber);
-								return;
-							case SHORT:
-								autoCastInt(v1, v1.intNumber ^ v2.shortNumber);
-								return;
-							case INT:
-								autoCastInt(v1, v1.intNumber ^ v2.intNumber);
-								return;
-							case LONG:
-								autoCastLong(v1, v1.intNumber ^ v2.longNumber);
-								return;
-						}
-						break;
-
-					case LONG:
-						switch (t2) {
-							case CHAR:
-								autoCastLong(v1, v1.longNumber ^ v2.character);
-								return;
-							case BYTE:
-								autoCastLong(v1, v1.longNumber ^ v2.byteNumber);
-								return;
-							case SHORT:
-								autoCastLong(v1, v1.longNumber ^ v2.shortNumber);
-								return;
-							case INT:
-								autoCastLong(v1, v1.longNumber ^ v2.intNumber);
-								return;
-							case LONG:
-								autoCastLong(v1, v1.longNumber ^ v2.longNumber);
-								return;
-						}
-						break;
-				}
-			} else {
-				switch (t1) {
-					case CHAR:
-						switch (t2) {
-							case CHAR:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.character ^ v2.character;
-								return;
-							case BYTE:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.character ^ v2.byteNumber;
-								return;
-							case SHORT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.character ^ v2.shortNumber;
-								return;
-							case INT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.character ^ v2.intNumber;
-								return;
-							case LONG:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.character ^ v2.longNumber;
-								return;
-						}
-						break;
-
-					case BYTE:
-						switch (t2) {
-							case CHAR:
-								v1.intNumber = v1.byteNumber ^ v2.character;
-								v1.valueClass = TYPE_INT;
-								return;
-							case BYTE:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.byteNumber ^ v2.byteNumber;
-								return;
-							case SHORT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.byteNumber ^ v2.shortNumber;
-								return;
-							case INT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.byteNumber ^ v2.intNumber;
-								return;
-							case LONG:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.byteNumber ^ v2.longNumber;
-								return;
-						}
-						break;
-
-					case SHORT:
-						switch (t2) {
-							case CHAR:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.shortNumber ^ v2.character;
-								return;
-							case BYTE:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.shortNumber ^ v2.byteNumber;
-								return;
-							case SHORT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.shortNumber ^ v2.shortNumber;
-								return;
-							case INT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.shortNumber ^ v2.intNumber;
-								return;
-							case LONG:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.shortNumber ^ v2.longNumber;
-								return;
-						}
-						break;
-
-					case INT:
-						switch (t2) {
-							case CHAR:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.intNumber ^ v2.character;
-								return;
-							case BYTE:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.intNumber ^ v2.byteNumber;
-								return;
-							case SHORT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.intNumber ^ v2.shortNumber;
-								return;
-							case INT:
-								v1.valueClass = TYPE_INT;
-								v1.intNumber = v1.intNumber ^ v2.intNumber;
-								return;
-							case LONG:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.intNumber ^ v2.longNumber;
-								return;
-						}
-						break;
-
-					case LONG:
-						switch (t2) {
-							case CHAR:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.longNumber ^ v2.character;
-								return;
-							case BYTE:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.longNumber ^ v2.byteNumber;
-								return;
-							case SHORT:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.longNumber ^ v2.shortNumber;
-								return;
-							case INT:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.longNumber ^ v2.intNumber;
-								return;
-							case LONG:
-								v1.valueClass = TYPE_LONG;
-								v1.longNumber = v1.longNumber ^ v2.longNumber;
-								return;
-						}
-						break;
-				}
+		int t1 = c1.getPrimitiveType();
+		int t2 = c2.getPrimitiveType();
+		if (t1 == BOOLEAN || t2 == BOOLEAN) {
+			if (t1 == BOOLEAN && t2 == BOOLEAN) {
+				v1.valueClass = TYPE_BOOLEAN;
+				v1.bool = v1.bool ^ v2.bool;
+			}
+		} else if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
+			switch (t1) {
+				case CHAR:
+					switch (t2) {
+						case CHAR:
+							autoCastInt(v1, v1.character ^ v2.character);
+							return;
+						case BYTE:
+							autoCastInt(v1, v1.character ^ v2.byteNumber);
+							return;
+						case SHORT:
+							autoCastInt(v1, v1.character ^ v2.shortNumber);
+							return;
+						case INT:
+							autoCastInt(v1, v1.character ^ v2.intNumber);
+							return;
+						case LONG:
+							autoCastLong(v1, v1.character ^ v2.longNumber);
+							return;
+					}
+				case BYTE:
+					switch (t2) {
+						case CHAR:
+							autoCastInt(v1, v1.byteNumber ^ v2.character);
+							return;
+						case BYTE:
+							autoCastInt(v1, v1.byteNumber ^ v2.byteNumber);
+							return;
+						case SHORT:
+							autoCastInt(v1, v1.byteNumber ^ v2.shortNumber);
+							return;
+						case INT:
+							v1.valueClass = TYPE_INT;
+							autoCastInt(v1, v1.byteNumber ^ v2.intNumber);
+							return;
+						case LONG:
+							autoCastLong(v1, v1.byteNumber ^ v2.longNumber);
+							return;
+					}
+				case SHORT:
+					switch (t2) {
+						case CHAR:
+							autoCastInt(v1, v1.shortNumber ^ v2.character);
+							return;
+						case BYTE:
+							autoCastInt(v1, v1.shortNumber ^ v2.byteNumber);
+							return;
+						case SHORT:
+							autoCastInt(v1, v1.shortNumber ^ v2.shortNumber);
+							return;
+						case INT:
+							autoCastInt(v1, v1.shortNumber ^ v2.intNumber);
+							return;
+						case LONG:
+							autoCastLong(v1, v1.shortNumber ^ v2.longNumber);
+							return;
+					}
+				case INT:
+					switch (t2) {
+						case CHAR:
+							autoCastInt(v1, v1.intNumber ^ v2.character);
+							return;
+						case BYTE:
+							autoCastInt(v1, v1.intNumber ^ v2.byteNumber);
+							return;
+						case SHORT:
+							autoCastInt(v1, v1.intNumber ^ v2.shortNumber);
+							return;
+						case INT:
+							autoCastInt(v1, v1.intNumber ^ v2.intNumber);
+							return;
+						case LONG:
+							autoCastLong(v1, v1.intNumber ^ v2.longNumber);
+							return;
+					}
+				case LONG:
+					switch (t2) {
+						case CHAR:
+							autoCastLong(v1, v1.longNumber ^ v2.character);
+							return;
+						case BYTE:
+							autoCastLong(v1, v1.longNumber ^ v2.byteNumber);
+							return;
+						case SHORT:
+							autoCastLong(v1, v1.longNumber ^ v2.shortNumber);
+							return;
+						case INT:
+							autoCastLong(v1, v1.longNumber ^ v2.intNumber);
+							return;
+						case LONG:
+							autoCastLong(v1, v1.longNumber ^ v2.longNumber);
+							return;
+					}
+			}
+		} else {
+			switch (t1) {
+				case CHAR:
+					switch (t2) {
+						case CHAR:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.character ^ v2.character;
+							return;
+						case BYTE:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.character ^ v2.byteNumber;
+							return;
+						case SHORT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.character ^ v2.shortNumber;
+							return;
+						case INT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.character ^ v2.intNumber;
+							return;
+						case LONG:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.character ^ v2.longNumber;
+							return;
+					}
+				case BYTE:
+					switch (t2) {
+						case CHAR:
+							v1.intNumber = v1.byteNumber ^ v2.character;
+							v1.valueClass = TYPE_INT;
+							return;
+						case BYTE:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.byteNumber ^ v2.byteNumber;
+							return;
+						case SHORT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.byteNumber ^ v2.shortNumber;
+							return;
+						case INT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.byteNumber ^ v2.intNumber;
+							return;
+						case LONG:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.byteNumber ^ v2.longNumber;
+							return;
+					}
+				case SHORT:
+					switch (t2) {
+						case CHAR:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.shortNumber ^ v2.character;
+							return;
+						case BYTE:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.shortNumber ^ v2.byteNumber;
+							return;
+						case SHORT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.shortNumber ^ v2.shortNumber;
+							return;
+						case INT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.shortNumber ^ v2.intNumber;
+							return;
+						case LONG:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.shortNumber ^ v2.longNumber;
+							return;
+					}
+				case INT:
+					switch (t2) {
+						case CHAR:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.intNumber ^ v2.character;
+							return;
+						case BYTE:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.intNumber ^ v2.byteNumber;
+							return;
+						case SHORT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.intNumber ^ v2.shortNumber;
+							return;
+						case INT:
+							v1.valueClass = TYPE_INT;
+							v1.intNumber = v1.intNumber ^ v2.intNumber;
+							return;
+						case LONG:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.intNumber ^ v2.longNumber;
+							return;
+					}
+				case LONG:
+					switch (t2) {
+						case CHAR:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.longNumber ^ v2.character;
+							return;
+						case BYTE:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.longNumber ^ v2.byteNumber;
+							return;
+						case SHORT:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.longNumber ^ v2.shortNumber;
+							return;
+						case INT:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.longNumber ^ v2.intNumber;
+							return;
+						case LONG:
+							v1.valueClass = TYPE_LONG;
+							v1.longNumber = v1.longNumber ^ v2.longNumber;
+							return;
+					}
 			}
 		}
-
-		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

@@ -1,7 +1,12 @@
 package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiArrays;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -38,17 +43,7 @@ public class OperationPostfixDecrement extends UnaryOperation {
     @Override
     public void doOperation(RuntimeContext ctx, Value value) {
         HiClass c = value.getOperationClass();
-        if (!c.isPrimitive()) {
-            errorInvalidOperator(ctx, value.valueClass);
-            return;
-        }
-
         int type = c.getPrimitiveType();
-        if (type == BOOLEAN) {
-            errorInvalidOperator(ctx, value.valueClass);
-            return;
-        }
-
         HiField<?> var = value.variable;
         Value[] tmpValues = ctx.getValues(1);
         try {

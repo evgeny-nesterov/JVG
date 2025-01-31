@@ -45,7 +45,6 @@ public class OperationBitwiseShiftRight extends BinaryOperation {
 					}
 			}
 		}
-
 		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		return c1;
 	}
@@ -54,137 +53,124 @@ public class OperationBitwiseShiftRight extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
-		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = c1.getPrimitiveType();
-			int t2 = c2.getPrimitiveType();
-			switch (t1) {
-				case CHAR:
-					switch (t2) {
-						case CHAR:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.character >> v2.character;
-							return;
-						case BYTE:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.character >> v2.byteNumber;
-							return;
-						case SHORT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.character >> v2.shortNumber;
-							return;
-						case INT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.character >> v2.intNumber;
-							return;
-						case LONG:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.character >> v2.longNumber;
-							return;
-					}
-					break;
-
-				case BYTE:
-					switch (t2) {
-						case CHAR:
-							v1.intNumber = v1.byteNumber >> v2.character;
-							v1.valueClass = TYPE_INT;
-							return;
-						case BYTE:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.byteNumber >> v2.byteNumber;
-							return;
-						case SHORT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.byteNumber >> v2.shortNumber;
-							return;
-						case INT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.byteNumber >> v2.intNumber;
-							return;
-						case LONG:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.byteNumber >> v2.longNumber;
-							return;
-					}
-					break;
-
-				case SHORT:
-					switch (t2) {
-						case CHAR:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.shortNumber >> v2.character;
-							return;
-						case BYTE:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.shortNumber >> v2.byteNumber;
-							return;
-						case SHORT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.shortNumber >> v2.shortNumber;
-							return;
-						case INT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.shortNumber >> v2.intNumber;
-							return;
-						case LONG:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.shortNumber >> v2.longNumber;
-							return;
-					}
-					break;
-
-				case INT:
-					switch (t2) {
-						case CHAR:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.intNumber >> v2.character;
-							return;
-						case BYTE:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.intNumber >> v2.byteNumber;
-							return;
-						case SHORT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.intNumber >> v2.shortNumber;
-							return;
-						case INT:
-							v1.valueClass = TYPE_INT;
-							v1.intNumber = v1.intNumber >> v2.intNumber;
-							return;
-						case LONG:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.intNumber >> v2.longNumber;
-							return;
-					}
-					break;
-
-				case LONG:
-					switch (t2) {
-						case CHAR:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.longNumber >> v2.character;
-							return;
-						case BYTE:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.longNumber >> v2.byteNumber;
-							return;
-						case SHORT:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.longNumber >> v2.shortNumber;
-							return;
-						case INT:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.longNumber >> v2.intNumber;
-							return;
-						case LONG:
-							v1.valueClass = TYPE_LONG;
-							v1.longNumber = v1.longNumber >> v2.longNumber;
-							return;
-					}
-					break;
-			}
+		int t1 = c1.getPrimitiveType();
+		int t2 = c2.getPrimitiveType();
+		switch (t1) {
+			case CHAR:
+				switch (t2) {
+					case CHAR:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.character >> v2.character;
+						return;
+					case BYTE:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.character >> v2.byteNumber;
+						return;
+					case SHORT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.character >> v2.shortNumber;
+						return;
+					case INT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.character >> v2.intNumber;
+						return;
+					case LONG:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.character >> v2.longNumber;
+						return;
+				}
+			case BYTE:
+				switch (t2) {
+					case CHAR:
+						v1.intNumber = v1.byteNumber >> v2.character;
+						v1.valueClass = TYPE_INT;
+						return;
+					case BYTE:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.byteNumber >> v2.byteNumber;
+						return;
+					case SHORT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.byteNumber >> v2.shortNumber;
+						return;
+					case INT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.byteNumber >> v2.intNumber;
+						return;
+					case LONG:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.byteNumber >> v2.longNumber;
+						return;
+				}
+			case SHORT:
+				switch (t2) {
+					case CHAR:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.shortNumber >> v2.character;
+						return;
+					case BYTE:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.shortNumber >> v2.byteNumber;
+						return;
+					case SHORT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.shortNumber >> v2.shortNumber;
+						return;
+					case INT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.shortNumber >> v2.intNumber;
+						return;
+					case LONG:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.shortNumber >> v2.longNumber;
+						return;
+				}
+			case INT:
+				switch (t2) {
+					case CHAR:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.intNumber >> v2.character;
+						return;
+					case BYTE:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.intNumber >> v2.byteNumber;
+						return;
+					case SHORT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.intNumber >> v2.shortNumber;
+						return;
+					case INT:
+						v1.valueClass = TYPE_INT;
+						v1.intNumber = v1.intNumber >> v2.intNumber;
+						return;
+					case LONG:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.intNumber >> v2.longNumber;
+						return;
+				}
+			case LONG:
+				switch (t2) {
+					case CHAR:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.longNumber >> v2.character;
+						return;
+					case BYTE:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.longNumber >> v2.byteNumber;
+						return;
+					case SHORT:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.longNumber >> v2.shortNumber;
+						return;
+					case INT:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.longNumber >> v2.intNumber;
+						return;
+					case LONG:
+						v1.valueClass = TYPE_LONG;
+						v1.longNumber = v1.longNumber >> v2.longNumber;
+						return;
+				}
 		}
-
-		errorInvalidOperator(ctx, v1.valueClass, v2.valueClass);
 	}
 }

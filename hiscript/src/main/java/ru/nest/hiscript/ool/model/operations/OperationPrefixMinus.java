@@ -32,20 +32,8 @@ public class OperationPrefixMinus extends UnaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		HiClass c = v.getOperationClass();
-
 		boolean isP = c.isPrimitive();
-		if (!isP) {
-			errorInvalidOperator(ctx, c);
-			return;
-		}
-
-		int t = c.getPrimitiveType();
-		if (t == BOOLEAN) {
-			errorInvalidOperator(ctx, c);
-			return;
-		}
-
-		switch (t) {
+		switch (c.getPrimitiveType()) {
 			case CHAR:
 				v.valueClass = TYPE_INT;
 				v.intNumber = -v.character;

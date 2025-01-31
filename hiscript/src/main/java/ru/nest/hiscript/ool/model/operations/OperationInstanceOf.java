@@ -51,42 +51,29 @@ public class OperationInstanceOf extends BinaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c2 = v2.valueClass;
-		if (!v1.valueClass.isPrimitive()) {
-			HiClass c1;
-			if (v1.valueClass.isArray()) {
-				c1 = v1.object != null ? v1.valueClass : HiClassNull.NULL;
-			} else {
-				c1 = v1.object != null ? ((HiObject) v1.object).clazz : HiClassNull.NULL;
+		HiClass c1;
+		if (v1.valueClass.isArray()) {
+			c1 = v1.object != null ? v1.valueClass : HiClassNull.NULL;
+		} else {
+			c1 = v1.object != null ? ((HiObject) v1.object).clazz : HiClassNull.NULL;
+		}
+
+		boolean isInstanceof = c1.isInstanceof(c2);
+		if (isInstanceof) {
+			if (v2.castedVariableName != null) {
+				HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, v2.castedVariableName, null);
+				castedField.set(v1.object);
+				ctx.addVariable(castedField);
 			}
-
-			boolean isInstanceof = c1.isInstanceof(c2);
-			if (isInstanceof) {
-				if (v2.castedVariableName != null) {
-					if (ctx.getVariable(v2.castedVariableName) != null) {
-						ctx.throwRuntimeException("variable '" + v2.castedVariableName + "' is already defined in the scope");
-						return;
-					}
-
-					HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, v2.castedVariableName, null);
-					castedField.set(v1.object);
+			if (v2.castedRecordArguments != null) {
+				for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
+					HiField castedField = ((HiObject) v1.object).getField(ctx, castedRecordArgument.name, c2);
 					ctx.addVariable(castedField);
 				}
-				if (v2.castedRecordArguments != null) {
-					if (!c2.isRecord()) {
-						ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.getNameDescr() + " to Record");
-						return;
-					}
-					for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
-						HiField castedField = ((HiObject) v1.object).getField(ctx, castedRecordArgument.name, c2);
-						ctx.addVariable(castedField);
-					}
-				}
 			}
-
-			v1.valueClass = TYPE_BOOLEAN;
-			v1.bool = isInstanceof;
-			return;
 		}
-		ctx.throwRuntimeException("inconvertible types; cannot cast " + v1.valueClass.getNameDescr() + " to " + c2.getNameDescr());
+
+		v1.valueClass = TYPE_BOOLEAN;
+		v1.bool = isInstanceof;
 	}
 }

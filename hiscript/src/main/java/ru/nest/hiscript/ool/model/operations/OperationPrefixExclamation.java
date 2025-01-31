@@ -32,10 +32,6 @@ public class OperationPrefixExclamation extends UnaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v) {
 		HiClass c = v.getOperationClass();
-		if (c != TYPE_BOOLEAN) {
-			errorInvalidOperator(ctx, c);
-			return;
-		}
 		v.bool = !v.bool;
 	}
 }
