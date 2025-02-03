@@ -28,7 +28,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (value == null) {
-				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
@@ -69,7 +69,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 

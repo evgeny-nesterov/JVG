@@ -73,7 +73,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 				if (arg != null) {
 					args.add(arg);
 				} else {
-					tokenizer.error("expression is expected");
+					tokenizer.error("expression expected");
 				}
 			}
 		}

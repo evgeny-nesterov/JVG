@@ -43,7 +43,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					value = ExpressionParseRule.getInstance().visit(tokenizer);
 					if (value == null) {
-						throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+						throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 					}
 				}
 				node.addVariable(namespace, variableName, dimension, value);
@@ -58,7 +58,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 					if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 						value = ExpressionParseRule.getInstance().visit(tokenizer);
 						if (value == null) {
-							throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+							throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 						}
 					}
 					node.addVariable(namespace, variableName, dimension, value);
@@ -92,7 +92,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				int dimension = commonDimension + visitDimension(tokenizer, handler);
 				if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
 					if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-						errorOccurred(tokenizer, handler, "expression is expected");
+						errorOccurred(tokenizer, handler, "expression expected");
 					}
 				}
 
@@ -104,7 +104,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 
 					if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
 						if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-							errorOccurred(tokenizer, handler, "expression is expected");
+							errorOccurred(tokenizer, handler, "expression expected");
 						}
 					}
 				}

@@ -125,69 +125,120 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testSwitch() {
-		assertSuccessSerialize("switch(1){}");
-		assertSuccessSerialize("switch((byte)1){}");
-		assertSuccessSerialize("switch((short)1){}");
-		assertSuccessSerialize("switch((char)1){}");
-		assertFailCompile("switch(1L){}");
-		assertFailCompile("switch(1F){}");
-		assertFailCompile("switch(1.0){}");
-		assertFailCompile("switch(true){}");
-		assertSuccessSerialize("switch(\"a\"){case \"a\": break; default: assert false;}");
-		assertSuccessSerialize("switch(new Object()){}");
-		assertSuccessSerialize("enum E{e} switch(E.e){}");
-
+		// primitives
+		assertSuccessSerialize("switch((byte)1){case (byte)1:}");
+		assertSuccessSerialize("switch((short)1){case (short)1:}");
+		assertSuccessSerialize("switch((char)1){case (char)1:}");
+		assertSuccessSerialize("switch(1){case 1:}");
 		assertSuccessSerialize("switch(1){case 1,2,3: break; case 4,5,6: assert false; break; default: assert false; break;}");
-		assertSuccessSerialize("switch(\"a\"){case \"a\",\"b\",\"c\": break; case \"d\",\"e\",\"f\": break; default: break;}");
-
 		assertSuccessSerialize("int x = 1; switch(x){case 1: assert true;break; case 2: assert false;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2: assert false;break; default: assert true;break;}");
 		assertSuccessSerialize("int x = 1; switch(x){case 2, x == 1: assert true;break; case 1, x == 2: assert false;break;}");
 		assertSuccessSerialize("int x = 2; switch(x) {case 0: x=0; break; case 1: x--; break; case 2, 3, x + 1: x++; break;} assert x == 3;");
 		assertSuccessSerialize("int x = 1; switch(x) {case 0: x=0; case 1: x++; case 2: x++;} assert x == 3;");
 		assertSuccessSerialize("int x = 4; switch(x) {case 0: x=0; break; case 1: x--; break; case 2: x++; break; default: x += 2;} assert x == 6;");
+		assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}", //
+				"incompatible switch case types; found String, required int");
+		assertFailCompile("switch(1L){}", //
+				"invalid switch value type: 'long'");
+		assertFailCompile("switch(1F){}", //
+				"invalid switch value type: 'float'");
+		assertFailCompile("switch(1.0){}", //
+				"invalid switch value type: 'double'");
+		assertFailCompile("switch(true){}", //
+				"invalid switch value type: 'boolean'");
+		assertSuccessSerialize("class A{static int get(){System.exit(); return 1;}} switch(A.get()){case 1: break;}");
+
+		// enums
+		assertSuccessSerialize("enum E{e} switch(E.e){}");
+		assertSuccessSerialize("enum E{a,b,c} E e = E.a; switch(e){case a: break; case b: assert false;}");
+		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b:}");
+		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
+		assertFailCompile("enum E{e} switch(E.e){case :}", //
+				"expression expected");
+		assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}", //
+				"cannot resolve symbol 'd'");
+
+		// objects
+		assertSuccessSerialize("switch(\"a\"){case \"a\": break; default: assert false;}");
+		assertSuccessSerialize("switch(\"a\"){case \"a\",\"b\",\"c\": break; case \"d\",\"e\",\"f\": break; default: break;}");
 		assertSuccessSerialize("String s = \"c\"; switch(s) {case \"a\", \"x\": s = \"\"; break; case \"b\": break; case \"c\": s += 1; break;} assert s.equals(\"c1\");");
+
+		assertSuccessSerialize("switch(new Object()){}");
 		assertSuccessSerialize("class A {}; class B{}; A a = new A(); Object b = new B(); switch(b) {case a: break; case new A(): break; case b: b = a;} assert b == a && b.equals(a);");
 		assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case O o when o.a == 1: assert o.a == 1; return;} assert false : \"case 2\";");
-		assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}");
-		assertSuccessSerialize("Object s = null; switch(s){case \"a\": assert true;break; case \"b\": assert false;break; case null: assert s == null;break;}");
-		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
-		assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}"); // cannot resolve symbol 'd'
+		assertSuccessSerialize("Object s = \"a\"; switch(s){case \"a\": assert true;break; case \"b\": assert false;break;}");
 
-		// switch object class
-		assertSuccess("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
-		assertSuccess("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
-		assertFailCompile("switch(\"\"){case Integer i, String s: break;}"); // several types in one case
+		assertSuccessSerialize("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
+		assertSuccessSerialize("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
+
+		assertFailCompile("class A{static void m(){}} switch(new Object()){case A.m():}", //
+				"value or casted identifier is expected");
+		assertFailCompile("class A{} class B{} switch(new A()){case B b:}", //
+				"incompatible switch case types; found B, required A");
+
+		// casted identifiers
+		assertFailCompile("switch(\"\"){case Integer i, String s: break;}", //
+				"only one casted identifier is allowed in the case condition");
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
 
+		// nulls
+		assertSuccessSerialize("switch(null){case null: return; break; case 1:} assert false;");
+		assertSuccessSerialize("switch(\"\"){case null: break; case \"\": return;} assert false;");
+		assertFailCompile("switch(1){case null: case 1:}", //
+				"incompatible switch case types; found null, required int");
+
 		// format failure
-		assertFailCompile("switch(){}");
-		assertFailCompile("switch(1);");
-		assertFailCompile("switch(1;){}");
-		assertFailCompile("switch(1,2){}");
-		assertFailCompile("switch(1){case}");
-		assertFailCompile("switch(1){case :}");
-		assertFailCompile("switch(1){case 1,2,:break;}");
-		assertFailCompile("switch(1){case 1: break}");
-		assertFailCompile("switch(1){case 1: break; default}");
-		assertFailCompile("switch(1){default;}");
-		assertFailCompile("switch(void){}");
-		assertFailCompile("switch(int){}");
-		assertFailCompile("switch(int x = 1){}");
+		assertFailCompile("switch(){}", //
+				"expression expected");
+		assertFailCompile("switch(1);", //
+				"'{' is expected");
+		assertFailCompile("switch(1;){}", //
+				"')' is expected");
+		assertFailCompile("switch(1,2){}", //
+				"')' is expected");
+		assertFailCompile("switch(1){case}", //
+				"':' is expected");
+		assertFailCompile("switch(1){case :}", //
+				"expression expected");
+		assertFailCompile("switch(1){case 1,2,:break;}", //
+				"expression expected");
+		assertFailCompile("switch(1){case 1: break}", //
+				"';' is expected");
+		assertFailCompile("switch(1){case 1: break; default}", //
+				"':' is expected");
+		assertFailCompile("switch(1){default;}", //
+				"':' is expected");
+		assertFailCompile("switch(void){}", //
+				"expression expected");
+		assertFailCompile("switch(int){}", //
+				"expression expected");
+		assertFailCompile("switch(int x = 1){}", //
+				"expression expected");
 
 		// failures
-		assertFailCompile("class A{} switch(A){}");
-		assertFailCompile("class A{void m(){}} switch(new A().m()){}");
-		assertFailMessage("class A{int get(){throw new RuntimeException(\"error\");}} switch(new A().get()){case 1: break;}", "error");
-		assertFailCompile("switch(1){case 1,2,1: break;}");
-		assertFailCompile("switch(12){case 1, 12, 2*5+2: break;}");
-		assertFailCompile("switch(12){case 1, ((2 * 8 + 18/3)/2-1)/2, 5: break;}");
-		assertFailCompile("switch(\"a\"){case \"a\",\"b\",\"a\": break;}");
-		assertFailCompile("switch(\"a\"){case \"ab\",\"b\",\"a\"+\"b\": break;}");
-		assertFailCompile("switch(\"a\"){case \"a\": break; case \"b\", \"a\": break;}");
-		assertFailCompile("enum E{e1,e2,e3} switch(E.e1){case e1,e2,e3,e1: break;}");
+		assertFailCompile("class A{} switch(A){}", //
+				"expression expected");
+		assertFailCompile("class A{void m(){}} switch(new A().m()){}", //
+				"value is expected");
+		assertFailMessage("class A{int get(){throw new RuntimeException(\"error\");}} switch(new A().get()){case 1: break;}", //
+				"error");
+		assertFailCompile("switch(1){case 1,2,1: break;}", //
+				"case value '1' is duplicated");
+		assertFailCompile("switch(12){case 1, 12, 2*5+2: break;}", //
+				"case value '12' is duplicated");
+		assertFailCompile("switch(12){case 1, ((2 * 8 + 18/3)/2-1)/2, 5: break;}", //
+				"case value '5' is duplicated");
+		assertFailCompile("switch(\"a\"){case \"a\",\"b\",\"a\": break;}", //
+				"case value 'a' is duplicated");
+		assertFailCompile("switch(\"a\"){case \"ab\",\"b\",\"a\"+\"b\": break;}", //
+				"case value 'ab' is duplicated");
+		assertFailCompile("switch(\"a\"){case \"a\": break; case \"b\", \"a\": break;}", //
+				"case value 'a' is duplicated");
+		assertFailCompile("enum E{e1,e2,e3} switch(E.e1){case e1,e2,e3,e1: break;}", //
+				"case enum value 'e1' is duplicated");
 	}
 
 	@Test

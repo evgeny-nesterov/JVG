@@ -24,7 +24,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 		if (visitWord(Words.CASE, tokenizer) != null) {
 			Node value;
 			if ((value = ExpressionParseRule.getInstance().visit(tokenizer)) == null) {
-				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.COLON, tokenizer);
 			BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
@@ -37,7 +37,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.CASE, tokenizer, handler) != null) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 			expectSymbol(Symbols.COLON, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);

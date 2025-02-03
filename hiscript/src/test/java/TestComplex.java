@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Test;
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
@@ -16,8 +15,7 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
-		script.execute();
+		assertSuccessSerialize("switch(null){case null: return; break; case 1:} assert false;");
 	}
 
 	@Test

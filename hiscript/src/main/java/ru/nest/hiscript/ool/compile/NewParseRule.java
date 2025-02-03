@@ -4,8 +4,17 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.*;
-import ru.nest.hiscript.tokenizer.*;
+import ru.nest.hiscript.ool.model.nodes.NodeArray;
+import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
+import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
+import ru.nest.hiscript.ool.model.nodes.NodeType;
+import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.Token;
+import ru.nest.hiscript.tokenizer.Tokenizer;
+import ru.nest.hiscript.tokenizer.TokenizerException;
+import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +160,7 @@ public class NewParseRule extends ParseRule<HiNode> {
                             }
                             list.add(cell);
                         } else {
-                            tokenizer.error("expression is expected");
+                            tokenizer.error("expression expected");
                         }
                     }
                     actualDimensions++;

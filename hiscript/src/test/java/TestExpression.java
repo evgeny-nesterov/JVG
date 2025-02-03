@@ -506,7 +506,7 @@ public class TestExpression extends HiTest {
 		assertFailCompile("int x = switch(1){};", "expression switch without cases");
 		assertFailMessage("int x = switch(1){case 2 -> 2;};", "no suitable value in the switch");
 
-		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", "Only one casted identifier is allowed in the case condition");
+		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", "only one casted identifier is allowed in the case condition");
 		assertFailCompile("int x = switch(\"\"){case String -> 1;};", "'->' is expected");
 		assertFailCompile("int x = switch(\"\"){case x -> 1;};", "invalid expression");
 		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case \"\" -> A.a();};", "value is expected");

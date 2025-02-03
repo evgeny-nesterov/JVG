@@ -82,7 +82,11 @@ public class NodeSwitch extends HiNode {
 		}
 		valid &= valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
 
-		HiClass valueClass = valueNode.getValueClass(validationInfo, ctx);
+		NodeValueType valueReturnType = valueNode.getNodeValueType(validationInfo, ctx);
+		HiClass valueClass = valueReturnType.clazz;
+		if (valueClass.isNull()) {
+			valueClass = HiClass.OBJECT_CLASS;
+		}
 
 		// autobox
 		HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
@@ -102,6 +106,10 @@ public class NodeSwitch extends HiNode {
 			for (int i = 0; i < size; i++) {
 				HiNode[] caseValueNodes = casesValues.get(i);
 				if (caseValueNodes != null) { // not default
+					if (caseValueNodes.length == 0) {
+						validationInfo.error("expression expected", getToken());
+						valid = false;
+					}
 					for (int j = 0; j < caseValueNodes.length; j++) {
 						HiNode caseValueNode = caseValueNodes[j];
 						if (caseValueNode instanceof NodeExpressionNoLS) {
@@ -126,22 +134,32 @@ public class NodeSwitch extends HiNode {
 					}
 				}
 
-				HiNode caseNode = casesNodes.get(i);
-				if (caseNode != null) {
-					valid &= caseNode.validate(validationInfo, ctx);
-				} else {
-					validationInfo.error("expression expected", getToken());
-					valid = false;
+				HiNode caseBodyNode = casesNodes.get(i);
+				if (caseBodyNode != null) {
+					valid &= caseBodyNode.validate(validationInfo, ctx);
 				}
 			}
 		} else {
-			HiClass topCaseClass = null;
 			Set<Object> processedValues = new HashSet<>();
 			for (int i = 0; i < size; i++) {
 				HiNode[] caseValueNodes = casesValues.get(i);
 				if (caseValueNodes != null) { // not default
+					if (caseValueNodes.length == 0) {
+						validationInfo.error("expression expected", getToken());
+						valid = false;
+					}
 					for (int j = 0; j < caseValueNodes.length; j++) {
 						HiNode caseValueNode = caseValueNodes[j];
+						NodeCastedIdentifier castedIdentifier = caseValueNode.getSingleNode(NodeCastedIdentifier.class);
+						boolean isCaseCastedIdentifiers = castedIdentifier != null;
+						if (isCaseCastedIdentifiers) {
+							if (caseValueNodes.length > 1) {
+								validationInfo.error("only one casted identifier is allowed in the case condition", castedIdentifier.getToken());
+								valid = false;
+							}
+							ctx.initializedNodes.add(castedIdentifier.declarationNode);
+						}
+
 						if (caseValueNode.validate(validationInfo, ctx) && expectCaseValue(validationInfo, ctx, caseValueNode)) {
 							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
 							Object caseValue = ctx.nodeValueType.getCompileValue();
@@ -154,37 +172,28 @@ public class NodeSwitch extends HiNode {
 								}
 							}
 							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
-								HiClass c = caseValueClass.getCommonClass(topCaseClass);
-								if (c != null) {
-									topCaseClass = c;
-								} else {
-									validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
+								if (valueClass.isPrimitive()) {
+									if (!HiClass.autoCast(ctx, caseValueClass, valueClass, valueReturnType.isCompileValue(), true)) {
+										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
+										valid = false;
+									}
+								} else if (!caseValueClass.isNull() && !caseValueClass.isInstanceof(valueClass)) {
+									validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
 									valid = false;
 								}
 							}
 						} else {
 							valid = false;
 						}
-						if (caseValueNode instanceof NodeExpression) {
-							NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
-							if (identifier != null) {
-								if (caseValueNodes.length > 1) {
-									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
-								}
-								ctx.initializedNodes.add(identifier.declarationNode);
-							}
-						}
 					}
 				}
 
-				HiNode caseNode = casesNodes.get(i);
-				if (caseNode != null) {
-					valid &= caseNode.validate(validationInfo, ctx);
-				} else {
-					validationInfo.error("expression expected", getToken());
-					valid = false;
+				HiNode caseBodyNode = casesNodes.get(i);
+				if (caseBodyNode != null) {
+					valid &= caseBodyNode.validate(validationInfo, ctx);
 				}
 
+				// after caseNode validation
 				if (caseValueNodes != null) { // not default
 					for (HiNode caseValueNode : caseValueNodes) {
 						NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
@@ -252,7 +261,14 @@ public class NodeSwitch extends HiNode {
 			return -2;
 		}
 
-		if (ctx.value.valueClass.isPrimitive()) {
+		HiClass switchValueClass = ctx.value.valueClass;
+		if (switchValueClass.getAutoboxedPrimitiveClass() != null && ctx.value.object != null) {
+			HiClass primitiveClass = ctx.value.valueClass.getAutoboxedPrimitiveClass();
+			if (primitiveClass == HiClassPrimitive.INT || primitiveClass == HiClassPrimitive.BYTE || primitiveClass == HiClassPrimitive.SHORT || primitiveClass == HiClassPrimitive.CHAR || primitiveClass == HiClassPrimitive.BOOLEAN) {
+				switchValueClass = primitiveClass;
+			}
+		}
+		if (switchValueClass.isPrimitive()) {
 			int value = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {
 				return -2;
@@ -286,7 +302,7 @@ public class NodeSwitch extends HiNode {
 					return i;
 				}
 			}
-		} else if (ctx.value.valueClass.isObject()) {
+		} else if (switchValueClass.isObject() || switchValueClass.isNull()) {
 			HiObject object = (HiObject) ctx.value.object;
 			if (object != null && object.clazz.isEnum()) {
 				HiClassEnum enumClass = (HiClassEnum) object.clazz;

@@ -348,7 +348,7 @@ public class ParserUtil implements Words {
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (condition == null) {
-			tokenizer.error("expression is expected");
+			tokenizer.error("expression expected");
 		}
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 		return condition;
@@ -376,7 +376,7 @@ public class ParserUtil implements Words {
 
 		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (expression == null) {
-			tokenizer.error("expression is expected");
+			tokenizer.error("expression expected");
 			expression = new NodeExpressionNoLS(new HiNode[0], new OperationsGroup[0]);
 		}
 		return expression;
@@ -517,7 +517,7 @@ public class ParserUtil implements Words {
 				Token token = tokenizer.currentToken();
 				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg == null || arg.isCastedIdentifier()) {
-					tokenizer.error("expression is expected", token);
+					tokenizer.error("expression expected", token);
 				}
 				args.add(arg);
 			}

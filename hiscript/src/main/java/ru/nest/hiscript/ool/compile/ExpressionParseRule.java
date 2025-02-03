@@ -257,7 +257,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 			HiNode indexNode = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			if (indexNode == null) {
-				tokenizer.error("expression is expected", token);
+				tokenizer.error("expression expected", token);
 			}
 
 			expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
@@ -356,7 +356,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 				operands.add(node);
 			} else {
-				tokenizer.error("expression is expected");
+				tokenizer.error("expression expected");
 			}
 			return true;
 		}

@@ -1,7 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
@@ -227,7 +226,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 
 		// autobox
-		if (value.valueClass.getAutoboxedPrimitiveClass() != null) {
+		if (value.valueClass.getAutoboxedPrimitiveClass() != null && value.object != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
 		}
 

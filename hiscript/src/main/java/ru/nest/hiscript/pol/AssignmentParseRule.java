@@ -1,8 +1,5 @@
 package ru.nest.hiscript.pol;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.AssignmentNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
@@ -11,6 +8,9 @@ import ru.nest.hiscript.pol.model.VariableNode;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 	private final static AssignmentParseRule instance = new AssignmentParseRule();
@@ -43,7 +43,7 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 				tokenizer.commit();
 				Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (value == null) {
-					throw new HiScriptParseException("Expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 				return new AssignmentNode(variable.getNamespace(), variable.getVarName(), indexes, value, equateType);
 			} else if (indexes.size() > 0) {
@@ -75,7 +75,7 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 			if (equateType != -1) {
 				tokenizer.commit();
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-					errorOccurred(tokenizer, handler, "Expression is expected");
+					errorOccurred(tokenizer, handler, "expression expected");
 				}
 				return true;
 			} else if (indexes.size() > 0) {

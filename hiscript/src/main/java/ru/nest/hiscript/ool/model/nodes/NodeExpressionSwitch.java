@@ -88,7 +88,7 @@ public class NodeExpressionSwitch extends HiNode {
 							NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
 								if (caseValueNodes.length > 1) {
-									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
+									validationInfo.error("only one casted identifier is allowed in the case condition", caseValueNode.getToken());
 								}
 								ctx.initializedNodes.add(identifier.declarationNode);
 							}

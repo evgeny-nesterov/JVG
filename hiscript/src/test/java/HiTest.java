@@ -3,7 +3,7 @@ import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
@@ -134,6 +134,9 @@ public abstract class HiTest {
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			boolean match = true;
 			for (String expectMessage : expectMessages) {
+				if (expectMessage.length() == 0) {
+					continue;
+				}
 				boolean matchMessage = e.getMessage() != null && e.getMessage().indexOf(expectMessage) != -1;
 				if (!matchMessage && e instanceof HiScriptValidationException) {
 					matchMessage = ((HiScriptValidationException) e).getValidationInfo().hasMessage(expectMessage);

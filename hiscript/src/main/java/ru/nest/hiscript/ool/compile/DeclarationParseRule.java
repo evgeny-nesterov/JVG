@@ -43,7 +43,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
 					if (initializer == null) {
-						tokenizer.error("expression is expected");
+						tokenizer.error("expression expected");
 					}
 					isField = true;
 				} else if (tokenizer.currentToken() == null || checkSymbol(tokenizer, SymbolToken.BRACES_RIGHT) != -1) {

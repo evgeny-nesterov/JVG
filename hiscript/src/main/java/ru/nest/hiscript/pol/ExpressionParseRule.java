@@ -30,7 +30,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		PrefixNode prefix = PrefixParseRule.getInstance().visit(tokenizer);
 		Node value = visitSimpleExpression(tokenizer);
 		if (value == null && prefix != null) {
-			throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+			throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 		}
 
 		if (value != null) {
@@ -52,14 +52,14 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				Node trueValue = visit(tokenizer);
 				if (trueValue == null) {
-					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 
 				expectSymbol(Symbols.COLON, tokenizer);
 
 				Node falseValue = visit(tokenizer);
 				if (falseValue == null) {
-					throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 
 				TriggerNode trigger = new TriggerNode(node, trueValue, falseValue);
@@ -77,7 +77,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		boolean prefix = PrefixParseRule.getInstance().visit(tokenizer, handler);
 		boolean value = visitSimpleExpression(tokenizer, handler);
 		if (!value && prefix) {
-			errorOccurred(tokenizer, handler, "expression is expected");
+			errorOccurred(tokenizer, handler, "expression expected");
 		}
 
 		if (value) {
@@ -96,14 +96,14 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			if (visitSymbol(tokenizer, handler, Symbols.QUESTION) != -1) {
 				boolean trueValue = visit(tokenizer, handler);
 				if (!trueValue) {
-					errorOccurred(tokenizer, handler, "expression is expected");
+					errorOccurred(tokenizer, handler, "expression expected");
 				}
 
 				expectSymbol(Symbols.COLON, tokenizer, handler);
 
 				boolean falseValue = visit(tokenizer, handler);
 				if (!falseValue) {
-					errorOccurred(tokenizer, handler, "expression is expected");
+					errorOccurred(tokenizer, handler, "expression expected");
 				}
 			}
 			return true;
@@ -158,7 +158,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 			ExpressionNode enode = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (enode == null) {
-				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 
 			if (enode.getValues().size() == 1) {
@@ -218,7 +218,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		// visit block
 		if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);

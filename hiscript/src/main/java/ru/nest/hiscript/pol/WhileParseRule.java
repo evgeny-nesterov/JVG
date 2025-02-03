@@ -24,7 +24,7 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
-				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 
@@ -45,12 +45,12 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 		if (visitWord(Words.WHILE, tokenizer, handler) != null) {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "Expression is expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 
 			if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "Statement is expected");
+				errorOccurred(tokenizer, handler, "statement expected");
 			}
 
 			return true;

@@ -33,7 +33,7 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
-				throw new HiScriptParseException("expression is expected", tokenizer.currentToken());
+				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
 			expectSymbol(Symbols.SEMICOLON, tokenizer);
@@ -57,7 +57,7 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 
 			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-				errorOccurred(tokenizer, handler, "expression is expected");
+				errorOccurred(tokenizer, handler, "expression expected");
 			}
 			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
 			expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
