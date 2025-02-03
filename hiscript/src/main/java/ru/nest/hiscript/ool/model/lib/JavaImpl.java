@@ -127,7 +127,7 @@ public class JavaImpl extends ImplUtil {
 		if (matchedJavaConstructor != null) {
 			Object javaObject = matchedJavaConstructor.newInstance(javaArgs);
 
-			HiObject object = new HiObject(clazz, null, null);
+			HiObject object = new HiObject(ctx, clazz, null, null);
 			object.userObject = javaObject;
 
 			ctx.value.valueType = Value.VALUE;

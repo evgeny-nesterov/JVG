@@ -22,7 +22,7 @@ public class HiConstructorJava extends HiConstructor {
 	@Override
 	public HiObject newInstance(RuntimeContext ctx, Type type, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
 		if (object == null) {
-			object = new HiObject(clazz, type, null);
+			object = new HiObject(ctx, clazz, type, null);
 		}
 
 		try {

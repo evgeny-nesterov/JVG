@@ -13,8 +13,6 @@ import ru.nest.hiscript.ool.model.classes.HiClassJava;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class HiMethodJava extends HiMethod {
 	public final static HiMethodJava NULL = new HiMethodJava();
@@ -38,12 +36,8 @@ public class HiMethodJava extends HiMethod {
 			Type argType = null;
 			if (argJavaClass.isPrimitive()) {
 				argType = Type.getPrimitiveType(argJavaClass.getName());
-			} else if (argJavaClass == String.class) {
-				argType = Type.getTopType(HiClass.STRING_CLASS_NAME);
-			} else if (argJavaClass == HashMap.class) {
-				argType = Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
-			} else if (argJavaClass == ArrayList.class) {
-				argType = Type.getTopType(HiClass.ARRAYLIST_CLASS_NAME);
+			} else {
+				argType = Type.getTopType(argJavaClass.getSimpleName());
 			}
 			String argName = "arg" + i;
 			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);

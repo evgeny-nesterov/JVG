@@ -54,21 +54,23 @@ public class HiNative {
 	public static Method findMethod(ClassResolver classResolver, String name) {
 		Method method = methods.get(name);
 		if (method == null) {
-			classResolver.processResolverException("native method '" + name + "' not found");
+			String className = name.substring(0, name.indexOf('_'));
+			HiClass.forName(new RuntimeContext(classResolver.getCompiler(), false), className);
+			method = methods.get(name);
+			if (method == null) {
+				classResolver.processResolverException("native method '" + name + "' not found");
+			}
 		}
 		return method;
 	}
 
-	public static void invoke(ClassResolver classResolver, String name, Object[] args) {
+	public static void invoke(ClassResolver classResolver, Method method, Object[] args) {
 		try {
-			Method method = findMethod(classResolver, name);
-			if (method != null) {
-				Object o = objects.get(name);
-				method.invoke(o, args);
-			}
+			Object o = objects.get(method.getName());
+			method.invoke(o, args);
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			classResolver.processResolverException("native method '" + name + "' invocation error: " + exc);
+			classResolver.processResolverException("native method '" + method.getName() + "' invocation error: " + exc);
 		}
 	}
 }

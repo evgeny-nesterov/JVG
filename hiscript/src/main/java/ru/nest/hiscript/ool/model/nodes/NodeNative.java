@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class NodeNative extends HiNode {
 	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
@@ -55,13 +56,20 @@ public class NodeNative extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// define method before set arguments
+		Method method = HiNative.findMethod(ctx, id);
+		if (ctx.exitFromBlock()) {
+			return;
+		}
+
+		// invoke
 		Object[] args = new Object[1 + argCount];
 		args[0] = ctx;
 		for (int i = 0; i < argCount; i++) {
 			HiField<?> f = ctx.getVariable(argNames[i]);
 			args[i + 1] = f.get();
 		}
-		HiNative.invoke(ctx, id, args);
+		HiNative.invoke(ctx, method, args);
 	}
 
 	@Override

@@ -35,8 +35,6 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 		if (value.valueClass.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
 			// autobox
 			value.substitutePrimitiveValueFromAutoboxValue();
-		} else if (value.valueClass != HiClassPrimitive.BOOLEAN) {
-			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 		}
 
 		this.value = value.bool;

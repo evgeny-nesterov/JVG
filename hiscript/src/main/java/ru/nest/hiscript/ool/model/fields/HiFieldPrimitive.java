@@ -51,7 +51,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case LONG:
 				switch (dstType) {
 					case LONG:
@@ -60,13 +59,10 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case FLOAT:
 				return dstType == FLOAT || dstType == DOUBLE;
-
 			case DOUBLE:
 				return dstType == DOUBLE;
-
 			case BOOLEAN:
 				return dstType == BOOLEAN;
 		}
@@ -76,9 +72,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	public static boolean autoCast(HiClass src, HiClass dst) {
 		int srcType = src.getPrimitiveType();
 		int dstType = dst.getPrimitiveType();
-//		if (srcType == VAR || dstType == VAR) {
-//			return true;
-//		}
 		switch (srcType) {
 			case CHAR:
 				switch (dstType) {
@@ -90,7 +83,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case BYTE:
 				switch (dstType) {
 					case BYTE:
@@ -102,7 +94,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case SHORT:
 				switch (dstType) {
 					case SHORT:
@@ -113,7 +104,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case INT:
 				switch (dstType) {
 					case INT:
@@ -123,7 +113,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case LONG:
 				switch (dstType) {
 					case LONG:
@@ -132,7 +121,6 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case FLOAT:
 				switch (dstType) {
 					case FLOAT:
@@ -140,10 +128,8 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 						return true;
 				}
 				break;
-
 			case DOUBLE:
 				return dstType == DOUBLE;
-
 			case BOOLEAN:
 				return dstType == BOOLEAN;
 		}

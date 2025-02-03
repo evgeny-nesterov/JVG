@@ -1,4 +1,8 @@
 public final class Byte extends Number {
+	static {
+		System.loadLib("ByteImpl.class");
+	}
+
 	private byte value;
 
 	public Byte(byte value) {
@@ -33,7 +37,5 @@ public final class Byte extends Number {
 		return o instanceof Byte && ((Byte) o).value == value;
 	}
 
-	public int hashCode() {
-		return value;
-	}
+	public native int hashCode();
 }

@@ -45,13 +45,13 @@ public class OperationPercent extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.INT;
 							case LONG:
 								node1.longValue = node1.charValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case FLOAT:
 								node1.floatValue = node1.charValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.charValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case BYTE:
 						switch (t2) {
@@ -69,13 +69,13 @@ public class OperationPercent extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.INT;
 							case LONG:
 								node1.longValue = node1.byteValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case FLOAT:
 								node1.floatValue = node1.byteValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.byteValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case SHORT:
 						switch (t2) {
@@ -93,13 +93,13 @@ public class OperationPercent extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.INT;
 							case LONG:
 								node1.longValue = node1.shortValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case FLOAT:
 								node1.floatValue = node1.shortValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.shortValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case INT:
 						switch (t2) {
@@ -117,84 +117,84 @@ public class OperationPercent extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.INT;
 							case LONG:
 								node1.longValue = node1.intValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case FLOAT:
 								node1.floatValue = node1.intValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.intValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case LONG:
 						switch (t2) {
 							case CHAR:
 								node1.longValue = node1.longValue % node2.charValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case BYTE:
 								node1.longValue = node1.longValue % node2.byteValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case SHORT:
 								node1.longValue = node1.longValue % node2.shortValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case INT:
 								node1.longValue = node1.longValue % node2.intValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case LONG:
 								node1.longValue = node1.longValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.LONG;
 							case FLOAT:
 								node1.floatValue = node1.longValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.longValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case FLOAT:
 						switch (t2) {
 							case CHAR:
 								node1.floatValue = node1.floatValue % node2.charValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case BYTE:
 								node1.floatValue = node1.floatValue % node2.byteValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case SHORT:
 								node1.floatValue = node1.floatValue % node2.shortValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case INT:
 								node1.floatValue = node1.floatValue % node2.intValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case LONG:
 								node1.floatValue = node1.floatValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case FLOAT:
 								node1.floatValue = node1.floatValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case DOUBLE:
 								node1.doubleValue = node1.floatValue % node2.doubleValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 					case DOUBLE:
 						switch (t2) {
 							case CHAR:
 								node1.doubleValue = node1.doubleValue % node2.charValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case BYTE:
 								node1.doubleValue = node1.doubleValue % node2.byteValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case SHORT:
 								node1.doubleValue = node1.doubleValue % node2.shortValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case INT:
 								node1.doubleValue = node1.doubleValue % node2.intValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case LONG:
 								node1.doubleValue = node1.doubleValue % node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case FLOAT:
 								node1.doubleValue = node1.doubleValue % node2.floatValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case DOUBLE:
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 				}
 			} else {

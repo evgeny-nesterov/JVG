@@ -68,7 +68,6 @@ public class NodeAnnotation extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		throw new HiScriptRuntimeException("cannot execute annotation");
 	}
 
 	@Override

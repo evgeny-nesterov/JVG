@@ -84,8 +84,8 @@ public class NodeExpressionSwitch extends HiNode {
 						} else {
 							valid = false;
 						}
-						if (caseValueNode instanceof NodeExpressionNoLS) {
-							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+						if (caseValueNode instanceof NodeExpression) {
+							NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
 								if (caseValueNodes.length > 1) {
 									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
@@ -131,7 +131,7 @@ public class NodeExpressionSwitch extends HiNode {
 
 	private boolean expectCaseValue(ValidationInfo validationInfo, CompileClassContext ctx, HiNode caseValueNode) {
 		HiClass valueClass = caseValueNode.getValueClass(validationInfo, ctx);
-		if ((valueClass == null || valueClass == HiClassPrimitive.VOID) && !(caseValueNode.getExpressionSingleNode() instanceof NodeCastedIdentifier)) {
+		if (valueClass == HiClassPrimitive.VOID && !(caseValueNode.getExpressionSingleNode() instanceof NodeCastedIdentifier)) {
 			validationInfo.error("value or casted identifier is expected", getToken());
 			return false;
 		}

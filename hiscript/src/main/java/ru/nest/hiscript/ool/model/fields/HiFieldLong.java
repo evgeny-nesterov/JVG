@@ -22,23 +22,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
-		switch (valueType) {
-			case LONG:
-				value.longNumber = this.value;
-				break;
-
-			case FLOAT:
-				value.floatNumber = this.value;
-				break;
-
-			case DOUBLE:
-				value.doubleNumber = this.value;
-				break;
-
-			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
-				break;
-		}
+		value.longNumber = this.value;
 	}
 
 	@Override
@@ -47,25 +31,17 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 			case CHAR:
 				this.value = value.character;
 				break;
-
 			case BYTE:
 				this.value = value.byteNumber;
 				break;
-
 			case SHORT:
 				this.value = value.shortNumber;
 				break;
-
 			case INT:
 				this.value = value.intNumber;
 				break;
-
 			case LONG:
 				this.value = value.longNumber;
-				break;
-
-			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 				break;
 		}
 	}

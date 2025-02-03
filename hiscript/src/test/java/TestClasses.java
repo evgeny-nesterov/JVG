@@ -546,4 +546,16 @@ public class TestClasses extends HiTest {
 	public void testStackOverflow() {
 		assertFail("class A {\n\tvoid m1(int i) {\n\t\tm2(i+1);\n\t}\n\n\tvoid m2(int i) {\n\t\tm1(i+1);\n\t}\n}\nnew A().m1(1);", StackOverflowError.class);
 	}
+
+	@Test
+	public void testVarargs() {
+		assertFailCompile("class A{void m(int... x){}} new A().m(\"\");", //
+				"cannot resolve method 'm' in 'A'");
+		assertFailCompile("class A{void m(int... x){}} new A().m(1, 2, 3, true);", //
+				"cannot resolve method 'm' in 'A'");
+		assertFailCompile("class A{void m(int... x){}} new A().m(new double[]{1});", //
+				"cannot resolve method 'm' in 'A'");
+		assertFailCompile("class A{void m(int... x){}} new A().m(new double[]{});", //
+				"cannot resolve method 'm' in 'A'");
+	}
 }

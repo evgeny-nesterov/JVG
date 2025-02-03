@@ -51,7 +51,7 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static HiObject clone(HiObject src) {
-		HiObject clone = new HiObject(src.clazz, src.type, src.outboundObject);
+		HiObject clone = new HiObject(src.ctx, src.clazz, src.type, src.outboundObject);
 		if (src.getSuperObject() != null) {
 			clone.setSuperObject(clone(src.getSuperObject()));
 		}

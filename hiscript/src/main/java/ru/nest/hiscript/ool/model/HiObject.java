@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HiObject {
-	public HiObject(HiClass clazz, Type type, HiObject outboundObject) {
+	public HiObject(RuntimeContext ctx, HiClass clazz, Type type, HiObject outboundObject) {
+		this.ctx = ctx;
 		this.clazz = clazz;
 		this.type = type;
 		this.outboundObject = outboundObject;
@@ -186,7 +187,6 @@ public class HiObject {
 	}
 
 	public String toString(RuntimeContext ctx) {
-		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "toString");
 		if (method.clazz.superClass == null) {
 			// is Object
@@ -221,7 +221,6 @@ public class HiObject {
 	}
 
 	public boolean equals(RuntimeContext ctx, HiObject object) {
-		this.ctx = ctx;
 		if (this == object) {
 			return true;
 		}
@@ -260,7 +259,6 @@ public class HiObject {
 	}
 
 	public int hashCode(RuntimeContext ctx) {
-		this.ctx = ctx;
 		HiMethod method = clazz.searchMethod(ctx, "hashCode");
 		if (method.clazz.superClass == null) {
 			// is Object

@@ -1,4 +1,8 @@
 public final class Boolean extends Object {
+	static {
+		System.loadLib("BooleanImpl.class");
+	}
+
 	public final static Boolean TRUE = true;
 
 	public final static Boolean FALSE = false;
@@ -21,7 +25,5 @@ public final class Boolean extends Object {
 		return o instanceof Boolean && ((Boolean) o).value == value;
 	}
 
-	public int hashCode() {
-		return value ? 1 : 0;
-	}
+	public native int hashCode();
 }

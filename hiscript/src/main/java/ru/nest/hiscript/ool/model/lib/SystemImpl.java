@@ -197,18 +197,15 @@ public class SystemImpl extends ImplUtil {
 					newCtx = new RuntimeContext(ctx);
 				}
 
-				new Thread() {
-					@Override
-					public void run() {
-						try {
-							node.execute(newCtx);
-						} catch (Exception exc) {
-							exc.printStackTrace();
-						} finally {
-							newCtx.close();
-						}
+				new Thread(() -> {
+					try {
+						node.execute(newCtx);
+					} catch (Exception exc) {
+						exc.printStackTrace();
+					} finally {
+						newCtx.close();
 					}
-				}.start();
+				}).start();
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();

@@ -31,10 +31,6 @@ public class NodeIdentifier extends HiNode {
         return name;
     }
 
-    public boolean isClass() {
-        return resolvedIdentifier instanceof HiClass;
-    }
-
     @Override
     public boolean isVariable() {
         return true;

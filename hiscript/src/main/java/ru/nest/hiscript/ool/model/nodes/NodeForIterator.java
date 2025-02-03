@@ -104,8 +104,6 @@ public class NodeForIterator extends HiNode {
 						break;
 					}
 				}
-			} else {
-				ctx.throwRuntimeException("not iterable argument");
 			}
 		} finally {
 			ctx.exit();

@@ -53,7 +53,7 @@ public class OperationAnd extends BinaryOperation {
 							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.charValue & node2.longValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 					}
 				case BYTE:
 					switch (t2) {
@@ -71,7 +71,7 @@ public class OperationAnd extends BinaryOperation {
 							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.byteValue & node2.longValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 					}
 				case SHORT:
 					switch (t2) {
@@ -89,7 +89,7 @@ public class OperationAnd extends BinaryOperation {
 							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.shortValue & node2.longValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 					}
 				case INT:
 					switch (t2) {
@@ -107,25 +107,25 @@ public class OperationAnd extends BinaryOperation {
 							return node1.valueClass = HiClassPrimitive.INT;
 						case LONG:
 							node1.longValue = node1.intValue & node2.longValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 					}
 				case LONG:
 					switch (t2) {
 						case CHAR:
 							node1.longValue = node1.longValue & node2.charValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 						case BYTE:
 							node1.longValue = node1.longValue & node2.byteValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 						case SHORT:
 							node1.longValue = node1.longValue & node2.shortValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 						case INT:
 							node1.longValue = node1.longValue & node2.intValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 						case LONG:
 							node1.longValue = node1.longValue & node2.longValue;
-							return node1.valueClass = HiClassPrimitive.INT;
+							return node1.valueClass = HiClassPrimitive.LONG;
 					}
 			}
 		} else {

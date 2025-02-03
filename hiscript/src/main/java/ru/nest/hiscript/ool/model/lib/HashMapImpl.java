@@ -12,13 +12,6 @@ public class HashMapImpl extends ImplUtil {
 		return (HashMap<Object, Object>) o.userObject;
 	}
 
-	private static void setCtx(RuntimeContext ctx, Object object) {
-		if (object instanceof HiObject) {
-			HiObject o = (HiObject) object;
-			o.ctx = ctx; // used to compute hash code
-		}
-	}
-
 	public static void HashMap_void_init(RuntimeContext ctx) {
 		HiObject o = ctx.getCurrentObject();
 		o.userObject = new HashMap<>();

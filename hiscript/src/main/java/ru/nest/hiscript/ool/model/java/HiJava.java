@@ -59,7 +59,9 @@ public class HiJava {
 		HiObject object = type.getConstructor(ctx).newInstance(ctx, Type.getType(type), null, null);
 		Map map = (Map) object.userObject;
 		for (Map.Entry e : javaMap.entrySet()) {
-			map.put(convertFromJava(ctx, e.getKey()), convertFromJava(ctx, e.getValue()));
+			Object key = convertFromJava(ctx, e.getKey());
+			Object value = convertFromJava(ctx, e.getValue());
+			map.put(key, value);
 		}
 		return object;
 	}
@@ -125,18 +127,19 @@ public class HiJava {
 	}
 
 	public static Type getTypeByJavaClass(Class javaClass) {
-		Type primitiveType = Type.getPrimitiveType(javaClass.getSimpleName());
+		String javaClassName = javaClass.getSimpleName();
+		Type primitiveType = Type.getPrimitiveType(javaClassName);
 		if (primitiveType != null) {
 			return primitiveType;
 		}
 
-		if (javaClass == String.class) {
-			return Type.getTopType(HiClass.STRING_CLASS_NAME);
-		} else if (Number.class.isAssignableFrom(javaClass)) {
-			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
-		} else if (javaClass == Boolean.class || javaClass == Character.class) {
-			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
-		} else if (Map.class.isAssignableFrom(javaClass)) {
+		if (javaClass.isArray()) {
+			// TODO packages
+		} else {
+			return Type.getTopType(javaClassName);
+		}
+
+		if (Map.class.isAssignableFrom(javaClass)) {
 			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
 		} else if (List.class.isAssignableFrom(javaClass)) {
 			return Type.getTopType(HiClass.ARRAYLIST_CLASS_NAME);
@@ -152,6 +155,6 @@ public class HiJava {
 				return Type.getArrayType(rootElementType, dimension);
 			}
 		}
-		return Type.getTopType(javaClass.getSimpleName());
+		return Type.getTopType(javaClassName);
 	}
 }

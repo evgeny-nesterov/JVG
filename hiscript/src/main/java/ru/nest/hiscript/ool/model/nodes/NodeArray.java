@@ -69,9 +69,6 @@ public class NodeArray extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = true;
-		if (dimensions[0] == null) {
-			validationInfo.error("invalid array size value", getToken());
-		}
 		dimensionsCountActive = -1;
 		for (int i = 0; i < dimensionsCount; i++) {
 			if (dimensions[i] != null) {
@@ -89,17 +86,13 @@ public class NodeArray extends HiNode {
 		}
 
 		clazz = (HiClassArray) type.getClass(ctx);
-		if (clazz != null) {
-			HiClass cellClass = clazz.getRootCellClass();
-			int dimension = dimensionsCount - dimensionsCountActive;
-			arrayJavaClass = HiArrays.getClass(cellClass, dimension);
+		HiClass cellClass = clazz.getRootCellClass();
+		int dimension = dimensionsCount - dimensionsCountActive;
+		arrayJavaClass = HiArrays.getClass(cellClass, dimension);
 
-			if (cellType.parameters != null) {
-				valid = false;
-				validationInfo.error("cannot create array with '" + cellType.getParametersDescr() + "'", getToken());
-			}
-		} else {
+		if (cellType.parameters != null) {
 			valid = false;
+			validationInfo.error("cannot create array with '" + cellType.getParametersDescr() + "'", getToken());
 		}
 		return valid;
 	}

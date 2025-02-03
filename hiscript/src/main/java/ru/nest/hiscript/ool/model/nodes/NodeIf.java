@@ -38,7 +38,7 @@ public class NodeIf extends HiNode {
 	@Override
 	public NodeReturn getReturnNode() {
 		NodeReturn returnNode = body != null ? body.getReturnNode() : null;
-		if (returnNode == null) {
+		if (returnNode == null && nextIf != null) {
 			returnNode = nextIf.getReturnNode();
 		}
 		return returnNode;

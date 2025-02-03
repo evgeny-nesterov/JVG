@@ -195,7 +195,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public HiObject newInstance(RuntimeContext ctx, Type type, HiField<?>[] arguments, HiObject object, HiObject outboundObject) {
 		if (object == null) {
-			object = new HiObject(clazz, type, outboundObject);
+			object = new HiObject(ctx, clazz, type, outboundObject);
 		}
 		if (type == null) {
 			type = this.type;

@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestJava extends HiTest {
 	public static class B {
@@ -83,9 +85,30 @@ public class TestJava extends HiTest {
 			x.add(new double[] {1, 2, 3});
 			x.add(new int[][] {{1, 2, 3}, {4, 5, 6}});
 			x.add(new String[] {"a", "b", "c"});
-			x.add(new HashMap());
-			x.add(new ArrayList());
+
+			Map m = new HashMap();
+			m.put("a", 1);
+			m.put(1.0, true);
+			x.add(m);
+
+			List l = new ArrayList();
+			l.add("a");
+			l.add(1);
+			l.add(true);
+			x.add(l);
 			return x;
+		}
+
+		public int[] getArray() {
+			return new int[] {x};
+		}
+
+		public int[][] getArray2() {
+			return new int[][] {{x}};
+		}
+
+		public String[] getStringArray() {
+			return new String[] {"abc"};
 		}
 	}
 
@@ -101,6 +124,9 @@ public class TestJava extends HiTest {
 		assertSuccessSerialize("interface B{String getString(String s);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String s = \"abc\"; s = b.getString(s); assert \"abcd\".equals(s);");
 		assertSuccessSerialize("interface B{HashMap getHashMap(HashMap m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); HashMap m = new HashMap(); m.put(\"number\", 123); m = b.getHashMap(m); assert \"v\".equals(m.get(\"k\")); assert new Integer(123).equals(m.get(\"number\"));");
 		assertSuccessSerialize("interface B{ArrayList getArrayList(ArrayList m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); ArrayList a = new ArrayList(); a.add(\"e1\"); a.add(null); a = b.getArrayList(a); assert \"e1\".equals(a.get(0)); assert a.get(1) == null; assert \"e2\".equals(a.get(2)); assert a.get(3) == null;");
+		assertSuccessSerialize("interface B{int[] getArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[] x = b.getArray(); assert x[0] == 1;");
+		assertSuccessSerialize("interface B{int[][] getArray2();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[][] x = b.getArray2(); assert x[0][0] == 1;");
+		assertSuccessSerialize("interface B{String[] getStringArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String[] x = b.getStringArray(); assert x[0].equals(\"abc\");");
 
 		// primitive types
 		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};

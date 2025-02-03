@@ -43,35 +43,6 @@ public class MethodSignature implements Cloneable {
 		return isLambda;
 	}
 
-	public boolean isOverride(MethodSignature m) {
-		if (m.isLambda) {
-			return false;
-		}
-		if (!m.name.equals(name) && !isLambda) {
-			return false;
-		}
-		if (m.isVarargs != isVarargs) {
-			return false;
-		}
-
-		if (argClasses != null || m.argClasses != null) {
-			if (argClasses == null || m.argClasses == null) {
-				return false;
-			}
-
-			if (argCount != m.argCount) {
-				return false;
-			}
-
-			for (int i = 0; i < argCount; i++) {
-				if (!argClasses[i].isInstanceof(m.argClasses[i])) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	public HiClass.ArgClassPriorityType getArgsPriority(MethodSignature m, MethodSignature args) {
 		if (equals(args)) {
 			return HiClass.ArgClassPriorityType.higher;

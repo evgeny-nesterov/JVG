@@ -19,7 +19,7 @@ public class ThreadImpl extends ImplUtil {
 			}
 		}
 
-		HiObject object = new HiObject(threadClass, null, null);
+		HiObject object = new HiObject(ctx, threadClass, null, null);
 		object.userObject = Thread.currentThread();
 
 		ctx.value.valueType = Value.VALUE;

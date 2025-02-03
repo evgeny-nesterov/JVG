@@ -504,7 +504,13 @@ public class TestExpression extends HiTest {
 		assertFailCompile("String s = \"\"; int x = switch(1){case s -> 1;};");
 		assertFailCompile("int x = switch(1){case 1 -> \"a\"; case 2 -> \"b\";};");
 		assertFailCompile("int x = switch(1){};", "expression switch without cases");
-		assertFail("int x = switch(1){case 2 -> 2;};", "no suitable value in the switch");
+		assertFailMessage("int x = switch(1){case 2 -> 2;};", "no suitable value in the switch");
+
+		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", "Only one casted identifier is allowed in the case condition");
+		assertFailCompile("int x = switch(\"\"){case String -> 1;};", "'->' is expected");
+		assertFailCompile("int x = switch(\"\"){case x -> 1;};", "invalid expression");
+		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case \"\" -> A.a();};", "value is expected");
+		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case A.a() -> 1;};", "value or casted identifier is expected");
 	}
 
 	@Test

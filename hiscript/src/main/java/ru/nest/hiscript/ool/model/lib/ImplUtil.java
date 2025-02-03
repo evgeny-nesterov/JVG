@@ -53,4 +53,13 @@ public class ImplUtil {
 		ctx.value.object = ctx.value.valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
 		((List) ((HiObject) ctx.value.object).userObject).addAll(value);
 	}
+
+	protected static void setCtx(RuntimeContext ctx, Object... objects) {
+		for (Object object : objects) {
+			if (object instanceof HiObject) {
+				HiObject o = (HiObject) object;
+				o.ctx = ctx; // used to compute hash code
+			}
+		}
+	}
 }

@@ -241,7 +241,6 @@ public class HiClassJava extends HiClass {
 			return new HiFieldJava(field, name);
 			//}
 		} catch (NoSuchFieldException e) {
-			classResolver.processResolverException(e.getMessage());
 		}
 		return null;
 	}

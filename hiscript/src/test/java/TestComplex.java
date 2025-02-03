@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import ru.nest.hiscript.HiScriptParseException;
+import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
@@ -15,8 +16,95 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		// assertFailCompile("class A{void m(B arg){}} new A().m(1);");
-		// assertSuccess("interface I{int x = 1;} assert I.x == 1;");
+		HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
+		script.execute();
+	}
+
+	@Test
+	public void testCompileValue() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		// compile value
+		assertSuccess("class A{final static Boolean x = true;} assert A.x == Boolean.TRUE;");
+		assertSuccess("class A{final static boolean x = !false;} assert A.x;");
+
+		for (String t : new String[] {"byte", "short", "char", "int", "long", "float", "double"}) {
+			assertSuccess("class A{final " + t + " x = (byte)1;} assert new A().x == 1;");
+			assertSuccess("class A{final " + t + " x = (short)1;} assert new A().x == 1;");
+			assertSuccess("class A{final " + t + " x = (char)1;} assert new A().x == 1;");
+			assertSuccess("class A{final " + t + " x = (int)1;} assert new A().x == 1;");
+
+			for (String t1 : new String[] {"byte", "short", "char", "int"}) {
+				assertSuccess("class A{final " + t + " x = (" + t1 + ")(1+2);} assert new A().x == 3;");
+				for (String t2 : new String[] {"byte", "short", "char", "int"}) {
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")1+(" + t2 + ")2;} assert new A().x == 3;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")1+(" + t1 + ")2;} assert new A().x == 3;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")2-(" + t2 + ")1;} assert new A().x == 1;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")2-(" + t1 + ")1;} assert new A().x == 1;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")2*(" + t2 + ")3;} assert new A().x == 6;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")2*(" + t1 + ")3;} assert new A().x == 6;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")6/(" + t2 + ")3;} assert new A().x == 2;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")6/(" + t1 + ")3;} assert new A().x == 2;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")5%(" + t2 + ")3;} assert new A().x == 2;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")5%(" + t1 + ")3;} assert new A().x == 2;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")7&(" + t2 + ")2;} assert new A().x == 2;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")7&(" + t1 + ")2;} assert new A().x == 2;");
+
+					assertSuccess("class A{final " + t + " x = (" + t1 + ")5|(" + t2 + ")2;} assert new A().x == 7;");
+					assertSuccess("class A{final " + t + " x = (" + t2 + ")5|(" + t1 + ")2;} assert new A().x == 7;");
+				}
+			}
+
+			assertSuccess("class A{final double x = (" + t + ")(1+2);} assert new A().x == 3;");
+
+			assertFailCompile("class A{final " + t + " x = true;}");
+		}
+
+		assertFailCompile("class A{final byte x = 1L;}");
+		assertFailCompile("class A{final byte x = 1f;}");
+		assertFailCompile("class A{final byte x = 1.0;}");
+		assertFailCompile("class A{final byte x = 128;}");
+
+		assertFailCompile("class A{final short x = 1L;}");
+		assertFailCompile("class A{final short x = 1f;}");
+		assertFailCompile("class A{final short x = 1.0;}");
+		assertFailCompile("class A{final short x = " + (Short.MAX_VALUE + 1) + ";}");
+
+		assertFailCompile("class A{final char x = 1L;}");
+		assertFailCompile("class A{final char x = 1f;}");
+		assertFailCompile("class A{final char x = 1.0;}");
+		assertFailCompile("class A{final char x = " + (Character.MAX_VALUE + 1) + ";}");
+
+		assertFailCompile("class A{final int x = 1L;}");
+		assertFailCompile("class A{final int x = 1f;}");
+		assertFailCompile("class A{final int x = 1.0;}");
+		assertFailCompile("class A{final int x = " + (Integer.MAX_VALUE + 1L) + ";}");
+
+		assertSuccess("class A{final long x = 1L;}");
+		assertFailCompile("class A{final long x = 1f;}");
+		assertFailCompile("class A{final long x = 1.0;}");
+
+		assertSuccess("class A{final float x = 1L;}");
+		assertSuccess("class A{final float x = 1f;}");
+		assertFailCompile("class A{final float x = 1.0;}");
+
+		assertSuccess("class A{final double x = 1L;}");
+		assertSuccess("class A{final double x = 1f;}");
+		assertSuccess("class A{final double x = 1.0;}");
+
+		// get and set fields
+		for (String t : new String[] {"byte", "short", "int", "long", "float", "double"}) {
+			assertSuccess("byte x = 1; " + t + " y = x;");
+		}
+		for (String t : new String[] {"short", "int", "long", "float", "double"}) {
+			assertSuccess("short x = 1; " + t + " y = x;");
+		}
+		for (String t : new String[] {"int", "long", "float", "double"}) {
+			assertSuccess("int x = 1; " + t + " y = x;");
+		}
 	}
 
 	@Test
@@ -122,21 +210,21 @@ public class TestComplex extends HiTest {
 		assertFail("double x = 1; x /= 0f;");
 		assertFail("double x = 1; x /= 0.0;");
 
-		assertFail("double x = 1 / (byte)0;", "divide by zero");
-		assertFail("double x = 1 / (short)0;", "divide by zero");
-		assertFail("double x = 1 / (char)0;", "divide by zero");
-		assertFail("double x = 1 / 0;", "divide by zero");
-		assertFail("double x = 1 / 0L;", "divide by zero");
-		assertFail("double x = 1 / 0f;", "divide by zero");
-		assertFail("double x = 1 / 0.0;", "divide by zero");
+		assertFailMessage("double x = 1 / (byte)0;", "divide by zero");
+		assertFailMessage("double x = 1 / (short)0;", "divide by zero");
+		assertFailMessage("double x = 1 / (char)0;", "divide by zero");
+		assertFailMessage("double x = 1 / 0;", "divide by zero");
+		assertFailMessage("double x = 1 / 0L;", "divide by zero");
+		assertFailMessage("double x = 1 / 0f;", "divide by zero");
+		assertFailMessage("double x = 1 / 0.0;", "divide by zero");
 
-		assertFail("double x = 1; byte y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; short y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; char y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; int y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; long y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; float y = 0; double z = x / y;", "divide by zero");
-		assertFail("double x = 1; double y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; byte y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; short y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; char y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; int y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; long y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; float y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; double y = 0; double z = x / y;", "divide by zero");
 
 		// var
 		assertFailCompile("!true;");

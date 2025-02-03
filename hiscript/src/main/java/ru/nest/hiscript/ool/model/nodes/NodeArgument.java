@@ -2,7 +2,6 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -92,16 +91,16 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		return valid;
 	}
 
-	// TODO unused!
 	@Override
 	public void execute(RuntimeContext ctx) {
 		// TODO keep in field only runtime annotations
-		HiField<?> field = HiField.getField(clazz, name, null);
-		field.setModifiers(modifiers);
-		field.declared = true;
-		field.initialized = true;
 
-		ctx.addVariable(field);
+//		HiField<?> field = HiField.getField(clazz, name, null);
+//		field.setModifiers(modifiers);
+//		field.declared = true;
+//		field.initialized = true;
+//
+//		ctx.addVariable(field);
 	}
 
 	@Override

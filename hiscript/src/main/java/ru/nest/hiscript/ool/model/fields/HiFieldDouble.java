@@ -14,10 +14,6 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	private double value;
 
-	public double getValue() {
-		return value;
-	}
-
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		return valueType.clazz.isNumber();
@@ -25,11 +21,7 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
-		if (valueType == DOUBLE) {
-			value.doubleNumber = this.value;
-		} else {
-			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
-		}
+		value.doubleNumber = this.value;
 	}
 
 	@Override
@@ -38,27 +30,21 @@ public class HiFieldDouble extends HiFieldNumber<Double> {
 			case CHAR:
 				this.value = value.character;
 				break;
-
 			case BYTE:
 				this.value = value.byteNumber;
 				break;
-
 			case SHORT:
 				this.value = value.shortNumber;
 				break;
-
 			case INT:
 				this.value = value.intNumber;
 				break;
-
 			case LONG:
 				this.value = value.longNumber;
 				break;
-
 			case FLOAT:
 				this.value = value.floatNumber;
 				break;
-
 			case DOUBLE:
 				this.value = value.doubleNumber;
 				break;

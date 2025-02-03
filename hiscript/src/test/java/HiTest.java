@@ -56,18 +56,6 @@ public abstract class HiTest {
 		}
 	}
 
-	public void assertFail(String script, String message) {
-		try {
-			execute(script);
-			onFail(script, message);
-		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
-			onFail(script, "Compilation failed: expected exception");
-		} catch (Throwable e) {
-			// expected
-			System.err.println("Success! Expected failure: " + e.getMessage());
-		}
-	}
-
 	public void assertFail(String script) {
 		try {
 			execute(script);

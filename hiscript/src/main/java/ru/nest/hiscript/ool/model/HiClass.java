@@ -387,7 +387,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			}
 
 			if (interfaces != null) {
-				for (HiClass classInterface : interfaces) {
+				for (int i = 0; i < interfaces.length; i++) {
+					HiClass classInterface = interfaces[i];
 					if (classInterface == null) {
 						// not found
 						continue;
@@ -406,8 +407,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 			// init children classes
 			if (innerClasses != null) {
-				for (HiClass clazz : innerClasses) {
-					clazz.init(classResolver);
+				for (int i = 0; i < innerClasses.length; i++) {
+					innerClasses[i].init(classResolver);
 				}
 			}
 		}
@@ -428,8 +429,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				superClass.initStaticInitializers(classResolver);
 			}
 			if (interfaces != null) {
-				for (HiClass classInterface : interfaces) {
-					classInterface.initStaticInitializers(classResolver);
+				for (int i = 0; i < interfaces.length; i++) {
+					interfaces[i].initStaticInitializers(classResolver);
 				}
 			}
 
@@ -679,7 +680,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		if (innerClasses != null) {
 			boolean isStaticRootClassTop = isStaticRootClassTop();
-			for (HiClass innerClass : innerClasses) {
+			for (int i = 0; i < innerClasses.length; i++) {
+				HiClass innerClass = innerClasses[i];
 				valid &= innerClass.validate(validationInfo, ctx);
 				if (!isStaticRootClassTop) {
 					if (innerClass.isInterface) {
@@ -698,7 +700,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		if (constructors != null) {
-			for (HiConstructor constructor : constructors) {
+			for (int i = 0; i < constructors.length; i++) {
+				HiConstructor constructor = constructors[i];
 				valid &= constructor.validate(validationInfo, ctx);
 				if (isInterface) {
 					validationInfo.error("interface cannot have constructors", constructor.getToken());
@@ -708,8 +711,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		if (methods != null) {
-			for (HiMethod method : methods) {
-				valid &= method.validate(validationInfo, ctx);
+			for (int i = 0; i < methods.length; i++) {
+				valid &= methods[i].validate(validationInfo, ctx);
 			}
 		}
 
@@ -749,7 +752,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		processedClasses.add(this);
 
 		if (methods != null) {
-			for (HiMethod method : methods) {
+			for (int i = 0; i < methods.length; i++) {
+				HiMethod method = methods[i];
 				if (!method.isStatic()) {
 					method.resolve(classResolver);
 					if (method.isAbstract()) {
@@ -862,10 +866,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public HiClass getInnerClass(ClassResolver classResolver, String name, boolean checkInheritance) {
 		if (innerClasses != null) {
-			for (HiClass c : innerClasses) {
-				if (c.name.equals(name) || c.fullName.equals(name)) {
-					c.init(classResolver);
-					return c;
+			for (int i = 0; i < innerClasses.length; i++) {
+				HiClass innerClass = innerClasses[i];
+				if (innerClass.name.equals(name) || innerClass.fullName.equals(name)) {
+					innerClass.init(classResolver);
+					return innerClass;
 				}
 			}
 		}
@@ -877,8 +882,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				}
 			}
 			if (interfaces != null) {
-				for (HiClass i : interfaces) {
-					HiClass innerClass = i != null ? i.getInnerClass(classResolver, name, true) : null;
+				for (int i = 0; i < interfaces.length; i++) {
+					HiClass classInterface = interfaces[i];
+					if (classInterface == null) {
+						continue;
+					}
+					HiClass innerClass = interfaces[i].getInnerClass(classResolver, name, true);
 					if (innerClass != null) {
 						return innerClass;
 					}
@@ -890,8 +899,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean isInstanceofAny(HiClass[] classes) {
 		if (classes != null) {
-			for (HiClass clazz : classes) {
-				if (isInstanceof(clazz)) {
+			for (int i = 0; i < classes.length; i++) {
+				if (isInstanceof(classes[i])) {
 					return true;
 				}
 			}
@@ -901,8 +910,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean isInstanceofAny(ClassResolver classResolver, Type[] types) {
 		if (types != null) {
-			for (Type type : types) {
-				HiClass clazz = type.getClass(classResolver);
+			for (int i = 0; i < types.length; i++) {
+				HiClass clazz = types[i].getClass(classResolver);
 				if (isInstanceof(clazz)) {
 					return true;
 				}
@@ -917,8 +926,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		if (clazz.isMix()) {
 			HiClassMix mixClass = (HiClassMix) clazz;
-			for (HiClass c : mixClass.classes) {
-				if (isInstanceof(c)) {
+			HiClass[] classes = mixClass.classes;
+			for (int i = 0; i < classes.length; i++) {
+				if (isInstanceof(classes[i])) {
 					return true;
 				}
 			}
@@ -957,11 +967,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean hasInterfaceInstanceof(HiClass superInterface) {
 		if (interfaces != null && superInterface.isInterface) {
-			for (HiClass in : interfaces) {
-				if (in == superInterface) {
+			for (int i = 0; i < interfaces.length; i++) {
+				HiClass classInterface = interfaces[i];
+				if (classInterface == superInterface) {
 					return true;
 				}
-				if (in.hasInterfaceInstanceof(superInterface)) {
+				if (classInterface.hasInterfaceInstanceof(superInterface)) {
 					return true;
 				}
 			}
@@ -971,11 +982,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean hasInterfaceInstanceof(String superInterfaceName) {
 		if (interfaces != null) {
-			for (HiClass in : interfaces) {
-				if (in.fullName.equals(superInterfaceName)) {
+			for (int i = 0; i < interfaces.length; i++) {
+				HiClass classInterface = interfaces[i];
+				if (classInterface.fullName.equals(superInterfaceName)) {
 					return true;
 				}
-				if (in.hasInterfaceInstanceof(superInterfaceName)) {
+				if (classInterface.hasInterfaceInstanceof(superInterfaceName)) {
 					return true;
 				}
 			}
@@ -1016,40 +1028,43 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	protected HiField<?> _searchField(ClassResolver classResolver, String name, boolean local) {
 		init(classResolver);
-		HiField<?> field = null;
 
 		// this fields
 		if (fields != null && fields.length > 0) {
-			for (HiField<?> f : fields) {
-				if (f.name.equals(name)) {
-					field = f;
-					break;
+			for (int i = 0; i < fields.length; i++) {
+				HiField<?> field = fields[i];
+				if (field.name.equals(name)) {
+					return field;
 				}
 			}
 		}
 
 		// interfaces static fields
-		if (field == null && interfaces != null) {
-			for (HiClass i : interfaces) {
-				field = i.getField(classResolver, name, local);
+		if (interfaces != null) {
+			for (int i = 0; i < interfaces.length; i++) {
+				HiField<?> field = interfaces[i].getField(classResolver, name, local);
 				if (field != null) {
-					break;
+					return field;
 				}
 			}
 		}
 
 		// super fields
-		if (field == null && superClass != null) {
-			field = superClass.getField(classResolver, name, local);
+		if (superClass != null) {
+			HiField<?> field = superClass.getField(classResolver, name, local);
+			if (field != null) {
+				return field;
+			}
 		}
 
 		// enclosing fields
-		if (!local) {
-			if (field == null && enclosingClass != null) {
-				field = enclosingClass.getField(classResolver, name, local);
+		if (!local && enclosingClass != null) {
+			HiField<?> field = enclosingClass.getField(classResolver, name, local);
+			if (field != null) {
+				return field;
 			}
 		}
-		return field;
+		return null;
 	}
 
 	private final Map<MethodSignature, List<HiMethod>> methodsHash = new HashMap<>();
@@ -1133,11 +1148,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		// current class methods
-		if (methods != null && methods.length > 0) {
-			for (HiMethod m : methods) {
-				if (m.name.equals(name) || m.isLambda() || signature.isLambda()) {
-					if (isMatchMethodArguments(classResolver, m, argTypes)) {
-						matchedMethods = addFoundMethod(m, signature, matchedMethods, false);
+		if (methods != null) {
+			for (int i = 0; i < methods.length; i++) {
+				HiMethod method = methods[i];
+				if (method.name.equals(name) || method.isLambda() || signature.isLambda()) {
+					if (isMatchMethodArguments(classResolver, method, argTypes)) {
+						matchedMethods = addFoundMethod(method, signature, matchedMethods, false);
 					}
 				}
 			}
@@ -1147,8 +1163,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (superClass != null) {
 			List<HiMethod> superMethods = superClass.searchMethods(classResolver, signature);
 			if (superMethods != null) {
-				for (HiMethod m : superMethods) {
-					matchedMethods = addFoundMethod(m, signature, matchedMethods, true);
+				for (int i = 0; i < superMethods.size(); i++) {
+					matchedMethods = addFoundMethod(superMethods.get(i), signature, matchedMethods, true);
 				}
 			}
 		}
@@ -1161,11 +1177,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		// interfaces methods
 		if (interfaces != null) {
-			for (HiClass i : interfaces) {
-				List<HiMethod> interfaceMethods = i.searchMethods(classResolver, signature);
+			for (int i = 0; i < interfaces.length; i++) {
+				List<HiMethod> interfaceMethods = interfaces[i].searchMethods(classResolver, signature);
 				if (interfaceMethods != null) {
-					for (HiMethod m : interfaceMethods) {
-						matchedMethods = addFoundMethod(m, signature, matchedMethods, true);
+					for (int j = 0; j < interfaceMethods.size(); j++) {
+						matchedMethods = addFoundMethod(interfaceMethods.get(j), signature, matchedMethods, true);
 					}
 				}
 			}
@@ -1178,23 +1194,19 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (!isTopLevel()) {
 			List<HiMethod> enclosingMethods = enclosingClass.searchMethods(classResolver, signature);
 			if (enclosingMethods != null) {
-				for (HiMethod m : enclosingMethods) {
-					matchedMethods = addFoundMethod(m, signature, matchedMethods, false);
+				for (int i = 0; i < enclosingMethods.size(); i++) {
+					matchedMethods = addFoundMethod(enclosingMethods.get(i), signature, matchedMethods, false);
 				}
 			}
 		}
 		return matchedMethods;
 	}
 
-	private void ambiguousMethodCall(ClassResolver classResolver, MethodSignature signature, HiMethod m1, HiMethod m2) {
-		// Ambiguous method call. Both
-		// m(int, int,int...) in A and m(int, int...) in I match
-	}
-
 	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
 		if (methods != null && methods.length > 0) {
 			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
-				for (HiMethod m : methods) {
+				for (int i = 0; i < methods.length; i++) {
+					HiMethod m = methods[i];
 					if (m.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes, matchType)) {
 						return m;
 					}
@@ -1202,8 +1214,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			}
 		}
 		if (interfaces != null) {
-			for (HiClass i : interfaces) {
-				HiMethod m = i.getInterfaceAbstractMethod(classResolver, argTypes);
+			for (int i = 0; i < interfaces.length; i++) {
+				HiMethod m = interfaces[i].getInterfaceAbstractMethod(classResolver, argTypes);
 				if (m != null) {
 					return m;
 				}
@@ -1358,11 +1370,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	private void searchMethodsByName(ClassResolver classResolver, String name, Map<MethodSignature, HiMethod> foundMethods) {
-		if (methods != null && methods.length > 0) {
-			for (HiMethod m : methods) {
-				if (m.name.equals(name)) {
-					m.resolve(classResolver);
-					foundMethods.putIfAbsent(m.signature, m);
+		if (methods != null) {
+			for (int i = 0; i < methods.length; i++) {
+				HiMethod method = methods[i];
+				if (method.name.equals(name)) {
+					method.resolve(classResolver);
+					foundMethods.putIfAbsent(method.signature, method);
 				}
 			}
 		}
@@ -1370,8 +1383,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			superClass.searchMethodsByName(classResolver, name, foundMethods);
 		}
 		if (interfaces != null) {
-			for (HiClass i : interfaces) {
-				i.searchMethodsByName(classResolver, name, foundMethods);
+			for (int i = 0; i < interfaces.length; i++) {
+				interfaces[i].searchMethodsByName(classResolver, name, foundMethods);
 			}
 		}
 	}
@@ -1417,22 +1430,23 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		// this methods
 		if (methods != null) {
-			for (HiMethod m : methods)
+			for (int i = 0; i < methods.length; i++)
 				FOR:{
-					if (m.name.equals(name)) {
-						int argCount = m.argCount;
+					HiMethod method = methods[i];
+					if (method.name.equals(name)) {
+						int argCount = method.argCount;
 						if (argCount != argTypes.length) {
 							continue;
 						}
 
-						m.resolve(classResolver);
+						method.resolve(classResolver);
 
-						for (int i = 0; i < argCount; i++) {
-							if (argTypes[i] != m.argClasses[i]) {
+						for (int j = 0; j < argCount; j++) {
+							if (argTypes[j] != method.argClasses[j]) {
 								break FOR;
 							}
 						}
-						return m;
+						return method;
 					}
 				}
 		}
@@ -1475,7 +1489,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
 		if (constructors != null) {
 			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
-				for (HiConstructor constructor : constructors) {
+				for (int i = 0; i < constructors.length; i++) {
+					HiConstructor constructor = constructors[i];
 					if (matchConstructor(classResolver, constructor, argTypes, matchType)) {
 						return constructor;
 					}
@@ -1723,6 +1738,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			cellType = HiClassPrimitive.LONG;
 		} else if (clazz == Double.class || clazz == double.class) {
 			cellType = HiClassPrimitive.DOUBLE;
+		} else if (clazz == String.class) {
+			cellType = HiClass.STRING_CLASS;
 		}
 		return cellType;
 	}
@@ -2052,7 +2069,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (node instanceof NodeArrayValue) {
 			NodeArrayValue nodeArrayValue = (NodeArrayValue) node;
 			HiClass dstCellClass = dst.cellClass;
-			for (HiNode cellValue : nodeArrayValue.array) {
+			for (int i = 0; i < nodeArrayValue.array.length; i++) {
+				HiNode cellValue = nodeArrayValue.array[i];
 				cellValue = cellValue.getExpressionSingleNode();
 				HiClass srcCellClass = cellValue.getValueClass(validationInfo, ctx);
 				if (cellValue instanceof NodeArrayValue) {
@@ -2179,8 +2197,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean hasInnerClass(HiClass clazz) {
 		if (innerClasses != null) {
-			for (HiClass innerClass : innerClasses) {
-				if (innerClass == clazz) {
+			for (int i = 0; i < innerClasses.length; i++) {
+				if (clazz == innerClasses[i]) {
 					return true;
 				}
 			}

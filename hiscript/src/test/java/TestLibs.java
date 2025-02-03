@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 public class TestLibs extends HiTest {
 	@Test
 	public void testArrayList() {
@@ -27,6 +25,17 @@ public class TestLibs extends HiTest {
 		assertSuccessSerialize("HashMap m = new HashMap(); m.put(\"1\", \"a\"); assert m.size() == 1; assert m.containsKey(\"1\"); assert m.get(\"1\").equals(\"a\"); m.remove(\"1\"); assert m.size() == 0;");
 		assertSuccessSerialize("HashMap<String, String> m = new HashMap<>(); m.put(\"1\", \"a\"); for (String key : m.keys()) {assert key.equals(\"1\");}  for (String v : m.values()) {assert v.equals(\"a\");}");
 		assertSuccessSerialize("HashMap m1 = new HashMap(); m1.put(\"1\", \"a\"); HashMap m2 = new HashMap(); m2.putAll(m1); assert m2.size() == 1; assert m2.get(\"1\").equals(\"a\");");
+
+		assertSuccessSerialize("HashMap m = new HashMap(); Byte key = new Byte((byte)1); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Short key = new Short((short)1); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Character key = new Character('!'); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Integer key = new Integer(1); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Long key = new Long(1L); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Float key = new Float(1f); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Double key = new Double(1.0); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Boolean key = new Boolean(true); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); String key = new String(\"key\"); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
+		assertSuccessSerialize("HashMap m = new HashMap(); Object key = new Object(); m.put(key, \"abc\"); assert m.get(key).equals(\"abc\");");
 	}
 
 	@Test

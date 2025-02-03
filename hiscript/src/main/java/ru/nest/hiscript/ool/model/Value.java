@@ -88,22 +88,6 @@ public class Value implements PrimitiveTypes {
 	// Method arguments
 	public HiNode[] arguments;
 
-	public void clear() {
-		node = null;
-		valueClass = null;
-		lambdaClass = null;
-		object = null;
-		parentArray = null;
-		name = null;
-		nameDimensions = 0;
-		castedVariableName = null;
-		castedCondition = null;
-		castedRecordArguments = null;
-		variableType = null;
-		variable = null;
-		arguments = null;
-	}
-
 	/**
 	 * Возвращает текущее значение в виде объекта в зависимости от типа.
 	 */

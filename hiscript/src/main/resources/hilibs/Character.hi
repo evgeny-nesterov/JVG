@@ -1,4 +1,8 @@
 public final class Character extends Object {
+	static {
+		System.loadLib("CharacterImpl.class");
+	}
+
 	private char value;
 
 	public Character(char value) {
@@ -17,7 +21,5 @@ public final class Character extends Object {
 		return o instanceof Character && ((Character) o).value == value;
 	}
 
-	public int hashCode() {
-		return value;
-	}
+	public native int hashCode();
 }

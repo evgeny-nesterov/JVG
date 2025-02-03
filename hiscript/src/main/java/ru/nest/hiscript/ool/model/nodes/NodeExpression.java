@@ -22,29 +22,10 @@ public abstract class NodeExpression extends HiNode {
 	}
 
 	public NodeCastedIdentifier checkCastedIdentifier() {
-		if (this instanceof NodeExpressionNoLS) {
-			NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) this;
-			return exprCaseValueNode.checkCastedIdentifier();
-		} else {
-			return null;
-		}
+		return null;
 	}
 
 	public boolean isCastedIdentifier() {
-		if (this instanceof NodeExpressionNoLS) {
-			NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) this;
-			return exprCaseValueNode.checkCastedIdentifier() != null;
-		} else {
-			return false;
-		}
-	}
-
-	public HiMethod checkMethod() {
-		if (this instanceof NodeExpressionNoLS) {
-			NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) this;
-			return exprCaseValueNode.checkMethod();
-		} else {
-			return null;
-		}
+		return false;
 	}
 }

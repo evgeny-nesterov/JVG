@@ -61,13 +61,15 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public NodeReturn getReturnNode() {
+		NodeReturn nodeReturn = null;
 		for (int i = 0; i < size; i++) {
 			HiNode caseNode = casesNodes.get(i);
 			if (caseNode != null) {
-				return caseNode.getReturnNode();
+				nodeReturn = caseNode.getReturnNode();
+				break;
 			}
 		}
-		return null;
+		return nodeReturn;
 	}
 
 	@Override
@@ -163,8 +165,8 @@ public class NodeSwitch extends HiNode {
 						} else {
 							valid = false;
 						}
-						if (caseValueNode instanceof NodeExpressionNoLS) {
-							NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+						if (caseValueNode instanceof NodeExpression) {
+							NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
 								if (caseValueNodes.length > 1) {
 									validationInfo.error("Only one casted identifier is allowed in the case condition", caseValueNode.getToken());
@@ -185,7 +187,7 @@ public class NodeSwitch extends HiNode {
 
 				if (caseValueNodes != null) { // not default
 					for (HiNode caseValueNode : caseValueNodes) {
-						NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
+						NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 						if (identifier != null) {
 							identifier.removeLocalVariable(ctx);
 							ctx.initializedNodes.remove(identifier.declarationNode);

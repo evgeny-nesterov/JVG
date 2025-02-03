@@ -193,7 +193,16 @@ public class TestGenerics extends HiTest {
 
 	@Test
 	public void testAnonymousClasses() {
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Byte>(){Byte get(){return 123;}}.get() == 123;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Short>(){Short get(){return 123;}}.get() == 123;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Character>(){Character get(){return '!';}}.get() == '!';");
 		assertSuccessSerialize("interface A<O>{O get();} assert new A<Integer>(){Integer get(){return 123;}}.get() == 123;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Long>(){Long get(){return 123L;}}.get() == 123L;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Float>(){Float get(){return 1.23f;}}.get() == 1.23f;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Double>(){Double get(){return 1.23;}}.get() == 1.23;");
+		assertSuccessSerialize("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == true;");
+
+		assertFailCompile("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == 1;", "operator '==' can not be applied to Boolean, int");
 	}
 
 	@Test
@@ -316,7 +325,7 @@ public class TestGenerics extends HiTest {
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O extends A1>{O get();} class B<O extends A2> implements I<O>{public O get(){return (O)new A2();}} assert new B<A2>().get() instanceof A2;");
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O1 extends A1>{O1 get();} class B<O2 extends A2> implements I<O2>{public O2 get(){return (O2)new A2();}} assert new B<A2>().get() instanceof A2;");
 
-		assertFail("class C{<O> O get(){return (O)\"\";}} Integer i = new C().get();", "cannot convert 'String' to 'Integer'");
+		assertFailMessage("class C{<O> O get(){return (O)\"\";}} Integer i = new C().get();", "cannot convert 'String' to 'Integer'");
 	}
 
 	@Test

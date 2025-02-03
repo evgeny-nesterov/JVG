@@ -1,4 +1,8 @@
 public final class Short extends Number {
+	static {
+		System.loadLib("ShortImpl.class");
+	}
+
 	private short value;
 
 	public Short(short value) {
@@ -33,7 +37,5 @@ public final class Short extends Number {
 		return o instanceof Short && ((Short) o).value == value;
 	}
 
-	public int hashCode() {
-		return value;
-	}
+	public native int hashCode();
 }

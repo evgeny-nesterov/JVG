@@ -1,4 +1,8 @@
 public final class Long extends Number {
+	static {
+		System.loadLib("LongImpl.class");
+	}
+
 	private long value;
 
 	public Long(long value) {
@@ -29,7 +33,5 @@ public final class Long extends Number {
 		return o instanceof Long && ((Long) o).value == value;
 	}
 
-	public int hashCode() {
-		return (int) value;
-	}
+	public native int hashCode();
 }

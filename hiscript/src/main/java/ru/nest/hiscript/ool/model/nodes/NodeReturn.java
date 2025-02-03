@@ -53,14 +53,9 @@ public class NodeReturn extends HiNode {
 			HiMethod method = (HiMethod) ctx.level.node;
 			if (method.isLambda()) {
 				if (value instanceof NodeBlock) {
-					NodeBlock block = (NodeBlock) value;
-					if (block.statements.size() > 0) {
-						value = block.statements.get(block.statements.size() - 1);
-						if (value instanceof NodeReturn) {
-							value = ((NodeReturn) value).value;
-						} else {
-							value = EmptyNode.getInstance();
-						}
+					NodeReturn returnNode = value.getReturnNode();
+					if (returnNode != null) {
+						value = returnNode.value;
 					} else {
 						value = EmptyNode.getInstance();
 					}
@@ -117,14 +112,7 @@ public class NodeReturn extends HiNode {
 				}
 
 				if (ctx.value.valueType == Value.NAME) {
-					if (!NodeIdentifier.resolveVariable(ctx, ctx.value, true)) {
-						if (ctx.value.nameDimensions == 0) {
-							ctx.throwRuntimeException("cannot resolve variable " + ctx.value.name);
-						} else {
-							ctx.throwRuntimeException("cannot resolve class " + ctx.value.name);
-						}
-						return;
-					}
+					assert NodeIdentifier.resolveVariable(ctx, ctx.value, true);
 				}
 
 				// TODO: check on void return value

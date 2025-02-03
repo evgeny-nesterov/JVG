@@ -78,7 +78,7 @@ public class NodeInvocation extends HiNode {
 					boolean validArguments = true;
 					for (int i = 0; i < method.argClasses.length; i++) {
 						HiClass methodArgumentClass = method.argClasses[i];
-						if (methodArgumentClass.isGeneric()) {
+						if (methodArgumentClass.isGeneric()) { // not primitive
 							Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
 							HiClass argumentClass = argumentsClasses[i];
 							if (argumentType.isWildcard() && !argumentType.isSuper && argumentClass.isPrimitive()) {
@@ -90,9 +90,6 @@ public class NodeInvocation extends HiNode {
 								// autobox
 								if (argumentClass.isPrimitive()) {
 									argumentClass = argumentClass.getAutoboxClass();
-								}
-								if (methodArgumentClass.isPrimitive()) {
-									methodArgumentClass = methodArgumentClass.getAutoboxClass();
 								}
 
 								if (!argumentClass.isInstanceof(methodArgumentClass)) {

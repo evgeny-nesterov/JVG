@@ -45,11 +45,6 @@ public class NodeThis extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx, HiClass clazz) {
 		HiObject currentObject = ctx.getCurrentObject();
-		if (currentObject == null) {
-			ctx.throwRuntimeException("cannot access this class");
-			return;
-		}
-
 		if (clazz != null && clazz != currentObject.clazz) {
 			while (currentObject != null) {
 				currentObject = currentObject.outboundObject;
@@ -59,14 +54,11 @@ public class NodeThis extends HiNode {
 			}
 		}
 
-		if (currentObject != null) {
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.valueClass = currentObject.clazz;
-			ctx.value.lambdaClass = null;
-			ctx.value.object = currentObject;
-		} else {
-			ctx.throwRuntimeException("can not find this for class '" + clazz.getNameDescr() + "'");
-		}
+		// assumed currentObject is not null
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = currentObject.clazz;
+		ctx.value.lambdaClass = null;
+		ctx.value.object = currentObject;
 	}
 
 	@Override

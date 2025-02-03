@@ -50,7 +50,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public final static int STATIC_CLASS = 16;
 
-	public final static int MAX_STACK_SIZE = 1000;
+	public static int MAX_STACK_SIZE = 1000;
 
 	public boolean isExit;
 
@@ -245,11 +245,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		level.level = this.level != null ? this.level.level + 1 : 0;
 		level.mainLevel = this.level != null ? this.level.mainLevel : 0;
 		this.level = level;
-
-		// String s = "";
-		// while(s.length() != 2 * level.level)
-		// s += "  ";
-		// System.out.println(s + "ENTER: " + level);
 	}
 
 	public void exit() {
@@ -258,11 +253,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public StackLevel exit(boolean lockLevel) {
 		boolean isBroken = (isBreak || isContinue) && isCurrentLabel();
-
-		// String s = "";
-		// while(s.length() != 2 * level.level)
-		// s += "  ";
-		// System.out.println(s + "EXIT: " + level);
 
 		if (level.classType == START) {
 			if (exception != null) {
@@ -516,11 +506,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			stack = new StackLevel();
 		}
 		stack.set(type, parent, clazz, constructor, method, object, name, token);
-
-		// String s = "";
-		// while(s.length() != 2 * stack.level)
-		// s += "  ";
-		// System.out.println(s + "ENTER: " + stack);
 		return stack;
 	}
 
@@ -776,18 +761,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (values != null) {
 			cacheValues.add(values);
 		}
-	}
-
-	public void clear() {
-		isExit = false;
-		isReturn = false;
-
-		label = null;
-		isBreak = false;
-		isContinue = false;
-
-		value.clear();
-		exception = null;
 	}
 
 	public List<StackLevel> getStack() {

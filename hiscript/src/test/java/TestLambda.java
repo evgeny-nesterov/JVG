@@ -9,15 +9,22 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{int get(int x);} I o = (int x) -> {return x + 1;}; assert o.get(1) == 2;");
 		assertSuccessSerialize("interface I{int get(int x, int y);} I o = (x, y) -> x + y; assert o.get(1, 2) == 3;");
 		assertSuccessSerialize("interface I{int get(int x, int y);} I o = (byte x, short y) -> x + y; assert o.get(1, 2) == 3;");
-		assertFailCompile("interface I{int get(int x, int y);} I o = (int x, y) -> 0;");
-		assertFailCompile("interface I{int get(int x, int y);} I o = (x, int y) -> 0;");
+		assertFailCompile("interface I{int get(int x, int y);} I o = (int x, y) -> 0;", //
+				"argument is expected");
+		assertFailCompile("interface I{int get(int x, int y);} I o = (x, int y) -> 0;", //
+				"unexpected token");
 		assertSuccessSerialize("interface I{String get(long x, String y);} I o = (x, y) -> x + y; assert o.get((byte)1, \"_\").equals(\"1_\");");
-		assertFailCompile("Object o = (x) -> x;");
-		assertFailCompile("interface I{int get(int x);} I o = (x, y) -> x + y;");
-		assertFailCompile("interface I{int get(int x);} I o = (boolean x) -> x ? 1 : 0;");
-		assertFailSerialize("interface I{int get(int x, int y);} I o = (x, y) -> x / y; o.get(1, 0);");
-		// TODO assertFailCompile("int x = 0; interface I{int get(int x);} I o = x -> x;");
-		assertFailCompile("interface I{void get();} I o = () -> 1;");
+		assertFailCompile("Object o = (x) -> x;", //
+				"target type of a lambda conversion must be an interface");
+		assertFailCompile("interface I{int get(int x);} I o = (x, y) -> x + y;", //
+				"incompatible parameters signature in lambda expression");
+		assertFailCompile("interface I{int get(int x);} I o = (boolean x) -> x ? 1 : 0;", //
+				"incompatible parameters signature in lambda expression");
+		assertFailMessage("interface I{int get(int x, int y);} I o = (x, y) -> x / y; o.get(1, 0);", //
+				"divide by zero");
+		assertFailCompile("interface I{void get();} I o = () -> 1;", //
+				"incompatible types; found int, required void");
+		assertSuccessSerialize("int x = 1; interface I{int get(int x);} I o = x -> x; assert o.get(x + 1) == x + 1;");
 		assertSuccessSerialize("class C{int c = 0;} C c = new C(); interface I{void m(I i, int x);} I o = (i,x)->{if(x>0) i.m(i, x-1); c.c++;}; o.m(o, 5); assert c.c == 6;");
 		assertSuccessSerialize("interface I{int get(int a);} interface J{int sum(int a, I... i);} J j = (a,i) -> {int c = 0; for(int x=0;x<i.length;x++) c+=i[x].get(a); return c;} assert j.sum(3, a->a, a->1, a->a/2) == 5;");
 	}
@@ -27,10 +34,19 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{});");
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} assert new C().m((x,y)->x+y,1,2)==3; assert new C().m((x,y)->{return x+y;},1,2)==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} assert new C().m((s,x)->s+x.length).equals(\"l=3\");");
-		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{return 1;});");
-		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);");
-		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} new C().m(()->{});");
-		assertFailCompile("interface I{String get(int x);} class C{String m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});");
+
+		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{return 1;});", //
+				"incompatible types; found int, required void");
+		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);", //
+				"incompatible types; found int, required void");
+		assertFailCompile("interface I{int get();} class C{int m(I i){return i.get();}} new C().m(()->{});", //
+				"incompatible types; found void, required int");
+		assertFailCompile("interface I{String get(int x);} class C{String m(I i){return i.get(1);}} new C().m(x->{int y = x + 1;});", //
+				"incompatible types; found void, required String");
+		assertFailCompile("interface I{String get(int x, String... args);} class C{String m(I i){return i.get(\"\", 1, 2, 3);}}", //
+				"cannot resolve method 'get' in 'I'");
+		assertFailCompile("interface I{String get(int x, String... args);} I i = null; i.get(\"\", 1, 2, 3);", //
+				"cannot resolve method 'get' in 'I'");
 	}
 
 	@Test
@@ -42,12 +58,14 @@ public class TestLambda extends HiTest {
 		assertFailCompile("interface I{void get(int x);} class C{C(I i){i.get(1);}} new C(x->x);");
 		assertFailCompile("interface I{int get();} class C{C(I i){i.get();}} new C(()->{});");
 		assertFailCompile("interface I{String get(int x);} class C{C(I i){i.get(1);}} new C(x->{int y = x + 1;});");
+		assertFailCompile("interface I{String get(int x, String... args);} class C{C(I i){return i.get(\"\", 1, 2, 3);}}");
 	}
 
 	@Test
 	public void testArray() {
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{x->x+1}}; assert a[0][0].get(1) == 2;");
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{(byte x)->x+1}}; assert a[0][0].get(1) == 2;");
+		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{null}}; a[0][0] = (var x)->x+1; assert a[0][0].get(1) == 2;");
 		assertFailCompile("interface A{int get(int x);} A[][] a = {{x->x==0}};");
 		assertFailCompile("interface A{int get(int x, int y);} A[][][] a = {{{x->0}}};");
 	}
@@ -56,9 +74,12 @@ public class TestLambda extends HiTest {
 	public void testMethodReferenceDeclaration() {
 		// string
 		assertSuccessSerialize("interface A{int length();} A a = \"abc\"::length; assert a.length() == 3;"); // same method name
+		assertSuccessSerialize("interface A{int indexOf(String s);} A a = \"abc\"::indexOf; assert a.indexOf(\"b\") == 1;"); // same method name
 		assertSuccessSerialize("interface A{int getLength();} A a = \"abc\"::length; assert a.getLength() == 3;"); // another method name
+		assertSuccessSerialize("interface A{int getIndex(String s);} A a = \"abc\"::indexOf; assert a.getIndex(\"c\") == 2;"); // another method name
 		assertFailCompile("interface A{int getLength();} A a = \"abc\"::length; assert a.length() == 3;"); // method name is not match
 		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;"); // not a functional interface
+		assertSuccessSerialize("interface A{int get(int... x);} class B{int get(int... x){return x[x.length - 1];}} A a = B::get; assert a.get(1,2,3) == 3;"); // same method name
 
 		// object
 		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
@@ -102,5 +123,23 @@ public class TestLambda extends HiTest {
 
 		assertFailCompile("interface I{void get(Object s);} class C{void m(I i){i.get(null);}} class D{void d(String s){}} new C().m(new D()::d);"); // arguments not match
 		assertFailCompile("interface I{void get(long x, String s);} class C{void m(I i){i.get(1, \"a\");}} class D{void d(int x, Object s){}} new C().m(new D()::d);"); // arguments not match
+	}
+
+	@Test
+	public void testReturnType() {
+		assertSuccessSerialize("interface A{int get();} A a = () -> {return 1;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {{return 1;}}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {if(true) return 1; else return 2;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {if(false) {} else return 1; return 0;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {switch(1){case 1: return 1; case 2: return 2; default: return 3;}}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {try{return 1;} catch(Exception e){return 2;}}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {try{} catch(Exception e){return 2;} return 1;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {try{} catch(Exception e){} finally{return 1;}}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {for(int x = 0; x < 1; x++) return 1; return 0;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {for(int x : new int[]{1}) return x; return 0;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {int x = 1; while(x == 1) return x++; return 0;}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {do{return 1;}while(false);}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {synchronized(new Object()){return 1;}}; assert a.get() == 1;");
+		assertSuccessSerialize("interface A{int get();} A a = () -> {LABEL:return 1;}; assert a.get() == 1;");
 	}
 }

@@ -31,29 +31,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value, int valueType) {
-		switch (valueType) {
-			case BYTE:
-				value.byteNumber = this.value;
-				break;
-			case SHORT:
-				value.shortNumber = this.value;
-				break;
-			case INT:
-				value.intNumber = this.value;
-				break;
-			case LONG:
-				value.longNumber = this.value;
-				break;
-			case FLOAT:
-				value.floatNumber = this.value;
-				break;
-			case DOUBLE:
-				value.doubleNumber = this.value;
-				break;
-			default:
-				ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
-				break;
-		}
+		value.byteNumber = this.value;
 	}
 
 	@Override
@@ -84,7 +62,6 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 						break;
 				}
 			}
-			ctx.throwRuntimeException("incompatible types; found " + value.valueClass.getNameDescr() + ", required " + type.fullName);
 		}
 	}
 

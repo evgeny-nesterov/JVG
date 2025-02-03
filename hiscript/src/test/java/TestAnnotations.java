@@ -3,11 +3,45 @@ import org.junit.jupiter.api.Test;
 public class TestAnnotations extends HiTest {
 	@Test
 	public void test() {
+		assertSuccessSerialize("public @interface Field{byte value() default (byte)(1 + 2);}");
+		assertSuccessSerialize("public @interface Field{short value() default (short)(1 + 2);}");
+		assertSuccessSerialize("public @interface Field{char value() default (char)(1 + 2);}");
 		assertSuccessSerialize("public @interface Field{int value() default 1 + 2;}");
+		assertSuccessSerialize("public @interface Field{long value() default 1L + 2L;}");
+		assertSuccessSerialize("public @interface Field{float value() default 1f + 2f;}");
+		assertSuccessSerialize("public @interface Field{double value() default 1.0 + 1.0 * 2.0;}");
+		assertSuccessSerialize("public @interface Field{boolean value() default !true || !false;}");
 		assertSuccessSerialize("abstract @interface Field{String value() default \"x=\" + 1;}");
 		assertSuccessSerialize("static @interface Field{int value();}");
 		assertSuccessSerialize("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
 		assertFailCompile("@interface {String value();}", "annotation class name is expected");
+
+		assertSuccessSerialize("@interface A{byte value();} @A(value=(byte)2) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{short value();} @A(value=(short)2) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{char value();} @A(value='!') class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{int value();} @A(value=2) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{long value();} @A(value=2L) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{float value();} @A(value=2f) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{double value();} @A(value=2.0) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{boolean value();} @A(value=true) class C{} C c = new C();");
+		assertSuccessSerialize("@interface A{String value();} @A(value=\"a\") class C{} C c = new C();");
+
+		assertFailCompile("@interface A{Byte value();}");
+		assertFailCompile("@interface A{Short value();}");
+		assertFailCompile("@interface A{Character value();}");
+		assertFailCompile("@interface A{Integer value();}");
+		assertFailCompile("@interface A{Long value();}");
+		assertFailCompile("@interface A{Float value();}");
+		assertFailCompile("@interface A{Double value();}");
+		assertFailCompile("@interface A{Boolean value();}");
+		assertFailCompile("@interface A{byte value();} @A(value=new Byte((byte)1)) class C{}");
+		assertFailCompile("@interface A{short value();} @A(value=new Short((short)1)) class C{}");
+		assertFailCompile("@interface A{char value();} @A(value=new Character('!')) class C{}");
+		assertFailCompile("@interface A{int value();} @A(value=new Integer(1)) class C{}");
+		assertFailCompile("@interface A{long value();} @A(value=new Long(1L)) class C{}");
+		assertFailCompile("@interface A{float value();} @A(value=new Float(1f)) class C{}");
+		assertFailCompile("@interface A{double value();} @A(value=new Double(1.0)) class C{}");
+		assertFailCompile("@interface A{String value();} @A(value=null) class C{}");
 
 		assertSuccessSerialize("@interface A{int value() default y + 1; int x = 1; int y = x + 1;} @A(value=2) class C{} C c = new C();");
 		assertFailCompile("@interface A{int value() default y / 0; int x = 1; int y = x + 1;}", "divide by zero");

@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
 import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
@@ -64,12 +63,9 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 		List<HiNode> args = new ArrayList<>(3);
 		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (arg != null) {
-			if (arg instanceof NodeExpressionNoLS) {
-				NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) arg;
-				NodeCastedIdentifier identifier = exprCaseValueNode.checkCastedIdentifier();
-				if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
-					identifier.castedCondition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
-				}
+			NodeCastedIdentifier identifier = arg.checkCastedIdentifier();
+			if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
+				identifier.castedCondition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 			}
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {

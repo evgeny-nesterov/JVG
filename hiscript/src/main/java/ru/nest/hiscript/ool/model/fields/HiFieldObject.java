@@ -92,6 +92,7 @@ public class HiFieldObject extends HiField<Object> {
 		if (object instanceof HiObject) {
 			return ((HiObject) object).getJavaValue(ctx);
 		} else {
+			// array
 			return HiFieldArray.getJava(ctx, getClass(ctx), object);
 		}
 	}

@@ -49,11 +49,6 @@ public class NodeSuper extends HiNode {
 		HiObject object = ctx.getCurrentObject();
 		HiClass objectClass;
 		if (clazz == null || !clazz.isInterface) {
-			if (object == null || object.getSuperObject() == null) {
-				ctx.throwRuntimeException("cannot access super class");
-				return;
-			}
-
 			if (clazz != null && clazz != object.clazz) {
 				while (object != null) {
 					object = object.getSuperObject();
