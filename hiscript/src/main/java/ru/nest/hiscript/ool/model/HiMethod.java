@@ -504,6 +504,28 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		return clazz;
 	}
 
+	public String getSignatureText(Type invocationType) {
+		StringBuilder buf = new StringBuilder();
+		buf.append(name);
+		buf.append('(');
+		for (int i = 0; i < argCount; i++) {
+			if (i != 0) {
+				buf.append(", ");
+			}
+			HiClass methodArgumentClass = argClasses[i];
+			if (methodArgumentClass.isGeneric()) { // not primitive
+				Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
+				buf.append(argumentType.fullName);
+			} else {
+				buf.append(arguments[i].getTypeName());
+			}
+			buf.append(' ');
+			buf.append(arguments[i].name);
+		}
+		buf.append(')');
+		return buf.toString();
+	}
+
 	@Override
 	public String toString() {
 		if (descr == null) {

@@ -6,6 +6,7 @@ public class TestComments extends HiTest {
 		assertSuccessSerialize("// test\nint x = 1");
 		assertSuccessSerialize("/* test */\nint x = 1");
 		assertSuccessSerialize("/** test */\nint x = 1");
-		assertFailCompile("int x = 1; /* test");
+		assertFailCompile("int x = 1; /* test", //
+				"end of comment '*/' is expected");
 	}
 }

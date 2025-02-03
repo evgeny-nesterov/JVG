@@ -15,7 +15,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccessSerialize("switch(null){case null: return; break; case 1:} assert false;");
 	}
 
 	@Test
@@ -171,7 +170,8 @@ public class TestComplex extends HiTest {
 		assertFailCompile("int x = 2; x >>=true;");
 		assertSuccess("int x = 1; x <<=1; assert x == 2;");
 		assertFailCompile("int x = 2; x <<=true;");
-		assertFailCompile("int x = 1; x <<<=1;", "invalid expression");
+		assertFailCompile("int x = 1; x <<<=1;", //
+				"invalid expression");
 		assertSuccess("int x = 2; x >>>=1; assert x == 1;");
 		assertFailCompile("int x = 2; x >>>=true;");
 		assertFailCompile("int x = 1 >> true;");
@@ -208,21 +208,35 @@ public class TestComplex extends HiTest {
 		assertFail("double x = 1; x /= 0f;");
 		assertFail("double x = 1; x /= 0.0;");
 
-		assertFailMessage("double x = 1 / (byte)0;", "divide by zero");
-		assertFailMessage("double x = 1 / (short)0;", "divide by zero");
-		assertFailMessage("double x = 1 / (char)0;", "divide by zero");
-		assertFailMessage("double x = 1 / 0;", "divide by zero");
-		assertFailMessage("double x = 1 / 0L;", "divide by zero");
-		assertFailMessage("double x = 1 / 0f;", "divide by zero");
-		assertFailMessage("double x = 1 / 0.0;", "divide by zero");
+		assertFailMessage("double x = 1 / (byte)0;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / (short)0;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / (char)0;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / 0;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / 0L;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / 0f;", //
+				"divide by zero");
+		assertFailMessage("double x = 1 / 0.0;", //
+				"divide by zero");
 
-		assertFailMessage("double x = 1; byte y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; short y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; char y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; int y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; long y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; float y = 0; double z = x / y;", "divide by zero");
-		assertFailMessage("double x = 1; double y = 0; double z = x / y;", "divide by zero");
+		assertFailMessage("double x = 1; byte y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; short y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; char y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; int y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; long y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; float y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFailMessage("double x = 1; double y = 0; double z = x / y;", //
+				"divide by zero");
 
 		// var
 		assertFailCompile("!true;");

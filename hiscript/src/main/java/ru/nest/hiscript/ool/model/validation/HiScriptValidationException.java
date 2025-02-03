@@ -4,7 +4,7 @@ import ru.nest.hiscript.tokenizer.Token;
 
 public class HiScriptValidationException extends Exception {
 	public HiScriptValidationException(String msg, Token token) {
-		super(msg + ": " + (token != null ? token : "EOF"));
+		super(msg);// + ": " + (token != null ? token : "EOF"));
 		this.token = token;
 	}
 

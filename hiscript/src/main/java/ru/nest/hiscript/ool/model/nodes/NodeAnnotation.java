@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -54,7 +53,7 @@ public class NodeAnnotation extends HiNode {
 						} else {
 							NodeValueType argValueType = arg.getNodeValueType(validationInfo, ctx);
 							valid &= argValueType.valid;
-							if (argValueType.valid && !argValueType.clazz.isInstanceof(method.returnClass)) {
+							if (argValueType.valid && !argValueType.clazz.boxed().isInstanceof(method.returnClass.boxed())) {
 								validationInfo.error("incompatible types: " + argValueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), arg.valueNode.getToken());
 								valid = false;
 							}

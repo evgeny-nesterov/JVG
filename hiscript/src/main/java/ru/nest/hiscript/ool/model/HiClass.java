@@ -1628,6 +1628,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return autoboxedPrimitiveClass;
 	}
 
+	public HiClass boxed() {
+		return getAutoboxClass() != null ? getAutoboxClass() : this;
+	}
+
 	public boolean isNumber() {
 		return false;
 	}
@@ -2271,6 +2275,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public String getNameDescr() {
+		String fullName = isArray() ? getArrayType().fullName : this.fullName;
 		String descr = fullName;
 		int index = 0;
 		if (fullName.startsWith(ROOT_CLASS_NAME_PREFIX)) {
@@ -2281,6 +2286,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		if (index > 0) {
 			descr = descr.substring(index);
+		}
+		for (int i = 0; i < getArrayDimension(); i++) {
+			descr += "[]";
 		}
 		return descr;
 	}

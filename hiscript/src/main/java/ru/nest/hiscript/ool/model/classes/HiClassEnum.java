@@ -140,4 +140,9 @@ public class HiClassEnum extends HiClass {
         enumClass.enumValues = os.readList(HiEnumValue.class, os.readShort());
         return enumClass;
     }
+
+    @Override
+    public String getNameDescr() {
+        return fullName;
+    }
 }

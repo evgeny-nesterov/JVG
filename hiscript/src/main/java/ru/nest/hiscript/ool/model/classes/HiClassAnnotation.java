@@ -87,4 +87,9 @@ public class HiClassAnnotation extends HiClass {
 	public Class getJavaClass() {
 		return null;
 	}
+
+	@Override
+	public String getNameDescr() {
+		return fullName;
+	}
 }

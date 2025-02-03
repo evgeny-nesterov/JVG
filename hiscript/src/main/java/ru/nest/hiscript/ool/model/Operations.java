@@ -445,7 +445,7 @@ public class Operations implements OperationsIF, PrimitiveTypes {
 				return "^=";
 
 			case EQUATE_OR:
-				return "=|";
+				return "|=";
 		}
 		return "<No such operation: " + operation + ">";
 	}

@@ -256,4 +256,9 @@ public class HiClassPrimitive extends HiClass {
 		}
 		return null;
 	}
+
+	@Override
+	public String getNameDescr() {
+		return name;
+	}
 }

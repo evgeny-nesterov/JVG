@@ -17,7 +17,8 @@ public class TestLibs extends HiTest {
 		assertSuccessSerialize("ArrayList l = new ArrayList(); l.add(\"a\"); l.add(1); assert l.size() == 2; assert l.indexOf(1) == 1; assert l.get(0).equals(\"a\"); assert l.get(1).equals(1); assert l.remove(\"a\"); assert l.size() == 1;");
 		assertSuccessSerialize("ArrayList<String> l = new ArrayList(); l.add(\"a\"); l.add(\"b\"); assert l.size() == 2; assert l.indexOf(\"b\") == 1; assert l.get(0).equals(\"a\"); assert l.get(1).equals(\"b\"); assert l.remove(\"a\"); assert l.size() == 1;");
 		assertSuccessSerialize("ArrayList<Integer> l = new ArrayList<>(); l.add(1); l.add(2); Iterator<Integer> i = l.iterator(); String s = \"\"; while(i.hasNext()) {s += i.next();} assert s.equals(\"12\");");
-		assertFailCompile("ArrayList<String> l = new ArrayList(); l.add(1L);");
+		assertFailCompile("ArrayList<String> l = new ArrayList(); l.add(1L);", //
+				"'add(String element)' in 'ArrayList<String>' cannot be applied to '(long')");
 	}
 
 	@Test
@@ -48,7 +49,9 @@ public class TestLibs extends HiTest {
 	public void testSystemExec() {
 		assertSuccessSerialize("Integer v = System.exec(\"1 + 2\"); assert v == 3;");
 		assertSuccessSerialize("Boolean v = System.exec(\"int x = 1; int y = 2; return x < y;\"); assert v;");
-		assertFailMessage("Integer v = System.exec(\"1 < 2\");", "cannot convert 'Boolean' to 'Integer'");
-		assertFailMessage("Float v = System.exec(\"1.0/2.0\");", "cannot convert 'Double' to 'Float'");
+		assertFailMessage("Integer v = System.exec(\"1 < 2\");", //
+				"cannot convert 'Boolean' to 'Integer'");
+		assertFailMessage("Float v = System.exec(\"1.0/2.0\");", //
+				"cannot convert 'Double' to 'Float'");
 	}
 }

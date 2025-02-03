@@ -173,7 +173,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 				clazz = valueType.clazz;
 				type = valueType.type;
 			} else if (valueType.clazz != getClass(ctx) && !validateType(validationInfo, ctx, getClass(ctx), valueType)) {
-				validationInfo.error("incompatible types; found " + valueType.clazz + ", required " + getClass(ctx), token);
+				validationInfo.error("incompatible types; found " + valueType.clazz.getNameDescr() + ", required " + getClass(ctx).getNameDescr(), token);
 				valid = false;
 			}
 		} else if (type == Type.varType) {

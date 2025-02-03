@@ -10,12 +10,16 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class C{int c = 1;} assert new C().c == 1;");
 		assertSuccessSerialize("class C{static int c;} assert C.c == 0;");
 		assertSuccessSerialize("class C{static int c = 1;} assert C.c == 1;");
-		assertFailCompile("class C{class C{}}"); // duplicate
-		assertFailCompile("class C{{class C{}}}"); // duplicate
+		assertFailCompile("class C{class C{}}", //
+				"duplicate class: C");
+		assertFailCompile("class C{{class C{}}}", //
+				"duplicate class: C");
 
 		// abstract
-		assertFailCompile("abstract class C{} new C();");
-		assertFailCompile("abstract class C{void get();}");
+		assertFailCompile("abstract class C{} new C();", //
+				"'C' is abstract; cannot be instantiated");
+		assertFailCompile("abstract class C{void get();}", //
+				"modifier 'abstract' is expected");
 		assertSuccessSerialize("abstract class C{} new C(){};");
 		assertSuccessSerialize("abstract class C{void get(){}} new C(){void get(){}};");
 		assertSuccessSerialize("abstract class C{abstract void get();} new C(){void get(){}};");
@@ -23,43 +27,67 @@ public class TestClasses extends HiTest {
 		// extends
 		assertSuccessSerialize("{class B{B(int x){}} new B(1);} {class B{void get(){}} class C extends B{} new C().get();}");
 		assertFailSerialize("class A {A(boolean x){this(x ? 1 : 0);} A(int y){this(y == 1);}} new A(true);");
-		assertFailCompile("class A{A(int x){this(x);}} new A(1);");
-		assertFailCompile("class A extends B{} class B extends A{}");
-		assertFailCompile("class A extends B{} class B extends C{} class C extends A{}");
-		assertFailCompile("final class A{} class B extends A{}");
+		assertFailCompile("class A{A(int x){this(x);}} new A(1);", //
+				"recursive constructor invocation");
+		assertFailCompile("class A extends B{} class B extends A{}", //
+				"cyclic inheritance involving B");
+		assertFailCompile("class A extends B{} class B extends C{} class C extends A{}", //
+				"cyclic inheritance involving C");
+		assertFailCompile("final class A{} class B extends A{}", //
+				"the type B cannot subclass the final class A");
 		assertSuccessSerialize("static class A{static class B{} static class C extends B{}}");
-		assertFailCompile("static class A{class B{} static class C extends B{}}");
-		assertFailCompile("class A extends B{}");
-		assertFailCompile("class A implements B{}");
+		assertFailCompile("static class A{class B{} static class C extends B{}}", //
+				"static class A$C can not extend not static and not top level class");
+		assertFailCompile("class A extends B{}", //
+				"class 'B' can not be resolved");
+		assertFailCompile("class A implements B{}", //
+				"class 'B' can not be resolved");
 
 		// initializing order
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert A.a.equals(\"nullBA\"); assert B.b.equals(\"nullB\");");
 		assertSuccessSerialize("class A{static String a = B.b + 'A';} class B{static String b = A.a + 'B';} assert B.b.equals(\"nullAB\"); assert A.a.equals(\"nullA\");");
 
 		// abstract
-		assertFailCompile("abstract class A{} new A();");
-		assertFailCompile("final abstract class A{}");
+		assertFailCompile("abstract class A{} new A();", //
+				"'A' is abstract; cannot be instantiated");
+		assertFailCompile("final abstract class A{}", //
+				"abstract class cannot be final");
 
 		// inner classes
 		assertSuccessSerialize("class A{class B{}} A.B b = new A().new B();");
 		assertSuccessSerialize("class A{class B{class C{}}} A.B.C c = new A().new B().new C();");
-		assertFailCompile("class A{class B{}} A.B b = new B();");
-		assertFailCompile("class A{class B{}} A.B b = new A.B();");
-		assertFailCompile("class A{class B{}} A.B b = A.new B();");
-		assertFailCompile("class A{class B{static class C{}}}");
+		assertFailCompile("class A{class B{}} A.B b = new B();", //
+				"class 'B' can not be resolved");
+		assertFailCompile("class A{class B{}} A.B b = new A.B();", //
+				"'A.B' is not an enclosing class");
+		assertFailCompile("class A{class B{}} A.B b = A.new B();", //
+				"cannot create");
+		assertFailCompile("class A{class B{static class C{}}}", //
+				"static declarations in inner classes are not supported");
 
 		// invalid format
-		assertFailCompile("class {}");
-		assertFailCompile("class 1A{}");
-		assertFailCompile("class A{");
-		assertFailCompile("class A extends");
-		assertFailCompile("class A extends {}");
-		assertFailCompile("class A{} extends B, ");
-		assertFailCompile("class A implements");
-		assertFailCompile("class A implements {}");
-		assertFailCompile("class A implements B, ");
-		assertFailCompile("class A implements B, {}");
-		assertFailCompile("class A{A()}");
+		assertFailCompile("class {}", //
+				"class name is expected");
+		assertFailCompile("class 1A{}", //
+				"class name is expected");
+		assertFailCompile("class A{", //
+				"'}' is expected");
+		assertFailCompile("class A extends", //
+				"illegal start of type");
+		assertFailCompile("class A extends {}", //
+				"illegal start of type");
+		assertFailCompile("class A{} extends B, ", //
+				"unexpected token");
+		assertFailCompile("class A implements", //
+				"illegal start of type");
+		assertFailCompile("class A implements {}", //
+				"illegal start of type");
+		assertFailCompile("class A implements B, ", //
+				"illegal start of type");
+		assertFailCompile("class A implements B, {}", //
+				"illegal start of type");
+		assertFailCompile("class A{A()}", //
+				"'{' is expected");
 	}
 
 	@Test
@@ -73,16 +101,22 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testFields() {
 		assertSuccessSerialize("class A{} class B extends A{} class C{A a = new B(); A get(){A a = new B(); return a;}} new C().get();");
-		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();");
-		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();");
-		assertFailCompile("class A{int x; int x;}");
+		assertFailCompile("class A{} class B extends A{} class C{B b = new A();} new C().get();", //
+				"incompatible types; found A, required B");
+		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();", //
+				"incompatible types: A cannot be converted to B");
+		assertFailCompile("class A{int x; int x;}", //
+				"duplicated local variable x");
 		assertSuccessSerialize("abstract class A{static int x = 1;} assert A.x == 1;");
 		assertSuccessSerialize("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
 		assertSuccessSerialize("interface I{static int x = 1;} assert I.x == 1;");
 		assertSuccessSerialize("interface I{static int get(){return 1;}} assert I.get() == 1;");
-		assertFailCompile("class A{int x = y + 1;}");
-		assertFailCompile("int x; class A{x = 1;}");
-		assertFailMessage("String x = null; int length = x.length();", "null pointer");
+		assertFailCompile("class A{int x = y + 1;}", //
+				"cannot resolve symbol 'y'");
+		assertFailCompile("int x; class A{x = 1;}", //
+				"'}' is expected");
+		assertFailMessage("String x = null; int length = x.length();", //
+				"null pointer");
 	}
 
 	@Test
@@ -98,17 +132,23 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{static class B{}} A.B b = new A.B(); assert b instanceof A.B;");
 		assertSuccessSerialize("static class A{static class B{B(int i){}}} A.B b = new A.B(0); assert b instanceof A.B;");
 		assertSuccessSerialize("class A{static class B{static class C{static class D{}}}} A.B.C.D d = new A.B.C.D(); assert d instanceof A.B.C.D;");
-		assertFailCompile("class AA{class BB{static class CC{}}}"); // BB is not static
-		assertFailCompile("class AA{static class BB{}} BB b;");
-		assertFailCompile("class A{static class B{}} A.B b = new B();");
-		assertFailCompile("class A{static class B{}} A a = new A(); A.B b = a.new B();");
-		assertFailCompile("class A{static class AA{} static class AA{}}");
+		assertFailCompile("class AA{class BB{static class CC{}}}", //
+				"static declarations in inner classes are not supported"); // BB is not static
+		assertFailCompile("class AA{static class BB{}} BB b;", //
+				"class 'BB' can not be resolved");
+		assertFailCompile("class A{static class B{}} A.B b = new B();", //
+				"class 'B' can not be resolved");
+		assertFailCompile("class A{static class B{}} A a = new A(); A.B b = a.new B();", //
+				"qualified new of static class");
+		assertFailCompile("class A{static class AA{} static class AA{}}", //
+				"duplicate nested type AA");
 		assertSuccessSerialize("class A {void get(){}} A a = new A(); a.get();");
 
 		// not static inner class
 		assertSuccessSerialize("class A{class B{}} A a = new A(); A.B b = a.new B(); new A().new B();");
 		assertSuccessSerialize("class A{static class B{class C{C(int i){}}}} A.B b = new A.B(); A.B.C c = b.new C(0); new A.B().new C(0);");
-		assertFailCompile("class A{class B{}} A.B b = new A.B();");
+		assertFailCompile("class A{class B{}} A.B b = new A.B();", //
+				"'A.B' is not an enclosing class");
 		assertSuccessSerialize("class A{class B{class C{int get(){return 123;}} C c = new C();} B b = new B();} A a = new A(); assert a.b != null; assert a.b.c != null; assert a.b.c.get() == 123;");
 		assertSuccessSerialize("class A{class B{} B b = new B();} A a = new A(); assert a.b instanceof A.B;");
 
@@ -127,10 +167,14 @@ public class TestClasses extends HiTest {
 				"A a = new A(); assert a.new B().getA() == a; A.B b = a.new B(); assert b. getB() == b;");
 		assertSuccessSerialize("class A{int x; void m(int x) {class B{B(){A.this.x = x;}} new B();}} A a = new A(); a.m(2); assert a.x == 2;");
 		assertSuccessSerialize("class A{int x; A m(int y) {class B{B(){x = y;}} new B(); return this;}} assert new A().m(2).x == 2;");
-		assertFailCompile("class A{{static class B{}}}");
-		assertFailCompile("class A{static {static class B{}}}");
-		assertFailCompile("static class A{void m(){static class B{}}}");
-		assertFailCompile("static class A{static void m(){static class B{}}}");
+		assertFailCompile("class A{{static class B{}}}", //
+				"modifier 'static' not allowed in local classes");
+		assertFailCompile("class A{static {static class B{}}}", //
+				"modifier 'static' not allowed in local classes");
+		assertFailCompile("static class A{void m(){static class B{}}}", //
+				"modifier 'static' not allowed in local classes");
+		assertFailCompile("static class A{static void m(){static class B{}}}", //
+				"modifier 'static' not allowed in local classes");
 	}
 
 	@Test
@@ -145,34 +189,50 @@ public class TestClasses extends HiTest {
 		// extends, implements
 		assertSuccessSerialize("interface I{int x1 = 1; final static int x2 = 1; abstract void m1(); void m2(); default void m3(){} static void m4(){}}");
 		assertSuccessSerialize("interface I{} class C implements I{} assert new C() instanceof C; assert new C() instanceof I;");
-		assertFailCompile("interface I{} new I();");
-		assertFailCompile("interface I{I{}}");
-		assertFailCompile("interface I{int i;}");
-		assertFailCompile("interface I{default void m();}");
-		assertFailCompile("interface I{void m(){}}");
-		assertFailCompile("interface I{abstract void m(){}}");
+		assertFailCompile("interface I{} new I();", //
+				"cannot create object from interface 'I'");
+		assertFailCompile("interface I{I{}}", //
+				"not a statement");
+		assertFailCompile("interface I{int i;}", //
+				"variable 'i' might not have been initialized");
+		assertFailCompile("interface I{default void m();}", //
+				"invalid 'default' modification");
+		assertFailCompile("interface I{void m(){}}", //
+				"modifier 'private' is expected");
+		assertFailCompile("interface I{abstract void m(){}}", //
+				"';' is expected");
 		assertSuccessSerialize("interface I1{} interface I2 extends I1{} class C implements I2{} I1 c = new C(); assert c instanceof C; assert c instanceof I1; assert c instanceof I2;");
 		assertSuccessSerialize("interface I1{} interface I2{} interface I3 extends I1{} interface I12 extends I1, I2{} class C implements I12, I3{} Object c = new C(); assert c instanceof C; assert c instanceof I1; assert c instanceof I2; assert c instanceof I3; assert c instanceof I12;");
 		assertSuccessSerialize("interface I{void m();} class C implements I{void m(){}}");
-		assertFailCompile("interface I{void m();} class C implements I{}");
-		assertFailCompile("interface I{} class C extends I{}");
-		assertFailCompile("interface I{} interface C implements I{}");
+		assertFailCompile("interface I{void m();} class C implements I{}", //
+				"abstract method m() is implemented in non-abstract class");
+		assertFailCompile("interface I{} class C extends I{}", //
+				"cannot extends interface");
+		assertFailCompile("interface I{} interface C implements I{}", //
+				"interface cannot implements another interfaces");
 		assertSuccessSerialize("interface I{void m();} abstract class A implements I{}");
 		assertSuccessSerialize("interface I{void m();} abstract class A implements I{} class C extends A implements I{void m(){}} new C(); new A(){void m(){}};");
 
 		// fields
-		assertFailCompile("interface I{int c;}");
+		assertFailCompile("interface I{int c;}", //
+				"variable 'c' might not have been initialized");
 		assertSuccessSerialize("interface I{int c = 1, d = 0;} assert I.c == 1;");
-		assertFailCompile("interface I{static int c;}");
+		assertFailCompile("interface I{static int c;}", //
+				"variable 'c' might not have been initialized");
 		assertSuccessSerialize("interface I{static int c = 1;} assert I.c == 1;");
-		assertFailCompile("interface I{int c = 0;} I.c = 1;");
-		assertFailCompile("interface I{ { System.println(\"\"); } }");
-		assertFailCompile("interface I{ static { System.println(\"\"); } }");
+		assertFailCompile("interface I{int c = 0;} I.c = 1;", //
+				"cannot assign value to final variable");
+		assertFailCompile("interface I{ { System.println(\"\"); } }", //
+				"interface cannot have initializers");
+		assertFailCompile("interface I{ static { System.println(\"\"); } }", //
+				"interface cannot have initializers");
 
 		// default
 		assertSuccessSerialize("interface I{default int get(){return 1;}} class C implements I{}; assert new C().get() == 1;");
-		assertFailCompile("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{};");
-		assertFailCompile("interface I1{int get();} interface I2{int get();} class C implements I1, I2{}; new C().get();");
+		assertFailCompile("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{};", //
+				"C inherits unrelated defaults for get() from types I1 and I2");
+		assertFailCompile("interface I1{int get();} interface I2{int get();} class C implements I1, I2{}; new C().get();", //
+				"abstract method get() is implemented in non-abstract class");
 		assertSuccessSerialize("interface I1{default int get(){return 1;}} interface I2{default int get(){return 2;}} class C implements I1, I2{int get(){return 3;}}; assert new C().get() == 3;");
 		assertSuccessSerialize("interface I1{int get();} interface I2{default int get(){return 2;}} class C implements I1, I2{}; assert new C().get() == 2;");
 
@@ -182,37 +242,54 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("interface A1{int a1 = A2.a2 + 1; interface A2{int a2 = A3.a3 + 1; interface A3{int a3 = a2 + 1;}}} assert A1.a1 == 3; assert A1.A2.a2 == 2; assert A1.A2.A3.a3 == 1;");
 
 		// multiple implementations
-		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{}");
-		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{int get(){return B.this.get();}}");
+		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{}", //
+				"C inherits unrelated defaults for get() from types A and B");
+		assertFailCompile("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{int get(){return B.this.get();}}", //
+				"'B' is not an enclosing class");
 		assertSuccessSerialize("interface A {default int get(){return 1;}} interface B {default int get(){return 2;}} class C implements A, B{int get(){return B.super.get();}} assert new C().get() == 2;");
 
 		// failures
-		assertFailCompile("final interface A{}");
-		assertFailCompile("class A{void m(){static class B{}}}");
+		assertFailCompile("final interface A{}", //
+				"abstract class cannot be final");
+		assertFailCompile("class A{void m(){static class B{}}}", //
+				"modifier 'static' not allowed in local classes");
 
 		// invalid format
-		assertFailCompile("interface {}");
-		assertFailCompile("interface 1A{}");
-		assertFailCompile("interface A extends");
-		assertFailCompile("interface A extends {}");
-		assertFailCompile("interface A extends B, {}");
+		assertFailCompile("interface {}", //
+				"class name is expected");
+		assertFailCompile("interface 1A{}", //
+				"class name is expected");
+		assertFailCompile("interface A extends", //
+				"illegal start of type");
+		assertFailCompile("interface A extends {}", //
+				"illegal start of type");
+		assertFailCompile("interface A extends B, {}", //
+				"illegal start of type");
 
 		// private methods
 		assertSuccessSerialize("interface A{private void m(){}}");
 		assertSuccessSerialize("interface A{private int m(){return 1;} default int get(){this.m(); return m();}} assert new A(){}.get() == 1;");
-		assertFailCompile("interface A{private void m(){}} new A(){}.m();");
-		assertFailCompile("interface A{private void m();}");
-		assertFailCompile("interface A{protected void m();}");
-		assertFailCompile("interface A{protected void m(){}}");
-		assertFailCompile("interface A{void m(){}}");
-		assertFailCompile("interface A{public void m(){}}");
+		assertFailCompile("interface A{private void m(){}} new A(){}.m();", //
+				"private method 'm()' is not accessible from outside of interface A");
+		assertFailCompile("interface A{private void m();}", //
+				"modifier 'private' not allowed here");
+		assertFailCompile("interface A{protected void m();}", //
+				"modifier 'protected' not allowed here");
+		assertFailCompile("interface A{protected void m(){}}", //
+				"modifier 'private' is expected");
+		assertFailCompile("interface A{void m(){}}", //
+				"modifier 'private' is expected");
+		assertFailCompile("interface A{public void m(){}}", //
+				"modifier 'private' is expected");
 
 		// static methods
 		assertSuccessSerialize("interface A{static int m(){return 1;}} assert A.m() == 1;");
 
 		// failures
-		assertFailCompile("interface A{A(){}}");
-		assertFailCompile("interface A{void m(){}}");
+		assertFailCompile("interface A{A(){}}", //
+				"interface cannot have constructors");
+		assertFailCompile("interface A{void m(){}}", //
+				"modifier 'private' is expected");
 	}
 
 	@Test
@@ -222,92 +299,147 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class O{} class C{int get(Object... n){return n.length;}} assert new C().get(new O(), \"x\", new Object()) == 3;");
 		assertSuccessSerialize("class A{int get(){return 1;}} class B extends A{int get(){return super.get() + 1;}} assert new A().get() == 1; assert new B().get() == 2; ");
 
-		assertFailCompile("class A{} class C extends A{void get(){}} A a = new C(); a.get();");
+		assertFailCompile("class A{} class C extends A{void get(){}} A a = new C(); a.get();", //
+				"cannot resolve method 'get' in 'A'");
 		assertSuccessSerialize("abstract class A{abstract void get();} class C extends A{void get(){}} A a = new C(); a.get();");
 
 		// signature
 		assertSuccessSerialize("class A{String m(int x, String arg){return \"\";}} String s = new A().m(0, null);");
-		assertFailCompile("class A{int m(int x, String arg){return 1;}} String s = new A().m(0, null);");
-		assertFailCompile("class A{Object m(int x, String arg){return null;}} class C{} C s = new A().m(0, null);");
-		assertFailCompile("class C{void get(String x){}} new C().get(1);");
+		assertFailCompile("class A{int m(int x, String arg){return 1;}} String s = new A().m(0, null);", //
+				"incompatible types: int cannot be converted to String");
+		assertFailCompile("class A{Object m(int x, String arg){return null;}} class C{} C s = new A().m(0, null);", //
+				"incompatible types: Object cannot be converted to C");
+		assertFailCompile("class C{void get(String x){}} new C().get(1);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(byte x){}} new C().get((short)1);");
-		assertFailCompile("class C{void get(byte x){}} new C().get('1');");
-		assertFailCompile("class C{void get(byte x){}} new C().get(1);");
-		assertFailCompile("class C{void get(byte x){}} new C().get(1l);");
-		assertFailCompile("class C{void get(byte x){}} new C().get(1.0f);");
-		assertFailCompile("class C{void get(byte x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(byte x){}} new C().get((short)1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(byte x){}} new C().get('1');", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(byte x){}} new C().get(1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(byte x){}} new C().get(1l);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(byte x){}} new C().get(1.0f);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(byte x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(short x){}} new C().get('1');");
-		assertFailCompile("class C{void get(short x){}} new C().get(1);");
-		assertFailCompile("class C{void get(short x){}} new C().get(1l);");
-		assertFailCompile("class C{void get(short x){}} new C().get(1.0f);");
-		assertFailCompile("class C{void get(short x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(short x){}} new C().get('1');", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(short x){}} new C().get(1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(short x){}} new C().get(1l);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(short x){}} new C().get(1.0f);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(short x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(char x){}} new C().get((byte)1);");
-		assertFailCompile("class C{void get(char x){}} new C().get((short)1);");
-		assertFailCompile("class C{void get(char x){}} new C().get(1);");
-		assertFailCompile("class C{void get(char x){}} new C().get(1l);");
-		assertFailCompile("class C{void get(char x){}} new C().get(1.0f);");
-		assertFailCompile("class C{void get(char x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(char x){}} new C().get((byte)1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(char x){}} new C().get((short)1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(char x){}} new C().get(1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(char x){}} new C().get(1l);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(char x){}} new C().get(1.0f);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(char x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(int x){}} new C().get(1l);");
-		assertFailCompile("class C{void get(int x){}} new C().get(1.0f);");
-		assertFailCompile("class C{void get(int x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(int x){}} new C().get(1l);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(int x){}} new C().get(1.0f);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(int x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(long x){}} new C().get(1.0f);");
-		assertFailCompile("class C{void get(long x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(long x){}} new C().get(1.0f);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(long x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(float x){}} new C().get(1.0d);");
+		assertFailCompile("class C{void get(float x){}} new C().get(1.0d);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(int x, byte y, char z){}} new C().get(1, 1, 1);");
+		assertFailCompile("class C{void get(int x, byte y, char z){}} new C().get(1, 1, 1);", //
+				"cannot resolve method 'get' in 'C'");
 
-		assertFailCompile("class C{void get(int x, int y, int z){}} new C().get(1, 1);");
-		assertFailCompile("class C{void get(int x, int y, int z){}} new C().get(1, 1, 1, 1);");
+		assertFailCompile("class C{void get(int x, int y, int z){}} new C().get(1, 1);", //
+				"cannot resolve method 'get' in 'C'");
+		assertFailCompile("class C{void get(int x, int y, int z){}} new C().get(1, 1, 1, 1);", //
+				"cannot resolve method 'get' in 'C'");
 
 		assertSuccessSerialize("class A{void m(int x, int y){}} class B extends A{void m(int x, byte y){}} new B().m(1, 1);");
 
-		assertFailCompile("class A{void get(){}} class B extends A{int get(){}};"); // rewrite method with another return type
+		assertFailCompile("class A{void get(){}} class B extends A{int get(){}};", //
+				"incompatible return type"); // rewrite method with another return type
 
 		assertSuccessSerialize("class C{void m(int... x){assert false;} void m(int x1, int x2, int x3){}} new C().m(1, 2, 3);");
 
 		// TODO check incompatible throws of rewrite method
 		assertSuccessSerialize("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1, E2 {throw new E1();}}");
-		assertFailCompile("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1 {throw new E2();}}");
-		assertFailCompile("class E extends Exception{}; class A{void m() throws E {throw new E(); throw new E();}}");
+		assertFailCompile("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1 {throw new E2();}}", //
+				"unreported exception E2: exception must be caught or declared to be thrown");
+		assertFailCompile("class E extends Exception{}; class A{void m() throws E {throw new E(); throw new E();}}", //
+				"unreachable statement");
 
-		assertFailCompile("class A{void ()}", "'}' is expected", "unexpected token");
-		assertFailCompile("class A{void m()}", "'{' is expected", "'}' is expected");
-		assertFailCompile("class A{void m(){}", "'}' is expected");
-		assertFailCompile("class A{m(){}}", "invalid method declaration; return type is expected");
-		assertFailCompile("class A{void m(){return 1;}}", "incompatible types; found int, required void");
-		assertFailCompile("class A{int m(){return;}}", "incompatible types; found void, required int");
-		assertFailCompile("class A{int m(){return 1;return 1;}}", "unreachable statement");
-		assertFailCompile("class A{void m(){return;return;}}", "unreachable statement");
-		assertFailCompile("class A{void m() throws {}}", "identifier expected");
-		assertFailCompile("class A{void m() throws Exception, {}}", "identifier expected");
+		assertFailCompile("class A{void ()}", //
+				"'}' is expected", "unexpected token");
+		assertFailCompile("class A{void m()}", //
+				"'{' is expected", "'}' is expected");
+		assertFailCompile("class A{void m(){}", //
+				"'}' is expected");
+		assertFailCompile("class A{m(){}}", //
+				"invalid method declaration; return type is expected");
+		assertFailCompile("class A{void m(){return 1;}}", //
+				"incompatible types; found int, required void");
+		assertFailCompile("class A{int m(){return;}}", //
+				"incompatible types; found void, required int");
+		assertFailCompile("class A{int m(){return 1;return 1;}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m(){return;return;}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m() throws {}}", //
+				"identifier expected");
+		assertFailCompile("class A{void m() throws Exception, {}}", //
+				"identifier expected");
 
 		// rewrite
 		assertSuccessSerialize("class A{Number get(){return 1;}} class B extends A{Integer get(){return 2;}}");
-		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{String get(){return null;}}", "incompatible return type");
-		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{Number get(){return null;}}", "incompatible return type");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{String get(){return null;}}", //
+				"incompatible return type");
+		assertFailCompile("class A{Integer get(){return 1;}} class B extends A{Number get(){return null;}}", //
+				"incompatible return type");
 
 		assertSuccessSerialize("interface A{Number get();} class B implements A{Integer get(){return 2;}}");
-		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}", "incompatible return type");
-		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}", "incompatible return type");
+		assertFailCompile("interface A{Integer get();} class B implements A{String get(){return null;}}", //
+				"incompatible return type");
+		assertFailCompile("interface A{Integer get();} class B implements A{Number get(){return null;}}", //
+				"incompatible return type");
 
 		// synchronized
 		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
 
 		// primitives
-		assertFailCompile("boolean x = true; x.toString();", "cannot resolve method 'toString' in 'boolean'");
-		assertFailCompile("byte x = 1; x.toString();", "cannot resolve method 'toString' in 'byte'");
-		assertFailCompile("short x = 1; x.toString();", "cannot resolve method 'toString' in 'short'");
-		assertFailCompile("char x = 1; x.toString();", "cannot resolve method 'toString' in 'char'");
-		assertFailCompile("int x = 1; x.toString();", "cannot resolve method 'toString' in 'int'");
-		assertFailCompile("long x = 1; x.toString();", "cannot resolve method 'toString' in 'long'");
-		assertFailCompile("float x = 1; x.toString();", "cannot resolve method 'toString' in 'float'");
-		assertFailCompile("double x = 1; x.toString();", "cannot resolve method 'toString' in 'double'");
+		assertFailCompile("boolean x = true; x.toString();", //
+				"cannot resolve method 'toString' in 'boolean'");
+		assertFailCompile("byte x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'byte'");
+		assertFailCompile("short x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'short'");
+		assertFailCompile("char x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'char'");
+		assertFailCompile("int x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'int'");
+		assertFailCompile("long x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'long'");
+		assertFailCompile("float x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'float'");
+		assertFailCompile("double x = 1; x.toString();", //
+				"cannot resolve method 'toString' in 'double'");
 
 		// failures
 		assertFailCompile("class A{void m(){return; int x = 1;}}", //
@@ -332,9 +464,11 @@ public class TestClasses extends HiTest {
 				"illegal combination of modifiers: 'static' and 'abstract'", //
 				"abstract method in non-abstract class", //
 				"static method cannot be abstract");
-		assertFailCompile("int x = 1; x.m();", "cannot resolve method 'm' in 'int'");
+		assertFailCompile("int x = 1; x.m();", //
+				"cannot resolve method 'm' in 'int'");
 
-		assertFailCompile("class A {void m(Float x){}} new A().m(1);");
+		assertFailCompile("class A {void m(Float x){}} new A().m(1);", //
+				"cannot resolve method 'm' in 'A'");
 	}
 
 	@Test
@@ -358,8 +492,10 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{void m(int x1, int x2){assert false;} void m(float x1, float x2){assert true;}} new A().m(1, 2f);");
 
 		// Ambiguous method call
-		assertFailCompile("class A{void m(int x, int... y){} void m(int... x){}} new A().m(1, 2);", "Ambiguous method call. Both");
-		assertFailCompile("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));", "Ambiguous method call. Both");
+		assertFailCompile("class A{void m(int x, int... y){} void m(int... x){}} new A().m(1, 2);", //
+				"Ambiguous method call. Both");
+		assertFailCompile("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));", //
+				"Ambiguous method call. Both");
 
 		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority strict primitives over cast primitives
 		assertSuccessSerialize("class A {void m(int x, Integer y){assert true;} void m(Integer x, int y){assert false;}} new A().m(1, new Integer(2));"); // priority strict over autoboxing
@@ -368,19 +504,23 @@ public class TestClasses extends HiTest {
 
 		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(new Integer(1), 2);"); // priority autoboxing (box->primitive) over primitive cast
 		assertSuccessSerialize("class A {void m(Integer x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority autoboxing(primitive->box) over primitive cast
-		assertFailCompile("class A {void m(Integer x, int y){} void m(int x, int y){}} new A().m(1, new Integer(2));");
-		assertFailCompile("class A {void m(Integer x, Integer y){} void m(Integer x,  int y){}} new A().m(1, new Integer(2));");
+		assertFailCompile("class A {void m(Integer x, int y){} void m(int x, int y){}} new A().m(1, new Integer(2));", //
+				"Ambiguous method call. Both m(Integer x, int y) in A and m(int x, int y) in A match.");
+		assertFailCompile("class A {void m(Integer x, Integer y){} void m(Integer x,  int y){}} new A().m(1, new Integer(2));", //
+				"Ambiguous method call. Both m(Integer x, Integer y) in A and m(Integer x, int y) in A match");
 
 		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(Integer x, Integer y){assert false;}} new A().m(1, 2);");
 		assertSuccessSerialize("class A {void m(Integer x, Integer y){assert true;} void m(int x, int y){assert false;}} new A().m(new Integer(1), new Integer(2));");
 		assertSuccessSerialize("class A {void m(Integer x, int y){assert true;} void m(int x, int y){assert false;}} new A().m(new Integer(1), 2);");
-		assertFailCompile("class A {void m(int x, int y){} void m(Integer x, Integer y){}} new A().m(new Integer(1), 2);");
+		assertFailCompile("class A {void m(int x, int y){} void m(Integer x, Integer y){}} new A().m(new Integer(1), 2);", //
+				"Ambiguous method call. Both m(int x, int y) in A and m(Integer x, Integer y) in A match.");
 	}
 
 	@Test
 	public void testNativeMethod() {
 		assertSuccessSerialize("class A{native void m();}");
-		assertFailMessage("class A{native void m();} new A().m();", "native method 'root$0A_void_m' not found");
+		assertFailMessage("class A{native void m();} new A().m();", //
+				"native method 'root$0A_void_m' not found");
 
 		class A {
 			public void root$0A_int_m_int(RuntimeContext ctx, int value) {
@@ -398,7 +538,8 @@ public class TestClasses extends HiTest {
 		HiNative.registerObject(new A());
 		assertSuccessSerialize("class A{native int m(int value);} assert new A().m(1) == 2;");
 		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
-		assertFailMessage("class A{native void error();} new A().error();", "error");
+		assertFailMessage("class A{native void error();} new A().error();", //
+				"error");
 	}
 
 	@Test
@@ -408,53 +549,84 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{A(int x, String arg){}} new A(0, \"a\"); new A(0, null);");
 		assertSuccessSerialize("class C{C(int x, int y){assert false;} C(int x){}} new C(1);");
 
-		assertFailCompile("class C{C(byte x){}} new C((short)1);");
-		assertFailCompile("class C{C(byte x){}} new C('1');");
-		assertFailCompile("class C{C(byte x){}} new C(1);");
-		assertFailCompile("class C{C(byte x){}} new C(1l);");
-		assertFailCompile("class C{C(byte x){}} new C(1.0f);");
-		assertFailCompile("class C{C(byte x){}} new C(1.0d);");
+		assertFailCompile("class C{C(byte x){}} new C((short)1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte x){}} new C('1');", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte x){}} new C(1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte x){}} new C(1l);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte x){}} new C(1.0f);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(short x){}} new C('1');");
-		assertFailCompile("class C{C(short x){}} new C(1);");
-		assertFailCompile("class C{C(short x){}} new C(1l);");
-		assertFailCompile("class C{C(short x){}} new C(1.0f);");
-		assertFailCompile("class C{C(short x){}} new C(1.0d);");
+		assertFailCompile("class C{C(short x){}} new C('1');", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(short x){}} new C(1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(short x){}} new C(1l);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(short x){}} new C(1.0f);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(short x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(char x){}} new C((byte)1);");
-		assertFailCompile("class C{C(char x){}} new C((short)1);");
-		assertFailCompile("class C{C(char x){}} new C(1);");
-		assertFailCompile("class C{C(char x){}} new C(1l);");
-		assertFailCompile("class C{C(char x){}} new C(1.0f);");
-		assertFailCompile("class C{C(char x){}} new C(1.0d);");
+		assertFailCompile("class C{C(char x){}} new C((byte)1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(char x){}} new C((short)1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(char x){}} new C(1);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(char x){}} new C(1l);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(char x){}} new C(1.0f);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(char x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(int x){}} new C(1l);");
-		assertFailCompile("class C{C(int x){}} new C(1.0f);");
-		assertFailCompile("class C{C(int x){}} new C(1.0d);");
+		assertFailCompile("class C{C(int x){}} new C(1l);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(int x){}} new C(1.0f);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(int x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(long x){}} new C(1.0f);");
-		assertFailCompile("class C{C(long x){}} new C(1.0d);");
+		assertFailCompile("class C{C(long x){}} new C(1.0f);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(long x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(float x){}} new C(1.0d);");
+		assertFailCompile("class C{C(float x){}} new C(1.0d);", //
+				"constructor not found: C");
 
-		assertFailCompile("class C{C(int x, byte y, char z){}} new C(1, 1, 1);");
+		assertFailCompile("class C{C(int x, byte y, char z){}} new C(1, 1, 1);", //
+				"constructor not found: C");
 
 		// varargs
 		assertSuccessSerialize("class C{C(int length, int... n){assert n.length == length;}} new C(0); new C(3, 1, 2, 3);");
 		assertSuccessSerialize("class O{} class O1 extends O{} class C{C(O... n){assert n.length == 2;}} new C(new O1(), new O());");
 		assertSuccessSerialize("class O{} class C{Object[] o; C(Object... o){this.o = o;}} assert new C().o.length == 0; assert new C(new O(), \"x\", new Object()).o.length == 3;;");
-		assertFailCompile("class C{C(String... s){}} new C(1, 2, 3);");
-		assertFailCompile("class C{C(int... x, String s){}} new C(1, 2, 3, \"x\");");
-		assertFailCompile("class C{C(int... x, int... y){}} new C(/*x=*/1, 2, /*y=*/3);");
-		assertFailCompile("class C{C(byte... x){}} new C(1, 2, 3);");
+		assertFailCompile("class C{C(String... s){}} new C(1, 2, 3);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(int... x, String s){}} new C(1, 2, 3, \"x\");", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(int... x, int... y){}} new C(/*x=*/1, 2, /*y=*/3);", //
+				"constructor not found: C");
+		assertFailCompile("class C{C(byte... x){}} new C(1, 2, 3);", //
+				"constructor not found: C");
 		assertSuccessSerialize("class C{C(int... x){assert false;} C(int x1, int x2, int x3){}} new C(1, 2, 3);");
 
 		// this
 		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
 		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
-		assertFailCompile("class A{A(){this();}} new A();");
-		assertFailSerialize("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);"); // recursive constructor invocation
-		assertFailCompile("class A{A(){this(1);} A(byte x){}} new A();");
+		assertFailCompile("class A{A(){this();}} new A();", //
+				"recursive constructor invocation");
+		assertFailMessage("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);", //
+				"recursive constructor invocation"); // recursive constructor invocation
+		assertFailCompile("class A{A(){this(1);} A(byte x){}} new A();", //
+				"constructor not found: A");
 
 		// super
 		assertSuccessSerialize("class A{A(){super();}} new A();");
@@ -462,11 +634,16 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{A(int x, int y){}} class B extends A{B(int x, byte y){super(x, y);}} new B(1, (byte)1);");
 
 		// failures
-		assertFailCompile("class A{A(){return; super();}}");
-		assertFailCompile("class A{A(){super(1);}}");
-		assertFailCompile("class A{A(){this(1);}}");
-		assertFailCompile("class A{A(int x, String x){}}");
-		assertFailCompile("class A{A(int x){this(x);}}");
+		assertFailCompile("class A{A(){return; super();}}", //
+				"';' is expected");
+		assertFailCompile("class A{A(){super(1);}}", //
+				"constructor not found: Object");
+		assertFailCompile("class A{A(){this(1);}}", //
+				"constructor not found: A");
+		assertFailCompile("class A{A(int x, String x){}}", //
+				"duplicated argument 'x'");
+		assertFailCompile("class A{A(int x){this(x);}}", //
+				"recursive constructor invocation");
 	}
 
 	@Test
@@ -478,24 +655,40 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("enum E{} E e = null;");
 		assertSuccessSerialize("enum E{A, a}");
 		assertSuccessSerialize("enum E{e1, e2(1); int x; E(){} E(int x){this.x = x;}} assert E.e1.x == 0; assert E.e2.x == 1;");
-		assertFailMessage("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", "error");
-		assertFailMessage("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", "error");
+		assertFailMessage("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", //
+				"error");
+		assertFailMessage("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", //
+				"error");
 
 		// failures
-		assertFailCompile("enum {}");
-		assertFailCompile("enum E{");
-		assertFailCompile("enum E{1}");
-		assertFailCompile("enum E{e(}");
-		assertFailCompile("enum E{e(1)}");
-		assertFailCompile("enum E{e(1,) E(int x, int y){}}");
-		assertFailCompile("enum E{e(1,); E(int x, int y){}}");
-		assertFailCompile("enum E{e(1,true) E(int x, int y){}}");
-		assertFailCompile("enum E{e(); E(int a){}}");
-		assertFailCompile("enum E{e(true); E(int a){}}");
-		assertFailCompile("enum E1{e1} enum E2 extends E1{e2}");
-		assertFailCompile("enum E1{e1} new E1();");
-		assertFailCompile("enum E1{e1} E1 e = new Object();");
-		assertFailCompile("enum E1{A, b, C, A, d, C, e, f, g}");
+		assertFailCompile("enum {}", //
+				"enum name is expected");
+		assertFailCompile("enum E{", //
+				"'}' is expected");
+		assertFailCompile("enum E{1}", //
+				"'}' is expected");
+		assertFailCompile("enum E{e(}", //
+				"')' is expected");
+		assertFailCompile("enum E{e(1)}", //
+				"invalid constructor arguments");
+		assertFailCompile("enum E{e(1,) E(int x, int y){}}", //
+				"expression expected");
+		assertFailCompile("enum E{e(1,); E(int x, int y){}}", //
+				"expression expected");
+		assertFailCompile("enum E{e(1,true) E(int x, int y){}}", //
+				"expected ',', '(' or ';'");
+		assertFailCompile("enum E{e(); E(int a){}}", //
+				"invalid constructor arguments");
+		assertFailCompile("enum E{e(true); E(int a){}}", //
+				"invalid constructor arguments");
+		assertFailCompile("enum E1{e1} enum E2 extends E1{e2}", //
+				"'{' is expected");
+		assertFailCompile("enum E1{e1} new E1();", //
+				"enum types cannot be instantiated");
+		assertFailCompile("enum E1{e1} E1 e = new Object();", //
+				"incompatible types: Object cannot be converted to E1");
+		assertFailCompile("enum E1{A, b, C, A, d, C, e, f, g}", //
+				"variable 'A' is already defined in the scope");
 	}
 
 	@Test
@@ -521,25 +714,37 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(long a, Object b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 		assertSuccessSerialize("record Rec(int a){int b; Rec(int b){a = 1; this.b = b;} int getB(){return b;}}; Rec r = new Rec(3); if(r instanceof Rec(int b) rec) {} else {assert false;}}");
-		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a) rec);");
-		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(String b, String a) rec);");
-		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int _a, String b) rec);");
-		assertFailCompile("class Rec{Rec(int a){}} Object r = new Rec(a); if(r instanceof Rec(int a) rec);");
+		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a) rec);", //
+				"record argument 'byte a' has invalid type, expected 'int'");
+		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(String b, String a) rec);", //
+				"record argument 'String a' has invalid type, expected 'int'");
+		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int _a, String b) rec);", //
+				"record argument 'int _a' is not found");
+		assertFailCompile("class Rec{Rec(int a){}} Object r = new Rec(a); if(r instanceof Rec(int a) rec);", //
+				"cannot resolve symbol 'a'");
 
 		// switch-case
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		// duplicated local variable a
-		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
-		assertFailCompile("record R1(int x); record R2(int x) extends R1;");
+		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;", //
+				"duplicated local variable a");
+		assertFailCompile("record R1(int x); record R2(int x) extends R1;", //
+				"'{' is expected");
 
 		// failures
-		assertFailCompile("record;");
-		assertFailCompile("record Rec;");
-		assertFailCompile("record Rec(int a, long a);");
-		assertFailCompile("record (int a);");
-		assertFailCompile("record Rec();");
-		assertFailCompile("record Rec(){int a;};");
+		assertFailCompile("record;", //
+				"record name is expected");
+		assertFailCompile("record Rec;", //
+				"'(' is expected");
+		assertFailCompile("record Rec(int a, long a);", //
+				"duplicated argument 'a'");
+		assertFailCompile("record (int a);", //
+				"record name is expected");
+		assertFailCompile("record Rec();", //
+				"record argument expected");
+		assertFailCompile("record Rec(){int a;};", //
+				"record argument expected");
 	}
 
 	@Test

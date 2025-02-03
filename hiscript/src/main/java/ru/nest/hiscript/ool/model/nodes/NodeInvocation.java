@@ -100,7 +100,7 @@ public class NodeInvocation extends HiNode {
 						}
 					}
 					if (!validArguments) {
-						String message = "'" + method.toString() + "' in '" + method.clazz.fullName + "' cannot be applied to '(";
+						String message = "'" + method.getSignatureText(invocationType) + "' in '" + invocationType + "' cannot be applied to '(";
 						for (int i = 0; i < argumentsClasses.length; i++) {
 							if (i > 0) {
 								message += ", ";

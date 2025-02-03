@@ -67,10 +67,12 @@ public class TestAutoboxing extends HiTest {
 				if (allowEquatePlus) {
 					assertSuccess(script);
 				} else {
-					assertFailCompile(script);
+					assertFailCompile(script, //
+							"can not be applied");
 				}
 			}
-			assertFailCompile(T + " a = 32; a ~= 1;");
+			assertFailCompile(T + " a = 32; a ~= 1;", //
+					"not a statement");
 			assertSuccess(T + " a = 1; assert a > 0;");
 			assertSuccess(T + " a = 1; assert a >= 0;");
 			assertSuccess(T + " a = 1; assert a < 2;");
@@ -93,7 +95,8 @@ public class TestAutoboxing extends HiTest {
 			assertSuccessSerialize("class C{" + T + " set(" + t + " a){return a;}} assert new C().set(new " + T + "((" + t + ")123)) == 123;");
 			assertSuccessSerialize("class C{void set(" + t + "... a){assert a[1] == 127;}} new C().set(new " + T + "((" + t + ")0), new " + T + "((" + t + ")127));");
 			assertSuccessSerialize("class C{C(" + t + "... a){assert a[0] == 0; assert a[1] == 127; assert a[2] == 1;}} new C(new " + T + "((" + t + ")0), new " + T + "((" + t + ")127), (" + t + ")1);");
-			assertFailCompile("class C{C(" + t + "... a){}} new C(new " + T + "((" + t + ")0), new " + T + "((" + t + ")127), null);");
+			assertFailCompile("class C{C(" + t + "... a){}} new C(new " + T + "((" + t + ")0), new " + T + "((" + t + ")127), null);", //
+					"constructor not found: C");
 
 			// constructors
 			assertSuccessSerialize("class C{" + t + " set(" + T + " a){assert a == 123; return a;}} assert new C().set((" + t + ")123) == 123;");
@@ -114,26 +117,35 @@ public class TestAutoboxing extends HiTest {
 			// statements
 			assertSuccessSerialize("for(" + T + " i = 0; i < 127; i++) {assert i instanceof " + T + ";}");
 			assertSuccessSerialize(T + " i = 0; while(i < 10) i++; assert i == 10;");
-			assertFailCompile("" + t + " i = 0; while(i < 10) i = null;");
+			assertFailCompile("" + t + " i = 0; while(i < 10) i = null;", //
+					"operator '=' can not be applied to " + t + ", null");
 		}
 	}
 
 	@Test
 	public void testByte() {
 		// primitive => autobox object
-		assertFailCompile("Byte a = 128;");
-		assertFailCompile("Byte a = 1L;");
-		assertFailCompile("Byte a = (short)128;");
-		assertFailCompile("Byte a = 1.1;");
-		assertFailCompile("Byte a = 1f;");
-		assertFailCompile("Byte a = true;");
+		assertFailCompile("Byte a = 128;", //
+				"incompatible types: int cannot be converted to Byte");
+		assertFailCompile("Byte a = 1L;", //
+				"incompatible types: long cannot be converted to Byte");
+		assertFailCompile("Byte a = (short)128;", //
+				"incompatible types: short cannot be converted to Byte");
+		assertFailCompile("Byte a = 1.1;", //
+				"incompatible types: double cannot be converted to Byte");
+		assertFailCompile("Byte a = 1f;", //
+				"incompatible types: float cannot be converted to Byte");
+		assertFailCompile("Byte a = true;", //
+				"incompatible types: boolean cannot be converted to Byte");
 
 		// boxed object => primitive
 		assertSuccess("byte a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("int a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("short a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertFailCompile("char a = new Byte((byte)0);");
-		assertFailCompile("char a = 0; a = new Byte((byte)0);");
+		assertFailCompile("char a = new Byte((byte)0);", //
+				"incompatible types: Byte cannot be converted to char");
+		assertFailCompile("char a = 0; a = new Byte((byte)0);", //
+				"operator '=' can not be applied to char, Byte");
 		assertSuccess("long a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("float a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("double a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
@@ -147,16 +159,22 @@ public class TestAutoboxing extends HiTest {
 	@Test
 	public void testShort() {
 		// primitive => autobox object
-		assertFailCompile("Short a = " + (Short.MAX_VALUE + 1) + ";");
-		assertFailCompile("Short a = " + (Short.MAX_VALUE + 1) + ";");
-		assertFailCompile("Short a = 1L;");
-		assertFailCompile("Short a = (int)" + (Short.MAX_VALUE + 1) + ";");
-		assertFailCompile("Short a = 1.1;");
-		assertFailCompile("Short a = 1f;");
-		assertFailCompile("Short a = true;");
+		assertFailCompile("Short a = " + (Short.MAX_VALUE + 1) + ";", //
+				"incompatible types: int cannot be converted to Short");
+		assertFailCompile("Short a = 1L;", //
+				"incompatible types: long cannot be converted to Short");
+		assertFailCompile("Short a = (int)" + (Short.MAX_VALUE + 1) + ";", //
+				"incompatible types: int cannot be converted to Short");
+		assertFailCompile("Short a = 1.1;", //
+				"incompatible types: double cannot be converted to Short");
+		assertFailCompile("Short a = 1f;", //
+				"incompatible types: float cannot be converted to Short");
+		assertFailCompile("Short a = true;", //
+				"incompatible types: boolean cannot be converted to Short");
 
 		// boxed object => primitive
-		assertFailCompile("byte a = new Short((short)127);");
+		assertFailCompile("byte a = new Short((short)127);", //
+				"incompatible types: Short cannot be converted to byte");
 		assertSuccess("int a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
 		assertSuccess("short a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
 		assertSuccess("long a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");

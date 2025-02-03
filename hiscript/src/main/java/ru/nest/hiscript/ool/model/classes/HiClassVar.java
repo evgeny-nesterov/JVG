@@ -82,4 +82,9 @@ public class HiClassVar extends HiClass {
 	public int getPrimitiveType() {
 		return PrimitiveTypes.VAR;
 	}
+
+	@Override
+	public String getNameDescr() {
+		return fullName;
+	}
 }

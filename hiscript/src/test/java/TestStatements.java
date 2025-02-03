@@ -227,6 +227,8 @@ public class TestStatements extends HiTest {
 				"error");
 		assertFailCompile("switch(1){case 1,2,1: break;}", //
 				"case value '1' is duplicated");
+		assertFailCompile("switch(1){case 1,2,3: break; case 3: break;}", //
+				"case value '3' is duplicated");
 		assertFailCompile("switch(12){case 1, 12, 2*5+2: break;}", //
 				"case value '12' is duplicated");
 		assertFailCompile("switch(12){case 1, ((2 * 8 + 18/3)/2-1)/2, 5: break;}", //
@@ -239,6 +241,12 @@ public class TestStatements extends HiTest {
 				"case value 'a' is duplicated");
 		assertFailCompile("enum E{e1,e2,e3} switch(E.e1){case e1,e2,e3,e1: break;}", //
 				"case enum value 'e1' is duplicated");
+		assertFailCompile("enum E{e1,e2,e3} switch(E.e1){case e1,e2,e3: break; case e2: break;}", //
+				"case enum value 'e2' is duplicated");
+		assertFailCompile("switch(null){case null, null:}", //
+				"case value 'null' is duplicated");
+		assertFailCompile("switch(null){case null: break; case null: break;}", //
+				"case value 'null' is duplicated");
 	}
 
 	@Test
@@ -271,8 +279,10 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
-		assertFailMessage("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", "close error");
-		assertFailMessage("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", "null pointer");
+		assertFailMessage("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", //
+				"close error");
+		assertFailMessage("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", //
+				"null pointer");
 
 		// Exception has already been caught
 		assertFailCompile("try{} catch(Exception e){} catch(Exception e){}"); // Exception 'java.lang.Exception' has already been caught
@@ -428,9 +438,12 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("class A{int m(int x) {if(x == 3) return x; return 0;}} assert new A().m(3) == 3;");
 
 		// unreachable statement
-		assertFailCompile("class A{void m(){try{return;} catch(Exception e){return;}; int y = 0;}}", "unreachable statement");
-		assertFailCompile("class A{void m(boolean x){if(x) {return;} else if(!x) {return;} else {return;}; int y = 0;}}", "unreachable statement");
-		assertFailCompile("class A{void m(int x){switch(x) {case 1: return; case 2: return; default: return;}; int y = 0;}}", "unreachable statement");
+		assertFailCompile("class A{void m(){try{return;} catch(Exception e){return;}; int y = 0;}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m(boolean x){if(x) {return;} else if(!x) {return;} else {return;}; int y = 0;}}", //
+				"unreachable statement");
+		assertFailCompile("class A{void m(int x){switch(x) {case 1: return; case 2: return; default: return;}; int y = 0;}}", //
+				"unreachable statement");
 
 		// constructors
 		assertSuccessSerialize("class A{A(){return;}}");
@@ -550,7 +563,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("int x = 0; synchronized(x){}");
 		assertFailCompile("synchronized(1){}");
 		assertFailCompile("synchronized(null){}");
-		assertFailMessage("Object o = null; synchronized(o){}", "null pointer");
+		assertFailMessage("Object o = null; synchronized(o){}", //
+				"null pointer");
 	}
 
 	@Test
@@ -580,6 +594,7 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testNPE() {
-		assertFailMessage("class A{int b;} A a = null; int b = a.b;", "null pointer");
+		assertFailMessage("class A{int b;} A a = null; int b = a.b;", //
+				"null pointer");
 	}
 }

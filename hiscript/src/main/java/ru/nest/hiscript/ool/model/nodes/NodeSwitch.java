@@ -162,16 +162,16 @@ public class NodeSwitch extends HiNode {
 
 						if (caseValueNode.validate(validationInfo, ctx) && expectCaseValue(validationInfo, ctx, caseValueNode)) {
 							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
-							Object caseValue = ctx.nodeValueType.getCompileValue();
-							if (caseValue != null) {
-								if (processedValues.contains(caseValue)) {
-									validationInfo.error("case value '" + caseValue + "' is duplicated", caseValueNode.getToken());
-									valid = false;
-								} else {
-									processedValues.add(caseValue);
-								}
-							}
 							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
+								Object caseValue = ctx.nodeValueType.getCompileValue();
+								if (caseValue != null || caseValueClass.isNull()) {
+									if (processedValues.contains(caseValue)) {
+										validationInfo.error("case value '" + caseValue + "' is duplicated", caseValueNode.getToken());
+										valid = false;
+									} else {
+										processedValues.add(caseValue);
+									}
+								}
 								if (valueClass.isPrimitive()) {
 									if (!HiClass.autoCast(ctx, caseValueClass, valueClass, valueReturnType.isCompileValue(), true)) {
 										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());

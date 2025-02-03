@@ -52,29 +52,46 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("boolean a = true; a &= false; assert !a;");
 		assertSuccessSerialize("boolean a = false; a |= true; assert a;");
 
-		assertFailCompile("int a = 1 + true;");
-		assertFailCompile("int a = true | 1;");
-		assertFailCompile("int a = true;");
-		assertFailCompile("int a = !0;");
-		assertFailCompile("boolean a = 1.0;");
-		assertFailCompile("boolean a = +true;");
-		assertFailCompile("boolean a = -true;");
+		assertFailCompile("int a = 1 + true;", //
+				"operator '+' can not be applied to int, boolean");
+		assertFailCompile("int a = true | 1;", //
+				"operator '|' can not be applied to boolean, int");
+		assertFailCompile("int a = true;", //
+				"incompatible types: boolean cannot be converted to int");
+		assertFailCompile("int a = !0;", //
+				"operation '!' cannot be applied to 'int'");
+		assertFailCompile("boolean a = 1.0;", //
+				"incompatible types: double cannot be converted to boolean");
+		assertFailCompile("boolean a = +true;", //
+				"operation '+' cannot be applied to 'boolean'");
+		assertFailCompile("boolean a = -true;", //
+				"operation '-' cannot be applied to 'boolean'");
 	}
 
 	@Test
 	public void testLogicalAndOr() {
-		assertFailCompile("if(true && 1){}");
-		assertFailCompile("if(1 && false){}");
-		assertFailCompile("if(1 && 1){}");
-		assertFailCompile("int x = 1; if(x && true){}");
-		assertFailCompile("var x = 1; if(x && true){}");
+		assertFailCompile("if(true && 1){}", //
+				"operator '&&' can not be applied to boolean, int");
+		assertFailCompile("if(1 && false){}", //
+				"operator '&&' can not be applied to int, boolean");
+		assertFailCompile("if(1 && 1){}", //
+				"operator '&&' can not be applied to int, int");
+		assertFailCompile("int x = 1; if(x && true){}", //
+				"operator '&&' can not be applied to int, boolean");
+		assertFailCompile("var x = 1; if(x && true){}", //
+				"operator '&&' can not be applied to int, boolean");
 		assertSuccessSerialize("var x = true; if(x && true) {} else {assert false;}");
 
-		assertFailCompile("if(true || 1){}");
-		assertFailCompile("if(1 || false){}");
-		assertFailCompile("if(1 || 1){}");
-		assertFailCompile("int x = 1; if(x || true){}");
-		assertFailCompile("var x = 1; if(x || true){}");
+		assertFailCompile("if(true || 1){}", //
+				"operator '||' can not be applied to boolean, int");
+		assertFailCompile("if(1 || false){}", //
+				"operator '||' can not be applied to int, boolean");
+		assertFailCompile("if(1 || 1){}", //
+				"operator '||' can not be applied to int, int");
+		assertFailCompile("int x = 1; if(x || true){}", //
+				"operator '||' can not be applied to int, boolean");
+		assertFailCompile("var x = 1; if(x || true){}", //
+				"operator '||' can not be applied to int, boolean");
 		assertSuccessSerialize("var x = true; if(x || true) {} else {assert false;}");
 	}
 
@@ -164,13 +181,17 @@ public class TestExpression extends HiTest {
 				String bt2 = boxIntTypes1[j];
 				String pt2 = priIntTypes1[j];
 				for (String o : new String[] {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"}) {
-					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+							"operator '" + o + "=' can not be applied to " + bt1 + ", " + pt2);
 					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
-					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+							"operator '" + o + "=' can not be applied to " + bt1 + ", " + bt2);
 					// arrays
-					assertFailCompile(bt1 + "[] x1 = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= (" + pt2 + ")3; assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + "[] x1 = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= (" + pt2 + ")3; assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+							"operator '" + o + "=' can not be applied to " + bt1 + ", " + pt2);
 					assertSuccessSerialize(pt1 + "[] x1 = {(" + pt1 + ")15}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
-					assertFailCompile(bt1 + " x1[] = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+					assertFailCompile(bt1 + " x1[] = {new " + bt1 + "((" + pt1 + ")15)}; x1[0] " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1[0] == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+							"operator '" + o + "=' can not be applied to " + bt1 + ", " + bt2);
 				}
 			}
 		}
@@ -194,13 +215,15 @@ public class TestExpression extends HiTest {
 					assertSuccessSerialize(bt1 + "[][][] x1={{{63}}}; " + bt2 + "[] x2={3}; assert (x1[0][0][0] " + o + " x2[0]) == ((" + pt1 + ")63 " + o + " (" + pt2 + ")3);");
 
 					if (bt1.equals("Byte") || bt1.equals("Short") || bt1.equals("Character")) {
-						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+								"operator '" + o + "=' can not be applied to " + bt1 + ", " + pt2);
 					} else {
 						assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= (" + pt2 + ")3; assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
 					assertSuccessSerialize(pt1 + " x1 = (" + pt1 + ")15; x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					if (bt1.equals("Byte") || bt1.equals("Short") || bt1.equals("Character")) {
-						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
+						assertFailCompile(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);", //
+								"operator '" + o + "=' can not be applied to " + bt1 + ", " + bt2);
 					} else {
 						assertSuccessSerialize(bt1 + " x1 = new " + bt1 + "((" + pt1 + ")15); x1 " + o + "= new " + bt2 + "((" + pt2 + ")3); assert x1 == ((" + pt1 + ")15 " + o + " (" + pt2 + ")3);");
 					}
@@ -209,39 +232,67 @@ public class TestExpression extends HiTest {
 		}
 
 		for (String o : new String[] {"+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"}) {
-			assertFailCompile("1" + o + "=1;");
-			assertFailCompile("this" + o + "=1;");
-			assertFailCompile("class A{} A" + o + "=1;");
-			assertFailCompile("class A{} new A()" + o + "=1;");
-			assertFailCompile("class A{int m(){return 1;}} new A().m()" + o + "=1;");
+			assertFailCompile("1" + o + "=1;", //
+					"variable expected");
+			assertFailCompile("this" + o + "=1;", //
+					"cannot resolve this");
+			assertFailCompile("class A{} A" + o + "=1;", //
+					"variable expected");
+			assertFailCompile("class A{} new A()" + o + "=1;", //
+					"variable expected");
+			assertFailCompile("class A{int m(){return 1;}} new A().m()" + o + "=1;", //
+					"variable expected");
 		}
-		assertFailCompile("1++;");
-		assertFailCompile("1--;");
-		assertFailCompile("++1;");
-		assertFailCompile("--1;");
-		assertFailCompile("boolean x = !1;");
-		assertFailCompile("boolean x = true; x++;");
-		assertFailCompile("boolean x = true; x--+;");
-		assertFailCompile("boolean x = true; ++x;");
-		assertFailCompile("boolean x = true; --x;");
-		assertFailCompile("String x = \"\"; x++;");
-		assertFailCompile("String x = \"\"; x--+;");
-		assertFailCompile("String x = \"\"; ++x;");
-		assertFailCompile("String x = \"\"; --x;");
-		assertFailCompile("float x = ~10f;");
-		assertFailCompile("double x = ~10f;");
+		assertFailCompile("1++;", //
+				"variable expected");
+		assertFailCompile("1--;", //
+				"variable expected");
+		assertFailCompile("++1;", //
+				"not a statement");
+		assertFailCompile("--1;", //
+				"not a statement");
+		assertFailCompile("boolean x = !1;", //
+				"operation '!' cannot be applied to 'int'");
+		assertFailCompile("boolean x = true; x++;", //
+				"operation '++' cannot be applied to 'boolean'");
+		assertFailCompile("boolean x = true; x--+;", //
+				"operation '--' cannot be applied to 'boolean'");
+		assertFailCompile("boolean x = true; ++x;", //
+				"operation '++' cannot be applied to 'boolean'");
+		assertFailCompile("boolean x = true; --x;", //
+				"operation '--' cannot be applied to 'boolean'");
+		assertFailCompile("String x = \"\"; x++;", //
+				"operation '++' cannot be applied to 'String'");
+		assertFailCompile("String x = \"\"; x--+;", //
+				"operation '--' cannot be applied to 'String'");
+		assertFailCompile("String x = \"\"; ++x;", //
+				"operation '++' cannot be applied to 'String'");
+		assertFailCompile("String x = \"\"; --x;", //
+				"operation '--' cannot be applied to 'String'");
+		assertFailCompile("float x = ~10f;", //
+				"operation '~' cannot be applied to 'float'");
+		assertFailCompile("double x = ~10f;", //
+				"operation '~' cannot be applied to 'float'");
 
 		for (int i = 0; i < priIntTypesALl.length; i++) {
 			String pt = priIntTypesALl[i];
 			for (String o : operations) {
-				assertFailCompile("var x = (" + pt + ")0 " + o + " new Object();");
-				assertFailCompile("var x = new Object() " + o + " (" + pt + ")0;");
-				assertFailCompile("var x = (" + pt + ")0 " + o + " true;");
-				assertFailCompile("var x = false " + o + " (" + pt + ")0;");
-				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " new Object();");
-				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = new Object() " + o + " x;");
-				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " true;");
-				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = true" + o + " x;");
+				assertFailCompile("var x = (" + pt + ")0 " + o + " new Object();", //
+						"operator '" + o + "' can not be applied to " + pt + ", Object");
+				assertFailCompile("var x = new Object() " + o + " (" + pt + ")0;", //
+						"operator '" + o + "' can not be applied to Object, " + pt);
+				assertFailCompile("var x = (" + pt + ")0 " + o + " true;", //
+						"operator '" + o + "' can not be applied to " + pt + ", boolean");
+				assertFailCompile("var x = false " + o + " (" + pt + ")0;", //
+						"operator '" + o + "' can not be applied to boolean, " + pt);
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " new Object();", //
+						"operator '" + o + "' can not be applied to " + pt + ", Object");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = new Object() " + o + " x;", //
+						"operator '" + o + "' can not be applied to Object, " + pt);
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = x" + o + " true;", //
+						"operator '" + o + "' can not be applied to " + pt + ", boolean");
+				assertFailCompile(pt + " x = (" + pt + ")0; " + pt + " y = true" + o + " x;", //
+						"operator '" + o + "' can not be applied to boolean, " + pt);
 			}
 		}
 
@@ -349,10 +400,14 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("interface A{} interface B extends A{} class C implements B{} assert new C() instanceof A; A a = new C();");
 		assertSuccessSerialize("Integer x = null; if(x instanceof Integer){assert false;}");
 
-		assertFailCompile("int x = 1; if(x instanceof Integer){}", "inconvertible types; cannot cast int to Integer");
-		assertFailCompile("Integer x = 1; if(x instanceof int){}", "unexpected token");
-		assertFailCompile("Integer x; if(x instanceof Integer){}", "variable 'x' is not initialized");
-		assertFailCompile("Integer x = 1; if(x instanceof 1){}", "type expected");
+		assertFailCompile("int x = 1; if(x instanceof Integer){}", //
+				"inconvertible types; cannot cast int to Integer");
+		assertFailCompile("Integer x = 1; if(x instanceof int){}", //
+				"unexpected token");
+		assertFailCompile("Integer x; if(x instanceof Integer){}", //
+				"variable 'x' is not initialized");
+		assertFailCompile("Integer x = 1; if(x instanceof 1){}", //
+				"type expected");
 	}
 
 	@Test
@@ -372,12 +427,18 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("char c = (char)-1; assert c == 65535;");
 		assertSuccessSerialize("int c = (char)-1; assert c == 65535;");
 
-		assertFailCompile("char c1 = -1;", "incompatible types: int cannot be converted to char");
-		assertFailCompile("char c1 = 'a'; char c2 = c1 + '1';", "incompatible types: int cannot be converted to char");
-		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1;", "incompatible types: int cannot be converted to char");
-		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1l;", "incompatible types: long cannot be converted to char");
-		assertFailCompile("char c1 = 'a'; char c2 = c1 + (byte)1;", "incompatible types: int cannot be converted to char");
-		assertFailCompile("char c1 = 'a'; char c2 = c1 + (short)1;", "incompatible types: int cannot be converted to char");
+		assertFailCompile("char c1 = -1;", //
+				"incompatible types: int cannot be converted to char");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + '1';", //
+				"incompatible types: int cannot be converted to char");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1;", //
+				"incompatible types: int cannot be converted to char");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + 1l;", //
+				"incompatible types: long cannot be converted to char");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + (byte)1;", //
+				"incompatible types: int cannot be converted to char");
+		assertFailCompile("char c1 = 'a'; char c2 = c1 + (short)1;", //
+				"incompatible types: int cannot be converted to char");
 
 		assertSuccessSerialize("char c = \"x\".charAt(0); assert c == 'x';");
 		assertSuccessSerialize("String s = \"[\" + 'a' + 'b' + 'c' + \"]\"; assert s.equals(\"[abc]\");");
@@ -404,15 +465,24 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert 1<0?1>0?1>0?false:false:false:true;");
 		assertSuccessSerialize("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
 
-		assertFailCompile("Long x = true ? \"\" : new Integer(1);", "incompatible types: Object cannot be converted to Long");
-		assertFailCompile("int x = true ? 1 : \"\";", "incompatible switch values types: 'int' and 'String'");
-		assertFailCompile("int x = 1 ? 1 : 2;", "boolean is expected");
-		assertFailCompile("int x = 1 ? true : 2;", "boolean is expected");
-		assertFailCompile("int x = true ? ;", "expression expected");
-		assertFailCompile("int x = true ? 1;", "':' is expected");
-		assertFailCompile("int x = true ? 1 : ;", "expression expected");
-		assertFailCompile("int x = true ? : 1;", "expression expected");
-		assertFailCompile("int x = true ? : ;", "expression expected");
+		assertFailCompile("Long x = true ? \"\" : new Integer(1);", //
+				"incompatible types: Object cannot be converted to Long");
+		assertFailCompile("int x = true ? 1 : \"\";", //
+				"incompatible switch values types: 'int' and 'String'");
+		assertFailCompile("int x = 1 ? 1 : 2;", //
+				"boolean is expected");
+		assertFailCompile("int x = 1 ? true : 2;", //
+				"boolean is expected");
+		assertFailCompile("int x = true ? ;", //
+				"expression expected");
+		assertFailCompile("int x = true ? 1;", //
+				"':' is expected");
+		assertFailCompile("int x = true ? 1 : ;", //
+				"expression expected");
+		assertFailCompile("int x = true ? : 1;", //
+				"expression expected");
+		assertFailCompile("int x = true ? : ;", //
+				"expression expected");
 	}
 
 	@Test
@@ -432,14 +502,22 @@ public class TestExpression extends HiTest {
 			assertSuccessSerialize(t + " x = 1; --x; assert x == 0;");
 		}
 
-		assertFailCompile("String s = \"\"; s++;", "operation '++' cannot be applied to 'String'");
-		assertFailCompile("String s = \"\"; s--;", "operation '--' cannot be applied to 'String'");
-		assertFailCompile("String s = \"\"; ++s;", "operation '++' cannot be applied to 'String'");
-		assertFailCompile("String s = \"\"; --s;", "operation '--' cannot be applied to 'String'");
-		assertFailCompile("boolean s = true; s++;", "operation '++' cannot be applied to 'boolean'");
-		assertFailCompile("boolean s = true; s--;", "operation '--' cannot be applied to 'boolean'");
-		assertFailCompile("boolean s = true; ++s;", "operation '++' cannot be applied to 'boolean'");
-		assertFailCompile("boolean s = true; --s;", "operation '--' cannot be applied to 'boolean'");
+		assertFailCompile("String s = \"\"; s++;", //
+				"operation '++' cannot be applied to 'String'");
+		assertFailCompile("String s = \"\"; s--;", //
+				"operation '--' cannot be applied to 'String'");
+		assertFailCompile("String s = \"\"; ++s;", //
+				"operation '++' cannot be applied to 'String'");
+		assertFailCompile("String s = \"\"; --s;", //
+				"operation '--' cannot be applied to 'String'");
+		assertFailCompile("boolean s = true; s++;", //
+				"operation '++' cannot be applied to 'boolean'");
+		assertFailCompile("boolean s = true; s--;", //
+				"operation '--' cannot be applied to 'boolean'");
+		assertFailCompile("boolean s = true; ++s;", //
+				"operation '++' cannot be applied to 'boolean'");
+		assertFailCompile("boolean s = true; --s;", //
+				"operation '--' cannot be applied to 'boolean'");
 	}
 
 	@Test
@@ -460,10 +538,14 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("assert new Object(){int m(int x){return x;}}.m(123) == 123;");
 		assertSuccessSerialize("var o = new Object(){void m(){}}; o.m();");
 
-		assertFailCompile("class O{} O o1 = new O(); Object o2 = o1; O o3 = o2;", "incompatible types: Object cannot be converted to O");
-		assertFailCompile("class O extends O{}", "cyclic inheritance involving O");
-		assertFailCompile("interface I extends I{}", "cyclic inheritance involving I");
-		assertFailCompile("Object o = new Object(){void m(){}}; o.m();", "cannot resolve method 'm' in 'Object'");
+		assertFailCompile("class O{} O o1 = new O(); Object o2 = o1; O o3 = o2;", //
+				"incompatible types: Object cannot be converted to O");
+		assertFailCompile("class O extends O{}", //
+				"cyclic inheritance involving O");
+		assertFailCompile("interface I extends I{}", //
+				"cyclic inheritance involving I");
+		assertFailCompile("Object o = new Object(){void m(){}}; o.m();", //
+				"cannot resolve method 'm' in 'Object'");
 	}
 
 	@Test
@@ -503,14 +585,21 @@ public class TestExpression extends HiTest {
 		assertFailCompile("int x = switch(1){case 1 -> 1; default -> \"\";};");
 		assertFailCompile("String s = \"\"; int x = switch(1){case s -> 1;};");
 		assertFailCompile("int x = switch(1){case 1 -> \"a\"; case 2 -> \"b\";};");
-		assertFailCompile("int x = switch(1){};", "expression switch without cases");
-		assertFailMessage("int x = switch(1){case 2 -> 2;};", "no suitable value in the switch");
+		assertFailCompile("int x = switch(1){};", //
+				"expression switch without cases");
+		assertFailMessage("int x = switch(1){case 2 -> 2;};", //
+				"no suitable value in the switch");
 
-		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", "only one casted identifier is allowed in the case condition");
-		assertFailCompile("int x = switch(\"\"){case String -> 1;};", "'->' is expected");
-		assertFailCompile("int x = switch(\"\"){case x -> 1;};", "invalid expression");
-		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case \"\" -> A.a();};", "value is expected");
-		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case A.a() -> 1;};", "value or casted identifier is expected");
+		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", //
+				"only one casted identifier is allowed in the case condition");
+		assertFailCompile("int x = switch(\"\"){case String -> 1;};", //
+				"'->' is expected");
+		assertFailCompile("int x = switch(\"\"){case x -> 1;};", //
+				"invalid expression");
+		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case \"\" -> A.a();};", //
+				"value is expected");
+		assertFailCompile("class A{static void a(){}} int x = switch(\"\"){case A.a() -> 1;};", //
+				"value or casted identifier is expected");
 	}
 
 	@Test

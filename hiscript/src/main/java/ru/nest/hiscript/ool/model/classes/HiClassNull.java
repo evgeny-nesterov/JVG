@@ -42,4 +42,9 @@ public class HiClassNull extends HiClass {
 	public static HiClass decode(DecodeContext os) {
 		return NULL;
 	}
+
+	@Override
+	public String getNameDescr() {
+		return name;
+	}
 }

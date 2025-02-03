@@ -202,7 +202,8 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("interface A<O>{O get();} assert new A<Double>(){Double get(){return 1.23;}}.get() == 1.23;");
 		assertSuccessSerialize("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == true;");
 
-		assertFailCompile("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == 1;", "operator '==' can not be applied to Boolean, int");
+		assertFailCompile("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == 1;", //
+				"operator '==' can not be applied to Boolean, int");
 	}
 
 	@Test
@@ -299,7 +300,8 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class C{<O extends Double> O get(){return (O)new Double(1.23);}} Number v = new C().get(); assert v.equals(new Double(1.23));");
 		assertSuccessSerialize("class C<O extends Double>{O get(){return (O)new Double(1.23);}} Number v = new C().get(); assert v.equals(new Double(1.23));");
 
-		assertFailMessage("class C{<O> O get(){return (O)new Integer(1);}} Boolean v = new C().get();", "cannot convert 'Integer' to 'Boolean'");
+		assertFailMessage("class C{<O> O get(){return (O)new Integer(1);}} Boolean v = new C().get();", //
+				"cannot convert 'Integer' to 'Boolean'");
 	}
 
 	@Test
@@ -313,7 +315,8 @@ public class TestGenerics extends HiTest {
 
 		assertSuccess("class C{<O> O get(){return (O)\"abc\";}} String s = new C().get(); assert s.equals(\"abc\");");
 		assertFailCompile("class C{<O> O get(){return \"abc\";}}");
-		assertFailMessage("class C{<O> O get(){return (O)\"abc\";}} Boolean s = new C().get();", "cannot convert 'String' to 'Boolean'");
+		assertFailMessage("class C{<O> O get(){return (O)\"abc\";}} Boolean s = new C().get();", //
+				"cannot convert 'String' to 'Boolean'");
 
 		assertSuccess("class C{<O> O get(O o){return o;}} C c = new C().get(new C()) assert c instanceof C;");
 		assertSuccess("class C{<O extends Number> Number get(O o){return o;}} Number n = new C().get(1d); assert n.equals(new Double(1));");
@@ -325,7 +328,8 @@ public class TestGenerics extends HiTest {
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O extends A1>{O get();} class B<O extends A2> implements I<O>{public O get(){return (O)new A2();}} assert new B<A2>().get() instanceof A2;");
 		assertSuccess("class A1{} class A2 extends A1{} interface I<O1 extends A1>{O1 get();} class B<O2 extends A2> implements I<O2>{public O2 get(){return (O2)new A2();}} assert new B<A2>().get() instanceof A2;");
 
-		assertFailMessage("class C{<O> O get(){return (O)\"\";}} Integer i = new C().get();", "cannot convert 'String' to 'Integer'");
+		assertFailMessage("class C{<O> O get(){return (O)\"\";}} Integer i = new C().get();", //
+				"cannot convert 'String' to 'Integer'");
 	}
 
 	@Test

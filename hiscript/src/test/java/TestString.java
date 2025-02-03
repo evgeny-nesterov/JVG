@@ -11,15 +11,21 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = new String(\"abc\"); assert s.equals(\"abc\");");
 		assertSuccessSerialize("String s1 = \"abc\"; String s2 = new String(s1); assert s2.equals(\"abc\");");
 		assertSuccessSerialize("String s = \"xxx\\nyyy\"; assert s.indexOf(\"\\n\") == 3;");
-		assertFailCompile("String s = 1;");
-		assertFailCompile("String s = 'a';");
-		assertFailCompile("String s = true;");
+		assertFailCompile("String s = 1;", //
+				"incompatible types: int cannot be converted to String");
+		assertFailCompile("String s = 'a';", //
+				"incompatible types: char cannot be converted to String");
+		assertFailCompile("String s = true;", //
+				"incompatible types: boolean cannot be converted to String");
 
 		// special symbols
 		assertSuccessSerialize("String s = \"quote=\\\"\"; assert s.indexOf('\"') == 6;");
-		assertFailCompile("String s = \"\\s\";");
-		assertFailCompile("String s = \"a\nb\";");
-		assertFailCompile("String s = \"a\rb\";");
+		assertFailCompile("String s = \"\\s\";", //
+				"illegal escape character");
+		assertFailCompile("String s = \"a\nb\";", //
+				"Illegal line end in string literal");
+		assertFailCompile("String s = \"a\rb\";", //
+				"Illegal line end in string literal");
 
 		// plus
 		assertSuccessSerialize("String s = \"\" + 1; assert s.equals(\"1\");");
@@ -101,12 +107,18 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = \"\"\"\nabc   \\s\nabc   \\s  \"\"\"; assert s.equals(\"abc   \\nabc   \");");
 		assertSuccessSerialize("String s = \"\"\"\n   \\\"\"\"   \"\"\"; assert s.equals(\"\\\"\\\"\\\"\");");
 		assertSuccessSerialize("String s = \"\"\"\n a\\\n b \\\n c \"\"\"; assert s.equals(\"ab c\");");
-		assertFailCompile("String s = \"\"\";");
-		assertFailCompile("String s = \"\"\"\";");
-		assertFailCompile("String s = \"\"\"\n;");
-		assertFailCompile("String s = \"\"\"\n\";");
-		assertFailCompile("String s = \"\"\"\n\"\";");
-		assertFailCompile("String s = \"\"\"\n\\\"\"\";");
+		assertFailCompile("String s = \"\"\";", //
+				"new line is expected");
+		assertFailCompile("String s = \"\"\"\";", //
+				"new line is expected");
+		assertFailCompile("String s = \"\"\"\n;", //
+				"'\"\"\"' is expected");
+		assertFailCompile("String s = \"\"\"\n\";", //
+				"'\"\"\"' is expected");
+		assertFailCompile("String s = \"\"\"\n\"\";", //
+				"'\"\"\"' is expected");
+		assertFailCompile("String s = \"\"\"\n\\\"\"\";", //
+				"'\"\"\"' is expected");
 	}
 
 	@Test
@@ -119,7 +131,8 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = \"\\\"\"; assert s.charAt(0) == '\\\"';");
 		assertSuccessSerialize("String s = \"\\'\"; assert s.charAt(0) == '\\'';");
 		assertSuccessSerialize("String s = \"\\\\\"; assert s.charAt(0) == '\\\\';");
-		assertFailCompile("String s = \"\\\";");
+		assertFailCompile("String s = \"\\\";", //
+				"'\"' is expected");
 
 		// octal
 		assertSuccessSerialize("String s = \"\\7\"; assert s.charAt(0) == '\\7';");
@@ -129,18 +142,24 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = \"\\067\"; assert s.charAt(0) == '\\067';");
 		assertSuccessSerialize("String s = \"\\777\"; assert s.charAt(0) == '\\77' && s.charAt(1) == '7';");
 		assertSuccessSerialize("String s = \"\\1234\"; assert s.charAt(0) == '\\123' && s.charAt(1) == '4';");
-		assertFailCompile("String s = \"\\8\";"); // illegal escape character
+		assertFailCompile("String s = \"\\8\";", //
+				"illegal escape character");
 
 		// hex
 		assertSuccessSerialize("String s = \"\\u0123\"; assert s.charAt(0) == 0x123;");
 		assertSuccessSerialize("String s = \"\\u4567\"; assert s.charAt(0) == 0x4567;");
 		assertSuccessSerialize("String s = \"\\u89ab\"; assert s.charAt(0) == 0x89ab;");
 		assertSuccessSerialize("String s = \"\\ucdef\"; assert s.charAt(0) == 0xcdef;");
-		assertFailCompile("String s = \"\\u\";");
-		assertFailCompile("String s = \"\\u0\";");
-		assertFailCompile("String s = \"\\u01\";");
-		assertFailCompile("String s = \"\\u012\";");
-		assertFailCompile("String s = \"\\u000g\";");
+		assertFailCompile("String s = \"\\u\";", //
+				"invalid code of character");
+		assertFailCompile("String s = \"\\u0\";", //
+				"invalid code of character");
+		assertFailCompile("String s = \"\\u01\";", //
+				"invalid code of character");
+		assertFailCompile("String s = \"\\u012\";", //
+				"invalid code of character");
+		assertFailCompile("String s = \"\\u000g\";", //
+				"invalid code of character");
 	}
 
 	@Test

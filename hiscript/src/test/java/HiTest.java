@@ -3,7 +3,11 @@ import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
@@ -120,7 +124,10 @@ public abstract class HiTest {
 			onFail(script, "fail (actual success)");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			// expected
-			System.err.println("Success! Expected compile failure: " + e.getMessage());
+//			System.err.println("Success! Expected compile failure: " + e.getMessage());
+
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			clipboard.setContents(new StringSelection(", //\n\"" + e.getMessage() + "\""), null);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			onFail(script, "Expected compile failure");

@@ -12,14 +12,20 @@ public class TestVar extends HiTest {
 		assertSuccessSerialize("var x = 1; var y = x; assert y == 1;");
 		assertSuccessSerialize("var x = \"abc\"; var y = x; assert y.equals(\"abc\"); assert y == x;");
 		assertSuccessSerialize("var x = new String(\"abc\"); var y = x; assert x == y; assert y.getClass() == String.class; assert y.length() == 3;");
-		assertFailCompile("var x;");
-		assertFailCompile("var x; x = 1;");
-		assertFailCompile("var x = null;");
+		assertFailCompile("var x;", //
+				"var is not initialized");
+		assertFailCompile("var x; x = 1;", //
+				"var is not initialized");
+		assertFailCompile("var x = null;", //
+				"invalid var initialization");
 
 		assertSuccessSerialize("class A{var x = 1; {assert x == 1;} {x = 2;}} A a = new A(); assert a.x == 2;");
-		assertFailCompile("class A{var x; {int x = 1}}");
-		assertFailCompile("class A{static var x; static{int x = 1}}");
+		assertFailCompile("class A{var x; {int x = 1}}", //
+				"var is not initialized");
+		assertFailCompile("class A{static var x; static{int x = 1}}", //
+				"var is not initialized");
 		assertSuccessSerialize("class A{int get(int x) {var y = x + 1; return y;}} A a = new A(); assert a.get(1) == 2;");
-		assertFailCompile("class A{int get(var x) {return x;}}");
+		assertFailCompile("class A{int get(var x) {return x;}}", //
+				"'var' not allowed here");
 	}
 }
