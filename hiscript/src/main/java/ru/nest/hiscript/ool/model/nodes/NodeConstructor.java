@@ -342,8 +342,8 @@ public class NodeConstructor extends HiNode {
 			os.write(nodeType);
 		} else {
 			os.writeClass(clazz);
+			os.writeType(type);
 		}
-		os.writeType(type);
 
 		os.writeByte(argValues != null ? argValues.length : 0);
 		os.writeArray(argValues);
@@ -352,9 +352,9 @@ public class NodeConstructor extends HiNode {
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
 		boolean isType = os.readBoolean();
 		if (isType) {
-			NodeType type = (NodeType) os.read(HiNode.class);
+			NodeType nodeType = (NodeType) os.read(HiNode.class);
 			HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-			return new NodeConstructor(type, argValues);
+			return new NodeConstructor(nodeType, argValues);
 		} else {
 			try {
 				HiClass clazz = os.readClass();

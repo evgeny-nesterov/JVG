@@ -49,7 +49,7 @@ public class NodeGeneric extends HiNode {
 			HiClass typeClass = validType ? genericType.getClass(ctx) : HiClass.OBJECT_CLASS;
 			clazz = new HiClassGeneric(genericName, genericType, typeClass != null ? typeClass : HiClass.OBJECT_CLASS, parametersClasses, isSuper, sourceType, index, sourceClass, ctx);
 			return typeClass != null;
-		} else if (stage == 2) {
+		} else { // stage = 2
 			boolean valid = true;
 			for (int i = 0; i < parametersClasses.length; i++) {
 				Type parameterType = genericType.parameters[i];
@@ -63,7 +63,6 @@ public class NodeGeneric extends HiNode {
 			valid &= genericType.validateClass(clazz.clazz, validationInfo, ctx, getToken());
 			return valid;
 		}
-		return false;
 	}
 
 	@Override

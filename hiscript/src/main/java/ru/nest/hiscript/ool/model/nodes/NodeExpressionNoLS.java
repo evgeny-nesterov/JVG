@@ -370,7 +370,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 	}
 
 	public static NodeExpressionNoLS decode(DecodeContext os) throws IOException {
-		HiNode[] operands = os.readShortArray(HiNode.class);
+		HiNodeIF[] operands = os.readShortArray(HiNodeIF.class);
 
 		HiOperation[] operations = new HiOperation[os.readShort()];
 		for (int i = 0; i < operations.length; i++) {

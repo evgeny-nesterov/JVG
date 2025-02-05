@@ -548,9 +548,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		// do not write class as when method will being read the class will not
-		// be yet created
+		// do not write class as then method will being read the class will not be yet created
 		// os.writeClass(clazz);
+		if (isLambda()) {
+			os.writeByte(HiNode.TYPE_LAMBDA);
+		}
 		os.writeToken(token);
 		os.writeShortArray(annotations);
 		modifiers.code(os);
@@ -565,7 +567,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
+		return decode(os, true);
+	}
+
+	public static HiMethod decode(DecodeContext os, boolean readToken) throws IOException {
+		Token token = readToken ? os.readToken() : null;
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		NodeGenerics generics = os.readNullable(NodeGenerics.class);
@@ -576,7 +582,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		HiNode body = os.readNullable(HiNode.class);
 
 		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
-		method.token = token;
+		if (readToken) {
+			method.setToken(token);
+		}
 		return method;
 	}
 

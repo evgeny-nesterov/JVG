@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
@@ -248,16 +249,8 @@ public class DecodeContext {
 	}
 
 	public HiClass readClass() throws IOException, HiNoClassException {
-		boolean isHasIndex = is.readBoolean();
-		HiClass clazz;
-		if (isHasIndex) {
-			int clazzIndex = is.readShort();
-			clazz = getClass(clazzIndex);
-		} else {
-			String classFullName = is.readUTF();
-			clazz = HiClass.forName(/*no context*/ null, classFullName);
-		}
-		return clazz;
+		int clazzIndex = is.readShort();
+		return getClass(clazzIndex);
 	}
 
 	public HiClass getClass(int index) throws HiNoClassException {
@@ -388,8 +381,12 @@ public class DecodeContext {
 
 	public <N> N read(Class<N> type) {
 		try {
-			Method m = type.getMethod("decode", DecodeContext.class);
-			return (N) m.invoke(type, this);
+			if (type == HiNodeIF.class) {
+				return (N) HiNode.decode(this);
+			} else {
+				Method m = type.getMethod("decode", DecodeContext.class);
+				return (N) m.invoke(type, this);
+			}
 		} catch (Exception exc) {
 			throw new HiScriptRuntimeException("cannot decode for " + type, exc);
 		}

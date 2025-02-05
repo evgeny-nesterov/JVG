@@ -1816,28 +1816,20 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		switch (classType) {
 			case CLASS_OBJECT:
 				return decodeObject(os, classType);
-
 			case CLASS_PRIMITIVE:
 				return HiClassPrimitive.decode(os);
-
 			case CLASS_ARRAY:
 				return HiClassArray.decode(os);
-
 			case CLASS_ENUM:
 				return HiClassEnum.decode(os);
-
 			case CLASS_RECORD:
 				return HiClassRecord.decode(os);
-
 			case CLASS_ANNOTATION:
 				return HiClassAnnotation.decode(os);
-
 			case CLASS_NULL:
 				return HiClassNull.decode(os);
-
 			case CLASS_VAR:
 				return HiClassVar.decode(os);
-
 			case CLASS_GENERIC:
 				return HiClassGeneric.decode(os);
 		}

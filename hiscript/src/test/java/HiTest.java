@@ -124,10 +124,10 @@ public abstract class HiTest {
 			onFail(script, "fail (actual success)");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			// expected
-//			System.err.println("Success! Expected compile failure: " + e.getMessage());
+			System.err.println("Success! Expected compile failure: " + e.getMessage());
 
-			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			clipboard.setContents(new StringSelection(", //\n\"" + e.getMessage() + "\""), null);
+//			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//			clipboard.setContents(new StringSelection(", //\n\"" + e.getMessage() + "\""), null);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			onFail(script, "Expected compile failure");

@@ -166,6 +166,8 @@ public abstract class HiNode implements HiNodeIF {
 
 	public final static byte TYPE_GENERICS = 50;
 
+	public final static byte TYPE_LAMBDA = 51;
+
 	public HiNode(String name, int type, boolean isStatement) {
 		this(name, type, null, isStatement);
 	}
@@ -344,10 +346,10 @@ public abstract class HiNode implements HiNodeIF {
 		os.writeToken(token);
 	}
 
-	public static HiNode decode(DecodeContext os) throws IOException {
+	public static HiNodeIF decode(DecodeContext os) throws IOException {
 		int type = os.readByte();
 		Token token = os.readToken();
-		HiNode node = null;
+		HiNodeIF node = null;
 		switch (type) {
 			case TYPE_EMPTY:
 				node = EmptyNode.decode(os);
@@ -496,9 +498,12 @@ public abstract class HiNode implements HiNodeIF {
 			case TYPE_GENERICS:
 				node = NodeGenerics.decode(os);
 				break;
+			case TYPE_LAMBDA:
+				node = HiMethod.decode(os, false);
+				break;
 		}
 		if (node != null) {
-			node.token = token;
+			node.setToken(token);
 			return node;
 		} else {
 			throw new HiScriptRuntimeException("node cannot be decoded: undefined type " + type);

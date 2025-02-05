@@ -11,8 +11,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -277,23 +277,20 @@ public class CodeContext {
 			}
 		}
 
-		Collections.sort(types, new Comparator<Type>() {
-			@Override
-			public int compare(Type t1, Type t2) {
-				int type1 = t1.getTypeClass();
-				int type2 = t2.getTypeClass();
-				if (type1 != type2) {
-					return type1 - type2;
-				}
-
-				if (type1 == Type.ARRAY && t1.getDimension() != t2.getDimension()) {
-					return t1.getDimension() - t2.getDimension();
-				}
-
-				int index1 = typesHash.get(t1);
-				int index2 = typesHash.get(t2);
-				return index1 - index2;
+		Collections.sort(types, (t1, t2) -> {
+			int type1 = t1.getTypeClass();
+			int type2 = t2.getTypeClass();
+			if (type1 != type2) {
+				return type1 - type2;
 			}
+
+			if (type1 == Type.ARRAY && t1.getDimension() != t2.getDimension()) {
+				return t1.getDimension() - t2.getDimension();
+			}
+
+			int index1 = typesHash.get(t1);
+			int index2 = typesHash.get(t2);
+			return index1 - index2;
 		});
 
 		writeShort(types.size());
@@ -307,24 +304,23 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private final Map<Integer, Integer> classes = new HashMap<>();
+	private final Map<Integer, Integer> classes = new LinkedHashMap<>();
 
-	private final Map<Integer, HiClass> indexToClasses = new HashMap<>();
+	private final Map<Integer, HiClass> indexToClasses = new LinkedHashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
-		CodeContext ctx = getRoot();
+		writeShort(registerClass(clazz));
+	}
 
-		Integer classId = System.identityHashCode(clazz); // classes may have identical names
+	private int registerClass(HiClass clazz) {
+		if (clazz.isArray()) {
+			registerClass(clazz.getArrayType());
+		}
+		CodeContext ctx = getRoot();
+		int classId = System.identityHashCode(clazz); // classes may have identical names
 		int index = ctx.classes.computeIfAbsent(classId, k -> ctx.classes.size());
 		ctx.indexToClasses.put(index, clazz);
-
-		boolean isHasIndex = index != -1;
-		writeBoolean(isHasIndex);
-		if (isHasIndex) {
-			writeShort(index);
-		} else {
-			writeUTF(clazz.fullName);
-		}
+		return index;
 	}
 
 	public void statistics() {
