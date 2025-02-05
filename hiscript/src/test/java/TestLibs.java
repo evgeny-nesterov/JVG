@@ -49,9 +49,9 @@ public class TestLibs extends HiTest {
 	public void testSystemExec() {
 		assertSuccessSerialize("Integer v = System.exec(\"1 + 2\"); assert v == 3;");
 		assertSuccessSerialize("Boolean v = System.exec(\"int x = 1; int y = 2; return x < y;\"); assert v;");
-		assertFailMessage("Integer v = System.exec(\"1 < 2\");", //
+		assertFail("Integer v = System.exec(\"1 < 2\");", //
 				"cannot convert 'Boolean' to 'Integer'");
-		assertFailMessage("Float v = System.exec(\"1.0/2.0\");", //
+		assertFail("Float v = System.exec(\"1.0/2.0\");", //
 				"cannot convert 'Double' to 'Float'");
 	}
 }

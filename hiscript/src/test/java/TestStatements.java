@@ -223,7 +223,7 @@ public class TestStatements extends HiTest {
 				"expression expected");
 		assertFailCompile("class A{void m(){}} switch(new A().m()){}", //
 				"value is expected");
-		assertFailMessage("class A{int get(){throw new RuntimeException(\"error\");}} switch(new A().get()){case 1: break;}", //
+		assertFail("class A{int get(){throw new RuntimeException(\"error\");}} switch(new A().get()){case 1: break;}", //
 				"error");
 		assertFailCompile("switch(1){case 1,2,1: break;}", //
 				"case value '1' is duplicated");
@@ -264,7 +264,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("throw true;");
 		assertFailCompile("class E extends Exception{} throw new E();"); // unreported exception
 		assertFailSerialize("class E extends RuntimeException{} throw new E();");
-		assertFail("Exception exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}");
+		assertFail("Exception exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}", //
+				"error");
 
 		// throw in try
 		assertSuccessSerialize("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
@@ -279,9 +280,9 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}");
 		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
-		assertFailMessage("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", //
+		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", //
 				"close error");
-		assertFailMessage("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", //
+		assertFail("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", //
 				"null pointer");
 
 		// Exception has already been caught
@@ -299,22 +300,27 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{A() throws RuntimeException {throw new Exception();}}");
 		assertFailCompile("class A{A() throws Exception {throw new Exception(); super();}}");
 		assertFailCompile("class A{A() throws String {}}");
-		assertFail("class A{A(){throw new RuntimeException();}} new A();");
-		assertFail("class A{A(){throw new RuntimeException();}} class B extends A{B(){super();}} new B();");
+		assertFail("class A{A(){throw new RuntimeException(\"runtime\");}} new A();", //
+				"runtime");
+		assertFail("class A{A(){throw new RuntimeException(\"runtime\");}} class B extends A{B(){super();}} new B();", //
+				"runtime");
 
 		// in method
 		assertFailCompile("class A{void m() {throw new Exception();}}");
 		assertFailCompile("class A{void m() throws RuntimeException {throw new Exception();}}");
 		assertFailCompile("class A{void m() throws String {}}");
-		assertFail("class A{void m(){throw new RuntimeException();}} new A().m();");
+		assertFail("class A{void m(){throw new RuntimeException(\"runtime\");}} new A().m();", //
+				"runtime");
 
 		// in initialization
 		assertFailCompile("class A{{throw new Exception();}}");
-		assertFail("class A{{throw new RuntimeException();}} new A();");
+		assertFail("class A{{throw new RuntimeException(\"runtime\");}} new A();", //
+				"runtime");
 
 		assertFailCompile("class A{static{throw new Exception();}}");
 		assertSuccessSerialize("class A{static{throw new RuntimeException();}}");
-		assertFail("class A{static int x = 1; static{throw new RuntimeException();}} int x = A.x;");
+		assertFail("class A{static int x = 1; static{throw new RuntimeException(\"runtime\");}} int x = A.x;", //
+				"runtime");
 		assertFailCompile("try(int x = 1) {}");
 		assertFailCompile("try(Object x = new Object()) {}");
 		assertFailCompile("try {} catch(String | Integer e){}");
@@ -386,6 +392,10 @@ public class TestStatements extends HiTest {
 		assertFailCompile("float[] x = new float[]{true};");
 		assertFailCompile("float[] x = new float[]{1D};");
 		assertFailCompile("double[] x = new double[]{true};");
+
+		assertFailCompile("int x = 0; x.new Object();");
+		assertFailCompile("int[] x = {0}; x.new Object();");
+		assertFailCompile("class A{class B{}} A[] a = {new A()}; a.new B();");
 	}
 
 	@Test
@@ -543,8 +553,10 @@ public class TestStatements extends HiTest {
 	public void testAsserts() {
 		assertSuccessSerialize("assert true;");
 		assertSuccessSerialize("assert true : \"failure\";");
-		assertFail("assert false;");
-		assertFail("assert false : \"failure\";");
+		assertFail("assert false;", //
+				"Assert failed");
+		assertFail("assert false : \"failure\";", //
+				"failure");
 		assertFailCompile("assert;");
 		assertFailCompile("assert 1;");
 		assertFailCompile("assert \"\";");
@@ -563,7 +575,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("int x = 0; synchronized(x){}");
 		assertFailCompile("synchronized(1){}");
 		assertFailCompile("synchronized(null){}");
-		assertFailMessage("Object o = null; synchronized(o){}", //
+		assertFail("Object o = null; synchronized(o){}", //
 				"null pointer");
 	}
 
@@ -594,7 +606,7 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testNPE() {
-		assertFailMessage("class A{int b;} A a = null; int b = a.b;", //
+		assertFail("class A{int b;} A a = null; int b = a.b;", //
 				"null pointer");
 	}
 }

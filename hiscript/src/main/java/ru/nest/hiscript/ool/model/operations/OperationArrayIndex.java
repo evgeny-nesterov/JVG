@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
@@ -39,13 +40,16 @@ public class OperationArrayIndex extends BinaryOperation {
 					validIndex = true;
 			}
 		}
+		if (!validIndex) {
+			errorCast(validationInfo, node2.token, node2.clazz, HiClassPrimitive.INT);
+		}
 		boolean validArray = false;
 		if (node1.clazz.isArray()) {
 			clazz = ((HiClassArray) clazz).cellClass;
 			type = type.cellType;
 			validArray = true;
 		}
-		if (!validIndex || !validArray) {
+		if (!validArray) {
 			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		}
 		if (validIndex && node2.isCompileValue() && node2.getIntValue() < 0) {

@@ -30,6 +30,9 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 		// autobox
 		if (value.valueClass.getAutoboxedPrimitiveClass() != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
+			if (ctx.exitFromBlock()) {
+				return;
+			}
 		}
 
 		int valueType = HiFieldPrimitive.getAutoType(value.valueClass);

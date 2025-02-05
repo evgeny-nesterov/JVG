@@ -130,12 +130,12 @@ public abstract class BinaryOperation extends HiOperation {
 	}
 
 	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
-		String text = "cannot cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
+		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
 		ctx.throwRuntimeException(text);
 	}
 
 	public void errorCast(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
-		String text = "cannot cast " + typeFrom.getClassName() + " to " + typeTo.getClassName();
+		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
 		validationInfo.error(text, token);
 	}
 }

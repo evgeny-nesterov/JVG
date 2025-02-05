@@ -20,7 +20,7 @@ public class TestLambda extends HiTest {
 				"incompatible parameters signature in lambda expression");
 		assertFailCompile("interface I{int get(int x);} I o = (boolean x) -> x ? 1 : 0;", //
 				"incompatible parameters signature in lambda expression");
-		assertFailMessage("interface I{int get(int x, int y);} I o = (x, y) -> x / y; o.get(1, 0);", //
+		assertFail("interface I{int get(int x, int y);} I o = (x, y) -> x / y; o.get(1, 0);", //
 				"divide by zero");
 		assertFailCompile("interface I{void get();} I o = () -> 1;", //
 				"incompatible types; found int, required void");

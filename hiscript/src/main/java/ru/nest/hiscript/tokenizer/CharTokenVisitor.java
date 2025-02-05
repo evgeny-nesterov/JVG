@@ -4,19 +4,33 @@ public class CharTokenVisitor implements TokenVisitor {
 	@Override
 	public Token getToken(Tokenizer tokenizer) throws TokenizerException {
 		if (tokenizer.getCurrent() == '\'') {
-			tokenizer.next();
-
 			int offset = tokenizer.getOffset();
 			int line = tokenizer.getLine();
 			int lineOffset = tokenizer.getLineOffset();
-			char c = readCharacter(tokenizer);
-
-			if (tokenizer.getCurrent() != '\'') {
-				tokenizer.error("' is expected", tokenizer.getLine(), tokenizer.getOffset() - 1, 1, tokenizer.getLineOffset());
-			}
-
 			tokenizer.next();
-			return new CharToken(c, line, offset, tokenizer.getOffset() - 1 - offset, lineOffset);
+
+			char c;
+			if (tokenizer.getCurrent() == '\'') {
+				tokenizer.error("empty character literal", line, offset, 2, lineOffset);
+				c = (char) 0;
+			} else {
+				c = readCharacter(tokenizer);
+				int length = 1;
+				while (tokenizer.getCurrent() != '\'' && tokenizer.hasNext()) {
+					length++;
+					readCharacter(tokenizer);
+					if (tokenizer.getCurrent() == ';' || tokenizer.getCurrent() == '\n') {
+						break;
+					}
+				}
+				if (tokenizer.getCurrent() != '\'') {
+					tokenizer.error("' is expected", line, offset + 2, 1, lineOffset);
+				} else if (length > 1) {
+					tokenizer.error("too many characters in character literal", line, offset, length + 2, lineOffset);
+				}
+			}
+			tokenizer.next();
+			return new CharToken(c, line, offset, tokenizer.getOffset() + 1 - offset, lineOffset);
 		}
 		return null;
 	}
@@ -32,35 +46,27 @@ public class CharTokenVisitor implements TokenVisitor {
 				case 'n':
 					c = '\n';
 					break;
-
 				case 't':
 					c = '\t';
 					break;
-
 				case 'r':
 					c = '\r';
 					break;
-
 				case 'b':
 					c = '\b';
 					break;
-
 				case 'f':
 					c = '\f';
 					break;
-
 				case '\"':
 					c = '\"';
 					break;
-
 				case '\'':
 					c = '\'';
 					break;
-
 				case '\\':
 					c = '\\';
 					break;
-
 				case 'u':
 					int size = 0;
 					int value = 0;
@@ -91,7 +97,6 @@ public class CharTokenVisitor implements TokenVisitor {
 						tokenizer.error("invalid code of character", line, offset + 1, size, lineOffset + 1);
 					}
 					break;
-
 				default:
 					c = tokenizer.getCurrent();
 					if (c >= '0' && c <= '7') {

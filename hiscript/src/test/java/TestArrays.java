@@ -48,6 +48,8 @@ public class TestArrays extends HiTest {
 				"int is expected");
 		assertFailCompile("String[] x = {1};", //
 				"String is expected");
+		assertFail("int[] x = {1}; int y = x[-1];",
+				"array index out of bound: array length = 1, index = -1");
 
 		// Object
 		assertSuccessSerialize("Object[] x = {1, \"\", true, 1L, 1f, 1d, new Object(), new Integer(1), new boolean[][]{{true}}, new Object[0], null, new String[]{\"abc\"}};");
@@ -84,7 +86,8 @@ public class TestArrays extends HiTest {
 	public void testSetValue() {
 		// boolean
 		assertSuccessSerialize("boolean[] x = new boolean[1]; x[0] = true; assert x[0];");
-		assertFailCompile("boolean[] x = new boolean[1]; x[0] = 1;");
+		assertFailCompile("boolean[] x = new boolean[1]; x[0] = 1;", //
+				"operator '=' can not be applied to boolean, int");
 		assertSuccessSerialize("boolean[] x = new boolean[1]; x[0] |= true; assert x[0];");
 
 		// byte
@@ -92,10 +95,14 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("byte[] x = new byte[1]; x[0] = (short)1; assert x[0] == 1;");
 		assertSuccessSerialize("byte[] x = new byte[1]; x[0] = (char)1; assert x[0] == 1;");
 		assertSuccessSerialize("byte[] x = new byte[1]; x[0] = (int)1; assert x[0] == 1;");
-		assertFailCompile("byte[] x = new byte[1]; x[0] = \"\";");
-		assertFailCompile("byte[] x = new byte[1]; x[0] = 1L;");
-		assertFailCompile("byte[] x = new byte[1]; x[0] = 1F;");
-		assertFailCompile("byte[] x = new byte[1]; x[0] = 1D;");
+		assertFailCompile("byte[] x = new byte[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to byte, String");
+		assertFailCompile("byte[] x = new byte[1]; x[0] = 1L;", //
+				"operator '=' can not be applied to byte, long");
+		assertFailCompile("byte[] x = new byte[1]; x[0] = 1F;", //
+				"operator '=' can not be applied to byte, float");
+		assertFailCompile("byte[] x = new byte[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to byte, double");
 		assertSuccessSerialize("byte[] x = new byte[1]; x[0] += 1; assert x[0] == 1;");
 
 		// short
@@ -103,10 +110,14 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("short[] x = new short[1]; x[0] = (short)1; assert x[0] == 1;");
 		assertSuccessSerialize("short[] x = new short[1]; x[0] = (char)1; assert x[0] == 1;");
 		assertSuccessSerialize("short[] x = new short[1]; x[0] = (int)1; assert x[0] == 1;");
-		assertFailCompile("short[] x = new short[1]; x[0] = \"\";");
-		assertFailCompile("short[] x = new short[1]; x[0] = 1L;");
-		assertFailCompile("short[] x = new short[1]; x[0] = 1F;");
-		assertFailCompile("short[] x = new short[1]; x[0] = 1D;");
+		assertFailCompile("short[] x = new short[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to short, String");
+		assertFailCompile("short[] x = new short[1]; x[0] = 1L;", //
+				"operator '=' can not be applied to short, long");
+		assertFailCompile("short[] x = new short[1]; x[0] = 1F;", //
+				"operator '=' can not be applied to short, float");
+		assertFailCompile("short[] x = new short[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to short, double");
 		assertSuccessSerialize("short[] x = new short[1]; x[0] += 1; assert x[0] == 1;");
 
 		// char
@@ -114,10 +125,14 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("char[] x = new char[1]; x[0] = (short)1; assert x[0] == 1;");
 		assertSuccessSerialize("char[] x = new char[1]; x[0] = (char)1; assert x[0] == 1;");
 		assertSuccessSerialize("char[] x = new char[1]; x[0] = (int)1; assert x[0] == 1;");
-		assertFailCompile("char[] x = new char[1]; x[0] = \"\";");
-		assertFailCompile("char[] x = new char[1]; x[0] = 1L;");
-		assertFailCompile("char[] x = new char[1]; x[0] = 1F;");
-		assertFailCompile("char[] x = new char[1]; x[0] = 1D;");
+		assertFailCompile("char[] x = new char[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to char, String");
+		assertFailCompile("char[] x = new char[1]; x[0] = 1L;", //
+				"operator '=' can not be applied to char, long");
+		assertFailCompile("char[] x = new char[1]; x[0] = 1F;", //
+				"operator '=' can not be applied to char, float");
+		assertFailCompile("char[] x = new char[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to char, double");
 		assertSuccessSerialize("char[] x = new char[1]; x[0] += 1; assert x[0] == 1;");
 
 		// int
@@ -125,10 +140,14 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("int[] x = new int[1]; x[0] = (short)1; assert x[0] == 1;");
 		assertSuccessSerialize("int[] x = new int[1]; x[0] = (char)1; assert x[0] == 1;");
 		assertSuccessSerialize("int[] x = new int[1]; x[0] = (int)1; assert x[0] == 1;");
-		assertFailCompile("int[] x = new int[1]; x[0] = \"\";");
-		assertFailCompile("int[] x = new int[1]; x[0] = 1L;");
-		assertFailCompile("int[] x = new int[1]; x[0] = 1F;");
-		assertFailCompile("int[] x = new int[1]; x[0] = 1D;");
+		assertFailCompile("int[] x = new int[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to int, String");
+		assertFailCompile("int[] x = new int[1]; x[0] = 1L;", //
+				"operator '=' can not be applied to int, long");
+		assertFailCompile("int[] x = new int[1]; x[0] = 1F;", //
+				"operator '=' can not be applied to int, float");
+		assertFailCompile("int[] x = new int[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to int, double");
 		assertSuccessSerialize("int[] x = new int[1]; x[0] += 1; assert x[0] == 1;");
 
 		// long
@@ -137,9 +156,12 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("long[] x = new long[1]; x[0] = (char)1; assert x[0] == 1L;");
 		assertSuccessSerialize("long[] x = new long[1]; x[0] = (int)1; assert x[0] == 1L;");
 		assertSuccessSerialize("long[] x = new long[1]; x[0] = (long)1; assert x[0] == 1L;");
-		assertFailCompile("long[] x = new long[1]; x[0] = \"\";");
-		assertFailCompile("long[] x = new long[1]; x[0] = 1F;");
-		assertFailCompile("long[] x = new long[1]; x[0] = 1D;");
+		assertFailCompile("long[] x = new long[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to long, String");
+		assertFailCompile("long[] x = new long[1]; x[0] = 1F;", //
+				"operator '=' can not be applied to long, float");
+		assertFailCompile("long[] x = new long[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to long, double");
 		assertSuccessSerialize("long[] x = new long[1]; x[0] += 1; assert x[0] == 1;");
 
 		// float
@@ -149,8 +171,10 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("float[] x = new float[1]; x[0] = (int)1; assert x[0] == 1F;");
 		assertSuccessSerialize("float[] x = new float[1]; x[0] = (long)1; assert x[0] == 1F;");
 		assertSuccessSerialize("float[] x = new float[1]; x[0] = (float)1; assert x[0] == 1F;");
-		assertFailCompile("float[] x = new float[1]; x[0] = \"\";");
-		assertFailCompile("float[] x = new float[1]; x[0] = 1D;");
+		assertFailCompile("float[] x = new float[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to float, String");
+		assertFailCompile("float[] x = new float[1]; x[0] = 1D;", //
+				"operator '=' can not be applied to float, double");
 		assertSuccessSerialize("float[] x = new float[1]; x[0] += 1; assert x[0] == 1;");
 
 		// double
@@ -161,7 +185,8 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("double[] x = new double[1]; x[0] = (long)1; assert x[0] == 1D;");
 		assertSuccessSerialize("double[] x = new double[1]; x[0] = (float)1; assert x[0] == 1D;");
 		assertSuccessSerialize("double[] x = new double[1]; x[0] = (double)1; assert x[0] == 1D;");
-		assertFailCompile("double[] x = new double[1]; x[0] = \"\";");
+		assertFailCompile("double[] x = new double[1]; x[0] = \"\";", //
+				"operator '=' can not be applied to double, String");
 		assertSuccessSerialize("double[] x = new double[1]; x[0] += 1; assert x[0] == 1;");
 
 		// Object
@@ -172,12 +197,15 @@ public class TestArrays extends HiTest {
 	@Test
 	public void testCast() {
 		assertSuccessSerialize("Object x = new int[1]; int[] y = (int[])x; assert y instanceof int[]; assert y == x;");
-		assertFailCompile("Object x = new int[1]; long[] y = (int[])x;");
+		assertFailCompile("Object x = new int[1]; long[] y = (int[])x;", //
+				"incompatible types: int[] cannot be converted to long[]");
 
 		assertSuccessSerialize("int[] x = {}; int[] y = x; assert x == y;");
 		assertSuccessSerialize("int[] x = {}; int[] y = (int[])x; assert x == y;");
-		assertFailCompile("byte[] x = {}; int[] y = x;");
-		assertFailCompile("byte[] x = {}; int[] y = (int[])x;");
+		assertFailCompile("byte[] x = {}; int[] y = x;", //
+				"incompatible types: byte[] cannot be converted to int[]");
+		assertFailCompile("byte[] x = {}; int[] y = (int[])x;", //
+				"cannot cast byte[] to int[]");
 		assertSuccessSerialize("class A{} class B extends A{} B[] x = {new B()}; A[] y = x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
 		assertSuccessSerialize("class A{} class B extends A{} A[] x = new B[]{new B()}; B[] y = (B[])x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
 		assertSuccessSerialize("int[] x = {}; int[] y = (int[])x;");
@@ -189,40 +217,57 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("int[] x = {1}; assert x[(byte)0] == 1;");
 		assertSuccessSerialize("int[] x = {1}; assert x[(short)0] == 1;");
 		assertSuccessSerialize("int[] x = new int['b']; assert x['a'] == 0;");
-		assertFailCompile("int[] x = {1}; assert x[0L] == 1;");
-		assertFailCompile("int[] x = {1}; assert x[0D] == 1;");
-		assertFailCompile("int[] x = {1}; assert x[0F] == 1;");
+		assertFailCompile("int[] x = {1}; assert x[0L] == 1;", //
+				"cannot cast long to int");
+		assertFailCompile("int[] x = {1}; assert x[0D] == 1;", //
+				"cannot cast double to int");
+		assertFailCompile("int[] x = {1}; assert x[0F] == 1;", //
+				"cannot cast float to int");
 
 		// autocast
 		assertSuccessSerialize("byte[] x = {(short)1}; assert x[0] == 1;");
-		assertFailCompile("byte[] x = {(short)128};");
+		assertFailCompile("byte[] x = {(short)128};", //
+				"byte is expected");
 		assertSuccessSerialize("byte[] x = {'a'}; assert x[0] == 'a';");
 		assertSuccessSerialize("byte[] x = {(int)1}; assert x[0] == 1;");
-		assertFailCompile("byte[] x = {(int)128};");
-		assertFailCompile("byte[] x = {1L};");
-		assertFailCompile("byte[] x = {1F};");
-		assertFailCompile("byte[] x = {1D};");
+		assertFailCompile("byte[] x = {(int)128};", //
+				"byte is expected");
+		assertFailCompile("byte[] x = {1L};", //
+				"byte is expected");
+		assertFailCompile("byte[] x = {1F};", //
+				"byte is expected");
+		assertFailCompile("byte[] x = {1D};", //
+				"byte is expected");
 
 		assertSuccessSerialize("short[] x = {(byte)1}; assert x[0] == 1;");
 		assertSuccessSerialize("short[] x = {'a'}; assert x[0] == 'a';");
 		assertSuccessSerialize("short[] x = {(int)1}; assert x[0] == 1;");
-		assertFailCompile("short[] x = {" + (Short.MAX_VALUE + 1) + "};");
-		assertFailCompile("short[] x = {1L};");
-		assertFailCompile("short[] x = {1F};");
-		assertFailCompile("short[] x = {1D};");
+		assertFailCompile("short[] x = {" + (Short.MAX_VALUE + 1) + "};", //
+				"short is expected");
+		assertFailCompile("short[] x = {1L};", //
+				"short is expected");
+		assertFailCompile("short[] x = {1F};", //
+				"short is expected");
+		assertFailCompile("short[] x = {1D};", //
+				"short is expected");
 
 		assertSuccessSerialize("int[] x = {(byte)1}; assert x[0] == 1;");
 		assertSuccessSerialize("int[] x = {'a'}; assert x[0] == 'a';");
 		assertSuccessSerialize("int[] x = {(short)1}; assert x[0] == 1;");
-		assertFailCompile("int[] x = {1L};");
-		assertFailCompile("int[] x = {1F};");
-		assertFailCompile("int[] x = {1D};");
+		assertFailCompile("int[] x = {1L};", //
+				"int is expected");
+		assertFailCompile("int[] x = {1F};", //
+				"int is expected");
+		assertFailCompile("int[] x = {1D};", //
+				"int is expected");
 
 		assertSuccessSerialize("long[] x = {(byte)1}; assert x[0] == 1L;");
 		assertSuccessSerialize("long[] x = {(short)1}; assert x[0] == 1L;");
 		assertSuccessSerialize("long[] x = {'a'}; assert x[0] == 'a';");
-		assertFailCompile("long[] x = {1F};");
-		assertFailCompile("long[] x = {1D};");
+		assertFailCompile("long[] x = {1F};", //
+				"long is expected");
+		assertFailCompile("long[] x = {1D};", //
+				"long is expected");
 	}
 
 	@Test
@@ -234,18 +279,18 @@ public class TestArrays extends HiTest {
 		assertSuccessSerialize("String[] x = {null}; assert x[0] == null; assert !(x[0] instanceof String);");
 		assertSuccessSerialize("String[][] x = {null}; assert x[0] == null;");
 		assertSuccessSerialize("int[][][][][][][][][][] x = {null, {null, {null, {null, {null, {null, {null, {null, {null, { 1 }}}}}}}}}}; assert x[1] != null; assert x[1][1][1][1][1][1][1][1][1][0] == 1;");
-		assertFailMessage("String[][] x = {null}; String s = x[0][0]", //
+		assertFail("String[][] x = {null}; String s = x[0][0]", //
 				"null pointer");
-		assertFailMessage("int[] x = {1,2,3}; int i = x[3]", //
+		assertFail("int[] x = {1,2,3}; int i = x[3]", //
 				"array index out of bound: array length = 3, index = 3");
-		assertFailMessage("int[][] x = {{1,2},{3,4}}; int i = x[1][2]", //
+		assertFail("int[][] x = {{1,2},{3,4}}; int i = x[1][2]", //
 				"array index out of bound: array length = 2, index = 2");
 
 		assertSuccessSerialize("int[] x = new int[]{0}; x[0]++; assert x[0] == 1;");
 		assertSuccessSerialize("int[] x = new int[]{1}; x[0] = 0; assert x[0] == 0;");
 		assertSuccessSerialize("String[] x = {null}; x[0] = \"\"; x[0] += 0.000; x[0] += 3L; assert x[0].equals(\"0.03\");");
 
-		assertFailMessage("int[] x = null; int length = x.length", //
+		assertFail("int[] x = null; int length = x.length", //
 				"null pointer");
 	}
 

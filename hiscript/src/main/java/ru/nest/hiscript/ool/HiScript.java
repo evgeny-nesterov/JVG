@@ -67,7 +67,7 @@ public class HiScript implements AutoCloseable {
 			HiClassLoader classLoader = new HiClassLoader("test-decoded");
 			DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
 			/*node =*/
-			ctxDecode.load();
+			//ctxDecode.load();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -104,15 +104,18 @@ public class TestAutoboxing extends HiTest {
 			assertSuccessSerialize("class C{C(Object a){assert a instanceof " + T + ";}} new C((" + t + ")123);");
 			assertSuccessSerialize("class C{C(" + T + "... a){assert a[0] instanceof " + T + "; assert a[1] instanceof " + T + "; assert a[1] == 127; assert a[2] == null; assert a[3] == 1;}} new C((" + t + ")0, (" + t + ")127, null, new " + T + "((" + t + ")1));");
 			assertSuccessSerialize("class C{C(Object... a){assert a[0] instanceof " + T + "; assert a[1] instanceof " + T + "; assert (" + T + ")a[1] == 127;}} new C((" + t + ")0, (" + t + ")127);");
-			assertFail("class C{void set(" + t + " a){}} " + T + " b = null; new C().set(b);");
-			assertFail("class C{C(" + t + " a){}} " + T + " b = null; new C(b);");
+			assertFail("class C{void set(" + t + " a){}} " + T + " b = null; new C().set(b);", //
+					"null pointer");
+			assertFail("class C{C(" + t + " a){}} " + T + " b = null; new C(b);", //
+					"null pointer");
 
 			// arrays
 			assertSuccessSerialize(T + "[] a = new " + T + "[3]; a[0] = (" + t + ")1; a[0]++; a[1] = 127; assert a[0] == 2; assert a[1] == 127; assert a[2] == null;");
 			assertSuccessSerialize(T + "[][] a = new " + T + "[3][3]; a[0][0] = (" + t + ")1; a[0][0]++; a[1][1] = 127; assert a[0][0] == 2; assert a[1][1] == 127; assert a[2][2] == null;");
 			assertSuccessSerialize("" + t + "[] a = new " + t + "[2]; a[1] = new " + T + "((" + t + ")127); assert a[1] == 127;");
 			assertSuccessSerialize("" + t + "[][] a = new " + t + "[2][2]; a[1][1] = new " + T + "((" + t + ")127); assert a[1][1] == 127;");
-			assertFail("" + t + "[][] a = new " + t + "[1][1]; " + T + " b = null; a[0][0] = b;");
+			assertFail("" + t + "[][] a = new " + t + "[1][1]; " + T + " b = null; a[0][0] = b;", //
+					"null pointer");
 
 			// statements
 			assertSuccessSerialize("for(" + T + " i = 0; i < 127; i++) {assert i instanceof " + T + ";}");
@@ -149,7 +152,8 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("long a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("float a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertSuccess("double a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertFail("Byte a = null; byte b = a;");
+		assertFail("Byte a = null; byte b = a;", //
+				"null pointer");
 
 		// operations
 		assertSuccess("Byte a = 127; a++; assert a == -128;");
@@ -180,7 +184,8 @@ public class TestAutoboxing extends HiTest {
 		assertSuccess("long a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
 		assertSuccess("float a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
 		assertSuccess("double a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
-		assertFail("Short a = null; short b = a;");
+		assertFail("Short a = null; short b = a;", //
+				"null pointer");
 
 		// operations
 		assertSuccess("Short a = 32767; a++; assert a == -32768;");
@@ -236,13 +241,16 @@ public class TestAutoboxing extends HiTest {
 		// nulls
 		assertSuccessSerialize("Boolean a = false; Boolean b = null; assert (a && b) == false;");
 		assertSuccessSerialize("Boolean a = true; Boolean b = null; assert (a || b) == true;");
-		assertFail("Boolean a = true; Boolean b = null; assert a && b;"); // null pointer in b
-		assertFail("boolean a = false; Boolean b = null; assert a || b;"); // null pointer in b
+		assertFail("Boolean a = true; Boolean b = null; assert a && b;", //
+				"null pointer");
+		assertFail("boolean a = false; Boolean b = null; assert a || b;", //
+				"null pointer");
 
 		assertSuccessSerialize("Boolean[] a = new Boolean[3]; a[0] = (boolean)true; a[0] = !a[0]; a[1] = true; assert a[0]; assert a[1]; assert a[2] == null;");
 	}
 
 	@Test
 	public void testCharacter() {
+		// TODO
 	}
 }

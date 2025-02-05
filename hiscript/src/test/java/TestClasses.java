@@ -88,6 +88,23 @@ public class TestClasses extends HiTest {
 				"illegal start of type");
 		assertFailCompile("class A{A()}", //
 				"'{' is expected");
+
+		assertFailCompile("int x = 0; Object o = x.field;", //
+				"cannot resolve symbol 'field'");
+		assertFailCompile("int x = 0; x.get();", //
+				"cannot resolve method 'get' in 'int'");
+		assertFailCompile("class I extends int{}", //
+				"can not extends primitive class");
+		assertFailCompile("class I implements int{}", //
+				"interface expected");
+		assertFailCompile("class int {}", //
+				"class name is expected");
+		assertFailCompile("class A{} class B implements A{}", //
+				"interface expected");
+		assertFailCompile("class A{} class B implements A{}", //
+				"interface expected");
+		assertFailCompile("interface A{} interface B implements A{}", //
+				"interface cannot implements another interfaces");
 	}
 
 	@Test
@@ -115,7 +132,7 @@ public class TestClasses extends HiTest {
 				"cannot resolve symbol 'y'");
 		assertFailCompile("int x; class A{x = 1;}", //
 				"'}' is expected");
-		assertFailMessage("String x = null; int length = x.length();", //
+		assertFail("String x = null; int length = x.length();", //
 				"null pointer");
 	}
 
@@ -519,7 +536,7 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testNativeMethod() {
 		assertSuccessSerialize("class A{native void m();}");
-		assertFailMessage("class A{native void m();} new A().m();", //
+		assertFail("class A{native void m();} new A().m();", //
 				"native method 'root$0A_void_m' not found");
 
 		class A {
@@ -538,7 +555,7 @@ public class TestClasses extends HiTest {
 		HiNative.registerObject(new A());
 		assertSuccessSerialize("class A{native int m(int value);} assert new A().m(1) == 2;");
 		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
-		assertFailMessage("class A{native void error();} new A().error();", //
+		assertFail("class A{native void error();} new A().error();", //
 				"error");
 	}
 
@@ -623,7 +640,7 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{A(int x){assert x == 1;} A(int x, int y){this(x); assert y == 2;} } new A(1, 2);");
 		assertFailCompile("class A{A(){this();}} new A();", //
 				"recursive constructor invocation");
-		assertFailMessage("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);", //
+		assertFail("class A{A(int x){this(true);} A(boolean x){this(1);}} new A(1);", //
 				"recursive constructor invocation"); // recursive constructor invocation
 		assertFailCompile("class A{A(){this(1);} A(byte x){}} new A();", //
 				"constructor not found: A");
@@ -655,9 +672,9 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("enum E{} E e = null;");
 		assertSuccessSerialize("enum E{A, a}");
 		assertSuccessSerialize("enum E{e1, e2(1); int x; E(){} E(int x){this.x = x;}} assert E.e1.x == 0; assert E.e2.x == 1;");
-		assertFailMessage("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", //
+		assertFail("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", //
 				"error");
-		assertFailMessage("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", //
+		assertFail("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", //
 				"error");
 
 		// failures
@@ -749,7 +766,8 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testStackOverflow() {
-		assertFail("class A {\n\tvoid m1(int i) {\n\t\tm2(i+1);\n\t}\n\n\tvoid m2(int i) {\n\t\tm1(i+1);\n\t}\n}\nnew A().m1(1);", StackOverflowError.class);
+		assertFail("class A {\n\tvoid m1(int i) {\n\t\tm2(i+1);\n\t}\n\n\tvoid m2(int i) {\n\t\tm1(i+1);\n\t}\n}\nnew A().m1(1);", //
+				StackOverflowError.class);
 	}
 
 	@Test

@@ -306,6 +306,148 @@ public class TestExpression extends HiTest {
 		for (String o : new String[] {"|", "||", "&", "&&", "^"}) {
 			assertSuccessSerialize("interface I{boolean get(boolean x, boolean y);} I o = (x, y) -> x " + o + " y;");
 		}
+
+		assertSuccess("Integer x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccess("var x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccess("Integer x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccess("var x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+
+		assertSuccess("Boolean x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccess("var x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccess("Boolean x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccess("var x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+
+		assertFailCompile("String x = \"\"; int y = x & 1;", //
+				"operator '&' can not be applied to String, int");
+		assertFailCompile("String x = \"\"; int y = x | 1;", //
+				"operator '|' can not be applied to String, int");
+		assertFailCompile("String x = \"\"; int y = x ^ 1;", //
+				"operator '^' can not be applied to String, int");
+		assertFailCompile("Boolean x = true; int y = x & 1;", //
+				"operator '&' can not be applied to Boolean, int");
+		assertFailCompile("Boolean x = true; int y = x | 1;", //
+				"operator '|' can not be applied to Boolean, int");
+		assertFailCompile("Boolean x = true; int y = x ^ 1;", //
+				"operator '^' can not be applied to Boolean, int");
+
+		for (String o : new String[] {"+", "-", "*", "/", "%", ">", ">=", "<", "<=", "==", "!=", "&", "&&", "|", "||", "^"}) {
+			assertFailCompile("boolean x = \"\" " + o + " 1;", //
+					o.equals("+") ? "String cannot be converted to boolean" : "operator '" + o + "' can not be applied to String, int");
+			assertFailCompile("boolean x = \"\" " + o + " true;", //
+					o.equals("+") ? "String cannot be converted to boolean" : "operator '" + o + "' can not be applied to String, boolean");
+			assertFailCompile("boolean x = 1 " + o + " true;", //
+					"operator '" + o + "' can not be applied to int, boolean");
+		}
+		assertSuccess("Boolean x = (boolean) true; assert x;");
+
+		assertSuccess("boolean x = true; x ^= true;");
+		assertSuccess("int x = 1; x ^= 1;");
+		assertFailCompile("boolean x = true; x ^= 1;", //
+				"operator '^=' can not be applied to boolean, int");
+		assertFailCompile("boolean x = true; x ^= 1.1;", //
+				"operator '^=' can not be applied to boolean, double");
+		assertFailCompile("int x = 1; x ^= true;", //
+				"operator '^=' can not be applied to int, boolean");
+
+		assertFailCompile("int x = 1; x += true;", //
+				"operator '+=' can not be applied to int, boolean");
+		assertFailCompile("int x = 1; x += \"\";", //
+				"operator '+=' can not be applied to int, String");
+		assertFailCompile("int x = 1; x -= true;", //
+				"operator '-=' can not be applied to int, boolean");
+		assertFailCompile("int x = 1; x -= \"\";", //
+				"operator '-=' can not be applied to int, String");
+
+		assertSuccess("int x = 2; x >>=1; assert x == 1;");
+		assertFailCompile("int x = 2; x >>=true;", //
+				"operator '>>=' can not be applied to int, boolean");
+		assertSuccess("int x = 1; x <<=1; assert x == 2;");
+		assertFailCompile("int x = 2; x <<=true;", //
+				"operator '<<=' can not be applied to int, boolean");
+		assertFailCompile("int x = 1; x <<<=1;", //
+				"invalid expression");
+		assertSuccess("int x = 2; x >>>=1; assert x == 1;");
+		assertFailCompile("int x = 2; x >>>=true;", //
+				"operator '>>>=' can not be applied to int, boolean");
+		assertFailCompile("int x = 1 >> true;", //
+				"operator '>>' can not be applied to int, boolean");
+		assertFailCompile("int x = 1 << true;", //
+				"operator '<<' can not be applied to int, boolean");
+		assertFailCompile("int x = 1 >>> true;", //
+				"operator '>>>' can not be applied to int, boolean");
+
+		// divide
+		assertFailCompile("double x = 1; x *= true;", //
+				"operator '*=' can not be applied to double, boolean");
+		assertFailCompile("double x = 1; x /= true;", //
+				"operator '/=' can not be applied to double, boolean");
+		assertFailCompile("double x = 1; x %= true;", //
+				"operator '%=' can not be applied to double, boolean");
+		assertFailCompile("boolean x = true; x =* 1;", //
+				"not a statement");
+		assertFailCompile("boolean x = true; x /= 1;", //
+				"operator '/=' can not be applied to boolean, int");
+		assertFailCompile("boolean x = true; x %= 1;", //
+				"operator '%=' can not be applied to boolean, int");
+
+		// equals
+		assertSuccess("var x = true; var y = true; assert x == y;");
+		assertSuccess("var x = true; var y = false; assert x != y;");
+
+		// null
+		assertSuccess("Object x = null; assert null == x;");
+		assertSuccess("Object x = null; assert x == null;");
+		assertSuccess("assert null == null;");
+		assertSuccess("Object x = null; assert x != \"\";");
+		assertSuccess("Object x = null; assert \"\" != x;");
+		assertSuccess("assert null != \"\";");
+		assertSuccess("assert \"\" != null;");
+
+		// zero
+		assertFail("double x = 1; x /= (byte)0;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= (short)0;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= (char)0;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= 0;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= 0L;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= 0f;", //
+				"divide by zero");
+		assertFail("double x = 1; x /= 0.0;", //
+				"divide by zero");
+
+		assertFail("double x = 1 / (byte)0;", //
+				"divide by zero");
+		assertFail("double x = 1 / (short)0;", //
+				"divide by zero");
+		assertFail("double x = 1 / (char)0;", //
+				"divide by zero");
+		assertFail("double x = 1 / 0;", //
+				"divide by zero");
+		assertFail("double x = 1 / 0L;", //
+				"divide by zero");
+		assertFail("double x = 1 / 0f;", //
+				"divide by zero");
+		assertFail("double x = 1 / 0.0;", //
+				"divide by zero");
+
+		assertFail("double x = 1; byte y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; short y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; char y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; int y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; long y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; float y = 0; double z = x / y;", //
+				"divide by zero");
+		assertFail("double x = 1; double y = 0; double z = x / y;", //
+				"divide by zero");
 	}
 
 	@Test
@@ -570,24 +712,37 @@ public class TestExpression extends HiTest {
 		// TODO
 		// assertFailCompile("int x = 2; int y = switch(x){case 1 -> 10; case 2 -> 20;};"); // not all cases
 		// assertFailCompile("String x = \"c\"; int y = switch(x){case null -> 0; case \"a\", \"b\" -> 1; case \"c\" -> 2;};"); // not all cases
-		assertFailCompile("int x = 1; int y = switch(x){case 1 -> 10; case 2 -> true;};");
-		assertFailCompile("int x = switch(1){case 1 -> 1; case \"\" -> 2;};");
+		assertFailCompile("int x = 1; int y = switch(x){case 1 -> 10; case 2 -> true;};", //
+				"incompatible switch values types; found boolean, required int");
+		assertFailCompile("int x = switch(1){case 1 -> 1; case \"\" -> 2;};", //
+				"incompatible switch case types; found String, required int");
 
 		// failures
-		assertFailCompile("switch(1){case 1 -> 1;};");
-		assertFailCompile("int x = switch(){case 1 -> 1;};");
-		assertFailCompile("int x = switch(1){case 1 -> ;};");
-		assertFailCompile("int x = switch(1){case 1;};");
-		assertFailCompile("int x = switch(1){case 1 -> {};};");
-		assertFailCompile("int x = switch(1){case -> 1;};");
-		assertFailCompile("int x = switch(1){case 1 -> 1; default;};");
-		assertFailCompile("int x = switch(1){case 1 -> 1; default ->;};");
-		assertFailCompile("int x = switch(1){case 1 -> 1; default -> \"\";};");
-		assertFailCompile("String s = \"\"; int x = switch(1){case s -> 1;};");
-		assertFailCompile("int x = switch(1){case 1 -> \"a\"; case 2 -> \"b\";};");
+		assertFailCompile("switch(1){case 1 -> 1;};", //
+				"':' is expected");
+		assertFailCompile("int x = switch(){case 1 -> 1;};", //
+				"expression expected");
+		assertFailCompile("int x = switch(1){case 1 -> ;};", //
+				"expression expected");
+		assertFailCompile("int x = switch(1){case 1;};", //
+				"'->' is expected");
+		assertFailCompile("int x = switch(1){case 1 -> {};};", //
+				"expression expected");
+		assertFailCompile("int x = switch(1){case -> 1;};", //
+				"empty case value");
+		assertFailCompile("int x = switch(1){case 1 -> 1; default;};", //
+				"'->' is expected");
+		assertFailCompile("int x = switch(1){case 1 -> 1; default ->;};", //
+				"expression expected");
+		assertFailCompile("int x = switch(1){case 1 -> 1; default -> \"\";};", //
+				"incompatible switch values types; found String, required int");
+		assertFailCompile("String s = \"\"; int x = switch(1){case s -> 1;};", //
+				"'->' is expected");
+		assertFailCompile("int x = switch(1){case 1 -> \"a\"; case 2 -> \"b\";};", //
+				"incompatible types: String cannot be converted to int");
 		assertFailCompile("int x = switch(1){};", //
 				"expression switch without cases");
-		assertFailMessage("int x = switch(1){case 2 -> 2;};", //
+		assertFail("int x = switch(1){case 2 -> 2;};", //
 				"no suitable value in the switch");
 
 		assertFailCompile("int x = switch(\"\"){case String s, Integer i -> 1;};", //
@@ -611,25 +766,40 @@ public class TestExpression extends HiTest {
 				assertSuccessSerialize(t + " x = (" + t + ")(" + t2 + ")127; assert x == 127;");
 			}
 			assertSuccessSerialize(t + " x = (" + t + ")(double)(float)(char)(long)(byte)127.0; assert x == 127;");
-			assertFailCompile(t + " x = (boolean)(byte)1;");
-			assertFailCompile(t + " x = (" + t + ")\"1\";");
-			assertFailCompile(t + " x = (" + t + ")true;");
-			assertFailCompile(t + " x = (" + t + ");");
-			assertFailCompile(t + " x = (" + t + ")new int[0];");
-			assertFailCompile(t + " x = (" + t + ")new String[1];");
-			assertFailCompile(t + " x = (void)1;");
-			assertFailCompile("String s = (String)(" + t + ")1;");
-			assertFailCompile("boolean b = (boolean)(" + t + ")1;");
-			assertFailCompile("String s = (" + t + ")\"\";");
-			assertFailCompile("void s = (" + t + ")1;");
-			assertFailCompile("boolean b = (" + t + ")true;");
-			assertFailCompile("class A{} " + t + " x = (" + t + ")A;");
+			assertFailCompile(t + " x = (boolean)(byte)1;", //
+					"cannot cast byte to boolean");
+			assertFailCompile(t + " x = (" + t + ")\"1\";", //
+					"cannot cast String to " + t);
+			assertFailCompile(t + " x = (" + t + ")true;", //
+					"cannot cast boolean to " + t);
+			assertFailCompile(t + " x = (" + t + ");", //
+					"invalid expression");
+			assertFailCompile(t + " x = (" + t + ")new int[0];", //
+					"cannot cast int[] to " + t);
+			assertFailCompile(t + " x = (" + t + ")new String[1];", //
+					"cannot cast String[] to " + t);
+			assertFailCompile(t + " x = (void)1;", //
+					"expression expected");
+			assertFailCompile("String s = (String)(" + t + ")1;", //
+					"cannot cast " + t + " to String");
+			assertFailCompile("boolean b = (boolean)(" + t + ")1;", //
+					"cannot cast " + t + " to boolean");
+			assertFailCompile("String s = (" + t + ")\"\";", //
+					"cannot cast String to " + t);
+			assertFailCompile("void s = (" + t + ")1;", //
+					"unexpected token");
+			assertFailCompile("boolean b = (" + t + ")true;", //
+					"cannot cast boolean to " + t);
+			assertFailCompile("class A{} " + t + " x = (" + t + ")A;", //
+					"cannot cast A to " + t);
 
 			assertSuccessSerialize(t + "[] x = (" + t + "[])new " + t + "[]{127}; assert x[0] == 127;");
 			for (String t2 : new String[] {"byte", "short", "int", "long", "float", "double", "char"}) {
 				if (!t.equals(t2)) {
-					assertFailCompile(t + "[] x = (" + t2 + "[])new " + t + "[]{127}; assert x[0] == 127;");
-					assertFailCompile(t + "[] x = (" + t + "[])new " + t2 + "[]{127}; assert x[0] == 127;");
+					assertFailCompile(t + "[] x = (" + t2 + "[])new " + t + "[]{127}; assert x[0] == 127;", //
+							"cannot cast " + t + "[] to " + t2 + "[]");
+					assertFailCompile(t + "[] x = (" + t + "[])new " + t2 + "[]{127}; assert x[0] == 127;", //
+							"cannot cast " + t2 + "[] to " + t + "[]");
 				}
 			}
 		}
@@ -637,32 +807,46 @@ public class TestExpression extends HiTest {
 		// autocast
 		assertSuccessSerialize("byte x = 1; assert x == (byte)1;");
 		assertSuccessSerialize("byte x = 'a'; assert x == (byte)'a';");
-		assertFailCompile("byte x = 1l;");
-		assertFailCompile("byte x = 1f;");
-		assertFailCompile("byte x = 1d;");
-		assertFailCompile("byte x = 129;");
+		assertFailCompile("byte x = 1l;", //
+				"incompatible types: long cannot be converted to byte");
+		assertFailCompile("byte x = 1f;", //
+				"incompatible types: float cannot be converted to byte");
+		assertFailCompile("byte x = 1d;", //
+				"incompatible types: double cannot be converted to byte");
+		assertFailCompile("byte x = 129;", //
+				"incompatible types: int cannot be converted to byte");
 
 		assertSuccessSerialize("short x = 1; assert x == (short)1;");
 		assertSuccessSerialize("short x = 'a'; assert x == (short)'a';");
-		assertFailCompile("short x = 1l;");
-		assertFailCompile("short x = 1f;");
-		assertFailCompile("short x = 1d;");
-		assertFailCompile("short x = " + (Short.MAX_VALUE + 1) + ";");
+		assertFailCompile("short x = 1l;", //
+				"incompatible types: long cannot be converted to short");
+		assertFailCompile("short x = 1f;", //
+				"incompatible types: float cannot be converted to short");
+		assertFailCompile("short x = 1d;", //
+				"incompatible types: double cannot be converted to short");
+		assertFailCompile("short x = " + (Short.MAX_VALUE + 1) + ";", //
+				"incompatible types: int cannot be converted to short");
 
 		assertSuccessSerialize("int x = 1; assert x == (int)1;");
 		assertSuccessSerialize("int x = 'a'; assert x == (int)'a';");
-		assertFailCompile("int x = 1l;");
-		assertFailCompile("int x = 1f;");
-		assertFailCompile("int x = 1d;");
+		assertFailCompile("int x = 1l;", //
+				"incompatible types: long cannot be converted to int");
+		assertFailCompile("int x = 1f;", //
+				"incompatible types: float cannot be converted to int");
+		assertFailCompile("int x = 1d;", //
+				"incompatible types: double cannot be converted to int");
 
 		assertSuccessSerialize("long x = 1; assert x == 1L;");
 		assertSuccessSerialize("long x = 'a'; assert x == (long)'a';");
-		assertFailCompile("long x = 1f;");
-		assertFailCompile("long x = 1d;");
+		assertFailCompile("long x = 1f;", //
+				"incompatible types: float cannot be converted to long");
+		assertFailCompile("long x = 1d;", //
+				"incompatible types: double cannot be converted to long");
 
 		assertSuccessSerialize("float x = 1; assert x == 1f;");
 		assertSuccessSerialize("float x = 'a'; assert x == (float)'a';");
-		assertFailCompile("float x = 1d;");
+		assertFailCompile("float x = 1d;", //
+				"incompatible types: double cannot be converted to float");
 
 		assertSuccessSerialize("double x = 1; assert x == 1d;");
 		assertSuccessSerialize("double x = 'a'; assert x == (double)'a';");
@@ -671,44 +855,66 @@ public class TestExpression extends HiTest {
 
 		// assignments
 		assertSuccessSerialize("byte a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("short a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("char a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("int a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("long a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("float a = 1; byte x = a; assert x == 1;");
-		assertFailCompile("double a = 1; byte x = a; assert x == 1;");
+		assertFailCompile("short a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: short cannot be converted to byte");
+		assertFailCompile("char a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: char cannot be converted to byte");
+		assertFailCompile("int a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: int cannot be converted to byte");
+		assertFailCompile("long a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: long cannot be converted to byte");
+		assertFailCompile("float a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: float cannot be converted to byte");
+		assertFailCompile("double a = 1; byte x = a; assert x == 1;", //
+				"incompatible types: double cannot be converted to byte");
 
 		assertSuccessSerialize("byte a = 1; short x = a; assert x == 1;");
 		assertSuccessSerialize("short a = 1; short x = a; assert x == 1;");
-		assertFailCompile("char a = 1; short x = a; assert x == 1;");
-		assertFailCompile("int a = 1; short x = a; assert x == 1;");
-		assertFailCompile("long a = 1; short x = a; assert x == 1;");
-		assertFailCompile("float a = 1; short x = a; assert x == 1;");
-		assertFailCompile("double a = 1; short x = a; assert x == 1;");
+		assertFailCompile("char a = 1; short x = a; assert x == 1;", //
+				"incompatible types: char cannot be converted to short");
+		assertFailCompile("int a = 1; short x = a; assert x == 1;", //
+				"incompatible types: int cannot be converted to short");
+		assertFailCompile("long a = 1; short x = a; assert x == 1;", //
+				"incompatible types: long cannot be converted to short");
+		assertFailCompile("float a = 1; short x = a; assert x == 1;", //
+				"incompatible types: float cannot be converted to short");
+		assertFailCompile("double a = 1; short x = a; assert x == 1;", //
+				"incompatible types: double cannot be converted to short");
 
-		assertFailCompile("byte a = 1; char x = a; assert x == 1;");
-		assertFailCompile("short a = 1; char x = a; assert x == 1;");
+		assertFailCompile("byte a = 1; char x = a; assert x == 1;", //
+				"incompatible types: byte cannot be converted to char");
+		assertFailCompile("short a = 1; char x = a; assert x == 1;", //
+				"incompatible types: short cannot be converted to char");
 		assertSuccessSerialize("char a = 1; char x = a; assert x == 1;");
-		assertFailCompile("int a = 1; char x = a; assert x == 1;");
-		assertFailCompile("long a = 1; char x = a; assert x == 1;");
-		assertFailCompile("float a = 1; char x = a; assert x == 1;");
-		assertFailCompile("double a = 1; char x = a; assert x == 1;");
+		assertFailCompile("int a = 1; char x = a; assert x == 1;", //
+				"incompatible types: int cannot be converted to char");
+		assertFailCompile("long a = 1; char x = a; assert x == 1;", //
+				"incompatible types: long cannot be converted to char");
+		assertFailCompile("float a = 1; char x = a; assert x == 1;", //
+				"incompatible types: float cannot be converted to char");
+		assertFailCompile("double a = 1; char x = a; assert x == 1;", //
+				"incompatible types: double cannot be converted to char");
 
 		assertSuccessSerialize("byte a = 1; int x = a; assert x == 1;");
 		assertSuccessSerialize("short a = 1; int x = a; assert x == 1;");
 		assertSuccessSerialize("char a = 1; int x = a; assert x == 1;");
 		assertSuccessSerialize("int a = 1; int x = a; assert x == 1;");
-		assertFailCompile("long a = 1; int x = a; assert x == 1;");
-		assertFailCompile("float a = 1; int x = a; assert x == 1;");
-		assertFailCompile("double a = 1; int x = a; assert x == 1;");
+		assertFailCompile("long a = 1; int x = a;", //
+				"incompatible types: long cannot be converted to int");
+		assertFailCompile("float a = 1; int x = a; assert x == 1;", //
+				"incompatible types: float cannot be converted to int");
+		assertFailCompile("double a = 1; int x = a; assert x == 1;", //
+				"incompatible types: double cannot be converted to int");
 
 		assertSuccessSerialize("byte a = 1; long x = a; assert x == 1L;");
 		assertSuccessSerialize("short a = 1; long x = a; assert x == 1L;");
 		assertSuccessSerialize("char a = 1; long x = a; assert x == 1L;");
 		assertSuccessSerialize("int a = 1; long x = a; assert x == 1L;");
 		assertSuccessSerialize("long a = 1; long x = a; assert x == 1L;");
-		assertFailCompile("float a = 1; long x = a; assert x == 1L;");
-		assertFailCompile("double a = 1; long x = a; assert x == 1L;");
+		assertFailCompile("float a = 1; long x = a; assert x == 1L;", //
+				"incompatible types: float cannot be converted to long");
+		assertFailCompile("double a = 1; long x = a; assert x == 1L;", //
+				"incompatible types: double cannot be converted to long");
 
 		assertSuccessSerialize("byte a = 1; float x = a; assert x == 1F;");
 		assertSuccessSerialize("short a = 1; float x = a; assert x == 1F;");
@@ -716,7 +922,8 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("int a = 1; float x = a; assert x == 1F;");
 		assertSuccessSerialize("long a = 1; float x = a; assert x == 1F;");
 		assertSuccessSerialize("float a = 1; float x = a; assert x == 1F;");
-		assertFailCompile("double a = 1; float x = a; assert x == 1F;");
+		assertFailCompile("double a = 1; float x = a; assert x == 1F;", //
+				"incompatible types: double cannot be converted to float");
 
 		assertSuccessSerialize("byte a = 1; double x = a; assert x == 1D;");
 		assertSuccessSerialize("short a = 1; double x = a; assert x == 1D;");
@@ -741,7 +948,8 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("var x = 1; var y = 2; assert x != y;");
 		assertSuccessSerialize("var x = 1; int y = 2; assert x != y;");
 
-		assertFailCompile("assert true != 2;");
+		assertFailCompile("assert true != 2;", //
+				"operator '!=' can not be applied to boolean, int");
 		assertFailSerialize("assert \"a\" != \"a\";");
 		assertSuccessSerialize("assert new Integer(1) != new Integer(1);");
 
@@ -753,5 +961,18 @@ public class TestExpression extends HiTest {
 	@Test
 	public void testArrays() {
 		assertSuccessSerialize("int[] x = {2}; x[0] *= 2; assert x[0] == 4;");
+	}
+
+	@Test
+	public void testGetAndSet() {
+		for (String t : new String[] {"byte", "short", "int", "long", "float", "double"}) {
+			assertSuccess("byte x = 1; " + t + " y = x;");
+		}
+		for (String t : new String[] {"short", "int", "long", "float", "double"}) {
+			assertSuccess("short x = 1; " + t + " y = x;");
+		}
+		for (String t : new String[] {"int", "long", "float", "double"}) {
+			assertSuccess("int x = 1; " + t + " y = x;");
+		}
 	}
 }

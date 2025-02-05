@@ -1,13 +1,10 @@
+import org.opentest4j.AssertionFailedError;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
@@ -63,19 +60,21 @@ public abstract class HiTest {
 	public void assertFail(String script) {
 		try {
 			execute(script);
-			onFail(script, "executed successfully");
+			onFail(script, "executed successfully, expected failure");
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			onFail(script, "Compilation failed: expected exception");
+		} catch (AssertionFailedError e) {
+			throw e;
 		} catch (Throwable e) {
 			// expected
 			System.err.println("Success! Expected failure: " + e.getMessage());
 		}
 	}
 
-	public void assertFailMessage(String script, String expectMessage) {
+	public void assertFail(String script, String expectMessage) {
 		try {
 			execute(script);
-			onFail(script, "executed successfully");
+			onFail(script, "executed successfully, expected failure: " + expectMessage);
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			onFail(script, "Compilation failed: expected exception");
 		} catch (Throwable e) {

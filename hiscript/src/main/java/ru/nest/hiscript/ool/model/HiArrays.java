@@ -169,6 +169,9 @@ public class HiArrays implements PrimitiveTypes {
 
 		if (type.isArray()) {
 			dst.object = value.getArray();
+			if (value.ctx.exitFromBlock()) {
+				return;
+			}
 			Array.set(parentArray, index, dst.object);
 		} else if (type.isPrimitive()) {
 			// autobox
@@ -176,34 +179,58 @@ public class HiArrays implements PrimitiveTypes {
 			switch (typeIndex) {
 				case BOOLEAN:
 					dst.bool = value.getBoolean();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setBoolean(parentArray, index, dst.bool);
 					break;
 				case CHAR:
 					dst.character = value.getChar();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setChar(parentArray, index, dst.character);
 					break;
 				case BYTE:
 					dst.byteNumber = value.getByte();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setByte(parentArray, index, dst.byteNumber);
 					break;
 				case SHORT:
 					dst.shortNumber = value.getShort();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setShort(parentArray, index, dst.shortNumber);
 					break;
 				case INT:
 					dst.intNumber = value.getInt();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setInt(parentArray, index, dst.intNumber);
 					break;
 				case LONG:
 					dst.longNumber = value.getLong();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setLong(parentArray, index, dst.longNumber);
 					break;
 				case FLOAT:
 					dst.floatNumber = value.getFloat();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setFloat(parentArray, index, dst.floatNumber);
 					break;
 				case DOUBLE:
 					dst.doubleNumber = value.getDouble();
+					if (value.ctx.exitFromBlock()) {
+						return;
+					}
 					Array.setDouble(parentArray, index, dst.doubleNumber);
 					break;
 			}
@@ -212,6 +239,9 @@ public class HiArrays implements PrimitiveTypes {
 			if (value.valueClass.isPrimitive()) {
 				value.object = ((HiClassPrimitive) value.valueClass).autobox(value.ctx, value);
 				value.valueClass = value.valueClass.getAutoboxClass();
+				if (value.ctx.exitFromBlock()) {
+					return;
+				}
 			}
 			dst.object = value.getObject();
 			dst.lambdaClass = null;

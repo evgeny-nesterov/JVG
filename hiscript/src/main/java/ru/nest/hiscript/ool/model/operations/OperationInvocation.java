@@ -425,8 +425,14 @@ public class OperationInvocation extends BinaryOperation {
 				// autobox
 				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass();
 				HiClass origArgClass = argClass;
-				if (argClass.isPrimitive() && expectedArgClass.isObject()) {
-					argClass = argClass.getAutoboxClass();
+				if (argClass.isPrimitive()) {
+					if (expectedArgClass.isObject()) {
+						argClass = argClass.getAutoboxClass();
+					}
+				} else if (expectedArgClass.isPrimitive()) {
+					if (argClass.getAutoboxedPrimitiveClass() != null) {
+						argClass = argClass.getAutoboxedPrimitiveClass();
+					}
 				}
 
 				// on null argument update field class from ClazzNull on argument class
@@ -447,9 +453,18 @@ public class OperationInvocation extends BinaryOperation {
 				}
 				// TODO: update array cell type
 
+				if (ctx.exitFromBlock()) {
+					return;
+				}
+
 				argsField.name = method.argNames[i];
 				argsField.initialized = true;
 			}
+		}
+
+		// TODO remove
+		if (ctx.exitFromBlock()) {
+			return;
 		}
 
 		// enter into method
