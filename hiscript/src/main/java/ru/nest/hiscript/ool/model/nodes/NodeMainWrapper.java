@@ -79,10 +79,11 @@ public class NodeMainWrapper extends HiNode {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		body.code(os);
+		super.code(os);
+		os.writeNullable(body);
 	}
 
 	public static NodeMainWrapper decode(DecodeContext os) throws IOException {
-		return new NodeMainWrapper(os.getClassLoader(), NodeBlock.decode(os), null);
+		return new NodeMainWrapper(os.getClassLoader(), (NodeBlock) os.readNullable(HiNode.class), null);
 	}
 }

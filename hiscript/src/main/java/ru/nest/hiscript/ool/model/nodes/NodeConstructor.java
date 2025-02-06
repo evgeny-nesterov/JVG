@@ -1,12 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
@@ -37,9 +35,11 @@ public class NodeConstructor extends HiNode {
 		name = clazz.getFullName(clazz.getClassLoader());
 	}
 
-	private NodeConstructor(HiNode[] argValues) {
+	private NodeConstructor(Type type, HiNode[] argValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
+		this.type = type;
 		this.argValues = argValues;
+		// clazz has to be deserialized
 	}
 
 	public NodeType nodeType;
@@ -48,13 +48,24 @@ public class NodeConstructor extends HiNode {
 
 	public HiNode[] argValues;
 
-	public String name;
+	private String name;
 
 	private HiClass clazz;
 
 	private Type type;
 
 	private HiConstructor constructor;
+
+	public String getName() {
+		if (name == null) {
+			if (clazz != null) {
+				name = clazz.getFullName(clazz.getClassLoader());
+			} else {
+				return type.fullName;
+			}
+		}
+		return name;
+	}
 
 	// generic
 	public boolean validateDeclarationGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -103,16 +114,16 @@ public class NodeConstructor extends HiNode {
 		}
 
 		if (clazz == null) {
-			validationInfo.error("class not found: " + name, getToken());
+			validationInfo.error("class not found: " + type.fullName, getToken());
 			return false;
 		} else if (clazz.isInterface) {
-			validationInfo.error("cannot create object from interface '" + name + "'", getToken());
+			validationInfo.error("cannot create object from interface '" + clazz.getNameDescr() + "'", getToken());
 			return false;
 		} else if (clazz.isEnum()) {
 			validationInfo.error("enum types cannot be instantiated", getToken());
 		}
 
-		// generics
+		// @generics
 		if (clazz.generics != null) {
 			valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
 		} else if (nodeType != null && type.parameters != null) {
@@ -137,8 +148,8 @@ public class NodeConstructor extends HiNode {
 			validationInfo.error("qualified new of static class", getToken());
 			valid = false;
 		} else if (!clazz.isStatic()) {
-			if (ctx.level.enclosingClass == null && name.indexOf('.') != -1) {
-				validationInfo.error("'" + name + "' is not an enclosing class", getToken());
+			if (ctx.level.enclosingClass == null && getName().indexOf('.') != -1) {
+				validationInfo.error("'" + getName() + "' is not an enclosing class", getToken());
 				valid = false;
 			}
 			if (ctx.level.enclosingClass != null && !ctx.level.isEnclosingObject) {
@@ -336,43 +347,29 @@ public class NodeConstructor extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-
-		os.writeBoolean(nodeType != null);
-		if (nodeType != null) {
-			os.write(nodeType);
-		} else {
-			os.writeClass(clazz);
-			os.writeType(type);
-		}
-
 		os.writeByte(argValues != null ? argValues.length : 0);
 		os.writeArray(argValues);
+		os.writeType(type);
+		os.writeClass(clazz);
+		if (argsClasses != null) {
+			for (int i = 0; i < argsClasses.length; i++) {
+				os.writeClass(argsClasses[i]);
+			}
+		}
+		constructor.codeLink(os);
 	}
 
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
-		boolean isType = os.readBoolean();
-		if (isType) {
-			NodeType nodeType = (NodeType) os.read(HiNode.class);
-			HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-			return new NodeConstructor(nodeType, argValues);
-		} else {
-			try {
-				HiClass clazz = os.readClass();
-				Type type = os.readType();
-				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-				return new NodeConstructor(clazz, type, argValues);
-			} catch (HiNoClassException exc) {
-				HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-				final NodeConstructor node = new NodeConstructor(argValues);
-				os.addClassLoadListener(new ClassLoadListener() {
-					@Override
-					public void classLoaded(HiClass clazz) {
-						node.clazz = clazz;
-						node.name = clazz.fullName.intern();
-					}
-				}, exc.getIndex());
-				return node;
-			}
+		int argsCount = os.readByte();
+		HiNode[] argValues = os.readArray(HiNode.class, argsCount);
+		NodeConstructor node = new NodeConstructor(os.readType(), argValues);
+		os.readClass(clazz -> node.clazz = clazz);
+		node.argsClasses = new HiClass[argsCount];
+		for (int i = 0; i < argsCount; i++) {
+			final int index = i;
+			os.readClass(clazz -> node.argsClasses[index] = clazz);
 		}
+		HiConstructor.decodeLink(os, constructor -> node.constructor = constructor);
+		return node;
 	}
 }

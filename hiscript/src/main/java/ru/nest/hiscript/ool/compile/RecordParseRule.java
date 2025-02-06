@@ -55,7 +55,7 @@ public class RecordParseRule extends ParserUtil {
 				tokenizer.error("record name is expected");
 			}
 
-			// generics
+			// @generics
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);

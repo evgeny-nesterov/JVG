@@ -217,7 +217,7 @@ public class DecodeContext {
 
 	private final Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>();
 
-	public void addClassLoadListener(ClassLoadListener listener, int index) {
+	public void addClassLoadListener(ClassLoadListener<HiClass> listener, int index) {
 		DecodeContext ctx = getRoot();
 		List<ClassLoadListener> list = ctx.classLoadListeners.computeIfAbsent(index, k -> new ArrayList<>());
 		list.add(listener);
@@ -248,9 +248,27 @@ public class DecodeContext {
 		}
 	}
 
+	/**
+	 * Read class or receive HiNoClassException.
+	 * If HiNoClassException occur listen class loaded and update class value on event:
+	 * try {
+	 * 		HiClass clazz = os.readClass();
+	 * 		... use clazz ...
+	 * } catch (HiNoClassException exc) {
+	 * 		os.addClassLoadListener(clazz -> ... use clazz ..., exc.getIndex());
+	 * }
+	 */
 	public HiClass readClass() throws IOException, HiNoClassException {
-		int clazzIndex = is.readShort();
-		return getClass(clazzIndex);
+		int classIndex = is.readShort();
+		return getClass(classIndex);
+	}
+
+	public void readClass(ClassLoadListener<HiClass> callback) throws IOException, HiNoClassException {
+		try {
+			callback.classLoaded(readClass());
+		} catch (HiNoClassException exc) {
+			addClassLoadListener(callback, exc.getIndex());
+		}
 	}
 
 	public HiClass getClass(int index) throws HiNoClassException {
@@ -381,7 +399,7 @@ public class DecodeContext {
 
 	public <N> N read(Class<N> type) {
 		try {
-			if (type == HiNodeIF.class) {
+			if (type == HiNodeIF.class || type == HiNode.class) {
 				return (N) HiNode.decode(this);
 			} else {
 				Method m = type.getMethod("decode", DecodeContext.class);

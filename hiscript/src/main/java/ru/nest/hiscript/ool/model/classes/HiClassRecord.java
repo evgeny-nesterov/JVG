@@ -17,7 +17,7 @@ public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
 
 	public HiClassRecord(HiClassLoader classLoader, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
-		super(classLoader, Type.recordType, null, null, null, name, generics, type, classResolver);
+		super(classLoader, Type.recordType, null, null, name, generics, type, classResolver);
 	}
 
 	@Override

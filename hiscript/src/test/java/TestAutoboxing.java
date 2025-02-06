@@ -28,44 +28,44 @@ public class TestAutoboxing extends HiTest {
 			boolean cacheable = this.cacheable[i];
 
 			// primitive => autobox object
-			assertSuccess(T + " a = (byte)127; assert a == 127;");
-			assertSuccess(T + " a = 127; assert a == 127;");
-			assertSuccess(T + " a = (short)127; assert a == 127;");
-			assertSuccess(T + " a = (" + t + ")127; assert a != null;");
-			assertSuccess(T + " a = 127; assert a instanceof " + T + ";");
+			assertSuccessSerialize(T + " a = (byte)127; assert a == 127;");
+			assertSuccessSerialize(T + " a = 127; assert a == 127;");
+			assertSuccessSerialize(T + " a = (short)127; assert a == 127;");
+			assertSuccessSerialize(T + " a = (" + t + ")127; assert a != null;");
+			assertSuccessSerialize(T + " a = 127; assert a instanceof " + T + ";");
 			if (!t.equals("char")) {
-				assertSuccess(T + " a = null; a = 127; assert a.toString().equals(\"\" + (" + t + ")127);");
-				assertSuccess(T + " a = 1; assert a instanceof Number;");
+				assertSuccessSerialize(T + " a = null; a = 127; assert a.toString().equals(\"\" + (" + t + ")127);");
+				assertSuccessSerialize(T + " a = 1; assert a instanceof Number;");
 			} else {
-				assertSuccess(T + " a = null; a = 127; assert a.toString().equals(\"" + (char) 127 + "\");");
-				assertSuccess(T + " a = 1; assert a instanceof Character;");
+				assertSuccessSerialize(T + " a = null; a = 127; assert a.toString().equals(\"" + (char) 127 + "\");");
+				assertSuccessSerialize(T + " a = 1; assert a instanceof Character;");
 			}
-			assertSuccess(T + " a = 127; " + T + " b = a; assert b == a; assert b == 127;");
+			assertSuccessSerialize(T + " a = 127; " + T + " b = a; assert b == a; assert b == 127;");
 
 			// create autobox object
-			assertSuccess(T + " a = new " + T + "((" + t + ")127); assert a == 127;");
-			assertSuccess("var a = new " + T + "((" + t + ")127); assert a == 127;");
+			assertSuccessSerialize(T + " a = new " + T + "((" + t + ")127); assert a == 127;");
+			assertSuccessSerialize("var a = new " + T + "((" + t + ")127); assert a == 127;");
 
 			// operations
-			assertSuccess(T + " a = 1; " + T + " b = 2; " + T + " c = 3; assert a + b == c;");
+			assertSuccessSerialize(T + " a = 1; " + T + " b = 2; " + T + " c = 3; assert a + b == c;");
 			for (String operation : operations) {
 				String B1 = "new " + T + "((" + t + ")63)";
 				String b1 = "(" + t + ")63";
 				String B2 = "new " + T + "((" + t + ")3)";
 				String b2 = "(" + t + ")3";
-				assertSuccess("assert (" + B1 + " " + operation + " " + b2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
-				assertSuccess("assert (" + b1 + " " + operation + " " + B2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
-				assertSuccess("assert (" + B1 + " " + operation + " " + B2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
+				assertSuccessSerialize("assert (" + B1 + " " + operation + " " + b2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
+				assertSuccessSerialize("assert (" + b1 + " " + operation + " " + B2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
+				assertSuccessSerialize("assert (" + B1 + " " + operation + " " + B2 + ") == (" + b1 + " " + operation + " " + b2 + ");");
 			}
 
-			assertSuccess(T + " a = 1; a++; assert a == 2;");
-			assertSuccess(T + " a = 1; ++a; assert a == 2;");
-			assertSuccess(T + " a = 1; a--; assert a == 0;");
-			assertSuccess(T + " a = 1; --a; assert a == 0;");
+			assertSuccessSerialize(T + " a = 1; a++; assert a == 2;");
+			assertSuccessSerialize(T + " a = 1; ++a; assert a == 2;");
+			assertSuccessSerialize(T + " a = 1; a--; assert a == 0;");
+			assertSuccessSerialize(T + " a = 1; --a; assert a == 0;");
 			for (String operation : operations) {
 				String script = T + " a = 32; a " + operation + "= 1;";
 				if (allowEquatePlus) {
-					assertSuccess(script);
+					assertSuccessSerialize(script);
 				} else {
 					assertFailCompile(script, //
 							"can not be applied");
@@ -73,17 +73,17 @@ public class TestAutoboxing extends HiTest {
 			}
 			assertFailCompile(T + " a = 32; a ~= 1;", //
 					"not a statement");
-			assertSuccess(T + " a = 1; assert a > 0;");
-			assertSuccess(T + " a = 1; assert a >= 0;");
-			assertSuccess(T + " a = 1; assert a < 2;");
-			assertSuccess(T + " a = 1; assert a <= 2;");
-			assertSuccess(T + " a = 1; assert a != 2;");
+			assertSuccessSerialize(T + " a = 1; assert a > 0;");
+			assertSuccessSerialize(T + " a = 1; assert a >= 0;");
+			assertSuccessSerialize(T + " a = 1; assert a < 2;");
+			assertSuccessSerialize(T + " a = 1; assert a <= 2;");
+			assertSuccessSerialize(T + " a = 1; assert a != 2;");
 			if (cacheable) {
-				assertSuccess(T + " a = 1; " + t + " b = a; " + T + " c = a; " + T + " d = b; assert a == c; assert a == d;");
-				assertSuccess(T + " a = 1; " + T + " b = 1; assert a == b;"); // cached value
-				assertSuccess(T + " a = 127; " + T + " b = 127; assert a == b;"); // max cached value
+				assertSuccessSerialize(T + " a = 1; " + t + " b = a; " + T + " c = a; " + T + " d = b; assert a == c; assert a == d;");
+				assertSuccessSerialize(T + " a = 1; " + T + " b = 1; assert a == b;"); // cached value
+				assertSuccessSerialize(T + " a = 127; " + T + " b = 127; assert a == b;"); // max cached value
 			}
-			assertSuccess(T + " a = new " + T + "((" + t + ")1); " + T + " b = 1; assert a != b;");
+			assertSuccessSerialize(T + " a = new " + T + "((" + t + ")1); " + T + " b = 1; assert a != b;");
 
 			// class fields
 			assertSuccessSerialize("class C{" + T + " a; C(" + T + " a) {this.a = a;}} assert new C((" + t + ")127).a == 127;");
@@ -142,22 +142,22 @@ public class TestAutoboxing extends HiTest {
 				"incompatible types: boolean cannot be converted to Byte");
 
 		// boxed object => primitive
-		assertSuccess("byte a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertSuccess("int a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertSuccess("short a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("byte a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("int a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("short a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertFailCompile("char a = new Byte((byte)0);", //
 				"incompatible types: Byte cannot be converted to char");
 		assertFailCompile("char a = 0; a = new Byte((byte)0);", //
 				"operator '=' can not be applied to char, Byte");
-		assertSuccess("long a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertSuccess("float a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
-		assertSuccess("double a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("long a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("float a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
+		assertSuccessSerialize("double a = new Byte((byte)127); assert a == 127; a = new Byte((byte)-1); assert a == -1;");
 		assertFail("Byte a = null; byte b = a;", //
 				"null pointer");
 
 		// operations
-		assertSuccess("Byte a = 127; a++; assert a == -128;");
-		assertSuccess("Byte a = -128; a--; assert a == 127;");
+		assertSuccessSerialize("Byte a = 127; a++; assert a == -128;");
+		assertSuccessSerialize("Byte a = -128; a--; assert a == 127;");
 	}
 
 	@Test
@@ -179,17 +179,17 @@ public class TestAutoboxing extends HiTest {
 		// boxed object => primitive
 		assertFailCompile("byte a = new Short((short)127);", //
 				"incompatible types: Short cannot be converted to byte");
-		assertSuccess("int a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
-		assertSuccess("short a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
-		assertSuccess("long a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
-		assertSuccess("float a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
-		assertSuccess("double a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
+		assertSuccessSerialize("int a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
+		assertSuccessSerialize("short a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
+		assertSuccessSerialize("long a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
+		assertSuccessSerialize("float a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
+		assertSuccessSerialize("double a = new Short((short)32767); assert a == 32767; a = new Short((short)-1); assert a == -1;");
 		assertFail("Short a = null; short b = a;", //
 				"null pointer");
 
 		// operations
-		assertSuccess("Short a = 32767; a++; assert a == -32768;");
-		assertSuccess("Short a = -32768; a--; assert a == 32767;");
+		assertSuccessSerialize("Short a = 32767; a++; assert a == -32768;");
+		assertSuccessSerialize("Short a = -32768; a--; assert a == 32767;");
 	}
 
 	@Test

@@ -307,15 +307,15 @@ public class TestExpression extends HiTest {
 			assertSuccessSerialize("interface I{boolean get(boolean x, boolean y);} I o = (x, y) -> x " + o + " y;");
 		}
 
-		assertSuccess("Integer x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
-		assertSuccess("var x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
-		assertSuccess("Integer x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
-		assertSuccess("var x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccessSerialize("Integer x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccessSerialize("var x = 2; Integer y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccessSerialize("Integer x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
+		assertSuccessSerialize("var x = 2; var y = 3; assert (x & y) == 2; assert (x | y) == 3; assert (x ^ y) == 1;");
 
-		assertSuccess("Boolean x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
-		assertSuccess("var x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
-		assertSuccess("Boolean x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
-		assertSuccess("var x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccessSerialize("Boolean x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccessSerialize("var x = true; Boolean y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccessSerialize("Boolean x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
+		assertSuccessSerialize("var x = true; var y = false; assert (x & y) == false; assert (x | y) == true; assert (x ^ y) == true;");
 
 		assertFailCompile("String x = \"\"; int y = x & 1;", //
 				"operator '&' can not be applied to String, int");
@@ -338,10 +338,10 @@ public class TestExpression extends HiTest {
 			assertFailCompile("boolean x = 1 " + o + " true;", //
 					"operator '" + o + "' can not be applied to int, boolean");
 		}
-		assertSuccess("Boolean x = (boolean) true; assert x;");
+		assertSuccessSerialize("Boolean x = (boolean) true; assert x;");
 
-		assertSuccess("boolean x = true; x ^= true;");
-		assertSuccess("int x = 1; x ^= 1;");
+		assertSuccessSerialize("boolean x = true; x ^= true;");
+		assertSuccessSerialize("int x = 1; x ^= 1;");
 		assertFailCompile("boolean x = true; x ^= 1;", //
 				"operator '^=' can not be applied to boolean, int");
 		assertFailCompile("boolean x = true; x ^= 1.1;", //
@@ -358,15 +358,15 @@ public class TestExpression extends HiTest {
 		assertFailCompile("int x = 1; x -= \"\";", //
 				"operator '-=' can not be applied to int, String");
 
-		assertSuccess("int x = 2; x >>=1; assert x == 1;");
+		assertSuccessSerialize("int x = 2; x >>=1; assert x == 1;");
 		assertFailCompile("int x = 2; x >>=true;", //
 				"operator '>>=' can not be applied to int, boolean");
-		assertSuccess("int x = 1; x <<=1; assert x == 2;");
+		assertSuccessSerialize("int x = 1; x <<=1; assert x == 2;");
 		assertFailCompile("int x = 2; x <<=true;", //
 				"operator '<<=' can not be applied to int, boolean");
 		assertFailCompile("int x = 1; x <<<=1;", //
 				"invalid expression");
-		assertSuccess("int x = 2; x >>>=1; assert x == 1;");
+		assertSuccessSerialize("int x = 2; x >>>=1; assert x == 1;");
 		assertFailCompile("int x = 2; x >>>=true;", //
 				"operator '>>>=' can not be applied to int, boolean");
 		assertFailCompile("int x = 1 >> true;", //
@@ -391,17 +391,17 @@ public class TestExpression extends HiTest {
 				"operator '%=' can not be applied to boolean, int");
 
 		// equals
-		assertSuccess("var x = true; var y = true; assert x == y;");
-		assertSuccess("var x = true; var y = false; assert x != y;");
+		assertSuccessSerialize("var x = true; var y = true; assert x == y;");
+		assertSuccessSerialize("var x = true; var y = false; assert x != y;");
 
 		// null
-		assertSuccess("Object x = null; assert null == x;");
-		assertSuccess("Object x = null; assert x == null;");
-		assertSuccess("assert null == null;");
-		assertSuccess("Object x = null; assert x != \"\";");
-		assertSuccess("Object x = null; assert \"\" != x;");
-		assertSuccess("assert null != \"\";");
-		assertSuccess("assert \"\" != null;");
+		assertSuccessSerialize("Object x = null; assert null == x;");
+		assertSuccessSerialize("Object x = null; assert x == null;");
+		assertSuccessSerialize("assert null == null;");
+		assertSuccessSerialize("Object x = null; assert x != \"\";");
+		assertSuccessSerialize("Object x = null; assert \"\" != x;");
+		assertSuccessSerialize("assert null != \"\";");
+		assertSuccessSerialize("assert \"\" != null;");
 
 		// zero
 		assertFail("double x = 1; x /= (byte)0;", //
@@ -491,7 +491,7 @@ public class TestExpression extends HiTest {
 						for (String suffix1 : suffixes) {
 							for (String suffix2 : suffixes) {
 								String script = "assert " + prefix1 + prefix2 + prefix3 + successNumber + suffix1 + " == " + successNumber + suffix2 + ";";
-								assertSuccess(script);
+								assertSuccessSerialize(script);
 							}
 						}
 					}
@@ -966,13 +966,13 @@ public class TestExpression extends HiTest {
 	@Test
 	public void testGetAndSet() {
 		for (String t : new String[] {"byte", "short", "int", "long", "float", "double"}) {
-			assertSuccess("byte x = 1; " + t + " y = x;");
+			assertSuccessSerialize("byte x = 1; " + t + " y = x;");
 		}
 		for (String t : new String[] {"short", "int", "long", "float", "double"}) {
-			assertSuccess("short x = 1; " + t + " y = x;");
+			assertSuccessSerialize("short x = 1; " + t + " y = x;");
 		}
 		for (String t : new String[] {"int", "long", "float", "double"}) {
-			assertSuccess("int x = 1; " + t + " y = x;");
+			assertSuccessSerialize("int x = 1; " + t + " y = x;");
 		}
 	}
 }

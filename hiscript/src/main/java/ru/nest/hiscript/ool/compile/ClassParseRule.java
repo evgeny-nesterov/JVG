@@ -55,7 +55,7 @@ public class ClassParseRule extends ParserUtil {
 				className = "";
 			}
 
-			// generics
+			// @generics
 			NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 			if (generics != null) {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
@@ -114,7 +114,7 @@ public class ClassParseRule extends ParserUtil {
 					tokenizer.error("interface cannot implements another interfaces");
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, ctx.enclosingType, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
 			} else {
 				Type superClassType = superClassesList != null ? superClassesList.get(0) : null;
 				if (superClassesList != null && superClassesList.size() > 1) {
@@ -127,7 +127,7 @@ public class ClassParseRule extends ParserUtil {
 					interfacesList.toArray(interfaces);
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, ctx.enclosingType, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
 			}
 			ctx.clazz.isInterface = isInterface;
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
@@ -175,7 +175,6 @@ public class ClassParseRule extends ParserUtil {
 		if (innerClass != null) {
 			// TODO keep in class only runtime annotations
 			innerClass.enclosingClass = clazz;
-			innerClass.enclosingType = type;
 			ctx.addClass(innerClass);
 			return true;
 		}
@@ -215,7 +214,7 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 		Type type = ctx.type;
 
-		// generics
+		// @generics
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		if (generics != null) {
 			generics.setSourceType(NodeGeneric.GenericSourceType.constructor);
@@ -298,7 +297,7 @@ public class ClassParseRule extends ParserUtil {
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, true);
 
-		// generics
+		// @generics
 		NodeGenerics generics = GenericsParseRule.getInstance().visit(tokenizer, ctx);
 		if (generics != null) {
 			generics.setSourceType(NodeGeneric.GenericSourceType.method);

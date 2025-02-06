@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
@@ -80,7 +81,7 @@ public class NodeGeneric extends HiNode {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		super.code(os);
+		os.writeToken(token);
 		os.writeNullableUTF(genericName);
 		os.writeBoolean(isSuper);
 		os.writeType(genericType);
@@ -89,8 +90,10 @@ public class NodeGeneric extends HiNode {
 	}
 
 	public static NodeGeneric decode(DecodeContext os) throws IOException {
+		Token token = os.readToken();
 		NodeGeneric node = new NodeGeneric(os.readNullableUTF(), os.readBoolean(), os.readType(), os.readInt());
 		node.sourceType = NodeGeneric.GenericSourceType.values()[os.readInt()];
+		node.setToken(token);
 		return node;
 	}
 }

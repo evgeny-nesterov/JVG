@@ -118,7 +118,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
-		// generics
+		// @generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
 				validationInfo.error("type parameter expected", generics.getToken());
@@ -343,7 +343,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 		Type type = Type.getType(interfaceClass);
 		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
-		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, ctx.level.enclosingType, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
 		HiConstructor defaultConstructor = new HiConstructor(clazz, type, null, Modifiers.PUBLIC(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
 		clazz.modifiers = Modifiers.PUBLIC();
 		clazz.functionalMethod = this;

@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
@@ -95,7 +96,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 			valid = false;
 		}
 
-		// generics
+		// @generics
 		if (type.parameters != null) {
 			if (type.parameters.length > 0) {
 				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
@@ -194,7 +195,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	public static NodeDeclaration decode(DecodeContext os) throws IOException {
 		NodeDeclaration node = new NodeDeclaration(os.readType(), os.readUTF(), os.readNullable(HiNode.class), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
-		node.clazz = os.readClass();
+		os.readClass(clazz -> node.clazz = clazz);
 		return node;
 	}
 }

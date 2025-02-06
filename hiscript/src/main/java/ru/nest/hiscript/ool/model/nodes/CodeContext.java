@@ -104,7 +104,7 @@ public class CodeContext {
 		if (token != null) {
 			token.code(this);
 		} else {
-			dos.writeInt(-1);
+			dos.writeInt(-1); // line
 			len_byte += 4;
 		}
 	}
@@ -304,9 +304,9 @@ public class CodeContext {
 	}
 
 	// ============================================================================
-	private final Map<Integer, Integer> classes = new LinkedHashMap<>();
+	private final Map<Integer, Integer> classes = new HashMap<>();
 
-	private final Map<Integer, HiClass> indexToClasses = new LinkedHashMap<>();
+	private final Map<Integer, HiClass> indexToClasses = new HashMap<>();
 
 	public void writeClass(HiClass clazz) throws IOException {
 		writeShort(registerClass(clazz));

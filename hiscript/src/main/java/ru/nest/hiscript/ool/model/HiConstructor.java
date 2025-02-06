@@ -126,7 +126,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
-		// generics
+		// @generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
 				validationInfo.error("type parameter expected", generics.getToken());
@@ -404,6 +404,15 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		os.writeByte(bodyConstructorType.getType());
 	}
 
+	public void codeLink(CodeContext os) throws IOException {
+		for (int i = 0; i < clazz.constructors.length; i++) {
+			if (clazz.constructors[i] == this) {
+				os.writeShort(i);
+			}
+		}
+		os.writeClass(clazz);
+	}
+
 	public static HiConstructor decode(DecodeContext os) throws IOException {
 		Token token = os.readToken();
 		Type type = os.readType();
@@ -419,6 +428,14 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		HiConstructor constructor = new HiConstructor(os.getHiClass(), type, annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
 		constructor.token = token;
 		return constructor;
+	}
+
+	public static void decodeLink(DecodeContext os, ClassLoadListener<HiConstructor> callback) throws IOException {
+		int index = os.readShort();
+		os.readClass(c -> {
+			HiConstructor constructor = c.constructors[index];
+			callback.classLoaded(constructor);
+		});
 	}
 
 	@Override

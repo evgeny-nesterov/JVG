@@ -4,7 +4,9 @@ import ru.nest.hiscript.ool.HiScript;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class HiTest {
 	public void assertCondition(String script, String condition, String message) {
@@ -167,8 +169,8 @@ public abstract class HiTest {
 		return result;
 	}
 
-	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		HiScript result = HiScript.create().compile(script).serialize().execute().throwExceptionIf();
+	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
+		HiScript result = HiScript.create().compile(script).serialize().deserialize().execute().throwExceptionIf();
 		result.close();
 		return result;
 	}

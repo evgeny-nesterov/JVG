@@ -9,7 +9,7 @@ public class TestLoad extends HiTest {
 			script.execute().printError();
 		}
 		script.compile("System.println(\"x=\" + x); assert x == 1_000_000;").execute().printError().close();
-		System.out.println("load test duration: " + script.duration() / 1000.0 + "sec");
+		System.out.println("load test duration: " + script.getDuration() / 1000.0 + "sec");
 	}
 
 	@Test
@@ -19,7 +19,7 @@ public class TestLoad extends HiTest {
 			script.execute().printError();
 		}
 		script.compile("System.println(\"s.length=\" + s.length()); assert s.length() == 50_000;").execute().printError().close();
-		System.out.println("load test duration: " + script.duration() / 1000.0 + "sec");
+		System.out.println("load test duration: " + script.getDuration() / 1000.0 + "sec");
 	}
 
 	@Test

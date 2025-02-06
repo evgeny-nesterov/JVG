@@ -170,7 +170,7 @@ public class HiClassArray extends HiClass {
 	}
 
 	public static HiClass decode(DecodeContext os) throws IOException {
-		// assumed cell class is already read
+		// assumed cell class is already loaded
 		HiClass cellClass = os.readClass();
 		return cellClass.getArrayClass();
 	}

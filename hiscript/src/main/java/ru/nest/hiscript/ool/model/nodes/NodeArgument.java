@@ -75,7 +75,7 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 			valid = false;
 		}
 
-		// generics
+		// @generics
 		if (type.parameters != null) {
 			if (type.parameters.length > 0) {
 				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());

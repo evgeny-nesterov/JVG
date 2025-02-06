@@ -188,7 +188,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		}
 		getClass(ctx);
 
-		// generics
+		// @generics
 		if (type.parameters != null) { // after getClass
 			if (type.parameters.length > 0) {
 				valid &= type.validateClass(clazz, validationInfo, ctx, getToken());

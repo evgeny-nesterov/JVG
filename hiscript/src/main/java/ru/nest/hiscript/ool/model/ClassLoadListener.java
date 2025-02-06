@@ -1,5 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-public interface ClassLoadListener {
-	void classLoaded(HiClass clazz);
+public interface ClassLoadListener<O> {
+	void classLoaded(O object);
 }

@@ -2,6 +2,14 @@ import org.junit.jupiter.api.Test;
 
 public class TestStatements extends HiTest {
 	@Test
+	public void testBody() {
+		assertSuccessSerialize("");
+		assertSuccessSerialize("{}");
+		assertSuccessSerialize("{};");
+		assertSuccessSerialize("{{}} {}");
+	}
+
+	@Test
 	public void testDeclaration() {
 		assertSuccessSerialize("int a;");
 		assertSuccessSerialize("int a123;");

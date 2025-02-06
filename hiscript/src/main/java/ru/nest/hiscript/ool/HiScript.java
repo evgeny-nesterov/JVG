@@ -27,12 +27,19 @@ public class HiScript implements AutoCloseable {
 
 	private final long startTime;
 
+	private byte[] serializedCode;
+
+	public static HiScript create() {
+		return new HiScript().open();
+	}
+
 	private HiScript() {
 		startTime = System.currentTimeMillis();
 	}
 
-	public long duration() {
-		return System.currentTimeMillis() - startTime;
+	public HiScript open() {
+		classLoader = new HiClassLoader("test");
+		return this;
 	}
 
 	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
@@ -48,39 +55,41 @@ public class HiScript implements AutoCloseable {
 		return this;
 	}
 
-	public HiScript serialize() {
-		try {
-			CodeContext ctxCode = new CodeContext();
+	private CodeContext ctxCode;
+
+	public HiScript serialize() throws IOException {
+		if (node != null) {
+			ctxCode = new CodeContext();
 			node.code(ctxCode);
-
-			byte[] bytes = ctxCode.code();
-
-			// DEBUG
-			//		System.out.println("======================");
-			//		ctxCode.statistics();
-			//		System.out.println("total: " + bytes.length + " bytes");
-			//		System.out.println("======================");
-			//
-			//		System.out.println("\n" + new String(bytes));
-			//		System.out.println("======================");
-
-			HiClassLoader classLoader = new HiClassLoader("test-decoded");
-			DecodeContext ctxDecode = new DecodeContext(classLoader, bytes);
-			/*node =*/
-			//ctxDecode.load();
-		} catch (IOException e) {
-			e.printStackTrace();
+			serializedCode = ctxCode.code();
 		}
 		return this;
 	}
 
-	public static HiScript create() {
-		return new HiScript().open();
+	public HiScript printSerializeDebug() {
+		if (ctxCode != null) {
+			System.out.println("======================");
+			ctxCode.statistics();
+			System.out.println("total: " + serializedCode.length + " bytes");
+			System.out.println("======================");
+
+			System.out.println("\n" + new String(serializedCode));
+			System.out.println("======================");
+		}
+		return this;
 	}
 
-	public HiScript open() {
-		classLoader = new HiClassLoader("test");
+	public HiScript deserialize() throws IOException {
+		if (serializedCode != null) {
+			HiClassLoader classLoader = new HiClassLoader("main");
+			DecodeContext ctxDecode = new DecodeContext(classLoader, serializedCode);
+			node = ctxDecode.load();
+		}
 		return this;
+	}
+
+	public byte[] getSerializedCode() {
+		return serializedCode;
 	}
 
 	@Override
@@ -120,5 +129,9 @@ public class HiScript implements AutoCloseable {
 		compiler.getValidationInfo().printError();
 		ctx.printException();
 		return this;
+	}
+
+	public long getDuration() {
+		return System.currentTimeMillis() - startTime;
 	}
 }

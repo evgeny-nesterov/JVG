@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 public class HiClassGeneric extends HiClass {
 	public HiClassGeneric(String genericName, Type genericType, HiClass clazz, HiClass[] parametersClasses, boolean isSuper, NodeGeneric.GenericSourceType sourceType, int index, HiClass sourceClass, ClassResolver classResolver) {
-		super(classResolver.getClassLoader(), Type.objectType, clazz.enclosingClass, clazz.enclosingType, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
+		super(classResolver.getClassLoader(), Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
 		this.genericType = genericType;
 		this.clazz = clazz;
 		this.parametersClasses = parametersClasses;

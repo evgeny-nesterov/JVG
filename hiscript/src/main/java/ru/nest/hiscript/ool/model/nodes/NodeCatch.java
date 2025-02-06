@@ -142,7 +142,7 @@ public class NodeCatch extends HiNode {
 
 	public static NodeCatch decode(DecodeContext os) throws IOException {
 		NodeCatch node = new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
-		node.excClass = os.readClass();
+		os.readClass(clazz -> node.excClass = clazz);
 		return node;
 	}
 }

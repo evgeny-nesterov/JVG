@@ -214,8 +214,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public HiClass enclosingClass;
 
-	public Type enclosingType;
-
 	public boolean isInterface = false;
 
 	// content
@@ -249,14 +247,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(classLoader, classResolver, enclosingClass, Type.getType(enclosingClass), name, null, type);
+		init(classLoader, classResolver, enclosingClass, name, null, type);
 	}
 
 	// for ClassParseRule and NewParseRule
-	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type enclosingType, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(classLoader, classResolver, enclosingClass, enclosingType, name, generics, type);
+		init(classLoader, classResolver, enclosingClass, name, generics, type);
 	}
 
 	// for decode
@@ -268,9 +266,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		// init(...) is in decode
 	}
 
-	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, Type enclosingType, String name, NodeGenerics generics, int type) {
+	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
 		this.enclosingClass = enclosingClass;
-		this.enclosingType = enclosingType;
 		this.type = type;
 
 		// try resolve super class if needed
@@ -547,7 +544,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		ctx.clazz = this;
 		init(ctx);
 
-		// generics (after init)
+		// @generics (after init)
 		if (generics != null) {
 			if (generics.generics.length == 0) {
 				validationInfo.error("type parameter expected", generics.getToken());
@@ -579,7 +576,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				typeParameters[i] = parameterClass;
 			}
 
-			// generics
+			// @generics
 			// TODO use type (superClassType.parameters[i]) token
 			if (superClass.generics != null) {
 				if (superClass.generics.generics.length == typeParameters.length) {
@@ -856,7 +853,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return forName(classResolver, name);
 	}
 
-	// generics
+	// @generics
 	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {
 		if (generics != null) {
 			return generics.getGenericClass(classResolver, name);
@@ -1853,7 +1850,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				outerClass = os.readClass();
 			} catch (HiNoClassException exc) {
 				initClass = false;
-				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, Type.getType(clazz), classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
+				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
 			}
 		}
 
@@ -1872,7 +1869,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(os.getClassLoader(), null, outerClass, Type.getType(outerClass), name, generics, type);
+			clazz.init(os.getClassLoader(), null, outerClass, name, generics, type);
 		}
 
 		HiClass oldClass = os.getHiClass();
@@ -1900,16 +1897,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		clazz.innerClasses = new HiClass[os.readShort()];
 		for (int i = 0; i < clazz.innerClasses.length; i++) {
-			final int index = i;
 			try {
 				clazz.innerClasses[i] = os.readClass();
 			} catch (HiNoClassException exc) {
-				os.addClassLoadListener(new ClassLoadListener() {
-					@Override
-					public void classLoaded(HiClass clazz) {
-						classAccess[0].innerClasses[index] = clazz;
-					}
-				}, exc.getIndex());
+				final int index = i;
+				os.addClassLoadListener(c -> classAccess[0].innerClasses[index] = c, exc.getIndex());
 			}
 		}
 

@@ -123,7 +123,7 @@ public class OperationInvocation extends BinaryOperation {
 				String typeName = "";
 				if (valueNode instanceof NodeConstructor) {
 					NodeConstructor constructorNode = (NodeConstructor) valueNode;
-					typeName = constructorNode.name;
+					typeName = constructorNode.getName();
 				} else if (valueNode instanceof NodeArray) {
 					NodeArray arrayNode = (NodeArray) valueNode;
 					typeName = arrayNode.type.fullName;

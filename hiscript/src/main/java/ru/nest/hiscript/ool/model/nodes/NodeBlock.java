@@ -27,11 +27,13 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 	public List<HiNode> statements = new ArrayList<>(0);
 
+	private boolean isStatic;
+
+	private int enterType = RuntimeContext.BLOCK;
+
 	public void addStatement(HiNode statement) {
 		statements.add(statement);
 	}
-
-	private boolean isStatic;
 
 	@Override
 	public boolean isStatic() {
@@ -41,8 +43,6 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
-
-	private int enterType = RuntimeContext.BLOCK;
 
 	public void setEnterType(int enterType) {
 		this.enterType = enterType;

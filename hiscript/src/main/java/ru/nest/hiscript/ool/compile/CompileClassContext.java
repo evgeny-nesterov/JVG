@@ -723,7 +723,7 @@ public class CompileClassContext implements ClassResolver {
 			return null;
 		}
 
-		// generics
+		// @generics
 		public HiClassGeneric resolveGeneric(String name) {
 			CompileClassLevel level = this;
 			NodeGeneric generic = null;
