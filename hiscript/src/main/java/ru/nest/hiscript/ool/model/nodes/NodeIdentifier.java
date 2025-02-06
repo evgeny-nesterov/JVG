@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
@@ -25,7 +26,7 @@ public class NodeIdentifier extends HiNode {
 
     public int dimension;
 
-    public Object resolvedIdentifier;
+    public HiNodeIF resolvedIdentifier; // only for validation
 
     public String getName() {
         return name;
@@ -38,7 +39,7 @@ public class NodeIdentifier extends HiNode {
 
     @Override
     public boolean isConstant(CompileClassContext ctx) {
-        Object resolvedIdentifier = ctx.resolveIdentifier(name);
+        HiNodeIF resolvedIdentifier = ctx.resolveIdentifier(name);
         if (resolvedIdentifier instanceof HiNode) {
             return ((HiNode) resolvedIdentifier).isConstant(ctx);
         }
@@ -215,7 +216,7 @@ public class NodeIdentifier extends HiNode {
         super.code(os);
         os.writeUTF(name);
         os.writeByte(dimension);
-    }
+   }
 
     public static NodeIdentifier decode(DecodeContext os) throws IOException {
         return new NodeIdentifier(os.readUTF(), os.readByte());

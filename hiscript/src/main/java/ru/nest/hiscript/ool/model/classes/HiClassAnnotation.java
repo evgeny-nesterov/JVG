@@ -18,6 +18,12 @@ public class HiClassAnnotation extends HiClass {
 		super(classLoader, null, enclosingClass, name, type, null);
 	}
 
+	// for decode
+	public HiClassAnnotation(String name, int type) {
+		super(null, name, null, type);
+		// init(...) is in decode
+	}
+
 	@Override
 	public boolean isAnnotation() {
 		return true;
@@ -73,14 +79,11 @@ public class HiClassAnnotation extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		// write class type
-		os.writeByte(HiClass.CLASS_ANNOTATION);
-		// TODO
+		super.code(os, CLASS_ANNOTATION);
 	}
 
-	public static HiClass decode(DecodeContext os) {
-		// TODO
-		return null;
+	public static HiClass decode(DecodeContext os) throws IOException {
+		return HiClass.decodeObject(os, CLASS_ANNOTATION);
 	}
 
 	@Override

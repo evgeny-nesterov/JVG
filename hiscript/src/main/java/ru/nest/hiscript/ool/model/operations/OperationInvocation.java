@@ -126,7 +126,7 @@ public class OperationInvocation extends BinaryOperation {
 					typeName = constructorNode.getName();
 				} else if (valueNode instanceof NodeArray) {
 					NodeArray arrayNode = (NodeArray) valueNode;
-					typeName = arrayNode.type.fullName;
+					typeName = arrayNode.clazz.fullName;
 				} else if (valueNode instanceof NodeArrayValue) {
 					NodeArrayValue arrayValueNode = (NodeArrayValue) valueNode;
 					typeName = arrayValueNode.type.fullName;

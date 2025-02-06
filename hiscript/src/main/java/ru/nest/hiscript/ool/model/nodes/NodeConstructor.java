@@ -351,24 +351,15 @@ public class NodeConstructor extends HiNode {
 		os.writeArray(argValues);
 		os.writeType(type);
 		os.writeClass(clazz);
-		if (argsClasses != null) {
-			for (int i = 0; i < argsClasses.length; i++) {
-				os.writeClass(argsClasses[i]);
-			}
-		}
+		os.writeClasses(argsClasses);
 		constructor.codeLink(os);
 	}
 
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
-		int argsCount = os.readByte();
-		HiNode[] argValues = os.readArray(HiNode.class, argsCount);
+		HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 		NodeConstructor node = new NodeConstructor(os.readType(), argValues);
 		os.readClass(clazz -> node.clazz = clazz);
-		node.argsClasses = new HiClass[argsCount];
-		for (int i = 0; i < argsCount; i++) {
-			final int index = i;
-			os.readClass(clazz -> node.argsClasses[index] = clazz);
-		}
+		node.argsClasses = os.readClasses();
 		HiConstructor.decodeLink(os, constructor -> node.constructor = constructor);
 		return node;
 	}

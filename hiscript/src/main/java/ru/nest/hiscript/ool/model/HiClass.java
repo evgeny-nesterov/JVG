@@ -64,6 +64,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public final static int CLASS_GENERIC = 9;
 
+	public final static int CLASS_SYSTEM = 10; // used only for serializations
+
 	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
 	public final static int CLASS_TYPE_INNER = 1; // static (NESTED) and not
@@ -258,7 +260,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	// for decode
-	private HiClass(Type superClassType, String name, NodeGenerics generics, int type) {
+	protected HiClass(Type superClassType, String name, NodeGenerics generics, int type) {
 		this.superClassType = superClassType;
 		this.name = name.intern();
 		this.type = type;
@@ -1698,7 +1700,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public boolean isConstant() {
-		return isPrimitive() || isEnum() || fullName.equals(STRING_CLASS_NAME) || (isArray() && ((HiClassArray) this).cellClass.isConstant());
+		return isPrimitive() || isEnum() || isStringClass() || (isArray() && ((HiClassArray) this).cellClass.isConstant());
 	}
 
 	public static HiClass forName(ClassResolver classResolver, String name) {
@@ -1759,7 +1761,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		code(os, CLASS_OBJECT);
+		if (systemClassLoader.getClass(fullName) != null) {
+			os.writeByte(CLASS_SYSTEM);
+			os.writeUTF(fullName);
+		} else {
+			code(os, CLASS_OBJECT);
+		}
 	}
 
 	public void code(CodeContext os, int classType) throws IOException {
@@ -1799,18 +1806,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		os.writeShortArray(initializers); // contains ordered fields and blocks
 		os.writeShortArray(constructors);
 		os.writeShortArray(methods);
-
-		os.writeShort(innerClasses != null ? innerClasses.length : 0);
-		if (innerClasses != null) {
-			for (int i = 0; i < innerClasses.length; i++) {
-				os.writeClass(innerClasses[i]);
-			}
-		}
+		os.writeClasses(innerClasses);
 	}
 
 	public static HiClass decode(DecodeContext os) throws IOException {
 		int classType = os.readByte();
 		switch (classType) {
+			case CLASS_SYSTEM:
+				return decodeSystem(os);
 			case CLASS_OBJECT:
 				return decodeObject(os, classType);
 			case CLASS_PRIMITIVE:
@@ -1831,6 +1834,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return HiClassGeneric.decode(os);
 		}
 		throw new HiScriptRuntimeException("unknown class type: " + classType);
+	}
+
+	public static HiClass decodeSystem(DecodeContext os) throws IOException {
+		return os.getClassLoader().getClass(os.readUTF());
 	}
 
 	public static HiClass decodeObject(DecodeContext os, int classType) throws IOException {
@@ -1860,9 +1867,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		HiClass clazz;
 		if (classType == CLASS_ENUM) {
-			clazz = new HiClassEnum(os.getClassLoader(), name, type);
+			clazz = new HiClassEnum(name, type);
 		} else if (classType == CLASS_RECORD) {
-			clazz = new HiClassRecord(os.getClassLoader(), name, generics, type, null);
+			clazz = new HiClassRecord(name, generics, type);
+		} else if (classType == CLASS_ANNOTATION) {
+			clazz = new HiClassAnnotation(name, type);
 		} else {
 			clazz = new HiClass(superClassType, name, generics, type);
 		}
@@ -1880,31 +1889,22 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		clazz.annotations = os.readShortNodeArray(NodeAnnotation.class);
 		clazz.modifiers = os.readNullable(Modifiers.class);
 		clazz.interfaceTypes = os.readTypes();
+
 		int fieldsCount = os.readShort();
 		clazz.initializers = os.readShortNodeArray(NodeInitializer.class); // contains ordered fields and blocks
-		clazz.constructors = os.readShortArray(HiConstructor.class);
-		clazz.methods = os.readShortArray(HiMethod.class);
-
 		if (fieldsCount > 0) {
 			clazz.fields = new HiField[fieldsCount];
-			int index = 0;
-			for (NodeInitializer initializer : clazz.initializers) {
+			for (int i = 0; i < clazz.initializers.length; i++) {
+				NodeInitializer initializer = clazz.initializers[i];
 				if (initializer instanceof HiField) {
-					clazz.fields[index++] = (HiField) initializer;
+					clazz.fields[i] = (HiField) initializer;
 				}
 			}
 		}
 
-		clazz.innerClasses = new HiClass[os.readShort()];
-		for (int i = 0; i < clazz.innerClasses.length; i++) {
-			try {
-				clazz.innerClasses[i] = os.readClass();
-			} catch (HiNoClassException exc) {
-				final int index = i;
-				os.addClassLoadListener(c -> classAccess[0].innerClasses[index] = c, exc.getIndex());
-			}
-		}
-
+		clazz.constructors = os.readShortArray(HiConstructor.class);
+		clazz.methods = os.readShortArray(HiMethod.class);
+		clazz.innerClasses = os.readClasses();
 		os.setHiClass(oldClass);
 
 		// try resolve super class
@@ -2342,5 +2342,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return ArgClassPriorityType.lower;
 		}
 		return ArgClassPriorityType.nonComparable;
+	}
+
+	public boolean isStringClass() {
+		return STRING_CLASS_NAME.equals(fullName);
 	}
 }

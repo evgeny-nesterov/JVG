@@ -132,7 +132,6 @@ public class NodeCatch extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeTypes(excTypes);
 		os.writeNullable(catchBody);
 		os.writeUTF(excName);
 		modifiers.code(os);
@@ -141,7 +140,7 @@ public class NodeCatch extends HiNode {
 	}
 
 	public static NodeCatch decode(DecodeContext os) throws IOException {
-		NodeCatch node = new NodeCatch(os.readTypes(), os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		NodeCatch node = new NodeCatch(null, os.readNullable(HiNode.class), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
 		os.readClass(clazz -> node.excClass = clazz);
 		return node;
 	}

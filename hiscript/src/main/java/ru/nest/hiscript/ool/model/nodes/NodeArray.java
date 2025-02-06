@@ -16,26 +16,32 @@ import java.lang.reflect.Array;
 public class NodeArray extends HiNode {
 	public NodeArray(Type cellType, HiNode[] dimensions) {
 		super("array", TYPE_ARRAY, false);
-
 		this.cellType = cellType;
 		this.dimensions = dimensions;
 		this.dimensionsCount = dimensions.length;
 		this.type = Type.getArrayType(cellType, dimensionsCount);
 	}
 
+	private NodeArray(HiNode[] dimensions, int dimensionsCountActive) {
+		super("array", TYPE_ARRAY, false);
+		this.dimensions = dimensions;
+		this.dimensionsCount = dimensions.length;
+		this.dimensionsCountActive = dimensionsCountActive;
+	}
+
+	private Type cellType; // only for validation
+
+	private Type type; // only for validation
+
 	private final int dimensionsCount;
 
 	private int dimensionsCountActive;
 
-	public Type cellType;
-
-	public Type type;
+	private final HiNode[] dimensions; // last cells may have null values
 
 	public HiClassArray clazz;
 
-	public Class<?> arrayJavaClass;
-
-	private final HiNode[] dimensions;
+	private Class<?> arrayJavaClass;
 
 	@Override
 	public int getArrayDimension() {
@@ -125,12 +131,17 @@ public class NodeArray extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeType(cellType);
-		os.writeByte(dimensionsCount);
+		os.writeByte(dimensions != null ? dimensions.length : 0);
 		os.writeNullable(dimensions);
+		os.writeByte(dimensionsCountActive);
+		os.writeJavaClass(arrayJavaClass);
+		os.writeClass(clazz);
 	}
 
 	public static NodeArray decode(DecodeContext os) throws IOException {
-		return new NodeArray(os.readType(), os.readNullableNodeArray(HiNode.class, os.readByte()));
+		NodeArray node = new NodeArray(os.readNullableNodeArray(HiNode.class, os.readByte()), os.readByte());
+		node.arrayJavaClass = os.readJavaClass();
+		os.readClass(clazz -> node.clazz = (HiClassArray) clazz);
+		return node;
 	}
 }

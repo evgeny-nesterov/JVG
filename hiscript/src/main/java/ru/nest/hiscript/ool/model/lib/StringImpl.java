@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
@@ -114,7 +113,7 @@ public class StringImpl extends ImplUtil {
         boolean isNull2 = o == null;
         if (isNull1 || isNull2) {
             equals = isNull1 == isNull2;
-        } else if (o.clazz.fullName.equals(HiClass.STRING_CLASS_NAME)) {
+        } else if (o.clazz.isStringClass()) {
             char[] chars1 = getChars(ctx, (HiObject) ctx.value.object);
             char[] chars2 = getChars(ctx, o);
             IF:

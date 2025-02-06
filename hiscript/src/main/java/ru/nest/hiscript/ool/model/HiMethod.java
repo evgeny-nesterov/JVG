@@ -564,6 +564,12 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
 		os.writeNullable(throwsTypes);
 		os.writeNullable(body);
+		os.writeClass(returnClass); // null for void
+		os.writeClasses(throwsClasses);
+		os.writeClasses(argClasses);
+		if (isLambda()) {
+			os.writeClass(clazz);
+		}
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
@@ -582,6 +588,12 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		HiNode body = os.readNullable(HiNode.class);
 
 		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
+		os.readClass(clazz -> method.returnClass = clazz);
+		method.throwsClasses = os.readClasses();
+		method.argClasses = os.readClasses();
+		if (method.isLambda()) {
+			os.readClass(clazz -> method.clazz = clazz);
+		}
 		if (readToken) {
 			method.setToken(token);
 		}

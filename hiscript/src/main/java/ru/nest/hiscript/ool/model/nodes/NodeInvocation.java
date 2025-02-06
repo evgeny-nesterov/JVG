@@ -44,6 +44,8 @@ public class NodeInvocation extends HiNode {
 
 	public HiMethod method;
 
+	private HiClass returnClass;
+
 	public void setInner(boolean innerInvocation) {
 		this.innerInvocation = innerInvocation;
 	}
@@ -163,7 +165,7 @@ public class NodeInvocation extends HiNode {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
-		getValueClass(validationInfo, ctx);
+		returnClass = getValueClass(validationInfo, ctx);
 
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		valid &= method != null;
@@ -219,7 +221,7 @@ public class NodeInvocation extends HiNode {
 			ctx.value.valueType = Value.METHOD_INVOCATION;
 			ctx.value.name = name;
 			ctx.value.arguments = arguments;
-			ctx.value.valueClass = getReturnValueClass();
+			ctx.value.valueClass = returnClass;
 		} else {
 			Value[] vs = ctx.getValues(1);
 			try {
@@ -249,7 +251,7 @@ public class NodeInvocation extends HiNode {
 		}
 	}
 
-	// TODO: do more usable
+	// TODO do more usable
 	public static void invoke(RuntimeContext ctx, HiObject object, String methodName, HiNode... arguments) {
 		Value[] vs = ctx.getValues(1);
 		try {
@@ -279,9 +281,12 @@ public class NodeInvocation extends HiNode {
 		os.writeBoolean(innerInvocation);
 		os.writeByte(arguments != null ? arguments.length : 0);
 		os.writeArray(arguments);
+		os.writeClass(returnClass);
 	}
 
 	public static NodeInvocation decode(DecodeContext os) throws IOException {
-		return new NodeInvocation(os.readUTF(), os.readBoolean(), os.readArray(HiNode.class, os.readByte()));
+		NodeInvocation node = new NodeInvocation(os.readUTF(), os.readBoolean(), os.readArray(HiNode.class, os.readByte()));
+		os.readClass(clazz -> node.returnClass = clazz);
+		return node;
 	}
 }

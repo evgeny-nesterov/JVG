@@ -21,11 +21,20 @@ public class NodeArrayValue extends HiNode {
 		this.array = array;
 	}
 
-	public Type type;
+	private NodeArrayValue(HiNode[] array) {
+		super("array-value", TYPE_ARRAY_VALUE, false);
+		this.array = array;
+	}
 
-	public final int dimensions;
+	public Type type; // only for validation
+
+	private int dimensions; // only for validation
 
 	public final HiNode[] array;
+
+	private HiClass cellClass;
+
+	private Class<?> javaClass;
 
 	@Override
 	public int getArrayDimension() {
@@ -40,10 +49,6 @@ public class NodeArrayValue extends HiNode {
 		ctx.nodeValueType.type = Type.getType(clazz);
 		return clazz;
 	}
-
-	private HiClass cellClass;
-
-	private Class<?> javaClass;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -92,15 +97,15 @@ public class NodeArrayValue extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeType(type);
-		os.writeByte(dimensions);
 		os.writeByte(array.length);
 		os.writeArray(array);
+		os.writeJavaClass(javaClass);
 		os.writeClass(cellClass);
 	}
 
 	public static NodeArrayValue decode(DecodeContext os) throws IOException {
-		NodeArrayValue node = new NodeArrayValue(os.readType(), os.readByte(), os.readArray(HiNode.class, os.readByte()));
+		NodeArrayValue node = new NodeArrayValue(os.readArray(HiNode.class, os.readByte()));
+		node.javaClass = os.readJavaClass();
 		os.readClass(cellClass -> node.setCellClass(cellClass));
 		return node;
 	}

@@ -394,11 +394,11 @@ public class CompileClassContext implements ClassResolver {
 		return resolveIdentifier(name, false, true, true) != null;
 	}
 
-	public Object resolveIdentifier(String name) {
+	public HiNodeIF resolveIdentifier(String name) {
 		return resolveIdentifier(name, true, true, false);
 	}
 
-	public Object resolveIdentifier(String name, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
+	public HiNodeIF resolveIdentifier(String name, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
 		CompileClassLevel level = this.level;
 		while (level != null) {
 			if (resolveVariable) {
@@ -445,7 +445,7 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		if (parent != null) {
-			Object resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
+			HiNodeIF resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
 			if (resolvedIdentifier != null) {
 				return resolvedIdentifier;
 			}

@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
@@ -38,14 +37,14 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	private Modifiers modifiers;
 
+	public NodeAnnotation[] annotations;
+
+	private HiClass clazz;
+
 	@Override
 	public Modifiers getModifiers() {
 		return modifiers;
 	}
-
-	public NodeAnnotation[] annotations;
-
-	private HiClass clazz;
 
 	@Override
 	public boolean isVariable() {

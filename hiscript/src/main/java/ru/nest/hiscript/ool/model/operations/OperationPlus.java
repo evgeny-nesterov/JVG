@@ -26,14 +26,14 @@ public class OperationPlus extends BinaryOperation {
 		HiClass c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
 		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 
-		boolean isS1 = c1 != null && HiClass.STRING_CLASS_NAME.equals(c1.fullName);
-		boolean isS2 = c2 != null && HiClass.STRING_CLASS_NAME.equals(c2.fullName);
-		if (isS1 || isS2) {
+		boolean isStr1 = c1.isStringClass();
+		boolean isStr2 = c2.isStringClass();
+		if (isStr1 || isStr2) {
 			if (node1.isCompileValue() && node2.isCompileValue()) {
 				node1.stringValue = String.valueOf(node1.getCompileValue()) + node2.getCompileValue();
 				return node1.valueClass = HiClass.STRING_CLASS;
 			}
-			return isS1 ? c1 : c2;
+			return isStr1 ? c1 : c2;
 		}
 
 		if (c1.isNumber() && c2.isNumber()) {
@@ -267,9 +267,7 @@ public class OperationPlus extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
-		boolean isS1 = c1 != null && HiClass.STRING_CLASS_NAME.equals(c1.fullName);
-		boolean isS2 = c2 != null && HiClass.STRING_CLASS_NAME.equals(c2.fullName);
-		if (isS1 || isS2) {
+		if (c1.isStringClass() || c2.isStringClass()) {
 			char[] chars1 = v1.getString(ctx);
 			char[] chars2 = v2.getString(ctx);
 			char[] chars = new char[chars1.length + chars2.length];

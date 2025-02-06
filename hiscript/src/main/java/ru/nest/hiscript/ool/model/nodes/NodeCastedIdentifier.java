@@ -29,7 +29,7 @@ public class NodeCastedIdentifier extends HiNode {
 
 	public HiNode castedCondition;
 
-	public NodeDeclaration declarationNode;
+	public NodeDeclaration declarationNode; // only for validation
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {

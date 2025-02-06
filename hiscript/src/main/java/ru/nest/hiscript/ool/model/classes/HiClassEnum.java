@@ -29,6 +29,12 @@ public class HiClassEnum extends HiClass {
 		super(classLoader, Type.enumType, null, null, name, null, type, null);
 	}
 
+	// for decode
+	public HiClassEnum(String name, int type) {
+		super(Type.recordType, name, null, type);
+		// init(...) is in decode
+	}
+
 	private Map<String, HiField> enumsMap;
 
 	public void initEnumValues(RuntimeContext ctx) {

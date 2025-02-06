@@ -34,7 +34,7 @@ public class OperationEquatePlus extends BinaryOperation {
 			validationInfo.error("variable expected", node1.token);
 		}
 
-		if (!node1.clazz.fullName.equals(HiClass.STRING_CLASS_NAME)) {
+		if (!node1.clazz.isStringClass()) {
 			HiClass c1 = node1.clazz.getAutoboxedPrimitiveClass() == null ? node1.clazz : node1.clazz.getAutoboxedPrimitiveClass();
 			HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 			if (!c1.isPrimitive() || !c2.isPrimitive()) {
@@ -252,7 +252,7 @@ public class OperationEquatePlus extends BinaryOperation {
 			} else if (v1.valueType == Value.ARRAY_INDEX) {
 				v1.copyToArray(v1);
 			}
-		} else if (c1.fullName.equals(HiClass.STRING_CLASS_NAME)) {
+		} else if (c1.isStringClass()) {
 			char[] chars1 = v1.getString(ctx);
 			char[] chars2 = v2.getString(ctx);
 			char[] chars = new char[chars1.length + chars2.length];

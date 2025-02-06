@@ -15,6 +15,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class DecodeContext {
 		return clazz;
 	}
 
-	public DecodeContext(HiClassLoader classLoader, byte[] data) {
+	public DecodeContext(HiClassLoader classLoader, byte[] data) throws IOException {
 		this(classLoader, new DataInputStream(new ByteArrayInputStream(data)));
 	}
 
@@ -57,6 +58,17 @@ public class DecodeContext {
 		return classLoader;
 	}
 
+	boolean check = true;
+
+	private void check() throws IOException {
+		if (check) {
+			int checkValue = is.readByte();
+			if (checkValue != 123) {
+				throw new RuntimeException("decode error");
+			}
+		}
+	}
+
 	public DecodeContext getRoot() {
 		DecodeContext ctx = this;
 		while (ctx.parent != null) {
@@ -68,6 +80,7 @@ public class DecodeContext {
 	private int len_boolean = 0;
 
 	public boolean readBoolean() throws IOException {
+		check();
 		len_boolean += 1;
 		return is.readBoolean();
 	}
@@ -75,6 +88,7 @@ public class DecodeContext {
 	private int len_byte = 0;
 
 	public byte readByte() throws IOException {
+		check();
 		len_byte += 1;
 		return is.readByte();
 	}
@@ -82,6 +96,7 @@ public class DecodeContext {
 	private int len_char = 0;
 
 	public char readChar() throws IOException {
+		check();
 		len_char += 2;
 		return is.readChar();
 	}
@@ -89,6 +104,7 @@ public class DecodeContext {
 	private int len_double = 0;
 
 	public double readDouble() throws IOException {
+		check();
 		len_double += 8;
 		return is.readDouble();
 	}
@@ -96,6 +112,7 @@ public class DecodeContext {
 	private int len_float = 0;
 
 	public float readFloat() throws IOException {
+		check();
 		len_float += 4;
 		return is.readFloat();
 	}
@@ -103,6 +120,7 @@ public class DecodeContext {
 	private int len_int = 0;
 
 	public int readInt() throws IOException {
+		check();
 		len_int += 4;
 		return is.readInt();
 	}
@@ -110,6 +128,7 @@ public class DecodeContext {
 	private int len_long = 0;
 
 	public long readLong() throws IOException {
+		check();
 		len_long += 8;
 		return is.readLong();
 	}
@@ -117,6 +136,7 @@ public class DecodeContext {
 	private int len_short = 0;
 
 	public short readShort() throws IOException {
+		check();
 		len_short += 2;
 		return is.readShort();
 	}
@@ -124,15 +144,26 @@ public class DecodeContext {
 	private String[] strings;
 
 	private void loadUTF() throws IOException {
+		check = false;
 		int count = is.readShort();
 		strings = new String[count];
 		for (int index = 0; index < count; index++) {
 			strings[index] = is.readUTF();
 		}
+		check = true;
 	}
 
 	public String readUTF() throws IOException {
-		return getUTF(is.readShort());
+		check();
+		return getUTF(readShort());
+	}
+
+	public Class<?> readJavaClass() throws IOException {
+		try {
+			return Class.forName(readUTF());
+		} catch (ClassNotFoundException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public String[] readUTFArray(int size) throws IOException {
@@ -144,7 +175,7 @@ public class DecodeContext {
 	}
 
 	public String readNullableUTF() throws IOException {
-		return readBoolean() ? getUTF(is.readShort()) : null;
+		return readBoolean() ? getUTF(readShort()) : null;
 	}
 
 	public String getUTF(int index) {
@@ -168,7 +199,7 @@ public class DecodeContext {
 	private Type[] types;
 
 	public void loadTypes() throws IOException {
-		int count = is.readShort();
+		int count = readShort();
 		types = new Type[count];
 		for (int i = 0; i < count; i++) {
 			int index = readShort();
@@ -177,11 +208,11 @@ public class DecodeContext {
 	}
 
 	public Type readType() throws IOException {
-		return getType(is.readShort());
+		return getType(readShort());
 	}
 
 	public TypeArgumentIF readTypeArgument() throws IOException {
-		Type type = getType(is.readShort());
+		Type type = getType(readShort());
 		if (type.isArray() && readBoolean()) {
 			return new TypeVarargs(type);
 		} else {
@@ -190,7 +221,7 @@ public class DecodeContext {
 	}
 
 	public Type[] readTypes() throws IOException {
-		int count = is.readByte();
+		int count = readByte();
 		if (count > 0) {
 			Type[] types = new Type[count];
 			for (int i = 0; i < count; i++) {
@@ -225,7 +256,7 @@ public class DecodeContext {
 
 	protected void fireClassLoaded(HiClass clazz, int index) {
 		DecodeContext ctx = getRoot();
-		List<ClassLoadListener> list = ctx.classLoadListeners.get(index);
+		List<ClassLoadListener> list = ctx.classLoadListeners.remove(index);
 		if (list != null) {
 			for (ClassLoadListener listener : list) {
 				listener.classLoaded(clazz);
@@ -237,6 +268,7 @@ public class DecodeContext {
 	private HiClass[] classes;
 
 	public void loadClasses() throws IOException {
+		check = false;
 		int count = is.readShort();
 		classes = new HiClass[count];
 		for (int index = 0; index < count; index++) {
@@ -246,29 +278,51 @@ public class DecodeContext {
 			// fire event
 			fireClassLoaded(classes[index], index);
 		}
+		check = true;
 	}
 
 	/**
 	 * Read class or receive HiNoClassException.
 	 * If HiNoClassException occur listen class loaded and update class value on event:
 	 * try {
-	 * 		HiClass clazz = os.readClass();
-	 * 		... use clazz ...
+	 * HiClass clazz = os.readClass();
+	 * ... use clazz ...
 	 * } catch (HiNoClassException exc) {
-	 * 		os.addClassLoadListener(clazz -> ... use clazz ..., exc.getIndex());
+	 * os.addClassLoadListener(clazz -> ... use clazz ..., exc.getIndex());
 	 * }
 	 */
 	public HiClass readClass() throws IOException, HiNoClassException {
-		int classIndex = is.readShort();
-		return getClass(classIndex);
+		int classIndex = readShort();
+		if (classIndex != -1) {
+			return getClass(classIndex);
+		} else {
+			return null;
+		}
 	}
 
 	public void readClass(ClassLoadListener<HiClass> callback) throws IOException, HiNoClassException {
 		try {
-			callback.classLoaded(readClass());
+			HiClass clazz = readClass();
+			if (clazz != null) {
+				callback.classLoaded(clazz);
+			}
 		} catch (HiNoClassException exc) {
 			addClassLoadListener(callback, exc.getIndex());
 		}
+	}
+
+	public HiClass[] readClasses() throws IOException, HiNoClassException {
+		int size = readShort();
+		HiClass[] classes = size > 0 ? new HiClass[size] : null;
+		for (int i = 0; i < size; i++) {
+			try {
+				classes[i] = readClass();
+			} catch (HiNoClassException exc) {
+				final int index = i;
+				readClass(clazz -> classes[index] = clazz);
+			}
+		}
+		return classes;
 	}
 
 	public HiClass getClass(int index) throws HiNoClassException {
@@ -285,18 +339,6 @@ public class DecodeContext {
 				throw new HiScriptRuntimeException("invalid class index " + index + " (max is " + (classes != null ? (classes.length - 1) : 0) + ")");
 			}
 		}
-	}
-
-	public String[] readStringArray() throws IOException {
-		int length = readInt();
-		if (length > 0) {
-			String[] array = new String[length];
-			for (int i = 0; i < length; i++) {
-				array[i] = readUTF();
-			}
-			return array;
-		}
-		return null;
 	}
 
 	public <N> List<N> readList(Class<N> type, int size) throws IOException {
@@ -335,7 +377,7 @@ public class DecodeContext {
 	public <N> N[] readNodeArray(Class<N> type, int size) throws IOException {
 		N[] nodes = (N[]) Array.newInstance(type, size);
 		for (int i = 0; i < size; i++) {
-			nodes[i] = (N) read(HiNode.class);
+			nodes[i] = (N) read(type.isInterface() ? (Class<N>) HiNode.class : type);
 		}
 		return nodes;
 	}
@@ -408,6 +450,46 @@ public class DecodeContext {
 		} catch (Exception exc) {
 			throw new HiScriptRuntimeException("cannot decode for " + type, exc);
 		}
+	}
+
+	public Object readObject() throws IOException {
+		int type = readByte();
+		switch (type) {
+			case -1:
+				return null;
+			case 1:
+				return readUTF();
+			case 2:
+				return readBoolean();
+			case 3:
+				return readInt();
+			case 4:
+				return readByte();
+			case 5:
+				return readShort();
+			case 6:
+				return readChar();
+			case 7:
+				return readLong();
+			case 8:
+				return readDouble();
+			case 9:
+				return readFloat();
+			case 10:
+				return HiNode.decode(this);
+			case 11:
+				check();
+				int size = readInt();
+				byte[] bytes = new byte[size];
+				is.read(bytes);
+				ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(bytes));
+				try {
+					return is.readObject();
+				} catch (ClassNotFoundException e) {
+					throw new IOException(e);
+				}
+		}
+		throw new IOException("undefined object type: " + type);
 	}
 
 	public HiNode load() throws IOException {

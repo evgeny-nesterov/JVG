@@ -22,6 +22,14 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	public TypeArgumentIF typeArgument;
 
+	public String name;
+
+	private Modifiers modifiers;
+
+	public NodeAnnotation[] annotations;
+
+	public HiClass clazz;
+
 	public Type getType() {
 		return typeArgument.getType();
 	}
@@ -34,18 +42,10 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		return typeArgument.isVarargs();
 	}
 
-	public String name;
-
-	private Modifiers modifiers;
-
 	@Override
 	public Modifiers getModifiers() {
 		return modifiers;
 	}
-
-	public NodeAnnotation[] annotations;
-
-	public HiClass clazz;
 
 	public HiClass getArgClass() {
 		return clazz;
@@ -110,10 +110,13 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		os.writeUTF(name);
 		modifiers.code(os);
 		os.writeShortArray(annotations);
+		os.writeClass(clazz);
 	}
 
 	public static NodeArgument decode(DecodeContext os) throws IOException {
-		return new NodeArgument(os.readTypeArgument(), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		NodeArgument node = new NodeArgument(os.readTypeArgument(), os.readUTF(), Modifiers.decode(os), os.readShortNodeArray(NodeAnnotation.class));
+		os.readClass(clazz -> node.clazz = clazz);
+		return node;
 	}
 
 	@Override

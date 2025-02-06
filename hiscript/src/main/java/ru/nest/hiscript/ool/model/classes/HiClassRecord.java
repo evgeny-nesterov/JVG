@@ -20,6 +20,12 @@ public class HiClassRecord extends HiClass {
 		super(classLoader, Type.recordType, null, null, name, generics, type, classResolver);
 	}
 
+	// for decode
+	public HiClassRecord(String name, NodeGenerics generics, int type) {
+		super(Type.recordType, name, generics, type);
+		// init(...) is in decode
+	}
+
 	@Override
 	public boolean isNull() {
 		return false;

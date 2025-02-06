@@ -18,12 +18,12 @@ public class NodeString extends HiNode {
 	public NodeString(String text) {
 		super("string", TYPE_STRING, false);
 		this.text = text;
-		this.chars = text.toCharArray();
+		this.chars = new JavaString(text);
 	}
 
 	public final String text;
 
-	private final char[] chars;
+	private final JavaString chars;
 
 	private static HiClass clazz;
 
@@ -61,24 +61,27 @@ public class NodeString extends HiNode {
 	}
 
 	public static HiObject createString(RuntimeContext ctx, String text) {
-		return createString(ctx, text.toCharArray());
+		return createString(ctx, new JavaString(text));
 	}
 
-	public static HiObject createString(RuntimeContext ctx, char[] text) {
+	public static HiObject createString(RuntimeContext ctx, char[] chars) {
+		return createString(ctx, new JavaString(chars));
+	}
+
+	public static HiObject createString(RuntimeContext ctx, JavaString text) {
 		if (clazz == null) {
 			clazz = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);
 			constructor = clazz.getConstructor(ctx);
 		}
 
-		JavaString key = new JavaString(text);
-		HiObject object = ctx.strings.get(key);
+		HiObject object = ctx.strings.get(text);
 		if (object == null) {
 			object = constructor.newInstance(ctx, null, null, null);
 			if (object != null) {
 				HiFieldArray chars = (HiFieldArray) object.getField(ctx, "chars");
-				chars.array = text;
+				chars.array = text.getChars();
 
-				ctx.strings.put(key, object);
+				ctx.strings.put(text, object);
 			}
 		} else {
 			ctx.value.valueType = Value.VALUE;

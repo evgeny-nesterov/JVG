@@ -9,6 +9,14 @@ public class JavaString {
 		this.chars = chars;
 	}
 
+	public JavaString(String string) {
+		this.chars = string.toCharArray();
+	}
+
+	public char[] getChars() {
+		return chars;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof JavaString) {

@@ -54,7 +54,7 @@ public class HiClassJava extends HiClass {
 			javaArgClasses[i] = argTypeJavaClass;
 		}
 		try {
-			Integer signatureId = Objects.hash(javaArgClasses);
+			Integer signatureId = Objects.hash(javaArgClasses); // TODO check correct!
 			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
 				return javaConstructor != noJavaConstructor ? javaConstructor : null;

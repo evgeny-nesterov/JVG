@@ -404,15 +404,6 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		os.writeByte(bodyConstructorType.getType());
 	}
 
-	public void codeLink(CodeContext os) throws IOException {
-		for (int i = 0; i < clazz.constructors.length; i++) {
-			if (clazz.constructors[i] == this) {
-				os.writeShort(i);
-			}
-		}
-		os.writeClass(clazz);
-	}
-
 	public static HiConstructor decode(DecodeContext os) throws IOException {
 		Token token = os.readToken();
 		Type type = os.readType();
@@ -430,10 +421,22 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		return constructor;
 	}
 
+	public void codeLink(CodeContext os) throws IOException {
+		int index = -1;
+		for (int i = 0; i < clazz.constructors.length; i++) {
+			if (clazz.constructors[i] == this) {
+				index = i;
+				break;
+			}
+		}
+		os.writeShort(index);
+		os.writeClass(clazz);
+	}
+
 	public static void decodeLink(DecodeContext os, ClassLoadListener<HiConstructor> callback) throws IOException {
 		int index = os.readShort();
-		os.readClass(c -> {
-			HiConstructor constructor = c.constructors[index];
+		os.readClass(clazz -> {
+			HiConstructor constructor = clazz.constructors[index];
 			callback.classLoaded(constructor);
 		});
 	}

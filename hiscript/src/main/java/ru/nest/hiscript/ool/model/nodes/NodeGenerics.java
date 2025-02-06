@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
-import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -143,15 +142,14 @@ public class NodeGenerics extends HiNode {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeToken(token);
-		os.writeInt(generics.length);
+		os.writeShort(generics.length);
 		os.writeArray(generics);
+		os.writeToken(token);
 	}
 
 	public static NodeGenerics decode(DecodeContext os) throws IOException {
-		Token token = os.readToken();
-		NodeGenerics nodeGenerics = new NodeGenerics(os.readArray(NodeGeneric.class, os.readInt()));
-		nodeGenerics.setToken(token);
+		NodeGenerics nodeGenerics = new NodeGenerics(os.readArray(NodeGeneric.class, os.readShort()));
+		nodeGenerics.setToken(os.readToken());
 		return nodeGenerics;
 	}
 }

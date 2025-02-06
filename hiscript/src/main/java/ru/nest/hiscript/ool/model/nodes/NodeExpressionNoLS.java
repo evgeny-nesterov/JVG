@@ -28,6 +28,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 		this.operations = operations;
 	}
 
+	private HiNodeIF[] operands;
+
+	private HiOperation[] operations;
+
 	private void compile(HiNodeIF[] operands, OperationsGroup[] o) {
 		this.operands = operands;
 		int operandsCount = operands.length;
@@ -130,10 +134,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 		HiNode singleNode = getSingleNode();
 		return singleNode != null ? singleNode.getConstantValue() : null;
 	}
-
-	private HiNodeIF[] operands;
-
-	private HiOperation[] operations;
 
 	@Override
 	public int getArrayDimension() {

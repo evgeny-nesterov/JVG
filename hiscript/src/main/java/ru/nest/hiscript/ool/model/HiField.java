@@ -340,11 +340,13 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		os.writeUTF(name);
 		os.writeNullable(initializer);
 		modifiers.code(os);
+		os.writeClass(clazz);
 	}
 
 	public static HiField<?> decode(DecodeContext os) throws IOException {
 		HiField<?> field = HiField.getField(os.readType(), os.readUTF(), os.readNullable(HiNode.class), null);
 		field.modifiers = Modifiers.decode(os);
+		os.readClass(clazz -> field.clazz = clazz);
 		return field;
 	}
 
