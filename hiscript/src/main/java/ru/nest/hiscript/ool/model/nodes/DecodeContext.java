@@ -58,17 +58,6 @@ public class DecodeContext {
 		return classLoader;
 	}
 
-	boolean check = true;
-
-	private void check() throws IOException {
-		if (check) {
-			int checkValue = is.readByte();
-			if (checkValue != 123) {
-				throw new RuntimeException("decode error");
-			}
-		}
-	}
-
 	public DecodeContext getRoot() {
 		DecodeContext ctx = this;
 		while (ctx.parent != null) {
@@ -80,7 +69,6 @@ public class DecodeContext {
 	private int len_boolean = 0;
 
 	public boolean readBoolean() throws IOException {
-		check();
 		len_boolean += 1;
 		return is.readBoolean();
 	}
@@ -88,7 +76,6 @@ public class DecodeContext {
 	private int len_byte = 0;
 
 	public byte readByte() throws IOException {
-		check();
 		len_byte += 1;
 		return is.readByte();
 	}
@@ -96,7 +83,6 @@ public class DecodeContext {
 	private int len_char = 0;
 
 	public char readChar() throws IOException {
-		check();
 		len_char += 2;
 		return is.readChar();
 	}
@@ -104,7 +90,6 @@ public class DecodeContext {
 	private int len_double = 0;
 
 	public double readDouble() throws IOException {
-		check();
 		len_double += 8;
 		return is.readDouble();
 	}
@@ -112,7 +97,6 @@ public class DecodeContext {
 	private int len_float = 0;
 
 	public float readFloat() throws IOException {
-		check();
 		len_float += 4;
 		return is.readFloat();
 	}
@@ -120,7 +104,6 @@ public class DecodeContext {
 	private int len_int = 0;
 
 	public int readInt() throws IOException {
-		check();
 		len_int += 4;
 		return is.readInt();
 	}
@@ -128,7 +111,6 @@ public class DecodeContext {
 	private int len_long = 0;
 
 	public long readLong() throws IOException {
-		check();
 		len_long += 8;
 		return is.readLong();
 	}
@@ -136,31 +118,47 @@ public class DecodeContext {
 	private int len_short = 0;
 
 	public short readShort() throws IOException {
-		check();
 		len_short += 2;
 		return is.readShort();
 	}
 
 	private String[] strings;
 
-	private void loadUTF() throws IOException {
-		check = false;
+	private void loadStrings() throws IOException {
 		int count = is.readShort();
 		strings = new String[count];
 		for (int index = 0; index < count; index++) {
 			strings[index] = is.readUTF();
 		}
-		check = true;
 	}
 
 	public String readUTF() throws IOException {
-		check();
 		return getUTF(readShort());
 	}
 
 	public Class<?> readJavaClass() throws IOException {
 		try {
-			return Class.forName(readUTF());
+			String className = readUTF();
+			switch (className) {
+				case "byte":
+					return byte.class;
+				case "short":
+					return short.class;
+				case "char":
+					return char.class;
+				case "int":
+					return int.class;
+				case "long":
+					return long.class;
+				case "float":
+					return float.class;
+				case "double":
+					return double.class;
+				case "boolean":
+					return boolean.class;
+				default:
+					return Class.forName(className);
+			}
 		} catch (ClassNotFoundException e) {
 			throw new IOException(e);
 		}
@@ -268,7 +266,6 @@ public class DecodeContext {
 	private HiClass[] classes;
 
 	public void loadClasses() throws IOException {
-		check = false;
 		int count = is.readShort();
 		classes = new HiClass[count];
 		for (int index = 0; index < count; index++) {
@@ -278,7 +275,6 @@ public class DecodeContext {
 			// fire event
 			fireClassLoaded(classes[index], index);
 		}
-		check = true;
 	}
 
 	/**
@@ -319,7 +315,7 @@ public class DecodeContext {
 				classes[i] = readClass();
 			} catch (HiNoClassException exc) {
 				final int index = i;
-				readClass(clazz -> classes[index] = clazz);
+				addClassLoadListener(clazz -> classes[index] = clazz, exc.getIndex());
 			}
 		}
 		return classes;
@@ -439,16 +435,18 @@ public class DecodeContext {
 		}
 	}
 
-	public <N> N read(Class<N> type) {
+	public <N> N read(Class<N> type) throws IOException {
 		try {
-			if (type == HiNodeIF.class || type == HiNode.class) {
+			if (type == HiNodeIF.class || HiNode.class.isAssignableFrom(type)) {
 				return (N) HiNode.decode(this);
 			} else {
 				Method m = type.getMethod("decode", DecodeContext.class);
 				return (N) m.invoke(type, this);
 			}
+		} catch (IOException exc) {
+			throw exc;
 		} catch (Exception exc) {
-			throw new HiScriptRuntimeException("cannot decode for " + type, exc);
+			throw new IOException("cannot decode for " + type, exc);
 		}
 	}
 
@@ -478,7 +476,6 @@ public class DecodeContext {
 			case 10:
 				return HiNode.decode(this);
 			case 11:
-				check();
 				int size = readInt();
 				byte[] bytes = new byte[size];
 				is.read(bytes);
@@ -493,7 +490,7 @@ public class DecodeContext {
 	}
 
 	public HiNode load() throws IOException {
-		loadUTF();
+		loadStrings();
 		loadTypes();
 		loadClasses();
 		return read(HiNode.class);

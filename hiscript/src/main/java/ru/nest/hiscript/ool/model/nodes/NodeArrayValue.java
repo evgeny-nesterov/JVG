@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -56,20 +55,14 @@ public class NodeArrayValue extends HiNode {
 		boolean valid = true;
 		int size = array.length;
 		HiClass rootCellClass = type.getClass(ctx);
-		HiClass cellClass = dimensions > 1 ? rootCellClass.getArrayClass(dimensions - 1) : rootCellClass;
-		setCellClass(cellClass);
+		cellClass = dimensions > 1 ? rootCellClass.getArrayClass(dimensions - 1) : rootCellClass;
+		javaClass = HiArrays.getClass(rootCellClass, dimensions - 1);
 		for (int i = 0; i < size; i++) {
 			ctx.level.variableClass = cellClass;
 			ctx.level.variableNode = array[i];
 			valid &= array[i].validate(validationInfo, ctx) && array[i].expectValueClass(validationInfo, ctx, cellClass);
 		}
 		return valid;
-	}
-
-	private void setCellClass(HiClass cellClass) {
-		HiClass rootCellClass = cellClass.isArray() ? ((HiClassArray) cellClass).getRootCellClass() : cellClass;
-		this.cellClass = cellClass;
-		this.javaClass = HiArrays.getClass(rootCellClass, dimensions - 1);
 	}
 
 	@Override
@@ -106,7 +99,7 @@ public class NodeArrayValue extends HiNode {
 	public static NodeArrayValue decode(DecodeContext os) throws IOException {
 		NodeArrayValue node = new NodeArrayValue(os.readArray(HiNode.class, os.readByte()));
 		node.javaClass = os.readJavaClass();
-		os.readClass(cellClass -> node.setCellClass(cellClass));
+		os.readClass(clazz -> node.cellClass = clazz);
 		return node;
 	}
 }

@@ -1872,6 +1872,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			clazz = new HiClassRecord(name, generics, type);
 		} else if (classType == CLASS_ANNOTATION) {
 			clazz = new HiClassAnnotation(name, type);
+		} else if (classType == CLASS_GENERIC) {
+			clazz = new HiClassGeneric(name, type);
 		} else {
 			clazz = new HiClass(superClassType, name, generics, type);
 		}
@@ -1894,10 +1896,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		clazz.initializers = os.readShortNodeArray(NodeInitializer.class); // contains ordered fields and blocks
 		if (fieldsCount > 0) {
 			clazz.fields = new HiField[fieldsCount];
+			int fieldIndex = 0;
 			for (int i = 0; i < clazz.initializers.length; i++) {
 				NodeInitializer initializer = clazz.initializers[i];
 				if (initializer instanceof HiField) {
-					clazz.fields[i] = (HiField) initializer;
+					clazz.fields[fieldIndex++] = (HiField) initializer;
 				}
 			}
 		}

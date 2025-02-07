@@ -26,8 +26,8 @@ public class HiClassGeneric extends HiClass {
 	}
 
 	// for decode
-	protected HiClassGeneric(String genericName, Type genericType, boolean isSuper, NodeGeneric.GenericSourceType sourceType, int index) {
-		super(Type.objectType, genericName, null, CLASS_GENERIC);
+	public HiClassGeneric(String genericName, int type) {
+		super(Type.objectType, genericName, null, type);
 	}
 
 	public Type genericType;
@@ -86,7 +86,7 @@ public class HiClassGeneric extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeUTF(name);
+		code(os, CLASS_GENERIC);
 		os.writeType(genericType);
 		os.writeBoolean(isSuper);
 		os.writeByte(sourceType.ordinal());
@@ -97,7 +97,11 @@ public class HiClassGeneric extends HiClass {
 	}
 
 	public static HiClassGeneric decode(DecodeContext os) throws IOException {
-		HiClassGeneric clazz = new HiClassGeneric(os.readUTF(), os.readType(), os.readBoolean(), NodeGeneric.GenericSourceType.values()[os.readByte()], os.readShort());
+		HiClassGeneric clazz = (HiClassGeneric) HiClass.decodeObject(os, CLASS_GENERIC);
+		clazz.genericType = os.readType();
+		clazz.isSuper = os.readBoolean();
+		clazz.sourceType = NodeGeneric.GenericSourceType.values()[os.readByte()];
+		clazz.index = os.readShort();
 		os.readClass(c -> clazz.clazz = c);
 		clazz.parametersClasses = os.readClasses();
 		os.readClass(c -> clazz.sourceClass = c);

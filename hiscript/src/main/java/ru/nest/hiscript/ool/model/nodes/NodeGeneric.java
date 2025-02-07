@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NodeGeneric extends HiNode {
 	public NodeGeneric(String genericName, boolean isSuper, Type genericType, int index) {
-		super("generic", TYPE_GENERICS, false);
+		super("generic", TYPE_GENERIC, false);
 		this.genericName = genericName;
 		this.isSuper = isSuper;
 		this.genericType = genericType;
@@ -80,12 +80,12 @@ public class NodeGeneric extends HiNode {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
+		super.code(os);
 		os.writeNullableUTF(genericName);
 		os.writeBoolean(isSuper);
 		os.writeType(genericType);
 		os.writeInt(index);
 		os.writeInt(sourceType.ordinal());
-		os.writeToken(token);
 		os.writeClass(sourceClass);
 		os.writeClass(clazz);
 		os.writeClasses(parametersClasses);
@@ -94,7 +94,6 @@ public class NodeGeneric extends HiNode {
 	public static NodeGeneric decode(DecodeContext os) throws IOException {
 		NodeGeneric node = new NodeGeneric(os.readNullableUTF(), os.readBoolean(), os.readType(), os.readInt());
 		node.sourceType = NodeGeneric.GenericSourceType.values()[os.readInt()];
-		node.setToken(os.readToken());
 		os.readClass(clazz -> node.sourceClass = clazz);
 		os.readClass(clazz -> node.clazz = (HiClassGeneric) clazz);
 		node.parametersClasses = os.readClasses();

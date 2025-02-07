@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.fields.HiFieldInt;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -423,10 +424,12 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public void codeLink(CodeContext os) throws IOException {
 		int index = -1;
-		for (int i = 0; i < clazz.constructors.length; i++) {
-			if (clazz.constructors[i] == this) {
-				index = i;
-				break;
+		if (clazz.constructors != null) {
+			for (int i = 0; i < clazz.constructors.length; i++) {
+				if (clazz.constructors[i] == this) {
+					index = i;
+					break;
+				}
 			}
 		}
 		os.writeShort(index);
@@ -436,7 +439,12 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	public static void decodeLink(DecodeContext os, ClassLoadListener<HiConstructor> callback) throws IOException {
 		int index = os.readShort();
 		os.readClass(clazz -> {
-			HiConstructor constructor = clazz.constructors[index];
+			HiConstructor constructor;
+			if (index == -1 && clazz.isRecord()) {
+				constructor = ((HiClassRecord) clazz).defaultConstructor;
+			} else {
+				constructor = clazz.constructors[index];
+			}
 			callback.classLoaded(constructor);
 		});
 	}

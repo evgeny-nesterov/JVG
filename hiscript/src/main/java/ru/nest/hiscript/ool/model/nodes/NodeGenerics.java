@@ -142,14 +142,11 @@ public class NodeGenerics extends HiNode {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeShort(generics.length);
-		os.writeArray(generics);
-		os.writeToken(token);
+		super.code(os);
+		os.writeShortArray(generics);
 	}
 
 	public static NodeGenerics decode(DecodeContext os) throws IOException {
-		NodeGenerics nodeGenerics = new NodeGenerics(os.readArray(NodeGeneric.class, os.readShort()));
-		nodeGenerics.setToken(os.readToken());
-		return nodeGenerics;
+		return new NodeGenerics(os.readShortArray(NodeGeneric.class));
 	}
 }

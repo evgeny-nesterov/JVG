@@ -49,7 +49,6 @@ public class CodeContext {
 	private int len_boolean = 0;
 
 	public void writeBoolean(boolean value) throws IOException {
-		dos.writeByte(123);
 		dos.writeBoolean(value);
 		len_boolean += 1;
 	}
@@ -57,7 +56,6 @@ public class CodeContext {
 	private int len_byte = 0;
 
 	public void writeByte(int value) throws IOException {
-		dos.writeByte(123);
 		dos.writeByte(value);
 		len_byte += 1;
 	}
@@ -65,7 +63,6 @@ public class CodeContext {
 	private int len_char = 0;
 
 	public void writeChar(int value) throws IOException {
-		dos.writeByte(123);
 		dos.writeChar(value);
 		len_char += 2;
 	}
@@ -73,7 +70,6 @@ public class CodeContext {
 	private int len_double = 0;
 
 	public void writeDouble(double value) throws IOException {
-		dos.writeByte(123);
 		dos.writeDouble(value);
 		len_double += 8;
 	}
@@ -81,7 +77,6 @@ public class CodeContext {
 	private int len_float = 0;
 
 	public void writeFloat(float value) throws IOException {
-		dos.writeByte(123);
 		dos.writeFloat(value);
 		len_float += 4;
 	}
@@ -89,7 +84,6 @@ public class CodeContext {
 	private int len_int = 0;
 
 	public void writeInt(int value) throws IOException {
-		dos.writeByte(123);
 		dos.writeInt(value);
 		len_int += 4;
 	}
@@ -97,7 +91,6 @@ public class CodeContext {
 	private int len_long = 0;
 
 	public void writeLong(long value) throws IOException {
-		dos.writeByte(123);
 		dos.writeLong(value);
 		len_long += 8;
 	}
@@ -105,7 +98,6 @@ public class CodeContext {
 	private int len_short = 0;
 
 	public void writeShort(int value) throws IOException {
-		dos.writeByte(123);
 		dos.writeShort(value);
 		len_short += 2;
 	}
@@ -214,7 +206,6 @@ public class CodeContext {
 	}
 
 	public void writeUTF(String value) throws IOException {
-		dos.writeByte(123);
 		int index = getUTFIndex(value);
 		writeShort(index);
 	}
@@ -277,7 +268,6 @@ public class CodeContext {
 			writeByte(10);
 			node.code(this);
 		} else if (value instanceof Serializable) {
-			dos.writeByte(123);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(value);
@@ -333,7 +323,6 @@ public class CodeContext {
 		ByteArrayOutputStream bos_type = new ByteArrayOutputStream();
 		try (DataOutputStream dos_type = new DataOutputStream(bos_type)) {
 			dos = dos_type;
-
 			int typesSize = types.size();
 			for (int i = 0; i < typesSize; i++) {
 				Type type = types.get(i);
