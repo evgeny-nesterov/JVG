@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
@@ -252,15 +253,15 @@ public class DecodeContext {
 		list.add(listener);
 	}
 
-	protected void fireClassLoaded(HiClass clazz, int index) {
-		DecodeContext ctx = getRoot();
-		List<ClassLoadListener> list = ctx.classLoadListeners.remove(index);
-		if (list != null) {
-			for (ClassLoadListener listener : list) {
-				listener.classLoaded(clazz);
-			}
-			ctx.classLoadListeners.remove(index);
-		}
+	public void fireClassLoaded(HiClass clazz, int index) {
+//		DecodeContext ctx = getRoot();
+//		ctx.classes[index] = clazz;
+//		List<ClassLoadListener> list = ctx.classLoadListeners.remove(index);
+//		if (list != null) {
+//			for (ClassLoadListener listener : list) {
+//				listener.classLoaded(clazz);
+//			}
+//		}
 	}
 
 	private HiClass[] classes;
@@ -271,9 +272,18 @@ public class DecodeContext {
 		for (int index = 0; index < count; index++) {
 			DecodeContext ctx = new DecodeContext(classLoader, is, this);
 			classes[index] = HiClass.decode(ctx);
-
-			// fire event
-			fireClassLoaded(classes[index], index);
+			// do not fire event - class may be yet not initialized
+		}
+		while (!classLoadListeners.isEmpty()) {
+			Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>(this.classLoadListeners);
+			this.classLoadListeners.clear();
+			for (int index : classLoadListeners.keySet()) {
+				List<ClassLoadListener> list = classLoadListeners.get(index);
+				HiClass clazz = classes[index];
+				for (ClassLoadListener listener : list) {
+					listener.classLoaded(clazz);
+				}
+			}
 		}
 	}
 
@@ -327,10 +337,11 @@ public class DecodeContext {
 			return ctx.getClass(index);
 		} else {
 			if (index >= 0 && classes != null && index < classes.length) {
-				if (classes[index] == null) {
+				HiClass clazz = classes[index];
+				if (clazz == null || clazz.fullName == null) {
 					throw new HiNoClassException(index);
 				}
-				return classes[index];
+				return clazz;
 			} else {
 				throw new HiScriptRuntimeException("invalid class index " + index + " (max is " + (classes != null ? (classes.length - 1) : 0) + ")");
 			}
@@ -437,7 +448,7 @@ public class DecodeContext {
 
 	public <N> N read(Class<N> type) throws IOException {
 		try {
-			if (type == HiNodeIF.class || HiNode.class.isAssignableFrom(type)) {
+			if (type == HiNodeIF.class || HiNode.class.isAssignableFrom(type) || HiMethod.class == type) {
 				return (N) HiNode.decode(this);
 			} else {
 				Method m = type.getMethod("decode", DecodeContext.class);

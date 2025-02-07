@@ -96,8 +96,8 @@ public class HiClassGeneric extends HiClass {
 		os.writeClass(sourceClass);
 	}
 
-	public static HiClassGeneric decode(DecodeContext os) throws IOException {
-		HiClassGeneric clazz = (HiClassGeneric) HiClass.decodeObject(os, CLASS_GENERIC);
+	public static HiClassGeneric decode(DecodeContext os, int classIndex) throws IOException {
+		HiClassGeneric clazz = (HiClassGeneric) HiClass.decodeObject(os, CLASS_GENERIC, classIndex);
 		clazz.genericType = os.readType();
 		clazz.isSuper = os.readBoolean();
 		clazz.sourceType = NodeGeneric.GenericSourceType.values()[os.readByte()];

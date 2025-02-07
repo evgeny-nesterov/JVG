@@ -275,23 +275,27 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 				// init object: copy not static fields from class
 				if (clazz.fields != null) {
 					int fieldsCount = clazz.fields.length;
-					int count = 0;
+					int nonStaticCount = 0;
 					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
-							count++;
+							nonStaticCount++;
 						}
 					}
 
-					object.fields = new HiField[count];
+					object.fields = new HiField[nonStaticCount];
 					int index = 0;
 					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
 							HiField<?> field = (HiField<?>) clazz.fields[i].clone();
-
-							// generic
-							field.setGenericClass(ctx, type);
-
 							object.fields[index++] = field;
+
+							// generic (after set field to object.fields[])
+							field.setGenericClass(ctx, type);
+						}
+					}
+					for (int i = 0; i < object.fields.length; i++) {
+						if (object.fields[i] == null) {
+							object.fields[i] = null;
 						}
 					}
 

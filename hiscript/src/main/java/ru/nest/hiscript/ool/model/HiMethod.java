@@ -160,6 +160,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// check modifiers
 		boolean isResolved = false;
 		if (clazz != null) {
+			if (returnClass == null && returnType != null) {
+				returnClass = returnType.getClass(ctx);
+			}
 			if (!clazz.isInterface && !clazz.isAbstract() && modifiers.isAbstract()) {
 				validationInfo.error("abstract method in non-abstract class", token);
 				valid = false;
@@ -548,11 +551,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		// do not write class as then method will being read the class will not be yet created
-		// os.writeClass(clazz);
-		if (isLambda()) {
-			os.writeByte(HiNode.TYPE_LAMBDA);
-		}
+		os.writeByte(HiNode.TYPE_METHOD);
 		os.writeToken(token);
 		os.writeShortArray(annotations);
 		modifiers.code(os);

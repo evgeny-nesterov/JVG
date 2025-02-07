@@ -82,8 +82,8 @@ public class HiClassAnnotation extends HiClass {
 		super.code(os, CLASS_ANNOTATION);
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
-		return HiClass.decodeObject(os, CLASS_ANNOTATION);
+	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
+		return HiClass.decodeObject(os, CLASS_ANNOTATION, classIndex);
 	}
 
 	@Override

@@ -426,6 +426,7 @@ public class CodeContext {
 		ClassCodeContext classContext = new ClassCodeContext();
 		classContext.clazz = indexToClasses.get(index);
 		classContext.ctx = new CodeContext(this, classContext.clazz);
+		classContext.ctx.writeShort(index);
 		classContext.clazz.code(classContext.ctx);
 		classContext.code = classContext.ctx.code();
 		return classContext;
@@ -469,7 +470,7 @@ public class CodeContext {
 				// write types
 				bos_all.write(typesCode);
 
-				// write classes
+				// write classes (class with main method too)
 				dos_all.writeShort(classesCode.size());
 				for (ClassCodeContext classCode : classesCode) {
 					dos_all.write(classCode.code);

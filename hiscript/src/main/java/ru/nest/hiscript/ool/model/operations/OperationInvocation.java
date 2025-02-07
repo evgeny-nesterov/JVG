@@ -462,7 +462,6 @@ public class OperationInvocation extends BinaryOperation {
 			}
 		}
 
-		// TODO remove
 		if (ctx.exitFromBlock()) {
 			return;
 		}

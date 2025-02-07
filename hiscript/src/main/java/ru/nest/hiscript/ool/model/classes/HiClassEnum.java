@@ -150,8 +150,8 @@ public class HiClassEnum extends HiClass {
 		}
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
-		HiClassEnum enumClass = (HiClassEnum) HiClass.decodeObject(os, CLASS_ENUM);
+	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
+		HiClassEnum enumClass = (HiClassEnum) HiClass.decodeObject(os, CLASS_ENUM, classIndex);
 		enumClass.enumValues = os.readList(HiEnumValue.class, os.readShort());
 		return enumClass;
 	}

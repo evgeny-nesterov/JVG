@@ -69,8 +69,8 @@ public class HiClassRecord extends HiClass {
 		os.write(defaultConstructor);
 	}
 
-	public static HiClass decode(DecodeContext os) throws IOException {
-		HiClassRecord recordClass = (HiClassRecord) HiClass.decodeObject(os, CLASS_RECORD);
+	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
+		HiClassRecord recordClass = (HiClassRecord) HiClass.decodeObject(os, CLASS_RECORD, classIndex);
 		recordClass.defaultConstructor = os.read(HiConstructor.class);
 		recordClass.defaultConstructor.clazz = recordClass;
 		return recordClass;

@@ -11,11 +11,11 @@ public class TestAnnotations extends HiTest {
 		assertSuccessSerialize("public @interface Field{float value() default 1f + 2f;}");
 		assertSuccessSerialize("public @interface Field{double value() default 1.0 + 1.0 * 2.0;}");
 		assertSuccessSerialize("public @interface Field{boolean value() default !true || !false;}");
-		assertSuccessSerialize("abstract @interface Field{String value() default \"x=\" + 1;}");
+		assertSuccessSerialize("@interface Field{String value() default \"x=\" + 1;}");
+
 		assertSuccessSerialize("static @interface Field{int value();}");
+		assertSuccessSerialize("abstract @interface F1{String value() default \"x=\" + 1;}");
 		assertSuccessSerialize("@interface Field{String value() default \"\"; int count() default x; int x = 1; boolean valid();}");
-		assertFailCompile("@interface {String value();}", //
-				"annotation class name is expected");
 
 		assertSuccessSerialize("@interface A{byte value();} @A(value=(byte)2) class C{} C c = new C();");
 		assertSuccessSerialize("@interface A{short value();} @A(value=(short)2) class C{} C c = new C();");
@@ -85,12 +85,22 @@ public class TestAnnotations extends HiTest {
 		assertFailCompile("static class C{final int CONST=1;} @interface A{int value() default C.CONST;}", //
 				"constant expected");
 
+		assertSuccessSerialize("@interface F1{} @F1 @interface F2{};");
+
 		// array arguments
+//		assertSuccessSerialize("@interface A{int[] value();} @A(value={}) class C{} C c = new C();");
+//		assertSuccessSerialize("@interface A{int[] value();} @A(value={0}) class C{} C c = new C();");
+//		assertFailCompile("@interface A{int[] value();} @A(value=null) class C{}", //
+//				"constant value expected");
+//		assertFailCompile("@interface A{int[][] value();}", //
+//				"?");
 
 		// fails
 		assertFailCompile("@;", //
 				"unexpected token");
 		assertFailCompile("@interface;", //
+				"annotation class name is expected");
+		assertFailCompile("@interface {String value();}", //
 				"annotation class name is expected");
 		assertFailCompile("@interface A;", //
 				"'{' is expected");
@@ -145,5 +155,9 @@ public class TestAnnotations extends HiTest {
 				"annotation class expected");
 		assertFailCompile("public @interface A{int value();} @A(value=\"a\", value=\"b\") int x;", //
 				"duplicate annotation argument");
+		assertFailCompile("@interface F1{} @interface F2 extends F1 {}", //
+				"'{' is expected"); // TODO @interface may not have extends list
+		assertFailCompile("@interface F1{} @interface F2 implements F1 {}", //
+				"'{' is expected"); // TODO no implements clause allowed for interface
 	}
 }

@@ -22,6 +22,12 @@ public class NodeMainWrapper extends HiNode {
 		this.rootClass = getRootClass(body);
 	}
 
+	// for decode
+	private NodeMainWrapper(HiClassLoader classLoader) {
+		super("main", TYPE_MAIN_WRAPPER, false);
+		this.classLoader = classLoader;
+	}
+
 	private final HiClassLoader classLoader;
 
 	private CompileClassContext ctx;
@@ -80,10 +86,12 @@ public class NodeMainWrapper extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeNullable(body);
+		os.writeClass(rootClass);
 	}
 
 	public static NodeMainWrapper decode(DecodeContext os) throws IOException {
-		return new NodeMainWrapper(os.getClassLoader(), (NodeBlock) os.readNullable(HiNode.class), null);
+		NodeMainWrapper node = new NodeMainWrapper(os.getClassLoader());
+		os.readClass(clazz -> node.rootClass = clazz);
+		return node;
 	}
 }
