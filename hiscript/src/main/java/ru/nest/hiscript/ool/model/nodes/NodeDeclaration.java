@@ -23,9 +23,9 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 		this.annotations = annotations;
 	}
 
-	public NodeDeclaration(String typeName, String name) {
+	public NodeDeclaration(String typeName, Type type, String name) {
 		super("declaration", TYPE_DECLARATION, true);
-		this.type = Type.getTypeByFullName(typeName);
+		this.type = type;
 		this.name = name.intern();
 	}
 

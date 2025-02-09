@@ -34,7 +34,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 
 			startToken = startToken(tokenizer);
 			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-			Type type = visitType(tokenizer, true);
+			Type type = visitType(tokenizer, true, ctx.getEnv());
 			if (type != null) {
 				String name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {

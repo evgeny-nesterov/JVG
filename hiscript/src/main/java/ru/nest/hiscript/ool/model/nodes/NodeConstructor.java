@@ -220,7 +220,7 @@ public class NodeConstructor extends HiNode {
 
 		RuntimeContext.StackLevel level = ctx.level;
 		while (level != null) {
-			if (level.classType == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
+			if (level.levelType == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
 				ctx.throwRuntimeException("recursive constructor invocation");
 				return;
 			}

@@ -2,20 +2,20 @@ package ru.nest.hiscript.ool;
 
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.RootParseRule;
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.List;
 
 public class HiScript implements AutoCloseable {
-	private HiClassLoader classLoader;
+	private HiRuntimeEnvironment env;
 
 	private HiCompiler compiler;
 
@@ -38,12 +38,16 @@ public class HiScript implements AutoCloseable {
 	}
 
 	public HiScript open() {
-		classLoader = new HiClassLoader("test");
+		env = new HiRuntimeEnvironment();
 		return this;
 	}
 
+	public HiRuntimeEnvironment getEnv() {
+		return env;
+	}
+
 	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		compiler = HiCompiler.getDefaultCompiler(classLoader, script);
+		compiler = HiCompiler.getDefaultCompiler(env.getUserClassLoader(), script);
 		compiler.setAssertsActive(true);
 		compiler.setVerbose(true);
 		compiler.setPrintInvalidCode(true);
@@ -81,10 +85,15 @@ public class HiScript implements AutoCloseable {
 
 	public HiScript deserialize() throws IOException {
 		if (serializedCode != null) {
-			HiClassLoader classLoader = new HiClassLoader("main");
-			DecodeContext ctxDecode = new DecodeContext(classLoader, serializedCode);
+			clear();
+			DecodeContext ctxDecode = new DecodeContext(env.getUserClassLoader(), serializedCode);
 			node = ctxDecode.load();
 		}
+		return this;
+	}
+
+	public HiScript clear() throws IOException {
+		env.clear();
 		return this;
 	}
 
@@ -92,13 +101,9 @@ public class HiScript implements AutoCloseable {
 		return serializedCode;
 	}
 
-	@Override
-	public void close() {
-		ctx.close();
-		node = null;
-		parseRule = null;
-		ctx = null;
-		HiClass.systemClassLoader.removeClassLoader(compiler.getClassLoader());
+	public HiScript registerNative(List objects) {
+		env.getUserClassLoader().getNative().registerObjects(objects);
+		return this;
 	}
 
 	public HiScript execute() {
@@ -133,5 +138,14 @@ public class HiScript implements AutoCloseable {
 
 	public long getDuration() {
 		return System.currentTimeMillis() - startTime;
+	}
+
+	@Override
+	public void close() {
+		ctx.close();
+		node = null;
+		parseRule = null;
+		ctx = null;
+		env.clear();
 	}
 }

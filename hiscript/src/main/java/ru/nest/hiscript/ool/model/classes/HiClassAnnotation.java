@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
 
@@ -87,7 +88,7 @@ public class HiClassAnnotation extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		return null;
 	}
 

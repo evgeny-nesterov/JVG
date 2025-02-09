@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
@@ -10,6 +9,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.operations.OperationPlus;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 public class TestNodes extends HiTest {
 	@Test
@@ -75,7 +75,9 @@ public class TestNodes extends HiTest {
 	}
 
 	private Value doBinaryOperation(HiOperation operation, HiNode n1, HiNode n2) {
-		RuntimeContext ctx = new RuntimeContext(new HiCompiler(new HiClassLoader("test"), null), true);
+		HiRuntimeEnvironment env = new HiRuntimeEnvironment();
+		HiCompiler compiler = new HiCompiler(env.getUserClassLoader(), null);
+		RuntimeContext ctx = new RuntimeContext(compiler, true);
 		Value v1 = getValue(ctx, n1);
 		Value v2 = getValue(ctx, n2);
 		operation.doOperation(ctx, v1, v2);

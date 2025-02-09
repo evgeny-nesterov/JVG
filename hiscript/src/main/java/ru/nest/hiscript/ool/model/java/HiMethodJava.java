@@ -37,7 +37,7 @@ public class HiMethodJava extends HiMethod {
 			if (argJavaClass.isPrimitive()) {
 				argType = Type.getPrimitiveType(argJavaClass.getName());
 			} else {
-				argType = Type.getTopType(argJavaClass.getSimpleName());
+				argType = Type.getTopType(argJavaClass.getSimpleName(), classResolver.getEnv());
 			}
 			String argName = "arg" + i;
 			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);
@@ -66,7 +66,7 @@ public class HiMethodJava extends HiMethod {
 			Object resultValue = HiJava.convertFromJava(ctx, resultJavaValue);
 
 			ctx.value.valueType = Value.VALUE;
-			ctx.value.set(resultValue);
+			ctx.setValue(resultValue);
 		} catch (Exception e) {
 			ctx.throwRuntimeException(e.toString());
 		}

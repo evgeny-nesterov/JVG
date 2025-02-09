@@ -28,13 +28,13 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		Type baseType = visitType(tokenizer, true);
+		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (varName != null) {
 				Type cellType = baseType.isArray() ? baseType.cellTypeRoot : baseType;
 				int addDimension = visitDimension(tokenizer);
-				Type type = Type.getArrayType(baseType, addDimension);
+				Type type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 
 				HiNode initializer = null;
 				boolean isField = false;
@@ -67,7 +67,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 							return null;
 						}
 						addDimension = visitDimension(tokenizer);
-						type = Type.getArrayType(baseType, addDimension);
+						type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 
 						initializer = null;
 						if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
@@ -112,13 +112,13 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		Type baseType = visitType(tokenizer, true);
+		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
 			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (varName != null) {
 				Type cellType = baseType.isArray() ? baseType.cellTypeRoot : baseType;
 				int addDimension = visitDimension(tokenizer);
-				Type type = Type.getArrayType(baseType, addDimension);
+				Type type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 
 				HiNode initializer = null;
 				if (initialized) {

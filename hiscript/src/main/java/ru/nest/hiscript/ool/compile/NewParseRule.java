@@ -32,7 +32,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 	@Override
 	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.NEW, tokenizer) != null) {
-			Type type = visitType(tokenizer, false);
+			Type type = visitType(tokenizer, false, ctx.getEnv());
 			if (type == null) {
 				tokenizer.error("identifier is expected");
 			}
@@ -126,7 +126,8 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 		HiNode[] indexesArray = new HiNode[indexes.size()];
 		indexes.toArray(indexesArray);
-		return new NodeArray(type, indexesArray);
+		Type arrayType = Type.getArrayType(type, indexesArray.length, ctx.getEnv());
+		return new NodeArray(arrayType, indexesArray);
 	}
 
 	// new a.b.c.d[]...[] {{...}, ... ,{...}}

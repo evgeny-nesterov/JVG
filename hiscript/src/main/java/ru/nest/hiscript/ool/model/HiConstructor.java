@@ -82,25 +82,11 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	private Modifiers modifiers;
 
-	@Override
-	public Modifiers getModifiers() {
-		return modifiers;
-	}
-
 	public NodeGenerics generics;
 
 	public HiClass[] argClasses;
 
 	private Token token;
-
-	public void resolve(ClassResolver classResolver) {
-		if (argClasses == null) {
-			argClasses = new HiClass[arguments != null ? arguments.length : 0];
-			for (int i = 0; i < argClasses.length; i++) {
-				argClasses[i] = arguments[i].getType().getClass(classResolver);
-			}
-		}
-	}
 
 	public HiClass clazz;
 
@@ -117,6 +103,20 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	public HiClass[] throwsClasses;
 
 	public HiNode body;
+
+	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
+
+	public void resolve(ClassResolver classResolver) {
+		if (argClasses == null) {
+			argClasses = new HiClass[arguments != null ? arguments.length : 0];
+			for (int i = 0; i < argClasses.length; i++) {
+				argClasses[i] = arguments[i].getType().getClass(classResolver);
+			}
+		}
+	}
 
 	public boolean hasVarargs() {
 		return arguments != null && arguments.length > 0 && arguments[arguments.length - 1].isVarargs();
@@ -293,11 +293,6 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 							field.setGenericClass(ctx, type);
 						}
 					}
-					for (int i = 0; i < object.fields.length; i++) {
-						if (object.fields[i] == null) {
-							object.fields[i] = null;
-						}
-					}
 
 					// add fields
 					ctx.addVariables(object.fields);
@@ -407,6 +402,8 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		os.writeNullable(body);
 		os.writeNullable(bodyConstructor);
 		os.writeByte(bodyConstructorType.getType());
+		os.writeClasses(throwsClasses);
+		os.writeClasses(argClasses);
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
@@ -422,6 +419,8 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		BodyConstructorType constructorType = BodyConstructorType.get(os.readByte());
 
 		HiConstructor constructor = new HiConstructor(os.getHiClass(), type, annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
+		constructor.throwsClasses = os.readClasses();
+		constructor.argClasses = os.readClasses();
 		constructor.token = token;
 		return constructor;
 	}

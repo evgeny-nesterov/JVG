@@ -54,7 +54,7 @@ public class NodeCatch extends HiNode {
 
 		if (excTypes.length > 1) {
 			HiClass[] excClasses = new HiClass[excTypes.length];
-			HiClassMix excClassMix = new HiClassMix(excClasses, null);
+			HiClassMix excClassMix = new HiClassMix(ctx.getClassLoader(), excClasses, null);
 			for (int i = 0; i < excTypes.length; i++) {
 				Type excType = excTypes[i];
 				if (excClassMix.classes[i] == null) {

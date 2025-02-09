@@ -7,18 +7,14 @@ import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
-import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassArray extends HiClass {
-	private static final Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
-
 	public HiClass cellClass;
 
 	private HiClass rootCellClass;
@@ -81,8 +77,8 @@ public class HiClassArray extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
-		Class javaClass = javaClassesMap.get(this);
+	public Class getJavaClass(HiRuntimeEnvironment env) {
+		Class javaClass = env.javaClassesMap.get(this);
 		if (javaClass != null) {
 			return javaClass;
 		}
@@ -91,12 +87,12 @@ public class HiClassArray extends HiClass {
 		while (rootCellClass.isArray()) {
 			rootCellClass = ((HiClassArray) rootCellClass).cellClass;
 		}
-		Class javaRootCellClass = cellClass.getJavaClass();
+		Class javaRootCellClass = cellClass.getJavaClass(env);
 		if (javaRootCellClass != null) {
 			String name = getJavaClassName(javaRootCellClass);
 			try {
 				javaClass = Class.forName(name);
-				javaClassesMap.put(this, javaClass);
+				env.javaClassesMap.put(this, javaClass);
 				return javaClass;
 			} catch (ClassNotFoundException e) {
 			}

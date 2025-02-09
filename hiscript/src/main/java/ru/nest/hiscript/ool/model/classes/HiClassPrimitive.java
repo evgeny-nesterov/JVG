@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiObject;
@@ -9,6 +10,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxClass(HiClass autoboxClass) {
 			super.setAutoboxClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(null);
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			ctx.value.valueClass = this;
 			ctx.value.bool = true;
 			trueValue = super.autobox(ctx, ctx.value);
@@ -50,7 +52,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxClass(HiClass autoboxClass) {
 			super.setAutoboxClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(null);
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.byteNumber = (byte) intValue;
@@ -75,7 +77,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxClass(HiClass autoboxClass) {
 			super.setAutoboxClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(null);
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.shortNumber = (short) intValue;
@@ -100,7 +102,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxClass(HiClass autoboxClass) {
 			super.setAutoboxClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(null);
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.intNumber = intValue;
@@ -127,7 +129,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxClass(HiClass autoboxClass) {
 			super.setAutoboxClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(null);
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.longNumber = intValue;
@@ -152,7 +154,7 @@ public class HiClassPrimitive extends HiClass {
 	public final int typeId;
 
 	private HiClassPrimitive(int typeId, String name) {
-		super(HiClass.systemClassLoader, null, null, name, CLASS_TYPE_TOP, null);
+		super(HiClassLoader.primitiveClassLoader, null, null, name, CLASS_TYPE_TOP, null);
 		this.typeId = typeId;
 	}
 
@@ -234,7 +236,7 @@ public class HiClassPrimitive extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		// TODO use typeId
 		switch (name) {
 			case "short":

@@ -79,7 +79,8 @@ public class NodeCastedIdentifier extends HiNode {
 			}
 		}
 		if (castedVariableName != null) {
-			declarationNode = new NodeDeclaration(name, castedVariableName);
+			Type type = Type.getTypeByFullName(name, ctx.getEnv());
+			declarationNode = new NodeDeclaration(name, type, castedVariableName);
 			declarationNode.setToken(token);
 			valid &= ctx.addLocalVariable(declarationNode, true);
 			ctx.initializedNodes.add(declarationNode);

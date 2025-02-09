@@ -92,7 +92,7 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A{<O> O m(O x) {return x;}} assert new A().m(123) == 123;");
 		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;} O get(){return value;}} assert new A<Boolean>(true).get();");
 		assertSuccessSerialize("class A<O extends Number>{O x; O m(O x){this.x = x; return x;}} assert new A<Long>().m(1L) == 1;");
-		assertSuccessSerialize("class A{<O extends Number> O m(O o) {}} class B extends A{Integer m(Integer o) {super.m(o);}}");
+		assertSuccessSerialize("class A{<O extends Number> O m(O o) {return o;}} class B extends A{Integer m(Integer o) {return super.m(o);}}");
 
 		//assertFailCompile("class A{<O> void m(? extends O x){}}"); // Wildcards may be used only as reference parameters
 		assertFailCompile("class A{void m(O extends Number x){}}");
@@ -128,7 +128,7 @@ public class TestGenerics extends HiTest {
 
 	@Test
 	public void testFields() {
-		assertSuccessSerialize("class A<O>{O value; A(O value){this.value = value;}} assert new A<Boolean>(true).value; assert new A<Integer>(123).value == 123;");
+		assertSuccessSerialize("class A<O>{O vvv; A(O vvv){this.vvv = vvv;}} assert new A<Boolean>(true).vvv; assert new A<Integer>(123).vvv == 123;");
 		assertSuccessSerialize("class A<O1 extends Number>{O1 x;} class B<O2 extends Integer> extends A<O2>{} new B<Integer>().x = new Integer(1);");
 		assertSuccessSerialize("class A<O extends Number>{O x;} class B<O extends Integer> extends A<O>{} B<Integer> b = new B<>(); b.x = new Integer(1); assert b.x == 1; assert b.x instanceof Integer;");
 		assertSuccessSerialize("class A<O>{O m(O x) {O y = x; return y;}} assert new A<Integer>().m(1) == 1;");

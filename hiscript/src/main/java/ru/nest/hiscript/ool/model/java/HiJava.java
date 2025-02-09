@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -18,28 +19,28 @@ public class HiJava {
 		if (javaObject == null) {
 			return null;
 		} else if (javaObject instanceof Integer) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.INT.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Boolean) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.BOOLEAN.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Long) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.LONG.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Double) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.DOUBLE.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Character) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.CHAR.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Byte) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.BYTE.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Short) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.SHORT.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof Float) {
-			ctx.value.set(javaObject);
+			ctx.setValue(javaObject);
 			return HiClassPrimitive.FLOAT.autobox(ctx, ctx.value);
 		} else if (javaObject instanceof String) {
 			return NodeString.createString(ctx, (String) javaObject);
@@ -126,7 +127,7 @@ public class HiJava {
 		}
 	}
 
-	public static Type getTypeByJavaClass(Class javaClass) {
+	public static Type getTypeByJavaClass(Class javaClass, HiRuntimeEnvironment env) {
 		String javaClassName = javaClass.getSimpleName();
 		Type primitiveType = Type.getPrimitiveType(javaClassName);
 		if (primitiveType != null) {
@@ -136,13 +137,13 @@ public class HiJava {
 		if (javaClass.isArray()) {
 			// TODO packages
 		} else {
-			return Type.getTopType(javaClassName);
+			return Type.getTopType(javaClassName, env);
 		}
 
 		if (Map.class.isAssignableFrom(javaClass)) {
-			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME);
+			return Type.getTopType(HiClass.HASHMAP_CLASS_NAME, env);
 		} else if (List.class.isAssignableFrom(javaClass)) {
-			return Type.getTopType(HiClass.ARRAYLIST_CLASS_NAME);
+			return Type.getTopType(HiClass.ARRAYLIST_CLASS_NAME, env);
 		} else if (javaClass.isArray()) {
 			int dimension = 1;
 			Class elementClass = javaClass.getComponentType();
@@ -150,11 +151,11 @@ public class HiJava {
 				elementClass = elementClass.getComponentType();
 				dimension++;
 			}
-			Type rootElementType = getTypeByJavaClass(elementClass);
+			Type rootElementType = getTypeByJavaClass(elementClass, env);
 			if (rootElementType != null) {
-				return Type.getArrayType(rootElementType, dimension);
+				return Type.getArrayType(rootElementType, dimension, env);
 			}
 		}
-		return Type.getTopType(javaClassName);
+		return Type.getTopType(javaClassName, env);
 	}
 }

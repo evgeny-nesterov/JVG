@@ -182,7 +182,7 @@ public class HiObject {
 
 	@Override
 	public String toString() {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
 		return toString(ctx);
 	}
 
@@ -216,7 +216,7 @@ public class HiObject {
 
 	@Override
 	public boolean equals(Object object) {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
 		return equals(ctx, (HiObject) object);
 	}
 
@@ -254,7 +254,7 @@ public class HiObject {
 
 	@Override
 	public int hashCode() {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(null);
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
 		return hashCode(ctx);
 	}
 

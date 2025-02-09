@@ -64,12 +64,12 @@ public class ClassParseRule extends ParserUtil {
 			// parse 'extends'
 			List<Type> superClassesList = null;
 			if (visitWord(Words.EXTENDS, tokenizer) != null) {
-				Type superClassType = visitType(tokenizer, false);
+				Type superClassType = visitType(tokenizer, false, ctx.getEnv());
 				if (superClassType != null) {
 					superClassesList = new ArrayList<>(1);
 					superClassesList.add(superClassType);
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						superClassType = visitType(tokenizer, false);
+						superClassType = visitType(tokenizer, false, ctx.getEnv());
 						if (superClassType != null) {
 							superClassesList.add(superClassType);
 						} else {
@@ -84,12 +84,12 @@ public class ClassParseRule extends ParserUtil {
 			// parse 'implements'
 			List<Type> interfacesList = null;
 			if (visitWord(Words.IMPLEMENTS, tokenizer) != null) {
-				Type interfaceType = visitType(tokenizer, false);
+				Type interfaceType = visitType(tokenizer, false, ctx.getEnv());
 				if (interfaceType != null) {
 					interfacesList = new ArrayList<>(1);
 					interfacesList.add(interfaceType);
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						interfaceType = visitType(tokenizer, false);
+						interfaceType = visitType(tokenizer, false, ctx.getEnv());
 						if (interfaceType != null) {
 							interfacesList.add(interfaceType);
 						} else {
@@ -238,7 +238,7 @@ public class ClassParseRule extends ParserUtil {
 
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-				Type[] exceptionTypes = visitExceptionTypes(tokenizer);
+				Type[] exceptionTypes = visitExceptionTypes(tokenizer, ctx);
 
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
@@ -303,14 +303,14 @@ public class ClassParseRule extends ParserUtil {
 			generics.setSourceType(NodeGeneric.GenericSourceType.method);
 		}
 
-		Type type = visitType(tokenizer, true);
+		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type == null) {
 			if (visitWord(Words.VOID, tokenizer) != null) {
 				type = Type.voidType;
 			}
 		} else {
 			int dimension = visitDimension(tokenizer);
-			type = Type.getArrayType(type, dimension);
+			type = Type.getArrayType(type, dimension, ctx.getEnv());
 		}
 
 		if (type != null) {
@@ -329,7 +329,7 @@ public class ClassParseRule extends ParserUtil {
 
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
-					Type[] exceptionTypes = visitExceptionTypes(tokenizer);
+					Type[] exceptionTypes = visitExceptionTypes(tokenizer, ctx);
 
 					HiNode body = null;
 					if (modifiers.isNative() || modifiers.isAbstract()) {
@@ -361,10 +361,10 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public Type[] visitExceptionTypes(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	public Type[] visitExceptionTypes(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Type[] exceptionTypes = null;
 		if (visitWordType(tokenizer, Words.THROWS) != -1) {
-			Type exceptionType = visitType(tokenizer, true);
+			Type exceptionType = visitType(tokenizer, true, ctx.getEnv());
 			if (exceptionType == null) {
 				tokenizer.error("identifier expected");
 				return null;
@@ -373,7 +373,7 @@ public class ClassParseRule extends ParserUtil {
 			exceptionTypesList.add(exceptionType);
 			if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
 				tokenizer.nextToken();
-				exceptionType = visitType(tokenizer, true);
+				exceptionType = visitType(tokenizer, true, ctx.getEnv());
 				if (exceptionType != null) {
 					exceptionTypesList.add(exceptionType);
 				} else {
@@ -390,7 +390,7 @@ public class ClassParseRule extends ParserUtil {
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Token startToken = startToken(tokenizer);
-		Type baseType = visitType(tokenizer, true);
+		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
@@ -410,7 +410,7 @@ public class ClassParseRule extends ParserUtil {
 					Modifiers modifiers = annotatedModifiers.getModifiers();
 					checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC);
 
-					Type type = Type.getArrayType(baseType, addDimension);
+					Type type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 					HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 					field.setModifiers(modifiers);
 					field.setAnnotations(annotatedModifiers.getAnnotations());
@@ -444,7 +444,7 @@ public class ClassParseRule extends ParserUtil {
 			initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		}
 
-		Type type = Type.getArrayType(baseType, addDimension);
+		Type type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 		HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 		field.setModifiers(modifiers);
 

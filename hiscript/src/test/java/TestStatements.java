@@ -264,6 +264,7 @@ public class TestStatements extends HiTest {
 
 		// throw in root
 		assertFailCompile("throw new Exception(\"error\");"); // unreported exception
+		assertFailCompile("throw new Exception(null);"); // unreported exception
 		assertFailCompile("throw new Exception(1, 2, 3);");
 		assertFailSerialize("throw new RuntimeException(\"error\");");
 		assertFailCompile("throw new Object();");

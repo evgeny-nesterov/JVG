@@ -4,7 +4,6 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiNative;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
@@ -30,9 +29,14 @@ public class SystemImpl extends ImplUtil {
 	public static void System_void_loadLib_String(RuntimeContext ctx, HiObject path) {
 		try {
 			String p = ImplUtil.getString(ctx, path);
+			String classFileSuffix = "Impl.class";
+			assert p.endsWith(classFileSuffix) : "invalid class path: " + p;
+
+			String className = p.substring(0, p.length() - classFileSuffix.length());
+			HiClass clazz = HiClass.forName(ctx, className);
+			assert clazz != null : "class not found: " + className;
 
 			URL url = SystemImpl.class.getResource(p);
-
 			if (url == null) {
 				File file = new File(p);
 				if (file.exists()) {
@@ -65,9 +69,9 @@ public class SystemImpl extends ImplUtil {
 				}
 			};
 
-			Class<?> clazz = cl.loadClass(url.getFile());
-			if (clazz != null) {
-				HiNative.register(clazz);
+			Class<?> javaClass = cl.loadClass(url.getFile());
+			if (javaClass != null) {
+				clazz.getClassLoader().getNative().register(javaClass);
 			} else {
 				ctx.throwRuntimeException("cannot load library: " + error[0].toString());
 			}

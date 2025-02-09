@@ -55,7 +55,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		int operation;
 		OperationsGroup operations = new OperationsGroup();
 		do {
-			visitPrefixes(tokenizer, operations, operands);
+			visitPrefixes(tokenizer, ctx, operations, operands);
 			visitIncrement(tokenizer, operations, true);
 			allOperations.add(operations);
 
@@ -116,7 +116,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return null;
 	}
 
-	public boolean visitPrefixes(Tokenizer tokenizer, OperationsGroup operations, List<HiNodeIF> operands) throws TokenizerException, HiScriptParseException {
+	public boolean visitPrefixes(Tokenizer tokenizer, CompileClassContext ctx, OperationsGroup operations, List<HiNodeIF> operands) throws TokenizerException, HiScriptParseException {
 		boolean found = false;
 		boolean isBoolean = false;
 		boolean isNumber = false;
@@ -167,7 +167,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				continue;
 			}
 
-			if (visitCast(tokenizer, operations, operands)) {
+			if (visitCast(tokenizer, ctx, operations, operands)) {
 				found = true;
 				continue;
 			}
@@ -196,10 +196,10 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return false;
 	}
 
-	public boolean visitCast(Tokenizer tokenizer, OperationsGroup operations, List<HiNodeIF> operands) throws TokenizerException, HiScriptParseException {
+	public boolean visitCast(Tokenizer tokenizer, CompileClassContext ctx, OperationsGroup operations, List<HiNodeIF> operands) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-			Type type = visitType(tokenizer, true);
+			Type type = visitType(tokenizer, true, ctx.getEnv());
 			if (type != null) {
 				if (type.getDimension() == 0) {
 					// (a.b.c) (type)(var) + 1 - ???

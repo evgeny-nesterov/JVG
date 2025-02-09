@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Words;
 
@@ -86,12 +87,14 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		primitiveTypes.put("Boolean", booleanBoxType);
 	}
 
-	public final int id;
-
 	/**
 	 * Object type
 	 */
-	private Type(Type parent, String name) {
+	public Type(String name) {
+		this(null, name);
+	}
+
+	public Type(Type parent, String name) {
 		this.id = -1;
 		this.parent = parent;
 		this.cellType = null;
@@ -111,7 +114,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			this.fullName = name.intern();
 		}
-		this.hashCode = Objects.hash(fullName, dimension);
+		this.hashCode = Objects.hash(fullName, dimension, Objects.hash(parameters), isExtends, isSuper);
 	}
 
 	/**
@@ -146,7 +149,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	/**
 	 * Array type
 	 */
-	private Type(Type cellType) {
+	public Type(Type cellType) {
 		this.id = -1;
 		this.parent = null;
 		this.cellType = cellType;
@@ -166,7 +169,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 	}
 
-	private Type(Type extendedType, boolean isSuper) {
+	public Type(Type extendedType, boolean isSuper) {
 		this.id = -1;
 		this.primitive = false;
 		this.parent = extendedType.parent;
@@ -276,6 +279,8 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return rootCellClass.getArrayClassIf(dimensions);
 	}
 
+	private int id;
+
 	public Type parent;
 
 	public Type[] path;
@@ -292,14 +297,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	private final int dimension;
 
-	public int getDimension() {
-		return dimension;
-	}
-
-	public Type getCellType() {
-		return cellType;
-	}
-
 	private final boolean primitive;
 
 	// generic
@@ -308,6 +305,14 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	public boolean isExtends;
 
 	public boolean isSuper;
+
+	public int getDimension() {
+		return dimension;
+	}
+
+	public Type getCellType() {
+		return cellType;
+	}
 
 	public boolean isPrimitive() {
 		return primitive;
@@ -334,15 +339,32 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 		if (o != null && o.getClass() == Type.class) {
 			Type t = (Type) o;
-
 			if (!t.fullName.equals(fullName)) {
 				return false;
 			}
-
 			if (t.primitive != primitive) {
 				return false;
 			}
-
+			if (t.isExtends != isExtends) {
+				return false;
+			}
+			if (t.isSuper != isSuper) {
+				return false;
+			}
+			if (t.parameters != null && parameters == null) {
+				return false;
+			} else if (t.parameters == null && parameters != null) {
+				return false;
+			} else if (t.parameters != null && parameters != null) {
+				if (t.parameters.length != parameters.length) {
+					return false;
+				}
+				for (int i = 0; i < parameters.length; i++) {
+					if (!t.parameters[i].equals(parameters[i])) {
+						return false;
+					}
+				}
+			}
 			if (t.dimension != dimension) {
 				return false;
 			} else if (dimension > 0) {
@@ -409,7 +431,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	private Map<String, Type> innerTypes;
 
-	public Type getInnerType(String name, int dimension) {
+	public Type getInnerType(String name, int dimension, HiRuntimeEnvironment env) {
 		if (innerTypes == null) {
 			innerTypes = new HashMap<>(1);
 		}
@@ -420,20 +442,16 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			innerTypes.put(name, type);
 		}
 
-		type = getArrayType(type, dimension);
+		type = getArrayType(type, dimension, env);
 		return type;
 	}
 
 	// === Static Methods ===
-	private final static Map<String, Type> typesWithoutParent = new HashMap<>();
-
-	private final static Map<Type, Type> arrayTypes = new HashMap<>();
-
-	public static Type getType(Type parent, String name) {
+	public static Type getType(Type parent, String name, HiRuntimeEnvironment env) {
 		if (parent != null) {
-			return parent.getInnerType(name, 0);
+			return parent.getInnerType(name, 0, env);
 		} else {
-			return getTopType(name);
+			return getTopType(name, env);
 		}
 	}
 
@@ -443,43 +461,49 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	public static Type getExtendedType(Type extendedType, boolean isSuper) {
-		if (extendedType == null || extendedType == objectType) {
-			return anyType;
+		if (extendedType == null || extendedType == Type.objectType) {
+			return Type.anyType;
 		} else {
 			return new Type(extendedType, isSuper);
 		}
 	}
 
-	public static Type getTopType(String name) {
+	private final static Map<String, Type> typesWithoutParent = new HashMap<>();
+
+	public static Type getTopType(String name, HiRuntimeEnvironment env) {
 		Type type = primitiveTypes.get(name);
 		if (type != null) {
 			return type;
 		}
-
-		type = typesWithoutParent.get(name);
-		if (type == null) {
-			type = new Type(null, name);
-			typesWithoutParent.put(name, type);
+		if (env != null) {
+			return env.getTopType(name);
+		} else {
+			// system types
+			type = typesWithoutParent.get(name);
+			if (type == null) {
+				type = new Type(null, name);
+				typesWithoutParent.put(name, type);
+			}
+			return type;
 		}
-		return type;
 	}
 
-	public static Type getTypeByFullName(String fullName) {
+	public static Type getTypeByFullName(String fullName, HiRuntimeEnvironment env) {
 		int index = fullName.indexOf('.');
 		if (index != -1) {
-			Type type = getType(null, fullName.substring(0, index));
+			Type type = getType(null, fullName.substring(0, index), env);
 			while (index != -1) {
 				int nextIndex = fullName.indexOf('.', index + 1);
 				if (index != -1) {
-					type = getType(null, fullName.substring(index, nextIndex));
+					type = getType(null, fullName.substring(index, nextIndex), env);
 					index = nextIndex;
 				} else {
-					type = getType(null, fullName.substring(index));
+					type = getType(null, fullName.substring(index), env);
 				}
 			}
 			return type;
 		} else {
-			return getType(null, fullName);
+			return getType(null, fullName, env);
 		}
 	}
 
@@ -519,18 +543,25 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return null;
 	}
 
-	public static Type getArrayType(Type type) {
-		Type arrayType = arrayTypes.get(type);
-		if (arrayType == null) {
-			arrayType = new Type(type);
-			arrayTypes.put(type, arrayType);
+	private final static Map<Type, Type> arrayTypes = new HashMap<>();
+
+	public static Type getArrayType(Type type, HiRuntimeEnvironment env) {
+		if (env != null) {
+			return env.getArrayType(type);
+		} else {
+			// system types
+			Type arrayType = arrayTypes.get(type);
+			if (arrayType == null) {
+				arrayType = new Type(type);
+				arrayTypes.put(type, arrayType);
+			}
+			return arrayType;
 		}
-		return arrayType;
 	}
 
-	public static Type getArrayType(Type cellType, int dimension) {
+	public static Type getArrayType(Type cellType, int dimension, HiRuntimeEnvironment env) {
 		for (int i = 0; i < dimension; i++) {
-			cellType = getArrayType(cellType);
+			cellType = getArrayType(cellType, env);
 		}
 		return cellType;
 	}
@@ -548,13 +579,14 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			while (arrayClass.cellClass.fullName.charAt(index) == '0') {
 				index++;
 			}
-			Type cellType = getTypeByFullName(arrayClass.cellClass.fullName.substring(index));
-			return getArrayType(cellType, arrayClass.dimension);
+			HiRuntimeEnvironment env = clazz.getClassLoader().getEnv();
+			Type cellType = getTypeByFullName(arrayClass.cellClass.fullName.substring(index), env);
+			return getArrayType(cellType, arrayClass.dimension, env);
 		}
 		if (clazz.isNull()) {
 			return null;
 		}
-		return getTypeByFullName(clazz.fullName);
+		return getTypeByFullName(clazz.fullName, clazz.getClassLoader().getEnv());
 	}
 
 	@Override
@@ -570,7 +602,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		if (parameters != null) {
 			return fullName + getParametersDescr();
 		} else if (isExtends) {
-			if (!fullName.equals(objectType.fullName)) {
+			if (!fullName.equals(HiClass.OBJECT_CLASS_NAME)) {
 				return "? extends " + fullName;
 			} else {
 				return "?";
@@ -596,18 +628,27 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 		switch (typeClass) {
 			case PRIMITIVE:
+				os.writeUTF(fullName);
+				return;
+
 			case OBJECT:
 				os.writeUTF(fullName);
+				os.writeByte(parameters != null ? parameters.length : 0);
+				os.writeNullable(parameters);
+				os.writeBoolean(isExtends);
+				os.writeBoolean(isSuper);
 				break;
 
 			case ARRAY:
 				os.writeType(cellType);
+				os.writeShort(dimension);
 				break;
 		}
 	}
 
 	public static Type decode(DecodeContext os) throws IOException {
 		int typeType = os.readByte();
+		Type type = null;
 		switch (typeType) {
 			case PRIMITIVE:
 				return getPrimitiveType(os.readUTF());
@@ -615,14 +656,19 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			case OBJECT:
 				String fullName = os.readUTF();
 				String[] path = fullName.split("\\.");
-				Type type = null;
 				for (String name : path) {
-					type = getType(type, name);
+					type = getType(type, name, os.getEnv());
 				}
+				Type[] parameters = os.readNullableArray(Type.class, os.readByte());
+				if (parameters != null) {
+					type = getParameterizedType(type, parameters);
+				}
+				type.isExtends = os.readBoolean();
+				type.isSuper = os.readBoolean();
 				return type;
 
 			case ARRAY:
-				return getArrayType(os.readType());
+				return getArrayType(os.readType(), os.readShort(), os.getEnv());
 		}
 		throw new HiScriptRuntimeException("unknown type " + typeType);
 	}
@@ -671,13 +717,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 	}
 
 	// has to be set at the end of class init
-	public final static Type objectType = getTopType(HiClass.OBJECT_CLASS_NAME);
+	public final static Type objectType = new Type(HiClass.OBJECT_CLASS_NAME);
 
 	public final static Type anyType = new Type(objectType, false); // used for case <? extends Type>
 
-	public final static Type enumType = getTopType(HiClass.ENUM_CLASS_NAME);
+	public final static Type enumType = new Type(HiClass.ENUM_CLASS_NAME);
 
-	public final static Type recordType = getTopType(HiClass.RECORD_CLASS_NAME);
-
-	public final static Type stringType = getTopType(HiClass.STRING_CLASS_NAME);
+	public final static Type recordType = new Type(HiClass.RECORD_CLASS_NAME);
 }

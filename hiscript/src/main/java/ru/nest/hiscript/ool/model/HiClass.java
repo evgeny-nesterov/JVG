@@ -29,6 +29,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -107,25 +108,20 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public static String RUNTIME_EXCEPTION_CLASS_NAME = "RuntimeException";
 
-	public final static HiClassLoader systemClassLoader = new HiClassLoader("system");
-
-	public static HiClassLoader userClassLoader = new HiClassLoader("user", systemClassLoader);
-
-	public static void setUserClassLoader(HiClassLoader classLoader) {
-		systemClassLoader.removeClassLoader(userClassLoader);
-		systemClassLoader.addClassLoader(classLoader);
-		userClassLoader = classLoader;
-	}
-
 	static {
-		loadSystemClasses();
+		// system class loader is common and has to have null parent
+		HiClassLoader systemClassLoader = HiClassLoader.createSystem();
+		systemClassLoader.getNative().register(SystemImpl.class);
+		systemClassLoader.getNative().register(ObjectImpl.class);
+		loadSystemClasses(systemClassLoader);
 	}
 
-	private static void loadSystemClasses() {
-		systemClassLoader.clear();
+	public static HiClassLoader getSystemClassLoader() {
+		return HiClassLoader.getSystemClassLoader();
+	}
 
-		HiNative.register(SystemImpl.class);
-		HiNative.register(ObjectImpl.class);
+	private static void loadSystemClasses(HiClassLoader systemClassLoader) {
+		systemClassLoader.clear();
 
 		try {
 			List<HiClass> classes = new ArrayList<>();
@@ -278,21 +274,21 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			superClass = superClassType.getClass(classResolver);
 		}
 
+		this.classLoader = classLoader;
 		// intern name to optimize via a == b
 		this.name = (name != null ? name : "").intern();
 		this.fullName = getFullName(classLoader);
 		this.hashCode = fullName.hashCode();
 		this.generics = generics;
 
-		if (classLoader == null) {
-			classLoader = userClassLoader;
+		if (classLoader != null) {
+			classLoader.addClass(this, isRuntime);
 		}
-		classLoader.addClass(this, isRuntime);
 	}
 
 	public String getFullName(HiClassLoader classLoader) {
 		if (this.fullName == null) {
-			if (enclosingClass != null && !isEnum()) {
+			if (enclosingClass != null && !isEnum() && classLoader != null) {
 				switch (type) {
 					case CLASS_TYPE_TOP:
 					case CLASS_TYPE_INNER:
@@ -474,6 +470,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public HiClassLoader getClassLoader() {
 		return classLoader;
+	}
+
+	public HiRuntimeEnvironment getEnv() {
+		return classLoader.getEnv();
 	}
 
 	@Override
@@ -1761,7 +1761,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		if (systemClassLoader.getClass(fullName) != null) {
+		if (classLoader.isSystem()) {
 			os.writeByte(CLASS_SYSTEM);
 			os.writeUTF(fullName);
 		} else {
@@ -1774,18 +1774,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		os.writeByte(classType);
 		os.writeToken(token);
 		os.writeUTF(name);
+		os.writeUTF(classLoader.getName());
 
 		// constructor parameters
-		if (superClass != null) {
-			os.writeBoolean(true);
-			os.writeType(Type.getType(superClass));
-			// Type.getType(superClass).code(os);
-		} else if (superClassType != null) {
-			os.writeBoolean(true);
+		os.writeBoolean(superClassType != null || superClass != null);
+		if (superClassType != null) {
 			os.writeType(superClassType);
-			// superClassType.code(os);
-		} else {
-			os.writeBoolean(false);
+		} else if (superClass != null) {
+			os.writeType(Type.getType(superClass));
 		}
 
 		os.writeBoolean(enclosingClass != null);
@@ -1797,20 +1793,25 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		os.writeByte(type);
 		os.writeUTF(fullName);
 
+		// content
+		os.writeBoolean(superClass != null);
+		if (superClass != null) {
+			os.writeClass(superClass);
+		}
 		os.writeNullable(modifiers);
 		os.writeTypes(interfaceTypes);
+		os.writeClasses(interfaces);
 		os.writeShortArray(constructors);
 		if (isLambda()) {
 			os.write(functionalMethod);
-		} else {
-			os.writeBoolean(isInterface);
-			os.writeShortArray(annotations);
-
-			os.writeShort(fields != null ? fields.length : 0);
-			os.writeShortArray(initializers); // contains ordered fields and blocks
-			os.writeShortArray(methods);
-			os.writeClasses(innerClasses);
 		}
+		os.writeBoolean(isInterface);
+		os.writeShortArray(annotations);
+
+		os.writeShort(fields != null ? fields.length : 0);
+		os.writeShortArray(initializers); // contains ordered fields and blocks
+		os.writeShortArray(methods);
+		os.writeClasses(innerClasses);
 	}
 
 	public static HiClass decode(DecodeContext os) throws IOException {
@@ -1837,6 +1838,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return HiClassVar.decode(os);
 			case CLASS_GENERIC:
 				return HiClassGeneric.decode(os, classIndex);
+			case CLASS_MIX:
+				return HiClassMix.decode(os, classIndex);
 		}
 		throw new HiScriptRuntimeException("unknown class type: " + classType);
 	}
@@ -1849,6 +1852,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		final HiClass[] classAccess = new HiClass[1];
 		Token token = os.readToken();
 		String name = os.readUTF();
+		String classLoaderName = os.readUTF();
 
 		// constructor parameters
 		Type superClassType = null;
@@ -1863,7 +1867,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				outerClass = os.readClass();
 			} catch (HiNoClassException exc) {
 				initClass = false;
-				os.addClassLoadListener(clazz -> classAccess[0].init(os.getClassLoader(), null, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
+				os.addClassLoadListener(clazz -> classAccess[0].init(os, classLoaderName, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
 			}
 		}
 
@@ -1879,6 +1883,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			clazz = new HiClassAnnotation(name, type);
 		} else if (classType == CLASS_GENERIC) {
 			clazz = new HiClassGeneric(name, type);
+		} else if (classType == CLASS_MIX) {
+			clazz = new HiClassMix(os.getClassLoader());
 		} else {
 			clazz = new HiClass(superClassType, name, generics, type);
 		}
@@ -1886,39 +1892,42 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(os.getClassLoader(), null, outerClass, name, generics, type);
+			clazz.init(os, classLoaderName, outerClass, name, generics, type);
 		}
 
 		HiClass oldClass = os.getHiClass();
 		os.setHiClass(clazz);
 
 		// content
+		if (os.readBoolean()) {
+			os.readClass(c -> clazz.superClass = c);
+		}
 		clazz.modifiers = os.readNullable(Modifiers.class);
 		clazz.interfaceTypes = os.readTypes();
+		clazz.interfaces = os.readClasses();
 		clazz.constructors = os.readShortArray(HiConstructor.class);
 		if (clazz.isLambda()) {
-			clazz.isInterface = false;
 			clazz.functionalMethod = os.read(HiMethod.class);
-		} else {
-			clazz.isInterface = os.readBoolean();
-			clazz.annotations = os.readShortNodeArray(NodeAnnotation.class);
+		}
+		clazz.isInterface = os.readBoolean();
+		clazz.annotations = os.readShortNodeArray(NodeAnnotation.class);
 
-			int fieldsCount = os.readShort();
-			clazz.initializers = os.readShortNodeArray(NodeInitializer.class); // contains ordered fields and blocks
-			if (fieldsCount > 0) {
-				clazz.fields = new HiField[fieldsCount];
-				int fieldIndex = 0;
-				for (int i = 0; i < clazz.initializers.length; i++) {
-					NodeInitializer initializer = clazz.initializers[i];
-					if (initializer instanceof HiField) {
-						clazz.fields[fieldIndex++] = (HiField) initializer;
-					}
+		int fieldsCount = os.readShort();
+		clazz.initializers = os.readShortNodeArray(NodeInitializer.class); // contains ordered fields and blocks
+		if (fieldsCount > 0) {
+			clazz.fields = new HiField[fieldsCount];
+			int fieldIndex = 0;
+			for (int i = 0; i < clazz.initializers.length; i++) {
+				NodeInitializer initializer = clazz.initializers[i];
+				if (initializer instanceof HiField) {
+					clazz.fields[fieldIndex++] = (HiField) initializer;
 				}
 			}
-
-			clazz.methods = os.readShortArray(HiMethod.class);
-			clazz.innerClasses = os.readClasses();
 		}
+
+		clazz.methods = os.readShortArray(HiMethod.class);
+		clazz.innerClasses = os.readClasses();
+
 		os.setHiClass(oldClass);
 
 		// try resolve super class
@@ -1928,6 +1937,18 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		os.fireClassLoaded(clazz, classIndex);
 		return clazz;
+	}
+
+	private void init(DecodeContext os, String classLoaderName, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
+		HiClassLoader classLoader;
+		if (isPrimitive()) {
+			classLoader = HiClassLoader.primitiveClassLoader;
+		} else if (HiClassLoader.SYSTEM_CLASS_LOADER_NAME.equals(classLoaderName)) {
+			classLoader = os.getClassLoader().getSystemClassLoader();
+		} else {
+			classLoader = os.getClassLoader();
+		}
+		init(classLoader, null, enclosingClass, name, generics, type);
 	}
 
 	@Override
@@ -1977,7 +1998,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return enclosingClass == null || enclosingClass.name.equals(ROOT_CLASS_NAME);
 	}
 
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		switch (fullName) {
 			case "String":
 				return String.class;

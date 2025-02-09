@@ -53,12 +53,9 @@ public class NodeGeneric extends HiNode {
 			boolean valid = true;
 			for (int i = 0; i < parametersClasses.length; i++) {
 				Type parameterType = genericType.parameters[i];
-				parametersClasses[i] = parameterType.getClass(ctx);
-				HiClass parameterClass = parametersClasses[i];
-				if (parameterClass == null) {
-					parametersClasses[i] = HiClass.OBJECT_CLASS;
-					valid = false;
-				}
+				HiClass parameterClass = parameterType.getClass(ctx);
+				assert parameterClass != null;
+				parametersClasses[i] = parameterClass;
 			}
 			valid &= genericType.validateClass(clazz.clazz, validationInfo, ctx, getToken());
 			return valid;

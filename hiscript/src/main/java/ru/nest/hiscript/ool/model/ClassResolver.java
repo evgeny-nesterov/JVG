@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+
 public interface ClassResolver {
 	HiClass getCurrentClass();
 
@@ -12,4 +14,6 @@ public interface ClassResolver {
 	HiClassLoader getClassLoader();
 
 	HiCompiler getCompiler();
+
+	HiRuntimeEnvironment getEnv();
 }

@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.ByteArrayInputStream;
@@ -25,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 public class DecodeContext {
+	private final DecodeContext parent;
+
+	private final HiClassLoader classLoader;
+
 	private final DataInputStream is;
 
 	private HiClass clazz;
@@ -51,9 +56,9 @@ public class DecodeContext {
 		this.parent = parent;
 	}
 
-	private final DecodeContext parent;
-
-	private final HiClassLoader classLoader;
+	public HiRuntimeEnvironment getEnv() {
+		return classLoader.getEnv();
+	}
 
 	public HiClassLoader getClassLoader() {
 		return classLoader;
@@ -200,9 +205,12 @@ public class DecodeContext {
 	public void loadTypes() throws IOException {
 		int count = readShort();
 		types = new Type[count];
+		int[] indexes = new int[count];
 		for (int i = 0; i < count; i++) {
 			int index = readShort();
-			types[index] = Type.decode(this);
+			Type type = Type.decode(this);
+			types[index] = type;
+			indexes[i] = index;
 		}
 	}
 
@@ -319,7 +327,7 @@ public class DecodeContext {
 
 	public HiClass[] readClasses() throws IOException, HiNoClassException {
 		int size = readShort();
-		HiClass[] classes = size > 0 ? new HiClass[size] : null;
+		HiClass[] classes = new HiClass[size];
 		for (int i = 0; i < size; i++) {
 			try {
 				classes[i] = readClass();

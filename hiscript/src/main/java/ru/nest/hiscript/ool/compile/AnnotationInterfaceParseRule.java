@@ -92,7 +92,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		Type type = visitType(tokenizer, true);
+		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type != null) {
 			int dimension = visitDimension(tokenizer);
 
@@ -102,7 +102,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 				generics.setSourceType(NodeGeneric.GenericSourceType.method);
 			}
 
-			type = Type.getArrayType(type, dimension);
+			type = Type.getArrayType(type, dimension, ctx.getEnv());
 
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {

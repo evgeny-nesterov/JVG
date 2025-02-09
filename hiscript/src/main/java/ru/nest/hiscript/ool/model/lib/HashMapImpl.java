@@ -20,13 +20,13 @@ public class HashMapImpl extends ImplUtil {
 
 	public static void HashMap_V_get_K(RuntimeContext ctx, Object key) {
 		setCtx(ctx, key);
-		ctx.value.set(getMap(ctx).get(key));
+		ctx.setValue(getMap(ctx).get(key));
 	}
 
 	public static void HashMap_V_put_K_V(RuntimeContext ctx, Object key, Object value) {
 		setCtx(ctx, key);
 		setCtx(ctx, value);
-		ctx.value.set(getMap(ctx).put(key, value));
+		ctx.setValue(getMap(ctx).put(key, value));
 	}
 
 	public static void HashMap_boolean_containsKey_K(RuntimeContext ctx, Object key) {
@@ -45,7 +45,7 @@ public class HashMapImpl extends ImplUtil {
 
 	public static void HashMap_V_remove_K(RuntimeContext ctx, Object key) {
 		setCtx(ctx, key);
-		ctx.value.set(getMap(ctx).remove(key));
+		ctx.setValue(getMap(ctx).remove(key));
 	}
 
 	public static void HashMap_ArrayList_keys(RuntimeContext ctx) {
@@ -79,6 +79,6 @@ public class HashMapImpl extends ImplUtil {
 		HashMap<Object, Object> map = getMap(ctx);
 		Object cloneMap = map.clone();
 		// TODO: create clone Obj for HashMap
-		// ctx.value.set(clone);
+		// ctx.setValue(clone);
 	}
 }

@@ -14,6 +14,7 @@ import ru.nest.hiscript.ool.model.java.HiFieldJava;
 import ru.nest.hiscript.ool.model.java.HiMethodJava;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,14 +30,12 @@ import java.util.stream.Collectors;
 public class HiClassJava extends HiClass {
 	public Class javaClass;
 
+	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null, null);
+
 	public HiClassJava(HiClassLoader classLoader, String name, Class javaClass) {
 		super(classLoader, null, null, name, CLASS_TYPE_TOP, null);
 		this.javaClass = javaClass;
 	}
-
-	private final Map<Integer, HiConstructorJava> javaConstructorsMap = new ConcurrentHashMap<>();
-
-	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null, null);
 
 	@Override
 	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
@@ -46,7 +45,7 @@ public class HiClassJava extends HiClass {
 			if (argType.isNull()) {
 				continue;
 			}
-			Class argTypeJavaClass = argType.getJavaClass();
+			Class argTypeJavaClass = argType.getJavaClass(classResolver.getEnv());
 			if (argTypeJavaClass == null) {
 				classResolver.processResolverException("inconvertible java class argument: " + argType.getNameDescr());
 				return null;
@@ -55,6 +54,7 @@ public class HiClassJava extends HiClass {
 		}
 		try {
 			Integer signatureId = Objects.hash(javaArgClasses); // TODO check correct!
+			Map<Integer, HiConstructorJava> javaConstructorsMap = classResolver.getEnv().javaConstructorsMap;
 			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
 				return javaConstructor != noJavaConstructor ? javaConstructor : null;
@@ -188,7 +188,7 @@ public class HiClassJava extends HiClass {
 			if (argType.isNull()) {
 				continue;
 			}
-			Class argTypeJavaClass = argType.getJavaClass();
+			Class argTypeJavaClass = argType.getJavaClass(classResolver.getEnv());
 			if (argTypeJavaClass == null) {
 				classResolver.processResolverException("Inconvertible java class argument: " + argType.getNameDescr());
 				return null;
@@ -238,7 +238,7 @@ public class HiClassJava extends HiClass {
 		try {
 			Field field = javaClass.getDeclaredField(name);
 			//if (field.isAccessible()) {
-			return new HiFieldJava(field, name);
+			return new HiFieldJava(field, name, classResolver.getEnv());
 			//}
 		} catch (NoSuchFieldException e) {
 		}
@@ -264,7 +264,7 @@ public class HiClassJava extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		return javaClass;
 	}
 }

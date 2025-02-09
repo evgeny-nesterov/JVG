@@ -26,7 +26,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		Type type = visitType(tokenizer, true);
+		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type != null) {
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name == null) {
@@ -37,7 +37,7 @@ public class ArgumentParseRule extends ParseRule<NodeArgument> {
 			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
 			int addDimension = visitDimension(tokenizer);
-			type = Type.getArrayType(type, addDimension);
+			type = Type.getArrayType(type, addDimension, ctx.getEnv());
 			return new NodeArgument(type, name, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 		}
 

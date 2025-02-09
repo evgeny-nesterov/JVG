@@ -21,6 +21,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.AnnotationWordToken;
 import ru.nest.hiscript.tokenizer.CharToken;
 import ru.nest.hiscript.tokenizer.CommentToken;
@@ -154,24 +155,24 @@ public class ParserUtil implements Words {
 		return null;
 	}
 
-	protected static Type visitType(Tokenizer tokenizer, boolean allowArray) throws TokenizerException, HiScriptParseException {
+	protected static Type visitType(Tokenizer tokenizer, boolean allowArray, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
 		if (type == null) {
-			type = visitObjectType(tokenizer);
+			type = visitObjectType(tokenizer, env);
 		}
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
-			type = Type.getArrayType(type, dimension);
+			type = Type.getArrayType(type, dimension, env);
 		}
 		return type;
 	}
 
-	protected static Type visitObjectType(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = null;
 		tokenizer.start();
 		String name = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (name != null) {
-			type = Type.getType(null, name);
+			type = Type.getType(null, name, env);
 			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
 				name = visitWord(Words.NOT_SERVICE, tokenizer);
 				if (name == null) {
@@ -180,14 +181,14 @@ public class ParserUtil implements Words {
 					}
 					tokenizer.error("identifier is expected");
 				}
-				type = Type.getType(type, name);
+				type = Type.getType(type, name, env);
 			}
 
 			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
 				List<Type> parametersList = new ArrayList<>();
 				do {
 					Token parameterTypeToken = startToken(tokenizer);
-					Type parameterType = visitType(tokenizer, true);
+					Type parameterType = visitType(tokenizer, true, env);
 					if (parameterType != null) {
 						if (parameterType.isPrimitive()) {
 							tokenizer.error("type argument cannot be of primitive type", parameterTypeToken);
@@ -208,7 +209,7 @@ public class ParserUtil implements Words {
 			Type extendedType = Type.objectType;
 			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
 			if (extendsType != -1) {
-				extendedType = visitObjectType(tokenizer);
+				extendedType = visitObjectType(tokenizer, env);
 			}
 			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
 		}

@@ -323,9 +323,17 @@ public class CodeContext {
 		ByteArrayOutputStream bos_type = new ByteArrayOutputStream();
 		try (DataOutputStream dos_type = new DataOutputStream(bos_type)) {
 			dos = dos_type;
-			int typesSize = types.size();
-			for (int i = 0; i < typesSize; i++) {
+			for (int i = 0; i < types.size(); i++) {
 				Type type = types.get(i);
+				if (type.parameters != null && type.parameters.length > 0) {
+					for (Type p : type.parameters) {
+						if (!typesHash.containsKey(p)) {
+							int index = typesHash.size();
+							typesHash.put(p, index);
+							types.add(p);
+						}
+					}
+				}
 				while (type != null) {
 					if (!typesHash.containsKey(type)) {
 						int index = typesHash.size();
@@ -347,13 +355,22 @@ public class CodeContext {
 					return t1.getDimension() - t2.getDimension();
 				}
 
+				if (type1 == Type.OBJECT) {
+					if (t1.parameters == null && t2.parameters != null) {
+						return -1;
+					} else if (t1.parameters != null && t2.parameters == null) {
+						return -1;
+					}
+				}
+
 				int index1 = typesHash.get(t1);
 				int index2 = typesHash.get(t2);
 				return index1 - index2;
 			});
 
 			writeShort(types.size());
-			for (Type type : types) {
+			for (int i = 0; i < types.size(); i++) {
+				Type type = types.get(i);
 				writeShort(typesHash.get(type));
 				write(type);
 			}

@@ -238,7 +238,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		HiClass c1 = null;
 		if (v1.node instanceof NodeType) {
-			c1 = ((NodeType) v1.node).getReturnValueClass();
+			c1 = ((NodeType) v1.node).getTypeClass();
 		}
 		if (c1 == null) {
 			c1 = v1.variableType.getClass(ctx);

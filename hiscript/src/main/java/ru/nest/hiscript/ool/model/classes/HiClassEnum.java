@@ -16,6 +16,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -135,7 +136,7 @@ public class HiClassEnum extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		return null;
 	}
 

@@ -20,9 +20,10 @@ import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class HiMethod implements HiNodeIF, HasModifiers {
+	public final static String LAMBDA_METHOD_NAME = "lambda$$";
+
 	public int argCount;
 
 	public HiClass clazz;
@@ -30,11 +31,6 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	public NodeAnnotation[] annotations;
 
 	private Modifiers modifiers;
-
-	@Override
-	public Modifiers getModifiers() {
-		return modifiers;
-	}
 
 	public NodeGenerics generics;
 
@@ -64,6 +60,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	public boolean isAnnotationArgument = false;
 
+	// TODO unused?
 	/**
 	 * HiFieldObject for variables
 	 */
@@ -83,8 +80,6 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	public HiMethod(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
 		set(clazz, annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
 	}
-
-	public final static String LAMBDA_METHOD_NAME = "lambda$$";
 
 	/**
 	 * functional method
@@ -107,11 +102,14 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	}
 
 	@Override
+	public Modifiers getModifiers() {
+		return modifiers;
+	}
+
+	@Override
 	public boolean isStatement() {
 		return true;
 	}
-
-	private static final AtomicInteger lambdasCount = new AtomicInteger();
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
@@ -342,7 +340,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		if (ctx.level.enclosingClass != null) {
 			lambdaClassName += ctx.level.enclosingClass.fullName + "/";
 		}
-		lambdaClassName += lambdasCount.getAndIncrement();
+		lambdaClassName += ctx.lambdasCount.getAndIncrement();
 
 		Type type = Type.getType(interfaceClass);
 		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
@@ -416,21 +414,25 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		if (signature == null) {
 			if (arguments != null) {
 				int length = arguments.length;
-				argClasses = new HiClass[length];
+				if (argClasses == null) {
+					argClasses = new HiClass[length];
+					for (int i = 0; i < length; i++) {
+						argClasses[i] = arguments[i].getType().getClass(classResolver);
+					}
+				}
 				argNames = new String[length];
 				for (int i = 0; i < length; i++) {
-					argClasses[i] = arguments[i].getType().getClass(classResolver);
 					argNames[i] = arguments[i].name;
 				}
 			}
 			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
 			signature = new MethodSignature(name, argClasses, isVarargs);
 
-			if (returnType != null) {
+			if (returnType != null && returnClass == null) {
 				returnClass = returnType.getClass(classResolver);
 			}
 
-			if (modifiers.isNative()) {
+			if (modifiers.isNative() && body == null) {
 				body = new NodeNative(clazz, returnClass, name, argClasses, argNames);
 			}
 		}
@@ -551,6 +553,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
+		// ignore argNames, signature, descr, annotationDefaultValue
 		os.writeByte(HiNode.TYPE_METHOD);
 		os.writeToken(token);
 		os.writeShortArray(annotations);
@@ -563,12 +566,12 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
 		os.writeNullable(throwsTypes);
 		os.writeNullable(body);
+		os.writeBoolean(isAnnotationArgument);
 		os.writeClass(returnClass); // null for void
 		os.writeClasses(throwsClasses);
 		os.writeClasses(argClasses);
-		if (isLambda()) {
-			os.writeClass(clazz);
-		}
+		os.writeClass(clazz);
+		// TODO rewrittenMethod
 	}
 
 	public static HiMethod decode(DecodeContext os) throws IOException {
@@ -587,12 +590,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		HiNode body = os.readNullable(HiNode.class);
 
 		HiMethod method = new HiMethod(os.getHiClass(), annotations, modifiers, generics, returnType, name, arguments, throwsTypes, body);
+		method.isAnnotationArgument = os.readBoolean();
 		os.readClass(clazz -> method.returnClass = clazz);
 		method.throwsClasses = os.readClasses();
 		method.argClasses = os.readClasses();
-		if (method.isLambda()) {
-			os.readClass(clazz -> method.clazz = clazz);
-		}
+		os.readClass(clazz -> method.clazz = clazz);
 		if (readToken) {
 			method.setToken(token);
 		}

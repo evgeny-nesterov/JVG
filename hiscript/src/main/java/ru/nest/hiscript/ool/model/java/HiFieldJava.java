@@ -4,17 +4,18 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.lang.reflect.Field;
 
 public class HiFieldJava extends HiField {
     private final Field field;
 
-    public HiFieldJava(Field field, String name) {
+    public HiFieldJava(Field field, String name, HiRuntimeEnvironment env) {
         super((Type) null, name);
         this.field = field;
         field.setAccessible(true);
-        type = HiJava.getTypeByJavaClass(field.getType());
+        type = HiJava.getTypeByJavaClass(field.getType(), env);
         declared = true;
         initialized = true;
     }

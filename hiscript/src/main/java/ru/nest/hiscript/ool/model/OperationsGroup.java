@@ -10,8 +10,6 @@ import java.util.List;
  *  (operand) [postfix operations...] operation [prefix operations...] (operand)
  */
 public class OperationsGroup {
-	public static List<HiOperation> empty = new ArrayList<>(0);
-
 	private HiOperation operation;
 
 	private List<HiOperation> prefix;

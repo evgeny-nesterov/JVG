@@ -57,7 +57,7 @@ public class HiFieldArray extends HiField<Object> {
     }
 
     public static Object getJava(RuntimeContext ctx, HiClass arrayType, Object array) {
-        Class javaClass = arrayType.getJavaClass();
+        Class javaClass = arrayType.getJavaClass(ctx.getEnv());
         if (javaClass != null) {
             Class rootCellClass = javaClass;
             while (rootCellClass.isArray()) {

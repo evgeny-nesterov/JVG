@@ -47,7 +47,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 				if (extendsType != -1) {
 					isSuper = extendsType == Words.SUPER;
 					Token typeToken = startToken(tokenizer);
-					type = visitType(tokenizer, false);
+					type = visitType(tokenizer, false, ctx.getEnv());
 					if (type == null) {
 						tokenizer.error("identifier is expected", typeToken);
 						type = Type.invalidType;

@@ -40,13 +40,13 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_O_get_int(RuntimeContext ctx, int index) {
 		Object element = getArrayList(ctx).get(index);
-		ctx.value.set(element);
+		ctx.setValue(element);
 	}
 
 	public static void ArrayList_O_set_int_O(RuntimeContext ctx, int index, Object value) {
 		setCtx(ctx, value);
 		Object element = getArrayList(ctx).set(index, value);
-		ctx.value.set(element);
+		ctx.setValue(element);
 	}
 
 	public static void ArrayList_void_ensureCapacity_int(RuntimeContext ctx, int minCapacity) {
@@ -64,7 +64,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_O_remove_int(RuntimeContext ctx, int index) {
 		Object element = getArrayList(ctx).remove(index);
-		ctx.value.set(element);
+		ctx.setValue(element);
 	}
 
 	public static void ArrayList_int_size(RuntimeContext ctx) {
@@ -96,7 +96,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_0Object_toArray(RuntimeContext ctx) {
 		Object[] array = getArrayList(ctx).toArray();
-		ctx.value.set(array);
+		ctx.setValue(array);
 	}
 
 	public static void ArrayList_void_clear(RuntimeContext ctx) {
@@ -107,7 +107,7 @@ public class ArrayListImpl extends ImplUtil {
 
 	public static void ArrayList_void_clone(RuntimeContext ctx) {
 		Object clone = getArrayList(ctx).clone();
-		ctx.value.set(clone);
+		ctx.setValue(clone);
 	}
 
 	public static void ArrayList_boolean_addAll_ArrayList(RuntimeContext ctx, HiObject list) {

@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.lib.ThreadImpl;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.util.ArrayList;
@@ -70,7 +71,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public HiEnumValue initializingEnumValue;
 
-	public HiCompiler compiler;
+	public final HiCompiler compiler;
+
+	public final HiRuntimeEnvironment env;
 
 	public HiObject currentThread;
 
@@ -81,16 +84,26 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;
 		this.compiler = compiler;
+		this.env = compiler.getClassLoader().getEnv();
 		if (main) {
 			ThreadImpl.createThread(this);
 		}
 	}
 
 	// TODO: Used for a new thread to access to context of the parent thread
+	public RuntimeContext(HiRuntimeEnvironment env) {
+		this(null, env);
+	}
+
 	public RuntimeContext(RuntimeContext root) {
+		this(root, null);
+	}
+
+	public RuntimeContext(RuntimeContext root, HiRuntimeEnvironment env) {
 		this.root = root;
 		if (root != null) {
 			this.compiler = root.compiler;
+			this.env = root.env;
 
 			// copy local context
 			if (root.localClasses != null) {
@@ -102,12 +115,20 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				localVariables = new HashMap<>(root.localVariables.size());
 				localVariables.putAll(root.localVariables);
 			}
+		} else {
+			this.compiler = null;
+			this.env = env;
 		}
 	}
 
 	@Override
 	public HiCompiler getCompiler() {
 		return compiler;
+	}
+
+	@Override
+	public HiRuntimeEnvironment getEnv() {
+		return env;
 	}
 
 	@Override
@@ -132,6 +153,10 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	private static HiClass excClass;
 
 	private static HiConstructor excConstructor;
+
+	public void setValue(Object value) {
+		this.value.set(value);
+	}
 
 	@Override
 	public void processResolverException(String message) {
@@ -254,7 +279,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public StackLevel exit(boolean lockLevel) {
 		boolean isBroken = (isBreak || isContinue) && isCurrentLabel();
 
-		if (level.classType == START) {
+		if (level.levelType == START) {
 			if (exception != null) {
 				HiMethod method = exception.clazz.getMethod(this, "printStackTrace");
 				enterMethod(method, exception);
@@ -269,7 +294,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		if (isBroken) {
-			switch (level.classType) {
+			switch (level.levelType) {
 				case WHILE:
 				case DO_WHILE:
 				case FOR:
@@ -308,7 +333,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			if (var != null) {
 				break;
 			}
-			switch (level.classType) {
+			switch (level.levelType) {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
@@ -347,7 +372,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				if (var != null) {
 					break;
 				}
-				switch (level.classType) {
+				switch (level.levelType) {
 					case METHOD:
 					case CONSTRUCTOR:
 					case INITIALIZATION:
@@ -404,7 +429,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				break;
 			}
 
-			switch (level.classType) {
+			switch (level.levelType) {
 				case METHOD:
 				case CONSTRUCTOR:
 				case INITIALIZATION:
@@ -522,7 +547,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public class StackLevel {
 		public StackLevel parent;
 
-		public int classType;
+		public int levelType;
 
 		public String label;
 
@@ -548,7 +573,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		public StackLevel() {
 		}
 
-		public StackLevel set(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, Token token) {
+		public StackLevel set(int levelType, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, Token token) {
 			this.parent = parent;
 			this.clazz = clazz;
 			this.constructor = constructor;
@@ -556,7 +581,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			this.object = object;
 			this.level = parent != null ? parent.level + 1 : 0;
 			this.mainLevel = parent != null ? parent.mainLevel : 0;
-			this.classType = type;
+			this.levelType = levelType;
 			this.label = label;
 			this.token = token;
 
@@ -639,7 +664,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					}
 				}
 
-				switch (level.classType) {
+				switch (level.levelType) {
 					case METHOD:
 					case CONSTRUCTOR:
 					case INITIALIZATION:
@@ -687,7 +712,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		@Override
 		public String toString() {
-			return "[" + level + "] " + classType + ", class=" + clazz + ", method=" + method + ", object=" + object;
+			return "[" + level + "] " + levelType + ", class=" + clazz + ", method=" + method + ", object=" + object;
 		}
 	}
 
@@ -775,7 +800,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		}
 
 		while (level != null) {
-			switch (level.classType) {
+			switch (level.levelType) {
 				case INITIALIZATION:
 				case CONSTRUCTOR:
 				case METHOD:

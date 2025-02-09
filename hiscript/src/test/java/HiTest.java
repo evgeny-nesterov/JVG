@@ -5,10 +5,14 @@ import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class HiTest {
+	private List nativeObjects = new ArrayList<>();
+
 	public void assertCondition(String script, String condition, String message) {
 		try {
 			execute(script + "\nassert " + condition + " : \"" + message + "\";");
@@ -164,19 +168,27 @@ public abstract class HiTest {
 	}
 
 	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		HiScript result = HiScript.create().compile(script).execute().throwExceptionIf();
+		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects).execute().throwExceptionIf();
 		result.close();
 		return result;
 	}
 
 	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
-		HiScript result = HiScript.create().compile(script).serialize().deserialize().execute().throwExceptionIf();
+		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects). //
+//				execute(). //
+				serialize().deserialize().execute(). //
+				throwExceptionIf();
 		result.close();
 		return result;
 	}
 
 	public HiScript compile(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
 		return HiScript.create().compile(script).throwExceptionIf();
+	}
+
+	public HiTest nativeObject(Object object) {
+		nativeObjects.add(object);
+		return this;
 	}
 
 	private void onFail(String script, String message) {

@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 
 public class NodeArray extends HiNode {
-	public NodeArray(Type cellType, HiNode[] dimensions) {
+	public NodeArray(Type arrayType, HiNode[] dimensions) {
 		super("array", TYPE_ARRAY, false);
-		this.cellType = cellType;
+		this.type = arrayType;
+		this.cellType = arrayType.getCellType();
 		this.dimensions = dimensions;
 		this.dimensionsCount = dimensions.length;
-		this.type = Type.getArrayType(cellType, dimensionsCount);
 	}
 
 	private NodeArray(HiNode[] dimensions, int dimensionsCountActive) {

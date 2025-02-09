@@ -3,12 +3,18 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+
+import java.io.IOException;
 
 public class HiClassMix extends HiClass {
 	public HiClass[] classes;
 
-	public HiClassMix(HiClass[] classes, HiClass enclosingClass) {
+	public HiClassMix(HiClassLoader classLoader, HiClass[] classes, HiClass enclosingClass) {
+		this.classLoader = classLoader;
 		this.classes = classes;
 		this.type = CLASS_MIX;
 		this.name = "mix";
@@ -18,6 +24,13 @@ public class HiClassMix extends HiClass {
 			this.fullName = name;
 		}
 		this.hashCode = fullName.hashCode();
+	}
+
+	// for decode
+	public HiClassMix(HiClassLoader classLoader) {
+		this.classLoader = classLoader;
+		this.type = CLASS_MIX;
+		this.name = "mix";
 	}
 
 	@Override
@@ -63,5 +76,21 @@ public class HiClassMix extends HiClass {
 	@Override
 	public boolean isStatic() {
 		return false;
+	}
+
+	@Override
+	public void code(CodeContext os) throws IOException {
+		code(os, CLASS_MIX);
+		os.writeUTF(fullName);
+		os.writeClasses(classes);
+		os.writeClass(enclosingClass);
+	}
+
+	public static HiClassMix decode(DecodeContext os, int classIndex) throws IOException {
+		HiClassMix clazz = (HiClassMix) HiClass.decodeObject(os, CLASS_MIX, classIndex);
+		clazz.fullName = os.readUTF();
+		clazz.classes = os.readClasses();
+		os.readClass(c -> clazz.enclosingClass = c);
+		return clazz;
 	}
 }

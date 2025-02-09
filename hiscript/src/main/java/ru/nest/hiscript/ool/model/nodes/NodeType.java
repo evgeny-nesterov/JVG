@@ -18,15 +18,21 @@ public class NodeType extends HiNode {
 
 	private final Type type;
 
+	private HiClass clazz;
+
 	public Type getType() {
 		return type;
+	}
+
+	public HiClass getTypeClass() {
+		return clazz;
 	}
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
 		ctx.nodeValueType.type = type;
-		return type.getClass(ctx);
+		return clazz = type.getClass(ctx);
 	}
 
 	@Override
@@ -39,9 +45,12 @@ public class NodeType extends HiNode {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeType(type);
+		os.writeClass(clazz);
 	}
 
 	public static NodeType decode(DecodeContext os) throws IOException {
-		return new NodeType(os.readType());
+		NodeType node = new NodeType(os.readType());
+		os.readClass(clazz -> node.clazz = clazz);
+		return node;
 	}
 }

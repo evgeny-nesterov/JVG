@@ -21,6 +21,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -31,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompileClassContext implements ClassResolver {
 	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, int classType) {
@@ -85,15 +87,17 @@ public class CompileClassContext implements ClassResolver {
 
 	public CompileClassContext parent;
 
-	public Set<HiNodeIF> initializedNodes = new HashSet<>();
+	public final Set<HiNodeIF> initializedNodes = new HashSet<>();
 
-	public NodeValueType nodeValueType = new NodeValueType();
+	public final NodeValueType nodeValueType = new NodeValueType();
 
 	private final List<NodeValueType[]> nodesValueTypesCache = new ArrayList<>();
 
 	public NodeValueType invocationNode;
 
-	public Set<String> breaksLabels = new HashSet<>();
+	public final Set<String> breaksLabels = new HashSet<>();
+
+	public final AtomicInteger lambdasCount = new AtomicInteger();
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (this.nodesValueTypesCache.size() > 0) {
@@ -124,6 +128,11 @@ public class CompileClassContext implements ClassResolver {
 	@Override
 	public HiCompiler getCompiler() {
 		return compiler;
+	}
+
+	@Override
+	public HiRuntimeEnvironment getEnv() {
+		return compiler.getClassLoader().getEnv();
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ public class HiClassVar extends HiClass {
 	public final static HiClassVar VAR = new HiClassVar();
 
 	private HiClassVar() {
-		super(HiClass.systemClassLoader, null, null, "var", CLASS_TYPE_TOP, null);
+		super(null, null, null, "var", CLASS_TYPE_TOP, null);
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class HiClassVar extends HiClass {
 	}
 
 	@Override
-	public Class getJavaClass() {
+	public Class getJavaClass(HiRuntimeEnvironment env) {
 		return null;
 	}
 

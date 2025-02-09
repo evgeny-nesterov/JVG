@@ -27,7 +27,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		Type type = visitType(tokenizer, true);
+		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type != null) {
 			boolean vararg = visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1;
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
@@ -36,11 +36,11 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
 				int addDimension = visitDimension(tokenizer);
-				type = Type.getArrayType(type, addDimension);
+				type = Type.getArrayType(type, addDimension, ctx.getEnv());
 
 				TypeArgumentIF typeArgument;
 				if (vararg) {
-					type = Type.getArrayType(type, 1);
+					type = Type.getArrayType(type, 1, ctx.getEnv());
 					typeArgument = new TypeVarargs(type);
 				} else {
 					typeArgument = type;

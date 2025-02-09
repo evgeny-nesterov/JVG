@@ -7,6 +7,8 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiNative;
+import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -21,6 +23,69 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HiClassLoader {
+	public final static String ROOT_CLASS_LOADER_NAME = "root";
+
+	public final static String PRIMITIVE_CLASS_LOADER_NAME = "primitive";
+
+	public final static String SYSTEM_CLASS_LOADER_NAME = "system";
+
+	public final static String USER_CLASS_LOADER_NAME = "user";
+
+	public final static HiClassLoader primitiveClassLoader = new HiClassLoader(PRIMITIVE_CLASS_LOADER_NAME, null, null);
+
+	public static HiClassLoader createRoot(HiRuntimeEnvironment env) {
+		return new HiClassLoader(env);
+	}
+
+	private static HiClassLoader systemClassLoader;
+
+	public static HiClassLoader createSystem() {
+		if (systemClassLoader == null) {
+			systemClassLoader = new HiClassLoader(SYSTEM_CLASS_LOADER_NAME, null, null);
+		}
+		return systemClassLoader;
+	}
+
+	public static HiClassLoader getSystemClassLoader() {
+		return systemClassLoader;
+	}
+
+	// root
+	private HiClassLoader(HiRuntimeEnvironment env) {
+		this.name = ROOT_CLASS_LOADER_NAME;
+		this.env = env;
+		classLoaders = new ArrayList<>(1);
+		HiClass.getSystemClassLoader(); // init HiClass
+	}
+
+	public HiClassLoader(String name, HiClassLoader parent, HiRuntimeEnvironment env) {
+		this.name = name;
+		if (SYSTEM_CLASS_LOADER_NAME.equals(name)) {
+			this.parent = null;
+			this.env = null;
+			this.nativeObjects = new HiNative(this);
+		} else {
+			this.parent = parent;
+			this.env = parent != null ? parent.getEnv() : env;
+			if (parent != null) {
+				this.nativeObjects = new HiNative(this);
+				parent.addClassLoader(this);
+			}
+		}
+	}
+
+	public HiClassLoader getRoot() {
+		HiClassLoader root = this;
+		while (root.parent != null) {
+			root = root.parent;
+		}
+		return root;
+	}
+
+	public HiClassLoader getParent() {
+		return parent;
+	}
+
 	private final String name;
 
 	private HiClassLoader parent;
@@ -35,15 +100,35 @@ public class HiClassLoader {
 
 	private HiConstructor classConstructor;
 
-	public HiClassLoader(String name) {
-		this.name = name;
+	private HiRuntimeEnvironment env;
+
+	private HiNative nativeObjects;
+
+	public boolean isSystem() {
+		return SYSTEM_CLASS_LOADER_NAME.equals(name);
 	}
 
-	public HiClassLoader(String name, HiClassLoader parent) {
-		this(name);
-		if (parent != null) {
-			parent.addClassLoader(this);
+	public boolean isRoot() {
+		return ROOT_CLASS_LOADER_NAME.equals(name);
+	}
+
+	private HiClassLoader getByName(String name) {
+		if (this.name.equals(name)) {
+			return this;
 		}
+		if (classLoaders != null) {
+			for (HiClassLoader classLoader : classLoaders) {
+				HiClassLoader matched = classLoader.getByName(name);
+				if (matched != null) {
+					return matched;
+				}
+			}
+		}
+		return null;
+	}
+
+	public HiRuntimeEnvironment getEnv() {
+		return env;
 	}
 
 	public HiClass getClassClass(ClassResolver ctx) {
@@ -170,10 +255,10 @@ public class HiClassLoader {
 	}
 
 	public synchronized void addClassLoader(HiClassLoader classLoader) {
-		if (classLoader.parent != null) {
+		if (classLoader.parent != null && classLoader.parent != this) {
 			throw new HiScriptRuntimeException("cannot add class loader");
 		}
-		if (classLoader == HiClass.systemClassLoader) {
+		if (classLoader.isSystem()) {
 			throw new HiScriptRuntimeException("cannot add system class loader");
 		}
 
@@ -202,10 +287,10 @@ public class HiClassLoader {
 
 	public synchronized HiClass getClass(String name) {
 		HiClassLoader parent = this.parent;
-		boolean hasSystem = false;
+		boolean hasRoot = false;
 		while (parent != null) {
-			if (parent == HiClass.systemClassLoader) {
-				hasSystem = true;
+			if (parent.isRoot()) {
+				hasRoot = true;
 			}
 			HiClass clazz = parent.classes.get(name);
 			if (clazz != null) {
@@ -214,8 +299,8 @@ public class HiClassLoader {
 			parent = parent.parent;
 		}
 
-		if (!hasSystem && this != HiClass.systemClassLoader) {
-			HiClass clazz = HiClass.systemClassLoader.classes.get(name);
+		if (!hasRoot && !isRoot()) {
+			HiClass clazz = systemClassLoader.classes.get(name);
 			if (clazz != null) {
 				return clazz;
 			}
@@ -229,6 +314,12 @@ public class HiClassLoader {
 					break;
 				}
 			}
+		}
+		if (clazz == null) {
+			clazz = systemClassLoader.classes.get(name);
+		}
+		if (clazz == null) {
+			clazz = primitiveClassLoader.classes.get(name);
 		}
 		return clazz;
 	}
@@ -277,6 +368,10 @@ public class HiClassLoader {
 		return classes;
 	}
 
+	public HiNative getNative() {
+		return nativeObjects;
+	}
+
 	public void clear() {
 		clearClassLoaders();
 		clearClasses();
@@ -290,6 +385,7 @@ public class HiClassLoader {
 
 	public void clearClasses() {
 		classes.clear();
+		classesObjects.clear();
 	}
 
 	@Override

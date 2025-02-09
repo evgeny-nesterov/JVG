@@ -111,7 +111,7 @@ public class NodeForIterator extends HiNode {
 	}
 
 	private boolean executeValue(RuntimeContext ctx, HiField<?> forVariable, Object value) {
-		ctx.value.set(value);
+		ctx.setValue(value);
 		forVariable.set(ctx, ctx.value);
 		forVariable.initialized = true;
 

@@ -360,7 +360,12 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	}
 
 	public String getStringValue(RuntimeContext ctx) {
-		return ((HiObject) get()).getStringValue(ctx);
+		HiObject value = (HiObject) get();
+		if (value != null) {
+			return value.getStringValue(ctx);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
