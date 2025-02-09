@@ -96,6 +96,10 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface A{void get();} class C{static void get(){}}; A a = C::get; a.get();");
 		assertFailCompile("interface A{void get(); void get2();} class C{void m(){}}; A a = new C()::m;", //
 				"functional interface not match to 'A'");
+		assertFailCompile("interface A{void get(); void get(int x);} class C{void m(){}}; A a = new C()::m;", //
+				"functional interface not match to 'A'");
+		assertFailCompile("interface A{} class C{void m(){}}; A a = new C()::m;", //
+				"functional interface not match to 'A'");
 		assertFailCompile("abstract class A{abstract void get();} class C{void get(){}}; A a = new C()::get;", //
 				"functional interface not match to 'A'");
 		assertSuccessSerialize("interface A{void get();} class C{void get(){assert false;} void m(){}}; A a = new C()::m;");

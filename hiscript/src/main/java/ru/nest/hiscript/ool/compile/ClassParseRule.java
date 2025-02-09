@@ -145,14 +145,7 @@ public class ClassParseRule extends ParserUtil {
 	}
 
 	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx, ParseVisitor visitor) throws TokenizerException, HiScriptParseException {
-		while (visitContentElement(tokenizer, ctx, visitor)) {
-		}
-
-		if (ctx.constructors == null && !ctx.clazz.isInterface) {
-			HiConstructor defaultConstructor = new HiConstructor(ctx.clazz, ctx.type, null, new Modifiers(), null, (List<NodeArgument>) null, null, null, null, BodyConstructorType.NONE);
-			ctx.addConstructor(defaultConstructor);
-		}
-
+		while (visitContentElement(tokenizer, ctx, visitor)) ;
 		ctx.initClass();
 	}
 

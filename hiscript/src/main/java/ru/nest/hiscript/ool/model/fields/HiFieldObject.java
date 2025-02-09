@@ -36,7 +36,7 @@ public class HiFieldObject extends HiField<Object> {
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		HiClass valueClass = valueType.clazz;
 
-		// autobox
+		// @autobox
 		if (valueClass.isPrimitive() && valueClass != HiClassPrimitive.VOID) {
 			valueClass = valueClass.getAutoboxClass();
 		}
@@ -58,13 +58,13 @@ public class HiFieldObject extends HiField<Object> {
 			object = null;
 			lambdaClass = null;
 		} else {
-			// generic
+			// @generics
 			if (!value.valueClass.isPrimitive() && !value.valueClass.isLambda() && value.object != null) {
 				if (value.object instanceof HiObject) {
 					HiClass dstClass = getClass(ctx);
 					HiClass srcClass = ((HiObject) value.object).clazz;
 
-					// generic
+					// @generics
 					if (dstClass.isGeneric()) {
 						dstClass = ((HiClassGeneric) dstClass).clazz;
 					}

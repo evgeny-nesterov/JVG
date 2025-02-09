@@ -128,7 +128,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 		return clazz;
 	}
 
-	// generic
+	// @generics
 	public void setGenericClass(ClassResolver ctx, Type objectType) {
 		if (objectType == null) {
 			// type is direct class type

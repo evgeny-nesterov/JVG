@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -129,8 +128,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			// object
 			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi"), false).get(0);
 			OBJECT_CLASS.superClassType = null;
-			HiConstructor emptyConstructor = new HiConstructor(OBJECT_CLASS, Type.objectType, null, new Modifiers(), null, (NodeArgument[]) null, null, null, null, BodyConstructorType.NONE);
-			OBJECT_CLASS.constructors = new HiConstructor[] {emptyConstructor};
+			OBJECT_CLASS.constructors = new HiConstructor[] {HiConstructor.createDefaultConstructor(OBJECT_CLASS, Type.objectType)};
 			classes.add(OBJECT_CLASS);
 
 			classes.add(STRING_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false).get(0));
@@ -366,6 +364,20 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				if (superClass.isFinal()) {
 					classResolver.processResolverException("the type " + getNameDescr() + " cannot subclass the final class " + superClass.getNameDescr());
 					return;
+				}
+			}
+
+			if (constructors == null && !isInterface) {
+				if (isAnonymous() && !superClass.isInterface) {
+					// delegate to super constructors
+					constructors = new HiConstructor[superClass.constructors.length];
+					for (int i = 0; i < superClass.constructors.length; i++) {
+						HiConstructor superConstructor = superClass.constructors[i];
+						constructors[i] = new HiConstructor(this, superConstructor, classResolver);
+					}
+				} else {
+					HiConstructor defaultConstructor = HiConstructor.createDefaultConstructor(this, null);
+					constructors = new HiConstructor[] {defaultConstructor};
 				}
 			}
 
@@ -932,7 +944,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				}
 			}
 		} else if (clazz.isGeneric()) {
-			// generic
+			// @generics
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
 			return genericClass.isInstanceof(this);
 		} else {
@@ -1569,7 +1581,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return null;
 	}
 
-	// generic
+	// @generics
 	public HiClass resolveGenericClass(ClassResolver classResolver, Type classType, HiClassGeneric genericClass) {
 		HiClass srcClass = genericClass.sourceClass;
 		HiClass enclosingClass = this;
@@ -2017,7 +2029,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return this;
 		}
 		if (isPrimitive() || c.isPrimitive()) {
-			// autobox
+			// @autobox
 			// TODO autobox int => Integer?
 			HiClass c1 = this;
 			HiClass c2 = c;
@@ -2129,14 +2141,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return true;
 		}
 
-		// autobox
+		// @autobox
 		if (isAutobox && src != HiClassPrimitive.VOID && dst == HiClass.OBJECT_CLASS) {
 			return true;
 		}
 
 		if (src.isPrimitive() || dst.isPrimitive()) {
-			// autobox
-			// generic
+			// @autobox
+			// @generics
 			if (isAutobox) {
 				if (!src.isPrimitive()) {
 					if (src.getAutoboxedPrimitiveClass() != null) {
@@ -2210,7 +2222,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return true;
 		}
 
-		// generic
+		// @generics
 		if (dst.isGeneric() && !src.isGeneric()) {
 			HiClassGeneric genericDst = (HiClassGeneric) dst;
 			return src.isInstanceof(genericDst.clazz);

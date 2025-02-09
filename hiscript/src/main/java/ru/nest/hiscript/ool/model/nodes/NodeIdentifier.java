@@ -70,7 +70,7 @@ public class NodeIdentifier extends HiNode {
 				Type type = ctx.nodeValueType.type;
 				ctx.nodeValueType.resolvedValueVariable = resolvedValueVariable;
 
-				// generic
+				// @generics
 				if (clazz.isGeneric()) {
 					HiClass enclosingClass = ctx.level.enclosingClass != null ? ctx.level.enclosingClass : ctx.clazz;
 					Type enclosingType = ctx.level.enclosingType != null ? ctx.level.enclosingType : ctx.type;
@@ -179,7 +179,7 @@ public class NodeIdentifier extends HiNode {
 				return true;
 			}
 
-			// generic
+			// @generics
 			if (ctx.value.valueClass.isGeneric()) {
 				HiObject currentObject = ctx.getCurrentObject();
 				HiClass objectClass = currentObject.clazz;

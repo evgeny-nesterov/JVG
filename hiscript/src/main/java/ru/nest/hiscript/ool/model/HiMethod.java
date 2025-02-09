@@ -223,7 +223,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					if (rewrittenMethod != null) {
 						boolean match;
 						if (returnClass.isGeneric() && rewrittenMethod.returnClass.isGeneric()) {
-							// generic
+							// @generics
 							match = ((HiClassGeneric) returnClass).clazz.isInstanceof(((HiClassGeneric) rewrittenMethod.returnClass).clazz);
 						} else {
 							match = returnClass.isInstanceof(rewrittenMethod.returnClass);
@@ -345,10 +345,8 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		Type type = Type.getType(interfaceClass);
 		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
 		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
-		HiConstructor defaultConstructor = new HiConstructor(clazz, type, null, Modifiers.PUBLIC(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
 		clazz.modifiers = Modifiers.PUBLIC();
 		clazz.functionalMethod = this;
-		clazz.constructors = new HiConstructor[] {defaultConstructor};
 		clazz.setToken(token);
 		clazz.init(ctx);
 		return clazz;
@@ -458,7 +456,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				return;
 			}
 
-			// autobox
+			// @autobox
 			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {
 				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);
 				ctx.value.valueClass = returnClass;
@@ -470,7 +468,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		return resolveGenericClass(classResolver, returnClass, invocationClass, invocationType, argumentsClasses);
 	}
 
-	// generic
+	// @generics
 	public HiClass resolveGenericClassByArgument(HiClass clazz, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
@@ -490,7 +488,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		return clazz;
 	}
 
-	// generic
+	// @generics
 	public HiClass resolveGenericClass(ClassResolver classResolver, HiClass clazz, HiClass invocationClass, Type invocationType, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClass resolvedClass = resolveGenericClassByArgument(clazz, invokeArgumentsClasses);

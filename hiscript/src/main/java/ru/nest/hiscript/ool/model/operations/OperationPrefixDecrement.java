@@ -64,7 +64,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 				break;
 		}
 
-		// autobox
+		// @autobox
 		if (value.valueClass.isObject()) {
 			value.valueClass = c;
 			value.object = ((HiClassPrimitive) c).autobox(ctx, value);

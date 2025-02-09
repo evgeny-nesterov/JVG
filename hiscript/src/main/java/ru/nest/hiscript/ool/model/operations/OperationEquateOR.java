@@ -159,7 +159,7 @@ public class OperationEquateOR extends BinaryOperation {
 				break;
 		}
 
-		// autobox
+		// @autobox
 		if (v1.valueClass.isObject()) {
 			v1.valueClass = c1;
 			v1.object = ((HiClassPrimitive) c1).autobox(ctx, v1);

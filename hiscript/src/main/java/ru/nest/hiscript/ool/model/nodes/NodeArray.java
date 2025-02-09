@@ -48,7 +48,7 @@ public class NodeArray extends HiNode {
 		return dimensionsCount;
 	}
 
-	// generic
+	// @generics
 	public boolean validateDeclarationGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (cellType.parameters != null && cellType.parameters.length == 0) {
 			this.type = type;

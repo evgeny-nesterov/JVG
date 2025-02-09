@@ -4,7 +4,7 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldDouble;
 
-// autobox
+// @autobox
 public class DoubleImpl extends ImplUtil {
     public static void Double_int_hashCode(RuntimeContext ctx) {
         double value = ((HiFieldDouble) ((HiObject) ctx.value.object).getField(ctx, "value")).get();

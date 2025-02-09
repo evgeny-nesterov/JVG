@@ -267,7 +267,7 @@ public class OperationEquate extends BinaryOperation {
 						}
 					}
 				} else if (node2.clazz.isInstanceof(node1.clazz)) {
-					// generic
+					// @generics
 					if (node2.node instanceof NodeConstructor) {
 						((NodeConstructor) node2.node).validateDeclarationGenericType(node1.type, validationInfo, ctx);
 					} else if (node2.node instanceof NodeArray) {

@@ -77,7 +77,7 @@ public class NodeReturn extends HiNode {
 			if (returnValueType.valid) {
 				boolean match = false;
 				if (expectedType.isGeneric()) {
-					// generic
+					// @generics
 					if (returnValueType.clazz == expectedType) {
 						match = true;
 //					} else if (returnValueType.clazz.isGeneric()) {

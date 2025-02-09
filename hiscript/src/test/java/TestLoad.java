@@ -50,34 +50,28 @@ public class TestLoad extends HiTest {
 	public void testClassLoad2() throws Exception {
 		boolean[] started = {false};
 		boolean[] ready = {false};
-		Thread t1 = new Thread(new Runnable() {
-			@Override
-			public void run() {
+		Thread t1 = new Thread(() -> {
+			try {
+				HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
+				started[0] = true;
+				for (int i = 0; i < 100_000; i++) {
+					script.execute();
+				}
+			} catch (Exception e) {
+			}
+			ready[0] = true;
+		});
+		Thread t2 = new Thread(() -> {
+			while (!ready[0]) {
 				try {
-					HiScript script = HiScript.create().compile("class A {class B {int x;}} A.B b = new A().new B(); b.x = 1; assert b.x == 1;");
-					started[0] = true;
-					for (int i = 0; i < 100_000; i++) {
-						script.execute();
+					Thread.sleep(1);
+					if (started[0]) {
+						System.out.println("---------------------------");
+						for (StackTraceElement e : t1.getStackTrace()) {
+							System.out.println("\t" + e);
+						}
 					}
 				} catch (Exception e) {
-				}
-				ready[0] = true;
-			}
-		});
-		Thread t2 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (!ready[0]) {
-					try {
-						Thread.sleep(1);
-						if (started[0]) {
-							System.out.println("---------------------------");
-							for (StackTraceElement e : t1.getStackTrace()) {
-								System.out.println("\t" + e);
-							}
-						}
-					} catch (Exception e) {
-					}
 				}
 			}
 		});

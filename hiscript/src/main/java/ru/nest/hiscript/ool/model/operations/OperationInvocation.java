@@ -68,7 +68,7 @@ public class OperationInvocation extends BinaryOperation {
 			ctx.exit();
 			ctx.nodeValueType.returnType = node2.returnType != NodeValueType.NodeValueReturnType.noValue ? node2.returnType : NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
 
-			// generic
+			// @generics
 			HiClass clazz = node2.clazz;
 			if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
 				HiClassGeneric genericClass = (HiClassGeneric) clazz;
@@ -220,7 +220,8 @@ public class OperationInvocation extends BinaryOperation {
 		if (field != null) {
 			v1.valueType = Value.VALUE;
 			v1.valueClass = field.getClass(ctx);
-			// generic
+
+			// @generics
 			if (v1.valueClass.isGeneric()) {
 				v1.valueClass = clazz.resolveGenericClass(ctx, null, (HiClassGeneric) v1.valueClass);
 			}
@@ -397,7 +398,7 @@ public class OperationInvocation extends BinaryOperation {
 					v1.valueClass = argsClasses[mainSize + i];
 					argsFields[mainSize + i].get(ctx, v1);
 
-					// autobox
+					// @autobox
 					if (varargsClass.isPrimitive()) {
 						if (v1.valueClass.isObject()) {
 							v1.unbox();
@@ -422,7 +423,7 @@ public class OperationInvocation extends BinaryOperation {
 			for (int i = 0; i < size; i++) {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
 
-				// autobox
+				// @autobox
 				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass();
 				HiClass origArgClass = argClass;
 				if (argClass.isPrimitive()) {
@@ -478,7 +479,7 @@ public class OperationInvocation extends BinaryOperation {
 				ctx.value = v1;
 				method.invoke(ctx, clazz, object, argsFields);
 
-				// autobox
+				// @autobox
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
 					if (v1.valueClass.isObject()) {
 						v1.unbox();

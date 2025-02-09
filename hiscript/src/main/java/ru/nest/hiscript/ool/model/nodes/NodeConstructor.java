@@ -42,6 +42,25 @@ public class NodeConstructor extends HiNode {
 		// clazz has to be deserialized
 	}
 
+	public NodeConstructor(HiConstructor constructor) {
+		super("constructor", TYPE_CONSTRUCTOR, true);
+
+		HiNode[] argValues = null;
+		if (constructor.arguments != null) {
+			argValues = new HiNode[constructor.arguments.length];
+			for (int i = 0; i < argValues.length; i++) {
+				NodeArgument arg = constructor.arguments[i];
+				argValues[i] = new NodeIdentifier(arg.name, 0);
+			}
+		}
+
+		this.clazz = constructor.clazz;
+		this.type = constructor.type;
+		this.argValues = argValues;
+		this.constructor = constructor;
+		name = constructor.clazz.getFullName(clazz.getClassLoader());
+	}
+
 	public NodeType nodeType;
 
 	public HiClass[] argsClasses;
@@ -67,7 +86,7 @@ public class NodeConstructor extends HiNode {
 		return name;
 	}
 
-	// generic
+	// @generics
 	public boolean validateDeclarationGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (this.type.parameters != null && this.type.parameters.length == 0) {
 			this.type = type;
@@ -90,6 +109,12 @@ public class NodeConstructor extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return validate(validationInfo, ctx, clazz);
+	}
+
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx, HiClass instanceClass) {
+		boolean isInstanceClass = clazz == instanceClass;
+
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (argValues != null) {
@@ -144,22 +169,29 @@ public class NodeConstructor extends HiNode {
 			valid &= clazz.validate(validationInfo, ctx);
 		}
 
-		if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
-			validationInfo.error("qualified new of static class", getToken());
-			valid = false;
-		} else if (!clazz.isStatic()) {
-			if (ctx.level.enclosingClass == null && getName().indexOf('.') != -1) {
-				validationInfo.error("'" + getName() + "' is not an enclosing class", getToken());
+		if (isInstanceClass) {
+			if (clazz.isStatic() && ctx.level.enclosingClass != null && ctx.level.isEnclosingObject) {
+				validationInfo.error("qualified new of static class", getToken());
 				valid = false;
+			} else if (!clazz.isStatic()) {
+				if (ctx.level.enclosingClass == null && getName().indexOf('.') != -1) {
+					validationInfo.error("'" + getName() + "' is not an enclosing class", getToken());
+					valid = false;
+				}
+				if (ctx.level.enclosingClass != null && !ctx.level.isEnclosingObject) {
+					validationInfo.error("cannot create", getToken());
+					valid = false;
+				}
 			}
-			if (ctx.level.enclosingClass != null && !ctx.level.isEnclosingObject) {
-				validationInfo.error("cannot create", getToken());
+
+			if (clazz.isAbstract()) {
+				validationInfo.error("'" + clazz.getNameDescr() + "' is abstract; cannot be instantiated", getToken());
 				valid = false;
 			}
 		}
 
 		// resolve constructor
-		if (!clazz.isAbstract()) {
+		if (!clazz.isInterface) {
 			constructor = clazz.searchConstructor(ctx, argsClasses);
 			if (constructor != null) {
 				CompileClassContext.CompileClassLevel level = ctx.level;
@@ -174,9 +206,6 @@ public class NodeConstructor extends HiNode {
 				validationInfo.error("constructor not found: " + clazz.getNameDescr(), getToken());
 				valid = false;
 			}
-		} else {
-			validationInfo.error("'" + clazz.getNameDescr() + "' is abstract; cannot be instantiated", getToken());
-			valid = false;
 		}
 		return valid;
 	}
@@ -311,7 +340,7 @@ public class NodeConstructor extends HiNode {
 				HiField argField = null;
 				HiClass argClass = ctx.value.valueClass;
 
-				// autobox
+				// @autobox
 				if (argClass.isPrimitive()) {
 					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass();
 					if (dstArgClass.isObject()) {

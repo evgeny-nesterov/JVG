@@ -225,7 +225,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 			}
 		}
 
-		// autobox
+		// @autobox
 		if (value.valueClass.getAutoboxedPrimitiveClass() != null && value.object != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
 		}

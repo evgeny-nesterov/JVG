@@ -202,6 +202,10 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("interface A<O>{O get();} assert new A<Double>(){Double get(){return 1.23;}}.get() == 1.23;");
 		assertSuccessSerialize("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == true;");
 
+		assertSuccessSerialize("class A<O>{A(O a){}} new A<Integer>(0){};");
+		assertSuccessSerialize("class A<O>{O a;} Integer i = new A<Integer>(){}.a; assert i == null;");
+		assertSuccessSerialize("class A<O>{O a; A(O a){this.a = a;} O get(){return a;}} assert new A<Integer>(123){Integer get(){return a + 1;}}.get() == 124;");
+
 		assertFailCompile("interface A<O>{O get();} assert new A<Boolean>(){Boolean get(){return true;}}.get() == 1;", //
 				"operator '==' can not be applied to Boolean, int");
 	}

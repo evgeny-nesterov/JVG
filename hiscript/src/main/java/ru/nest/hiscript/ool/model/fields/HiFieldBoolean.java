@@ -33,7 +33,7 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 		declared = true;
 
 		if (value.valueClass.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
-			// autobox
+			// @autobox
 			value.substitutePrimitiveValueFromAutoboxValue();
 		}
 

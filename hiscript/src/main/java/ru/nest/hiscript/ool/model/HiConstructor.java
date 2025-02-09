@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.fields.HiFieldInt;
@@ -66,6 +67,9 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	}
 
 	public HiConstructor(HiClass clazz, Type type, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
+//		if (type == null) {
+//			type = Type.getType(clazz);
+//		}
 		this.clazz = clazz;
 		this.type = type;
 		this.annotations = annotations;
@@ -76,6 +80,42 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		this.body = body;
 		this.bodyConstructor = bodyConstructor;
 		this.bodyConstructorType = bodyConstructorType;
+	}
+
+	// for anonymous
+	public HiConstructor(HiClass clazz, HiConstructor delegateConstructor, ClassResolver classResolver) {
+		NodeArgument[] arguments = null;
+		if (delegateConstructor.arguments != null) {
+			arguments = new NodeArgument[delegateConstructor.arguments.length];
+			for (int i = 0; i < arguments.length; i++) {
+				NodeArgument arg = delegateConstructor.arguments[i];
+				Type argType = arg.getType();
+
+				// @generic
+				if (delegateConstructor.clazz.generics != null) {
+					HiClassGeneric genericClass = delegateConstructor.clazz.generics.getGenericClass(classResolver, arg.getVariableType());
+					HiClass argClass = clazz.resolveGenericClass(classResolver, null, genericClass);
+					argType = Type.getType(argClass);
+				}
+
+				arguments[i] = new NodeArgument(argType, arg.name, arg.getModifiers(), arg.annotations);
+			}
+		}
+
+		this.clazz = clazz;
+		this.type = Type.getType(clazz);
+		this.annotations = null;
+		this.modifiers = delegateConstructor.modifiers;
+		this.generics = null;
+		this.arguments = arguments;
+		this.throwsTypes = delegateConstructor.throwsTypes;
+		this.body = null;
+		this.bodyConstructor = new NodeConstructor(delegateConstructor);
+		this.bodyConstructorType = BodyConstructorType.SUPER;
+	}
+
+	public static HiConstructor createDefaultConstructor(HiClass clazz, Type type) {
+		return new HiConstructor(clazz, type, null, new Modifiers(), null, (List<NodeArgument>) null, null, null, null, HiConstructor.BodyConstructorType.NONE);
 	}
 
 	public NodeAnnotation[] annotations;
@@ -175,7 +215,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 				break;
 		}
 		if (bodyConstructor != null) {
-			valid &= bodyConstructor.validate(validationInfo, ctx);
+			valid &= bodyConstructor.validate(validationInfo, ctx, clazz);
 		}
 
 		if (body != null) {
@@ -289,7 +329,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 							HiField<?> field = (HiField<?>) clazz.fields[i].clone();
 							object.fields[index++] = field;
 
-							// generic (after set field to object.fields[])
+							// @generics (after set field to object.fields[])
 							field.setGenericClass(ctx, type);
 						}
 					}

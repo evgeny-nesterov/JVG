@@ -199,7 +199,7 @@ public class Value implements PrimitiveTypes {
 		return object;
 	}
 
-	// autobox
+	// @autobox
 	public Object getObject(HiClass dstClass) {
 		if (valueClass.isPrimitive()) {
 			HiClassPrimitive primitiveClass = dstClass != null && dstClass.getAutoboxedPrimitiveClass() != null ? dstClass.getAutoboxedPrimitiveClass() : (HiClassPrimitive) valueClass;
@@ -225,7 +225,7 @@ public class Value implements PrimitiveTypes {
 		return object;
 	}
 
-	// autobox
+	// @autobox
 	public boolean getAutoboxPrimitiveValue(int expectedTypeIndex) {
 		if (valueClass.isPrimitive()) {
 			if (valueClass.getPrimitiveType() == expectedTypeIndex) {
@@ -249,7 +249,7 @@ public class Value implements PrimitiveTypes {
 		return false;
 	}
 
-	// autobox
+	// @autobox
 	public int getAutoboxValues(int... expectedTypesIndexes) {
 		if (valueClass.isPrimitive()) {
 			int typeIndex = valueClass.getPrimitiveType();
@@ -280,7 +280,7 @@ public class Value implements PrimitiveTypes {
 		return -1;
 	}
 
-	// autobox
+	// @autobox
 	public void unbox() {
 		if (valueClass.getAutoboxedPrimitiveClass() != null) {
 			if (object != null) {
@@ -292,7 +292,7 @@ public class Value implements PrimitiveTypes {
 		}
 	}
 
-	// autobox
+	// @autobox
 	public void substitutePrimitiveValueFromAutoboxValue() {
 		if (object == null) {
 			ctx.throwRuntimeException("null pointer");
@@ -709,7 +709,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiClass getOperationClass() {
 		if (valueClass.getAutoboxedPrimitiveClass() != null) {
-			// autobox
+			// @autobox
 			substitutePrimitiveValueFromAutoboxValue();
 			return valueClass.getAutoboxedPrimitiveClass();
 		} else if (object instanceof HiObject && valueClass.isObject()) {

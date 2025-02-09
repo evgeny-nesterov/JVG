@@ -75,7 +75,7 @@ public class NodeInvocation extends HiNode {
 			if (method != null) {
 				HiClass returnClass = method.getReturnClass(ctx, invocationClass, invocationType, argumentsClasses);
 
-				// generic
+				// @generics
 				if (invocationType.parameters != null) {
 					boolean validArguments = true;
 					for (int i = 0; i < method.argClasses.length; i++) {
@@ -89,7 +89,7 @@ public class NodeInvocation extends HiNode {
 							} else {
 								methodArgumentClass = argumentType.getClass(ctx);
 
-								// autobox
+								// @autobox
 								if (argumentClass.isPrimitive()) {
 									argumentClass = argumentClass.getAutoboxClass();
 								}
@@ -114,7 +114,7 @@ public class NodeInvocation extends HiNode {
 					}
 				}
 
-				// generic
+				// @generics
 				Type type = method.returnType;
 				if (invocationType.parameters != null) {
 					Type resolvedType = null;

@@ -182,7 +182,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		this.isSuper = isSuper;
 	}
 
-	// generic
+	// @generics
 	public boolean validateClass(HiClass clazz, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
 		if (parameters != null && parameters.length > 0) {
 			if (clazz.generics == null) {
@@ -232,7 +232,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return true;
 	}
 
-	// generic
+	// @generics
 	public boolean validateMatch(Type type, ValidationInfo validationInfo, CompileClassContext ctx, Token token) {
 		if (parameters != null && parameters.length == 0) {
 			if (type.parameters == null) { // T<> => T
@@ -299,7 +299,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	private final boolean primitive;
 
-	// generic
+	// @generics
 	public Type[] parameters;
 
 	public boolean isExtends;
@@ -406,7 +406,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 		HiClass clazz = null;
 
-		// generic
+		// @generics
 		if (classResolver instanceof CompileClassContext) {
 			clazz = ((CompileClassContext) classResolver).level.resolveGeneric(name);
 		}
@@ -455,7 +455,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		}
 	}
 
-	// generic
+	// @generics
 	public static Type getParameterizedType(Type type, Type[] parameters) {
 		return new Type(type, parameters);
 	}
@@ -683,7 +683,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return typeClass;
 	}
 
-	// generic
+	// @generics
 	public Type getParameterType(HiClassGeneric genericClass) {
 		if (parameters != null && genericClass.index < parameters.length) {
 			return parameters[genericClass.index];
@@ -691,7 +691,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		return null;
 	}
 
-	// generic
+	// @generics
 	public boolean isWildcard() {
 		return isExtends || isSuper;
 	}

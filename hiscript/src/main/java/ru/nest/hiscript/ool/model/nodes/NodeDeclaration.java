@@ -139,7 +139,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 			ctx.initializedNodes.add(this);
 
-			// generic
+			// @generics
 			NodeConstructor newNode = initialization.getSingleNode(NodeConstructor.class);
 			if (newNode != null) {
 				valid &= newNode.validateDeclarationGenericType(type, validationInfo, ctx);
