@@ -18,10 +18,10 @@ public class CharTokenVisitor implements TokenVisitor {
 				int length = 1;
 				while (tokenizer.getCurrent() != '\'' && tokenizer.hasNext()) {
 					length++;
-					readCharacter(tokenizer);
 					if (tokenizer.getCurrent() == ';' || tokenizer.getCurrent() == '\n') {
 						break;
 					}
+					readCharacter(tokenizer);
 				}
 				if (tokenizer.getCurrent() != '\'') {
 					tokenizer.error("' is expected", line, offset + 2, 1, lineOffset);

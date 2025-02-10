@@ -130,9 +130,7 @@ public class StringTokenVisitor implements TokenVisitor {
 			minStartLineWhiteSpaces = startLineWhiteSpaces;
 		}
 		// remove whitespaces at the end of line (if not ends with \s)
-		if (splitLine) {
-			lastLine.append('\u0000');
-		} else if (trimLine) {
+		if (trimLine) {
 			while (lastLine.length() > startLineWhiteSpaces && Tokenizer.isWhiteSpace(lastLine.charAt(lastLine.length() - 1))) {
 				lastLine.setLength(lastLine.length() - 1);
 			}

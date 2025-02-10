@@ -91,7 +91,7 @@ public class TestNumbers extends HiTest {
 		assertFailCompile("long a = 1000000000000000000000000000000000000000000000L;", //
 				"long number too large");
 		assertFailCompile("long a = 0xQWEL;", //
-				"invalid number value");
+				"hexadecimal numbers must contain at least one hexadecimal digit");
 
 		assertCondition("double a = 1;", "a == 1", "double");
 		assertCondition("double a = 1.;", "a == 1", "double");

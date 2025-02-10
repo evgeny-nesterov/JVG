@@ -15,8 +15,8 @@ public class NumberTokenVisitor implements TokenVisitor {
 			tokenizer.next();
 			while (tokenizer.hasNext()) {
 				if (tokenizer.getCurrent() == '-') {
-					negative = !negative;
 					tokenizer.next();
+					negative = !negative;
 				} else if (tokenizer.getCurrent() == '+') {
 					tokenizer.next();
 				} else {
@@ -26,24 +26,104 @@ public class NumberTokenVisitor implements TokenVisitor {
 		}
 
 		int offset = tokenizer.getOffset();
+		boolean hasIntegerPart = false;
 
-		// hex
-		if (tokenizer.getCurrent() == '0' && tokenizer.lookForward() == 'x') {
-			tokenizer.next();
-			tokenizer.next();
-			char c = tokenizer.getCurrent();
+		ZERO:
+		if (tokenizer.getCurrent() == '0') {
 			long value = 0;
 			boolean tooLarge = false;
-			if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+			boolean firstUnderscore = false;
+			boolean lastUnderscore = false;
+			hasIntegerPart = true;
+
+			// hex (0x...)
+			if (tokenizer.lookForward() == 'x') {
+				tokenizer.next();
+				tokenizer.next();
+				char c = tokenizer.getCurrent();
+				if (c == '_') {
+					firstUnderscore = true;
+				}
+				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == '_') {
+					do {
+						c = tokenizer.getCurrent();
+						long newValue;
+						if (c >= '0' && c <= '9') {
+							lastUnderscore = false;
+							newValue = 16 * value + c - '0';
+						} else if (c >= 'a' && c <= 'f') {
+							lastUnderscore = false;
+							newValue = 16 * value + 10 + c - 'a';
+						} else if (c >= 'A' && c <= 'F') {
+							lastUnderscore = false;
+							newValue = 16 * value + 10 + c - 'A';
+						} else if (c == '_') {
+							newValue = value;
+							lastUnderscore = true;
+						} else {
+							break;
+						}
+						if (newValue < value) {
+							tooLarge = true;
+						}
+						value = newValue;
+						tokenizer.next();
+					} while (tokenizer.hasNext());
+				} else {
+					tokenizer.error("hexadecimal numbers must contain at least one hexadecimal digit", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				}
+			}
+
+			// binary (0b...)
+			else if (tokenizer.lookForward() == 'b') {
+				tokenizer.next();
+				tokenizer.next();
+				char c = tokenizer.getCurrent();
+				if (c == '_') {
+					firstUnderscore = true;
+				}
+				if (c == '0' || c == '1' || c == '_') {
+					do {
+						c = tokenizer.getCurrent();
+						long newValue = 0;
+						if (c == '0') {
+							lastUnderscore = false;
+							newValue = 2 * value;
+						} else if (c == '1') {
+							lastUnderscore = false;
+							newValue = 2 * value + 1;
+						} else if (c == '_') {
+							newValue = value;
+							lastUnderscore = true;
+						} else {
+							break;
+						}
+						if (newValue < value) {
+							tooLarge = true;
+						}
+						value = newValue;
+						tokenizer.next();
+					} while (tokenizer.hasNext());
+				} else {
+					tokenizer.error("binary numbers must contain at least one binary digit", line, offset, tokenizer.getOffset() - offset, lineOffset);
+				}
+			}
+
+			// octal (0...)
+			else {
+				tokenizer.next();
 				do {
-					c = tokenizer.getCurrent();
+					char c = tokenizer.getCurrent();
 					long newValue;
-					if (c >= '0' && c <= '9') {
-						newValue = 16 * value + c - '0';
-					} else if (c >= 'a' && c <= 'f') {
-						newValue = 16 * value + 10 + c - 'a';
-					} else if (c >= 'A' && c <= 'F') {
-						newValue = 16 * value + 10 + c - 'A';
+					if (c >= '0' && c <= '7') {
+						lastUnderscore = false;
+						newValue = 8 * value + c - '0';
+					} else if (c == '8' || c == '9' || c == '.' || c == 'e' || c == 'E' || c == 'f' || c == 'F' || c == 'd' || c == 'D') {
+						// non octal
+						break ZERO;
+					} else if (c == '_') {
+						newValue = value;
+						lastUnderscore = true;
 					} else {
 						break;
 					}
@@ -53,11 +133,14 @@ public class NumberTokenVisitor implements TokenVisitor {
 					value = newValue;
 					tokenizer.next();
 				} while (tokenizer.hasNext());
-			} else {
-				tokenizer.error("invalid number value", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
+
 			if (negative) {
 				value = -value;
+			}
+
+			if (firstUnderscore || lastUnderscore) {
+				tokenizer.error("illegal underscore", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 
 			if (tokenizer.getCurrent() == 'l' || tokenizer.getCurrent() == 'L') {
@@ -74,7 +157,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			}
 		}
 
-		boolean hasIntegerPart = visitInteger(tokenizer);
+		hasIntegerPart |= visitInteger(tokenizer, line, offset, lineOffset);
 
 		boolean hasPoint = false;
 		boolean hasFloatPart = false;
@@ -82,7 +165,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			hasPoint = true;
 			tokenizer.next();
 
-			hasFloatPart = visitInteger(tokenizer);
+			hasFloatPart = visitInteger(tokenizer, line, offset, lineOffset);
 		}
 
 		if ((!hasIntegerPart && !hasPoint) || (hasPoint && !hasIntegerPart && !hasFloatPart)) {
@@ -106,7 +189,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 				}
 			}
 
-			hasMantissa = visitInteger(tokenizer);
+			hasMantissa = visitInteger(tokenizer, line, offset, lineOffset);
 		}
 
 		if (hasExponent && !hasMantissa) {
@@ -202,8 +285,8 @@ public class NumberTokenVisitor implements TokenVisitor {
 		}
 	}
 
-	private boolean visitInteger(Tokenizer tokenizer) {
-		// decimal or octal (0x)
+	private boolean visitInteger(Tokenizer tokenizer, int line, int offset, int lineOffset) throws TokenizerException {
+		// decimal (nmmm, n not 0, m=[0-9]) or octal (0nmmm, n not null, m = [0-7])
 		boolean found = false;
 		if (tokenizer.hasNext() && tokenizer.getCurrent() >= '0' && tokenizer.getCurrent() <= '9') {
 			found = true;
@@ -216,7 +299,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			}
 
 			if (lastUnderscore) {
-				return false;
+				tokenizer.error("illegal underscore", line, offset, tokenizer.getOffset() - offset, lineOffset);
 			}
 		}
 		return found;
