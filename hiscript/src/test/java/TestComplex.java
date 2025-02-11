@@ -76,5 +76,47 @@ public class TestComplex extends HiTest {
 		assertSuccessSerialize("double x = 077e1; assert x == 770;"); // non octal
 		assertFailCompile("int x = 077_;", //
 				"illegal underscore");
+
+		// arrays
+		assertFailCompile("int[] a = new int[1L];", //
+				"int is expected");
+		assertFailCompile("int[] a = new int[1F];", //
+				"int is expected");
+		assertFailCompile("int[] a = new int[1D];", //
+				"int is expected");
+		assertFailCompile("int d = 1L; int[] a = new int[d];", //
+				"long cannot be converted to int");
+		assertFail("int[] a = new int[-1];", //
+				"negative array size");
+		assertFail("int[][] a = new int[0][-1];", //
+				"negative array size");
+		assertFail("int d = -1; int[] a = new int[d];", //
+				"negative array size");
+
+		// priority primitive cast over primitive cast
+		String[] types = {"byte", "short", "char", "int", "long", "float", "double"};
+		for (int i1 = 0; i1 < types.length; i1++) {
+			String a1 = types[i1];
+			for (int i2 = 0; i2 < types.length; i2++) {
+				if (i1 != i2) {
+					String a2 = types[i2];
+					for (int i = 0; i < types.length; i++) {
+						String a = types[i];
+						boolean cm1 = i == i1 || !a1.equals("char");
+						boolean cm2 = i == i2 || !a2.equals("char");
+						boolean m1 = i <= i1 && (i1 < i2 || i2 < i || !cm2) && (cm1 || !cm2);
+						boolean m2 = i <= i2 && (i2 < i1 || i1 < i || !cm1) && (cm2 || !cm1);
+						if (m1 || m2) {
+							String ms1 = m1 ? "true" : "false";
+							String ms2 = m2 ? "true" : "false";
+							assertSuccessSerialize("class A {void m(" + a1 + " x){assert " + ms1 + ";} void m(" + a2 + " x){assert " + ms2 + ";}} new A().m((" + a + ")1);");
+						} else {
+							assertFailCompile("class A {void m(" + a1 + " x){} void m(" + a2 + " x){}} new A().m((" + a + ")1);", //
+									"cannot resolve method 'm' in 'A'");
+						}
+					}
+				}
+			}
+		}
 	}
 }

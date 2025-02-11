@@ -36,6 +36,11 @@ public class HiClassVar extends HiClass {
 	}
 
 	@Override
+	public boolean isLongNumber() {
+		return true;
+	}
+
+	@Override
 	public boolean isArray() {
 		return true;
 	}

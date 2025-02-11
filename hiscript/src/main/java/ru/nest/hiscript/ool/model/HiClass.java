@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
 
@@ -1651,6 +1653,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return false;
 	}
 
+	public boolean isLongNumber() {
+		return false;
+	}
+
 	public boolean isArray() {
 		return false;
 	}
@@ -2353,19 +2359,37 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		if (argClass.isPrimitive()) {
 			if (c1.isPrimitive() && c2.isPrimitive()) {
-				boolean isIntArg = argClass.isIntNumber();
-				boolean isInt1 = c1.isIntNumber();
-				boolean isInt2 = c2.isIntNumber();
-				if (isInt1 != isInt2) {
-					if (isInt1 == isIntArg) {
+				boolean isNumberArg = argClass.isNumber();
+				boolean isNumber1 = c1.isNumber();
+				boolean isNumber2 = c2.isNumber();
+				if (isNumber1 != isNumber2) {
+					if (isNumber1 == isNumberArg) {
 						return ArgClassPriorityType.higher;
-					} else {
+					} else if (isNumber2 == isNumberArg) {
 						return ArgClassPriorityType.lower;
 					}
+				} else if (isNumber1 && isNumber2) {
+					// matched next closed type (except char and short)
+					int t1 = c1.getPrimitiveType();
+					if (t1 == CHAR) {
+						return ArgClassPriorityType.nonComparable;
+					}
+					int t2 = c2.getPrimitiveType();
+					if (t2 == CHAR) {
+						return ArgClassPriorityType.nonComparable;
+					}
+					int t = argClass.getPrimitiveType();
+					if (t <= t1 && (t1 < t2 || t2 < t)) {
+						return ArgClassPriorityType.higher;
+					} else if (t <= t2 && (t2 < t1 || t1 < t)) {
+						return ArgClassPriorityType.lower;
+					} else {
+						return ArgClassPriorityType.nonComparable;
+					}
 				}
-			} else if (c1.isPrimitive() || c1.getAutoboxedPrimitiveClass() == argClass) {
+			} else if (c1.getAutoboxedPrimitiveClass() == argClass) {
 				return ArgClassPriorityType.higher;
-			} else if (c2.isPrimitive() || c2.getAutoboxedPrimitiveClass() == argClass) {
+			} else if (c2.getAutoboxedPrimitiveClass() == argClass) {
 				return ArgClassPriorityType.lower;
 			}
 		} else {
@@ -2385,8 +2409,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		// object - object
 		if (c1.isInstanceof(c2)) {
 			return ArgClassPriorityType.higher;
-		}
-		if (c2.isInstanceof(c1)) {
+		} else if (c2.isInstanceof(c1)) {
 			return ArgClassPriorityType.lower;
 		}
 		return ArgClassPriorityType.nonComparable;

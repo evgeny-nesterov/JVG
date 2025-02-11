@@ -4,11 +4,11 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 
 public interface PrimitiveTypes {
-	int CHAR = 0;
+	int BYTE = 0;
 
-	int BYTE = 1;
+	int SHORT = 1;
 
-	int SHORT = 2;
+	int CHAR = 2;
 
 	int INT = 3;
 

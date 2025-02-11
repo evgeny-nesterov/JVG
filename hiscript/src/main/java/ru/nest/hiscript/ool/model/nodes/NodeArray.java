@@ -121,6 +121,10 @@ public class NodeArray extends HiNode {
 			if (ctx.exitFromBlock()) {
 				return;
 			}
+			if (dim[i] < 0) {
+				ctx.throwRuntimeException("negative array size");
+				return;
+			}
 		}
 
 		ctx.value.valueType = Value.VALUE;

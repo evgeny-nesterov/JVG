@@ -1,6 +1,7 @@
 import org.opentest4j.AssertionFailedError;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScript;
+import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -48,6 +49,9 @@ public abstract class HiTest {
 			executeSerialized(script);
 			// expected
 		} catch (Throwable e) {
+			if (e instanceof HiScriptRuntimeException) {
+				System.out.println(script);
+			}
 			e.printStackTrace();
 			onFail(script, e.toString());
 		}
