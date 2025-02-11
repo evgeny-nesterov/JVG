@@ -383,8 +383,8 @@ public class TestExpression extends HiTest {
 				"operator '/=' can not be applied to double, boolean");
 		assertFailCompile("double x = 1; x %= true;", //
 				"operator '%=' can not be applied to double, boolean");
-		assertFailCompile("boolean x = true; x =* 1;", //
-				"not a statement");
+		assertFailCompile("boolean x = true; x *= 1;", //
+				"operator '*=' can not be applied to boolean, int");
 		assertFailCompile("boolean x = true; x /= 1;", //
 				"operator '/=' can not be applied to boolean, int");
 		assertFailCompile("boolean x = true; x %= 1;", //
@@ -773,7 +773,7 @@ public class TestExpression extends HiTest {
 			assertFailCompile(t + " x = (" + t + ")true;", //
 					"cannot cast boolean to " + t);
 			assertFailCompile(t + " x = (" + t + ");", //
-					"invalid expression");
+					"expression expected");
 			assertFailCompile(t + " x = (" + t + ")new int[0];", //
 					"cannot cast int[] to " + t);
 			assertFailCompile(t + " x = (" + t + ")new String[1];", //

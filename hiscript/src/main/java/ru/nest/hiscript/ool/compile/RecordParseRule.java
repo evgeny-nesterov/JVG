@@ -7,6 +7,8 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
 import ru.nest.hiscript.ool.model.Operations;
@@ -28,6 +30,7 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RecordParseRule extends ParserUtil {
@@ -103,8 +106,9 @@ public class RecordParseRule extends ParserUtil {
 				if (argument.getVariableName().length() > 1) {
 					setMethodName += argument.getVariableName().substring(1);
 				}
-				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(new HiNode[] {new NodeThis(), new NodeIdentifier(argument.getVariableName(), 0), new NodeIdentifier(argument.getVariableName(), 0)}, //
-						new OperationsGroup[] {new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)});
+				HiNodeIF[] operands = new HiNode[] {new NodeThis(), new NodeIdentifier(argument.getVariableName(), 0), new NodeIdentifier(argument.getVariableName(), 0)};
+				HiOperation[] operations = NodeExpressionNoLS.compile(operands, Arrays.asList(new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)));
+				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(operands, operations);
 				setExpression.setToken(argument.getToken());
 				// TODO support set methods?
 				HiNode setMethodBody = new NodeBlock(setExpression);

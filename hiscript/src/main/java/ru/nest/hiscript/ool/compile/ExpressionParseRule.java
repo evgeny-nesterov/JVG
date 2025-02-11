@@ -52,21 +52,24 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		List<HiNodeIF> operands = new ArrayList<>(2);
 		List<OperationsGroup> allOperations = new ArrayList<>(1);
 
+		boolean valid = true;
 		int operation;
 		OperationsGroup operations = new OperationsGroup();
 		do {
-			visitPrefixes(tokenizer, ctx, operations, operands);
-			visitIncrement(tokenizer, operations, true);
+			boolean expectOperand = visitPrefixes(tokenizer, ctx, operations, operands);
+			expectOperand |= visitIncrement(tokenizer, operations, true);
 			allOperations.add(operations);
 
 			operations = new OperationsGroup();
-			visitSimpleExpression(tokenizer, operations, allOperations, operands, ctx);
-			visitArrayIndexes(tokenizer, operations, operands, ctx);
-			visitIncrement(tokenizer, operations, false);
+			boolean hasOperand = visitSimpleExpression(tokenizer, operations, allOperations, operands, ctx);
+			expectOperand |= visitArrayIndexes(tokenizer, operations, operands, ctx);
+			expectOperand |= visitIncrement(tokenizer, operations, false);
 
 			// tokenizer.start();
 			operation = visitOperation(tokenizer, operands);
 			if (operation != -1) {
+				expectOperand = true;
+
 				// tokenizer.commit();
 				if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
@@ -78,17 +81,17 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			} else {
 				// tokenizer.rollback();
 			}
+
+			if (!hasOperand && expectOperand) {
+				valid = false;
+			}
 		} while (operation != -1);
 
 		allOperations.add(operations);
 
-		if (operands.size() > 0) {
-			HiNodeIF[] operandsArray = new HiNodeIF[operands.size()];
-			operands.toArray(operandsArray);
-
-			OperationsGroup[] operationsArray = new OperationsGroup[allOperations.size()];
-			allOperations.toArray(operationsArray);
-
+		if (operands.size() > 0 && valid) {
+			HiNodeIF[] operandsArray = operands.toArray(new HiNodeIF[operands.size()]);
+			HiOperation[] operationsArray = NodeExpressionNoLS.compile(operandsArray, allOperations);
 			NodeExpression expressionNode = new NodeExpressionNoLS(operandsArray, operationsArray);
 			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 				NodeExpression trueValueNode = visit(tokenizer, ctx);
@@ -110,7 +113,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			return expressionNode;
 		}
 
-		if (operations.hasOperations()) {
+		if (operations.hasOperations() || !valid) {
 			tokenizer.error("invalid expression", tokenizer.getBlockToken(startToken));
 		}
 		return null;

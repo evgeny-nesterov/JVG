@@ -288,6 +288,10 @@ public class CodeContext {
 	private final List<Type> types = new ArrayList<>();
 
 	public void writeType(Type type) throws IOException {
+		if (type == null) {
+			writeShort(-1);
+			return;
+		}
 		CodeContext ctx = getRoot();
 		int index;
 		if (ctx.typesHash.containsKey(type)) {
@@ -403,13 +407,15 @@ public class CodeContext {
 	}
 
 	private int registerClass(HiClass clazz) {
-		if (clazz.isArray()) {
-			registerClass(clazz.getArrayType());
-		}
-		if (clazz.isPrimitive()) {
-			_registerClass(clazz.getAutoboxClass());
-		} else if (clazz.getAutoboxedPrimitiveClass() != null) {
-			_registerClass(clazz.getAutoboxedPrimitiveClass());
+		if (!clazz.isVar()) {
+			if (clazz.isArray()) {
+				registerClass(clazz.getArrayType());
+			}
+			if (clazz.isPrimitive()) {
+				_registerClass(clazz.getAutoboxClass());
+			} else if (clazz.getAutoboxedPrimitiveClass() != null) {
+				_registerClass(clazz.getAutoboxedPrimitiveClass());
+			}
 		}
 		return _registerClass(clazz);
 	}

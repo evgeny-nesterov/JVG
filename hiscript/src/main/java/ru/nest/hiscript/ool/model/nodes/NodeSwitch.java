@@ -114,7 +114,6 @@ public class NodeSwitch extends HiNode {
 						HiNode caseValueNode = caseValueNodes[j];
 						if (caseValueNode instanceof NodeExpressionNoLS) {
 							NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
-
 							NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
 							if (identifier != null) {
 								int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
@@ -129,6 +128,13 @@ public class NodeSwitch extends HiNode {
 										enumProcessedValues[enumOrdinal] = true;
 									}
 								}
+								continue;
+							}
+						}
+						if (valid &= caseValueNode.validate(validationInfo, ctx)) {
+							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
+							if (caseValueClass != valueClass) {
+								validationInfo.error("an enum switch case label must be the unqualified name of an enumeration constant", caseValueNode.getToken());
 							}
 						}
 					}
@@ -162,7 +168,7 @@ public class NodeSwitch extends HiNode {
 
 						if (caseValueNode.validate(validationInfo, ctx) && expectCaseValue(validationInfo, ctx, caseValueNode)) {
 							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
-							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN) {
+							if (caseValueClass != null && caseValueClass != HiClassPrimitive.BOOLEAN && caseValueClass.getAutoboxedPrimitiveClass() != HiClassPrimitive.BOOLEAN) {
 								Object caseValue = ctx.nodeValueType.getCompileValue();
 								if (caseValue != null || caseValueClass.isNull()) {
 									if (processedValues.contains(caseValue)) {
@@ -177,7 +183,7 @@ public class NodeSwitch extends HiNode {
 										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
 										valid = false;
 									}
-								} else if (!caseValueClass.isNull() && !caseValueClass.isInstanceof(valueClass)) {
+								} else if (!caseValueClass.isNull() && !caseValueClass.boxed().isInstanceof(valueClass.boxed())) {
 									validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
 									valid = false;
 								}
@@ -316,19 +322,11 @@ public class NodeSwitch extends HiNode {
 								NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
 								if (identifier != null) {
 									int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
-									if (enumOrdinal == -1) {
-										ctx.throwRuntimeException("cannot resolve symbol '" + identifier.getName() + "'");
-										return -2;
-									}
 									if (object.getField(ctx, "ordinal").get().equals(enumOrdinal)) {
 										return i;
 									}
-									continue;
 								}
 							}
-
-							ctx.throwRuntimeException("an enum switch case label must be the unqualified name of an enumeration constant");
-							return -2;
 						}
 					} else {
 						// default node

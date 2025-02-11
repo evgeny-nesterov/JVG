@@ -16,7 +16,7 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		super("argument", TYPE_ARGUMENT, false);
 		this.typeArgument = typeArgument;
 		this.name = name.intern();
-		this.modifiers = modifiers;
+		this.modifiers = modifiers != null ? modifiers : new Modifiers();
 		this.annotations = annotations;
 	}
 

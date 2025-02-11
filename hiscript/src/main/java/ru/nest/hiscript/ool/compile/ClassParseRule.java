@@ -180,7 +180,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		// method
-		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT);
+		HiMethod method = visitMethod(tokenizer, ctx, PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT, NATIVE, DEFAULT, SYNCHRONIZED);
 		if (method != null) {
 			// TODO keep in method only runtime annotations
 			ctx.addMethod(method);

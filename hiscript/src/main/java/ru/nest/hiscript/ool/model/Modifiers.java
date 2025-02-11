@@ -42,6 +42,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 			case Words.DEFAULT:
 				return DEFAULT;
+
+			case Words.SYNCHRONIZED:
+				return SYNCHRONIZED;
 		}
 		return -1;
 	}
@@ -54,7 +57,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 	}
 
 	public boolean hasModifiers() {
-		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative || isSynchronized;
+		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative || isDefault || isSynchronized;
 	}
 
 	private int access = ACCESS_DEFAULT;
@@ -72,7 +75,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 	}
 
 	public boolean isDefaultAccess() {
-		return (access & ACCESS_DEFAULT) != 0;
+		return access == ACCESS_DEFAULT;
 	}
 
 	public boolean isPrivate() {
@@ -168,6 +171,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (isDefault) {
 			sb.append("default ");
 		}
+		if (isSynchronized) {
+			sb.append("synchronized ");
+		}
 		return sb.toString();
 	}
 
@@ -179,6 +185,8 @@ public class Modifiers implements ModifiersIF, Codeable {
 				return "protected";
 			case ACCESS_PRIVATE:
 				return "private";
+			case ACCESS_DEFAULT:
+				return "";
 			case FINAL:
 				return "final";
 			case STATIC:
@@ -189,6 +197,8 @@ public class Modifiers implements ModifiersIF, Codeable {
 				return "native";
 			case DEFAULT:
 				return "default";
+			case SYNCHRONIZED:
+				return "synchronized";
 		}
 		return null;
 	}
@@ -214,6 +224,10 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (isDefault) {
 			modifiers |= DEFAULT;
 		}
+
+		if (isSynchronized) {
+			modifiers |= SYNCHRONIZED;
+		}
 		return modifiers;
 	}
 
@@ -223,6 +237,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 		setNative((code & NATIVE) != 0);
 		setAbstract((code & ABSTRACT) != 0);
 		setDefault((code & DEFAULT) != 0);
+		setSynchronized((code & SYNCHRONIZED) != 0);
 
 		if ((code & ACCESS_PUBLIC) != 0) {
 			setAccess(ACCESS_PUBLIC);
@@ -235,12 +250,12 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		os.writeByte(getModifiers());
+		os.writeShort(getModifiers());
 	}
 
 	public static Modifiers decode(DecodeContext os) throws IOException {
 		Modifiers modifiers = new Modifiers();
-		modifiers.setModifiers(os.readByte());
+		modifiers.setModifiers(os.readShort());
 		return modifiers;
 	}
 
@@ -252,38 +267,44 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 		boolean valid = true;
 		if ((allowedMask & access) == 0) {
-			Token token = Modifiers.getToken(tokenizer, access, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(access) + "' is not allowed", token);
+			Token token = getToken(tokenizer, access, modifiersToken);
+			tokenizer.error("modifier '" + getName(access) + "' is not allowed", token);
 			valid = false;
 		}
 
 		if (isFinal && (allowedMask & FINAL) == 0) {
-			Token token = Modifiers.getToken(tokenizer, FINAL, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(FINAL) + "' is not allowed", token);
+			Token token = getToken(tokenizer, FINAL, modifiersToken);
+			tokenizer.error("modifier '" + getName(FINAL) + "' is not allowed", token);
 			valid = false;
 		}
 
 		if (isStatic && (allowedMask & STATIC) == 0) {
-			Token token = Modifiers.getToken(tokenizer, STATIC, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(STATIC) + "' is not allowed", token);
+			Token token = getToken(tokenizer, STATIC, modifiersToken);
+			tokenizer.error("modifier '" + getName(STATIC) + "' is not allowed", token);
 			valid = false;
 		}
 
 		if (isAbstract && (allowedMask & ABSTRACT) == 0) {
-			Token token = Modifiers.getToken(tokenizer, ABSTRACT, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(ABSTRACT) + "' is not allowed", token);
+			Token token = getToken(tokenizer, ABSTRACT, modifiersToken);
+			tokenizer.error("modifier '" + getName(ABSTRACT) + "' is not allowed", token);
 			valid = false;
 		}
 
 		if (isNative && (allowedMask & NATIVE) == 0) {
-			Token token = Modifiers.getToken(tokenizer, NATIVE, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(NATIVE) + "' is not allowed", token);
+			Token token = getToken(tokenizer, NATIVE, modifiersToken);
+			tokenizer.error("modifier '" + getName(NATIVE) + "' is not allowed", token);
 			valid = false;
 		}
 
 		if (isDefault && (allowedMask & DEFAULT) == 0) {
-			Token token = Modifiers.getToken(tokenizer, DEFAULT, modifiersToken);
-			tokenizer.error("modifier '" + Modifiers.getName(DEFAULT) + "' is not allowed", token);
+			Token token = getToken(tokenizer, DEFAULT, modifiersToken);
+			tokenizer.error("modifier '" + getName(DEFAULT) + "' is not allowed", token);
+			valid = false;
+		}
+
+		if (isSynchronized && (allowedMask & SYNCHRONIZED) == 0) {
+			Token token = getToken(tokenizer, SYNCHRONIZED, modifiersToken);
+			tokenizer.error("modifier '" + getName(SYNCHRONIZED) + "' is not allowed", token);
 			valid = false;
 		}
 		return valid;
@@ -318,6 +339,10 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (isDefault && (allowedMask & DEFAULT) == 0) {
 			return DEFAULT;
 		}
+
+		if (isSynchronized && (allowedMask & SYNCHRONIZED) == 0) {
+			return SYNCHRONIZED;
+		}
 		return -1;
 	}
 
@@ -325,7 +350,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 		if (modifiersToken == null) {
 			return null;
 		}
-		String modifierName = Modifiers.getName(modifier);
+		String modifierName = getName(modifier);
 		return modifiersToken.getInnerToken(tokenizer, modifierName);
 	}
 

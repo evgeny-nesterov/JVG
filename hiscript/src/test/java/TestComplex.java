@@ -15,13 +15,17 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		// assertSuccessSerialize("interface A{void m(int x);} class B{void m(int x){}} class C{A a = (x) -> B::m;}");
 	}
 
 	@Test
-	public void testTodo() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+	public void testTODO() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
+//		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"error\");}} switch(new R(true)){case R(boolean x) when x: assert false;} assert false;", //
+//				"error");
+//		assertSuccessSerialize("switch(1){case Boolean.TRUE: return;} assert false;");
 	}
 
 	@Test
@@ -59,9 +63,11 @@ public class TestComplex extends HiTest {
 				"integer number too large");
 		assertFailCompile("long x = 0b10000000000_0000000000_0000000000_0000000000_0000000000_0000000000_000L;", // 64 bits
 				"long number too large");
-		assertFailCompile("inx x = 0b2;", //
+		assertFailCompile("int x = 0b2;", //
 				"binary numbers must contain at least one binary digit");
-		assertFailCompile("inx x = 0b111_;", //
+		assertFailCompile("int x = 0b111_;", //
+				"illegal underscore");
+		assertFailCompile("int x = 0b_111;", //
 				"illegal underscore");
 		// octal numbers
 		assertSuccessSerialize("int x = 010; assert x == 8;");
@@ -76,6 +82,11 @@ public class TestComplex extends HiTest {
 		assertSuccessSerialize("double x = 077e1; assert x == 770;"); // non octal
 		assertFailCompile("int x = 077_;", //
 				"illegal underscore");
+		// numbers
+		assertFailCompile("float x = 10e200f;", //
+				"float number too large");
+		assertFailCompile("double x = 10e1000;", //
+				"double number too large");
 
 		// arrays
 		assertFailCompile("int[] a = new int[1L];", //
@@ -118,5 +129,43 @@ public class TestComplex extends HiTest {
 				}
 			}
 		}
+
+		// expression
+		assertFailCompile("int x = *+-;", //
+				"expression expected");
+		assertFailCompile("int x = **1;", //
+				"expression expected");
+		assertFailCompile("int x = *%;", //
+				"expression expected");
+
+		// tokenizer
+		assertFailCompile("ljoi(*&^%^i}_", //
+				"unexpected token");
+
+		// annotations
+		assertFailCompile("@A class B{}", //
+				"cannot resolve class 'A'");
+
+		// switches
+		assertSuccessSerialize("switch(new Integer(1)){case 1:return;} assert false;");
+		assertFail("class A{boolean m(){throw new RuntimeException(\"error\");}} switch(new A()){case A a when a.m(): assert false;} assert false;", //
+				"error");
+		assertFailCompile("enum E{a,b} switch(E.a){case 1: assert false;} assert false;", //
+				"an enum switch case label must be the unqualified name of an enumeration constant");
+		assertSuccessSerialize("enum E{a,b} switch(E.a){case b: break; default: return;} assert false;");
+
+		// methods
+		assertFailCompile("interface A{void m(int x); void m(String x);} A a = (x) -> {};", //
+				"multiple non-overriding abstract methods found in interface A");
+		assertFailCompile("interface A{void m1(int x); void m2(String x);} A a = (x) -> {};", //
+				"multiple non-overriding abstract methods found in interface A");
+		assertFailCompile("interface A{} A a = (x) -> {};", //
+				"no abstract methods found in interface A");
+
+		// lambda + var (x)
+		assertSuccessSerialize("interface A{void m(int x);} class B{A a = (x) -> {};}");
+
+		// methods
+		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
 	}
 }

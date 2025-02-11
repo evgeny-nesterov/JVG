@@ -241,6 +241,9 @@ public class DecodeContext {
 	}
 
 	public Type getType(int index) {
+		if (index == -1) {
+			return null;
+		}
 		DecodeContext ctx = getRoot();
 		if (ctx != this) {
 			return ctx.getType(index);

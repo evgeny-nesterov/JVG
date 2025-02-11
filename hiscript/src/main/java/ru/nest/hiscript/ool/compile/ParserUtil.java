@@ -3,9 +3,9 @@ package ru.nest.hiscript.ool.compile;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.ModifiersIF;
-import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -378,7 +378,7 @@ public class ParserUtil implements Words {
 		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 		if (expression == null) {
 			tokenizer.error("expression expected");
-			expression = new NodeExpressionNoLS(new HiNode[0], new OperationsGroup[0]);
+			expression = new NodeExpressionNoLS(new HiNode[0], new HiOperation[0]);
 		}
 		return expression;
 	}

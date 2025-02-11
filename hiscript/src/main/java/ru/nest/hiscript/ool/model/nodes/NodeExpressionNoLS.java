@@ -12,17 +12,13 @@ import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
+import java.util.List;
 
 public class NodeExpressionNoLS extends NodeExpression {
 	/**
 	 * <operations1> X1 <operations2> X2 ... <operations n> Xn <operations n+1>
 	 */
-	public NodeExpressionNoLS(HiNodeIF[] operands, OperationsGroup[] operations) {
-		super("expression", TYPE_EXPRESSION);
-		compile(operands, operations);
-	}
-
-	private NodeExpressionNoLS(HiNodeIF[] operands, HiOperation[] operations) {
+	public NodeExpressionNoLS(HiNodeIF[] operands, HiOperation[] operations) {
 		super("expression", TYPE_EXPRESSION);
 		this.operands = operands;
 		this.operations = operations;
@@ -32,21 +28,20 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	private HiOperation[] operations;
 
-	private void compile(HiNodeIF[] operands, OperationsGroup[] o) {
-		this.operands = operands;
+	public static HiOperation[] compile(HiNodeIF[] operands, List<OperationsGroup> allOperations) {
 		int operandsCount = operands.length;
 
 		int operationsCount = 0;
-		for (int i = 0; i < o.length; i++) {
-			operationsCount += o[i].getCount();
+		for (int i = 0; i < allOperations.size(); i++) {
+			operationsCount += allOperations.get(i).getCount();
 		}
-		operations = new HiOperation[operandsCount + operationsCount];
+		HiOperation[] operations = new HiOperation[operandsCount + operationsCount];
 
 		HiOperation[] stack = new HiOperation[operationsCount];
 		int stackSize = 0;
 		int pos = 1;
-		for (int i = 0; i < o.length; i++) {
-			OperationsGroup og = o[i];
+		for (int i = 0; i < allOperations.size(); i++) {
+			OperationsGroup og = allOperations.get(i);
 
 			// append postfixes
 			// priority of postfixes has to be greater or equals (for example, . and []) of operation priority
@@ -104,6 +99,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		while (stackSize != 0 && pos < operations.length) {
 			operations[pos++] = stack[--stackSize];
 		}
+		return operations;
 	}
 
 	@SuppressWarnings("unused")
