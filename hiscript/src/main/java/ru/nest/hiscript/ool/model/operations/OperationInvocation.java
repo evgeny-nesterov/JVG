@@ -19,6 +19,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -341,6 +342,10 @@ public class OperationInvocation extends BinaryOperation {
 				argsClasses[i] = type;
 
 				if (type != null) {
+					if (ctx.value.valueType == Value.NAME) {
+						assert NodeIdentifier.resolve(ctx, ctx.value); // node resolved in validation
+					}
+
 					argsFields[i] = HiField.getField(type, null, argValues[i].getToken());
 					argsFields[i].set(ctx, ctx.value);
 				}

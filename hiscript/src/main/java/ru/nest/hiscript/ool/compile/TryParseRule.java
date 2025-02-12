@@ -50,7 +50,6 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					}
 				}
 				resources = resourcesList.toArray(new NodeDeclaration[resourcesList.size()]);
-				// TODO check resources on AutoCloseable
 				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 			}
 

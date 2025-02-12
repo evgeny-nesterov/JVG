@@ -371,7 +371,9 @@ public class NodeSwitch extends HiNode {
 
 										HiMethod getMethod = hiObject.clazz.getMethod(ctx, getMethodName.toString());
 										HiField castedField = (HiField) hiObject.getField(ctx, castedRecordArgument.name, c2).clone();
+										ctx.enterMethod(getMethod, hiObject);
 										getMethod.invoke(ctx, hiObject.clazz, hiObject, null);
+										ctx.exit();
 										castedField.set(ctx, ctx.value);
 
 										ctx.addVariable(castedField);

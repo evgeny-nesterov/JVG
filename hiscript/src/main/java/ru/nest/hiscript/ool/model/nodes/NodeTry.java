@@ -80,7 +80,7 @@ public class NodeTry extends HiNode {
 				valid &= resource.validate(validationInfo, ctx);
 				HiClass resourceClass = resource.getValueClass(validationInfo, ctx);
 				if (!resourceClass.isInstanceof("AutoCloseable")) {
-					validationInfo.error("incompatible types: try-with-resources not applicable to variable type", resource.getToken());
+					validationInfo.error("incompatible types: found: '" + resourceClass.getNameDescr() + "', required: 'AutoCloseable'", resource.getToken());
 					valid = false;
 				}
 			}

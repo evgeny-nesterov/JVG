@@ -212,7 +212,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	public void resolveValue(RuntimeContext ctx, Value value) {
 		if (value.valueType == Value.NAME) {
-			NodeIdentifier.resolve(ctx, value); // node resoved in validation
+			assert NodeIdentifier.resolve(ctx, value); // node resolved in validation
 		}
 
 		// @autobox

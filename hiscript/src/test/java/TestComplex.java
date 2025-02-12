@@ -15,8 +15,7 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertFail("record R(boolean x){void setX(boolean x){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true);", //
-				"exception in record rewritten method");
+		assertSuccessSerialize("int x;\n\nint y;\n\n");
 	}
 
 	@Test
@@ -24,8 +23,6 @@ public class TestComplex extends HiTest {
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
-//		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"error\");}} switch(new R(true)){case R(boolean x) when x: assert false;} assert false;", //
-//				"error");
 	}
 
 	@Test
@@ -34,7 +31,8 @@ public class TestComplex extends HiTest {
 		assertFailCompile("class C{C(int.. x){}}", //
 				"unexpected token");
 
-		// ??? assertSuccessSerialize("String s = \"'\";");
+		// string
+		assertSuccessSerialize("String s = \"'\";");
 
 		// chars
 		assertFailCompile("char c1 = 'a;\nchar c2 = 'a';", //
@@ -201,6 +199,8 @@ public class TestComplex extends HiTest {
 
 		// records
 		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true); boolean x = r.getX();", //
+				"exception in record rewritten method");
+		assertFail("record R(boolean x){void setX(boolean x){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true);", //
 				"exception in record rewritten method");
 	}
 }

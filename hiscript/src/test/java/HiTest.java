@@ -5,6 +5,9 @@ import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,8 +185,8 @@ public abstract class HiTest {
 	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
 		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects). //
 //				execute(). //
-				serialize().deserialize().execute(). //
-				throwExceptionIf();
+		serialize().deserialize().execute(). //
+						throwExceptionIf();
 		result.close();
 		return result;
 	}

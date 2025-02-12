@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -739,11 +739,17 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				valid = false;
 			}
 		}
+		_validateNext(validationInfo, ctx);
 		ctx.exit();
 
 		ctx.addLocalClass(this);
 		ctx.clazz = outboundClass;
 		return valid;
+	}
+
+	// after ctx enter and before exit in context of current class
+	protected boolean _validateNext(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return true;
 	}
 
 	public int getAbstractMethodsCount(ClassResolver classResolver) {

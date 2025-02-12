@@ -251,6 +251,22 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testCharacter() {
-		// TODO
+		assertSuccessSerialize("assert new Character('a') == 'a';");
+		assertSuccessSerialize("Character a = new Character('\\''); assert a == '\\'';");
+		assertSuccessSerialize("Character a = 'a'; a++; assert a == 'b';");
+		assertSuccessSerialize("Character a = 1001; a--; assert a == 1000;");
+		assertSuccessSerialize("char a = new Character('a'); assert a == new Character('a');");
+		assertFailCompile("Character a = -1;", //
+				"int cannot be converted to Character");
+		assertFailCompile("Character a = -1; a = -a;", //
+				"int cannot be converted to Character");
+		assertFailCompile("Character a = -1; a *= -1;", //
+				"int cannot be converted to Character");
+		assertFailCompile("Character a = -1; a /= -1;", //
+				"int cannot be converted to Character");
+		assertFailCompile("Character a = -1; a /= -1;", //
+				"int cannot be converted to Character");
+		assertFailCompile("Character a = 1; a *= 'x';", //
+				"operator '*=' can not be applied to Character");
 	}
 }
