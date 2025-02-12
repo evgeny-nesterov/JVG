@@ -142,9 +142,9 @@ public class NodeIdentifier extends HiNode {
 		ctx.value.valueClass = clazz;
 	}
 
-	public static boolean resolve(RuntimeContext ctx, Value value, boolean checkInitialization) {
+	public static boolean resolve(RuntimeContext ctx, Value value) {
 		// object
-		if (resolveVariable(ctx, value, checkInitialization)) {
+		if (resolveVariable(ctx, value)) {
 			return true;
 		}
 
@@ -154,12 +154,12 @@ public class NodeIdentifier extends HiNode {
 		}
 
 		if (ctx.root != null) {
-			return resolve(ctx.root, value, checkInitialization);
+			return resolve(ctx.root, value);
 		}
 		return false;
 	}
 
-	public static boolean resolveVariable(RuntimeContext ctx, Value value, boolean checkInitialization) {
+	public static boolean resolveVariable(RuntimeContext ctx, Value value) {
 		String name = value.name;
 		if (value.nameDimensions > 0) {
 			return false;
@@ -167,11 +167,6 @@ public class NodeIdentifier extends HiNode {
 
 		HiField<?> field = ctx.getVariable(name);
 		if (field != null) {
-			if (checkInitialization && !field.isInitialized(ctx)) {
-				ctx.throwRuntimeException("variable not initialized: " + field.name);
-				return true;
-			}
-
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.valueClass = field.getClass(ctx);
 			field.execute(ctx);

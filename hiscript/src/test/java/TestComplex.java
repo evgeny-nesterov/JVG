@@ -15,7 +15,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		// assertSuccessSerialize("interface A{void m(int x);} class B{void m(int x){}} class C{A a = (x) -> B::m;}");
 	}
 
 	@Test
@@ -167,5 +166,21 @@ public class TestComplex extends HiTest {
 
 		// methods
 		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
+
+		// interfaces
+		assertSuccessSerialize("interface A{int x = 1;} class B implements A{} assert new B().x == 1;");
+		assertSuccessSerialize("interface A{int x = 1;} class B implements A{} assert B.x == 1;");
+
+		// statements
+		assertSuccessSerialize("class A{Number x;} A a = new A(); a.x = 1.0;");
+
+		// generics
+		assertSuccessSerialize("class A<O1, O2 extends O1, O3 extends O2>{O1 o1; O2 o2; O3 o3;} A<Number, Integer, Integer> a = new A<>(); a.o1 = 1.0; a.o2 = 2; a.o3 = new Integer(3);");
+
+		// try-catch
+		assertFail("class A implements AutoCloseable{A(){throw new RuntimeException(\"exception in resource initialization\");} public void close(){}} try(A a = new A()){}", //
+				"exception in resource initialization");
+		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){}", //
+				"exception in resource close");
 	}
 }

@@ -62,7 +62,7 @@ public class OperationInstanceOf extends BinaryOperation {
 		if (isInstanceof) {
 			if (v2.castedVariableName != null) {
 				HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, v2.castedVariableName, null);
-				castedField.set(v1.object);
+				castedField.set(v1.object, v1.valueClass);
 				ctx.addVariable(castedField);
 			}
 			if (v2.castedRecordArguments != null) {

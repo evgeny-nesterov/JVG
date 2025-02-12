@@ -276,7 +276,7 @@ public class OperationPlus extends BinaryOperation {
 			NodeString.createString(ctx, chars);
 
 			v1.valueClass = ctx.value.valueClass;
-			v1.lambdaClass = null;
+			v1.originalValueClass = null;
 			v1.object = ctx.value.object;
 		} else {
 			int t1 = c1.getPrimitiveType();

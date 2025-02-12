@@ -244,7 +244,7 @@ public class HiArrays implements PrimitiveTypes {
 				}
 			}
 			dst.object = value.getObject();
-			dst.lambdaClass = null;
+			dst.originalValueClass = null;
 			Array.set(parentArray, index, dst.object);
 		}
 	}

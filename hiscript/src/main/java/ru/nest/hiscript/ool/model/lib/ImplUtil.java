@@ -49,7 +49,7 @@ public class ImplUtil {
 	protected static void returnArrayList(RuntimeContext ctx, Collection value) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
-		ctx.value.lambdaClass = null;
+		ctx.value.originalValueClass = null;
 		ctx.value.object = ctx.value.valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
 		((List) ((HiObject) ctx.value.object).userObject).addAll(value);
 	}

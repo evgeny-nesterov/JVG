@@ -41,7 +41,7 @@ public class HiConstructorJava extends HiConstructor {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.valueClass = clazz;
 			ctx.value.object = object;
-			ctx.value.lambdaClass = null;
+			ctx.value.originalValueClass = null;
 			return object;
 		} catch (Exception e) {
 			ctx.throwRuntimeException(e.getMessage());

@@ -117,6 +117,8 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	private HiClass clazz;
 
+	protected HiClass valueClass;
+
 	public String name;
 
 	public HiNode initializer;

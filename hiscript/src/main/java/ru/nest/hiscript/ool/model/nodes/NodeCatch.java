@@ -114,7 +114,7 @@ public class NodeCatch extends HiNode {
 					ctx.enter(RuntimeContext.CATCH, token);
 
 					HiFieldObject exc = (HiFieldObject) HiField.getField(excClass, excName, null);
-					exc.set(exception);
+					exc.set(exception, excClass);
 					exc.initialized = true;
 
 					ctx.addVariable(exc);

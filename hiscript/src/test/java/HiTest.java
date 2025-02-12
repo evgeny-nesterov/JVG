@@ -87,6 +87,8 @@ public abstract class HiTest {
 			onFail(script, "executed successfully, expected failure: " + expectMessage);
 		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
 			onFail(script, "Compilation failed: expected exception");
+		} catch (AssertionFailedError e) {
+			throw e;
 		} catch (Throwable e) {
 			if (e.getMessage() != null && e.getMessage().indexOf(expectMessage) != -1) {
 				// expected

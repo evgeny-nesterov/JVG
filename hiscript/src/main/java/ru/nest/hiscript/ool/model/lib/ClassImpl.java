@@ -31,7 +31,7 @@ public class ClassImpl extends ImplUtil {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
-		ctx.value.lambdaClass = null;
+		ctx.value.originalValueClass = null;
 		if (clazz != null) {
 			ctx.value.object = ctx.getClassLoader().getClassObject(ctx, clazz);
 		} else {
@@ -88,7 +88,7 @@ public class ClassImpl extends ImplUtil {
 		HiClassArray arrayClazz = (HiClassArray) clazz;
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
-		ctx.value.lambdaClass = null;
+		ctx.value.originalValueClass = null;
 		ctx.value.object = ctx.getClassLoader().getClassObject(ctx, arrayClazz.cellClass);
 	}
 }

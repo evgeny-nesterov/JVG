@@ -803,6 +803,7 @@ public class TestExpression extends HiTest {
 				}
 			}
 		}
+		assertSuccessSerialize("String s = (String)(\"a=\" + 1); assert s == \"a=1\";");
 
 		// autocast
 		assertSuccessSerialize("byte x = 1; assert x == (byte)1;");
@@ -932,6 +933,9 @@ public class TestExpression extends HiTest {
 		assertSuccessSerialize("long a = 1; double x = a; assert x == 1D;");
 		assertSuccessSerialize("float a = 1; double x = a; assert x == 1D;");
 		assertSuccessSerialize("double a = 1; double x = a; assert x == 1D;");
+
+		assertFail("Object a = 1; String s = (String)a;", //
+				"cannot cast Integer to String");
 	}
 
 	@Test

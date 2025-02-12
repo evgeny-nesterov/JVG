@@ -199,30 +199,36 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 			}
 			for (int i = 0; i < parameters.length; i++) {
 				Type parameterType = parameters[i];
+				HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
+				HiClass extendsClass = definedClass.clazz;
+				if (extendsClass.isGeneric()) {
+					HiClassGeneric extendsGenericClass = (HiClassGeneric) extendsClass;
+					if (extendsGenericClass != definedClass) {
+						extendsClass = parameters[extendsGenericClass.index].getClass(ctx);
+					}
+				}
 				if (parameterType.isExtends) {
 					HiClass parameterClass = parameterType.getClass(ctx);
 					if (parameterClass != null) {
-						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
 						if (!definedClass.isGeneric() && !definedClass.isInstanceof(parameterClass)) {
-							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + extendsClass.getNameDescr() + "'", token);
 						} else if (definedClass.isGeneric()) {
 							if (parameterType.isExtends) {
-								if (!definedClass.clazz.isInstanceof(parameterClass) && !parameterClass.isInstanceof(definedClass.clazz)) {
-									validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+								if (!extendsClass.isInstanceof(parameterClass) && !parameterClass.isInstanceof(extendsClass)) {
+									validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + extendsClass.getNameDescr() + "'", token);
 								}
-							} else if (!parameterClass.isInstanceof(definedClass.clazz)) {
-								validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+							} else if (!parameterClass.isInstanceof(extendsClass)) {
+								validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + extendsClass.getNameDescr() + "'", token);
 							}
 						}
 					}
 				} else {
 					HiClass parameterClass = parameterType.getClass(ctx);
 					if (parameterClass != null) {
-						HiClassGeneric definedClass = clazz.generics.generics[i].clazz;
 						if (!definedClass.isGeneric() && !parameterClass.isInstanceof(definedClass)) {
-							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
-						} else if (definedClass.isGeneric() && !parameterClass.isInstanceof(definedClass.clazz)) {
-							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + definedClass.clazz.getNameDescr() + "'", token);
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + extendsClass.getNameDescr() + "'", token);
+						} else if (definedClass.isGeneric() && !parameterClass.isInstanceof(extendsClass)) {
+							validationInfo.error("type parameter '" + parameterClass.getNameDescr() + "' is not within its bound; should extend '" + extendsClass.getNameDescr() + "'", token);
 						}
 						parameterType.validateClass(parameterClass, validationInfo, ctx, token);
 					}
@@ -262,7 +268,6 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 							}
 						} else {
 							if (fromClass != toClass) {
-								// validationInfo.error("type parameter '" + fromClass.fullName + "' is not within its bound; should extend '" + toClass.fullName + "'", token);
 								validationInfo.error("incompatible types. Found: '" + fromClass.getNameDescr() + "' required: '" + toClass.getNameDescr() + "'", token);
 								return false;
 							}

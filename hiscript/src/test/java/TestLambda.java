@@ -88,7 +88,6 @@ public class TestLambda extends HiTest {
 				"cannot resolve method 'length' in 'A'"); // method name is not match
 		assertFailCompile("interface A{int length(); int size();} A a = \"abc\"::length;", //
 				"functional interface not match to 'A'"); // not a functional interface
-		assertSuccessSerialize("interface A{int get(int... x);} class B{int get(int... x){return x[x.length - 1];}} A a = B::get; assert a.get(1,2,3) == 3;"); // same method name
 
 		// object
 		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
@@ -113,6 +112,10 @@ public class TestLambda extends HiTest {
 
 		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{int get(){return 1;} int get(int x){return x;}}; C c = new C(); A1 a1 = c::get; assert a1.get() == 1; A2 a2 = c::get; assert a2.get(2) == 2;");
 		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{static int get(){return 1;} static int get(int x){return x;}}; A1 a1 = C::get; assert a1.get() == 1; A2 a2 = C::get; assert a2.get(2) == 2;");
+
+		// varargs
+		assertSuccessSerialize("interface A{int get(int... x);} class B{int get(int... x){return x[x.length - 1];}} A a = B::get; assert a.get(1,2,3) == 3;"); // same method name
+		assertSuccessSerialize("interface A{int getA(int... x);} class B{int getB(int... x){return x[x.length - 1];}} B b = new B(); A a = b::getB; assert a.getA(1,2,3) == 3;"); // different name method name
 
 		// extends
 		assertSuccessSerialize("interface A{int get();} interface B extends A{} abstract class C{int get(){return 1;}}; class D extends C{}; D d = new D(); B b = d::get; assert b.get() == 1;");

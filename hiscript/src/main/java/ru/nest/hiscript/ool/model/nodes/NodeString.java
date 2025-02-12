@@ -86,7 +86,7 @@ public class NodeString extends HiNode {
 		} else {
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.valueClass = clazz;
-			ctx.value.lambdaClass = null;
+			ctx.value.originalValueClass = null;
 			ctx.value.object = object;
 		}
 		return object;

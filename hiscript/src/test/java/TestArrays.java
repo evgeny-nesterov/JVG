@@ -268,6 +268,9 @@ public class TestArrays extends HiTest {
 				"long is expected");
 		assertFailCompile("long[] x = {1D};", //
 				"long is expected");
+
+		assertFail("Object a = new Integer[0]; String[] s = (String[])a;", //
+				"cannot cast Integer[] to String[]");
 	}
 
 	@Test

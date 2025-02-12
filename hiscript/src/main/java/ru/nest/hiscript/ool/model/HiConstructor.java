@@ -246,6 +246,38 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		ctx.enterConstructor(this, object, null);
 		try {
 			// register argument variables in constructor
+			if (this.arguments != null) {
+				for (int i = 0; i < this.arguments.length; i++) {
+					TypeArgumentIF typeArgumentIf = this.arguments[i].typeArgument;
+					Type typeArgument = typeArgumentIf.getType();
+					if (typeArgumentIf.isVarargs()) {
+						typeArgument = typeArgument.getCellType();
+					}
+					HiClass argValueClass = arguments[i].getClass(ctx);
+					if (typeArgument.isPrimitive()) {
+						if (!argValueClass.isPrimitive() && arguments[i].get() == null) {
+							ctx.throwRuntimeException("null pointer");
+							return null;
+						}
+					} else if (!argValueClass.isNull()) {
+						// @generic
+						HiClass argDefinedClass = this.arguments[i].clazz;
+						if (argDefinedClass.isGeneric()) {
+							HiClassGeneric argDefinedGenericClass = (HiClassGeneric) argDefinedClass;
+							if (clazz.typeParameters != null) {
+								argDefinedClass = clazz.typeParameters[argDefinedGenericClass.index];
+							} else {
+								argDefinedClass = argDefinedGenericClass.clazz;
+							}
+						}
+
+						if (!argValueClass.boxed().isInstanceof(argDefinedClass)) {
+							ctx.throwRuntimeException("inconvertible types; cannot cast " + argValueClass.getNameDescr() + " to " + argDefinedClass.getNameDescr());
+							return null;
+						}
+					}
+				}
+			}
 			ctx.addVariables(arguments);
 
 			// execute constructor this(...)
@@ -326,10 +358,15 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 					int index = 0;
 					for (int i = 0; i < fieldsCount; i++) {
 						if (!clazz.fields[i].isStatic()) {
-							HiField<?> field = (HiField<?>) clazz.fields[i].clone();
-							object.fields[index++] = field;
+							object.fields[index++] = (HiField<?>) clazz.fields[i].clone();
+						}
+					}
 
-							// @generics (after set field to object.fields[])
+					// @generics (after set field to object.fields[])
+					index = 0;
+					for (int i = 0; i < fieldsCount; i++) {
+						if (!clazz.fields[i].isStatic()) {
+							HiField<?> field = object.fields[index++];
 							field.setGenericClass(ctx, type);
 						}
 					}
@@ -395,7 +432,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = clazz;
-		ctx.value.lambdaClass = null;
+		ctx.value.originalValueClass = null;
 		ctx.value.object = object;
 		return object;
 	}

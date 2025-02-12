@@ -251,8 +251,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
 		} else if (c1.isArray()) {
-			if (!canCastArray((HiClassArray) c1, v2.valueClass)) {
-				errorCast(ctx, v2.valueClass, v1.valueClass);
+			if (!canCastArray((HiClassArray) c1, v2.originalValueClass != null ? v2.originalValueClass : v2.valueClass)) {
+				errorCast(ctx, v2.originalValueClass, v1.valueClass);
 				return;
 			}
 			v1.object = v2.object;

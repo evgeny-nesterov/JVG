@@ -266,6 +266,8 @@ public class OperationEquate extends BinaryOperation {
 								return HiClassPrimitive.DOUBLE;
 						}
 					}
+				} else if (c1 == HiClass.NUMBER_CLASS && c2.isNumber()) {
+					return c2.boxed();
 				} else if (node2.clazz.isInstanceof(node1.clazz)) {
 					// @generics
 					if (node2.node instanceof NodeConstructor) {

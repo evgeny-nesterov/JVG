@@ -351,7 +351,7 @@ public class NodeSwitch extends HiNode {
 								if (isInstanceof) {
 									if (ctx.value.castedVariableName != null) {
 										HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, ctx.value.castedVariableName, null);
-										castedField.set(object);
+										castedField.set(object, object.clazz);
 										ctx.addVariable(castedField);
 									}
 									if (ctx.value.castedRecordArguments != null) {

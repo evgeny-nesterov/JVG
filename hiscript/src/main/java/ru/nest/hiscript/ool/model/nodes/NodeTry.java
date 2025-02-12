@@ -114,17 +114,19 @@ public class NodeTry extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		boolean closeException = false;
+		int initializedResources = -1;
 		try {
 			if (body != null || resources != null) {
 				ctx.enter(RuntimeContext.TRY, token);
 			}
 
 			if (resources != null) {
-				for (NodeDeclaration resource : resources) {
-					resource.execute(ctx);
+				for (int i = 0; i < resources.length; i++) {
+					resources[i].execute(ctx);
 					if (ctx.exception != null) {
 						break;
 					}
+					initializedResources = i;
 				}
 			}
 
@@ -136,7 +138,8 @@ public class NodeTry extends HiNode {
 				try {
 					HiObject initialException = ctx.exception;
 					ctx.exception = null;
-					for (NodeDeclaration resource : resources) {
+					for (int i = 0; i <= initializedResources; i++) {
+						NodeDeclaration resource = resources[i];
 						HiFieldObject resourceField = (HiFieldObject) ctx.getVariable(resource.name);
 						HiObject resourceObject = (HiObject) resourceField.get();
 						if (resourceObject == null) {

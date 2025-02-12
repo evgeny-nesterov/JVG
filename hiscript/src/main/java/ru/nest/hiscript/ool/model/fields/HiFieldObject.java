@@ -28,15 +28,13 @@ public class HiFieldObject extends HiField<Object> {
 		super(clazz, name);
 	}
 
-	private Object object; // HiObject or array (if object class is Object)
-
-	private HiClass lambdaClass; // has to be different from object class
+	private Object object; // HiObject or array (if object class is Object, then use valueClass to define array value type)
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		HiClass valueClass = valueType.clazz;
 		if (valueClass.isLambda()) {
-			lambdaClass = valueClass;
+			this.valueClass = valueClass;
 			return true;
 		}
 
@@ -51,7 +49,7 @@ public class HiFieldObject extends HiField<Object> {
 	public void get(RuntimeContext ctx, Value value) {
 		value.valueType = Value.VALUE;
 		value.valueClass = getClass(ctx);
-		value.lambdaClass = lambdaClass;
+		value.originalValueClass = valueClass;
 		value.object = object;
 	}
 
@@ -60,7 +58,7 @@ public class HiFieldObject extends HiField<Object> {
 		declared = true;
 		if (value.valueClass.isNull()) {
 			object = null;
-			lambdaClass = null;
+			valueClass = null;
 		} else {
 			// @generics
 			if (!value.valueClass.isPrimitive() && !value.valueClass.isLambda() && value.object != null) {
@@ -80,7 +78,7 @@ public class HiFieldObject extends HiField<Object> {
 					// TODO array
 				}
 			}
-			lambdaClass = value.valueClass.isLambda() ? value.valueClass : null;
+			valueClass = value.valueClass;
 			object = value.getObject(getClass(ctx));
 		}
 		initialized = true;
@@ -101,10 +99,10 @@ public class HiFieldObject extends HiField<Object> {
 		}
 	}
 
-	public void set(Object object) {
+	public void set(Object object, HiClass valueClass) {
 		this.declared = true;
 		this.object = object;
-		this.lambdaClass = null;
+		this.valueClass = valueClass;
 		this.initialized = true;
 	}
 

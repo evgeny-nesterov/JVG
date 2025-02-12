@@ -441,7 +441,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			if (modifiers.isNative()) {
 				ctx.value.valueType = Value.VALUE;
 				ctx.value.valueClass = type;
-				ctx.value.lambdaClass = null;
+				ctx.value.originalValueClass = null;
 				ctx.value.object = object;
 			}
 			if (modifiers.isSynchronized()) {

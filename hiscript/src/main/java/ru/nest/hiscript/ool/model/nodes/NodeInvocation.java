@@ -228,7 +228,7 @@ public class NodeInvocation extends HiNode {
 				// v1 - contains value as object
 				ctx.value.object = ctx.level.object;
 				ctx.value.valueClass = ctx.level.clazz;
-				ctx.value.lambdaClass = null;
+				ctx.value.originalValueClass = null;
 				if (ctx.value.object != null) {
 					ctx.value.valueType = Value.VALUE;
 				} else {
@@ -258,7 +258,7 @@ public class NodeInvocation extends HiNode {
 			// v1 - contains value as object
 			ctx.value.valueType = Value.VALUE;
 			ctx.value.valueClass = object.clazz;
-			ctx.value.lambdaClass = null;
+			ctx.value.originalValueClass = null;
 			ctx.value.object = object;
 
 			// v2 - contains method attributes (name, arguments)

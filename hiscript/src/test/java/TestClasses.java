@@ -666,6 +666,10 @@ public class TestClasses extends HiTest {
 				"duplicated argument 'x'");
 		assertFailCompile("class A{A(int x){this(x);}}", //
 				"recursive constructor invocation");
+		assertFail("class C{C(int a){}} Integer x = null; new C(x);", //
+				"null pointer");
+		assertFail("class C{C(int... a){}} Integer x = null; new C(1, 2, 3, x);", //
+				"null pointer");
 	}
 
 	@Test

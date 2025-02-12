@@ -152,8 +152,10 @@ public class HiClassLoader {
 		HiObject classObject = classesObjects.get(clazz);
 		if (classObject == null) {
 			classObject = getClassConstructor(ctx).newInstance(ctx, null, null, null);
-			classObject.userObject = clazz;
-			classesObjects.put(clazz, classObject);
+			if (classObject != null) {
+				classObject.userObject = clazz;
+				classesObjects.put(clazz, classObject);
+			}
 		}
 		return classObject;
 	}

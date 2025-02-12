@@ -297,10 +297,10 @@ public class OperationInvocation extends BinaryOperation {
 				if (obj != null) {
 					// inf cycle
 					// obj = obj.getMainObject();
-					if (v1.lambdaClass != null) {
+					if (v1.originalValueClass != null && v1.originalValueClass.isLambda()) {
 						// In this case object is used as container of original method on which functional method is mapped.
 						// Methods names (object and functional) may be different.
-						clazz = v1.lambdaClass;
+						clazz = v1.originalValueClass;
 					} else {
 						clazz = obj.clazz;
 					}

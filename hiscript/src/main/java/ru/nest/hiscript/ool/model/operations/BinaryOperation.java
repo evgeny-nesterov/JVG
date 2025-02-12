@@ -78,11 +78,10 @@ public abstract class BinaryOperation extends HiOperation {
 		Value v1 = values[0];
 		Value v2 = values[1];
 		if (v1.valueType == Value.NAME) {
-			boolean checkInitialization = operation != EQUATE;
-			NodeIdentifier.resolve(ctx, v1, checkInitialization);
+			NodeIdentifier.resolve(ctx, v1);
 		}
 		if (operation != INVOCATION && v2.valueType == Value.NAME) {
-			NodeIdentifier.resolve(ctx, v2, true);
+			NodeIdentifier.resolve(ctx, v2);
 		}
 		doOperation(ctx, v1, v2);
 	}

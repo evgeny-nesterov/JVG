@@ -43,7 +43,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiClass valueClass;
 
-	public HiClass lambdaClass;
+	public HiClass originalValueClass;
 
 	// Переменные со всеми возможными типами данных
 	public byte byteNumber;
@@ -122,7 +122,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public boolean set(Object value) {
-		lambdaClass = null;
+		originalValueClass = null;
 		if (value instanceof HiObject || value == null) {
 			valueType = VALUE;
 			if (value != null) {
@@ -532,7 +532,7 @@ public class Value implements PrimitiveTypes {
 
 		dst.valueType = valueType;
 		dst.valueClass = valueClass;
-		dst.lambdaClass = lambdaClass;
+		dst.originalValueClass = originalValueClass;
 		dst.name = name;
 		dst.nameDimensions = nameDimensions;
 

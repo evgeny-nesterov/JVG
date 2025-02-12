@@ -346,7 +346,7 @@ public class NodeConstructor extends HiNode {
 					if (dstArgClass.isObject()) {
 						HiObject autoboxValue = ((HiClassPrimitive) argClass).autobox(ctx, ctx.value);
 						argField = HiField.getField(argClass.getAutoboxClass(), null, argValue.getToken());
-						((HiFieldObject) argField).set(autoboxValue);
+						((HiFieldObject) argField).set(autoboxValue, autoboxValue.clazz);
 					}
 				}
 

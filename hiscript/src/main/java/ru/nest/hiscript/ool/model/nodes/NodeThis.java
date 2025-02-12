@@ -57,7 +57,7 @@ public class NodeThis extends HiNode {
 		// assumed currentObject is not null
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = currentObject.clazz;
-		ctx.value.lambdaClass = null;
+		ctx.value.originalValueClass = null;
 		ctx.value.object = currentObject;
 	}
 

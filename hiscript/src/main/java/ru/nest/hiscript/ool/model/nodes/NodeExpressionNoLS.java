@@ -211,7 +211,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 	public boolean resolveValue(RuntimeContext ctx, Value value) {
 		if (value.valueType == Value.NAME) {
-			if (!NodeIdentifier.resolve(ctx, value, true)) {
+			if (!NodeIdentifier.resolve(ctx, value)) {
 				if (value.nameDimensions == 0) {
 					ctx.throwRuntimeException("cannot resolve variable " + value.name);
 				} else {

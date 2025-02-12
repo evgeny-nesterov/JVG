@@ -47,7 +47,7 @@ public abstract class UnaryOperation extends HiOperation {
 	public final void doOperation(RuntimeContext ctx, Value... values) {
 		Value v = values[0];
 		if (v.valueType == Value.NAME) {
-			NodeIdentifier.resolve(ctx, v, true);
+			NodeIdentifier.resolve(ctx, v);
 		}
 		doOperation(ctx, v);
 	}
