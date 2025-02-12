@@ -112,6 +112,7 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 				modifiers = argument.getModifiers();
 				fieldNode = argument;
 			} else if (resolvedIdentifier instanceof HiNode) {
+				// TODO remove?
 				if (initialize) {
 					ctx.initializedNodes.add((HiNode) resolvedIdentifier);
 				}

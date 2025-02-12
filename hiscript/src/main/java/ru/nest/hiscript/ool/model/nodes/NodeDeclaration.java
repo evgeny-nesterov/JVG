@@ -159,14 +159,9 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		HiField<?> field;
-		if (clazz != null) {
-			field = HiField.getField(clazz, name, initialization, token);
-			if (clazz.isGeneric()) {
-				field.setGenericClass(ctx, ctx.level.object.type);
-			}
-		} else {
-			field = HiField.getField(type, name, initialization, token);
+		HiField<?> field = HiField.getField(clazz, name, initialization, token);
+		if (clazz.isGeneric()) {
+			field.setGenericClass(ctx, ctx.level.object.type);
 		}
 		field.setModifiers(modifiers);
 

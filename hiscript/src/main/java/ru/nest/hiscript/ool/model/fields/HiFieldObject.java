@@ -99,11 +99,10 @@ public class HiFieldObject extends HiField<Object> {
 		}
 	}
 
+    @Override
 	public void set(Object object, HiClass valueClass) {
-		this.declared = true;
+		super.set(valueClass, valueClass);
 		this.object = object;
-		this.valueClass = valueClass;
-		this.initialized = true;
 	}
 
 	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {

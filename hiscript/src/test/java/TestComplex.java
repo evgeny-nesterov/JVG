@@ -15,6 +15,8 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		assertFail("record R(boolean x){void setX(boolean x){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true);", //
+				"exception in record rewritten method");
 	}
 
 	@Test
@@ -24,7 +26,6 @@ public class TestComplex extends HiTest {
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
 //		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"error\");}} switch(new R(true)){case R(boolean x) when x: assert false;} assert false;", //
 //				"error");
-//		assertSuccessSerialize("switch(1){case Boolean.TRUE: return;} assert false;");
 	}
 
 	@Test
@@ -102,6 +103,13 @@ public class TestComplex extends HiTest {
 				"negative array size");
 		assertFail("int d = -1; int[] a = new int[d];", //
 				"negative array size");
+		// cast arrays
+		assertFail("Object a = new int[0]; double[] b = (double[])a;", //
+				"cannot cast int[] to double[]");
+		assertFail("Object a = 1; double[] b = (double[])a;", //
+				"cannot cast int to double[]");
+		assertFail("Object a = new int[0]; Double b = (Double)a;", //
+				"cannot cast int[] to Double");
 
 		// priority primitive cast over primitive cast
 		String[] types = {"byte", "short", "char", "int", "long", "float", "double"};
@@ -182,5 +190,17 @@ public class TestComplex extends HiTest {
 				"exception in resource initialization");
 		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){}", //
 				"exception in resource close");
+		assertSuccessSerialize("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){} catch(Exception e){assert e.getMessage().equals(\"exception in resource close\");}");
+
+		// switches
+		assertSuccessSerialize("switch(1){case Boolean.TRUE: return;} assert false;");
+		assertSuccessSerialize("Object o = new Integer[0]; switch(o){case String[] s: assert false; case Integer[] i: return;} assert false;");
+		assertSuccessSerialize("Object o = new Double[0]; switch(o){case Integer[] s: assert false; case Number[] i: return;} assert false;");
+		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"exception in record rewritten method\");}} switch(new R(true)){case R(boolean x) when x: assert false;} assert false;", //
+				"exception in record rewritten method");
+
+		// records
+		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true); boolean x = r.getX();", //
+				"exception in record rewritten method");
 	}
 }

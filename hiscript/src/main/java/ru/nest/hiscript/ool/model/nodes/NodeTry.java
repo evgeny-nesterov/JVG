@@ -113,7 +113,6 @@ public class NodeTry extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		boolean closeException = false;
 		int initializedResources = -1;
 		try {
 			if (body != null || resources != null) {
@@ -138,6 +137,7 @@ public class NodeTry extends HiNode {
 				try {
 					HiObject initialException = ctx.exception;
 					ctx.exception = null;
+					boolean closeException = false;
 					for (int i = 0; i <= initializedResources; i++) {
 						NodeDeclaration resource = resources[i];
 						HiFieldObject resourceField = (HiFieldObject) ctx.getVariable(resource.name);
@@ -177,12 +177,6 @@ public class NodeTry extends HiNode {
 
 		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException") && catches != null) {
 			for (NodeCatch catchNode : catches) {
-				if (closeException) {
-					ctx.exception = null;
-					ctx.throwRuntimeException("cannot catch close resource exception");
-					break;
-				}
-
 				if (ctx.exception.clazz.isInstanceof(catchNode.excClass)) {
 					catchNode.execute(ctx);
 					break;

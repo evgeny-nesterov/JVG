@@ -83,9 +83,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 		ctx.initClass();
 	}
-@interface A {
 
-}
 	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);

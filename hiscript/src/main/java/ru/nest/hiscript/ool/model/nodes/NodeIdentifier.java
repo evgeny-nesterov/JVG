@@ -193,13 +193,14 @@ public class NodeIdentifier extends HiNode {
 
 	public static boolean resolveClass(RuntimeContext ctx, Value v) {
 		String name = v.name;
+		int nameDimensions = v.nameDimensions;
 		HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 		if (clazz == null) {
 			clazz = ctx.getClass(name);
 		}
 		if (clazz != null) {
-			if (v.nameDimensions > 0) {
-				clazz = clazz.getArrayClass(v.nameDimensions);
+			if (nameDimensions > 0) {
+				clazz = clazz.getArrayClass(nameDimensions);
 			}
 			v.valueType = Value.CLASS;
 			v.valueClass = clazz;

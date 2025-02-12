@@ -239,7 +239,7 @@ public class HiObject {
 			// perform method invocation
 			Value oldValue = ctx.value;
 			try {
-				equalsMethod.invoke(ctx, HiClassPrimitive.getPrimitiveClass("boolean"), this, new HiField[] {objectField});
+				equalsMethod.invoke(ctx, HiClassPrimitive.getPrimitiveClass("boolean"), this, null);
 				result = ctx.value.getBoolean();
 			} finally {
 				ctx.value = oldValue;

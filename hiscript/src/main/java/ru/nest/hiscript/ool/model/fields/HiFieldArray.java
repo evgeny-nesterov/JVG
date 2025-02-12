@@ -1,7 +1,12 @@
 package ru.nest.hiscript.ool.model.fields;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -45,6 +50,14 @@ public class HiFieldArray extends HiField<Object> {
         }
         initialized = true;
     }
+
+    @Override
+    public void set(Object array, HiClass arrayType) {
+		this.declared = true;
+		this.array = array;
+		this.arrayType = arrayType;
+		this.initialized = true;
+	}
 
     @Override
     public Object get() {

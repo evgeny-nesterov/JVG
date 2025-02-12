@@ -156,6 +156,36 @@ public class CompileClassContext implements ClassResolver {
 		if (methods == null) {
 			methods = new ArrayList<>(1);
 		}
+		// rewrite record methods
+		if (clazz != null && clazz.isRecord()) {
+			for (int i = 0; i < methods.size(); i++) {
+				if (method.name.equals(methods.get(i).name) && ((method.name.startsWith("get") && method.hasArguments(0)) || (method.name.startsWith("set") && method.hasArguments(1)))) {
+					boolean match;
+					if (method.name.startsWith("set")) {
+						StringBuilder fieldNameBuf = new StringBuilder(5).append(Character.toLowerCase(method.name.charAt(3)));
+						if (method.name.length() > 4) {
+							fieldNameBuf.append(method.name.substring(4));
+						}
+						String fieldName = fieldNameBuf.toString();
+						HiField<?> field = null;
+						for (HiField<?> f : fields) {
+							if (f.name.equals(fieldName)) {
+								field = f;
+								break;
+							}
+						}
+						Type fieldType = field.type;
+						match = method.arguments[0].typeArgument.equals(fieldType);
+					} else {
+						match = true;
+					}
+					if (match) {
+						methods.set(i, method);
+						return;
+					}
+				}
+			}
+		}
 		methods.add(method);
 	}
 

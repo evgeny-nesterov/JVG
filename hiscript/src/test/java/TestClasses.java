@@ -228,6 +228,10 @@ public class TestClasses extends HiTest {
 				"interface cannot implements another interfaces");
 		assertSuccessSerialize("interface I{void m();} abstract class A implements I{}");
 		assertSuccessSerialize("interface I{void m();} abstract class A implements I{} class C extends A implements I{void m(){}} new C(); new A(){void m(){}};");
+		assertFailCompile("class C{interface A extends B{} interface B extends A{}}", //
+				"cyclic inheritance involving C$A", "cyclic inheritance involving C$B");
+		assertFailCompile("interface A extends B{} interface B extends A{}", //
+				"class 'B' can not be resolved");
 
 		// fields
 		assertFailCompile("interface I{int c;}", //

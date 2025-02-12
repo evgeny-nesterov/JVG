@@ -21,6 +21,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
+import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -106,17 +107,18 @@ public class RecordParseRule extends ParserUtil {
 				if (argument.getVariableName().length() > 1) {
 					setMethodName += argument.getVariableName().substring(1);
 				}
-				HiNodeIF[] operands = new HiNode[] {new NodeThis(), new NodeIdentifier(argument.getVariableName(), 0), new NodeIdentifier(argument.getVariableName(), 0)};
+				NodeIdentifier argIdentifier = new NodeIdentifier(argument.getVariableName(), 0);
+				HiNodeIF[] operands = new HiNode[] {new NodeThis(), argIdentifier, argIdentifier};
 				HiOperation[] operations = NodeExpressionNoLS.compile(operands, Arrays.asList(new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)));
 				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(operands, operations);
 				setExpression.setToken(argument.getToken());
-				// TODO support set methods?
 				HiNode setMethodBody = new NodeBlock(setExpression);
 				HiMethod setMethod = new HiMethod(record, null, new Modifiers(ModifiersIF.ACCESS_PUBLIC | ModifiersIF.FINAL), null, Type.voidType, setMethodName, new NodeArgument[] {argument}, null, setMethodBody);
 				setMethod.setToken(argument.getToken());
 				ctx.addMethod(setMethod);
 
-				defaultConstructorBody.addStatement(setExpression);
+				NodeInvocation setMethodInvocation = new NodeInvocation(setMethodName, true, new HiNode[] {argIdentifier});
+				defaultConstructorBody.addStatement(setMethodInvocation);
 			}
 
 			ctx.clazz = record;

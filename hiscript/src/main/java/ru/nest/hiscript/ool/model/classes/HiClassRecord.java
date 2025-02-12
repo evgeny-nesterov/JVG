@@ -50,6 +50,9 @@ public class HiClassRecord extends HiClass {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = super.validate(validationInfo, ctx);
+		if (defaultConstructor != null) {
+			valid &= defaultConstructor.validate(validationInfo, ctx);
+		}
 		return valid;
 	}
 

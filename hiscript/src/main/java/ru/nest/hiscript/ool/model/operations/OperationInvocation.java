@@ -424,7 +424,7 @@ public class OperationInvocation extends BinaryOperation {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
 
 				// @autobox
-				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass();
+				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass(ctx);
 				HiClass origArgClass = argClass;
 				if (argClass.isPrimitive()) {
 					if (expectedArgClass.isObject()) {

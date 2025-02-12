@@ -12,7 +12,6 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -76,13 +75,6 @@ public class NodeConstructor extends HiNode {
 	private HiConstructor constructor;
 
 	public String getName() {
-		if (name == null) {
-			if (clazz != null) {
-				name = clazz.getFullName(clazz.getClassLoader());
-			} else {
-				return type.fullName;
-			}
-		}
 		return name;
 	}
 
@@ -240,12 +232,7 @@ public class NodeConstructor extends HiNode {
 			}
 		}
 
-		// get constructor
 		HiConstructor constructor = clazz.searchConstructor(ctx, argsClasses);
-		if (constructor == null) {
-			ctx.throwRuntimeException("constructor not found: " + clazz.getNameDescr());
-			return;
-		}
 
 		RuntimeContext.StackLevel level = ctx.level;
 		while (level != null) {
@@ -333,33 +320,23 @@ public class NodeConstructor extends HiNode {
 			for (int i = 0; i < size; i++) {
 				HiNode argValue = argValues[i];
 				argValue.execute(ctx);
-				if (ctx.exitFromBlock()) {
-					return null;
-				}
 
 				HiField argField = null;
 				HiClass argClass = ctx.value.valueClass;
 
 				// @autobox
 				if (argClass.isPrimitive()) {
-					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass();
+					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass(ctx);
 					if (dstArgClass.isObject()) {
 						HiObject autoboxValue = ((HiClassPrimitive) argClass).autobox(ctx, ctx.value);
 						argField = HiField.getField(argClass.getAutoboxClass(), null, argValue.getToken());
-						((HiFieldObject) argField).set(autoboxValue, autoboxValue.clazz);
+						argField.set(autoboxValue, autoboxValue.clazz);
 					}
 				}
 
 				if (argField == null) {
 					argField = HiField.getField(argClass, null, argValue.getToken());
-					if (argField == null) {
-						ctx.throwRuntimeException("argument with type '" + argClass.getNameDescr() + "' is not found");
-						return null;
-					}
 					argField.set(ctx, ctx.value);
-				}
-				if (ctx.exitFromBlock()) {
-					return null;
 				}
 
 				argField.initialized = true;

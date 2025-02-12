@@ -93,6 +93,12 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	public abstract void set(RuntimeContext ctx, Value value);
 
+	public void set(Object value, HiClass valueClass) {
+		this.declared = true;
+		this.valueClass = valueClass;
+		this.initialized = true;
+	}
+
 	private NodeAnnotation[] annotations;
 
 	public NodeAnnotation[] getAnnotations() {
@@ -354,11 +360,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	public String toString() {
-		try (RuntimeContext ctx = new RuntimeContext(null, true)) {
-			String value = (clazz != null ? clazz.fullName : type.fullName) + " " + name + " = " + get();
-			ctx.throwExceptionIf(false);
-			return value;
-		}
+		return (clazz != null ? clazz.fullName : type.fullName) + " " + name + " = " + get();
 	}
 
 	public String getStringValue(RuntimeContext ctx) {

@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -949,6 +949,24 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			// @generics
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
 			return genericClass.isInstanceof(this);
+		} else if (isArray()) {
+			if (!clazz.isArray()) {
+				return false;
+			}
+			HiClassArray c1 = (HiClassArray) this;
+			HiClassArray c2 = (HiClassArray) clazz;
+			if (c1.cellClass.isPrimitive() || c2.cellClass.isPrimitive()) {
+				return false; // condition this == clazz is already checked
+			}
+			if (c2.cellClass == HiClass.OBJECT_CLASS) {
+				return true;
+			}
+			if (c1.dimension != c2.dimension) {
+				return false;
+			}
+			return c1.getRootCellClass().isInstanceof(c2.getRootCellClass());
+		} else if (clazz.isArray()) {
+			return false;
 		} else {
 			HiClass c = this;
 			while (c != null) {
@@ -1951,9 +1969,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		// try resolve super class
 		if (superClassType != null) {
 			clazz.superClass = os.getClassLoader().getClass(superClassType.fullName);
-			// clazz.superClass = superClassType.getClass(/*no context*/ null);
 		}
-		os.fireClassLoaded(clazz, classIndex);
 		return clazz;
 	}
 

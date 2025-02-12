@@ -58,6 +58,10 @@ public class TestJava extends HiTest {
 			return x;
 		}
 
+		public Object getNull() {
+			return null;
+		}
+
 		public HashMap getHashMap(HashMap x) {
 			assert x.get("number").equals(123);
 			x.put("k", "v");
@@ -127,6 +131,7 @@ public class TestJava extends HiTest {
 		assertSuccessSerialize("interface B{int[] getArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[] x = b.getArray(); assert x[0] == 1;");
 		assertSuccessSerialize("interface B{int[][] getArray2();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[][] x = b.getArray2(); assert x[0][0] == 1;");
 		assertSuccessSerialize("interface B{String[] getStringArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String[] x = b.getStringArray(); assert x[0].equals(\"abc\");");
+		assertSuccessSerialize("interface B{Object getNull();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getNull() == null;");
 
 		// primitive types
 		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};

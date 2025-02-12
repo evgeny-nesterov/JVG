@@ -3,13 +3,13 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -289,7 +289,7 @@ public class NodeSwitch extends HiNode {
 							return -2;
 						}
 
-						if (ctx.value.valueClass == HiClassPrimitive.BOOLEAN) {
+						if (ctx.value.valueClass == HiClassPrimitive.BOOLEAN || ctx.value.valueClass.getAutoboxedPrimitiveClass() == HiClassPrimitive.BOOLEAN) {
 							if (ctx.value.bool) {
 								return i;
 							}
@@ -309,97 +309,109 @@ public class NodeSwitch extends HiNode {
 				}
 			}
 		} else if (switchValueClass.isObject() || switchValueClass.isNull()) {
-			HiObject object = (HiObject) ctx.value.object;
-			if (object != null && object.clazz.isEnum()) {
-				HiClassEnum enumClass = (HiClassEnum) object.clazz;
-				for (int i = 0; i < size; i++) {
-					HiNode[] caseValueNodes = casesValues.get(i);
-					if (caseValueNodes != null && caseValueNodes.length > 0) {
-						for (int j = 0; j < caseValueNodes.length; j++) {
-							HiNode caseValueNode = caseValueNodes[j];
-							if (caseValueNode instanceof NodeExpressionNoLS) {
-								NodeExpressionNoLS exprCaseValueNode = (NodeExpressionNoLS) caseValueNode;
-								NodeIdentifier identifier = exprCaseValueNode.checkIdentifier();
+			// enums
+			Object object = ctx.value.object;
+			HiClass objectClass = null;
+			HiObject hiObject = null;
+			if (object instanceof HiObject) {
+				hiObject = (HiObject) object;
+				objectClass = hiObject.clazz;
+				if (objectClass.isEnum()) {
+					HiClassEnum enumClass = (HiClassEnum) objectClass;
+					for (int i = 0; i < size; i++) {
+						HiNode[] caseValueNodes = casesValues.get(i);
+						if (caseValueNodes != null && caseValueNodes.length > 0) {
+							for (int j = 0; j < caseValueNodes.length; j++) {
+								NodeIdentifier identifier = caseValueNodes[j].getSingleNode(NodeIdentifier.class);
 								if (identifier != null) {
 									int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
-									if (object.getField(ctx, "ordinal").get().equals(enumOrdinal)) {
+									if (hiObject.getField(ctx, "ordinal").get().equals(enumOrdinal)) {
 										return i;
 									}
 								}
 							}
+						} else {
+							// default node
+							return i;
 						}
-					} else {
-						// default node
-						return i;
 					}
+					return -1;
 				}
-			} else {
-				for (int i = 0; i < size; i++) {
-					HiNode[] caseValueNodes = casesValues.get(i);
-					if (caseValueNodes != null && caseValueNodes.length > 0) {
-						for (int j = 0; j < caseValueNodes.length; j++) {
-							HiNode caseValueNode = caseValueNodes[j];
-							caseValueNode.execute(ctx);
+			}
+			if (objectClass == null) {
+				objectClass = ctx.value.originalValueClass;
+			}
+
+			// objects, records, arrays
+			for (int i = 0; i < size; i++) {
+				HiNode[] caseValueNodes = casesValues.get(i);
+				if (caseValueNodes != null && caseValueNodes.length > 0) {
+					for (int j = 0; j < caseValueNodes.length; j++) {
+						HiNode caseValueNode = caseValueNodes[j];
+						caseValueNode.execute(ctx);
+						if (ctx.exitFromBlock()) {
+							return -2;
+						}
+
+						if (ctx.value.valueType == Value.CLASS) {
+							HiClass c1 = objectClass;
+							HiClass c2 = ctx.value.valueClass;
+							if (c1.isInstanceof(c2)) {
+								if (ctx.value.castedVariableName != null) { // object or array
+									HiField castedField = HiField.getField(c2, ctx.value.castedVariableName, null);
+									castedField.set(object, objectClass);
+									ctx.addVariable(castedField);
+								}
+								if (ctx.value.castedRecordArguments != null) {
+									for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
+										StringBuilder getMethodName = new StringBuilder("get").append(Character.toUpperCase(castedRecordArgument.name.charAt(0)));
+										if (castedRecordArgument.name.length() > 1) {
+											getMethodName.append(castedRecordArgument.name, 1, castedRecordArgument.name.length());
+										}
+
+										HiMethod getMethod = hiObject.clazz.getMethod(ctx, getMethodName.toString());
+										HiField castedField = (HiField) hiObject.getField(ctx, castedRecordArgument.name, c2).clone();
+										getMethod.invoke(ctx, hiObject.clazz, hiObject, null);
+										castedField.set(ctx, ctx.value);
+
+										ctx.addVariable(castedField);
+									}
+								}
+								if (ctx.value.castedCondition != null) {
+									ctx.value.castedCondition.execute(ctx);
+									if (ctx.exitFromBlock()) {
+										return -2;
+									}
+									if (!ctx.value.getBoolean()) {
+										continue;
+									}
+								}
+								return i;
+							}
+						} else if (ctx.value.valueClass.isPrimitive() && ctx.value.valueClass == HiClassPrimitive.BOOLEAN) {
+							if (ctx.value.getBoolean()) {
+								return i;
+							}
+						} else if (ctx.value.valueClass.isObject()) {
+							if (object == null) {
+								if (ctx.value.object == null) {
+									return i;
+								}
+							} else if (hiObject.equals(ctx, (HiObject) ctx.value.object)) {
+								return i;
+							}
 							if (ctx.exitFromBlock()) {
 								return -2;
 							}
-
-							if (ctx.value.valueType == Value.CLASS) {
-								HiClass c1 = object.clazz;
-								HiClass c2 = ctx.value.valueClass;
-								boolean isInstanceof = c1.isInstanceof(c2);
-								if (isInstanceof) {
-									if (ctx.value.castedVariableName != null) {
-										HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, ctx.value.castedVariableName, null);
-										castedField.set(object, object.clazz);
-										ctx.addVariable(castedField);
-									}
-									if (ctx.value.castedRecordArguments != null) {
-										if (!c2.isRecord()) {
-											ctx.throwRuntimeException("inconvertible types; cannot cast " + c2.getNameDescr() + " to Record");
-											return -2;
-										}
-										for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
-											HiField castedField = object.getField(ctx, castedRecordArgument.name, c2);
-											ctx.addVariable(castedField);
-										}
-									}
-									if (ctx.value.castedCondition != null) {
-										ctx.value.castedCondition.execute(ctx);
-										if (ctx.exitFromBlock()) {
-											return -2;
-										}
-										if (!ctx.value.getBoolean()) {
-											continue;
-										}
-									}
-									return i;
-								}
-							} else if (ctx.value.valueClass.isPrimitive() && ctx.value.valueClass == HiClassPrimitive.BOOLEAN) {
-								if (ctx.value.getBoolean()) {
-									return i;
-								}
-							} else if (ctx.value.valueClass.isObject()) {
-								if (object == null) {
-									if (ctx.value.object == null) {
-										return i;
-									}
-								} else if (object.equals(ctx, (HiObject) ctx.value.object)) {
-									return i;
-								}
-								if (ctx.exitFromBlock()) {
-									return -2;
-								}
-							} else if (ctx.value.valueClass.isNull()) {
-								if (object == null) {
-									return i;
-								}
+						} else if (ctx.value.valueClass.isNull()) {
+							if (object == null) {
+								return i;
 							}
 						}
-					} else {
-						// default node
-						return i;
 					}
+				} else {
+					// default node
+					return i;
 				}
 			}
 		}

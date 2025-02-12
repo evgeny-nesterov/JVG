@@ -191,6 +191,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		ctx.nodeValueType.enclosingClass = ctx.nodeValueType.clazz;
 		ctx.nodeValueType.enclosingType = ctx.nodeValueType.type;
 
+		// TODO remove?
 		if (!validValue && validationInfo.messages.size() == 0) {
 			validationInfo.error("invalid expression", getToken());
 		}
@@ -209,16 +210,9 @@ public class NodeExpressionNoLS extends NodeExpression {
 		return valid;
 	}
 
-	public boolean resolveValue(RuntimeContext ctx, Value value) {
+	public void resolveValue(RuntimeContext ctx, Value value) {
 		if (value.valueType == Value.NAME) {
-			if (!NodeIdentifier.resolve(ctx, value)) {
-				if (value.nameDimensions == 0) {
-					ctx.throwRuntimeException("cannot resolve variable " + value.name);
-				} else {
-					ctx.throwRuntimeException("cannot resolve class " + value.name);
-				}
-				return false;
-			}
+			NodeIdentifier.resolve(ctx, value); // node resoved in validation
 		}
 
 		// @autobox
@@ -227,7 +221,6 @@ public class NodeExpressionNoLS extends NodeExpression {
 		}
 
 		value.copyTo(ctx.value);
-		return true;
 	}
 
 	public <N extends HiNodeIF> N getSingleNode() {

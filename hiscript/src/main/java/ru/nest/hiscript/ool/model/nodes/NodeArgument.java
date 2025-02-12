@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
@@ -47,7 +48,10 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 		return modifiers;
 	}
 
-	public HiClass getArgClass() {
+	public HiClass getArgClass(ClassResolver classResolver) {
+		if (clazz == null) {
+			clazz = getType().getClass(classResolver);
+		}
 		return clazz;
 	}
 

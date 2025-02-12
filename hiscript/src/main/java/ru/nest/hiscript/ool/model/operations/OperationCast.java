@@ -236,28 +236,32 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = null;
+		HiClass c1 = v1.valueClass;
 		if (v1.node instanceof NodeType) {
 			c1 = ((NodeType) v1.node).getTypeClass();
-		}
-		if (c1 == null) {
-			c1 = v1.variableType.getClass(ctx);
 		}
 		v1.valueClass = c1;
 		if (ctx.exitFromBlock()) {
 			return;
 		}
+		HiClass c2 = v2.valueClass;
+		if (v2.originalValueClass != null) {
+			c2 = v2.originalValueClass;
+		}
 
 		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
 		} else if (c1.isArray()) {
-			if (!canCastArray((HiClassArray) c1, v2.originalValueClass != null ? v2.originalValueClass : v2.valueClass)) {
-				errorCast(ctx, v2.originalValueClass, v1.valueClass);
+			if (!canCastArray((HiClassArray) c1, c2)) {
+				errorCast(ctx, c2, v1.valueClass);
 				return;
 			}
 			v1.object = v2.object;
+		} else if (c2.isArray()) {
+			errorCast(ctx, c2, v1.valueClass);
+			return;
 		} else {
-			HiClass c2 = ((HiObject) v2.object).clazz;
+			c2 = ((HiObject) v2.object).clazz;
 			if (!c2.isInstanceof(c1)) {
 				errorCast(ctx, c2, c1);
 				return;

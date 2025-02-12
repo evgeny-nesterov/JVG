@@ -436,6 +436,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		}
 	}
 
+	/**
+	 * Arguments has to be added to ctx: ctx.addVariables(argsFields)
+	 * arguments is used only in HiClassJava
+	 */
 	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
 		if (body != null) {
 			if (modifiers.isNative()) {
@@ -627,5 +631,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	@Override
 	public HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		return clazz;
+	}
+
+	public boolean hasArguments(int count) {
+		return count == (arguments == null ? 0 : arguments.length);
 	}
 }

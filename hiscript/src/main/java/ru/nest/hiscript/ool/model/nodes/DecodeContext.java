@@ -264,17 +264,6 @@ public class DecodeContext {
 		list.add(listener);
 	}
 
-	public void fireClassLoaded(HiClass clazz, int index) {
-//		DecodeContext ctx = getRoot();
-//		ctx.classes[index] = clazz;
-//		List<ClassLoadListener> list = ctx.classLoadListeners.remove(index);
-//		if (list != null) {
-//			for (ClassLoadListener listener : list) {
-//				listener.classLoaded(clazz);
-//			}
-//		}
-	}
-
 	private HiClass[] classes;
 
 	public void loadClasses() throws IOException {

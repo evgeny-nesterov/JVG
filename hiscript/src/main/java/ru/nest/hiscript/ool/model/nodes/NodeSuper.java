@@ -49,16 +49,6 @@ public class NodeSuper extends HiNode {
 		HiObject object = ctx.getCurrentObject();
 		HiClass objectClass;
 		if (clazz == null || !clazz.isInterface) {
-			// TODO remove?
-			if (clazz != null && clazz != object.clazz) {
-				while (object != null) {
-					object = object.getSuperObject();
-					if (object == null || object.clazz == clazz) {
-						break;
-					}
-				}
-			}
-
 			object = object.getSuperObject();
 			objectClass = object.clazz;
 		} else {
