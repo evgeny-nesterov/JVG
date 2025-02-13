@@ -321,6 +321,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				}
 			}
 
+			if (returnType != null && returnType.isVar()) {
+				validationInfo.error("'var' not allowed here", getToken());
+			}
+
 			if (arguments != null) {
 				for (NodeArgument argument : arguments) {
 					if (argument.getValueClass(validationInfo, ctx).isVar()) {

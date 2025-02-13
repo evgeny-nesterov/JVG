@@ -3,13 +3,13 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.fields.HiRecordField;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -226,10 +226,10 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		int index = getCaseIndex(ctx, valueNode, size, casesValues);
-		if (index >= 0) {
-			ctx.enter(RuntimeContext.SWITCH, token);
-			try {
+		ctx.enter(RuntimeContext.SWITCH, token);
+		try {
+			int index = getCaseIndex(ctx, valueNode, size, casesValues);
+			if (index >= 0) {
 				for (int i = index; i < size; i++) {
 					HiNode caseBody = casesNodes.get(i);
 					HiNode[] caseValueNodes = casesValues.get(i);
@@ -250,13 +250,18 @@ public class NodeSwitch extends HiNode {
 						}
 					} finally {
 						if (identifier != null) {
-							ctx.removeVariable(identifier.name);
+							ctx.removeVariable(identifier.castedVariableName);
+							if (identifier.castedRecordArguments != null) {
+								for (int j = 0; j < identifier.castedRecordArguments.length; j++) {
+									ctx.removeVariable(identifier.castedRecordArguments[j].name);
+								}
+							}
 						}
 					}
 				}
-			} finally {
-				ctx.exit();
 			}
+		} finally {
+			ctx.exit();
 		}
 	}
 
@@ -356,38 +361,36 @@ public class NodeSwitch extends HiNode {
 							HiClass c1 = objectClass;
 							HiClass c2 = ctx.value.valueClass;
 							if (c1.isInstanceof(c2)) {
-								if (ctx.value.castedVariableName != null) { // object or array
-									HiField castedField = HiField.getField(c2, ctx.value.castedVariableName, null);
+								String castedVariableName = ctx.value.castedVariableName;
+								NodeArgument[] castedRecordArguments = ctx.value.castedRecordArguments;
+								HiNode castedCondition = ctx.value.castedCondition;
+								if (castedVariableName != null) { // object or array
+									HiField castedField = HiField.getField(c2, castedVariableName, null);
 									castedField.set(object, objectClass);
 									ctx.addVariable(castedField);
 								}
-								if (ctx.value.castedRecordArguments != null) {
-									for (NodeArgument castedRecordArgument : ctx.value.castedRecordArguments) {
-										StringBuilder getMethodName = new StringBuilder("get").append(Character.toUpperCase(castedRecordArgument.name.charAt(0)));
-										if (castedRecordArgument.name.length() > 1) {
-											getMethodName.append(castedRecordArgument.name, 1, castedRecordArgument.name.length());
-										}
-
-										HiMethod getMethod = hiObject.clazz.getMethod(ctx, getMethodName.toString());
-										HiField castedField = (HiField) hiObject.getField(ctx, castedRecordArgument.name, c2).clone();
-										ctx.enterMethod(getMethod, hiObject);
-										try {
-											getMethod.invoke(ctx, hiObject.clazz, hiObject, null);
-										} finally {
-											ctx.exit();
-											ctx.isReturn = false;
-										}
-										castedField.set(ctx, ctx.value);
-
+								if (castedRecordArguments != null) {
+									for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
+										NodeArgument castedRecordArgument = castedRecordArguments[j];
+										HiRecordField castedField = new HiRecordField(ctx, hiObject, recordArgumentIndex, hiObject.fields[recordArgumentIndex], castedRecordArgument.name);
 										ctx.addVariable(castedField);
 									}
 								}
-								if (ctx.value.castedCondition != null) {
-									ctx.value.castedCondition.execute(ctx);
+								if (castedCondition != null) {
+									castedCondition.execute(ctx);
 									if (ctx.exitFromBlock()) {
 										return -2;
 									}
 									if (!ctx.value.getBoolean()) {
+										if (castedVariableName != null) {
+											ctx.removeVariable(castedVariableName);
+										}
+										if (castedRecordArguments != null) {
+											for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
+												NodeArgument castedRecordArgument = castedRecordArguments[j];
+												ctx.removeVariable(castedRecordArgument.name);
+											}
+										}
 										continue;
 									}
 								}
