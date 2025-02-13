@@ -936,6 +936,17 @@ public class TestExpression extends HiTest {
 
 		assertFail("Object a = 1; String s = (String)a;", //
 				"cannot cast Integer to String");
+
+		// nulls
+		assertSuccessSerialize("Byte x = (Byte)null;");
+		assertSuccessSerialize("Short x = (Short)null;");
+		assertSuccessSerialize("Character x = (Character)null;");
+		assertSuccessSerialize("Integer x = (Integer)null;");
+		assertSuccessSerialize("Long x = (Long)null;");
+		assertSuccessSerialize("Float x = (Float)null;");
+		assertSuccessSerialize("Double x = (Double)null;");
+		assertSuccessSerialize("String x = (String)null;");
+		assertSuccessSerialize("class A{} A x = (A)null;");
 	}
 
 	@Test

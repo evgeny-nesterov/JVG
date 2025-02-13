@@ -41,7 +41,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			}
 		} else {
 			// c1 and c2 has to be in one hierarchy path
-			if (!c2.isInstanceof(c1) && !c1.isInstanceof(c2)) {
+			if (!c2.isNull() && !c2.isInstanceof(c1) && !c1.isInstanceof(c2)) {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		}
@@ -260,6 +260,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		} else if (c2.isArray()) {
 			errorCast(ctx, c2, v1.valueClass);
 			return;
+		} else if(v2.object == null) {
+			v1.object = null;
 		} else {
 			c2 = ((HiObject) v2.object).clazz;
 			if (!c2.isInstanceof(c1)) {

@@ -427,6 +427,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public void removeLocalVariable(NodeVariable localVariable) {
 		level.removeField(localVariable);
+		initializedNodes.remove(localVariable);
 	}
 
 	public boolean hasLocalVariable(String name) {

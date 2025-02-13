@@ -3,7 +3,9 @@ import org.junit.jupiter.api.Test;
 public class TestVar extends HiTest {
 	@Test
 	public void test() {
-		assertSuccessSerialize("var x = new Object(); assert x instanceof Object; x.hashCode(); assert x.equals(x);");
+		assertSuccessSerialize("int x = 1; assert x == 1;}");
+		assertSuccessSerialize("var x1 = 123; var x2 = x1; var x3 = x2; var x4 = x3; var x5 = x4; var x6 = x5; assert x5 == x1; assert x6 == 123;}");
+		assertSuccessSerialize("var x = new Object(); assert x instanceof Object; x.hashCode(); var y = x; assert x.equals(y);");
 		assertSuccessSerialize("var x = 1; int y = x + 1; assert x == 1; assert y == 2;");
 		assertSuccessSerialize("var x = false; x = !x; assert x;");
 		assertSuccessSerialize("var x = \"abc\"; assert x instanceof String; assert x.equals(\"abc\");");
@@ -12,20 +14,33 @@ public class TestVar extends HiTest {
 		assertSuccessSerialize("var x = 1; var y = x; assert y == 1;");
 		assertSuccessSerialize("var x = \"abc\"; var y = x; assert y.equals(\"abc\"); assert y == x;");
 		assertSuccessSerialize("var x = new String(\"abc\"); var y = x; assert x == y; assert y.getClass() == String.class; assert y.length() == 3;");
-		assertFailCompile("var x;", //
-				"var is not initialized");
-		assertFailCompile("var x; x = 1;", //
-				"var is not initialized");
-		assertFailCompile("var x = null;", //
-				"invalid var initialization");
 
 		assertSuccessSerialize("class A{var x = 1; {assert x == 1;} {x = 2;}} A a = new A(); assert a.x == 2;");
+		assertSuccessSerialize("class A{int get(int x) {var y = x + 1; return y;}} A a = new A(); assert a.get(1) == 2;");
+
 		assertFailCompile("class A{var x; {int x = 1}}", //
 				"var is not initialized");
 		assertFailCompile("class A{static var x; static{int x = 1}}", //
 				"var is not initialized");
-		assertSuccessSerialize("class A{int get(int x) {var y = x + 1; return y;}} A a = new A(); assert a.get(1) == 2;");
-		assertFailCompile("class A{int get(var x) {return x;}}", //
+		assertFailCompile("class A{void get(var x) {}}", //
 				"'var' not allowed here");
+		assertFailCompile("class A{var get() {}}", //
+				"'var' not allowed here");
+
+		assertSuccessSerialize("var x = 1; class C{var y = x; {assert y == 1;} long getY(){return y;}} var z = new C().getY(); assert z == 1; }");
+		assertSuccessSerialize("var x = 1; record R(int x); var r = new R(x); assert r.getX() == 1;");
+
+		// nulls
+		assertSuccessSerialize("var x = (String)null;");
+		assertFailCompile("var x = null;", //
+				"invalid var initialization");
+
+		// fails
+		assertFailCompile("var x;", //
+				"var is not initialized");
+		assertFailCompile("var x; x = 1;", //
+				"var is not initialized");
+		assertFailCompile("int x = 1; assert x instanceof Integer;}", // x is primitive
+				"inconvertible types; cannot cast int to Integer");
 	}
 }

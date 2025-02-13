@@ -15,11 +15,11 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccessSerialize("int x;\n\nint y;\n\n");
 	}
 
 	@Test
 	public void testTODO() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+//		assertSuccessSerialize("if(false);}");
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
@@ -202,5 +202,6 @@ public class TestComplex extends HiTest {
 				"exception in record rewritten method");
 		assertFail("record R(boolean x){void setX(boolean x){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true);", //
 				"exception in record rewritten method");
+		assertSuccessSerialize("record R(int x); int y = switch(new R(2)){case R(int x) when x == 11 -> x; case R(int x) when x > 1 -> 22;}; assert y == 22;");
 	}
 }

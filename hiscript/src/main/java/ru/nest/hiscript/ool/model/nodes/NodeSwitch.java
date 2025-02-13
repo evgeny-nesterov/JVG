@@ -205,7 +205,6 @@ public class NodeSwitch extends HiNode {
 						NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 						if (identifier != null) {
 							identifier.removeLocalVariable(ctx);
-							ctx.initializedNodes.remove(identifier.declarationNode);
 						}
 					}
 				}
@@ -372,8 +371,12 @@ public class NodeSwitch extends HiNode {
 										HiMethod getMethod = hiObject.clazz.getMethod(ctx, getMethodName.toString());
 										HiField castedField = (HiField) hiObject.getField(ctx, castedRecordArgument.name, c2).clone();
 										ctx.enterMethod(getMethod, hiObject);
-										getMethod.invoke(ctx, hiObject.clazz, hiObject, null);
-										ctx.exit();
+										try {
+											getMethod.invoke(ctx, hiObject.clazz, hiObject, null);
+										} finally {
+											ctx.exit();
+											ctx.isReturn = false;
+										}
 										castedField.set(ctx, ctx.value);
 
 										ctx.addVariable(castedField);

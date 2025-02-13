@@ -21,7 +21,7 @@ public class HiFieldVar extends HiField<Object> {
 	private HiField typedField;
 
 	public HiField getTypedField(ClassResolver classResolver) {
-		if (typedField == null && type != Type.varType) {
+		if (typedField == null) {
 			typedField = HiFieldVar.getField(getClass(classResolver), name, initializer, token);
 		}
 		return typedField;

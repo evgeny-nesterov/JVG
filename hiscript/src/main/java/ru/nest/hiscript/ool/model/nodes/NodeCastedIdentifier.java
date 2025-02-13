@@ -95,6 +95,11 @@ public class NodeCastedIdentifier extends HiNode {
 		if (castedVariableName != null) {
 			ctx.removeLocalVariable(declarationNode);
 		}
+		if (castedRecordArguments != null) {
+			for (int i = 0; i < castedRecordArguments.length; i++) {
+				ctx.removeLocalVariable(castedRecordArguments[i]);
+			}
+		}
 	}
 
 	private static NodeArgument getNodeArgument(HiClass recordClass, NodeArgument castedRecordArgument) {
