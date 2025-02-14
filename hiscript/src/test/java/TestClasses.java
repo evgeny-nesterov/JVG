@@ -232,6 +232,8 @@ public class TestClasses extends HiTest {
 				"cyclic inheritance involving C$A", "cyclic inheritance involving C$B");
 		assertFailCompile("interface A extends B{} interface B extends A{}", //
 				"class 'B' can not be resolved");
+		assertSuccessSerialize("interface A{int x = 1;} class B implements A{} assert new B().x == 1;");
+		assertSuccessSerialize("interface A{int x = 1;} class B implements A{} assert B.x == 1;");
 
 		// fields
 		assertFailCompile("interface I{int c;}", //
@@ -489,6 +491,9 @@ public class TestClasses extends HiTest {
 
 		assertFailCompile("class A {void m(Float x){}} new A().m(1);", //
 				"cannot resolve method 'm' in 'A'");
+
+		// synchronized
+		assertSuccessSerialize("class A{synchronized void m(){int x = 0;}} new A().m();");
 	}
 
 	@Test
@@ -540,6 +545,32 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A {void m(Integer x, int y){assert true;} void m(int x, int y){assert false;}} new A().m(new Integer(1), 2);");
 		assertFailCompile("class A {void m(int x, int y){} void m(Integer x, Integer y){}} new A().m(new Integer(1), 2);", //
 				"Ambiguous method call. Both m(int x, int y) in A and m(Integer x, Integer y) in A match.");
+
+		// priority primitive cast over primitive cast
+		String[] types = {"byte", "short", "char", "int", "long", "float", "double"};
+		for (int i1 = 0; i1 < types.length; i1++) {
+			String a1 = types[i1];
+			for (int i2 = 0; i2 < types.length; i2++) {
+				if (i1 != i2) {
+					String a2 = types[i2];
+					for (int i = 0; i < types.length; i++) {
+						String a = types[i];
+						boolean cm1 = i == i1 || !a1.equals("char");
+						boolean cm2 = i == i2 || !a2.equals("char");
+						boolean m1 = i <= i1 && (i1 < i2 || i2 < i || !cm2) && (cm1 || !cm2);
+						boolean m2 = i <= i2 && (i2 < i1 || i1 < i || !cm1) && (cm2 || !cm1);
+						if (m1 || m2) {
+							String ms1 = m1 ? "true" : "false";
+							String ms2 = m2 ? "true" : "false";
+							assertSuccessSerialize("class A {void m(" + a1 + " x){assert " + ms1 + ";} void m(" + a2 + " x){assert " + ms2 + ";}} new A().m((" + a + ")1);");
+						} else {
+							assertFailCompile("class A {void m(" + a1 + " x){} void m(" + a2 + " x){}} new A().m((" + a + ")1);", //
+									"cannot resolve method 'm' in 'A'");
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Test
@@ -761,6 +792,13 @@ public class TestClasses extends HiTest {
 				"duplicated local variable a");
 		assertFailCompile("record R1(int x); record R2(int x) extends R1;", //
 				"'{' is expected");
+		assertSuccessSerialize("record R(int x); int y = switch(new R(2)){case R(int x) when x == 11 -> x; case R(int x) when x > 1 -> 22;}; assert y == 22;");
+
+		// rewrite get/set method
+		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true); boolean x = r.getX();", //
+				"exception in record rewritten method");
+		assertFail("record R(boolean x){void setX(boolean x){throw new RuntimeException(\"exception in record rewritten method\");}} R r = new R(true);", //
+				"exception in record rewritten method");
 
 		// failures
 		assertFailCompile("record;", //
@@ -785,6 +823,7 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testVarargs() {
+		// methods
 		assertFailCompile("class A{void m(int... x){}} new A().m(\"\");", //
 				"cannot resolve method 'm' in 'A'");
 		assertFailCompile("class A{void m(int... x){}} new A().m(1, 2, 3, true);", //
@@ -793,5 +832,9 @@ public class TestClasses extends HiTest {
 				"cannot resolve method 'm' in 'A'");
 		assertFailCompile("class A{void m(int... x){}} new A().m(new double[]{});", //
 				"cannot resolve method 'm' in 'A'");
+
+		// constructors
+		assertFailCompile("class C{C(int.. x){}}", //
+				"unexpected token");
 	}
 }

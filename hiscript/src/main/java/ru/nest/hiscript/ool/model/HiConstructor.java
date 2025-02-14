@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class HiConstructor implements HiNodeIF, HasModifiers {
-	public final static String METHOD_NAME = "<init>";
-
 	public enum BodyConstructorType {
 		NONE(0), THIS(1), SUPER(2);
 
@@ -144,7 +142,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public HiNode body;
 
-	public MethodSignature signature;
+	public ArgumentsSignature signature;
 
 	@Override
 	public Modifiers getModifiers() {
@@ -155,10 +153,15 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		if (signature == null) {
 			argClasses = new HiClass[arguments != null ? arguments.length : 0];
 			for (int i = 0; i < argClasses.length; i++) {
-				argClasses[i] = arguments[i].getType().getClass(classResolver);
+				NodeArgument arg = arguments[i];
+				if (arg.clazz != null) {
+					argClasses[i] = arg.clazz;
+				} else {
+					argClasses[i] = arg.getArgClass(classResolver);
+				}
 			}
 			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
-			signature = new MethodSignature(METHOD_NAME, argClasses, isVarargs);
+			signature = new ArgumentsSignature(argClasses, isVarargs);
 		}
 	}
 
@@ -274,11 +277,11 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 								argDefinedClass = argDefinedGenericClass.clazz;
 							}
 						}
-
-						if (!argValueClass.boxed().isInstanceof(argDefinedClass)) {
-							ctx.throwRuntimeException("inconvertible types; cannot cast " + argValueClass.getNameDescr() + " to " + argDefinedClass.getNameDescr());
-							return null;
-						}
+// TODO check in validation
+//						if (!argValueClass.boxed().isInstanceof(argDefinedClass)) {
+//							ctx.throwRuntimeException("inconvertible types; cannot cast " + argValueClass.getNameDescr() + " to " + argDefinedClass.getNameDescr());
+//							return null;
+//						}
 					}
 				}
 			}
@@ -297,7 +300,22 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 				HiObject superOutboundObject = ctx.getOutboundObject(clazz.superClass);
 				HiObject superObject;
 				if (bodyConstructorType == BodyConstructorType.SUPER) {
-					NodeConstructor.invokeConstructor(ctx, clazz.superClass, null, bodyConstructor.argValues, null, superOutboundObject);
+					// TODO move to validation
+					Type superType = this.type;
+
+					// @generic
+					if (clazz.superClass.generics != null && type.parameters != null) {
+						int genericParametersCount = clazz.superClass.generics.generics.length;
+						Type[] superTypeParameters = new Type[genericParametersCount];
+						for (int i = 0; i < genericParametersCount; i++) {
+							NodeGeneric superGeneric = clazz.superClass.generics.generics[i];
+							superTypeParameters[i] = type.parameters[i];
+							// check cast superTypeParameters[i]=>superGeneric
+						}
+						superType = Type.getParameterizedType(superType, superTypeParameters);
+					}
+
+					NodeConstructor.invokeConstructor(ctx, clazz.superClass, superType, bodyConstructor.argValues, null, superOutboundObject);
 					if (ctx.exitFromBlock()) {
 						return null;
 					}

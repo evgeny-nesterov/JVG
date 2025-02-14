@@ -837,7 +837,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				NodeString.createString(this, level.method.toString()); // TODO use getSignatureText
 				array[i].getField(this, "methodName").set(this, value);
 			} else {
-				NodeString.createString(this, HiConstructor.METHOD_NAME);
+				NodeString.createString(this, "<init>");
 				array[i].getField(this, "methodName").set(this, value);
 			}
 

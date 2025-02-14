@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.model.ArgumentsSignature;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
@@ -37,8 +38,8 @@ public class HiClassJava extends HiClass {
 	}
 
 	@Override
-	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, MethodSignature signature) {
-		HiClass[] argTypes = signature.argClasses;
+	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, ArgumentsSignature signature) {
+		HiClass[] argTypes = signature.argsClasses;
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];
@@ -53,7 +54,7 @@ public class HiClassJava extends HiClass {
 			javaArgClasses[i] = argTypeJavaClass;
 		}
 		try {
-			Integer signatureId = Objects.hash(javaArgClasses); // TODO check correct!
+			Integer signatureId = Objects.hash((Object[]) javaArgClasses);
 			Map<Integer, HiConstructorJava> javaConstructorsMap = classResolver.getEnv().javaConstructorsMap;
 			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
@@ -181,7 +182,7 @@ public class HiClassJava extends HiClass {
 
 	@Override
 	protected List<HiMethod> _searchMethods(ClassResolver classResolver, MethodSignature signature) {
-		HiClass[] argTypes = signature.argClasses;
+		HiClass[] argTypes = signature.argsClasses;
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];

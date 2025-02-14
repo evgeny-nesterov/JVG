@@ -976,6 +976,20 @@ public class TestExpression extends HiTest {
 	@Test
 	public void testArrays() {
 		assertSuccessSerialize("int[] x = {2}; x[0] *= 2; assert x[0] == 4;");
+		assertFailCompile("int[] a = new int[1L];", //
+				"int is expected");
+		assertFailCompile("int[] a = new int[1F];", //
+				"int is expected");
+		assertFailCompile("int[] a = new int[1D];", //
+				"int is expected");
+		assertFailCompile("int d = 1L; int[] a = new int[d];", //
+				"long cannot be converted to int");
+		assertFail("int[] a = new int[-1];", //
+				"negative array size");
+		assertFail("int[][] a = new int[0][-1];", //
+				"negative array size");
+		assertFail("int d = -1; int[] a = new int[d];", //
+				"negative array size");
 	}
 
 	@Test

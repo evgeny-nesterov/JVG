@@ -159,5 +159,7 @@ public class TestAnnotations extends HiTest {
 				"'{' is expected"); // TODO @interface may not have extends list
 		assertFailCompile("@interface F1{} @interface F2 implements F1 {}", //
 				"'{' is expected"); // TODO no implements clause allowed for interface
+		assertFailCompile("@A class B{}", //
+				"cannot resolve class 'A'");
 	}
 }

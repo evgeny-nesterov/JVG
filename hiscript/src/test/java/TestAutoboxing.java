@@ -122,6 +122,10 @@ public class TestAutoboxing extends HiTest {
 			assertSuccessSerialize(T + " i = 0; while(i < 10) i++; assert i == 10;");
 			assertFailCompile("" + t + " i = 0; while(i < 10) i = null;", //
 					"operator '=' can not be applied to " + t + ", null");
+
+			assertSuccessSerialize("class A{Number x;} A a = new A(); a.x = (" + t + ")1; assert (" + t + ")a.x == 1;");
+			assertFail("class A{Number x;} A a = new A(); assert (" + t + ")a.x == 1;", //
+					"null pointer");
 		}
 	}
 

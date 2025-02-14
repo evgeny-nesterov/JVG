@@ -29,10 +29,16 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		HiClass c2 = node2.clazz;
 		ctx.nodeValueType.returnType = node2.returnType;
 		if (c1.isPrimitive()) {
-			if (!c2.isPrimitive()) {
+			if (c2 == HiClass.NUMBER_CLASS) {
+				if (!c1.isNumber()) {
+					errorCast(validationInfo, node1.token, c2, c1);
+				}
+			} else if (!c2.isPrimitive()) {
 				errorCast(validationInfo, node1.token, c2, c1);
-			} else if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
-				errorCast(validationInfo, node1.token, c2, c1);
+			} else {
+				if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
+					errorCast(validationInfo, node1.token, c2, c1);
+				}
 			}
 		} else if (c1.isArray() && c2.isArray()) {
 			// c1 and c2 has to be in one hierarchy path
@@ -260,7 +266,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		} else if (c2.isArray()) {
 			errorCast(ctx, c2, v1.valueClass);
 			return;
-		} else if(v2.object == null) {
+		} else if (v2.object == null) {
 			v1.object = null;
 		} else {
 			c2 = ((HiObject) v2.object).clazz;
@@ -299,13 +305,29 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	private void castPrimitive(RuntimeContext ctx, Value v1, Value v2) {
-		if (!v2.valueClass.isPrimitive()) {
+		HiClass c1 = v1.valueClass;
+		HiClass c2 = v2.valueClass;
+		if (c2 == HiClass.NUMBER_CLASS) {
+			if (v2.object == null) {
+				ctx.throwRuntimeException("null pointer");
+				return;
+			} else if (v2.originalValueClass != null) {
+				c2 = v2.originalValueClass;
+			} else if (v2.object instanceof HiObject) {
+				c2 = ((HiObject) v2.object).clazz;
+			}
+		}
+		if (c2.getAutoboxedPrimitiveClass() != null) {
+			c2 = c2.getAutoboxedPrimitiveClass();
+		}
+
+		if (!c2.isPrimitive()) {
 			errorCast(ctx, v2.valueClass, v1.valueClass);
 			return;
 		}
 
-		int type1 = v1.valueClass.getPrimitiveType();
-		int type2 = v2.valueClass.getPrimitiveType();
+		int type1 = c1.getPrimitiveType();
+		int type2 = c2.getPrimitiveType();
 		switch (type1) {
 			case BOOLEAN:
 				castBoolean(ctx, v1, v2, type2);

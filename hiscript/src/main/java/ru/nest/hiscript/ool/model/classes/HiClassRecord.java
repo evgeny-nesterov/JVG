@@ -1,11 +1,11 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ArgumentsSignature;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.MethodSignature;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -56,10 +56,10 @@ public class HiClassRecord extends HiClass {
 	}
 
 	@Override
-	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, MethodSignature signature) {
+	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, ArgumentsSignature signature) {
 		List<HiConstructor> constructors = super._searchConstructors(classResolver, signature);
 		if (constructors == null || constructors.size() == 0) {
-			if (isMatchConstructorArguments(classResolver, defaultConstructor, signature.argClasses)) {
+			if (isMatchConstructorArguments(classResolver, defaultConstructor, signature.argsClasses)) {
 				constructors = Arrays.asList(defaultConstructor);
 			}
 		}

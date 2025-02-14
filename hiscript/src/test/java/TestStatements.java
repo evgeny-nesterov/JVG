@@ -200,6 +200,7 @@ public class TestStatements extends HiTest {
 		assertFailCompile("switch(true){}", //
 				"invalid switch value type: 'boolean'");
 		assertSuccessSerialize("class A{static int get(){System.exit(); return 1;}} switch(A.get()){case 1: break;}");
+		assertSuccessSerialize("switch(1){case Boolean.TRUE: return;} assert false;");
 
 		// enums
 		assertSuccessSerialize("enum E{e} switch(E.e){}");
@@ -210,6 +211,9 @@ public class TestStatements extends HiTest {
 				"expression expected");
 		assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}", //
 				"cannot resolve symbol 'd'");
+		assertFailCompile("enum E{a,b} switch(E.a){case 1: assert false;} assert false;", //
+				"an enum switch case label must be the unqualified name of an enumeration constant");
+		assertSuccessSerialize("enum E{a,b} switch(E.a){case b: break; default: return;} assert false;");
 
 		// objects
 		assertSuccessSerialize("switch(\"a\"){case \"a\": break; default: assert false;}");
@@ -228,6 +232,11 @@ public class TestStatements extends HiTest {
 				"value or casted identifier is expected");
 		assertFailCompile("class A{} class B{} switch(new A()){case B b:}", //
 				"incompatible switch case types; found B, required A");
+		assertSuccessSerialize("switch(new Integer(1)){case 1:return;} assert false;");
+		assertFail("class A{boolean m(){throw new RuntimeException(\"error\");}} switch(new A()){case A a when a.m(): assert false;} assert false;", //
+				"error");
+		assertSuccessSerialize("Object o = new Integer[0]; switch(o){case String[] s: assert false; case Integer[] i: return;} assert false;");
+		assertSuccessSerialize("Object o = new Double[0]; switch(o){case Integer[] s: assert false; case Number[] i: return;} assert false;");
 
 		// casted identifiers
 		assertFailCompile("switch(\"\"){case Integer i, String s: break;}", //
@@ -235,6 +244,8 @@ public class TestStatements extends HiTest {
 //		assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 //		assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 //		assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
+		assertFail("record R(boolean x){boolean getX(){throw new RuntimeException(\"exception in record rewritten method\");}} switch(new R(true)){case R(boolean x) when x: assert false;} assert false;", //
+				"exception in record rewritten method");
 
 		// nulls
 		assertSuccessSerialize("switch(null){case null: return; break; case 1:} assert false;");
@@ -413,6 +424,14 @@ public class TestStatements extends HiTest {
 
 		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"1\");} catch(Exception e) {} finally{return 1;}}} assert new A().m() == 1;");
 		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;"); // cancel exception and return 1 in finally
+
+		// resource initialization
+		assertFail("class A implements AutoCloseable{A(){throw new RuntimeException(\"exception in resource initialization\");} public void close(){}} try(A a = new A()){}", //
+				"exception in resource initialization");
+		// resource close
+		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){}", //
+				"exception in resource close");
+		assertSuccessSerialize("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){} catch(Exception e){assert e.getMessage().equals(\"exception in resource close\");}");
 
 		// invalid format
 		assertFailCompile("throw Exception();", //

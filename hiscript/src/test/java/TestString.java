@@ -11,6 +11,7 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = new String(\"abc\"); assert s.equals(\"abc\");");
 		assertSuccessSerialize("String s1 = \"abc\"; String s2 = new String(s1); assert s2.equals(\"abc\");");
 		assertSuccessSerialize("String s = \"xxx\\nyyy\"; assert s.indexOf(\"\\n\") == 3;");
+		assertSuccessSerialize("String s = \"'\";");
 		assertFailCompile("String s = 1;", //
 				"incompatible types: int cannot be converted to String");
 		assertFailCompile("String s = 'a';", //
@@ -133,6 +134,8 @@ public class TestString extends HiTest {
 		assertSuccessSerialize("String s = \"\\\\\"; assert s.charAt(0) == '\\\\';");
 		assertFailCompile("String s = \"\\\";", //
 				"'\"' is expected");
+		assertFailCompile("char c1 = 'a;\nchar c2 = 'a';", //
+				"' is expected");
 
 		// octal
 		assertSuccessSerialize("String s = \"\\7\"; assert s.charAt(0) == '\\7';");

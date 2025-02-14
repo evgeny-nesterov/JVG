@@ -91,12 +91,12 @@ public class NodeReturn extends HiNode {
 					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true);
 				}
 				if (!match) {
-					validationInfo.error("incompatible types; found " + returnValueType.clazz + ", required " + expectedType, value.getToken());
+					validationInfo.error("incompatible types; found " + returnValueType.clazz.getNameDescr() + ", required " + expectedType.getNameDescr(), value.getToken());
 					return false;
 				}
 			}
 		} else if (expectedType != HiClassPrimitive.VOID) {
-			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType, token);
+			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType.getNameDescr(), token);
 			return false;
 		}
 		return true;

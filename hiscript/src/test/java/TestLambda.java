@@ -27,6 +27,16 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("int x = 1; interface I{int get(int x);} I o = x -> x; assert o.get(x + 1) == x + 1;");
 		assertSuccessSerialize("class C{int c = 0;} C c = new C(); interface I{void m(I i, int x);} I o = (i,x)->{if(x>0) i.m(i, x-1); c.c++;}; o.m(o, 5); assert c.c == 6;");
 		assertSuccessSerialize("interface I{int get(int a);} interface J{int sum(int a, I... i);} J j = (a,i) -> {int c = 0; for(int x=0;x<i.length;x++) c+=i[x].get(a); return c;} assert j.sum(3, a->a, a->1, a->a/2) == 5;");
+
+		assertFailCompile("interface A{void m(int x); void m(String x);} A a = (x) -> {};", //
+				"multiple non-overriding abstract methods found in interface A");
+		assertFailCompile("interface A{void m1(int x); void m2(String x);} A a = (x) -> {};", //
+				"multiple non-overriding abstract methods found in interface A");
+		assertFailCompile("interface A{} A a = (x) -> {};", //
+				"no abstract methods found in interface A");
+
+		// lambda + var
+		assertSuccessSerialize("interface A{void m(int x);} class B{A a = (var x) -> {};}");
 	}
 
 	@Test

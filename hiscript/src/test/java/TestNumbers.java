@@ -370,4 +370,55 @@ public class TestNumbers extends HiTest {
 		assertSuccessSerialize("int a = 1_000_000 * 1_000_000 * 1_000_000;");
 		assertSuccessSerialize("int a = -1_000_000 * 1_000_000 * 1_000_000;");
 	}
+
+	@Test
+	public void testNumbersFormats() {
+		// int numbers
+		assertFailCompile("int x = _1;", //
+				"cannot resolve symbol '_1'");
+		assertFailCompile("int x = 1_;", //
+				"illegal underscore");
+		assertFailCompile("int x = 1__________;", //
+				"illegal underscore");
+		// hex numbers
+		assertSuccessSerialize("int x = -0xf_f; assert -x == 255;");
+		assertFailCompile("int x = 0xFF_;", //
+				"illegal underscore");
+		assertFailCompile("int x = 0x_FF;", //
+				"illegal underscore");
+		assertFailCompile("long x = 0xFF__________L;", //
+				"illegal underscore");
+		// binary numbers
+		assertSuccessSerialize("int x = 0b101; assert x == 5;");
+		assertSuccessSerialize("long x = 0b101L; assert x == 5L;");
+		assertSuccessSerialize("int x = -0b101; assert -x == 5;");
+		assertFailCompile("int x = 0b10000000000_0000000000_0000000000_00;", // 32 bits
+				"integer number too large");
+		assertFailCompile("long x = 0b10000000000_0000000000_0000000000_0000000000_0000000000_0000000000_000L;", // 64 bits
+				"long number too large");
+		assertFailCompile("int x = 0b2;", //
+				"binary numbers must contain at least one binary digit");
+		assertFailCompile("int x = 0b111_;", //
+				"illegal underscore");
+		assertFailCompile("int x = 0b_111;", //
+				"illegal underscore");
+		// octal numbers
+		assertSuccessSerialize("int x = 010; assert x == 8;");
+		assertSuccessSerialize("long x = 010L; assert x == 8L;");
+		assertSuccessSerialize("int x = -010; assert -x == 8;");
+		assertFailCompile("int x = 010000000000_0;", // 11 octals = 11*3=33 bits > 32 bits (max)
+				"integer number too large");
+		assertFailCompile("long x = 010000000000_0000000000_00L;", // 22 octals = 22*3=66 bits > 64 bits (max)
+				"long number too large");
+		assertSuccessSerialize("float x = 077f; assert x == 77;"); // non octal
+		assertSuccessSerialize("double x = 077d; assert x == 77;"); // non octal
+		assertSuccessSerialize("double x = 077e1; assert x == 770;"); // non octal
+		assertFailCompile("int x = 077_;", //
+				"illegal underscore");
+		// numbers
+		assertFailCompile("float x = 10e200f;", //
+				"float number too large");
+		assertFailCompile("double x = 10e1000;", //
+				"double number too large");
+	}
 }

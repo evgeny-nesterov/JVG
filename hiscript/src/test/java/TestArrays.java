@@ -271,6 +271,12 @@ public class TestArrays extends HiTest {
 
 		assertFail("Object a = new Integer[0]; String[] s = (String[])a;", //
 				"cannot cast Integer[] to String[]");
+		assertFail("Object a = new int[0]; double[] b = (double[])a;", //
+				"cannot cast int[] to double[]");
+		assertFail("Object a = 1; double[] b = (double[])a;", //
+				"cannot cast int to double[]");
+		assertFail("Object a = new int[0]; Double b = (Double)a;", //
+				"cannot cast int[] to Double");
 	}
 
 	@Test
@@ -295,6 +301,12 @@ public class TestArrays extends HiTest {
 
 		assertFail("int[] x = null; int length = x.length", //
 				"null pointer");
+		assertFailCompile("int x = *+-;", //
+				"expression expected");
+		assertFailCompile("int x = **1;", //
+				"expression expected");
+		assertFailCompile("int x = *%;", //
+				"expression expected");
 	}
 
 	@Test

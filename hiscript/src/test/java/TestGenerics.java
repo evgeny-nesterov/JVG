@@ -39,6 +39,7 @@ public class TestGenerics extends HiTest {
 		assertSuccessSerialize("class A<O>{} new A<A<A<A>>>();");
 		assertFailCompile("class A<O>{} new A<Object<Object>>();");
 		assertSuccessSerialize("class A<O>{O x;} class B extends A<Integer>{int get(){x = 1; return x;}} assert new B().get() == 1;");
+		assertSuccessSerialize("class A<O1, O2 extends O1, O3 extends O2>{O1 o1; O2 o2; O3 o3;} A<Number, Integer, Integer> a = new A<>(); a.o1 = 1.0; a.o2 = 2; a.o3 = new Integer(3);");
 
 		// format failures
 		assertFailCompile("class A<>{}");
@@ -114,6 +115,9 @@ public class TestGenerics extends HiTest {
 	public void testConstructors() {
 		assertSuccessSerialize("class A{<O> A(O o) {}} new A(1); new A(true);");
 		assertSuccessSerialize("class A<O>{} class B{<O extends Number> B(A<O> a){}} new B(new A<Integer>());");
+		assertSuccessSerialize("class A<O>{O value; A(O value){this.value=value;} O get(){return value;}} class B<O extends Number> extends A<O>{B(O value){super(value);}} B<Integer> b = new B<>(2); assert b.get() == 2;");
+		assertSuccessSerialize("class A<O>{O value; A(O value){this.value=value;} O get(){return value;}} class B<O extends Number> extends A<O>{B(O value){super(value);}} assert new B<Integer>(2).get() == 2;");
+		assertSuccessSerialize("class A<O1>{O1 value; A(O1 value){this.value=value;} O1 get(){return value;}} class B<O2 extends Number> extends A<O2>{B(O2 value){super(value);}} B<Integer> b = new B<>(2); assert b.get() == 2;");
 
 		assertFailCompile("class A{A(O extends Number x){}}");
 		assertFailCompile("class A{<O> A(O extends Number x){}}");
@@ -220,6 +224,11 @@ public class TestGenerics extends HiTest {
 	public void testMethodInvocation() {
 		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; A<Integer> a = new A<>(); a.set(1); assert a.get() == 1;");
 		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; class B<O extends Number> extends A<O>{} B<Integer> b = new B<>(); b.set(1); assert b.get() == 1;");
+		assertSuccessSerialize("class A<O>{O value; void set(O value){this.value=value;} O get(){return value;}}; class B<O extends Number> extends A<O>{void set(O value){super.set(value);}} B<Integer> b = new B<>(); b.set(2); assert b.get() == 2;");
+		assertSuccessSerialize("class A<O>{O value; A<O> set(O value){this.value=value; return this;} O get(){return value;}} class B<O extends Number> extends A<O>{A<O> set(O value){return super.set(value);}} assert new B<Integer>().set(2).get() == 2;");
+		assertFailCompile("class A<O>{O value; A<O> set(O value){this.value=value; return this;} O get(){return value;}} class B<O extends Number> extends A<O>{B<O> set(O value){return super.set(value);}}", //
+				"incompatible types; found A, required B");
+		assertSuccessSerialize("class A<O1>{O1 value; void set(O1 value){this.value=value;} O1 get(){return value;}} class B<O2 extends Number> extends A<O2>{void set(O2 value){super.set(value);}} B<Integer> b = new B<>(); b.set(2); assert b.get() == 2;");
 
 		// HashMap
 		assertSuccessSerialize("HashMap<String, Integer> map = new HashMap<>(); map.put(\"a\", 1); assert map.get(\"a\") == 1;");
