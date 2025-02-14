@@ -8,12 +8,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -78,7 +74,6 @@ import ru.nest.jvg.shape.paint.RadialGradientDraw;
 import ru.nest.jvg.shape.paint.ShadowPainter;
 import ru.nest.jvg.shape.paint.TextureDraw;
 import ru.nest.jvg.shape.text.JVGStyleConstants;
-import sun.misc.BASE64Decoder;
 
 public class JVGParser_1_0 implements JVGParserInterface {
 	protected final static Map<String, Integer> shadows = new HashMap<>();
@@ -648,7 +643,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 						} else if ("image".equals(type)) {
 							String dataType = resourceElement.getAttributeValue("datatype");
 							if ("base64".equals(dataType)) {
-								byte[] bytes = new BASE64Decoder().decodeBuffer(value);
+								byte[] bytes = Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8));
 								resource = new ImageResource(bytes);
 							} else {
 								resource = new ImageResource(new URI(value).toURL());
@@ -887,7 +882,7 @@ public class JVGParser_1_0 implements JVGParserInterface {
 						String dataType = formElement.getAttributeValue("datatype");
 						try {
 							if ("base64".equals(dataType)) {
-								byte[] bytes = new BASE64Decoder().decodeBuffer(sourceValue);
+								byte[] bytes = Base64.getDecoder().decode(sourceValue.getBytes(StandardCharsets.UTF_8));
 								return new ImageResource<>(bytes);
 							} else {
 								return new ImageResource<>((String) null, sourceValue);

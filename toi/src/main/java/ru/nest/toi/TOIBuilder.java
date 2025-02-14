@@ -5,7 +5,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -20,8 +22,6 @@ import ru.nest.toi.objects.TOIMultiArrowPath;
 import ru.nest.toi.objects.TOIPath;
 import ru.nest.toi.objects.TOIText;
 import ru.nest.toi.objects.TOITextPath;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 public class TOIBuilder {
 	private TOIFactory factory;
@@ -153,7 +153,7 @@ public class TOIBuilder {
 				parseCommon(text, p);
 				o = text;
 			} else if ("img".equals(objectType)) {
-				byte[] data = new BASE64Decoder().decodeBuffer(p.getText());
+				byte[] data = Base64.getDecoder().decode(p.getText().getBytes(StandardCharsets.UTF_8));
 				String descr = p.getAttributeValue("descr");
 
 				TOIImage image = factory.create(TOIImage.class);
@@ -306,7 +306,7 @@ public class TOIBuilder {
 				objectElement = new Element("img");
 				objectElement.setAttribute("descr", i.getDescr());
 				objectElement.setAttribute("transform", TOIUtil.getTransform(i.getTransform()));
-				objectElement.setText(new BASE64Encoder().encode(i.getData()));
+				objectElement.setText(new String(Base64.getEncoder().encode(i.getData()), StandardCharsets.UTF_8));
 				rootElement.addContent(objectElement);
 			} else if (o instanceof TOIGroup) {
 				TOIGroup g = (TOIGroup) o;

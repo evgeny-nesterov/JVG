@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.classes;
 
-import com.sun.istack.internal.NotNull;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
@@ -117,7 +116,7 @@ public class HiClassJava extends HiClass {
 		return nullMatched ? MatchParametersType.NULL_MATCHED : MatchParametersType.MATCHED;
 	}
 
-	public static boolean matchParameter(Class t1, @NotNull Class t2) {
+	public static boolean matchParameter(Class t1, Class t2) {
 		if (t1 == null) {
 			return !t2.isPrimitive();
 		} else if (t1 == boolean.class || t1 == Boolean.class) {

@@ -6,7 +6,9 @@ import java.awt.Font;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +41,6 @@ import ru.nest.jvg.shape.paint.Draw;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
-import sun.misc.BASE64Encoder;
 
 public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 	private final static Namespace xlink = Namespace.getNamespace("http://www.w3.org/1999/xlink");
@@ -170,7 +171,7 @@ public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 			} else {
 				ImageResource r = (ImageResource) image.getImage();
 				byte[] data = r.getData();
-				String base64data = new BASE64Encoder().encode(data);
+				String base64data = new String(Base64.getEncoder().encode(data), StandardCharsets.UTF_8);
 				componentElement.setAttribute("href", "base64," + base64data);
 			}
 		} else if (shape instanceof JVGTextField) {

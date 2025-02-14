@@ -13,13 +13,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.gradient.Gradient;
@@ -74,7 +69,6 @@ import ru.nest.jvg.shape.paint.LinearGradientDraw;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.RadialGradientDraw;
-import sun.misc.BASE64Decoder;
 
 public class SVGParser implements JVGParserInterface {
 	private final static Namespace xlink = Namespace.getNamespace("http://www.w3.org/1999/xlink");
@@ -891,7 +885,7 @@ public class SVGParser implements JVGParserInterface {
 				int index = href.indexOf("base64,");
 				if (index != -1) {
 					String base64Data = href.substring(index + 7).replace("\n", "");
-					byte[] bytes = new BASE64Decoder().decodeBuffer(base64Data);
+					byte[] bytes = Base64.getDecoder().decode(base64Data.getBytes(StandardCharsets.UTF_8));
 					Resource<ImageIcon> image = new ImageResource<>(bytes);
 					JVGImage c = factory.createComponent(JVGImage.class, image);
 					return c;

@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,7 +69,6 @@ import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.ShadowPainter;
 import ru.nest.jvg.shape.text.JVGStyleConstants;
-import sun.misc.BASE64Encoder;
 
 public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 	private final static Map<Integer, String> shadows = new HashMap<>();
@@ -364,7 +365,7 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 			} else {
 				ImageResource r = (ImageResource) image.getImage();
 				byte[] data = r.getData();
-				String base64data = new BASE64Encoder().encode(data);
+				String base64data = new String(Base64.getEncoder().encode(data), StandardCharsets.UTF_8);
 				formElement.setAttribute("datatype", "base64");
 				formElement.setAttribute("source", base64data);
 				return true;
@@ -1005,7 +1006,7 @@ public class JVGBuilder_1_0 extends JVGBuilder implements JVGBuilderInterface {
 						resourceElement.setAttribute("value", url);
 					} else {
 						byte[] data = r.getData();
-						String base64data = new BASE64Encoder().encode(data);
+						String base64data = new String(Base64.getEncoder().encode(data), StandardCharsets.UTF_8);
 						resourceElement.setAttribute("type", "image");
 						resourceElement.setAttribute("datatype", "base64");
 						resourceElement.setAttribute("value", base64data);
