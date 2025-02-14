@@ -16,6 +16,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeConstructor extends HiNode {
 	public NodeConstructor(NodeType nodeType, HiNode[] argValues) {
@@ -72,6 +74,8 @@ public class NodeConstructor extends HiNode {
 
 	private Type type;
 
+	private Type[] superTypes;
+
 	private HiConstructor constructor;
 
 	public String getName() {
@@ -80,12 +84,47 @@ public class NodeConstructor extends HiNode {
 
 	// @generics
 	public boolean validateDeclarationGenericType(Type type, ValidationInfo validationInfo, CompileClassContext ctx) {
+		boolean valid = true;
 		if (this.type.parameters != null && this.type.parameters.length == 0) {
 			this.type = type;
-			return true;
 		} else {
-			return this.type.validateMatch(type, validationInfo, ctx, getToken());
+			valid = this.type.validateMatch(type, validationInfo, ctx, getToken());
 		}
+
+		if (valid && constructor != null && constructor.bodyConstructorType == HiConstructor.BodyConstructorType.SUPER && clazz.superClass != null) {
+			NodeConstructor nc = this;
+			List<Type> superTypes = null;
+			Type t = nc.type;
+			while (nc != null) {
+				HiClass c = nc.clazz;
+				if (c.superClass.generics != null && t.parameters != null && t.parameters.length > 0) {
+					int genericParametersCount = c.superClass.generics.generics.length;
+					Type[] superTypeParameters = new Type[genericParametersCount];
+					for (int i = 0; i < genericParametersCount; i++) {
+						NodeGeneric superGeneric = c.superClass.generics.generics[i];
+						Type superTypeParameter = t.parameters[i];
+						superTypeParameters[i] = superTypeParameter;
+						HiClass superTypeClass = superTypeParameter.getClass(ctx);
+						if (superTypeClass != null && !superTypeClass.isInstanceof(superGeneric.clazz.clazz)) {
+							validationInfo.error("cannot cast " + superTypeClass.getNameDescr() + " to " + superGeneric.clazz.getNameDescr(), superGeneric.getToken());
+						}
+					}
+					Type superType = Type.getParameterizedType(t, superTypeParameters);
+					if (superTypes == null) {
+						superTypes = new ArrayList<>(1);
+					}
+					superTypes.add(superType);
+					t = superType;
+					nc = constructor.bodyConstructor;
+				} else {
+					break;
+				}
+			}
+			if (superTypes != null) {
+				this.superTypes = superTypes.toArray(new Type[superTypes.size()]);
+			}
+		}
+		return valid;
 	}
 
 	@Override
@@ -356,6 +395,7 @@ public class NodeConstructor extends HiNode {
 		os.writeByte(argValues != null ? argValues.length : 0);
 		os.writeArray(argValues);
 		os.writeType(type);
+		os.writeTypes(superTypes);
 		os.writeClass(clazz);
 		os.writeClasses(argsClasses);
 		constructor.codeLink(os);
@@ -364,6 +404,7 @@ public class NodeConstructor extends HiNode {
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
 		HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
 		NodeConstructor node = new NodeConstructor(os.readType(), argValues);
+		node.superTypes = os.readTypes();
 		os.readClass(clazz -> node.clazz = clazz);
 		node.argsClasses = os.readClasses();
 		HiConstructor.decodeLink(os, constructor -> node.constructor = constructor);

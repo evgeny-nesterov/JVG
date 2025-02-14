@@ -15,6 +15,7 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		assertSuccessSerialize("class A<O1>{O1 value; A(O1 value){this.value=value;} O1 get(){return value;}} class B<O2 extends Number> extends A<O2>{B(O2 value){super(value);}} B<Integer> b = new B<>(2); assert b.get() == 2;");
 	}
 
 	@Test

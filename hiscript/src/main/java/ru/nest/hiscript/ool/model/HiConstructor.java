@@ -65,9 +65,9 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	}
 
 	public HiConstructor(HiClass clazz, Type type, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, NodeArgument[] arguments, Type[] throwsTypes, HiNode body, NodeConstructor bodyConstructor, BodyConstructorType bodyConstructorType) {
-//		if (type == null) {
-//			type = Type.getType(clazz);
-//		}
+		if (type == null) {
+			type = Type.getType(clazz);
+		}
 		this.clazz = clazz;
 		this.type = type;
 		this.annotations = annotations;
@@ -300,8 +300,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 				HiObject superOutboundObject = ctx.getOutboundObject(clazz.superClass);
 				HiObject superObject;
 				if (bodyConstructorType == BodyConstructorType.SUPER) {
-					// TODO move to validation
-					Type superType = this.type;
+					Type superType = type;
 
 					// @generic
 					if (clazz.superClass.generics != null && type.parameters != null) {
@@ -310,7 +309,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 						for (int i = 0; i < genericParametersCount; i++) {
 							NodeGeneric superGeneric = clazz.superClass.generics.generics[i];
 							superTypeParameters[i] = type.parameters[i];
-							// check cast superTypeParameters[i]=>superGeneric
+							// TODO check cast superTypeParameters[i]=>superGeneric
 						}
 						superType = Type.getParameterizedType(superType, superTypeParameters);
 					}

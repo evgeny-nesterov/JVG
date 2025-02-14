@@ -31,7 +31,7 @@ public class OperationEquals extends BinaryOperation {
 			c1 = node1.clazz;
 			c2 = node2.clazz;
 		}
-		if (c1.isPrimitive() && c2.isPrimitive()) {assert Integer.valueOf(1) == 1;
+		if (c1.isPrimitive() && c2.isPrimitive()) {
 			if (c1.isNumber() == c2.isNumber()) {
 				return HiClassPrimitive.BOOLEAN;
 			}
