@@ -38,7 +38,8 @@ public class HiClassJava extends HiClass {
 	}
 
 	@Override
-	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
+	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, MethodSignature signature) {
+		HiClass[] argTypes = signature.argClasses;
 		Class[] javaArgClasses = new Class[argTypes.length];
 		for (int i = 0; i < argTypes.length; i++) {
 			HiClass argType = argTypes[i];
@@ -57,7 +58,7 @@ public class HiClassJava extends HiClass {
 			Map<Integer, HiConstructorJava> javaConstructorsMap = classResolver.getEnv().javaConstructorsMap;
 			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
-				return javaConstructor != noJavaConstructor ? javaConstructor : null;
+				return javaConstructor != noJavaConstructor ? Arrays.asList(javaConstructor) : null;
 			}
 			Constructor matchedConstructor = null;
 			Constructor nullMatchedConstructor = null;
@@ -83,7 +84,7 @@ public class HiClassJava extends HiClass {
 				}
 				javaConstructor = new HiConstructorJava(this, type, matchedConstructor);
 				javaConstructorsMap.put(signatureId, javaConstructor);
-				return javaConstructor;
+				return Arrays.asList(javaConstructor);
 			} else {
 				javaConstructorsMap.put(signatureId, noJavaConstructor);
 			}

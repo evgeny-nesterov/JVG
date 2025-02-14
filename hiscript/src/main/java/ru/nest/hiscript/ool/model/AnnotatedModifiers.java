@@ -9,23 +9,16 @@ public class AnnotatedModifiers extends ParserUtil {
 
 	private Modifiers modifiers;
 
-	private final boolean hasModifiers;
-
 	private final Token token;
 
 	public AnnotatedModifiers(NodeAnnotation[] annotations, Modifiers modifiers, Token token) {
 		this.annotations = annotations;
 		this.modifiers = modifiers;
 		this.token = token;
-		this.hasModifiers = modifiers != null;
 	}
 
 	public NodeAnnotation[] getAnnotations() {
 		return annotations;
-	}
-
-	public boolean hasModifiers() {
-		return hasModifiers;
 	}
 
 	public Modifiers getModifiers() {

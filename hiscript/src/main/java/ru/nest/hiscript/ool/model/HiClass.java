@@ -1508,81 +1508,178 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return null;
 	}
 
-	private final Map<MethodSignature, HiConstructor> constructorsHash = new HashMap<>();
+	private final Map<MethodSignature, List<HiConstructor>> constructorsHash = new HashMap<>();
 
 	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		MethodSignature signature = new MethodSignature();
 		signature.set(HiConstructor.METHOD_NAME, argTypes, false);
-		HiConstructor constructor = constructorsHash.get(signature);
-		if (constructor == null) {
-			constructor = _searchConstructor(classResolver, argTypes);
-			if (constructor != null) {
-				constructorsHash.put(new MethodSignature(signature), constructor);
+		List<HiConstructor> constructors = constructorsHash.get(signature);
+		if (constructors == null) {
+			constructors = _searchConstructors(classResolver, signature);
+			if (constructors != null) {
+				if (constructors.size() > 1) {
+					HiConstructor c1 = constructors.get(0);
+					HiConstructor c2 = constructors.get(1);
+					classResolver.processResolverException("Ambiguous constructor call. Both " + c1 + " in " + c1.clazz.getNameDescr() + " and " + c2 + " in " + c2.clazz.getNameDescr() + " match.");
+				}
+				constructorsHash.put(new MethodSignature(signature), constructors);
 			}
 		}
-		return constructor;
+		return constructors != null && constructors.size() > 0 ? constructors.get(0) : null;
 	}
 
-	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
-		if (constructors != null) {
-			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
-				for (int i = 0; i < constructors.length; i++) {
-					HiConstructor constructor = constructors[i];
-					if (matchConstructor(classResolver, constructor, argTypes, matchType)) {
-						return constructor;
-					}
+	public List<HiConstructor> searchConstructors(ClassResolver classResolver, HiClass... argTypes) {
+		MethodSignature signature = new MethodSignature();
+		signature.set(HiConstructor.METHOD_NAME, argTypes, false);
+		List<HiConstructor> constructors = constructorsHash.get(signature);
+		if (constructors == null) {
+			constructors = _searchConstructors(classResolver, signature);
+			if (constructors != null) {
+				if (constructors.size() > 1) {
+					HiConstructor c1 = constructors.get(0);
+					HiConstructor c2 = constructors.get(1);
+					classResolver.processResolverException("Ambiguous constructor call. Both " + c1 + " in " + c1.clazz.getNameDescr() + " and " + c2 + " in " + c2.clazz.getNameDescr() + " match.");
 				}
+				constructorsHash.put(new MethodSignature(signature), constructors);
 			}
 		}
-		return null;
+		return constructors;
 	}
 
-	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
-		if (matchType.isVarargs && constructor.hasVarargs()) {
-			int mainArgCount = constructor.arguments.length - 1;
-			if (mainArgCount > argTypes.length) {
-				return false;
-			}
-
-			constructor.resolve(classResolver);
-
-			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
-					return false;
+	private List<HiConstructor> addFoundConstructor(HiConstructor constructor, MethodSignature searchSignature, List<HiConstructor> foundConstructors, boolean mayRewite) {
+		if (foundConstructors != null) {
+			for (int i = foundConstructors.size() - 1; i >= 0; i--) {
+				HiConstructor foundConstructor = foundConstructors.get(i);
+				ArgClassPriorityType argPriority = foundConstructor.signature.getArgsPriority(constructor.signature, searchSignature);
+				if (argPriority == ArgClassPriorityType.higher) {
+					return foundConstructors;
+				} else if (argPriority == ArgClassPriorityType.lower) {
+					foundConstructors.remove(i);
+				} else if (argPriority == ArgClassPriorityType.equals && mayRewite) {
+					return foundConstructors;
 				}
-			}
-			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
-			NodeArgument vararg = constructor.arguments[mainArgCount];
-			for (int i = mainArgCount; i < argTypes.length; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
-					return false;
-				}
-			}
-
-			for (int i = 0; i < mainArgCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
-			}
-			for (int i = mainArgCount; i < argTypes.length; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			}
 		} else {
-			int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
-			if (argCount != (argTypes != null ? argTypes.length : 0)) {
+			foundConstructors = new ArrayList<>(1);
+		}
+		foundConstructors.add(constructor);
+		return foundConstructors;
+	}
+
+	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, MethodSignature signature) {
+		List<HiConstructor> matchedConstructors = null;
+		if (constructors != null) {
+			for (int i = 0; i < constructors.length; i++) {
+				HiConstructor constructor = constructors[i];
+				if (isMatchConstructorArguments(classResolver, constructor, signature.argClasses)) {
+					matchedConstructors = addFoundConstructor(constructor, signature, matchedConstructors, false);
+				}
+			}
+		}
+		return matchedConstructors;
+	}
+
+	protected boolean isMatchConstructorArguments(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes) {
+		int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
+		if (constructor.hasVarargs()) {
+			int mainArgCount = argCount - 1;
+			if (!isMatchConstructorArgumentsPartially(classResolver, constructor, argTypes, mainArgCount)) {
 				return false;
 			}
 
-			constructor.resolve(classResolver);
-			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
+			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
+			NodeArgument vararg = constructor.arguments[mainArgCount];
+			if (argTypes.length == argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
+				HiClass argType = argTypes[mainArgCount].getArrayType();
+				if (!HiClass.autoCast(classResolver, argType, varargsType, false, true)) {
 					return false;
 				}
+				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+			} else {
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, true)) {
+						return false;
+					}
+				}
+				for (int i = mainArgCount; i < argTypes.length; i++) {
+					argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				}
 			}
-			for (int i = 0; i < argCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+		} else {
+			if (argCount != argTypes.length) {
+				return false;
+			}
+			if (!isMatchConstructorArgumentsPartially(classResolver, constructor, argTypes, argCount)) {
+				return false;
 			}
 		}
 		return true;
 	}
+
+	private boolean isMatchConstructorArgumentsPartially(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes, int argCount) {
+		if (argCount > argTypes.length) {
+			return false;
+		}
+
+		constructor.resolve(classResolver);
+
+		for (int i = 0; i < argCount; i++) {
+			if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, true)) {
+				return false;
+			}
+		}
+		for (int i = 0; i < argCount; i++) {
+			argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+		}
+		return true;
+	}
+
+//	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
+//		if (matchType.isVarargs && constructor.hasVarargs()) {
+//			int mainArgCount = constructor.arguments.length - 1;
+//			if (mainArgCount > argTypes.length) {
+//				return false;
+//			}
+//
+//			constructor.resolve(classResolver);
+//
+//			for (int i = 0; i < mainArgCount; i++) {
+//				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
+//					return false;
+//				}
+//			}
+//			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
+//			NodeArgument vararg = constructor.arguments[mainArgCount];
+//			for (int i = mainArgCount; i < argTypes.length; i++) {
+//				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
+//					return false;
+//				}
+//			}
+//
+//			for (int i = 0; i < mainArgCount; i++) {
+//				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+//			}
+//			for (int i = mainArgCount; i < argTypes.length; i++) {
+//				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+//			}
+//		} else {
+//			int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
+//			if (argCount != (argTypes != null ? argTypes.length : 0)) {
+//				return false;
+//			}
+//
+//			constructor.resolve(classResolver);
+//			for (int i = 0; i < argCount; i++) {
+//				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
+//					return false;
+//				}
+//			}
+//			for (int i = 0; i < argCount; i++) {
+//				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+//			}
+//		}
+//		return true;
+//	}
 
 	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		if (constructors != null) {

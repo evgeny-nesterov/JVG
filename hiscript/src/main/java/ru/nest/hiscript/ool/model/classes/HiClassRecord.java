@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
+import ru.nest.hiscript.ool.model.MethodSignature;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -13,6 +14,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
@@ -53,14 +56,14 @@ public class HiClassRecord extends HiClass {
 	}
 
 	@Override
-	protected HiConstructor _searchConstructor(ClassResolver classResolver, HiClass[] argTypes) {
-		HiConstructor constructor = super._searchConstructor(classResolver, argTypes);
-		if (constructor == null) {
-			if (matchConstructor(classResolver, defaultConstructor, argTypes, MatchMethodArgumentsType.soft)) {
-				constructor = defaultConstructor;
+	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, MethodSignature signature) {
+		List<HiConstructor> constructors = super._searchConstructors(classResolver, signature);
+		if (constructors == null || constructors.size() == 0) {
+			if (isMatchConstructorArguments(classResolver, defaultConstructor, signature.argClasses)) {
+				constructors = Arrays.asList(defaultConstructor);
 			}
 		}
-		return constructor;
+		return constructors;
 	}
 
 	@Override

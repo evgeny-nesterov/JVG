@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiRecordField;
+import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
 import java.io.IOException;
@@ -371,8 +371,8 @@ public class NodeSwitch extends HiNode {
 								}
 								if (castedRecordArguments != null) {
 									for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-										NodeArgument castedRecordArgument = castedRecordArguments[j];
-										HiRecordField castedField = new HiRecordField(ctx, hiObject, recordArgumentIndex, hiObject.fields[recordArgumentIndex], castedRecordArgument.name);
+										NodeArgument castedRecordArgument = castedRecordArguments[recordArgumentIndex];
+										HiPojoField castedField = new HiPojoField(hiObject, hiObject.fields[recordArgumentIndex], castedRecordArgument.name);
 										ctx.addVariable(castedField);
 									}
 								}
@@ -387,7 +387,7 @@ public class NodeSwitch extends HiNode {
 										}
 										if (castedRecordArguments != null) {
 											for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-												NodeArgument castedRecordArgument = castedRecordArguments[j];
+												NodeArgument castedRecordArgument = castedRecordArguments[recordArgumentIndex];
 												ctx.removeVariable(castedRecordArgument.name);
 											}
 										}

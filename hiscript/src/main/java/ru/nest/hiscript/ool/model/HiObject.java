@@ -58,13 +58,10 @@ public class HiObject {
 
 	public Object getUserObject() {
 		HiObject o = this;
-		while (o != null) {
-			if (o.userObject != null) {
-				return o.userObject;
-			}
+		while (o != null && o.userObject == null) {
 			o = o.superObject;
 		}
-		return null;
+		return o != null ? o.userObject : null;
 	}
 
 	private Map<HiClass, Map<String, HiField<?>>> fieldsMap;
