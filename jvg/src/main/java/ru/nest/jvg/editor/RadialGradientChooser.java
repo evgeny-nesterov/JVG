@@ -1,27 +1,15 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.gradient.RadialGradient;
-
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.resource.JVGResources;
 import ru.nest.jvg.resource.RadialGradientResource;
 import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.gradient.RadialGradient;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
 
 public class RadialGradientChooser extends GradientChooser<RadialGradient> {
 	public RadialGradientChooser(JVGResources resources) {

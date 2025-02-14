@@ -1,31 +1,5 @@
 package ru.nest.jvg.actionarea;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.QuadCurve2D;
-import java.awt.geom.Rectangle2D;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPopupMenu;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.menu.WMenu;
-import javax.swing.menu.WMenuItem;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.action.PathDeleteCurveAction;
@@ -39,6 +13,23 @@ import ru.nest.jvg.geom.CoordinablePathIterator;
 import ru.nest.jvg.geom.MutableGeneralPath;
 import ru.nest.jvg.shape.JVGPath;
 import ru.nest.jvg.undoredo.PathGeomUndoRedo;
+import ru.nest.swing.menu.WMenu;
+import ru.nest.swing.menu.WMenuItem;
+
+import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.CubicCurve2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.QuadCurve2D;
+import java.awt.geom.Rectangle2D;
 
 public class JVGPathGeomActionArea extends JVGActionArea implements JVGKeyListener {
 	private final static Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(JVGPathGeomActionArea.class.getResource("cursors/cursor_move_point.png")).getImage(), new Point(15, 15), "pencil");

@@ -1,39 +1,6 @@
 package ru.nest.jvg.editor.editoraction;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-
-import javax.swing.IconButton;
-import javax.swing.ImageIcon;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-import javax.swing.event.UndoableEditEvent;
-
 import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
-
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.SelectionRotater;
 import ru.nest.jvg.editor.Images;
@@ -49,6 +16,22 @@ import ru.nest.jvg.undoredo.AddUndoRedo;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
 import ru.nest.jvg.undoredo.RemoveUndoRedo;
 import ru.nest.jvg.undoredo.ShapeChangedUndoRedo;
+import ru.nest.swing.IconButton;
+
+import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 
 public class LassoEditorAction extends EditorAction {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

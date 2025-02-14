@@ -1,17 +1,14 @@
 package ru.nest.jvg.editor;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.AbstractButton;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.menu.WMenuItem;
-
 import ru.nest.jvg.action.JVGAction;
 import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.shape.paint.ColorDraw;
 import ru.nest.jvg.shape.paint.Draw;
+import ru.nest.swing.menu.WMenuItem;
+
+import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChooseColorButton extends AbstractChooseColorButton {
 	private ActionCreator actionCreator;

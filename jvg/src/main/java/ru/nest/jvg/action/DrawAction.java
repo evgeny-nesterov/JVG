@@ -1,12 +1,5 @@
 package ru.nest.jvg.action;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.RadialGradient;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGPane;
 import ru.nest.jvg.JVGScriptSupport;
@@ -29,6 +22,12 @@ import ru.nest.jvg.shape.paint.ShadowPainter;
 import ru.nest.jvg.shape.paint.TextureDraw;
 import ru.nest.jvg.undoredo.CompoundUndoRedo;
 import ru.nest.jvg.undoredo.PropertyUndoRedo;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.RadialGradient;
+
+import javax.swing.event.UndoableEditEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class DrawAction extends JVGAction {
 	public final static int NONE = 0;

@@ -1,20 +1,5 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.AbstractButton;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.RadialGradient;
-import javax.swing.menu.WMenuItem;
-import javax.swing.menu.WSeparator;
-
 import ru.nest.jvg.action.DrawAction;
 import ru.nest.jvg.action.JVGAction;
 import ru.nest.jvg.resource.ColorResource;
@@ -29,6 +14,15 @@ import ru.nest.jvg.shape.paint.Draw;
 import ru.nest.jvg.shape.paint.LinearGradientDraw;
 import ru.nest.jvg.shape.paint.RadialGradientDraw;
 import ru.nest.jvg.shape.paint.TextureDraw;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.RadialGradient;
+import ru.nest.swing.menu.WMenuItem;
+import ru.nest.swing.menu.WSeparator;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public abstract class ChooseFillerButton extends AbstractChooseColorButton {
 	private int painterType;

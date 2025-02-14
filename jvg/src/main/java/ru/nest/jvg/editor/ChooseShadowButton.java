@@ -1,24 +1,15 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import ru.nest.jvg.action.ShadowAction;
+import ru.nest.jvg.shape.paint.ShadowPainter;
+import ru.nest.swing.ActionChooser;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.ActionChooser;
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import ru.nest.jvg.action.ShadowAction;
-import ru.nest.jvg.shape.paint.ShadowPainter;
 
 public class ChooseShadowButton extends ActionChooser {
 	public ChooseShadowButton() {

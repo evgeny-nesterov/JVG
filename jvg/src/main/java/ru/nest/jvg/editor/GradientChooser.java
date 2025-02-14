@@ -1,18 +1,18 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Polygon;
-import java.awt.Stroke;
+import ru.nest.jvg.resource.ColorResource;
+import ru.nest.jvg.resource.JVGResources;
+import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.IconButton;
+import ru.nest.swing.WComboBox;
+import ru.nest.swing.gradient.Gradient;
+import ru.nest.swing.gradient.LinearGradientPaint;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -23,29 +23,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.IconButton;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.WComboBox;
-import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.gradient.Gradient;
-import javax.swing.gradient.LinearGradientPaint;
-import javax.swing.gradient.MultipleGradientPaint;
-
-import ru.nest.jvg.resource.ColorResource;
-import ru.nest.jvg.resource.JVGResources;
-import ru.nest.jvg.resource.Resource;
 
 public abstract class GradientChooser<G extends Gradient> extends AbstractChooserDialog<G> {
 	private GradientPanel gradientPanel;

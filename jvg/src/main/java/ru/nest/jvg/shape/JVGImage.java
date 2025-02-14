@@ -1,12 +1,15 @@
 package ru.nest.jvg.shape;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.TexturePaint;
-import java.awt.Toolkit;
+import ru.nest.jvg.event.JVGPropertyChangeEvent;
+import ru.nest.jvg.resource.ImageResource;
+import ru.nest.jvg.resource.Resource;
+import ru.nest.jvg.shape.paint.Painter;
+import ru.nest.jvg.shape.resources.filter.JVGImageFilter;
+import ru.nest.swing.AlfaPaint;
+import sun.awt.image.ToolkitImage;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -17,16 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
-import javax.swing.AlfaPaint;
-import javax.swing.ImageIcon;
-
-import ru.nest.jvg.event.JVGPropertyChangeEvent;
-import ru.nest.jvg.resource.ImageResource;
-import ru.nest.jvg.resource.Resource;
-import ru.nest.jvg.shape.paint.Painter;
-import ru.nest.jvg.shape.resources.filter.JVGImageFilter;
-import sun.awt.image.ToolkitImage;
 
 public class JVGImage extends JVGShape {
 	private int width;

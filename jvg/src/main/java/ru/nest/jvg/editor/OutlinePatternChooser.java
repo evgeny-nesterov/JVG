@@ -1,27 +1,15 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import ru.nest.jvg.action.BasicStrokeAction;
+import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.swing.ActionChooser;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.ActionChooser;
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
-import ru.nest.jvg.action.BasicStrokeAction;
-import ru.nest.jvg.editor.resources.JVGLocaleManager;
 
 public class OutlinePatternChooser extends ActionChooser {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

@@ -1,17 +1,35 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Toolkit;
-import java.awt.Window;
+import com.sun.media.jai.codec.BMPEncodeParam;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.JPEGEncodeParam;
+import com.sun.media.jai.codec.PNGEncodeParam;
+import com.sun.media.jai.codec.SeekableOutputStream;
+import com.sun.media.jai.codec.TIFFEncodeParam;
+import com.sun.media.jai.codecimpl.BMPCodec;
+import com.sun.media.jai.codecimpl.BMPImageEncoder;
+import com.sun.media.jai.codecimpl.JPEGCodec;
+import com.sun.media.jai.codecimpl.JPEGImageEncoder;
+import com.sun.media.jai.codecimpl.PNGCodec;
+import com.sun.media.jai.codecimpl.PNGImageEncoder;
+import com.sun.media.jai.codecimpl.TIFFCodec;
+import com.sun.media.jai.codecimpl.TIFFImageEncoder;
+import ru.nest.fonts.Fonts;
+import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.JVGEditorKit;
+import ru.nest.jvg.JVGFactory;
+import ru.nest.jvg.JVGPane;
+import ru.nest.jvg.JVGRoot;
+import ru.nest.jvg.parser.DocumentFormat;
+import ru.nest.jvg.parser.JVGBuilder;
+import ru.nest.jvg.parser.JVGParseException;
+import ru.nest.jvg.parser.JVGParser;
+import ru.nest.swing.CenterLayout;
+import ru.nest.swing.file.ExplorerPanel;
+
+import javax.swing.*;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -28,46 +46,6 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.AbstractButton;
-import javax.swing.CenterLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.event.ChangeListener;
-import javax.swing.file.ExplorerPanel;
-
-import com.sun.media.jai.codec.BMPEncodeParam;
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.JPEGEncodeParam;
-import com.sun.media.jai.codec.PNGEncodeParam;
-import com.sun.media.jai.codec.SeekableOutputStream;
-import com.sun.media.jai.codec.TIFFEncodeParam;
-import com.sun.media.jai.codecimpl.BMPCodec;
-import com.sun.media.jai.codecimpl.BMPImageEncoder;
-import com.sun.media.jai.codecimpl.JPEGCodec;
-import com.sun.media.jai.codecimpl.JPEGImageEncoder;
-import com.sun.media.jai.codecimpl.PNGCodec;
-import com.sun.media.jai.codecimpl.PNGImageEncoder;
-import com.sun.media.jai.codecimpl.TIFFCodec;
-import com.sun.media.jai.codecimpl.TIFFImageEncoder;
-
-import ru.nest.fonts.Fonts;
-import ru.nest.jvg.JVGComponent;
-import ru.nest.jvg.JVGEditorKit;
-import ru.nest.jvg.JVGFactory;
-import ru.nest.jvg.JVGPane;
-import ru.nest.jvg.JVGRoot;
-import ru.nest.jvg.parser.DocumentFormat;
-import ru.nest.jvg.parser.JVGBuilder;
-import ru.nest.jvg.parser.JVGParseException;
-import ru.nest.jvg.parser.JVGParser;
 
 public class Util {
 	static {

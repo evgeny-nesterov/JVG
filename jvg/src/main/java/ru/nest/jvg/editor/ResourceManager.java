@@ -1,50 +1,5 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.AbstractListModel;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.IconButton;
-import javax.swing.ImageIcon;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwitchPanel;
-import javax.swing.WindowConstants;
-import javax.swing.border.Border;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.LinearGradientPaint;
-import javax.swing.gradient.RadialGradient;
-import javax.swing.gradient.RadialGradientPaint;
-import javax.swing.plaf.basic.BasicLabelUI;
-
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.action.BasicStrokeAction;
 import ru.nest.jvg.action.DrawAction;
@@ -64,6 +19,25 @@ import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.resource.StrokeResource;
 import ru.nest.jvg.resource.TransformResource;
 import ru.nest.jvg.shape.paint.Painter;
+import ru.nest.swing.IconButton;
+import ru.nest.swing.SwitchPanel;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.LinearGradientPaint;
+import ru.nest.swing.gradient.RadialGradient;
+import ru.nest.swing.gradient.RadialGradientPaint;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicLabelUI;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 1. Color + 2. LinearGradient + 3. RadialGradient + 4. Image + apply? 5. Stroke + 6. Character attributes - ignore 7. Paragraph attributes - ignore 8. Font + 9. Scripts + 10. Transform + 11. Texture

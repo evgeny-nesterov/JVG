@@ -1,18 +1,12 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import ru.nest.swing.IconButton;
+import ru.nest.swing.image.ImagePanel;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.IconButton;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
-import javax.swing.image.ImagePanel;
 
 public class ImageViewPanel extends JPanel implements ActionListener {
 	private JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);

@@ -1,27 +1,21 @@
 package ru.nest.jvg.shape.text;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.font.TextAttribute;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
+import ru.nest.jvg.resource.ColorResource;
+import ru.nest.jvg.resource.LinearGradientResource;
+import ru.nest.jvg.resource.RadialGradientResource;
+import ru.nest.jvg.resource.Resource;
+import ru.nest.jvg.resource.TextureResource;
+import ru.nest.jvg.shape.JVGStyledText;
+import ru.nest.jvg.shape.paint.FillPainter;
+import ru.nest.jvg.shape.paint.Painter;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.LinearGradientPaint;
+import ru.nest.swing.gradient.RadialGradient;
+import ru.nest.swing.gradient.RadialGradientPaint;
+import sun.swing.SwingUtilities2;
 
-import javax.swing.JComponent;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.LinearGradientPaint;
-import javax.swing.gradient.RadialGradient;
-import javax.swing.gradient.RadialGradientPaint;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
@@ -35,16 +29,10 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.TabableView;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-
-import ru.nest.jvg.resource.ColorResource;
-import ru.nest.jvg.resource.LinearGradientResource;
-import ru.nest.jvg.resource.RadialGradientResource;
-import ru.nest.jvg.resource.Resource;
-import ru.nest.jvg.resource.TextureResource;
-import ru.nest.jvg.shape.JVGStyledText;
-import ru.nest.jvg.shape.paint.FillPainter;
-import ru.nest.jvg.shape.paint.Painter;
-import sun.swing.SwingUtilities2;
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 
 public class JVGLabelView extends GlyphView implements TabableView {
 	public JVGLabelView(Element elem) {

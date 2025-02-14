@@ -1,23 +1,16 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Action;
-import javax.swing.ActionChooser;
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
 import ru.nest.jvg.action.EndingsTypeAction;
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
 import ru.nest.jvg.geom.MutableGeneralPath;
 import ru.nest.jvg.shape.paint.Endings;
 import ru.nest.jvg.shape.paint.EndingsPainter;
+import ru.nest.swing.ActionChooser;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class EndingsPatternChooser extends ActionChooser {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

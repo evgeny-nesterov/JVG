@@ -1,30 +1,15 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
+import ru.nest.jvg.action.BasicStrokeAction;
+import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.swing.WComboBox;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.WComboBox;
-
-import ru.nest.jvg.action.BasicStrokeAction;
-import ru.nest.jvg.editor.resources.JVGLocaleManager;
 
 public class OutlineWidthChooser extends WComboBox {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

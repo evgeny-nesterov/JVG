@@ -1,28 +1,20 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import ru.nest.jvg.JVGComponent;
+import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.jvg.parser.JVGBuilder;
+import ru.nest.jvg.parser.JVGParseException;
+import ru.nest.swing.domeditor.DomEditor;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.domeditor.DomEditor;
-
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
-import ru.nest.jvg.JVGComponent;
-import ru.nest.jvg.editor.resources.JVGLocaleManager;
-import ru.nest.jvg.parser.JVGBuilder;
-import ru.nest.jvg.parser.JVGParseException;
 
 public class JVGDomEditor extends JDialog {
 	public final static int OPTION_OK = 0;

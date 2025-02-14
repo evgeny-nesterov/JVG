@@ -1,25 +1,18 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import ru.nest.fonts.Fonts;
+import ru.nest.swing.IconButton;
 
-import javax.swing.Icon;
-import javax.swing.IconButton;
-import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-
-import ru.nest.fonts.Fonts;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class SliderChooser extends IconButton {
 	private NumberFormat format = new DecimalFormat("##.#");

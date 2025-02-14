@@ -1,24 +1,5 @@
 package ru.nest.jvg.shape;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Robot;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.AlfaPaint;
-
 import ru.nest.jvg.Filter;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGComponentType;
@@ -35,6 +16,18 @@ import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.PainterFilter;
+import ru.nest.swing.AlfaPaint;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Transparency is supported in Color paint.

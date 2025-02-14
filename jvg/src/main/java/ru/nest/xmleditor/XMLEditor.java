@@ -9,7 +9,7 @@ import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BasicTextEditor;
+import ru.nest.swing.BasicTextEditor;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;

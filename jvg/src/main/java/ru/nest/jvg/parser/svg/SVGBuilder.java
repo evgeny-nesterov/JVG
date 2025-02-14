@@ -1,26 +1,7 @@
 package ru.nest.jvg.parser.svg;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Icon;
-import javax.swing.gradient.Gradient;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.MultipleGradientPaint;
-import javax.swing.gradient.RadialGradient;
-
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGContainer;
 import ru.nest.jvg.geom.CoordinablePathIterator;
@@ -41,6 +22,20 @@ import ru.nest.jvg.shape.paint.Draw;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
+import ru.nest.swing.gradient.Gradient;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+import ru.nest.swing.gradient.RadialGradient;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 public class SVGBuilder extends JVGBuilder implements JVGBuilderInterface {
 	private final static Namespace xlink = Namespace.getNamespace("http://www.w3.org/1999/xlink");

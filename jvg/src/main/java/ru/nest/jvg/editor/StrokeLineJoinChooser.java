@@ -1,19 +1,13 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.WComboBox;
-
 import ru.nest.jvg.action.BasicStrokeAction;
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.swing.WComboBox;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StrokeLineJoinChooser extends WComboBox<Icon> {
 	private static Icon[] strokeJoinIcons = { Images.getImage("stroke-join-bevel.png"), Images.getImage("stroke-join-miter.png"), Images.getImage("stroke-join-round.png") };

@@ -1,25 +1,16 @@
 package ru.nest.jvg.shape.text;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
+import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.text.AdvancedParagraphView;
 
-import javax.swing.BorderFactory;
+import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.text.AdvancedParagraphView;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
-
-import ru.nest.jvg.resource.Resource;
+import java.awt.*;
+import java.awt.font.FontRenderContext;
 
 public class JVGParagraphView extends AdvancedParagraphView {
 	protected static final Border smallBorder = BorderFactory.createEmptyBorder(2, 2, 2, 2);

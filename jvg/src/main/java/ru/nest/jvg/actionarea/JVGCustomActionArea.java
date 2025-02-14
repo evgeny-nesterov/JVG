@@ -15,12 +15,13 @@ import ru.nest.jvg.event.JVGSelectionEvent;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
+import ru.nest.swing.BasicTextEditor;
+import ru.nest.swing.menu.WMenu;
+import ru.nest.swing.menu.WMenuItem;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.menu.WMenu;
-import javax.swing.menu.WMenuItem;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;

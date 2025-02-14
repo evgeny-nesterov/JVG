@@ -1,11 +1,10 @@
 package ru.nest.jvg.shape.paint;
 
-import java.awt.Color;
-
-import javax.swing.gradient.MultipleGradientPaint;
-
 import ru.nest.jvg.CommonUtil;
 import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+
+import java.awt.*;
 
 public abstract class GradientDraw extends AbstractDraw {
 	public GradientDraw(float[] fractions, Resource<Color>[] colors, MultipleGradientPaint.CycleMethodEnum cycleMethod) {

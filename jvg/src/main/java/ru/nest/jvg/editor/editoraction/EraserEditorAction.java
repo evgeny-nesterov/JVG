@@ -1,17 +1,25 @@
 package ru.nest.jvg.editor.editoraction;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Toolkit;
+import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
+import ru.nest.jvg.JVGContainer;
+import ru.nest.jvg.editor.Images;
+import ru.nest.jvg.editor.JVGEditPane;
+import ru.nest.jvg.editor.JVGEditor;
+import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.jvg.geom.GeomUtil;
+import ru.nest.jvg.geom.MutableGeneralPath;
+import ru.nest.jvg.shape.JVGShape;
+import ru.nest.jvg.undoredo.CompoundUndoRedo;
+import ru.nest.jvg.undoredo.RemoveUndoRedo;
+import ru.nest.jvg.undoredo.ShapeChangedUndoRedo;
+import ru.nest.swing.IconToggleButton;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.plaf.metal.MetalSliderUI;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -26,35 +34,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.IconToggleButton;
-import javax.swing.ImageIcon;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.plaf.metal.MetalSliderUI;
-
-import com.sun.java.swing.plaf.motif.MotifInternalFrameUI;
-
-import ru.nest.jvg.JVGContainer;
-import ru.nest.jvg.editor.Images;
-import ru.nest.jvg.editor.JVGEditPane;
-import ru.nest.jvg.editor.JVGEditor;
-import ru.nest.jvg.editor.resources.JVGLocaleManager;
-import ru.nest.jvg.geom.GeomUtil;
-import ru.nest.jvg.geom.MutableGeneralPath;
-import ru.nest.jvg.shape.JVGShape;
-import ru.nest.jvg.undoredo.CompoundUndoRedo;
-import ru.nest.jvg.undoredo.RemoveUndoRedo;
-import ru.nest.jvg.undoredo.ShapeChangedUndoRedo;
 
 public class EraserEditorAction extends EditorAction {
 	protected JVGLocaleManager lm = JVGLocaleManager.getInstance();

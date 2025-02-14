@@ -1,11 +1,8 @@
 package ru.nest.jvg;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
+import ru.nest.swing.AlfaPaint;
 
-import javax.swing.AlfaPaint;
+import java.awt.*;
 
 public class JVGComposeGraphics extends JVGGraphics {
 	private Paint composePaint;

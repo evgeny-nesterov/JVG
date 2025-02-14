@@ -1,21 +1,17 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.file.ImageExplorerPanel;
-
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.resource.ImageResource;
 import ru.nest.jvg.resource.JVGResources;
 import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.file.ImageExplorerPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ImageChooser extends AbstractChooserDialog<Icon> implements ActionListener {
 	private ImageExplorerPanel imagePanel;

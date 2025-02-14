@@ -1,34 +1,19 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.WComboBox;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import ru.nest.fonts.FontComboBox;
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.resource.FontResource;
 import ru.nest.jvg.resource.JVGResources;
 import ru.nest.jvg.resource.Resource;
+import ru.nest.swing.WComboBox;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 
 public class FontChooser extends AbstractChooserDialog<Font> implements ActionListener {
 	private FontComboBox cmbFamily;
@@ -251,7 +236,7 @@ public class FontChooser extends AbstractChooserDialog<Font> implements ActionLi
 			setPreferredSize(new Dimension(0, 150));
 		}
 
-		private String[] text = { "Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj", "Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt", "Vv Uu Ww Xx Yy Zz", "1 2 3 4 5 6 7 8 9 0", "+ - * / \\ \" \' ! # $ % ^ & ( ) { } | < > . , ? ~ ` : ; ¹" };
+		private String[] text = { "Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj", "Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt", "Vv Uu Ww Xx Yy Zz", "1 2 3 4 5 6 7 8 9 0", "+ - * / \\ \" \' ! # $ % ^ & ( ) { } | < > . , ? ~ ` : ; ï¿½" };
 
 		@Override
 		public void paint(Graphics g) {

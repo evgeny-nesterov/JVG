@@ -1,18 +1,15 @@
 package ru.nest.jvg.shape.paint;
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
-import javax.swing.gradient.Gradient.GradientUnitsType;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.LinearGradientPaint;
-import javax.swing.gradient.MultipleGradientPaint;
-
 import ru.nest.jvg.resource.Resource;
 import ru.nest.jvg.shape.JVGShape;
+import ru.nest.swing.gradient.Gradient.GradientUnitsType;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.LinearGradientPaint;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class LinearGradientDraw extends AbstractDraw<LinearGradient> {
 	private Resource<LinearGradient> resource;

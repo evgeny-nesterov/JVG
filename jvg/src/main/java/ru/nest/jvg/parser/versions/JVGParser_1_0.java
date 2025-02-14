@@ -1,32 +1,6 @@
 package ru.nest.jvg.parser.versions;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.border.Border;
-import javax.swing.gradient.Gradient.GradientUnitsType;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.MultipleGradientPaint;
-import javax.swing.gradient.RadialGradient;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-
 import org.jdom2.Element;
-
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGComponentType;
 import ru.nest.jvg.JVGContainer;
@@ -74,6 +48,30 @@ import ru.nest.jvg.shape.paint.RadialGradientDraw;
 import ru.nest.jvg.shape.paint.ShadowPainter;
 import ru.nest.jvg.shape.paint.TextureDraw;
 import ru.nest.jvg.shape.text.JVGStyleConstants;
+import ru.nest.swing.gradient.Gradient.GradientUnitsType;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+import ru.nest.swing.gradient.RadialGradient;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JVGParser_1_0 implements JVGParserInterface {
 	protected final static Map<String, Integer> shadows = new HashMap<>();

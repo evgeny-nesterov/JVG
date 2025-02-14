@@ -1,22 +1,5 @@
 package ru.nest.jvg.editor;
 
-import java.awt.Color;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.swing.CenterLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.WindowConstants;
-
 import ru.nest.jvg.JVGEditorKit;
 import ru.nest.jvg.JVGFactory;
 import ru.nest.jvg.JVGPane;
@@ -26,6 +9,16 @@ import ru.nest.jvg.parser.DocumentFormat;
 import ru.nest.jvg.parser.JVGBuilder;
 import ru.nest.jvg.parser.JVGParseException;
 import ru.nest.jvg.parser.JVGParser;
+import ru.nest.swing.CenterLayout;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class JVGPreviewFrame extends JFrame {
 	private JVGPane pane;

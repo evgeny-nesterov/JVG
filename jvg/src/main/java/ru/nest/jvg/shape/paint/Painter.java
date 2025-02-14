@@ -1,13 +1,10 @@
 package ru.nest.jvg.shape.paint;
 
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-
-import javax.swing.AlfaPaint;
-
 import ru.nest.jvg.shape.JVGShape;
+import ru.nest.swing.AlfaPaint;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 public abstract class Painter implements Cloneable {
 	public final static int UNDEFINED = 0;

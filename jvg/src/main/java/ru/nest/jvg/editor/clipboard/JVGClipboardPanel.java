@@ -1,8 +1,22 @@
 package ru.nest.jvg.editor.clipboard;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
+import ru.nest.jvg.JVGEditorKit;
+import ru.nest.jvg.JVGFactory;
+import ru.nest.jvg.JVGPane;
+import ru.nest.jvg.JVGRoot;
+import ru.nest.jvg.JVGTransferHandler;
+import ru.nest.jvg.JVGTransferable;
+import ru.nest.jvg.editor.Util;
+import ru.nest.jvg.editor.editoraction.InsertEditorAction;
+import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.jvg.parser.JVGParseException;
+import ru.nest.jvg.parser.JVGParser;
+import ru.nest.swing.menu.WMenuItem;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -17,28 +31,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
-import javax.swing.TransferHandler;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.menu.WMenuItem;
-
-import ru.nest.jvg.JVGEditorKit;
-import ru.nest.jvg.JVGFactory;
-import ru.nest.jvg.JVGPane;
-import ru.nest.jvg.JVGRoot;
-import ru.nest.jvg.JVGTransferHandler;
-import ru.nest.jvg.JVGTransferable;
-import ru.nest.jvg.editor.Util;
-import ru.nest.jvg.editor.editoraction.InsertEditorAction;
-import ru.nest.jvg.editor.resources.JVGLocaleManager;
-import ru.nest.jvg.parser.JVGParseException;
-import ru.nest.jvg.parser.JVGParser;
 
 public class JVGClipboardPanel extends JList implements JVGClipboardListener {
 	private JVGLocaleManager lm = JVGLocaleManager.getInstance();

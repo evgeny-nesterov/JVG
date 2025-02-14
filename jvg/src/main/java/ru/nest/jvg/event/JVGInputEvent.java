@@ -1,9 +1,9 @@
 package ru.nest.jvg.event;
 
-import java.awt.GraphicsEnvironment;
-import java.awt.event.InputEvent;
-
 import ru.nest.jvg.JVGComponent;
+
+import java.awt.*;
+import java.awt.event.InputEvent;
 
 public abstract class JVGInputEvent extends JVGEvent {
 	public static final int SHIFT_MASK = InputEvent.SHIFT_MASK;
@@ -113,7 +113,7 @@ public abstract class JVGInputEvent extends JVGEvent {
 			SecurityManager sm = System.getSecurityManager();
 			if (sm != null) {
 				try {
-					sm.checkSystemClipboardAccess();
+					//sm.checkSystemClipboardAccess();
 					b = true;
 				} catch (SecurityException se) {
 				}

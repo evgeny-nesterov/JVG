@@ -8,6 +8,8 @@ import ru.nest.jvg.editor.resources.JVGLocaleManager;
 import ru.nest.jvg.resource.Script;
 import ru.nest.jvg.resource.ScriptResource;
 import ru.nest.jvg.shape.JVGShape;
+import ru.nest.swing.BasicTextEditor;
+import ru.nest.swing.WComboBox;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

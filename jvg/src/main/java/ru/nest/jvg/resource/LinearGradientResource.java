@@ -1,6 +1,6 @@
 package ru.nest.jvg.resource;
 
-import javax.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.LinearGradient;
 
 public class LinearGradientResource extends Resource<LinearGradient> {
 	private LinearGradient gradient;

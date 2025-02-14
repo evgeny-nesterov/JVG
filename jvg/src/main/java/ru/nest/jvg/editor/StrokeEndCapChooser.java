@@ -1,19 +1,13 @@
 package ru.nest.jvg.editor;
 
-import java.awt.BasicStroke;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.WComboBox;
-
 import ru.nest.jvg.action.BasicStrokeAction;
 import ru.nest.jvg.editor.resources.JVGLocaleManager;
+import ru.nest.swing.WComboBox;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StrokeEndCapChooser extends WComboBox<Icon> {
 	private static Icon[] strokeCapIcons = { Images.getImage("stroke-cap-butt.png"), Images.getImage("stroke-cap-square.png"), Images.getImage("stroke-cap-round.png") };

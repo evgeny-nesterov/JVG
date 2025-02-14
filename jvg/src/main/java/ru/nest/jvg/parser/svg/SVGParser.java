@@ -1,28 +1,7 @@
 package ru.nest.jvg.parser.svg;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.gradient.Gradient;
-import javax.swing.gradient.Gradient.GradientUnitsType;
-import javax.swing.gradient.LinearGradient;
-import javax.swing.gradient.MultipleGradientPaint;
-import javax.swing.gradient.RadialGradient;
-
+import com.steadystate.css.parser.CSSOMParser;
+import com.steadystate.css.parser.SACParserCSS3;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -33,10 +12,6 @@ import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleRule;
 import org.w3c.dom.css.CSSStyleSheet;
-
-import com.steadystate.css.parser.CSSOMParser;
-import com.steadystate.css.parser.SACParserCSS3;
-
 import ru.nest.fonts.Fonts;
 import ru.nest.jvg.JVGComponent;
 import ru.nest.jvg.JVGComponentType;
@@ -69,6 +44,30 @@ import ru.nest.jvg.shape.paint.LinearGradientDraw;
 import ru.nest.jvg.shape.paint.OutlinePainter;
 import ru.nest.jvg.shape.paint.Painter;
 import ru.nest.jvg.shape.paint.RadialGradientDraw;
+import ru.nest.swing.gradient.Gradient;
+import ru.nest.swing.gradient.Gradient.GradientUnitsType;
+import ru.nest.swing.gradient.LinearGradient;
+import ru.nest.swing.gradient.MultipleGradientPaint;
+import ru.nest.swing.gradient.RadialGradient;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SVGParser implements JVGParserInterface {
 	private final static Namespace xlink = Namespace.getNamespace("http://www.w3.org/1999/xlink");
