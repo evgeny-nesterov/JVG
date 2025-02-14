@@ -144,17 +144,21 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public HiNode body;
 
+	public MethodSignature signature;
+
 	@Override
 	public Modifiers getModifiers() {
 		return modifiers;
 	}
 
 	public void resolve(ClassResolver classResolver) {
-		if (argClasses == null) {
+		if (signature == null) {
 			argClasses = new HiClass[arguments != null ? arguments.length : 0];
 			for (int i = 0; i < argClasses.length; i++) {
 				argClasses[i] = arguments[i].getType().getClass(classResolver);
 			}
+			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
+			signature = new MethodSignature(METHOD_NAME, argClasses, isVarargs);
 		}
 	}
 
