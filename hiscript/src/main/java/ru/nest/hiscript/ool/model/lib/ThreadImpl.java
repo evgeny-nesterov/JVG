@@ -4,27 +4,26 @@ import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 
 public class ThreadImpl extends ImplUtil {
 	private static HiClass threadClass;
 
-	public synchronized static void createThread(RuntimeContext ctx) {
+	public static HiClass getThreadClass(RuntimeContext ctx) {
 		if (threadClass == null) {
 			threadClass = HiClass.forName(ctx, "Thread");
 			if (threadClass == null) {
 				throw new HiScriptRuntimeException("cannot find class Thread");
 			}
 		}
+		return threadClass;
+	}
 
-		HiObject object = new HiObject(ctx, threadClass, null, null);
+	public synchronized static void createThread(RuntimeContext ctx) {
+		HiObject object = new HiObject(ctx, getThreadClass(ctx), null, null);
 		object.userObject = Thread.currentThread();
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = threadClass;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = object;
+		returnObject(ctx, getThreadClass(ctx), object);
 		ctx.currentThread = object;
 	}
 
@@ -144,10 +143,7 @@ public class ThreadImpl extends ImplUtil {
 	}
 
 	public static void Thread_Thread_currentThread(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClass.forName(ctx, "Thread");
-		ctx.value.originalValueClass = null;
-		ctx.value.object = ctx.currentThread;
+		returnObject(ctx, getThreadClass(ctx), ctx.currentThread);
 	}
 
 	public static void Thread_void_yield(RuntimeContext ctx) {

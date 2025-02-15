@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.model.lib;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
@@ -28,14 +27,9 @@ public class ClassImpl extends ImplUtil {
 			}
 		}
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
-		ctx.value.originalValueClass = null;
-		if (clazz != null) {
-			ctx.value.object = ctx.getClassLoader().getClassObject(ctx, clazz);
-		} else {
-			ctx.value.object = null;
-		}
+		HiClass valueClass = ctx.getClassLoader().getClassClass(ctx);
+		HiObject value = clazz != null ? ctx.getClassLoader().getClassObject(ctx, clazz) : null;
+		returnObject(ctx, valueClass, value);
 	}
 
 	public static void Class_boolean_isArray(RuntimeContext ctx) {
@@ -80,14 +74,13 @@ public class ClassImpl extends ImplUtil {
 
 	public static void Class_Class_getComponentType(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		if (!clazz.isArray()) {
+		if (clazz.isArray()) {
+			HiClassArray arrayClazz = (HiClassArray) clazz;
+			HiClass valueClass = ctx.getClassLoader().getClassClass(ctx);
+			HiObject value = ctx.getClassLoader().getClassObject(ctx, arrayClazz.cellClass);
+			returnObject(ctx, valueClass, value);
+		} else {
 			ctx.throwRuntimeException("class is not represent an array");
 		}
-
-		HiClassArray arrayClazz = (HiClassArray) clazz;
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
-		ctx.value.originalValueClass = null;
-		ctx.value.object = ctx.getClassLoader().getClassObject(ctx, arrayClazz.cellClass);
 	}
 }

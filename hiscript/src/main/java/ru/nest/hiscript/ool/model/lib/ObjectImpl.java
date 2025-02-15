@@ -34,12 +34,7 @@ public class ObjectImpl extends ImplUtil {
 
 	public static void Object_Object_clone(RuntimeContext ctx) {
 		HiObject src = (HiObject) ctx.value.object;
-		HiObject clone = clone(src);
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClass.OBJECT_CLASS;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = clone;
+		returnObject(ctx, HiClass.OBJECT_CLASS, clone(src));
 	}
 
 	public static HiObject clone(HiObject src) {
@@ -100,10 +95,6 @@ public class ObjectImpl extends ImplUtil {
 
 	public static void Object_Class_getClass(RuntimeContext ctx) {
 		HiObject clazzObj = ctx.getClassLoader().getClassObject(ctx, ctx.value.valueClass);
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = clazzObj.clazz;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = clazzObj;
+		returnObject(ctx, clazzObj.clazz, clazzObj);
 	}
 }

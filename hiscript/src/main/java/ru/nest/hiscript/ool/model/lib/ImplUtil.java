@@ -93,6 +93,13 @@ public class ImplUtil {
 		ctx.value.object = NodeString.createString(ctx, value);
 	}
 
+	protected static void returnObject(RuntimeContext ctx, HiClass clazz, Object value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = clazz;
+		ctx.value.originalValueClass = null;
+		ctx.value.object = value;
+	}
+
 	protected static void setCtx(RuntimeContext ctx, Object... objects) {
 		for (Object object : objects) {
 			if (object instanceof HiObject) {
