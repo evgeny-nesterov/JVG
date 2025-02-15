@@ -89,7 +89,7 @@ public class NodeInvocation extends HiNode {
 							} else {
 								methodArgumentClass = argumentType.getClass(ctx);
 
-								// @autobox
+								// @autoboxing
 								if (argumentClass.isPrimitive()) {
 									argumentClass = argumentClass.getAutoboxClass();
 								}

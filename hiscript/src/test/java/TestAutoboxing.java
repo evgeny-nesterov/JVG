@@ -27,7 +27,7 @@ public class TestAutoboxing extends HiTest {
 			boolean allowEquatePlus = this.allowEquatePlus[i];
 			boolean cacheable = this.cacheable[i];
 
-			// primitive => autobox object
+			// primitive => autoboxing object
 			assertSuccessSerialize(T + " a = (byte)127; assert a == 127;");
 			assertSuccessSerialize(T + " a = 127; assert a == 127;");
 			assertSuccessSerialize(T + " a = (short)127; assert a == 127;");
@@ -42,7 +42,7 @@ public class TestAutoboxing extends HiTest {
 			}
 			assertSuccessSerialize(T + " a = 127; " + T + " b = a; assert b == a; assert b == 127;");
 
-			// create autobox object
+			// create autoboxing object
 			assertSuccessSerialize(T + " a = new " + T + "((" + t + ")127); assert a == 127;");
 			assertSuccessSerialize("var a = new " + T + "((" + t + ")127); assert a == 127;");
 
@@ -131,7 +131,7 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testByte() {
-		// primitive => autobox object
+		// primitive => autoboxing object
 		assertFailCompile("Byte a = 128;", //
 				"incompatible types: int cannot be converted to Byte");
 		assertFailCompile("Byte a = 1L;", //
@@ -166,7 +166,7 @@ public class TestAutoboxing extends HiTest {
 
 	@Test
 	public void testShort() {
-		// primitive => autobox object
+		// primitive => autoboxing object
 		assertFailCompile("Short a = " + (Short.MAX_VALUE + 1) + ";", //
 				"incompatible types: int cannot be converted to Short");
 		assertFailCompile("Short a = 1L;", //
@@ -222,13 +222,13 @@ public class TestAutoboxing extends HiTest {
 		assertSuccessSerialize("assert new Boolean(true).equals(Boolean.TRUE);");
 		assertSuccessSerialize("assert new Boolean(false).equals(Boolean.FALSE);");
 
-		// create autobox object
+		// create autoboxing object
 		assertSuccessSerialize("Boolean a = new Boolean(true); assert a == true;");
 		assertSuccessSerialize("var a = new Boolean(false); assert a == false;");
 		assertSuccessSerialize("Boolean a = Boolean.TRUE; assert a.equals(true); assert a.equals(Boolean.TRUE);");
 		assertSuccessSerialize("Boolean a = Boolean.FALSE; assert a.equals(false); assert a.equals(Boolean.FALSE);");
 
-		// primitive => autobox object
+		// primitive => autoboxing object
 		assertSuccessSerialize("Boolean a = true; assert a == true; assert a == Boolean.TRUE;");
 		assertSuccessSerialize("Boolean a = false; assert a == false; assert a == Boolean.FALSE;");
 		assertSuccessSerialize("Boolean a = true; Boolean b = true; assert a == b;"); // from cache

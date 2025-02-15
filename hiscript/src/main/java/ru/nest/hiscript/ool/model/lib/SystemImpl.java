@@ -181,7 +181,7 @@ public class SystemImpl extends ImplUtil {
 				node.execute(newCtx);
 				if (newCtx.exception == null) {
 					if (newCtx.value.valueClass.isPrimitive()) {
-						returnValue = ((HiClassPrimitive) newCtx.value.valueClass).autobox(ctx, ctx.value);
+						returnValue = ((HiClassPrimitive) newCtx.value.valueClass).box(ctx, ctx.value);
 					} else if (!newCtx.value.valueClass.isNull()) {
 						returnValue = newCtx.value.object;
 					}

@@ -363,11 +363,11 @@ public class NodeConstructor extends HiNode {
 				HiField argField = null;
 				HiClass argClass = ctx.value.valueClass;
 
-				// @autobox
+				// @autoboxing
 				if (argClass.isPrimitive()) {
 					HiClass dstArgClass = constructor.arguments[i < constructor.arguments.length ? i : constructor.arguments.length - 1].getArgClass(ctx);
 					if (dstArgClass.isObject()) {
-						HiObject autoboxValue = ((HiClassPrimitive) argClass).autobox(ctx, ctx.value);
+						HiObject autoboxValue = ((HiClassPrimitive) argClass).box(ctx, ctx.value);
 						argField = HiField.getField(argClass.getAutoboxClass(), null, argValue.getToken());
 						argField.set(autoboxValue, autoboxValue.clazz);
 					}

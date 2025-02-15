@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ThreadImpl extends ImplUtil {
 	private static HiClass threadClass;
@@ -189,5 +190,11 @@ public class ThreadImpl extends ImplUtil {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
 		ctx.value.bool = Thread.holdsLock(obj);
+	}
+
+	public static void Thread_String_toString(RuntimeContext ctx) {
+		HiObject o = ctx.getCurrentObject();
+		Thread thread = (Thread) o.getUserObject();
+		returnString(ctx, thread.toString());
 	}
 }

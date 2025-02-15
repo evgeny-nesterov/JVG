@@ -88,7 +88,7 @@ public class NodeSwitch extends HiNode {
 			valueClass = HiClass.OBJECT_CLASS;
 		}
 
-		// @autobox
+		// @autoboxing
 		HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
 
 		if (checkValueClass == HiClassPrimitive.LONG || checkValueClass == HiClassPrimitive.FLOAT || checkValueClass == HiClassPrimitive.DOUBLE || checkValueClass == HiClassPrimitive.BOOLEAN) {

@@ -74,10 +74,10 @@ public class OperationPostfixIncrement extends UnaryOperation {
 					break;
 			}
 
-			// @autobox
+			// @autoboxing
 			if (value.valueClass.isObject()) {
 				tmp.valueClass = c;
-				tmp.object = ((HiClassPrimitive) c).autobox(ctx, tmp);
+				tmp.object = ((HiClassPrimitive) c).box(ctx, tmp);
 			}
 
 			if (value.valueType == Value.ARRAY_INDEX) {

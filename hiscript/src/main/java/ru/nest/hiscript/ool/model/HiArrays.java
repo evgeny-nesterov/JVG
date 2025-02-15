@@ -174,7 +174,7 @@ public class HiArrays implements PrimitiveTypes {
 			}
 			Array.set(parentArray, index, dst.object);
 		} else if (type.isPrimitive()) {
-			// @autobox
+			// @autoboxing
 			int typeIndex = type.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
@@ -235,9 +235,9 @@ public class HiArrays implements PrimitiveTypes {
 					break;
 			}
 		} else {
-			// @autobox
+			// @autoboxing
 			if (value.valueClass.isPrimitive()) {
-				value.object = ((HiClassPrimitive) value.valueClass).autobox(value.ctx, value);
+				value.object = ((HiClassPrimitive) value.valueClass).box(value.ctx, value);
 				value.valueClass = value.valueClass.getAutoboxClass();
 				if (value.ctx.exitFromBlock()) {
 					return;
@@ -253,7 +253,7 @@ public class HiArrays implements PrimitiveTypes {
 		if (type.isArray()) {
 			Array.set(array, index, value.getArray());
 		} else if (type.isPrimitive()) {
-			// TODO autobox
+			// TODO autoboxing
 			int typeIndex = HiFieldPrimitive.getAutoType(type);
 			switch (typeIndex) {
 				case BOOLEAN:

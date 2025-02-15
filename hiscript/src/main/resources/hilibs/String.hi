@@ -70,4 +70,8 @@ public final class String {
 	public native boolean equals(Object o);
 
 	public native int hashCode();
+
+	public String toString() {
+	    return this;
+	}
 }

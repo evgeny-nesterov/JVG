@@ -26,21 +26,21 @@ public class HiClassPrimitive extends HiClass {
 		HiObject falseValue;
 
 		@Override
-		public void setAutoboxClass(HiClass autoboxClass) {
-			super.setAutoboxClass(autoboxClass);
+		public void setAutoboxingClass(HiClass autoboxClass) {
+			super.setAutoboxingClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			ctx.value.valueClass = this;
 			ctx.value.bool = true;
-			trueValue = super.autobox(ctx, ctx.value);
+			trueValue = super.box(ctx, ctx.value);
 
 			ctx.value.valueClass = this;
 			ctx.value.bool = false;
-			falseValue = super.autobox(ctx, ctx.value);
+			falseValue = super.box(ctx, ctx.value);
 		}
 
 		@Override
-		public HiObject autobox(RuntimeContext ctx, Value value) {
+		public HiObject box(RuntimeContext ctx, Value value) {
 			return value.getBoolean() ? trueValue : falseValue;
 		}
 	};
@@ -49,24 +49,24 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxClass(HiClass autoboxClass) {
-			super.setAutoboxClass(autoboxClass);
+		public void setAutoboxingClass(HiClass autoboxClass) {
+			super.setAutoboxingClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.byteNumber = (byte) intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
+				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
 			}
 		}
 
 		@Override
-		public HiObject autobox(RuntimeContext ctx, Value value) {
+		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
 				return cachedValues[intValue + (-Byte.MIN_VALUE)];
 			}
-			return super.autobox(ctx, value);
+			return super.box(ctx, value);
 		}
 	};
 
@@ -74,24 +74,24 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxClass(HiClass autoboxClass) {
-			super.setAutoboxClass(autoboxClass);
+		public void setAutoboxingClass(HiClass autoboxClass) {
+			super.setAutoboxingClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.shortNumber = (short) intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
+				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
 			}
 		}
 
 		@Override
-		public HiObject autobox(RuntimeContext ctx, Value value) {
+		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
 				return cachedValues[intValue + (-Byte.MIN_VALUE)];
 			}
-			return super.autobox(ctx, value);
+			return super.box(ctx, value);
 		}
 	};
 
@@ -99,24 +99,24 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxClass(HiClass autoboxClass) {
-			super.setAutoboxClass(autoboxClass);
+		public void setAutoboxingClass(HiClass autoboxClass) {
+			super.setAutoboxingClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.intNumber = intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
+				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
 			}
 		}
 
 		@Override
-		public HiObject autobox(RuntimeContext ctx, Value value) {
+		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
 				return cachedValues[intValue + (-Byte.MIN_VALUE)];
 			}
-			return super.autobox(ctx, value);
+			return super.box(ctx, value);
 		}
 	};
 
@@ -126,24 +126,24 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxClass(HiClass autoboxClass) {
-			super.setAutoboxClass(autoboxClass);
+		public void setAutoboxingClass(HiClass autoboxClass) {
+			super.setAutoboxingClass(autoboxClass);
 
 			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.longNumber = intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.autobox(ctx, ctx.value);
+				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
 			}
 		}
 
 		@Override
-		public HiObject autobox(RuntimeContext ctx, Value value) {
+		public HiObject box(RuntimeContext ctx, Value value) {
 			long longValue = value.getLong();
 			if (longValue >= Byte.MIN_VALUE && longValue <= Byte.MAX_VALUE) {
 				return cachedValues[(int) longValue + (-Byte.MIN_VALUE)];
 			}
-			return super.autobox(ctx, value);
+			return super.box(ctx, value);
 		}
 	};
 
@@ -192,7 +192,7 @@ public class HiClassPrimitive extends HiClass {
 		return autoboxClass;
 	}
 
-	public void setAutoboxClass(HiClass autoboxClass) {
+	public void setAutoboxingClass(HiClass autoboxClass) {
 		this.autoboxClass = autoboxClass;
 	}
 
@@ -221,8 +221,8 @@ public class HiClassPrimitive extends HiClass {
 		return false;
 	}
 
-	// @autobox
-	public HiObject autobox(RuntimeContext ctx, Value value) {
+	// @autoboxing
+	public HiObject box(RuntimeContext ctx, Value value) {
 		HiField valueField = HiField.getField(this, "value", null);
 		valueField.set(ctx, value);
 		HiConstructor constructor = autoboxClass.getConstructor(ctx, this);

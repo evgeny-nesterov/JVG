@@ -27,7 +27,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	public final void set(RuntimeContext ctx, Value value) {
 		declared = true;
 
-		// @autobox
+		// @autoboxing
 		if (value.valueClass.getAutoboxedPrimitiveClass() != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
 			if (ctx.exitFromBlock()) {

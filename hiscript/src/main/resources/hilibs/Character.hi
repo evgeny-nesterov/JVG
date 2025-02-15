@@ -13,9 +13,7 @@ public final class Character extends Object {
 		return value;
 	}
 
-	public String toString() {
-		return "" + value;
-	}
+	public native String toString();
 
 	public boolean equals(Object o) {
 		return o instanceof Character && ((Character) o).value == value;

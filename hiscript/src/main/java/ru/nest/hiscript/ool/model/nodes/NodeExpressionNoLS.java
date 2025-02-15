@@ -215,7 +215,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 			assert NodeIdentifier.resolve(ctx, value); // node resolved in validation
 		}
 
-		// @autobox
+		// @autoboxing
 		if (value.valueClass.getAutoboxedPrimitiveClass() != null && value.object != null) {
 			value.substitutePrimitiveValueFromAutoboxValue();
 		}

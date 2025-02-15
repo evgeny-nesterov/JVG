@@ -403,7 +403,7 @@ public class OperationInvocation extends BinaryOperation {
 					v1.valueClass = argsClasses[mainSize + i];
 					argsFields[mainSize + i].get(ctx, v1);
 
-					// @autobox
+					// @autoboxing
 					if (varargsClass.isPrimitive()) {
 						if (v1.valueClass.isObject()) {
 							v1.unbox();
@@ -428,7 +428,7 @@ public class OperationInvocation extends BinaryOperation {
 			for (int i = 0; i < size; i++) {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
 
-				// @autobox
+				// @autoboxing
 				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass(ctx);
 				HiClass origArgClass = argClass;
 				if (argClass.isPrimitive()) {
@@ -484,7 +484,7 @@ public class OperationInvocation extends BinaryOperation {
 				ctx.value = v1;
 				method.invoke(ctx, clazz, object, argsFields);
 
-				// @autobox
+				// @autoboxing
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
 					if (v1.valueClass.isObject()) {
 						v1.unbox();

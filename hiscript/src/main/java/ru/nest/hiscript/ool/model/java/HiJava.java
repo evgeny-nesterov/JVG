@@ -20,28 +20,28 @@ public class HiJava {
 			return null;
 		} else if (javaObject instanceof Integer) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.INT.autobox(ctx, ctx.value);
+			return HiClassPrimitive.INT.box(ctx, ctx.value);
 		} else if (javaObject instanceof Boolean) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.BOOLEAN.autobox(ctx, ctx.value);
+			return HiClassPrimitive.BOOLEAN.box(ctx, ctx.value);
 		} else if (javaObject instanceof Long) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.LONG.autobox(ctx, ctx.value);
+			return HiClassPrimitive.LONG.box(ctx, ctx.value);
 		} else if (javaObject instanceof Double) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.DOUBLE.autobox(ctx, ctx.value);
+			return HiClassPrimitive.DOUBLE.box(ctx, ctx.value);
 		} else if (javaObject instanceof Character) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.CHAR.autobox(ctx, ctx.value);
+			return HiClassPrimitive.CHAR.box(ctx, ctx.value);
 		} else if (javaObject instanceof Byte) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.BYTE.autobox(ctx, ctx.value);
+			return HiClassPrimitive.BYTE.box(ctx, ctx.value);
 		} else if (javaObject instanceof Short) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.SHORT.autobox(ctx, ctx.value);
+			return HiClassPrimitive.SHORT.box(ctx, ctx.value);
 		} else if (javaObject instanceof Float) {
 			ctx.setValue(javaObject);
-			return HiClassPrimitive.FLOAT.autobox(ctx, ctx.value);
+			return HiClassPrimitive.FLOAT.box(ctx, ctx.value);
 		} else if (javaObject instanceof String) {
 			return NodeString.createString(ctx, (String) javaObject);
 		} else if (javaObject instanceof Map) {

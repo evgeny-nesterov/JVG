@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +53,12 @@ public class ImplUtil {
 		ctx.value.originalValueClass = null;
 		ctx.value.object = ctx.value.valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
 		((List) ((HiObject) ctx.value.object).userObject).addAll(value);
+	}
+
+	protected static void returnString(RuntimeContext ctx, String value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClass.STRING_CLASS;
+		ctx.value.object = NodeString.createString(ctx, value);
 	}
 
 	protected static void setCtx(RuntimeContext ctx, Object... objects) {

@@ -45,4 +45,6 @@ public class Thread {
 	public static void dumpStack() {
 		new Exception("Stack trace").printStackTrace();
 	}
+
+	public native String toString();
 }

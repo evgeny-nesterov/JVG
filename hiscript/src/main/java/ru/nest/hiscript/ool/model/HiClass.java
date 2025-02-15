@@ -3,29 +3,12 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
-import ru.nest.hiscript.ool.model.classes.HiClassArray;
-import ru.nest.hiscript.ool.model.classes.HiClassEnum;
-import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
-import ru.nest.hiscript.ool.model.classes.HiClassMix;
-import ru.nest.hiscript.ool.model.classes.HiClassNull;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.classes.HiClassRecord;
-import ru.nest.hiscript.ool.model.classes.HiClassVar;
+import ru.nest.hiscript.ool.model.classes.*;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
-import ru.nest.hiscript.ool.model.nodes.CodeContext;
-import ru.nest.hiscript.ool.model.nodes.DecodeContext;
-import ru.nest.hiscript.ool.model.nodes.HasModifiers;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.ool.model.nodes.NodeArray;
-import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
-import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
-import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
-import ru.nest.hiscript.ool.model.nodes.NodeNull;
+import ru.nest.hiscript.ool.model.nodes.*;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
@@ -33,14 +16,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
@@ -138,15 +114,15 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 			// TODO define classes initialization order automatically
 			classes.add(NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0));
-			HiClassPrimitive.BYTE.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
-			HiClassPrimitive.SHORT.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
-			HiClassPrimitive.INT.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));
-			HiClassPrimitive.LONG.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Long.hi"), false).get(0));
-			HiClassPrimitive.FLOAT.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Float.hi"), false).get(0));
-			HiClassPrimitive.DOUBLE.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0));
-			HiClassPrimitive.BOOLEAN.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0));
-			HiClassPrimitive.CHAR.setAutoboxClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0));
-			HiClassPrimitive.VOID.setAutoboxClass(HiClassPrimitive.VOID); // to avoid NPE
+			HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
+			HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
+			HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));
+			HiClassPrimitive.LONG.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Long.hi"), false).get(0));
+			HiClassPrimitive.FLOAT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Float.hi"), false).get(0));
+			HiClassPrimitive.DOUBLE.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0));
+			HiClassPrimitive.BOOLEAN.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0));
+			HiClassPrimitive.CHAR.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0));
+			HiClassPrimitive.VOID.setAutoboxingClass(HiClassPrimitive.VOID); // to avoid NPE
 			for (HiClassPrimitive primitiveClass : HiClassPrimitive.primitiveClasses.values()) {
 				if (primitiveClass != HiClassPrimitive.VOID) {
 					classes.add(primitiveClass.getAutoboxClass());
@@ -586,9 +562,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			for (int i = 0; i < typeParameters.length; i++) {
 				Type parameterType = superClassType.parameters[i];
 				HiClass parameterClass = parameterType.getClass(ctx);
-				if (parameterClass == null) {
-					parameterClass = OBJECT_CLASS;
-				}
+				assert parameterClass != null;
 				typeParameters[i] = parameterClass;
 			}
 
@@ -618,12 +592,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		valid &= HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
-			superClass = superClassType.getClass(ctx);
-			if (superClass != null) {
-				valid &= superClass.validate(validationInfo, ctx);
-			} else {
-				valid = false;
-			}
+			superClass = OBJECT_CLASS;
+			valid = false;
 		}
 
 		// check modifiers
@@ -1260,7 +1230,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public enum MatchMethodArgumentsType {
-		strict(false, false, false), autobox(false, false, true), noCast(false, true, true), noVarargs(true, false, true), soft(true, true, true);
+		strict(false, false, false), autoboxing(false, false, true), noCast(false, true, true), noVarargs(true, false, true), soft(true, true, true);
 
 		private final boolean isCast;
 
@@ -1523,23 +1493,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return constructors != null && constructors.size() > 0 ? constructors.get(0) : null;
 	}
 
-	public List<HiConstructor> searchConstructors(ClassResolver classResolver, HiClass... argTypes) {
-		ArgumentsSignature signature = new ArgumentsSignature(argTypes, false);
-		List<HiConstructor> constructors = constructorsHash.get(signature);
-		if (constructors == null) {
-			constructors = _searchConstructors(classResolver, signature);
-			if (constructors != null) {
-				if (constructors.size() > 1) {
-					HiConstructor c1 = constructors.get(0);
-					HiConstructor c2 = constructors.get(1);
-					classResolver.processResolverException("Ambiguous constructor call. Both " + c1 + " in " + c1.clazz.getNameDescr() + " and " + c2 + " in " + c2.clazz.getNameDescr() + " match.");
-				}
-				constructorsHash.put(new ArgumentsSignature(signature), constructors);
-			}
-		}
-		return constructors;
-	}
-
 	private List<HiConstructor> addFoundConstructor(HiConstructor constructor, ArgumentsSignature searchSignature, List<HiConstructor> foundConstructors, boolean mayRewite) {
 		if (foundConstructors != null) {
 			for (int i = foundConstructors.size() - 1; i >= 0; i--) {
@@ -1629,53 +1582,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		return true;
 	}
-
-//	protected boolean matchConstructor(ClassResolver classResolver, HiConstructor constructor, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
-//		if (matchType.isVarargs && constructor.hasVarargs()) {
-//			int mainArgCount = constructor.arguments.length - 1;
-//			if (mainArgCount > argTypes.length) {
-//				return false;
-//			}
-//
-//			constructor.resolve(classResolver);
-//
-//			for (int i = 0; i < mainArgCount; i++) {
-//				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
-//					return false;
-//				}
-//			}
-//			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
-//			NodeArgument vararg = constructor.arguments[mainArgCount];
-//			for (int i = mainArgCount; i < argTypes.length; i++) {
-//				if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, matchType.isAutobox())) {
-//					return false;
-//				}
-//			}
-//
-//			for (int i = 0; i < mainArgCount; i++) {
-//				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
-//			}
-//			for (int i = mainArgCount; i < argTypes.length; i++) {
-//				argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
-//			}
-//		} else {
-//			int argCount = constructor.arguments != null ? constructor.arguments.length : 0;
-//			if (argCount != (argTypes != null ? argTypes.length : 0)) {
-//				return false;
-//			}
-//
-//			constructor.resolve(classResolver);
-//			for (int i = 0; i < argCount; i++) {
-//				if (!HiClass.autoCast(classResolver, argTypes[i], constructor.argClasses[i], false, matchType.isAutobox())) {
-//					return false;
-//				}
-//			}
-//			for (int i = 0; i < argCount; i++) {
-//				argTypes[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
-//			}
-//		}
-//		return true;
-//	}
 
 	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argTypes) {
 		if (constructors != null) {
@@ -2150,8 +2056,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return this;
 		}
 		if (isPrimitive() || c.isPrimitive()) {
-			// @autobox
-			// TODO autobox int => Integer?
+			// @autoboxing
 			HiClass c1 = this;
 			HiClass c2 = c;
 			if (!c1.isPrimitive()) {
@@ -2262,13 +2167,13 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return true;
 		}
 
-		// @autobox
+		// @autoboxing
 		if (isAutobox && src != HiClassPrimitive.VOID && dst == HiClass.OBJECT_CLASS) {
 			return true;
 		}
 
 		if (src.isPrimitive() || dst.isPrimitive()) {
-			// @autobox
+			// @autoboxing
 			// @generics
 			if (isAutobox) {
 				if (!src.isPrimitive()) {

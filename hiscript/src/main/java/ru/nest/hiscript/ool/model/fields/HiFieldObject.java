@@ -38,7 +38,7 @@ public class HiFieldObject extends HiField<Object> {
 			return true;
 		}
 
-		// @autobox
+		// @autoboxing
 		if (valueClass.isPrimitive() && valueClass != HiClassPrimitive.VOID) {
 			valueClass = valueClass.getAutoboxClass();
 		}

@@ -157,10 +157,10 @@ public class OperationEquateBitwiseShiftRight extends BinaryOperation {
 				break;
 		}
 
-		// @autobox
+		// @autoboxing
 		if (v1.valueClass.isObject()) {
 			v1.valueClass = c1;
-			v1.object = ((HiClassPrimitive) c1).autobox(ctx, v1);
+			v1.object = ((HiClassPrimitive) c1).box(ctx, v1);
 		}
 
 		if (v1.valueType == Value.VARIABLE) {

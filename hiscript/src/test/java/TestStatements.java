@@ -463,10 +463,6 @@ public class TestStatements extends HiTest {
 	}
 
 	@Test
-	public void testNew1() {
-	}
-
-	@Test
 	public void testNew() {
 		assertSuccessSerialize("new Object().toString();");
 		assertSuccessSerialize("assert new Object(){public String toString(){return \"a\";}}.toString().equals(\"a\");");

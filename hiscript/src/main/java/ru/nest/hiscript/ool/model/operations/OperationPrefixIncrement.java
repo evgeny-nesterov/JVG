@@ -64,10 +64,10 @@ public class OperationPrefixIncrement extends UnaryOperation {
 				break;
 		}
 
-		// @autobox
+		// @autoboxing
 		if (value.valueClass.isObject()) {
 			value.valueClass = c;
-			value.object = ((HiClassPrimitive) c).autobox(ctx, value);
+			value.object = ((HiClassPrimitive) c).box(ctx, value);
 		}
 
 		HiField<?> var = value.variable;

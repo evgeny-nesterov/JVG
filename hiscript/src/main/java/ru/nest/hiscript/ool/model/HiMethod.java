@@ -464,9 +464,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				return;
 			}
 
-			// @autobox
+			// @autoboxing
 			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {
-				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).autobox(ctx, ctx.value);
+				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).box(ctx, ctx.value);
 				ctx.value.valueClass = returnClass;
 			}
 		}

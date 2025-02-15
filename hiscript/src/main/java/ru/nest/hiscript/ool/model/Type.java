@@ -114,7 +114,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			this.fullName = name.intern();
 		}
-		this.hashCode = Objects.hash(fullName, dimension, Objects.hash(parameters), isExtends, isSuper);
+		this.hashCode = Objects.hash(fullName, dimension, Objects.hash((Object[])parameters), isExtends, isSuper);
 	}
 
 	/**

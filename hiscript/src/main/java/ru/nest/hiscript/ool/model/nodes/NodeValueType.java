@@ -255,7 +255,7 @@ public class NodeValueType implements PrimitiveTypes {
 	}
 
 	public boolean autoCastValue(HiClass type) {
-		// @autobox
+		// @autoboxing
 		// @generics
 		if (!type.isPrimitive()) {
 			if (type == HiClass.OBJECT_CLASS) {
