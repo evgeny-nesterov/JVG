@@ -407,10 +407,6 @@ public class ClassParseRule extends ParserUtil {
 					HiField<?> field = HiField.getField(type, name, initializer, tokenizer.getBlockToken(startToken));
 					field.setModifiers(modifiers);
 					field.setAnnotations(annotatedModifiers.getAnnotations());
-					if (ctx.clazz.isInterface) {
-						modifiers.setFinal(true);
-						modifiers.setStatic(true);
-					}
 
 					ctx.addField(field);
 

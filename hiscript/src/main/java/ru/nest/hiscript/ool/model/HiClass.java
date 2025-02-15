@@ -622,6 +622,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				validationInfo.error("static declarations in inner classes are not supported", token);
 				valid = false;
 			}
+			if (isTopLevel() && modifiers.isPrivate()) {
+				validationInfo.error("modifier 'private' not allowed here", token);
+				valid = false;
+			}
+			if (modifiers.isProtected()) {
+				validationInfo.error("modifier 'protected' not allowed here", token);
+				valid = false;
+			}
 		}
 
 		if (initializers != null) {
@@ -648,6 +656,15 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 
 					HiField field = (HiField) initializer;
+					if (isInterface) {
+						if (field.getModifiers().isProtected()) {
+							validationInfo.error("modifier 'protected' not allowed here", token);
+							valid = false;
+						}
+						field.getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
+						field.getModifiers().setFinal(true);
+						field.getModifiers().setStatic(true);
+					}
 					if (field.isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors
 						validationInfo.error("variable '" + field.name + "' might not have been initialized", field.getToken());

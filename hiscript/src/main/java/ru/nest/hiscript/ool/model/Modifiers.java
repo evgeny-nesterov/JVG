@@ -192,7 +192,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 			case STATIC:
 				return "static";
 			case ABSTRACT:
-				return "abstract";
+ 				return "abstract";
 			case NATIVE:
 				return "native";
 			case DEFAULT:

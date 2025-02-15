@@ -165,6 +165,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				validationInfo.error("abstract method in non-abstract class", token);
 				valid = false;
 			}
+			if (clazz.isInterface && modifiers.isProtected()) {
+				validationInfo.error("modifier 'protected' not allowed here", token);
+				valid = false;
+			}
 			if (modifiers.isDefault() && (!clazz.isInterface || modifiers.isStatic() || modifiers.isNative() || modifiers.isAbstract())) {
 				validationInfo.error("invalid 'default' modification", token);
 				valid = false;
@@ -197,6 +201,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			}
 			if (modifiers.isAbstract() && modifiers.isStatic()) {
 				validationInfo.error("static method cannot be abstract", token);
+				valid = false;
+			}
+			if (modifiers.isAbstract() && modifiers.isFinal()) {
+				validationInfo.error("illegal combination of modifiers: 'abstract' and 'final'", token);
 				valid = false;
 			}
 			boolean rewriteValid = true;

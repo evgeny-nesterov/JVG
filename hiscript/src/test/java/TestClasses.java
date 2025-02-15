@@ -575,9 +575,9 @@ public class TestClasses extends HiTest {
 
 	@Test
 	public void testNativeMethod() {
-//		assertSuccessSerialize("class A{native void m();}");
-//		assertFail("class A{native void m();} new A().m();", //
-//				"native method 'root$0A_void_m' not found");
+		//		assertSuccessSerialize("class A{native void m();}");
+		//		assertFail("class A{native void m();} new A().m();", //
+		//				"native method 'root$0A_void_m' not found");
 
 		class A {
 			public void root$0A_int_m_int(RuntimeContext ctx, int value) {
@@ -594,9 +594,9 @@ public class TestClasses extends HiTest {
 		}
 		nativeObject(new A());
 		assertSuccessSerialize("class A{native int m(int value);} assert new A().m(1) == 2;");
-//		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
-//		assertFail("class A{native void error();} new A().error();", //
-//				"error");
+		//		assertSuccessSerialize("class A{native void m();} try{new A().m();} catch(Exception e){assert e.getMessage().equals(\"test error\");}");
+		//		assertFail("class A{native void error();} new A().error();", //
+		//				"error");
 	}
 
 	@Test
@@ -836,5 +836,83 @@ public class TestClasses extends HiTest {
 		// constructors
 		assertFailCompile("class C{C(int.. x){}}", //
 				"unexpected token");
+	}
+
+	@Test
+	public void testModifiers() {
+		// fields
+		assertFailCompile("default int x;", //
+				"modifier 'default' is not allowed");
+		assertFailCompile("native int x;", //
+				"modifier 'native' is not allowed");
+		assertFailCompile("abstract int x;", //
+				"modifier 'abstract' is not allowed");
+		assertFailCompile("synchronized int x;", //
+				"'(' is expected");
+		assertFailCompile("interface I{protected int x = 0;};", //
+				"modifier 'protected' not allowed here");
+
+		// classes
+		assertFailCompile("private class A{};", //
+				"modifier 'private' not allowed here");
+		assertSuccessSerialize("class A{private class B{}};");
+		assertFailCompile("protected class A{};", //
+				"modifier 'protected' not allowed here");
+		assertFailCompile("class A{protected class B{}};", //
+				"modifier 'protected' not allowed here");
+		assertFailCompile("final abstract class A{};", //
+				"abstract class cannot be final");
+
+		// interfaces
+		assertFailCompile("final interface A{};", //
+				"abstract class cannot be final");
+
+		// constructors
+		assertFailCompile("class A{default A(){}};", //
+				"modifier 'default' is not allowed");
+		assertFailCompile("class A{native A(){};}", //
+				"modifier 'native' is not allowed");
+		assertFailCompile("class A{abstract A(){};}", //
+				"modifier 'abstract' is not allowed");
+		assertFailCompile("class A{static A(){};}", //
+				"modifier 'static' is not allowed");
+		assertFailCompile("class A{synchronized A(){};}", //
+				"modifier 'synchronized' is not allowed");
+
+		// methods
+		assertFailCompile("class A{default void m(){};", //
+				"invalid 'default' modification");
+		assertFailCompile("class A{native void m(){};", //
+				"';' is expected");
+		assertFailCompile("class A{abstract void m(){};", //
+				"';' is expected", //
+				"abstract method in non-abstract class", //
+				"abstract method m() is implemented in non-abstract class");
+		assertFailCompile("abstract class A{final abstract void m();}", //
+				"illegal combination of modifiers: 'abstract' and 'final'");
+		assertFailCompile("abstract class A{abstract static void m();}", //
+				"illegal combination of modifiers: 'static' and 'abstract'");
+		assertFailCompile("interface I{protected void m();};", //
+				"modifier 'protected' not allowed here");
+		assertFailCompile("interface I{protected static void m();};", //
+				"modifier 'protected' not allowed here");
+
+		// method arguments (only final)
+		assertFailCompile("class A{void m(public int x){}};", //
+				"modifier 'public' is not allowed");
+		assertFailCompile("class A{void m(protected int x){}};", //
+				"modifier 'protected' is not allowed");
+		assertFailCompile("class A{void m(private int x){}};", //
+				"modifier 'private' is not allowed");
+		assertFailCompile("class A{void m(default int x){}};", //
+				"modifier 'default' is not allowed");
+		assertFailCompile("class A{void m(native int x){}};", //
+				"modifier 'native' is not allowed");
+		assertFailCompile("class A{void m(abstract int x){}};", //
+				"modifier 'abstract' is not allowed");
+		assertFailCompile("class A{void m(static int x){}};", //
+				"modifier 'static' is not allowed");
+		assertFailCompile("class A{void m(synchronized int x){}};", //
+				"')' is expected");
 	}
 }
