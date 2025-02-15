@@ -8,7 +8,7 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{int get(int x);} I o = (x) -> {x++; return x;}; assert o.get(1) == 2;");
 		assertSuccessSerialize("interface I{int get(int x);} I o = (int x) -> {return x + 1;}; assert o.get(1) == 2;");
 		assertSuccessSerialize("interface I{int get(int x, int y);} I o = (x, y) -> x + y; assert o.get(1, 2) == 3;");
-		assertSuccessSerialize("interface I{int get(int x, int y);} I o = (byte x, short y) -> x + y; assert o.get(1, 2) == 3;");
+		assertSuccessSerialize("interface I{int get(int x, int y);} I o = (int x, int y) -> x + y; assert o.get(1, 2) == 3;");
 		assertFailCompile("interface I{int get(int x, int y);} I o = (int x, y) -> 0;", //
 				"argument is expected");
 		assertFailCompile("interface I{int get(int x, int y);} I o = (x, int y) -> 0;", //
@@ -45,6 +45,11 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} assert new C().m((x,y)->x+y,1,2)==3; assert new C().m((x,y)->{return x+y;},1,2)==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} assert new C().m((s,x)->s+x.length).equals(\"l=3\");");
 
+		assertSuccessSerialize("interface I{void get();} I i = () -> {};");
+		assertSuccessSerialize("interface I{void get();} I i = () -> {return;};");
+		assertSuccessSerialize("interface I{int get(int x);} I i = (int X) -> X+1; assert i.get(1) == 2;");
+		assertSuccessSerialize("interface I{int get(int x);} I i = (int X) -> {return X+1;}; assert i.get(1) == 2;");
+
 		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{return 1;});", //
 				"incompatible types; found int, required void");
 		assertFailCompile("interface I{void get(int x);} class C{void m(I i){i.get(1);}} new C().m(x->x);", //
@@ -79,12 +84,19 @@ public class TestLambda extends HiTest {
 	@Test
 	public void testArray() {
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{x->x+1}}; assert a[0][0].get(1) == 2;");
-		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{(byte x)->x+1}}; assert a[0][0].get(1) == 2;");
+		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{(int x)->x+1}}; assert a[0][0].get(1) == 2;");
+		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{(int x)->{return x+1;}}}; assert a[0][0].get(1) == 2;");
 		assertSuccessSerialize("interface A{int get(int x);} A[][] a = {{null}}; a[0][0] = (var x)->x+1; assert a[0][0].get(1) == 2;");
 		assertFailCompile("interface A{int get(int x);} A[][] a = {{x->x==0}};", //
 				"incompatible types; found boolean, required int");
 		assertFailCompile("interface A{int get(int x, int y);} A[][][] a = {{{x->0}}};", //
 				"incompatible parameters signature in lambda expression");
+		assertFailCompile("interface A{int get(int x, int y);} A[][][] a = {{{x->{return 0;}}}};", //
+				"incompatible parameters signature in lambda expression");
+		assertFailCompile("interface A{void get();} A[][][] a = {{{x->{}}}};", //
+				"incompatible parameters signature in lambda expression");
+		assertFailCompile("interface A{int get(int x);} A[][] a = {{(byte x)->0}};", //
+				"incompatible parameter types in lambda expression: expected int but found byte");
 	}
 
 	@Test

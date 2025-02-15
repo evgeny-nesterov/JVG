@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -78,14 +79,17 @@ public class NodeReturn extends HiNode {
 				boolean match = false;
 				if (expectedType.isGeneric()) {
 					// @generics
-					if (returnValueType.clazz == expectedType) {
+					HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
+					if (returnValueType.clazz == dstGenericClass) {
 						match = true;
-//					} else if (returnValueType.clazz.isGeneric()) {
-//						HiClassGeneric srcGenericClass = (HiClassGeneric) returnValueType.clazz;
-//						HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
-//						if (dstGenericClass.clazz.isInstanceof(srcGenericClass.clazz)) {
-//							match = true;
-//						}
+					} else if (returnValueType.clazz.isGeneric()) {
+						// TODO check
+						HiClassGeneric srcGenericClass = (HiClassGeneric) returnValueType.clazz;
+						if (srcGenericClass.sourceClass != dstGenericClass.sourceClass) {
+							if (dstGenericClass.clazz.isInstanceof(srcGenericClass.clazz)) {
+								match = true;
+							}
+						}
 					}
 				} else {
 					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true);

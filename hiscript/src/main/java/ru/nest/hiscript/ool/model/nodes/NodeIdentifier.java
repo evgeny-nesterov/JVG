@@ -73,14 +73,16 @@ public class NodeIdentifier extends HiNode {
 				// @generics
 				if (clazz.isGeneric()) {
 					HiClass enclosingClass = ctx.level.enclosingClass != null ? ctx.level.enclosingClass : ctx.clazz;
-					Type enclosingType = ctx.level.enclosingType != null ? ctx.level.enclosingType : ctx.type;
-					clazz = enclosingClass.resolveGenericClass(ctx, null, (HiClassGeneric) clazz);
-					type = ctx.nodeValueType.type;
-					if (clazz.isGeneric() && enclosingType != null && enclosingType.parameters != null) {
-						Type parameterType = enclosingType.getParameterType((HiClassGeneric) clazz);
-						if (parameterType != null) {
-							clazz = parameterType.getClass(ctx);
-							type = parameterType;
+					if (enclosingClass != null) {
+						Type enclosingType = ctx.level.enclosingType != null ? ctx.level.enclosingType : ctx.type;
+						clazz = enclosingClass.resolveGenericClass(ctx, null, (HiClassGeneric) clazz);
+						type = ctx.nodeValueType.type;
+						if (clazz.isGeneric() && enclosingType != null && enclosingType.parameters != null) {
+							Type parameterType = enclosingType.getParameterType((HiClassGeneric) clazz);
+							if (parameterType != null) {
+								clazz = parameterType.getClass(ctx);
+								type = parameterType;
+							}
 						}
 					}
 				}

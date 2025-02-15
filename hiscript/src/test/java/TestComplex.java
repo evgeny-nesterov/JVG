@@ -15,7 +15,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccessSerialize("class A{static int xxx = 1;} class B extends A{} assert new B().xxx == 1;");
 	}
 
 	@Test

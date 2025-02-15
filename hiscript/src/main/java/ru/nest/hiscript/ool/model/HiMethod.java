@@ -263,20 +263,50 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				if (implementedMethod != null) {
 					name += implementedMethod.name;
 					argCount = implementedMethod.argCount;
-					argClasses = implementedMethod.argClasses;
-					arguments = implementedMethod.arguments;
 					boolean isVarargs = false;
-					if (arguments != null) {
-						for (NodeArgument argument : arguments) {
-							ctx.level.addField(argument);
-							ctx.initializedNodes.add(argument);
+					HiClass[] newArgClasses = new HiClass[argCount];
+					if (arguments != null && argCount > 0) {
+						for (int i = 0; i < argCount; i++) {
+							NodeArgument receivedArgument = arguments[i];
+							HiClass receivedClass = argClasses[i];
+							NodeArgument methodArgument = implementedMethod.arguments[i];
+							HiClass requiredArgumentClass = methodArgument.clazz;
+
+							// @generic
+							if (requiredArgumentClass.isGeneric()) {
+								requiredArgumentClass = ctx.getDeclaredGenericClass((HiClassGeneric) requiredArgumentClass);
+							}
+
+							if (!receivedClass.isVar()) {
+								HiClass checkClass = requiredArgumentClass;
+
+								// @generic
+								if (checkClass.isGeneric()) {
+									checkClass = ((HiClassGeneric) checkClass).clazz;
+								}
+
+								if (receivedClass != checkClass) {
+									validationInfo.error("incompatible parameter types in lambda expression: expected " + checkClass.getNameDescr() + " but found " + receivedClass.getNameDescr(), receivedArgument.getToken());
+								}
+							}
+							receivedArgument.clazz = requiredArgumentClass;
+							receivedArgument.typeArgument = methodArgument.typeArgument;
+							ctx.level.addField(receivedArgument);
+							ctx.initializedNodes.add(receivedArgument);
+							newArgClasses[i] = requiredArgumentClass;
 						}
-						if (arguments.length > 0) {
-							isVarargs = arguments[arguments.length - 1].isVarargs();
-						}
+						isVarargs = implementedMethod.arguments[argCount - 1].isVarargs();
 					}
+					argClasses = newArgClasses;
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
+
+					// @generic
+					if (returnClass.isGeneric()) {
+						returnClass = ctx.getDeclaredGenericClass((HiClassGeneric) returnClass);
+						returnType = Type.getType(returnClass);
+					}
+
 					signature = new MethodSignature(name, argClasses, isVarargs);
 				} else {
 					validationInfo.error("incompatible parameters signature in lambda expression", variableNode.getToken());

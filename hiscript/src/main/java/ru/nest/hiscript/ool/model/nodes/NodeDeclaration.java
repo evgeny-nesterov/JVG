@@ -89,6 +89,9 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 		ctx.currentNode = this;
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
+
+		ctx.enterDeclaration(type.getClass(ctx), type);
+
 		clazz = getValueClass(validationInfo, ctx);
 		if (type.isWildcard()) {
 			validationInfo.error("invalid field type", token);
@@ -154,6 +157,8 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 		// TODO check name, modifiers, annotations
 		// TODO keep in field only runtime annotations
 		valid &= ctx.addLocalVariable(this, true);
+
+		ctx.exitDeclaration();
 		return valid;
 	}
 

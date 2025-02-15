@@ -62,9 +62,12 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-		ctx.nodeValueType.type = getType();
-		return getType().getClass(ctx);
+		if (clazz == null) {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.type = getType();
+			clazz = getType().getClass(ctx);
+		}
+		return clazz;
 	}
 
 	@Override

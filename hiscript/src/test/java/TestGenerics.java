@@ -348,5 +348,33 @@ public class TestGenerics extends HiTest {
 	@Test
 	public void testArguments() {
 		assertSuccessSerialize("class A<O>{O o; A(O o){this.o=o;} O get(){return o;}} class B{<O> O get(A<O> a){return a.get();}} A<Integer> a = new A<>(1); Integer v = new B().get(a); assert v == 1;");
+		assertSuccessSerialize("class A<AAA>{AAA o; A(AAA o){this.o=o;} AAA get(){return o;}} class B{<AAA> AAA get(A<AAA> a){return a.get();}} A<Integer> a = new A<>(1); Integer v = new B().get(a); assert v == 1;");
+		assertFailCompile("class A<AAA>{O o; A(AAA o){this.o=o;} O get(){return o;}} class B{<AAA> AAA get(A<AAA> a){return a.get();}} A<Integer> a = new A<>(1); Integer v = new B().get(a); assert v == 1;", //
+				"class 'O' can not be resolved");
+	}
+
+	@Test
+	public void testLambda() {
+		assertSuccessSerialize("interface A<O1>{O1 get(O1 x);}; A a = (X)->X; Object x = new Object(); assert a.get(x) == x;");
+		assertSuccessSerialize("interface A<O2>{O2 get(O2 x);}; A a = (Object X)->X; Object x = new Object(); assert a.get(x) == x;");
+		assertFailCompile("interface A<O3>{O3 get(O3 x);}; A a = (String X)->X;", //
+				"incompatible parameter types in lambda expression: expected Object but found String");
+
+		assertSuccessSerialize("interface A<O>{O get(O x);}; A<String> a = (X)->X + \"b\"; assert a.get(\"a\").equals(\"ab\");");
+		assertSuccessSerialize("interface A<O>{O get(O x);}; A<String> a = (String X)->X + \"b\"; assert a.get(\"a\").equals(\"ab\");");
+		assertFailCompile("interface A<O>{O get(O x);}; A<String> a = (Object X)->X;", //
+				"incompatible parameter types in lambda expression: expected String but found Object");
+
+		assertSuccessSerialize("interface A<O extends Number>{O get(O x);}; A a = (X)->X;");
+		assertSuccessSerialize("interface A<O extends Number>{O get(O x);}; A a = (Number X)->X;");
+		assertFailCompile("interface A<O extends Number>{O get(O x);}; A a = (Integer X)->X;", //
+				"incompatible parameter types in lambda expression: expected Number but found Integer");
+
+		assertSuccessSerialize("interface A<O extends Number>{O get(O x);}; A<Integer> a = (X)->X + 1; assert a.get(1) == 2;");
+		assertSuccessSerialize("interface A<O extends Number>{O get(O x);}; A<Integer> a = (Integer X)->X + 1; assert a.get(1) == 2;");
+		assertFailCompile("interface A<O extends Number>{O get(O x);}; A<Integer> a = (Double X)->X;", //
+				"incompatible parameter types in lambda expression: expected Integer but found Double");
+		assertFailCompile("interface A<O extends Object>{O get(O x);}; A<Number> a = (Integer X)->X;", //
+				"incompatible parameter types in lambda expression: expected Number but found Integer");
 	}
 }

@@ -300,6 +300,16 @@ public class CompileClassContext implements ClassResolver {
 		level.label = label;
 	}
 
+	public void enterDeclaration(HiClass declarationClass, Type declarationType) {
+		level.declarationClass = declarationClass;
+		level.declarationType = declarationType;
+	}
+
+	public void exitDeclaration() {
+		level.declarationClass = null;
+		level.declarationType = null;
+	}
+
 	public void enterObject(HiClass enclosingClass, Type enclosingType, boolean isEnclosingObject) {
 		level = new CompileClassLevel(RuntimeContext.OBJECT, enclosingClass, level);
 		level.enclosingClass = enclosingClass;
@@ -544,6 +554,16 @@ public class CompileClassContext implements ClassResolver {
 		return null;
 	}
 
+	// @generic
+	public HiClass getDeclaredGenericClass(HiClassGeneric genericClass) {
+		Type declarationType = level.getDeclarationType(genericClass.sourceClass);
+		if (declarationType.parameters != null && declarationType.parameters.length > 0) {
+			Type requiredArgumentType = declarationType.parameters[genericClass.index];
+			return requiredArgumentType.getClass(this);
+		}
+		return genericClass;
+	}
+
 	public class CompileClassLevel {
 		public int type;
 
@@ -570,6 +590,10 @@ public class CompileClassContext implements ClassResolver {
 		public HiNodeIF variableNode;
 
 		String label;
+
+		public HiClass declarationClass;
+
+		public Type declarationType;
 
 		boolean isTerminated;
 
@@ -833,6 +857,17 @@ public class CompileClassContext implements ClassResolver {
 				return false;
 			}
 			return true;
+		}
+
+		public Type getDeclarationType(HiClass declarationClass) {
+			CompileClassLevel level = this;
+			while (level != null) {
+				if (level.declarationClass == declarationClass) {
+					return level.declarationType;
+				}
+				level = level.parent;
+			}
+			return null;
 		}
 
 		public void clear() {
