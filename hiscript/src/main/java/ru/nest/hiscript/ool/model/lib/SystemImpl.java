@@ -78,47 +78,41 @@ public class SystemImpl extends ImplUtil {
 		} catch (Exception exc) {
 			ctx.throwRuntimeException("cannot load library: " + exc);
 		}
+		returnVoid(ctx);
 	}
 
 	public static void System_void_print_String(RuntimeContext ctx, HiObject string) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.print(chars);
 		}
+		returnVoid(ctx);
 	}
 
 	public static void System_void_println_String(RuntimeContext ctx, HiObject string) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
 		char[] chars = ImplUtil.getChars(ctx, string);
 		if (chars != null) {
 			System.out.println(chars);
 		}
+		returnVoid(ctx);
 	}
 
 	public static void System_void_sleep_long(RuntimeContext ctx, long time) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException exc) {
 			exc.printStackTrace();
 		}
+		returnVoid(ctx);
 	}
 
 	public static void System_long_time(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.LONG;
-		ctx.value.longNumber = System.currentTimeMillis();
+		returnLong(ctx, System.currentTimeMillis());
 	}
 
 	public static void System_void_exit(RuntimeContext ctx) {
 		ctx.isExit = true;
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
+		returnVoid(ctx);
 	}
 
 	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {

@@ -5,7 +5,6 @@ import ru.nest.hiscript.ool.model.HiObject;
 import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
-import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ClassImpl extends ImplUtil {
@@ -41,42 +40,42 @@ public class ClassImpl extends ImplUtil {
 
 	public static void Class_boolean_isArray(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isArray(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isArray());
 	}
 
 	public static void Class_boolean_isPrimitive(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isPrimitive(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isPrimitive());
 	}
 
 	public static void Class_boolean_isInterface(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isInterface, null).execute(ctx);
+		returnBoolean(ctx, clazz.isInterface);
 	}
 
 	public static void Class_boolean_isEnum(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isEnum(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isEnum());
 	}
 
 	public static void Class_boolean_isAnnotation(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isAnnotation(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isAnnotation());
 	}
 
 	public static void Class_boolean_isAnonymousClass(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isAnonymous(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isAnonymous());
 	}
 
 	public static void Class_boolean_isLocalClass(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isLocal(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isLocal());
 	}
 
 	public static void Class_boolean_isMemberClass(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeBoolean.getInstance(clazz.isInner(), null).execute(ctx);
+		returnBoolean(ctx, clazz.isInner());
 	}
 
 	public static void Class_Class_getComponentType(RuntimeContext ctx) {

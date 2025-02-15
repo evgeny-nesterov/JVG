@@ -1,10 +1,6 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
@@ -35,10 +31,46 @@ public class ImplUtil {
 		ctx.value.valueClass = HiClassPrimitive.VOID;
 	}
 
+	protected static void returnByte(RuntimeContext ctx, byte value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.BYTE;
+		ctx.value.byteNumber = value;
+	}
+
+	protected static void returnShort(RuntimeContext ctx, short value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.SHORT;
+		ctx.value.shortNumber = value;
+	}
+
+	protected static void returnChar(RuntimeContext ctx, char value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.CHAR;
+		ctx.value.character = value;
+	}
+
 	protected static void returnInt(RuntimeContext ctx, int value) {
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = HiClassPrimitive.INT;
 		ctx.value.intNumber = value;
+	}
+
+	protected static void returnLong(RuntimeContext ctx, long value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.LONG;
+		ctx.value.longNumber = value;
+	}
+
+	protected static void returnFloat(RuntimeContext ctx, float value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.FLOAT;
+		ctx.value.floatNumber = value;
+	}
+
+	protected static void returnDouble(RuntimeContext ctx, double value) {
+		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueClass = HiClassPrimitive.DOUBLE;
+		ctx.value.doubleNumber = value;
 	}
 
 	protected static void returnBoolean(RuntimeContext ctx, boolean value) {

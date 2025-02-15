@@ -126,10 +126,7 @@ public class StringImpl extends ImplUtil {
                 equals = true;
             }
         }
-
-        ctx.value.valueType = Value.VALUE;
-        ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
-        ctx.value.bool = equals;
+        returnBoolean(ctx, equals);
     }
 
     public static void String_int_hashCode(RuntimeContext ctx) {

@@ -11,7 +11,6 @@ public class ByteImpl extends ImplUtil {
 		returnInt(ctx, Byte.hashCode(value));
 	}
 
-
 	public static void Byte_String_toString(RuntimeContext ctx) {
 		byte value = ((HiFieldByte) ((HiObject) ctx.value.object).getField(ctx, "value")).get();
 		returnString(ctx, Byte.toString(value));

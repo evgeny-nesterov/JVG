@@ -1,23 +1,15 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.model.*;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 public class ObjectImpl extends ImplUtil {
 	public static void Object_int_hashCode(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.INT;
 		if (ctx.value.valueClass.isArray()) {
-			ctx.value.intNumber = ctx.value.object.hashCode();
+			returnInt(ctx, ctx.value.object.hashCode());
 		} else {
-			ctx.value.intNumber = ((HiObject) ctx.value.object).hashCode(ctx);
+			returnInt(ctx, ((HiObject) ctx.value.object).hashCode(ctx));
 		}
 	}
 
@@ -67,14 +59,7 @@ public class ObjectImpl extends ImplUtil {
 	}
 
 	public static void Object_boolean_equals_Object(RuntimeContext ctx, Object obj) {
-		if (ctx.value.valueClass.isArray()) {
-			ctx.value.bool = ctx.value.object == obj;
-		} else {
-			ctx.value.bool = ctx.value.object == obj;
-		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
+		returnBoolean(ctx, ctx.value.object == obj);
 	}
 
 	public static void Object_void_wait(RuntimeContext ctx) {
