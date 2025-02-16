@@ -40,14 +40,6 @@ public class HiClassAnnotation extends HiClass {
 		ctx.currentNode = this;
 		boolean valid = super.validate(validationInfo, ctx);
 		ctx.enter(RuntimeContext.INITIALIZATION, this);
-		if (fields != null) {
-			for (HiField field : fields) {
-				if (!field.getClass(ctx).isConstant()) {
-					validationInfo.error("invalid type '" + field.name + "' for annotation member", field.getToken());
-					valid = false;
-				}
-			}
-		}
 		if (methods != null) {
 			for (HiMethod method : methods) {
 				method.resolve(ctx);

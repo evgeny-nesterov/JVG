@@ -16,6 +16,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
@@ -429,7 +430,8 @@ public class OperationInvocation extends BinaryOperation {
 				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
 
 				// @autoboxing
-				HiClass expectedArgClass = method.arguments[i < method.arguments.length ? i : method.arguments.length - 1].getArgClass(ctx);
+				NodeArgument methodArgument = i < method.arguments.length ? method.arguments[i] : method.arguments[method.arguments.length - 1];
+				HiClass expectedArgClass = methodArgument.getArgClass(ctx);
 				HiClass origArgClass = argClass;
 				if (argClass.isPrimitive()) {
 					if (expectedArgClass.isObject()) {
@@ -444,14 +446,14 @@ public class OperationInvocation extends BinaryOperation {
 				// on null argument update field class from ClazzNull on argument class
 				HiField argsField;
 				if (origArgClass.isNull()) {
-					argsField = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+					argsField = HiField.getField(argClass, methodArgument.name, methodArgument.getToken());
 					ctx.value.valueClass = HiClassNull.NULL;
 					argsField.set(ctx, ctx.value);
 					argsFields[i] = argsField;
 				} else if (!origArgClass.isArray()) {
 					ctx.value.valueClass = origArgClass;
 					argsFields[i].get(ctx, ctx.value);
-					argsField = HiField.getField(argClass, method.arguments[i].name, method.arguments[i].getToken());
+					argsField = HiField.getField(argClass, methodArgument.name, methodArgument.getToken());
 					argsField.set(ctx, ctx.value);
 					argsFields[i] = argsField;
 				} else {
@@ -463,7 +465,7 @@ public class OperationInvocation extends BinaryOperation {
 					return;
 				}
 
-				argsField.name = method.argNames[i];
+				argsField.name = methodArgument.name;
 				argsField.initialized = true;
 			}
 		}

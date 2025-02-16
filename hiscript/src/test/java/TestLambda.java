@@ -49,6 +49,7 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{void get();} I i = () -> {return;};");
 		assertSuccessSerialize("interface I{int get(int x);} I i = (int X) -> X+1; assert i.get(1) == 2;");
 		assertSuccessSerialize("interface I{int get(int x);} I i = (int X) -> {return X+1;}; assert i.get(1) == 2;");
+		assertSuccessSerialize("interface I{int m1(int a);} class A{int m2(int x){I i = (y) -> y + 1; return i.m1(x);}} assert new A().m2(1) == 2;");
 
 		assertFailCompile("interface I{void get();} class C{void m(I i){i.get();}} new C().m(()->{return 1;});", //
 				"incompatible types; found int, required void");
@@ -134,6 +135,7 @@ public class TestLambda extends HiTest {
 
 		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{int get(){return 1;} int get(int x){return x;}}; C c = new C(); A1 a1 = c::get; assert a1.get() == 1; A2 a2 = c::get; assert a2.get(2) == 2;");
 		assertSuccessSerialize("interface A1{int get();} interface A2{int get(int x);} class C{static int get(){return 1;} static int get(int x){return x;}}; A1 a1 = C::get; assert a1.get() == 1; A2 a2 = C::get; assert a2.get(2) == 2;");
+		assertSuccessSerialize("interface I{int m1(int a);} class A{class B{int M(int m){return m+1;}} int m2(int x){B b = new B(); I i = b::M; return i.m1(x);}} assert new A().m2(1) == 2;");
 
 		// varargs
 		assertSuccessSerialize("interface A{int get(int... x);} class B{int get(int... x){return x[x.length - 1];}} A a = B::get; assert a.get(1,2,3) == 3;"); // same method name

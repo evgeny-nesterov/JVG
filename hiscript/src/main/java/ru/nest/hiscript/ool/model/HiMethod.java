@@ -618,10 +618,6 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// TODO rewrittenMethod
 	}
 
-	public static HiMethod decode(DecodeContext os) throws IOException {
-		return decode(os, true);
-	}
-
 	public static HiMethod decode(DecodeContext os, boolean readToken) throws IOException {
 		Token token = readToken ? os.readToken() : null;
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);

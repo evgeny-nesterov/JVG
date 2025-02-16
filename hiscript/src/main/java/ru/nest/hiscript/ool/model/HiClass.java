@@ -3,12 +3,29 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.classes.*;
+import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
+import ru.nest.hiscript.ool.model.classes.HiClassEnum;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
+import ru.nest.hiscript.ool.model.classes.HiClassMix;
+import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassRecord;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldVar;
 import ru.nest.hiscript.ool.model.lib.ObjectImpl;
 import ru.nest.hiscript.ool.model.lib.SystemImpl;
-import ru.nest.hiscript.ool.model.nodes.*;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.DecodeContext;
+import ru.nest.hiscript.ool.model.nodes.HasModifiers;
+import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeArray;
+import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
+import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
+import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
+import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
@@ -16,10 +33,17 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -246,6 +270,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 		// try resolve super class if needed
 		boolean isRuntime = classResolver instanceof RuntimeContext;
+		// TODO delete?
 		if (superClass == null && superClassType != null && isRuntime) {
 			superClass = superClassType.getClass(classResolver);
 		}
@@ -690,11 +715,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 						valid = false;
 					}
 
-					// check on valid static modifier (includes annotations)
-					if (innerClass.isStatic()) {
-						validationInfo.error("the member type " + innerClass.getNameDescr() + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
-						valid = false;
-					}
+//					// check on valid static modifier (includes annotations)
+//					if (innerClass.isStatic()) {
+//						validationInfo.error("the member type " + innerClass.getNameDescr() + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
+//						valid = false;
+//					}
 				}
 			}
 		}
@@ -853,10 +878,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			clazz = clazz.enclosingClass;
 		}
 
-		HiClassGeneric genericClass = getGenericClass(classResolver, name);
-		if (genericClass != null) {
-			return genericClass;
-		}
+		// TODO delete?
+//		HiClassGeneric genericClass = getGenericClass(classResolver, name);
+//		if (genericClass != null) {
+//			return genericClass;
+//		}
 
 		// registered classes
 		return forName(classResolver, name);
@@ -1998,6 +2024,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	private void init(DecodeContext os, String classLoaderName, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
 		HiClassLoader classLoader;
 		if (isPrimitive()) {
+			// TODO delete?
 			classLoader = HiClassLoader.primitiveClassLoader;
 		} else if (HiClassLoader.SYSTEM_CLASS_LOADER_NAME.equals(classLoaderName)) {
 			classLoader = os.getClassLoader().getSystemClassLoader();

@@ -550,6 +550,21 @@ public class TestExpression extends HiTest {
 				"variable 'x' is not initialized");
 		assertFailCompile("Integer x = 1; if(x instanceof 1){}", //
 				"type expected");
+
+		assertSuccessSerialize("int[] x = {}; assert x instanceof int[];");
+		assertFailCompile("int[] x = {}; boolean b = x instanceof Integer;", //
+				"inconvertible types; cannot cast int[] to Integer");
+		assertSuccessSerialize("Object x = new int[]{}; assert !(x instanceof Integer);");
+		assertFailCompile("int[] x = {}; boolean b = x instanceof double[];", //
+				"inconvertible types; cannot cast int[] to double[]");
+		assertSuccessSerialize("Object x = new int[]{}; assert !(x instanceof double[]);");
+		assertSuccessSerialize("Object x = new int[]{}; assert !(x instanceof int[][]);");
+		assertSuccessSerialize("String[] x = {}; assert x instanceof String[];");
+		assertSuccessSerialize("String[] x = new String[]{}; assert x instanceof Object[];");
+		assertFailCompile("String[] x = new String[]{}; boolean b = x instanceof String[][];", //
+				"inconvertible types; cannot cast String[] to String[][]");
+		assertSuccessSerialize("Object[] x = {}; assert x instanceof Object[];");
+		assertSuccessSerialize("Object[] x = {}; assert !(x instanceof Integer[]);");
 	}
 
 	@Test

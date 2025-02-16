@@ -400,6 +400,7 @@ public class TestClasses extends HiTest {
 				"incompatible return type"); // rewrite method with another return type
 
 		assertSuccessSerialize("class C{void m(int... x){assert false;} void m(int x1, int x2, int x3){}} new C().m(1, 2, 3);");
+		assertSuccessSerialize("class A{int m(int x){return 1;} int m(int x, int y, int z){return 2;} int m(int x, int... y){return 3;}} assert new A().m(1,2) == 3;");
 
 		// TODO check incompatible throws of rewrite method
 		assertSuccessSerialize("class E1 extends Exception{}; class E2 extends Exception{}; class A{void m() throws E1, E2 {throw new E1();}}");
@@ -535,6 +536,8 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A {void m(float x, float y){assert false;} void m(Integer x, int y){assert true;}} new A().m(1, 2);"); // priority autoboxing(primitive->box) over primitive cast
 		assertSuccessSerialize("class A {void m(long x, long y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority primitive cast over primitive cast
 		assertSuccessSerialize("class A {void m(float x, float y){assert false;} void m(long x, long y){assert true;}} new A().m(1, 2);"); // priority primitive cast over primitive cast
+		assertSuccessSerialize("class A {void m(long x, long y){assert true;} void m(char x, char y){assert false;}} new A().m(1, 2);"); // priority primitive cast over primitive cast
+		assertSuccessSerialize("class A {void m(char x, char y){assert false;} void m(long x, long y){assert true;}} new A().m(1, 2);"); // priority primitive cast over primitive cast
 		assertFailCompile("class A {void m(Integer x, int y){} void m(int x, int y){}} new A().m(1, new Integer(2));", //
 				"Ambiguous method call. Both m(Integer x, int y) in A and m(int x, int y) in A match.");
 		assertFailCompile("class A {void m(Integer x, Integer y){} void m(Integer x,  int y){}} new A().m(1, new Integer(2));", //

@@ -34,7 +34,7 @@ public class OperationInstanceOf extends BinaryOperation {
 			validationInfo.error("type expected", node2.node.getToken());
 		}
 		if (!c1.isVar()) {
-			if (c1.isPrimitive()) {
+			if (!c1.isInstanceof(c2) && !c2.isInstanceof(c1) && !c1.isNull()) {
 				validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node.getToken());
 			}
 			if (node2.node instanceof NodeCastedIdentifier) {
@@ -54,8 +54,12 @@ public class OperationInstanceOf extends BinaryOperation {
 		HiClass c1;
 		if (v1.valueClass.isArray()) {
 			c1 = v1.object != null ? v1.valueClass : HiClassNull.NULL;
-		} else {
-			c1 = v1.object != null ? ((HiObject) v1.object).clazz : HiClassNull.NULL;
+		} else if (v1.object instanceof HiObject) {
+			c1 = ((HiObject) v1.object).clazz;
+		} else if (v1.object == null) {
+			c1 = HiClassNull.NULL;
+		} else { // array
+			c1 = v1.originalValueClass;
 		}
 
 		boolean isInstanceof = c1.isInstanceof(c2);
