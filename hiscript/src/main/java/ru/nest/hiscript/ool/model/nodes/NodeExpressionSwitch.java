@@ -145,10 +145,9 @@ public class NodeExpressionSwitch extends HiNode {
 			try {
 				for (int i = index; i < size; i++) {
 					HiNode caseBody = casesNodes.get(i);
-					if (caseBody != null) {
-						caseBody.execute(ctx);
-						return;
-					}
+					assert caseBody != null;
+					caseBody.execute(ctx);
+					return;
 				}
 			} finally {
 				ctx.exit();

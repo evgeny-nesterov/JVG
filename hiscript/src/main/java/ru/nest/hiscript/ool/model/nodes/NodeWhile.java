@@ -53,11 +53,9 @@ public class NodeWhile extends HiNode {
 			try {
 				if (body != null) {
 					body.execute(ctx);
-
 					if (ctx.exitFromBlock()) {
 						return;
 					}
-
 					if (ctx.isBreak || (ctx.isContinue && !ctx.isCurrentLabel())) {
 						break;
 					}

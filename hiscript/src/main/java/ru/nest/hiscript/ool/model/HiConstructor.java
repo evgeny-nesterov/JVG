@@ -270,17 +270,17 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 							return null;
 						}
 					} else if (!argValueClass.isNull()) {
-						// @generic
-						HiClass argDefinedClass = this.arguments[i].clazz;
-						if (argDefinedClass.isGeneric()) {
-							HiClassGeneric argDefinedGenericClass = (HiClassGeneric) argDefinedClass;
-							if (clazz.typeParameters != null) {
-								argDefinedClass = clazz.typeParameters[argDefinedGenericClass.index];
-							} else {
-								argDefinedClass = argDefinedGenericClass.clazz;
-							}
-						}
 // TODO check in validation
+//						// @generic
+//						HiClass argDefinedClass = this.arguments[i].clazz;
+//						if (argDefinedClass.isGeneric()) {
+//							HiClassGeneric argDefinedGenericClass = (HiClassGeneric) argDefinedClass;
+//							if (clazz.typeParameters != null) {
+//								argDefinedClass = clazz.typeParameters[argDefinedGenericClass.index];
+//							} else {
+//								argDefinedClass = argDefinedGenericClass.clazz;
+//							}
+//						}
 //						if (!argValueClass.boxed().isInstanceof(argDefinedClass)) {
 //							ctx.throwRuntimeException("inconvertible types; cannot cast " + argValueClass.getNameDescr() + " to " + argDefinedClass.getNameDescr());
 //							return null;
@@ -340,17 +340,8 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 							superDefaultConstructor = HiClass.OBJECT_CLASS.getConstructor(ctx);
 						} else {
 							superDefaultConstructor = clazz.superClass.getConstructor(ctx);
-							if (superDefaultConstructor == null) {
-								// checked in validate
-								ctx.throwRuntimeException("constructor " + getConstructorDescr(clazz.getNameDescr(), null) + " not found");
-								return null;
-							}
-
-							if (superDefaultConstructor == this) {
-								// checked in validate
-								ctx.throwRuntimeException("cyclic dependence for constructor " + superDefaultConstructor);
-								return null;
-							}
+							assert superDefaultConstructor != null; // checked in validation (constructor not found)
+							assert superDefaultConstructor != this; // checked in validation (cyclic dependence for constructor)
 						}
 
 						superObject = superDefaultConstructor.newInstance(ctx, type, null, superOutboundObject);

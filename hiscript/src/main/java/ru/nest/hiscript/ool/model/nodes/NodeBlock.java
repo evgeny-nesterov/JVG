@@ -99,8 +99,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		try {
 			int size = statements.size();
 			for (int i = 0; i < size; i++) {
-				HiNode statement = statements.get(i);
-				statement.execute(ctx);
+				statements.get(i).execute(ctx);
 
 				if (ctx.exitFromBlock()) {
 					return;

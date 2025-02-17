@@ -817,6 +817,8 @@ public class TestExpression extends HiTest {
 							"cannot cast " + t2 + "[] to " + t + "[]");
 				}
 			}
+
+			assertSuccessSerialize("Number a = (" + t + ")1; " + t + " x = (" + t + ")a; assert x == 1;");
 		}
 		assertSuccessSerialize("String s = (String)(\"a=\" + 1); assert s == \"a=1\";");
 
@@ -951,6 +953,10 @@ public class TestExpression extends HiTest {
 
 		assertFail("Object a = 1; String s = (String)a;", //
 				"cannot cast Integer to String");
+
+		// Number
+		assertFailCompile("Number x = 1; boolean y = (boolean)x;", //
+				"cannot cast Number to boolean");
 
 		// nulls
 		assertSuccessSerialize("Byte x = (Byte)null;");

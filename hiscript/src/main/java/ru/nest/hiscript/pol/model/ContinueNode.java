@@ -45,8 +45,7 @@ public class ContinueNode extends Node {
 	public void execute(RuntimeContext ctx) {
 		int size = breakableNodes.size();
 		for (int i = 0; i < size; i++) {
-			Breakable breakable = breakableNodes.get(i);
-			breakable.breakBlock();
+			breakableNodes.get(i).breakBlock();
 		}
 	}
 }

@@ -459,6 +459,7 @@ public class CompileClassContext implements ClassResolver {
 			if (resolveClass) {
 				HiClass clazz = level.getClass(name);
 				if (clazz != null) {
+					checkClassAccess(clazz);
 					return clazz;
 				}
 			}
@@ -496,6 +497,9 @@ public class CompileClassContext implements ClassResolver {
 		if (parent != null) {
 			HiNodeIF resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
 			if (resolvedIdentifier != null) {
+				if (resolvedIdentifier instanceof HiClass) {
+					checkClassAccess((HiClass) resolvedIdentifier);
+				}
 				return resolvedIdentifier;
 			}
 		}
@@ -510,6 +514,7 @@ public class CompileClassContext implements ClassResolver {
 			if (resolveClass) {
 				HiClass clazz = level.getClass(name);
 				if (clazz != null) {
+					checkClassAccess(clazz);
 					return clazz;
 				}
 			}
@@ -524,6 +529,7 @@ public class CompileClassContext implements ClassResolver {
 					String extendedName = outboundClassName + '0' + name;
 					HiClass clazz = HiClass.forName(this, extendedName);
 					if (clazz != null) {
+						checkClassAccess(clazz);
 						return clazz;
 					}
 				}
@@ -531,6 +537,23 @@ public class CompileClassContext implements ClassResolver {
 			return HiClass.forName(this, name);
 		}
 		return null;
+	}
+
+	private void checkClassAccess(HiClass clazz) {
+		if (clazz.isPrivate() && clazz.enclosingClass != null) {
+			boolean hasCommonEnclosingClass = false;
+			HiClass c = this.clazz;
+			while (c != null) {
+				if (c == clazz.enclosingClass) {
+					hasCommonEnclosingClass = true;
+					break;
+				}
+				c = c.enclosingClass;
+			}
+			if (!hasCommonEnclosingClass) {
+				processResolverException("class '" + clazz.getNameDescr() + "' has private access");
+			}
+		}
 	}
 
 	public HiMethod resolveMethod(String name, HiClass... argsClasses) {

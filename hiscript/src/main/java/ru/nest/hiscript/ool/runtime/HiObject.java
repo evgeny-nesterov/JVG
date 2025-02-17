@@ -119,11 +119,11 @@ public class HiObject {
 			}
 
 			// super object (after this)
-			HiField<?> privateField = null;
+			HiField<?> protectedField = null;
 			if (field == null && superObject != null) {
 				field = superObject.getField(ctx, name);
-				if (field != null && field.isPrivate()) {
-					privateField = field;
+				if (field != null && field.isProtected()) {
+					protectedField = field;
 					field = null;
 				}
 			}
@@ -150,7 +150,7 @@ public class HiObject {
 			}
 
 			if (field == null) {
-				field = privateField;
+				field = protectedField;
 			}
 		} else {
 			field = clazz.getField(ctx, name);

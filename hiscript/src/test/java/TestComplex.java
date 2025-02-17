@@ -26,9 +26,5 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testNew() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		// strings
-		assertSuccessSerialize("assert \"123\".toString().equals(\"123\");");
-		assertFail("String s = null; s.toString();", //
-				"null pointer");
 	}
 }

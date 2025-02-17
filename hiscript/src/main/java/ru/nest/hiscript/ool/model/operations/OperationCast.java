@@ -314,6 +314,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			} else if (v2.originalValueClass != null) {
 				c2 = v2.originalValueClass;
 			} else if (v2.object instanceof HiObject) {
+				// TODO remove?
 				c2 = ((HiObject) v2.object).clazz;
 			}
 		}
@@ -357,7 +358,9 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	private void castBoolean(RuntimeContext ctx, Value v1, Value v2, int type) {
+		// TODO remove?
 		if (type != BOOLEAN) {
+			// TODO checked in validation?
 			errorCast(ctx, v2.valueClass, v1.valueClass);
 			return;
 		}

@@ -118,8 +118,6 @@ public class NodeReturn extends HiNode {
 				if (ctx.value.valueType == Value.NAME) {
 					assert NodeIdentifier.resolveVariable(ctx, ctx.value);
 				}
-
-				// TODO: check on void return value
 			} else {
 				ctx.value.valueType = Value.VALUE;
 				ctx.value.valueClass = HiClassPrimitive.VOID;

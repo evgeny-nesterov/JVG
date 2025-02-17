@@ -98,10 +98,10 @@ public abstract class BinaryOperation extends HiOperation {
 		v1.longNumber = value;
 	}
 
-	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
-		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
-		ctx.throwRuntimeException(text);
-	}
+//	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
+//		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
+//		ctx.throwRuntimeException(text);
+//	}
 
 	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type1, HiClass type2) {
 		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
@@ -113,10 +113,10 @@ public abstract class BinaryOperation extends HiOperation {
 		validationInfo.error(text, token);
 	}
 
-	public void errorUnexpectedType(RuntimeContext ctx) {
-		String text = "unexpected type";
-		ctx.throwRuntimeException(text);
-	}
+//	public void errorUnexpectedType(RuntimeContext ctx) {
+//		String text = "unexpected type";
+//		ctx.throwRuntimeException(text);
+//	}
 
 	public void errorDivideByZero(RuntimeContext ctx) {
 		String text = "divide by zero";

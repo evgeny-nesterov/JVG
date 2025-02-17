@@ -43,13 +43,10 @@ public class OperationArrayIndex extends BinaryOperation {
 		if (!validIndex) {
 			errorCast(validationInfo, node2.token, node2.clazz, HiClassPrimitive.INT);
 		}
-		boolean validArray = false;
 		if (node1.clazz.isArray()) {
 			clazz = ((HiClassArray) clazz).cellClass;
 			type = type.cellType;
-			validArray = true;
-		}
-		if (!validArray) {
+		} else {
 			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		}
 		if (validIndex && node2.isCompileValue() && node2.getIntValue() < 0) {

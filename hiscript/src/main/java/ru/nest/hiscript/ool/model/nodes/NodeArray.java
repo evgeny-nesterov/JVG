@@ -110,26 +110,27 @@ public class NodeArray extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		int[] dim = new int[dimensionsCountActive];
+		int[] dimensionsValues = new int[dimensionsCountActive];
 		for (int i = 0; i < dimensionsCountActive; i++) {
 			dimensions[i].execute(ctx);
 			if (ctx.exitFromBlock()) {
 				return;
 			}
 
-			dim[i] = ctx.value.getInt();
+			int dimensionValue = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {
 				return;
 			}
-			if (dim[i] < 0) {
+			if (dimensionValue < 0) {
 				ctx.throwRuntimeException("negative array size");
 				return;
 			}
+			dimensionsValues[i] = dimensionValue;
 		}
 
 		ctx.value.valueType = Value.VALUE;
 		ctx.value.valueClass = clazz;
-		ctx.value.object = Array.newInstance(arrayJavaClass, dim);
+		ctx.value.object = Array.newInstance(arrayJavaClass, dimensionsValues);
 	}
 
 	@Override

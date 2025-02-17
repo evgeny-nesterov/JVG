@@ -919,4 +919,23 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class A{void m(synchronized int x){}};", //
 				"')' is expected");
 	}
+
+	@Test
+	public void testAccess() {
+		// fields access
+		assertSuccessSerialize("class A{public int x = 1;} class B extends A{int y = x;} assert new B().y == 1;");
+		assertSuccessSerialize("class A{public int x = 1;} A a = new A(); class B{int y = a.x;} assert new B().y == 1;");
+
+		assertSuccessSerialize("class A{protected int x = 1;} class B extends A{int y = x;} assert new B().y == 1;");
+
+		assertFailCompile("class A{private int x = 1;} class B extends A{int y = x;}", //
+				"'x' has private access in 'A'");
+		assertSuccessSerialize("class A{private int x = 1;} class B extends A{int y = super.x;} assert new B().y == 1;");
+		assertFailCompile("class A{private int x = 1;} class B extends A{int y = this.x;}", //
+				"'x' has private access in 'A'");
+
+		// class access
+		assertFailCompile("class A{private class B{}} A a = new A(); A.B b = a.new B();", //
+				"class 'A$B' has private access");
+	}
 }

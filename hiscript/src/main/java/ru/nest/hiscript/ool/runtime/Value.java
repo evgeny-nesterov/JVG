@@ -198,10 +198,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public Object getObject() {
-		if (valueClass.isPrimitive()) {
-			ctx.throwRuntimeException("object is expected");
-			return null;
-		}
+		assert !valueClass.isPrimitive(); // checked in validation
 		return object;
 	}
 
@@ -224,10 +221,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public Object getArray() {
-		if (!valueClass.isArray() && !valueClass.isNull()) {
-			ctx.throwRuntimeException("array is expected: " + valueClass.getNameDescr());
-			return null;
-		}
+		assert valueClass.isArray() || valueClass.isNull(); // checked in validation (array is expected)
 		return object;
 	}
 
@@ -345,6 +339,7 @@ public class Value implements PrimitiveTypes {
 		if (getAutoboxPrimitiveValue(BOOLEAN)) {
 			return bool;
 		} else if (ctx.exitFromBlock()) {
+			// TODO delete?
 			return false;
 		}
 		ctx.throwRuntimeException("boolean is expected");

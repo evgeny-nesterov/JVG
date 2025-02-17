@@ -7,11 +7,8 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
-import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
@@ -24,6 +21,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Array;
 
@@ -101,42 +101,18 @@ public class OperationInvocation extends BinaryOperation {
 			case Value.TYPE_INVOCATION:
 				invokeClass(ctx, v1, v2);
 				break;
-			default:
-				ctx.throwRuntimeException("identifier is expected");
-				break;
 		}
 	}
 
 	public void invokeExecute(RuntimeContext ctx, Value v1, Value v2) {
-		if (v1.valueClass.isPrimitive()) {
-			ctx.throwRuntimeException("primitive type doesn't have a subclass " + name);
-			return;
-		}
-
 		// a.new B(), where v1=a, v2=new B()
 		HiNodeIF valueNode = v2.node;
 
 		HiObject enterObject = null;
 		if (valueNode instanceof NodeConstructor || valueNode instanceof NodeArray || valueNode instanceof NodeArrayValue) {
 			// Check previous operand on whether it's an object and not an array
-			if (!v1.valueClass.isArray() && v1.valueClass.isObject()) {
-				enterObject = (HiObject) v1.object;
-			} else {
-				String typeName = "";
-				if (valueNode instanceof NodeConstructor) {
-					NodeConstructor constructorNode = (NodeConstructor) valueNode;
-					typeName = constructorNode.getName();
-				} else if (valueNode instanceof NodeArray) {
-					NodeArray arrayNode = (NodeArray) valueNode;
-					typeName = arrayNode.clazz.fullName;
-				} else if (valueNode instanceof NodeArrayValue) {
-					NodeArrayValue arrayValueNode = (NodeArrayValue) valueNode;
-					typeName = arrayValueNode.type.fullName;
-				}
-
-				ctx.throwRuntimeException("class '" + typeName + "' cannot be resolved to a type");
-				return;
-			}
+			assert v1.valueClass.isObject() && !v1.valueClass.isArray(); // checked in validation
+			enterObject = (HiObject) v1.object;
 		}
 
 		if (enterObject != null) {
@@ -160,11 +136,6 @@ public class OperationInvocation extends BinaryOperation {
 	}
 
 	public static boolean invokeName(RuntimeContext ctx, Value v1, String name, int nameDimension) {
-		if (v1.valueClass.isPrimitive()) {
-			ctx.throwRuntimeException("primitive type doesn't have a field " + name);
-			return false;
-		}
-
 		HiField<?> field = null;
 		HiClass clazz = null;
 		HiObject object;
@@ -192,11 +163,7 @@ public class OperationInvocation extends BinaryOperation {
 
 				field = object.getField(ctx, name, clazz);
 			}
-
-			if (field == null) {
-				ctx.throwRuntimeException("type " + clazz.getNameDescr() + " doesn't contain field " + name);
-				return false;
-			}
+			assert field != null; // checked in validation
 		} else if (v1.valueType == Value.CLASS) {
 			clazz = v1.valueClass;
 
@@ -237,34 +204,19 @@ public class OperationInvocation extends BinaryOperation {
 			v1.name = name;
 			v1.variable = field;
 			return true;
-		} else if (clazz != null) {
+		} else {
+			assert clazz != null; // checked in validation
 			if (nameDimension > 0) {
 				clazz = clazz.getArrayClass(nameDimension);
 			}
 			v1.valueType = Value.CLASS;
 			v1.valueClass = clazz;
 			return true;
-		} else {
-			String text = "cannot find symbol; variable " + name;
-			clazz = ctx.level.clazz;
-			if (clazz != null) {
-				text += "; location " + clazz.getNameDescr();
-			}
-			ctx.throwRuntimeException(text);
-			return false;
 		}
 	}
 
 	public void invokeClass(RuntimeContext ctx, Value v1, Value v2) {
-		if (v1.valueType != Value.CLASS) {
-			String text = "cannot find symbol; variable " + name;
-			HiClass clazz = ctx.level.clazz;
-			if (clazz != null) {
-				text += "; location " + clazz.getNameDescr();
-			}
-			ctx.throwRuntimeException(text);
-			return;
-		}
+		assert v1.valueType == Value.CLASS; // checked in validation
 
 		HiNodeIF valueNode = v2.node;
 		Value oldValue = ctx.value;
@@ -278,11 +230,6 @@ public class OperationInvocation extends BinaryOperation {
 
 	public void invokeMethod(RuntimeContext ctx, Value v1, Value v2) {
 		String name = v2.name;
-		if (v1.valueClass.isPrimitive()) {
-			ctx.throwRuntimeException("primitive type doesn't have a method " + name);
-			return;
-		}
-
 		HiNode[] argValues = v2.arguments;
 		int v1ValueType = v1.valueType;
 		HiClass v1Clazz = v1.valueClass;
@@ -297,7 +244,7 @@ public class OperationInvocation extends BinaryOperation {
 			} else {
 				obj = (HiObject) v1.object;
 				if (obj != null) {
-					// inf cycle
+					// infinite cycle
 					// obj = obj.getMainObject();
 					if (v1.originalValueClass != null && v1.originalValueClass.isLambda()) {
 						// In this case object is used as container of original method on which functional method is mapped.
@@ -314,16 +261,9 @@ public class OperationInvocation extends BinaryOperation {
 				ctx.throwRuntimeException("null pointer");
 				return;
 			}
-		} else if (v1.valueType == Value.CLASS) {
-			isStatic = true;
 		} else {
-			String text = "cannot find symbol; variable " + name;
-			HiClass location = ctx.level.clazz;
-			if (location != null) {
-				text += "; location " + location.getNameDescr();
-			}
-			ctx.throwRuntimeException(text);
-			return;
+			assert v1.valueType == Value.CLASS; // checked in validation
+			isStatic = true;
 		}
 
 		// build argument class array and evaluate method arguments
@@ -357,10 +297,7 @@ public class OperationInvocation extends BinaryOperation {
 		if ((v1ValueType == Value.VARIABLE || v1ValueType == Value.VALUE) && clazz != v1Clazz) {
 			// find super method
 			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, argsClasses);
-			if (superMethod == null) {
-				ctx.throwRuntimeException("cannot find method " + v1Clazz.getNameDescr() + "." + name);
-				return;
-			}
+			assert superMethod != null; // checked in validation
 			if (superMethod.isDefault() && v1Clazz.isInterface) {
 				method = superMethod;
 			}
@@ -369,22 +306,12 @@ public class OperationInvocation extends BinaryOperation {
 		// find method
 		if (method == null) {
 			method = clazz.searchMethod(ctx, name, argsClasses);
-			if (method == null) {
-				ctx.throwRuntimeException("cannot find method " + clazz.getNameDescr() + "." + name);
-				return;
-			}
+			assert method != null; // checked in validation
 		}
 
 		if (!method.isJava()) {
-			if (isStatic && !method.isStatic()) {
-				ctx.throwRuntimeException("cannot invoke not static method from static context");
-				return;
-			}
-
-			if (method.isAbstract()) {
-				ctx.throwRuntimeException("cannot invoke abstract method");
-				return;
-			}
+			assert !(isStatic && !method.isStatic()); // checked in validation
+			assert !method.isAbstract(); // checked in validation
 		}
 
 		// set names and types of arguments

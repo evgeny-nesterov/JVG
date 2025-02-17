@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -1107,13 +1107,16 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (superClass != null) {
 			HiField<?> field = superClass.getField(classResolver, name, local);
 			if (field != null) {
+				if (field.isPrivate() && classResolver instanceof CompileClassContext) {
+					classResolver.processResolverException("'" + field.name + "' has private access in '" + superClass.getNameDescr() + "'");
+				}
 				return field;
 			}
 		}
 
 		// enclosing fields
 		if (!local && enclosingClass != null) {
-			HiField<?> field = enclosingClass.getField(classResolver, name, local);
+			HiField<?> field = enclosingClass.getField(classResolver, name, false);
 			if (field != null) {
 				return field;
 			}

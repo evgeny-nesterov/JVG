@@ -243,7 +243,6 @@ public class NodeSwitch extends HiNode {
 							if (ctx.exitFromBlock()) {
 								return;
 							}
-
 							if (ctx.isBreak) {
 								break;
 							}
