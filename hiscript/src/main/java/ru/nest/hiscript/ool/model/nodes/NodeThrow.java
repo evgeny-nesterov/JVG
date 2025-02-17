@@ -5,9 +5,9 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 import java.io.IOException;
 import java.util.Set;

@@ -1,9 +1,13 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.*;
+import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -18,13 +22,9 @@ public class NodeBoolean extends HiNode {
 	private final static NodeBoolean FALSE = new NodeBoolean(false);
 
 	public static NodeBoolean getInstance(boolean value, Token token) {
-		if (token != null) {
-			NodeBoolean node = new NodeBoolean(value);
-			node.token = token;
-			return node;
-		} else {
-			return value ? TRUE : FALSE;
-		}
+		NodeBoolean node = new NodeBoolean(value);
+		node.token = token;
+		return node;
 	}
 
 	private NodeBoolean(boolean value) {

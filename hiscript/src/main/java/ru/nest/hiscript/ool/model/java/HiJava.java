@@ -1,12 +1,12 @@
 package ru.nest.hiscript.ool.model.java;
 
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

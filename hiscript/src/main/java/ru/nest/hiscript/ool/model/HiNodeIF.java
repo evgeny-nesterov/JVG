@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 public interface HiNodeIF extends TokenAccessible, Codeable {
 	boolean validate(ValidationInfo validationInfo, CompileClassContext ctx);

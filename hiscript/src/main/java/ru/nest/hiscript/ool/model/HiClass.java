@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -28,7 +28,10 @@ import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -43,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -682,13 +685,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 					HiField field = (HiField) initializer;
 					if (isInterface) {
-						if (field.getModifiers().isProtected()) {
+						Modifiers fieldModifiers = field.getModifiers();
+						if (fieldModifiers.isProtected()) {
 							validationInfo.error("modifier 'protected' not allowed here", token);
 							valid = false;
 						}
-						field.getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
-						field.getModifiers().setFinal(true);
-						field.getModifiers().setStatic(true);
+						if (!fieldModifiers.isPublic() || !fieldModifiers.isFinal() || !fieldModifiers.isStatic()) {
+							field.setModifiers(fieldModifiers.change().setPublic().setFinal(true).setStatic(true));
+						}
 					}
 					if (field.isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors

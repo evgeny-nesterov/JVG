@@ -1,18 +1,15 @@
 import org.opentest4j.AssertionFailedError;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScript;
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class HiTest {
 	private List nativeObjects = new ArrayList<>();

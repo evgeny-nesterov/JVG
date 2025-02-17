@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 public class ThreadImpl extends ImplUtil {
 	private static HiClass threadClass;

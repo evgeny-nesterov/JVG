@@ -3,7 +3,6 @@ package ru.nest.hiscript.ool.runtime;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 
 import java.lang.reflect.Method;
 import java.util.List;

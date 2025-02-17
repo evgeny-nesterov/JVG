@@ -7,16 +7,16 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.ModifiersIF;
-import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -87,9 +87,11 @@ public class HiClassEnum extends HiClass {
 
 	private HiFieldObject createField(String name, Object value) {
 		HiFieldObject enumField = new HiFieldObject(Type.getType(this), name, value);
-		enumField.getModifiers().setFinal(true);
-		enumField.getModifiers().setStatic(true);
-		enumField.getModifiers().setAccess(ModifiersIF.ACCESS_PUBLIC);
+		Modifiers.Changeable modifiers = enumField.getModifiers().change();
+		modifiers.setPublic();
+		modifiers.setFinal(true);
+		modifiers.setStatic(true);
+		enumField.setModifiers(modifiers);
 		return enumField;
 	}
 

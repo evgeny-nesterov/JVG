@@ -1,8 +1,9 @@
 package ru.nest.hiscript.ool.model;
 
-import java.io.IOException;
-
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+
+import java.io.IOException;
 
 public interface NodeInitializer extends Codeable, TokenAccessible {
 	boolean isStatic();

@@ -4,12 +4,12 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 import java.util.List;

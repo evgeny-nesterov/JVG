@@ -1,12 +1,14 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.HiScriptParseException;
+import ru.nest.hiscript.ool.compile.parse.AnnotationParseRule;
+import ru.nest.hiscript.ool.compile.parse.ExpressionParseRule;
+import ru.nest.hiscript.ool.compile.parse.MethodArgumentParseRule;
+import ru.nest.hiscript.ool.compile.parse.StatementParseRule;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.ModifiersIF;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
@@ -22,6 +24,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.AnnotationWordToken;
 import ru.nest.hiscript.tokenizer.CharToken;
 import ru.nest.hiscript.tokenizer.CommentToken;
@@ -48,7 +51,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParserUtil implements Words {
+import static ru.nest.hiscript.tokenizer.Words.*;
+
+public class ParserUtil {
 	public static void skipComments(Tokenizer tokenizer) throws TokenizerException {
 		while (tokenizer.currentToken() instanceof CommentToken) {
 			tokenizer.nextToken();
@@ -385,19 +390,19 @@ public class ParserUtil implements Words {
 
 	protected static AnnotatedModifiers visitAnnotatedModifiers(Tokenizer tokenizer, CompileClassContext ctx, boolean sync) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
-		Modifiers modifiers = null;
+		Modifiers.Changeable modifiers = null;
 		List<NodeAnnotation> annotations = null;
 		int word;
 		while (true) {
 			annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx, annotations);
 
 			if ((word = visitWordType(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != -1) {
-				if (modifiers != null && modifiers.getAccess() != ModifiersIF.ACCESS_DEFAULT) {
-					tokenizer.error("illegal combination of modifiers: 'public' and 'public'");
+				if (modifiers != null && !modifiers.isDefaultAccess()) {
+					tokenizer.error("illegal combination of modifiers: '" + modifiers.getName(modifiers.getAccess()) + "' and '" + Modifiers.mapWordsToModification(word) + "'");
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setAccess(Modifiers.mapWordsToModification(word));
@@ -410,7 +415,7 @@ public class ParserUtil implements Words {
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setFinal(true);
@@ -427,7 +432,7 @@ public class ParserUtil implements Words {
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setStatic(true);
@@ -442,7 +447,7 @@ public class ParserUtil implements Words {
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setNative(true);
@@ -459,7 +464,7 @@ public class ParserUtil implements Words {
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setAbstract(true);
@@ -478,7 +483,7 @@ public class ParserUtil implements Words {
 				}
 
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setDefault(true);
@@ -487,7 +492,7 @@ public class ParserUtil implements Words {
 
 			if (sync && visitWordType(tokenizer, SYNCHRONIZED) != -1) {
 				if (modifiers == null) {
-					modifiers = new Modifiers();
+					modifiers = new Modifiers.Changeable();
 				}
 
 				modifiers.setSynchronized(true);

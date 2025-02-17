@@ -418,6 +418,8 @@ public class TestNumbers extends HiTest {
 		// numbers
 		assertFailCompile("float x = 10e200f;", //
 				"float number too large");
+		assertFailCompile("float x = 10e1000000000000000000000000000000000000000000000000000000000000f;", //
+				"float number too large");
 		assertFailCompile("double x = 10e1000;", //
 				"double number too large");
 	}

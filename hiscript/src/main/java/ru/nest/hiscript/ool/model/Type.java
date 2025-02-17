@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
@@ -10,6 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Words;
 
@@ -20,10 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- *
- */
-public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparable<Type> {
+public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
 
 	public final static int OBJECT = 1;
@@ -114,7 +111,7 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		} else {
 			this.fullName = name.intern();
 		}
-		this.hashCode = Objects.hash(fullName, dimension, Objects.hash((Object[])parameters), isExtends, isSuper);
+		this.hashCode = Objects.hash(fullName, dimension, Objects.hash((Object[]) parameters), isExtends, isSuper);
 	}
 
 	/**
@@ -394,11 +391,12 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 		if (isArray()) {
 			HiClass cellClass = cellType.getClass(classResolver);
 			if (cellClass == null) {
-				classResolver.processResolverException("class '" + fullName + "' can not be resolved");
+				if (classResolver != null) {
+					classResolver.processResolverException("class '" + fullName + "' can not be resolved");
+				}
 				return null;
-			} else {
-				return cellClass.getArrayClass();
 			}
+			return cellClass.getArrayClass();
 		}
 
 		if (isNull()) {
@@ -718,6 +716,11 @@ public class Type implements TypeArgumentIF, PrimitiveTypes, Codeable, Comparabl
 
 	@Override
 	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getTypeName() {
 		return name;
 	}
 

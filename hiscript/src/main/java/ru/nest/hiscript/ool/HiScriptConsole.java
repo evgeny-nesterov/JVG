@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool;
 
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;

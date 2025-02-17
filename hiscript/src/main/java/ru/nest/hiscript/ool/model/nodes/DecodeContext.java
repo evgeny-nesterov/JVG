@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.nodes;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
@@ -12,6 +11,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.ByteArrayInputStream;

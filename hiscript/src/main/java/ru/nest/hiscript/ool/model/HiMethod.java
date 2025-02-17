@@ -16,6 +16,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeNative;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -85,7 +88,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	 * functional method
 	 */
 	public HiMethod(NodeArgument[] arguments, HiNode body) {
-		set(null, null, Modifiers.PUBLIC(), null, null, LAMBDA_METHOD_NAME, arguments, null, body);
+		set(null, null, Modifiers.PUBLIC, null, null, LAMBDA_METHOD_NAME, arguments, null, body);
 	}
 
 	private void set(HiClass clazz, NodeAnnotation[] annotations, Modifiers modifiers, NodeGenerics generics, Type returnType, String name, NodeArgument[] arguments, Type[] throwsTypes, HiNode body) {
@@ -187,11 +190,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 							validationInfo.error("modifier 'protected' not allowed here", token);
 							valid = false;
 						}
-					} else {
-						if (!modifiers.isPrivate() && !clazz.isAnnotation()) {
-							validationInfo.error("modifier 'private' is expected", token);
-							valid = false;
-						}
+					} else if (!modifiers.isPrivate() && !clazz.isAnnotation()) {
+						validationInfo.error("modifier 'private' is expected", token);
+						valid = false;
 					}
 				}
 				if (!clazz.isAnnotation() && !modifiers.isAbstract() && !modifiers.isDefault() && !modifiers.isStatic() && !modifiers.isPrivate()) {
@@ -387,7 +388,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		Type type = Type.getType(interfaceClass);
 		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
 		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
-		clazz.modifiers = Modifiers.PUBLIC();
+		clazz.modifiers = Modifiers.PUBLIC;
 		clazz.functionalMethod = this;
 		clazz.setToken(token);
 		clazz.init(ctx);
@@ -541,13 +542,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			if (resolvedClass != clazz) {
 				return resolvedClass;
 			}
-			if (invocationClass == null) {
-				invocationClass = this.clazz;
-			}
 			if (resolvedClass.isGeneric() && invocationType != null && invocationType.parameters != null) {
 				Type resolvedType = invocationType.getParameterType((HiClassGeneric) resolvedClass);
 				return resolvedType.getClass(classResolver);
 			}
+			assert invocationClass != null;
 			return invocationClass.resolveGenericClass(classResolver, invocationType, (HiClassGeneric) clazz);
 		}
 		return clazz;

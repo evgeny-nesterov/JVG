@@ -239,8 +239,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 					number = -number;
 				}
 			} catch (NumberFormatException exc) {
-				tokenizer.error("float number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
-				number = 0;
+				throw new RuntimeException("bad number format: " + text);
 			}
 			if (hasSign) {
 				tokenizer.commit();
@@ -256,8 +255,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 					number = -number;
 				}
 			} catch (NumberFormatException exc) {
-				tokenizer.error("double number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
-				number = 0;
+				throw new RuntimeException("bad number format: " + text);
 			}
 			if (hasSign) {
 				tokenizer.commit();

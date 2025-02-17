@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 public class ClassImpl extends ImplUtil {
 	public static void Class_String_getName(RuntimeContext ctx) {

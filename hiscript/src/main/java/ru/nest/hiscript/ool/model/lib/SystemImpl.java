@@ -1,13 +1,9 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.compile.RootParseRule;
+import ru.nest.hiscript.ool.compile.parse.RootParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.RuntimeContext.StackLevel;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
@@ -15,6 +11,10 @@ import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.RuntimeContext.StackLevel;
+import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.ByteArrayOutputStream;

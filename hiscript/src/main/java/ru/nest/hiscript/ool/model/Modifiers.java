@@ -11,11 +11,11 @@ import ru.nest.hiscript.tokenizer.Words;
 import java.io.IOException;
 
 public class Modifiers implements ModifiersIF, Codeable {
-	public static Modifiers PUBLIC() {
-		Modifiers modifiers = new Modifiers();
-		modifiers.setAccess(ACCESS_PUBLIC);
-		return modifiers;
-	}
+	public final static Modifiers PUBLIC = new Modifiers(ACCESS_PUBLIC);
+
+	public final static Modifiers PRIVATE = new Modifiers(ACCESS_PRIVATE);
+
+	public final static Modifiers PUBLIC_FINAL = new Modifiers(ACCESS_PUBLIC | FINAL);
 
 	public static int mapWordsToModification(int word) {
 		switch (word) {
@@ -49,6 +49,20 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return -1;
 	}
 
+	private int access = ACCESS_DEFAULT;
+
+	private boolean isStatic = false;
+
+	private boolean isFinal = false;
+
+	private boolean isNative = false;
+
+	private boolean isAbstract = false;
+
+	private boolean isDefault = false;
+
+	private boolean isSynchronized = false;
+
 	public Modifiers() {
 	}
 
@@ -56,11 +70,21 @@ public class Modifiers implements ModifiersIF, Codeable {
 		setModifiers(modifiers);
 	}
 
+	public Modifiers(Modifiers modifiers) {
+		setModifiers(modifiers.getModifiers());
+	}
+
+	public Changeable change() {
+		if (this instanceof Changeable) {
+			return (Changeable) this;
+		} else {
+			return new Changeable(this);
+		}
+	}
+
 	public boolean hasModifiers() {
 		return access != ACCESS_DEFAULT || isFinal || isStatic || isAbstract || isNative || isDefault || isSynchronized;
 	}
-
-	private int access = ACCESS_DEFAULT;
 
 	public int getAccess() {
 		return access;
@@ -82,68 +106,28 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return (access & ACCESS_PRIVATE) != 0;
 	}
 
-	public void setAccess(int access) {
-		this.access = access;
-	}
-
-	private boolean isStatic = false;
-
 	public boolean isStatic() {
 		return isStatic;
 	}
-
-	public void setStatic(boolean isStatic) {
-		this.isStatic = isStatic;
-	}
-
-	private boolean isFinal = false;
 
 	public boolean isFinal() {
 		return isFinal;
 	}
 
-	public void setFinal(boolean isFinal) {
-		this.isFinal = isFinal;
-	}
-
-	private boolean isNative = false;
-
 	public boolean isNative() {
 		return isNative;
 	}
-
-	public void setNative(boolean isNative) {
-		this.isNative = isNative;
-	}
-
-	private boolean isAbstract = false;
 
 	public boolean isAbstract() {
 		return isAbstract;
 	}
 
-	public void setAbstract(boolean isAbstract) {
-		this.isAbstract = isAbstract;
-	}
-
-	private boolean isDefault = false;
-
 	public boolean isDefault() {
 		return isDefault;
 	}
 
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
-	}
-
-	private boolean isSynchronized = false;
-
 	public boolean isSynchronized() {
 		return isSynchronized;
-	}
-
-	public void setSynchronized(boolean isSynchronized) {
-		this.isSynchronized = isSynchronized;
 	}
 
 	@Override
@@ -192,7 +176,7 @@ public class Modifiers implements ModifiersIF, Codeable {
 			case STATIC:
 				return "static";
 			case ABSTRACT:
- 				return "abstract";
+				return "abstract";
 			case NATIVE:
 				return "native";
 			case DEFAULT:
@@ -231,20 +215,20 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return modifiers;
 	}
 
-	public void setModifiers(int code) {
-		setStatic((code & STATIC) != 0);
-		setFinal((code & FINAL) != 0);
-		setNative((code & NATIVE) != 0);
-		setAbstract((code & ABSTRACT) != 0);
-		setDefault((code & DEFAULT) != 0);
-		setSynchronized((code & SYNCHRONIZED) != 0);
+	private void setModifiers(int code) {
+		isStatic = (code & STATIC) != 0;
+		isFinal = (code & FINAL) != 0;
+		isNative = (code & NATIVE) != 0;
+		isAbstract = (code & ABSTRACT) != 0;
+		isDefault = (code & DEFAULT) != 0;
+		isSynchronized = (code & SYNCHRONIZED) != 0;
 
 		if ((code & ACCESS_PUBLIC) != 0) {
-			setAccess(ACCESS_PUBLIC);
+			access = ACCESS_PUBLIC;
 		} else if ((code & ACCESS_PROTECTED) != 0) {
-			setAccess(ACCESS_PROTECTED);
+			access = ACCESS_PROTECTED;
 		} else if ((code & ACCESS_PRIVATE) != 0) {
-			setAccess(ACCESS_PRIVATE);
+			access = ACCESS_PRIVATE;
 		}
 	}
 
@@ -372,5 +356,83 @@ public class Modifiers implements ModifiersIF, Codeable {
 			}
 		}
 		return true;
+	}
+
+	public static class Changeable extends Modifiers {
+		public Changeable() {
+			super();
+		}
+
+		public Changeable(int modifiers) {
+			super(modifiers);
+		}
+
+		public Changeable(Modifiers modifiers) {
+			super(modifiers);
+		}
+
+		public Changeable setAccess(int access) {
+			assert access == ACCESS_PUBLIC || access == ACCESS_PRIVATE || access == ACCESS_DEFAULT || access == ACCESS_PROTECTED;
+			super.access = access;
+			return this;
+		}
+
+		public Changeable setPublic() {
+			super.access = ACCESS_PUBLIC;
+			return this;
+		}
+
+		public Changeable setProtected() {
+			super.access = ACCESS_PROTECTED;
+			return this;
+		}
+
+		public Changeable setPrivate() {
+			super.access = ACCESS_PRIVATE;
+			return this;
+		}
+
+		public Changeable setDefaultAccess() {
+			super.access = ACCESS_DEFAULT;
+			return this;
+		}
+
+		public Modifiers immutable() {
+			return new Modifiers(this);
+		}
+
+		public Changeable setStatic(boolean isStatic) {
+			super.isStatic = isStatic;
+			return this;
+		}
+
+		public Changeable setFinal(boolean isFinal) {
+			super.isFinal = isFinal;
+			return this;
+		}
+
+		public Changeable setNative(boolean isNative) {
+			super.isNative = isNative;
+			return this;
+		}
+
+		public Changeable setAbstract(boolean isAbstract) {
+			super.isAbstract = isAbstract;
+			return this;
+		}
+
+		public Changeable setDefault(boolean isDefault) {
+			super.isDefault = isDefault;
+			return this;
+		}
+
+		public Changeable setSynchronized(boolean isSynchronized) {
+			super.isSynchronized = isSynchronized;
+			return this;
+		}
+
+		public void setModifiers(int code) {
+			super.setModifiers(code);
+		}
 	}
 }

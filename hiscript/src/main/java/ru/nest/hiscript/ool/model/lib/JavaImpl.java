@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassJava;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Constructor;
 

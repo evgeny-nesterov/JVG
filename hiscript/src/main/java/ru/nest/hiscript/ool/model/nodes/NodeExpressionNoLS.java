@@ -7,9 +7,9 @@ import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 import java.util.List;

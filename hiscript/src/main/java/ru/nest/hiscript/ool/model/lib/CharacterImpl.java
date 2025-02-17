@@ -1,8 +1,8 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.HiObject;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.fields.HiFieldChar;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 // @autoboxing
 public class CharacterImpl extends ImplUtil {

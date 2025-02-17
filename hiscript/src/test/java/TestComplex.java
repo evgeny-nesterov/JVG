@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
 import ru.nest.hiscript.HiScriptParseException;
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.compile.ParserUtil;
-import ru.nest.hiscript.ool.model.HiCompiler;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 

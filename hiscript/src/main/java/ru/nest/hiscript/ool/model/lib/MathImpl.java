@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.lib;
 
-import ru.nest.hiscript.ool.model.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 public class MathImpl extends ImplUtil {
 	public static void Math_int_abs_int(RuntimeContext ctx, int a) {

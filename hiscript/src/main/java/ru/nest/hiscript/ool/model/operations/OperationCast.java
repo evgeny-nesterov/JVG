@@ -2,11 +2,11 @@ package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiObject;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
-import ru.nest.hiscript.ool.model.RuntimeContext;
-import ru.nest.hiscript.ool.model.Value;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;

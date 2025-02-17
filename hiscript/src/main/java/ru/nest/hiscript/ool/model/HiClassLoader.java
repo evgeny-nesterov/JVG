@@ -1,14 +1,17 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
-import ru.nest.hiscript.ool.compile.ClassFileParseRule;
+import ru.nest.hiscript.ool.compile.HiCompiler;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
+import ru.nest.hiscript.ool.compile.parse.ClassFileParseRule;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiNative;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 

@@ -1,14 +1,14 @@
 package ru.nest.hiscript.ool;
 
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.compile.RootParseRule;
-import ru.nest.hiscript.ool.model.HiCompiler;
+import ru.nest.hiscript.ool.compile.HiCompiler;
+import ru.nest.hiscript.ool.compile.parse.RootParseRule;
 import ru.nest.hiscript.ool.model.HiNodeIF;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;

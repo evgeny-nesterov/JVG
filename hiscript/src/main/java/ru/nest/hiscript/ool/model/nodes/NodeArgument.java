@@ -5,10 +5,10 @@ import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.RuntimeContext;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 import java.io.IOException;
 
@@ -62,10 +62,12 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		if (clazz == null) {
-			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = getType();
 			clazz = getType().getClass(ctx);
+		} else {
+			ctx.nodeValueType.type = Type.getType(clazz);
 		}
 		return clazz;
 	}

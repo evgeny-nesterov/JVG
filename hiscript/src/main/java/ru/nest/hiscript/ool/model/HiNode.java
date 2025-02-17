@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.HiScriptRuntimeException;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -56,6 +57,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeWhile;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;

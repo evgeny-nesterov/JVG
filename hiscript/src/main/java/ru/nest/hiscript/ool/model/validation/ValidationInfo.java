@@ -1,6 +1,6 @@
 package ru.nest.hiscript.ool.model.validation;
 
-import ru.nest.hiscript.ool.model.HiCompiler;
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.PrintStream;

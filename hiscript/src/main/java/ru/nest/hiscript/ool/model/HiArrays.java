@@ -4,6 +4,8 @@ import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Array;
 import java.util.HashSet;
@@ -33,10 +35,11 @@ public class HiArrays implements PrimitiveTypes {
 
 	public static Class<?> getClass(HiClass clazz, int dimension) {
 		Class<?> c = null;
-		while (clazz.isArray()) {
-			clazz = ((HiClassArray) clazz).cellClass;
-			dimension++;
-		}
+		assert !clazz.isArray();
+//		while (clazz.isArray()) {
+//			clazz = ((HiClassArray) clazz).cellClass;
+//			dimension++;
+//		}
 		if (dimension > 0) {
 			StringBuilder prefix = new StringBuilder();
 			for (int i = 0; i < dimension; i++) {

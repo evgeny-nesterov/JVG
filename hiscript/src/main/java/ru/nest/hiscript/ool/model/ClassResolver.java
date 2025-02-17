@@ -1,5 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 public interface ClassResolver {

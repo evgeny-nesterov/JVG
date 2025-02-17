@@ -1,10 +1,9 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.tokenizer.Token;
 
-public class AnnotatedModifiers extends ParserUtil {
+public class AnnotatedModifiers {
 	private final NodeAnnotation[] annotations;
 
 	private Modifiers modifiers;
@@ -26,6 +25,10 @@ public class AnnotatedModifiers extends ParserUtil {
 			modifiers = new Modifiers();
 		}
 		return modifiers;
+	}
+
+	public void setModifiers(Modifiers modifiers) {
+		this.modifiers = modifiers;
 	}
 
 	public Token getToken() {
