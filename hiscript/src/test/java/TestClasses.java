@@ -505,6 +505,10 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){} void m(Integer x){assert false;}} new A().m(new Integer(1), new Integer(2));");
 		assertSuccessSerialize("class A{void m(int x){assert false;} void m(int... x){assert false;} void m(Integer x){}} new A().m(new Integer(1));");
 		assertSuccessSerialize("class A{void m(int x, int y){} void m(int... x){assert false;} void m(Integer x, Integer y){assert false;}} new A().m(1, 2);");
+		assertFail("Integer i1 = null, i2 = null; class A{void m(int x){} void m(int... x){} void m(Integer x){}} new A().m(i1, i2);", //
+				"null pointer");
+		assertFail("Boolean i1 = null, i2 = null; class A{void m(boolean x){} void m(boolean... x){} void m(Boolean x){}} new A().m(i1, i2);", //
+				"null pointer");
 
 		// primitive -> box+primitive
 		assertSuccessSerialize("class A {void m(Float x){assert false;} void m(float x){}} new A().m(1);");

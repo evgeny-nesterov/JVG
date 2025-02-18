@@ -329,21 +329,18 @@ public class Value implements PrimitiveTypes {
 			case BYTE:
 				if (byteNumber >= Character.MIN_VALUE) {
 					return (char) byteNumber;
-				} else {
-					break;
 				}
+				break;
 			case SHORT:
 				if (shortNumber >= Character.MIN_VALUE && shortNumber <= Character.MAX_VALUE) {
 					return (char) shortNumber;
-				} else {
-					break;
 				}
+				break;
 			case INT:
 				if (intNumber >= Character.MIN_VALUE && intNumber <= Character.MAX_VALUE) {
 					return (char) intNumber;
-				} else {
-					break;
 				}
+				break;
 		}
 		ctx.throwRuntimeException("char is expected");
 		return 0;
@@ -359,21 +356,18 @@ public class Value implements PrimitiveTypes {
 			case SHORT:
 				if (shortNumber >= Byte.MIN_VALUE && shortNumber <= Byte.MAX_VALUE) {
 					return (byte) shortNumber;
-				} else {
-					break;
 				}
+				break;
 			case CHAR:
 				if (character <= Byte.MAX_VALUE) {
 					return (byte) character;
-				} else {
-					break;
 				}
+				break;
 			case INT:
 				if (intNumber >= Byte.MIN_VALUE && intNumber <= Byte.MAX_VALUE) {
 					return (byte) intNumber;
-				} else {
-					break;
 				}
+				break;
 		}
 		ctx.throwRuntimeException("byte is expected");
 		return 0;
@@ -391,15 +385,13 @@ public class Value implements PrimitiveTypes {
 			case CHAR:
 				if (character <= Short.MAX_VALUE) {
 					return (short) character;
-				} else {
-					break;
 				}
+				break;
 			case INT:
 				if (intNumber >= Short.MIN_VALUE && intNumber <= Short.MAX_VALUE) {
 					return (short) intNumber;
-				} else {
-					break;
 				}
+				break;
 		}
 		ctx.throwRuntimeException("short is expected");
 		return 0;

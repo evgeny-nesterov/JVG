@@ -335,6 +335,9 @@ public class OperationInvocation extends BinaryOperation {
 					}
 
 					HiArrays.setArray(varargsClass, array, i, v1);
+					if (ctx.exitFromBlock()) {
+						return;
+					}
 				}
 
 				ctx.value.valueClass = varargsArrayClass;
