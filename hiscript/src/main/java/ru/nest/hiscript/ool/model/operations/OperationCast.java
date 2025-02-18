@@ -2,15 +2,15 @@ package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	private static final HiOperation instance = new OperationCast();
@@ -242,29 +242,31 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.valueClass;
+		HiClass c1;
 		if (v1.node instanceof NodeType) {
 			c1 = ((NodeType) v1.node).getTypeClass();
+		} else {
+			c1 = v1.valueClass;
 		}
 		v1.valueClass = c1;
-		if (ctx.exitFromBlock()) {
-			return;
-		}
-		HiClass c2 = v2.valueClass;
+
+		HiClass c2;
 		if (v2.originalValueClass != null) {
 			c2 = v2.originalValueClass;
+		} else {
+			c2 = v2.valueClass;
 		}
 
 		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
 		} else if (c1.isArray()) {
 			if (!canCastArray((HiClassArray) c1, c2)) {
-				errorCast(ctx, c2, v1.valueClass);
+				errorCast(ctx, c2, c1);
 				return;
 			}
 			v1.object = v2.object;
 		} else if (c2.isArray()) {
-			errorCast(ctx, c2, v1.valueClass);
+			errorCast(ctx, c2, c1);
 			return;
 		} else if (v2.object == null) {
 			v1.object = null;

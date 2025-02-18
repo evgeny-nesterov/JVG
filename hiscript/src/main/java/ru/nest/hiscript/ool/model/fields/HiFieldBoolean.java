@@ -23,9 +23,7 @@ public class HiFieldBoolean extends HiFieldPrimitive<Boolean> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
-		value.valueType = Value.VALUE;
-		value.valueClass = getClass(ctx);
-		value.bool = this.value;
+		value.setBooleanValue(this.value);
 	}
 
 	@Override

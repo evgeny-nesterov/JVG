@@ -256,10 +256,7 @@ public class NodeInvocation extends HiNode {
 		Value[] vs = ctx.getValues(1);
 		try {
 			// v1 - contains value as object
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.valueClass = object.clazz;
-			ctx.value.originalValueClass = null;
-			ctx.value.object = object;
+			ctx.value.setObjectValue(object.clazz, object);
 
 			// v2 - contains method attributes (name, arguments)
 			Value v = vs[0];

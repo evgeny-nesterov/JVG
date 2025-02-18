@@ -7,16 +7,11 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeBoolean extends HiNode {
-	private final static String name = "boolean";
-
-	private final static HiClass type = HiClass.getPrimitiveClass(name);
-
 	private final static NodeBoolean TRUE = new NodeBoolean(true);
 
 	private final static NodeBoolean FALSE = new NodeBoolean(false);
@@ -28,7 +23,7 @@ public class NodeBoolean extends HiNode {
 	}
 
 	private NodeBoolean(boolean value) {
-		super(name, TYPE_BOOLEAN, false);
+		super("boolean", TYPE_BOOLEAN, false);
 		this.value = value;
 	}
 
@@ -67,9 +62,7 @@ public class NodeBoolean extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = type;
-		ctx.value.bool = value;
+		ctx.value.setBooleanValue(value);
 	}
 
 	@Override

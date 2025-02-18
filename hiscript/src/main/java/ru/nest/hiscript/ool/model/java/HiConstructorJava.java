@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Constructor;
 
@@ -37,11 +36,7 @@ public class HiConstructorJava extends HiConstructor {
 				javaArgs[i] = argValue;
 			}
 			object.userObject = constructor.newInstance(javaArgs);
-
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.valueClass = clazz;
-			ctx.value.object = object;
-			ctx.value.originalValueClass = null;
+			ctx.value.setObjectValue(clazz, object);
 			return object;
 		} catch (Exception e) {
 			ctx.throwRuntimeException(e.getMessage());

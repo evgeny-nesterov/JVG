@@ -161,7 +161,7 @@ public class CompileClassContext implements ClassResolver {
 				if (method.name.equals(methods.get(i).name) && ((method.name.startsWith("get") && method.hasArguments(0)) || (method.name.startsWith("set") && method.hasArguments(1)))) {
 					boolean match;
 					if (method.name.startsWith("set")) {
-						StringBuilder fieldNameBuf = new StringBuilder(5).append(Character.toLowerCase(method.name.charAt(3)));
+						StringBuilder fieldNameBuf = new StringBuilder(method.name.length() - 3).append(Character.toLowerCase(method.name.charAt(3)));
 						if (method.name.length() > 4) {
 							fieldNameBuf.append(method.name.substring(4));
 						}

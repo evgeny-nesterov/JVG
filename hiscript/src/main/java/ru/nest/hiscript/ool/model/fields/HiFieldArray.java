@@ -33,9 +33,8 @@ public class HiFieldArray extends HiField<Object> {
 
     @Override
     public void get(RuntimeContext ctx, Value value) {
-        value.valueType = Value.VALUE;
-        value.valueClass = arrayType != null ? arrayType : getClass(ctx);
-        value.object = array;
+        HiClass valueClass = arrayType != null ? arrayType : getClass(ctx);
+        value.setArrayValue(valueClass, array);
     }
 
     @Override

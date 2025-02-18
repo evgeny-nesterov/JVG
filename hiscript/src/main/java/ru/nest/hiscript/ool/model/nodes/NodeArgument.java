@@ -102,19 +102,13 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		// TODO keep in field only runtime annotations
-
-//		HiField<?> field = HiField.getField(clazz, name, null);
-//		field.setModifiers(modifiers);
-//		field.declared = true;
-//		field.initialized = true;
-//
-//		ctx.addVariable(field);
+		// do nothing
 	}
 
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
+		// TODO keep in field only runtime annotations
 		os.writeTypeArgument(typeArgument);
 		os.writeUTF(name);
 		modifiers.code(os);

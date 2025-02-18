@@ -10,7 +10,6 @@ import ru.nest.hiscript.ool.model.classes.HiClassJava;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Method;
 
@@ -47,7 +46,7 @@ public class HiMethodJava extends HiMethod {
 	}
 
 	@Override
-	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
+	public void invoke(RuntimeContext ctx, HiClass clazz, Object object, HiField<?>[] arguments) {
 		Object javaObject = ((HiObject) object).userObject;
 
 		Object[] javaArgs = new Object[arguments.length - 1];
@@ -64,8 +63,6 @@ public class HiMethodJava extends HiMethod {
 		try {
 			Object resultJavaValue = method.invoke(javaObject, javaArgs);
 			Object resultValue = HiJava.convertFromJava(ctx, resultJavaValue);
-
-			ctx.value.valueType = Value.VALUE;
 			ctx.setValue(resultValue);
 		} catch (Exception e) {
 			ctx.throwRuntimeException(e.toString());

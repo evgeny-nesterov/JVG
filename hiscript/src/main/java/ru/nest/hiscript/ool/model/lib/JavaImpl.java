@@ -4,7 +4,6 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.classes.HiClassJava;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Constructor;
 
@@ -126,13 +125,9 @@ public class JavaImpl extends ImplUtil {
 
 		if (matchedJavaConstructor != null) {
 			Object javaObject = matchedJavaConstructor.newInstance(javaArgs);
-
 			HiObject object = new HiObject(ctx, clazz, null, null);
 			object.userObject = javaObject;
-
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.valueClass = clazz;
-			ctx.value.object = object;
+			ctx.value.setObjectValue(clazz, object);
 		} else {
 			ctx.throwRuntimeException("cannot find constructor for java class '" + hiClassName + "'");
 		}

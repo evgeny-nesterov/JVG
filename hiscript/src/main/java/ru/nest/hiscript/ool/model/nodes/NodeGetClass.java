@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
@@ -32,9 +33,9 @@ public class NodeGetClass extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx, HiClass clazz) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = ctx.getClassLoader().getClassClass(ctx);
-		ctx.value.object = ctx.getClassLoader().getClassObject(ctx, clazz);
+		HiClass valueClass = ctx.getClassLoader().getClassClass(ctx);
+		HiObject object = ctx.getClassLoader().getClassObject(ctx, clazz);
+		ctx.value.setObjectValue(valueClass, object);
 	}
 
 	@Override

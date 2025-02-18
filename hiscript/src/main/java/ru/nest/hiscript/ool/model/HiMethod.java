@@ -18,7 +18,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -483,13 +482,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	 * Arguments has to be added to ctx: ctx.addVariables(argsFields)
 	 * arguments is used only in HiClassJava
 	 */
-	public void invoke(RuntimeContext ctx, HiClass type, Object object, HiField<?>[] arguments) {
+	public void invoke(RuntimeContext ctx, HiClass clazz, Object object, HiField<?>[] arguments) {
 		if (body != null) {
 			if (modifiers.isNative()) {
-				ctx.value.valueType = Value.VALUE;
-				ctx.value.valueClass = type;
-				ctx.value.originalValueClass = null;
-				ctx.value.object = object;
+				ctx.value.setObjectOrArrayValue(clazz, clazz, object);
 			}
 			if (modifiers.isSynchronized()) {
 				synchronized (object) {

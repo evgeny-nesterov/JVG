@@ -17,6 +17,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 
 		get(ctx, value, valueType);
 
+		// after get
 		value.valueType = Value.VALUE;
 		value.valueClass = getClass(ctx);
 	}

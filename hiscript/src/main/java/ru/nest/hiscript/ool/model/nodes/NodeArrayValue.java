@@ -81,10 +81,7 @@ public class NodeArrayValue extends HiNode {
 			}
 			HiArrays.setArray(cellClass, value, i, ctx.value);
 		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = cellClass.getArrayClass();
-		ctx.value.object = value;
+		ctx.value.setArrayValue(cellClass.getArrayClass(), value);
 	}
 
 	@Override

@@ -119,8 +119,7 @@ public class NodeReturn extends HiNode {
 					assert NodeIdentifier.resolveVariable(ctx, ctx.value);
 				}
 			} else {
-				ctx.value.valueType = Value.VALUE;
-				ctx.value.valueClass = HiClassPrimitive.VOID;
+				ctx.value.setVoidValue();
 			}
 		} finally {
 			ctx.isReturn = true;

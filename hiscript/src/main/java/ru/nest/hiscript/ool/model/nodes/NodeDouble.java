@@ -6,20 +6,15 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeDouble extends NodeNumber {
-	private final static String name = "double";
-
-	private final static HiClass type = HiClass.getPrimitiveClass(name);
-
 	// TODO NaN, Infinite
 
 	public NodeDouble(double value, boolean hasSign, Token token) {
-		super(name, TYPE_DOUBLE, hasSign, token);
+		super("double", TYPE_DOUBLE, hasSign, token);
 		this.value = value;
 	}
 
@@ -43,9 +38,7 @@ public class NodeDouble extends NodeNumber {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = type;
-		ctx.value.doubleNumber = value;
+		ctx.value.setDoubleValue(value);
 	}
 
 	@Override

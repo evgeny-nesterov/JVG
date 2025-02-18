@@ -6,18 +6,13 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeInt extends NodeNumber {
-	private final static String name = "int";
-
-	private final static HiClass type = HiClass.getPrimitiveClass(name);
-
 	public NodeInt(int value, boolean hasSign, Token token) {
-		super(name, TYPE_INT, hasSign, token);
+		super("int", TYPE_INT, hasSign, token);
 		this.value = value;
 	}
 
@@ -41,9 +36,7 @@ public class NodeInt extends NodeNumber {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = type;
-		ctx.value.intNumber = value;
+		ctx.value.setIntValue(value);
 	}
 
 	@Override

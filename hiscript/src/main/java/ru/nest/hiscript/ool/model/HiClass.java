@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -712,18 +712,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			for (int i = 0; i < innerClasses.length; i++) {
 				HiClass innerClass = innerClasses[i];
 				valid &= innerClass.validate(validationInfo, ctx);
-				if (!isStaticRootClassTop) {
-					if (innerClass.isInterface) {
-						validationInfo.error("the member interface " + innerClass.getNameDescr() + " can only be defined inside a top-level class or interface", innerClass.token);
-						isStaticRootClassTop();
-						valid = false;
-					}
-
-//					// check on valid static modifier (includes annotations)
-//					if (innerClass.isStatic()) {
-//						validationInfo.error("the member type " + innerClass.getNameDescr() + " cannot be declared static; static types can only be declared in static or top level types", innerClass.token);
-//						valid = false;
-//					}
+				if (!isStaticRootClassTop && innerClass.isInterface) {
+					validationInfo.error("the member interface " + innerClass.getNameDescr() + " can only be defined inside a top-level class or interface", innerClass.token);
+					isStaticRootClassTop();
+					valid = false;
 				}
 			}
 		}

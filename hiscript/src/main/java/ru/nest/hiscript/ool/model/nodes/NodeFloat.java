@@ -6,20 +6,15 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeFloat extends NodeNumber {
-	private final static String name = "float";
-
-	private final static HiClass type = HiClass.getPrimitiveClass(name);
-
 	// TODO NaN, Infinite
 
 	public NodeFloat(float value, boolean hasSign, Token token) {
-		super(name, TYPE_FLOAT, hasSign, token);
+		super("float", TYPE_FLOAT, hasSign, token);
 		this.value = value;
 	}
 
@@ -43,9 +38,7 @@ public class NodeFloat extends NodeNumber {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = type;
-		ctx.value.floatNumber = value;
+		ctx.value.setFloatValue(value);
 	}
 
 	@Override

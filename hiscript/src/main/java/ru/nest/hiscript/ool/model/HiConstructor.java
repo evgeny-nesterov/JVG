@@ -1,9 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.runtime.HiObject;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.RuntimeContext.StackLevel;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
@@ -19,7 +16,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
-import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.RuntimeContext.StackLevel;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -445,10 +444,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 			ctx.isReturn = false;
 		}
 
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = clazz;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = object;
+		ctx.value.setObjectValue(clazz, object);
 		return object;
 	}
 

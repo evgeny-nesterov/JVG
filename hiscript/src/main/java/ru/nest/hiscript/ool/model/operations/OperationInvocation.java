@@ -12,7 +12,6 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
@@ -148,10 +147,7 @@ public class OperationInvocation extends BinaryOperation {
 						ctx.throwRuntimeException("null pointer");
 						return false;
 					}
-
-					v1.valueType = Value.VALUE;
-					v1.valueClass = HiClassPrimitive.INT;
-					v1.intNumber = Array.getLength(v1.object);
+					v1.setIntValue(Array.getLength(v1.object));
 					return true;
 				}
 			} else {

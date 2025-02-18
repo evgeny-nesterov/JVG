@@ -44,6 +44,7 @@ public class NodeAnnotationArgument extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// do nothing
 	}
 
 	@Override

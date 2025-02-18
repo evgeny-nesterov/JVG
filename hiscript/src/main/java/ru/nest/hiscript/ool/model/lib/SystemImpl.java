@@ -14,7 +14,6 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.RuntimeContext.StackLevel;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 
 import java.io.ByteArrayOutputStream;
@@ -122,8 +121,8 @@ public class SystemImpl extends ImplUtil {
 	}
 
 	public static void System_V_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {
-		HiClass returnClass = HiClass.OBJECT_CLASS;
 		Object returnValue = null;
+		HiClass originalValueClass = null;
 		try {
 			String text = getString(ctx, code);
 			if (!text.endsWith(";")) {
@@ -179,6 +178,7 @@ public class SystemImpl extends ImplUtil {
 					} else if (!newCtx.value.valueClass.isNull()) {
 						returnValue = newCtx.value.object;
 					}
+					originalValueClass = newCtx.value.originalValueClass;
 				}
 
 				if (!newInstance) {
@@ -210,10 +210,7 @@ public class SystemImpl extends ImplUtil {
 			ctx.throwRuntimeException("script execution error");
 			return;
 		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = returnClass;
-		ctx.value.object = returnValue;
+		returnObjectOrArray(ctx, HiClass.OBJECT_CLASS, originalValueClass, returnValue);
 	}
 
 	public static void System_Object_getVariable_String(RuntimeContext ctx, HiObject name) {

@@ -10,7 +10,6 @@ import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 
@@ -77,17 +76,11 @@ public class NodeString extends HiNode {
 		HiObject object = ctx.strings.get(text);
 		if (object == null) {
 			object = constructor.newInstance(ctx, null, null, null);
-			if (object != null) {
-				HiFieldArray chars = (HiFieldArray) object.getField(ctx, "chars");
-				chars.array = text.getChars();
-
-				ctx.strings.put(text, object);
-			}
+			HiFieldArray chars = (HiFieldArray) object.getField(ctx, "chars");
+			chars.array = text.getChars();
+			ctx.strings.put(text, object);
 		} else {
-			ctx.value.valueType = Value.VALUE;
-			ctx.value.valueClass = clazz;
-			ctx.value.originalValueClass = null;
-			ctx.value.object = object;
+			ctx.value.setObjectValue(clazz, object);
 		}
 		return object;
 	}

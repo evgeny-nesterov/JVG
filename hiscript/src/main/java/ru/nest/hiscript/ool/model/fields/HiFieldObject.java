@@ -47,10 +47,7 @@ public class HiFieldObject extends HiField<Object> {
 
 	@Override
 	public void get(RuntimeContext ctx, Value value) {
-		value.valueType = Value.VALUE;
-		value.valueClass = getClass(ctx);
-		value.originalValueClass = valueClass;
-		value.object = object;
+		value.setObjectOrArrayValue(getClass(ctx), valueClass, object);
 	}
 
 	@Override

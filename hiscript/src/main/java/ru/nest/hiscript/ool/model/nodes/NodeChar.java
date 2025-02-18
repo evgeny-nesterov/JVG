@@ -7,18 +7,13 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeChar extends HiNode {
-	private final static String name = "char";
-
-	private final static HiClass type = HiClass.getPrimitiveClass(name);
-
 	public NodeChar(char value, Token token) {
-		super(name, TYPE_CHAR, token, false);
+		super("char", TYPE_CHAR, token, false);
 		this.value = value;
 	}
 
@@ -57,9 +52,7 @@ public class NodeChar extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = type;
-		ctx.value.character = value;
+		ctx.value.setCharValue(value);
 	}
 
 	@Override

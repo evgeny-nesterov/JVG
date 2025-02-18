@@ -2,11 +2,9 @@ package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +19,10 @@ public class ImplUtil {
 		return chars != null ? new String(chars) : null;
 	}
 
+	public static String getString(RuntimeContext ctx) {
+		return getString(ctx, (HiObject) ctx.value.object);
+	}
+
 	public static char[] getChars(RuntimeContext ctx, HiObject string) {
 		HiField<?> field = string != null ? string.getField(ctx, "chars") : null;
 		if (field != null) {
@@ -31,77 +33,62 @@ public class ImplUtil {
 	}
 
 	protected static void returnVoid(RuntimeContext ctx) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.VOID;
+		ctx.value.setVoidValue();
 	}
 
 	protected static void returnByte(RuntimeContext ctx, byte value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.BYTE;
-		ctx.value.byteNumber = value;
+		ctx.value.setByteValue(value);
 	}
 
 	protected static void returnShort(RuntimeContext ctx, short value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.SHORT;
-		ctx.value.shortNumber = value;
+		ctx.value.setShortValue(value);
 	}
 
 	protected static void returnChar(RuntimeContext ctx, char value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.CHAR;
-		ctx.value.character = value;
+		ctx.value.setCharValue(value);
 	}
 
 	protected static void returnInt(RuntimeContext ctx, int value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.INT;
-		ctx.value.intNumber = value;
+		ctx.value.setIntValue(value);
 	}
 
 	protected static void returnLong(RuntimeContext ctx, long value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.LONG;
-		ctx.value.longNumber = value;
+		ctx.value.setLongValue(value);
 	}
 
 	protected static void returnFloat(RuntimeContext ctx, float value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.FLOAT;
-		ctx.value.floatNumber = value;
+		ctx.value.setFloatValue(value);
 	}
 
 	protected static void returnDouble(RuntimeContext ctx, double value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.DOUBLE;
-		ctx.value.doubleNumber = value;
+		ctx.value.setDoubleValue(value);
 	}
 
 	protected static void returnBoolean(RuntimeContext ctx, boolean value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClassPrimitive.BOOLEAN;
-		ctx.value.bool = value;
+		ctx.value.setBooleanValue(value);
 	}
 
 	protected static void returnArrayList(RuntimeContext ctx, Collection value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
-		ctx.value.originalValueClass = null;
-		ctx.value.object = ctx.value.valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
-		((List) ((HiObject) ctx.value.object).userObject).addAll(value);
+		HiClass valueClass = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
+		HiObject object = valueClass.searchConstructor(ctx).newInstance(ctx, null, null, null);
+		ctx.value.setObjectValue(valueClass, object);
+		((List) object.userObject).addAll(value);
 	}
 
 	protected static void returnString(RuntimeContext ctx, String value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = HiClass.STRING_CLASS;
-		ctx.value.object = NodeString.createString(ctx, value);
+		ctx.value.setObjectValue(HiClass.STRING_CLASS, NodeString.createString(ctx, value));
 	}
 
-	protected static void returnObject(RuntimeContext ctx, HiClass clazz, Object value) {
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = clazz;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = value;
+	protected static void returnObject(RuntimeContext ctx, HiClass clazz, HiObject value) {
+		ctx.value.setObjectValue(clazz, value);
+	}
+
+	protected static void returnArray(RuntimeContext ctx, HiClass clazz, Object array) {
+		ctx.value.setArrayValue(clazz, array);
+	}
+
+	protected static void returnObjectOrArray(RuntimeContext ctx, HiClass clazz, HiClass originalValueClass, Object value) {
+		ctx.value.setObjectOrArrayValue(clazz, originalValueClass, value);
 	}
 
 	protected static void setCtx(RuntimeContext ctx, Object... objects) {

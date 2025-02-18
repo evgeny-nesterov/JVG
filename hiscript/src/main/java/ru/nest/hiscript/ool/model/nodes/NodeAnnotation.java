@@ -67,6 +67,7 @@ public class NodeAnnotation extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// do nothing
 	}
 
 	@Override

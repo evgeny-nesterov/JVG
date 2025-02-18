@@ -54,11 +54,7 @@ public class NodeSuper extends HiNode {
 		} else {
 			objectClass = clazz;
 		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = objectClass;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = object;
+		ctx.value.setObjectValue(objectClass, object);
 	}
 
 	@Override

@@ -127,10 +127,7 @@ public class NodeArray extends HiNode {
 			}
 			dimensionsValues[i] = dimensionValue;
 		}
-
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = clazz;
-		ctx.value.object = Array.newInstance(arrayJavaClass, dimensionsValues);
+		ctx.value.setArrayValue(clazz, Array.newInstance(arrayJavaClass, dimensionsValues));
 	}
 
 	@Override

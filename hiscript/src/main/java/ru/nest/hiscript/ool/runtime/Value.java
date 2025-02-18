@@ -129,68 +129,41 @@ public class Value implements PrimitiveTypes {
 
 	public boolean set(Object value) {
 		originalValueClass = null;
-		if (value instanceof HiObject || value == null) {
-			valueType = VALUE;
-			if (value != null) {
-				HiObject object = (HiObject) value;
-				valueClass = object.clazz;
-				this.object = object;
-				return true;
-			} else {
-				object = null;
-				valueClass = HiClass.OBJECT_CLASS;
-				return true;
-			}
+		if (value instanceof HiObject) {
+			HiObject object = (HiObject) value;
+			setObjectValue(object.clazz, object);
+			return true;
+		} else if (value == null) {
+			setObjectValue(HiClass.OBJECT_CLASS, null);
+			return true;
 		} else {
-			// arrays
 			Class<?> clazz = value.getClass();
 			if (clazz.isArray()) {
-				valueType = VALUE;
-				this.valueClass = HiClass.getArrayType(clazz);
-				object = value;
+				setArrayValue(HiClass.getArrayType(clazz), value);
 				return true;
-			}
-
-			// primitives
-			else if (value instanceof Integer) {
-				valueType = VALUE;
-				intNumber = (Integer) value;
-				this.valueClass = HiClassPrimitive.INT;
+			} else if (clazz == Integer.class) {
+				setIntValue((Integer) value);
 				return true;
-			} else if (value instanceof Boolean) {
-				valueType = VALUE;
-				bool = (Boolean) value;
-				this.valueClass = HiClassPrimitive.BOOLEAN;
+			} else if (clazz == Boolean.class) {
+				setBooleanValue((Boolean) value);
 				return true;
-			} else if (value instanceof Long) {
-				valueType = VALUE;
-				longNumber = (Long) value;
-				this.valueClass = HiClassPrimitive.LONG;
+			} else if (clazz == Long.class) {
+				setLongValue((Long) value);
 				return true;
-			} else if (value instanceof Double) {
-				valueType = VALUE;
-				doubleNumber = (Double) value;
-				this.valueClass = HiClassPrimitive.DOUBLE;
+			} else if (clazz == Double.class) {
+				setDoubleValue((Double) value);
 				return true;
-			} else if (value instanceof Character) {
-				valueType = VALUE;
-				character = (Character) value;
-				this.valueClass = HiClassPrimitive.CHAR;
+			} else if (clazz == Character.class) {
+				setCharValue((Character) value);
 				return true;
-			} else if (value instanceof Byte) {
-				valueType = VALUE;
-				byteNumber = (Byte) value;
-				this.valueClass = HiClassPrimitive.BYTE;
+			} else if (clazz == Byte.class) {
+				setByteValue((Byte) value);
 				return true;
-			} else if (value instanceof Short) {
-				valueType = VALUE;
-				shortNumber = (Short) value;
-				this.valueClass = HiClassPrimitive.SHORT;
+			} else if (clazz == Float.class) {
+				setFloatValue((Float) value);
 				return true;
-			} else if (value instanceof Float) {
-				valueType = VALUE;
-				floatNumber = (Float) value;
-				this.valueClass = HiClassPrimitive.FLOAT;
+			} else if (clazz == Short.class) {
+				setShortValue((Short) value);
 				return true;
 			}
 			return false;
@@ -717,5 +690,80 @@ public class Value implements PrimitiveTypes {
 			return ((HiObject) object).clazz;
 		}
 		return valueClass;
+	}
+
+	public void setObjectValue(HiClass clazz, HiObject value) {
+		valueType = Value.VALUE;
+		valueClass = clazz;
+		originalValueClass = value != null ? value.clazz : null;
+		object = value;
+	}
+
+	public void setArrayValue(HiClass clazz, Object array) {
+		assert clazz.isArray();
+		valueType = Value.VALUE;
+		valueClass = clazz;
+		originalValueClass = clazz;
+		object = array;
+	}
+
+	public void setObjectOrArrayValue(HiClass clazz, HiClass originalValueClass, Object value) {
+		valueType = Value.VALUE;
+		valueClass = clazz;
+		this.originalValueClass = originalValueClass;
+		object = value;
+	}
+
+	public void setVoidValue() {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.VOID;
+	}
+
+	public void setByteValue(byte value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.BYTE;
+		byteNumber = value;
+	}
+
+	public void setShortValue(short value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.SHORT;
+		shortNumber = value;
+	}
+
+	public void setCharValue(char value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.CHAR;
+		character = value;
+	}
+
+	public void setIntValue(int value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.INT;
+		intNumber = value;
+	}
+
+	public void setLongValue(long value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.LONG;
+		longNumber = value;
+	}
+
+	public void setFloatValue(float value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.FLOAT;
+		floatNumber = value;
+	}
+
+	public void setDoubleValue(double value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.DOUBLE;
+		doubleNumber = value;
+	}
+
+	public void setBooleanValue(boolean value) {
+		valueType = Value.VALUE;
+		valueClass = HiClassPrimitive.BOOLEAN;
+		bool = value;
 	}
 }

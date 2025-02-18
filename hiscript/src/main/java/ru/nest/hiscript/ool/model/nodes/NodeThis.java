@@ -54,11 +54,8 @@ public class NodeThis extends HiNode {
 			}
 		}
 
-		// assumed currentObject is not null
-		ctx.value.valueType = Value.VALUE;
-		ctx.value.valueClass = currentObject.clazz;
-		ctx.value.originalValueClass = null;
-		ctx.value.object = currentObject;
+		assert currentObject != null;
+		ctx.value.setObjectValue(currentObject.clazz, currentObject);
 	}
 
 	@Override
