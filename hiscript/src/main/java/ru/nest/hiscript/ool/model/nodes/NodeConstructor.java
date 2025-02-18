@@ -20,44 +20,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NodeConstructor extends HiNode {
-	public NodeConstructor(NodeType nodeType, HiNode[] argValues) {
+	public NodeConstructor(NodeType nodeType, HiNode[] argsValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.nodeType = nodeType;
 		this.type = nodeType.getType();
-		this.argValues = argValues;
+		this.argsValues = argsValues;
 		name = type.getType().fullName;
 	}
 
-	public NodeConstructor(HiClass clazz, Type type, HiNode[] argValues) {
+	public NodeConstructor(HiClass clazz, Type type, HiNode[] argsValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.clazz = clazz;
 		this.type = type;
-		this.argValues = argValues;
+		this.argsValues = argsValues;
 		name = clazz.getFullName(clazz.getClassLoader());
 	}
 
-	private NodeConstructor(Type type, HiNode[] argValues) {
+	private NodeConstructor(Type type, HiNode[] argsValues) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
 		this.type = type;
-		this.argValues = argValues;
+		this.argsValues = argsValues;
 		// clazz has to be deserialized
 	}
 
 	public NodeConstructor(HiConstructor constructor) {
 		super("constructor", TYPE_CONSTRUCTOR, true);
 
-		HiNode[] argValues = null;
+		HiNode[] argsValues = null;
 		if (constructor.arguments != null) {
-			argValues = new HiNode[constructor.arguments.length];
-			for (int i = 0; i < argValues.length; i++) {
+			argsValues = new HiNode[constructor.arguments.length];
+			for (int i = 0; i < argsValues.length; i++) {
 				NodeArgument arg = constructor.arguments[i];
-				argValues[i] = new NodeIdentifier(arg.name, 0);
+				argsValues[i] = new NodeIdentifier(arg.name, 0);
 			}
 		}
 
 		this.clazz = constructor.clazz;
 		this.type = constructor.type;
-		this.argValues = argValues;
+		this.argsValues = argsValues;
 		this.constructor = constructor;
 		name = constructor.clazz.getFullName(clazz.getClassLoader());
 	}
@@ -66,7 +66,7 @@ public class NodeConstructor extends HiNode {
 
 	public HiClass[] argsClasses;
 
-	public HiNode[] argValues;
+	public HiNode[] argsValues;
 
 	private String name;
 
@@ -148,11 +148,11 @@ public class NodeConstructor extends HiNode {
 
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		if (argValues != null) {
-			int size = argValues.length;
+		if (argsValues != null) {
+			int size = argsValues.length;
 			argsClasses = new HiClass[size];
 			for (int i = 0; i < size; i++) {
-				HiNode argValue = argValues[i];
+				HiNode argValue = argsValues[i];
 				if (argValue.validate(validationInfo, ctx) && argValue.expectValue(validationInfo, ctx)) {
 					argsClasses[i] = argValue.getValueClass(validationInfo, ctx);
 				} else {
@@ -253,17 +253,17 @@ public class NodeConstructor extends HiNode {
 		ctx.addClass(clazz);
 
 		HiObject outboundObject = ctx.getOutboundObject(clazz);
-		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argValues, null, outboundObject);
+		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argsValues, null, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiNode[] argValues, HiObject object, HiObject outboundObject) {
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiNode[] argsValues, HiObject object, HiObject outboundObject) {
 		// build argument class array and evaluate method arguments
 		HiClass[] argsClasses = null;
-		if (argValues != null) {
-			int size = argValues.length;
+		if (argsValues != null) {
+			int size = argsValues.length;
 			argsClasses = new HiClass[size];
 			for (int i = 0; i < size; i++) {
-				argValues[i].execute(ctx);
+				argsValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return;
 				}
@@ -282,11 +282,11 @@ public class NodeConstructor extends HiNode {
 			level = level.parent;
 		}
 
-		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argValues, object, outboundObject);
+		invokeConstructor(ctx, clazz, type, constructor, argsClasses, argsValues, object, outboundObject);
 	}
 
-	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiConstructor constructor, HiClass[] argsClasses, HiNode[] argValues, HiObject object, HiObject outboundObject) {
-		HiField[] argsFields = getArgumentsFields(ctx, clazz, constructor, argValues);
+	public static void invokeConstructor(RuntimeContext ctx, HiClass clazz, Type type, HiConstructor constructor, HiClass[] argsClasses, HiNode[] argsValues, HiObject object, HiObject outboundObject) {
+		HiField[] argsFields = getArgumentsFields(ctx, clazz, constructor, argsValues);
 		if (ctx.exitFromBlock()) {
 			return;
 		}
@@ -351,13 +351,13 @@ public class NodeConstructor extends HiNode {
 	/**
 	 * build argument class array and evaluate method arguments
 	 */
-	public static HiField[] getArgumentsFields(RuntimeContext ctx, HiClass clazz, HiConstructor constructor, HiNode[] argValues) {
+	public static HiField[] getArgumentsFields(RuntimeContext ctx, HiClass clazz, HiConstructor constructor, HiNode[] argsValues) {
 		HiField[] argsFields = null;
-		if (argValues != null) {
-			int size = argValues.length;
+		if (argsValues != null) {
+			int size = argsValues.length;
 			argsFields = new HiField<?>[size + (constructor.hasVarargs() ? 1 : 0)]; //
 			for (int i = 0; i < size; i++) {
-				HiNode argValue = argValues[i];
+				HiNode argValue = argsValues[i];
 				argValue.execute(ctx);
 
 				HiField argField = null;
@@ -392,8 +392,8 @@ public class NodeConstructor extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeByte(argValues != null ? argValues.length : 0);
-		os.writeArray(argValues);
+		os.writeByte(argsValues != null ? argsValues.length : 0);
+		os.writeArray(argsValues);
 		os.writeType(type);
 		os.writeTypes(superTypes);
 		os.writeClass(clazz);
@@ -402,8 +402,8 @@ public class NodeConstructor extends HiNode {
 	}
 
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
-		HiNode[] argValues = os.readArray(HiNode.class, os.readByte());
-		NodeConstructor node = new NodeConstructor(os.readType(), argValues);
+		HiNode[] argsValues = os.readArray(HiNode.class, os.readByte());
+		NodeConstructor node = new NodeConstructor(os.readType(), argsValues);
 		node.superTypes = os.readTypes();
 		os.readClass(clazz -> node.clazz = clazz);
 		node.argsClasses = os.readClasses();

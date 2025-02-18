@@ -39,10 +39,10 @@ public class HiClassJava extends HiClass {
 
 	@Override
 	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, ArgumentsSignature signature) {
-		HiClass[] argTypes = signature.argsClasses;
-		Class[] javaArgClasses = new Class[argTypes.length];
-		for (int i = 0; i < argTypes.length; i++) {
-			HiClass argType = argTypes[i];
+		HiClass[] argsTypes = signature.argsClasses;
+		Class[] javaArgsClasses = new Class[argsTypes.length];
+		for (int i = 0; i < argsTypes.length; i++) {
+			HiClass argType = argsTypes[i];
 			if (argType.isNull()) {
 				continue;
 			}
@@ -51,10 +51,10 @@ public class HiClassJava extends HiClass {
 				classResolver.processResolverException("inconvertible java class argument: " + argType.getNameDescr());
 				return null;
 			}
-			javaArgClasses[i] = argTypeJavaClass;
+			javaArgsClasses[i] = argTypeJavaClass;
 		}
 		try {
-			Integer signatureId = Objects.hash((Object[]) javaArgClasses);
+			Integer signatureId = Objects.hash((Object[]) javaArgsClasses);
 			Map<Integer, HiConstructorJava> javaConstructorsMap = classResolver.getEnv().javaConstructorsMap;
 			HiConstructorJava javaConstructor = javaConstructorsMap.get(signatureId);
 			if (javaConstructor != null) {
@@ -63,12 +63,12 @@ public class HiClassJava extends HiClass {
 			Constructor matchedConstructor = null;
 			Constructor nullMatchedConstructor = null;
 			for (Constructor constructor : javaClass.getConstructors()) {
-				switch (matchParameters(javaArgClasses, constructor.getParameterTypes())) {
+				switch (matchParameters(javaArgsClasses, constructor.getParameterTypes())) {
 					case NOT:
 						continue;
 					case NULL_MATCHED:
 						if (nullMatchedConstructor != null) {
-							classResolver.processResolverException("multiple java constructors of class " + javaClass.getName() + " matched to arguments (" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedConstructor + " and " + constructor);
+							classResolver.processResolverException("multiple java constructors of class " + javaClass.getName() + " matched to arguments (" + String.join(", ", Arrays.asList(javaArgsClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedConstructor + " and " + constructor);
 							return null;
 						}
 						nullMatchedConstructor = constructor;
@@ -182,10 +182,10 @@ public class HiClassJava extends HiClass {
 
 	@Override
 	protected List<HiMethod> _searchMethods(ClassResolver classResolver, MethodSignature signature) {
-		HiClass[] argTypes = signature.argsClasses;
-		Class[] javaArgClasses = new Class[argTypes.length];
-		for (int i = 0; i < argTypes.length; i++) {
-			HiClass argType = argTypes[i];
+		HiClass[] argsTypes = signature.argsClasses;
+		Class[] javaArgsClasses = new Class[argsTypes.length];
+		for (int i = 0; i < argsTypes.length; i++) {
+			HiClass argType = argsTypes[i];
 			if (argType.isNull()) {
 				continue;
 			}
@@ -194,7 +194,7 @@ public class HiClassJava extends HiClass {
 				classResolver.processResolverException("Inconvertible java class argument: " + argType.getNameDescr());
 				return null;
 			}
-			javaArgClasses[i] = argTypeJavaClass;
+			javaArgsClasses[i] = argTypeJavaClass;
 		}
 		try {
 			HiMethodJava javaMethod = javaMethodsMap.get(signature);
@@ -207,12 +207,12 @@ public class HiClassJava extends HiClass {
 				if (!method.getName().equals(signature.name)) {
 					continue;
 				}
-				switch (matchParameters(javaArgClasses, method.getParameterTypes())) {
+				switch (matchParameters(javaArgsClasses, method.getParameterTypes())) {
 					case NOT:
 						continue;
 					case NULL_MATCHED:
 						if (nullMatchedMethod != null) {
-							classResolver.processResolverException("multiple java methods of class " + javaClass.getName() + " matched to signature " + signature.name + "(" + String.join(", ", Arrays.asList(javaArgClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
+							classResolver.processResolverException("multiple java methods of class " + javaClass.getName() + " matched to signature " + signature.name + "(" + String.join(", ", Arrays.asList(javaArgsClasses).stream().map(t -> t != null ? t.toString() : "any").collect(Collectors.toList())) + "): " + matchedMethod + " and " + method);
 							return null;
 						}
 						nullMatchedMethod = method;

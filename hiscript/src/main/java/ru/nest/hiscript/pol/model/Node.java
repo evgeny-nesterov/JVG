@@ -96,25 +96,25 @@ public abstract class Node {
 
 	private Methods methods = null;
 
-	public Method getMethod(RuntimeContext ctx, String namespace, String name, int[] argTypes, int[] argDimensions) {
+	public Method getMethod(RuntimeContext ctx, String namespace, String name, int[] argsTypes, int[] argsDimensions) {
 		if (methods != null) {
-			Method method = methods.get(namespace, name, argTypes, argDimensions);
+			Method method = methods.get(namespace, name, argsTypes, argsDimensions);
 			if (method != null) {
 				return method;
 			}
 		}
 
 		if (parent != null) {
-			return parent.getMethod(ctx, namespace, name, argTypes, argDimensions);
+			return parent.getMethod(ctx, namespace, name, argsTypes, argsDimensions);
 		} else if (ctx != null) {
-			return ctx.getMethod(namespace, name, argTypes, argDimensions);
+			return ctx.getMethod(namespace, name, argsTypes, argsDimensions);
 		}
 
 		return null;
 	}
 
 	public void addMethod(RuntimeContext ctx, Method method) throws ExecuteException {
-		Method m = getMethod(ctx, method.getNamespace(), method.getName(), method.getArgTypes(), method.getArgDimensions());
+		Method m = getMethod(ctx, method.getNamespace(), method.getName(), method.getArgsTypes(), method.getArgsDimensions());
 		if (m != null) {
 			throw new ExecuteException(method + " is already defined");
 		}

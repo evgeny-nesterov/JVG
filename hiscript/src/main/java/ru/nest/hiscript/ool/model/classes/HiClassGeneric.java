@@ -65,8 +65,8 @@ public class HiClassGeneric extends HiClass {
 	}
 
 	@Override
-	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
-		return clazz.searchMethod(classResolver, name, argTypes);
+	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argsTypes) {
+		return clazz.searchMethod(classResolver, name, argsTypes);
 	}
 
 	@Override

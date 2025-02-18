@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class NodeNative extends HiNode {
-	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argTypes, String[] argNames) {
+	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argsTypes, String[] argsNames) {
 		super("native", TYPE_NATIVE, false);
 
-		this.argNames = argNames;
+		this.argsNames = argsNames;
 
 		StringBuilder id = new StringBuilder();
 		id.append(clazz.fullName.startsWith(HiClass.ROOT_CLASS_NAME) ? clazz.fullName.substring(1) : clazz.fullName);
@@ -22,27 +22,27 @@ public class NodeNative extends HiNode {
 		id.append(returnType != null ? returnType.fullName : "void");
 		id.append('_');
 		id.append(name);
-		if (argTypes != null) {
-			for (int i = 0; i < argTypes.length; i++) {
+		if (argsTypes != null) {
+			for (int i = 0; i < argsTypes.length; i++) {
 				id.append('_');
-				id.append(argTypes[i].fullName);
+				id.append(argsTypes[i].fullName);
 			}
 		}
 
 		this.id = id.toString().intern();
-		argCount = argNames != null ? argNames.length : 0;
+		argsCount = argsNames != null ? argsNames.length : 0;
 	}
 
-	private NodeNative(String[] argNames, String id) {
+	private NodeNative(String[] argsNames, String id) {
 		super("native", TYPE_NATIVE, false);
-		this.argNames = argNames;
-		this.argCount = argNames != null ? argNames.length : 0;
+		this.argsNames = argsNames;
+		this.argsCount = argsNames != null ? argsNames.length : 0;
 		this.id = id;
 	}
 
-	private final int argCount;
+	private final int argsCount;
 
-	private final String[] argNames;
+	private final String[] argsNames;
 
 	private final String id;
 
@@ -62,10 +62,10 @@ public class NodeNative extends HiNode {
 		}
 
 		// invoke
-		Object[] args = new Object[1 + argCount];
+		Object[] args = new Object[1 + argsCount];
 		args[0] = ctx;
-		for (int i = 0; i < argCount; i++) {
-			HiField<?> f = ctx.getVariable(argNames[i]);
+		for (int i = 0; i < argsCount; i++) {
+			HiField<?> f = ctx.getVariable(argsNames[i]);
 			args[i + 1] = f.get();
 		}
 		ctx.getClassLoader().getNative().invoke(ctx, method, args);
@@ -74,8 +74,8 @@ public class NodeNative extends HiNode {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
-		os.writeByte(argCount);
-		os.writeUTFArray(argNames);
+		os.writeByte(argsCount);
+		os.writeUTFArray(argsNames);
 		os.writeUTF(id);
 	}
 

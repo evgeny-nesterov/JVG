@@ -519,9 +519,9 @@ public class TestClasses extends HiTest {
 
 		// Ambiguous method call
 		assertFailCompile("class A{void m(int x, int... y){} void m(int... x){}} new A().m(1, 2);", //
-				"Ambiguous method call. Both");
-		assertFailCompile("class A{void m(int x1, int x2){} void m(int... x){assert false;} void m(Integer x1, Integer x2){assert false;}} new A().m(1, new Integer(2));", //
-				"Ambiguous method call. Both");
+				"Ambiguous method call. Both m(int x, int[] y) in A and m(int[] x) in A match");
+		assertFailCompile("class A{void m(int x, int... y){} void m(int... x){}} class B extends A{} new B().m(1, 2);", //
+				"Ambiguous method call. Both m(int x, int[] y) in A and m(int[] x) in A match");
 
 		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(1, 2);"); // priority strict primitives over cast primitives
 		assertSuccessSerialize("class A {void m(int x, Integer y){assert true;} void m(Integer x, int y){assert false;}} new A().m(1, new Integer(2));"); // priority strict over autoboxing
@@ -529,6 +529,20 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class A {void m(Object x, Object y){assert false;} void m(String x, Integer y){assert true;}} new A().m(\"a\", new Integer(1));"); // priority strict over cast Object
 		assertSuccessSerialize("class A {void m(Double x, Integer y){assert true;} void m(Number x, Number y){assert false;}} new A().m(1.0, 1);"); // priority strict over cast
 		assertSuccessSerialize("class A {void m(Number x, Number y){assert false;} void m(Double x, Integer y){assert true;}} new A().m(1.0, 1);"); // priority strict over cast
+
+		assertFailCompile("class A{} class B extends A{} class C extends B{} class D{void m(A x, B y){} void m(B x, A y){}} new D().m(new C(), new C());",
+				"Ambiguous method call. Both m(A x, B y) in D and m(B x, A y) in D match");
+		assertFailCompile("class A{} class B extends A{} class C extends B{} class D{void m(B x, A y){} void m(A x, B y){}} new D().m(new C(), new C());",
+				"Ambiguous method call. Both m(B x, A y) in D and m(A x, B y) in D match");
+		assertFailCompile("class A{} class B extends A{} class C extends B{} class D{void m(A x, B... y){} void m(B x, A... y){}} new D().m(new C(), new C());",
+				"Ambiguous method call. Both m(A x, B[] y) in D and m(B x, A[] y) in D match");
+		assertFailCompile("class A{} class B extends A{} class C extends B{} class D{void m(A x, B... y){} void m(B x, A... y){}} new D().m(new B(), new B(), new B());",
+				"Ambiguous method call. Both m(A x, B[] y) in D and m(B x, A[] y) in D match");
+		assertSuccessSerialize("class A{} class B extends A{} class C extends B{} class D{void m(A x, A... y){assert false;} void m(B x, A... y){}} new D().m(new B(), new B(), new B());");
+		assertFailCompile("class A{} class B extends A{} class C extends B{} class D{void m(A x, B... y){} void m(B x, A y1, A y2){}} new D().m(new C(), new C(), new C());",
+				"Ambiguous method call. Both m(A x, B[] y) in D and m(B x, A y1, A y2) in D match");
+		assertSuccessSerialize("class A{} class B extends A{} class C extends B{} class D{void m(A x, A... y){assert false;} void m(B x, A y1, A y2){}} new D().m(new B(), new B(), new B());");
+		assertSuccessSerialize("class A{} class B extends A{} class C extends B{} class D{void m(B x, A y1, A y2){} void m(A x, A... y){assert false;}} new D().m(new B(), new B(), new B());");
 
 		assertSuccessSerialize("class A {void m(int x, int y){assert true;} void m(float x, float y){assert false;}} new A().m(new Integer(1), 2);"); // priority autoboxing (box->primitive) over primitive cast
 		assertSuccessSerialize("class A {void m(float x, float y){assert false;} void m(int x, int y){assert true;}} new A().m(new Integer(1), 2);"); // priority autoboxing (box->primitive) over primitive cast
@@ -892,6 +906,10 @@ public class TestClasses extends HiTest {
 				"';' is expected", //
 				"abstract method in non-abstract class", //
 				"abstract method m() is implemented in non-abstract class");
+		assertFailCompile("class A{abstract void m(int x, int... y){};", //
+				"';' is expected", //
+				"abstract method in non-abstract class", //
+				"abstract method m(int, int...) is implemented in non-abstract class");
 		assertFailCompile("abstract class A{final abstract void m();}", //
 				"illegal combination of modifiers: 'abstract' and 'final'");
 		assertFailCompile("abstract class A{abstract static void m();}", //

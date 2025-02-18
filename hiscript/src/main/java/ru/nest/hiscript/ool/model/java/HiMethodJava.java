@@ -26,22 +26,22 @@ public class HiMethodJava extends HiMethod {
 		super(clazz, null, null, null, null, name, (NodeArgument[]) null, null, null);
 		this.method = method;
 
-		Class[] argJavaClasses = method.getParameterTypes();
-		argCount = argJavaClasses.length;
-		arguments = new NodeArgument[argCount];
-		argNames = new String[argCount];
-		for (int i = 0; i < argCount; i++) {
-			Class argJavaClass = argJavaClasses[i];
-			Type argType = null;
-			if (argJavaClass.isPrimitive()) {
-				argType = Type.getPrimitiveType(argJavaClass.getName());
+		Class[] argsJavaClasses = method.getParameterTypes();
+		argsCount = argsJavaClasses.length;
+		arguments = new NodeArgument[argsCount];
+		argsNames = new String[argsCount];
+		for (int i = 0; i < argsCount; i++) {
+			Class argsJavaClass = argsJavaClasses[i];
+			Type argType;
+			if (argsJavaClass.isPrimitive()) {
+				argType = Type.getPrimitiveType(argsJavaClass.getName());
 			} else {
-				argType = Type.getTopType(argJavaClass.getSimpleName(), classResolver.getEnv());
+				argType = Type.getTopType(argsJavaClass.getSimpleName(), classResolver.getEnv());
 			}
 			String argName = "arg" + i;
 			arguments[i] = new NodeArgument(argType, argName, new Modifiers(), null);
 			arguments[i].clazz = argType.getType().getClass(classResolver);
-			argNames[i] = argName;
+			argsNames[i] = argName;
 		}
 	}
 

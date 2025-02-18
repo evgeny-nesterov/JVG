@@ -226,7 +226,7 @@ public class OperationInvocation extends BinaryOperation {
 
 	public void invokeMethod(RuntimeContext ctx, Value v1, Value v2) {
 		String name = v2.name;
-		HiNode[] argValues = v2.arguments;
+		HiNode[] argsValues = v2.arguments;
 		int v1ValueType = v1.valueType;
 		HiClass v1Clazz = v1.valueClass;
 		HiClass clazz = v1Clazz;
@@ -265,12 +265,12 @@ public class OperationInvocation extends BinaryOperation {
 		// build argument class array and evaluate method arguments
 		HiClass[] argsClasses = null;
 		HiField<?>[] argsFields = null;
-		if (argValues != null) {
-			int size = argValues.length;
+		if (argsValues != null) {
+			int size = argsValues.length;
 			argsClasses = new HiClass[size];
 			argsFields = new HiField[size + 1]; // +vararg
 			for (int i = 0; i < size; i++) {
-				argValues[i].execute(ctx);
+				argsValues[i].execute(ctx);
 				if (ctx.exitFromBlock()) {
 					return;
 				}
@@ -283,7 +283,7 @@ public class OperationInvocation extends BinaryOperation {
 						assert NodeIdentifier.resolve(ctx, ctx.value); // node resolved in validation
 					}
 
-					argsFields[i] = HiField.getField(type, null, argValues[i].getToken());
+					argsFields[i] = HiField.getField(type, null, argsValues[i].getToken());
 					argsFields[i].set(ctx, ctx.value);
 				}
 			}

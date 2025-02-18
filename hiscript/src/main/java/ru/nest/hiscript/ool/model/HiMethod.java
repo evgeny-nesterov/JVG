@@ -26,7 +26,7 @@ import java.util.List;
 public class HiMethod implements HiNodeIF, HasModifiers {
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
 
-	public int argCount;
+	public int argsCount;
 
 	public HiClass clazz;
 
@@ -48,9 +48,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	public HiNode body;
 
-	public HiClass[] argClasses;
+	public HiClass[] argsClasses;
 
-	public String[] argNames;
+	public String[] argsNames;
 
 	public HiClass returnClass;
 
@@ -100,7 +100,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		this.arguments = arguments;
 		this.throwsTypes = throwsTypes;
 		this.body = body;
-		this.argCount = arguments != null ? arguments.length : 0;
+		this.argsCount = arguments != null ? arguments.length : 0;
 	}
 
 	@Override
@@ -270,13 +270,13 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				HiMethod implementedMethod = variableClass.searchMethod(ctx, signature);
 				if (implementedMethod != null) {
 					name += implementedMethod.name;
-					argCount = implementedMethod.argCount;
+					argsCount = implementedMethod.argsCount;
 					boolean isVarargs = false;
-					HiClass[] newArgClasses = new HiClass[argCount];
-					if (arguments != null && argCount > 0) {
-						for (int i = 0; i < argCount; i++) {
+					HiClass[] newArgsClasses = new HiClass[argsCount];
+					if (arguments != null && argsCount > 0) {
+						for (int i = 0; i < argsCount; i++) {
 							NodeArgument receivedArgument = arguments[i];
-							HiClass receivedClass = argClasses[i];
+							HiClass receivedClass = argsClasses[i];
 							NodeArgument methodArgument = implementedMethod.arguments[i];
 							HiClass requiredArgumentClass = methodArgument.clazz;
 
@@ -301,11 +301,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 							receivedArgument.typeArgument = methodArgument.typeArgument;
 							ctx.level.addField(receivedArgument);
 							ctx.initializedNodes.add(receivedArgument);
-							newArgClasses[i] = requiredArgumentClass;
+							newArgsClasses[i] = requiredArgumentClass;
 						}
-						isVarargs = implementedMethod.arguments[argCount - 1].isVarargs();
+						isVarargs = implementedMethod.arguments[argsCount - 1].isVarargs();
 					}
-					argClasses = newArgClasses;
+					argsClasses = newArgsClasses;
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
 
@@ -315,7 +315,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 						returnType = Type.getType(returnClass);
 					}
 
-					signature = new MethodSignature(name, argClasses, isVarargs);
+					signature = new MethodSignature(name, argsClasses, isVarargs);
 				} else {
 					validationInfo.error("incompatible parameters signature in lambda expression", variableNode.getToken());
 					valid = false;
@@ -409,13 +409,13 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 					clazz.interfaceTypes = new Type[] {Type.getType(variableClass)};
 
 					name += implementedMethod.name;
-					argCount = implementedMethod.argCount;
-					argClasses = implementedMethod.argClasses;
+					argsCount = implementedMethod.argsCount;
+					argsClasses = implementedMethod.argsClasses;
 					arguments = implementedMethod.arguments;
 					returnType = implementedMethod.returnType;
 					returnClass = implementedMethod.returnClass;
 					boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
-					signature = new MethodSignature(name, argClasses, isVarargs);
+					signature = new MethodSignature(name, argsClasses, isVarargs);
 
 					if (body != null && classResolver instanceof CompileClassContext) {
 						CompileClassContext ctx = (CompileClassContext) classResolver;
@@ -447,33 +447,33 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	}
 
 	public boolean hasVarargs() {
-		return argCount > 0 && arguments[argCount - 1].isVarargs();
+		return argsCount > 0 && arguments[argsCount - 1].isVarargs();
 	}
 
 	public void resolve(ClassResolver classResolver) {
 		if (signature == null) {
 			if (arguments != null) {
 				int length = arguments.length;
-				if (argClasses == null) {
-					argClasses = new HiClass[length];
+				if (argsClasses == null) {
+					argsClasses = new HiClass[length];
 					for (int i = 0; i < length; i++) {
-						argClasses[i] = arguments[i].getType().getClass(classResolver);
+						argsClasses[i] = arguments[i].getType().getClass(classResolver);
 					}
 				}
-				argNames = new String[length];
+				argsNames = new String[length];
 				for (int i = 0; i < length; i++) {
-					argNames[i] = arguments[i].name;
+					argsNames[i] = arguments[i].name;
 				}
 			}
 			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
-			signature = new MethodSignature(name, argClasses, isVarargs);
+			signature = new MethodSignature(name, argsClasses, isVarargs);
 
 			if (returnType != null && returnClass == null) {
 				returnClass = returnType.getClass(classResolver);
 			}
 
 			if (modifiers.isNative() && body == null) {
-				body = new NodeNative(clazz, returnClass, name, argClasses, argNames);
+				body = new NodeNative(clazz, returnClass, name, argsClasses, argsNames);
 			}
 		}
 	}
@@ -515,9 +515,9 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	public HiClass resolveGenericClassByArgument(HiClass clazz, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
-			if (argClasses.length > 0) {
-				for (int i = 0; i < argClasses.length; i++) {
-					HiClass argClass = argClasses[i];
+			if (argsClasses.length > 0) {
+				for (int i = 0; i < argsClasses.length; i++) {
+					HiClass argClass = argsClasses[i];
 					if (argClass == genericClass) {
 						HiClass resolveClass = invokeArgumentsClasses[i];
 						if (resolveClass.isPrimitive()) {
@@ -552,11 +552,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		StringBuilder buf = new StringBuilder();
 		buf.append(name);
 		buf.append('(');
-		for (int i = 0; i < argCount; i++) {
+		for (int i = 0; i < argsCount; i++) {
 			if (i != 0) {
 				buf.append(", ");
 			}
-			HiClass methodArgumentClass = argClasses[i];
+			HiClass methodArgumentClass = argsClasses[i];
 			if (methodArgumentClass.isGeneric()) { // not primitive
 				Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
 				buf.append(argumentType.fullName);
@@ -576,11 +576,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			StringBuilder buf = new StringBuilder();
 			buf.append(name);
 			buf.append('(');
-			for (int i = 0; i < argCount; i++) {
+			for (int i = 0; i < argsCount; i++) {
 				if (i != 0) {
 					buf.append(", ");
 				}
-				buf.append(arguments[i].getTypeName());
+				buf.append(arguments[i].clazz.getNameDescr());
 				buf.append(' ');
 				buf.append(arguments[i].name);
 			}
@@ -592,7 +592,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		// ignore argNames, signature, descr, annotationDefaultValue
+		// ignore argsNames, signature, descr, annotationDefaultValue
 		os.writeByte(HiNode.TYPE_METHOD);
 		os.writeToken(token);
 		os.writeShortArray(annotations);
@@ -600,7 +600,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		os.writeNullable(generics);
 		os.writeType(returnType);
 		os.writeUTF(name);
-		os.writeByte(argCount);
+		os.writeByte(argsCount);
 		os.writeNullable(arguments);
 		os.writeByte(throwsTypes != null ? throwsTypes.length : 0);
 		os.writeNullable(throwsTypes);
@@ -608,7 +608,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		os.writeBoolean(isAnnotationArgument);
 		os.writeClass(returnClass); // null for void
 		os.writeClasses(throwsClasses);
-		os.writeClasses(argClasses);
+		os.writeClasses(argsClasses);
 		os.writeClass(clazz);
 		// TODO rewrittenMethod
 	}
@@ -628,7 +628,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		method.isAnnotationArgument = os.readBoolean();
 		os.readClass(clazz -> method.returnClass = clazz);
 		method.throwsClasses = os.readClasses();
-		method.argClasses = os.readClasses();
+		method.argsClasses = os.readClasses();
 		os.readClass(clazz -> method.clazz = clazz);
 		if (readToken) {
 			method.setToken(token);

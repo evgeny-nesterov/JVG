@@ -114,7 +114,7 @@ public class TestLambda extends HiTest {
 
 		// object
 		assertSuccessSerialize("interface A{void get();} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
-		assertSuccessSerialize("interface A{void get(); default void get2(){} static void get3(){}} class C{void get(){}}; C c = new C(); A a = c::get; a.get();");
+		assertSuccessSerialize("interface A{void getX(int... x); default void getX2(int... x){} static void getX3(int... x){}} class C{void getX(int... x){}}; C c = new C(); A a = c::getX; a.getX(1, 2, 3);");
 		assertSuccessSerialize("interface A{void get();} class C{static void get(){}}; A a = C::get; a.get();");
 		assertFailCompile("interface A{void get(); void get2();} class C{void m(){}}; A a = new C()::m;", //
 				"functional interface not match to 'A'");
@@ -158,6 +158,23 @@ public class TestLambda extends HiTest {
 		assertSuccessSerialize("interface I{int get(int x,int y);} class C{int m(I i,int x,int y){return i.get(x,y);}} class D{int d(int x,int y){return x+y;}} assert new C().m(new D()::d,1,2)==3;");
 		assertSuccessSerialize("interface I{String get(String s, int... x);} class C{String m(I i){i.get(\"l=\",1,2,3);}} class D{String d(String s, int... x){return s+x.length;}} assert new C().m(new D()::d).equals(\"l=3\");");
 		assertSuccessSerialize("interface I{int get(int x, String s);} class C{int m(I i){return i.get(2, \"abc\");}} class D{int d(long x, Object s){return (int)x + ((String)s).length();}} assert new C().m(new D()::d) == 5;");
+		assertSuccessSerialize("interface A{void get(int x, int y);} class B{void g(long a, Integer... b){}} A a = new B()::g;");
+		assertFailCompile("interface A{void get(int x, int... y);} class B{void g(long a, Integer b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get(int x, int[] y)' of functional interface 'A'");
+		assertSuccessSerialize("interface A{void get(int x, Integer y);} class B{void g(long a, int... b){}} A a = new B()::g;");
+		assertFailCompile("interface A{void get(long x, Integer y);} class B{void g(int a, int... b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get(long x, Integer y)' of functional interface 'A'");
+		assertFailCompile("interface A{void get(int x, long y);} class B{void g(int a, int... b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get(int x, long y)' of functional interface 'A'");
+		assertFailCompile("interface A{void get();} class B{void g(int a, int... b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get()' of functional interface 'A'");
+		assertSuccessSerialize("interface A{void get(int[] x);} class B{void g(int... b){}} A a = new B()::g;");
+		assertSuccessSerialize("interface A{void get(int[][] x);} class B{void g(int[]... b){}} A a = new B()::g;");
+		assertFailCompile("interface A{void get(int[][][] x);} class B{void g(int[]... b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get(int[][][] x)' of functional interface 'A'");
+		assertSuccessSerialize("interface A{void get(Integer[] x);} class B{void g(int[]... b){}} A a = new B()::g;");
+		assertFailCompile("interface A{void get(int[] x);} class B{void g(Integer[]... b){}} A a = new B()::g;", //
+				"method 'g' of class 'B' doesn't match to the method 'get(int[] x)' of functional interface 'A'");
 
 		assertFailCompile("interface I{void get();} class C{void m(I i){i.get(1);}} class D{int d(){return 1;}} new C().m(new D()::d);", //
 				"cannot resolve method 'get' in 'I'"); // return type not match

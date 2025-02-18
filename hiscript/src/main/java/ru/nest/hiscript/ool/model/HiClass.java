@@ -270,23 +270,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
 		this.enclosingClass = enclosingClass;
 		this.type = type;
-
-		// try resolve super class if needed
-		boolean isRuntime = classResolver instanceof RuntimeContext;
-		// TODO delete?
-		if (superClass == null && superClassType != null && isRuntime) {
-			superClass = superClassType.getClass(classResolver);
-		}
-
 		this.classLoader = classLoader;
 		// intern name to optimize via a == b
 		this.name = (name != null ? name : "").intern();
 		this.fullName = getFullName(classLoader);
 		this.hashCode = fullName.hashCode();
 		this.generics = generics;
-
-		if (classLoader != null) {
-			classLoader.addClass(this, isRuntime);
+		if (classLoader != null) { // generated classes may have null classLoader
+			classLoader.addClass(this, classResolver instanceof RuntimeContext);
 		}
 	}
 
@@ -708,15 +699,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		if (innerClasses != null) {
-			boolean isStaticRootClassTop = isStaticRootClassTop();
 			for (int i = 0; i < innerClasses.length; i++) {
 				HiClass innerClass = innerClasses[i];
 				valid &= innerClass.validate(validationInfo, ctx);
-				if (!isStaticRootClassTop && innerClass.isInterface) {
-					validationInfo.error("the member interface " + innerClass.getNameDescr() + " can only be defined inside a top-level class or interface", innerClass.token);
-					isStaticRootClassTop();
-					valid = false;
-				}
 			}
 		}
 
@@ -1118,8 +1103,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	private final Map<MethodSignature, List<HiMethod>> methodsHash = new HashMap<>();
 
-	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
-		return searchMethod(classResolver, new MethodSignature(name, argTypes, false));
+	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argsTypes) {
+		return searchMethod(classResolver, new MethodSignature(name, argsTypes, false));
 	}
 
 	public HiMethod searchMethod(ClassResolver classResolver, MethodSignature signature) {
@@ -1165,7 +1150,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 						return foundMethods;
 					}
 				} else {
-					ArgClassPriorityType argPriority = foundMethod.signature.getArgsPriority(method.signature, searchSignature);
+					ArgClassPriorityType argPriority = foundMethod.signature.getPriority(method.signature, searchSignature);
 					if (argPriority == ArgClassPriorityType.higher) {
 						return foundMethods;
 					} else if (argPriority == ArgClassPriorityType.lower) {
@@ -1184,12 +1169,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	protected List<HiMethod> _searchMethods(ClassResolver classResolver, MethodSignature signature) {
 		String name = signature.name;
-		HiClass[] argTypes = signature.argsClasses;
+		HiClass[] argsClasses = signature.argsClasses;
 		List<HiMethod> matchedMethods = null;
 
 		// functional method
 		if (functionalMethod != null) {
-			if (isMatchMethodArguments(classResolver, functionalMethod, argTypes)) {
+			if (isMatchMethodArguments(classResolver, functionalMethod, argsClasses)) {
 				matchedMethods = addFoundMethod(functionalMethod, signature, matchedMethods, false);
 			}
 		}
@@ -1199,7 +1184,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			for (int i = 0; i < methods.length; i++) {
 				HiMethod method = methods[i];
 				if (method.name.equals(name) || method.isLambda() || signature.isLambda()) {
-					if (isMatchMethodArguments(classResolver, method, argTypes)) {
+					if (isMatchMethodArguments(classResolver, method, argsClasses)) {
 						matchedMethods = addFoundMethod(method, signature, matchedMethods, false);
 					}
 				}
@@ -1249,12 +1234,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return matchedMethods;
 	}
 
-	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiClass[] argTypes) {
+	public HiMethod getInterfaceAbstractMethod(ClassResolver classResolver, HiMethod method) {
 		if (methods != null && methods.length > 0) {
 			for (MatchMethodArgumentsType matchType : MatchMethodArgumentsType.values()) {
 				for (int i = 0; i < methods.length; i++) {
 					HiMethod m = methods[i];
-					if (m.isAbstract() && isMatchMethodDefinition(classResolver, m, argTypes, matchType)) {
+					if (m.isAbstract() && isMatchMethodsInvocation(classResolver, m, method, matchType)) {
 						return m;
 					}
 				}
@@ -1262,11 +1247,14 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		if (interfaces != null) {
 			for (int i = 0; i < interfaces.length; i++) {
-				HiMethod m = interfaces[i].getInterfaceAbstractMethod(classResolver, argTypes);
+				HiMethod m = interfaces[i].getInterfaceAbstractMethod(classResolver, method);
 				if (m != null) {
 					return m;
 				}
 			}
+		}
+		if (superClass != null) {
+			return superClass.getInterfaceAbstractMethod(classResolver, method);
 		}
 		return null;
 	}
@@ -1299,112 +1287,117 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 	}
 
-	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argTypes) {
+	private boolean isMatchMethodArguments(ClassResolver classResolver, HiMethod method, HiClass[] argsTypes) {
 		if (method.hasVarargs()) {
-			int mainArgCount = method.argCount - 1;
-			if (!isMatchMethodArgumentsPartially(classResolver, method, argTypes, mainArgCount)) {
+			int mainArgsCount = method.argsCount - 1;
+			if (!isMatchMethodArgumentsPartially(classResolver, method, argsTypes, mainArgsCount)) {
 				return false;
 			}
 
-			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
-			NodeArgument vararg = method.arguments[mainArgCount];
-			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
-				HiClass argType = argTypes[mainArgCount].getArrayType();
+			HiClass varargsType = method.argsClasses[mainArgsCount].getArrayType();
+			NodeArgument vararg = method.arguments[mainArgsCount];
+			if (argsTypes.length == method.argsCount && argsTypes[mainArgsCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
+				HiClass argType = argsTypes[mainArgsCount].getArrayType();
 				if (!HiClass.autoCast(classResolver, argType, varargsType, false, true)) {
 					return false;
 				}
 				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 			} else {
-				for (int i = mainArgCount; i < argTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, argTypes[i], varargsType, false, true)) {
+				for (int i = mainArgsCount; i < argsTypes.length; i++) {
+					if (!HiClass.autoCast(classResolver, argsTypes[i], varargsType, false, true)) {
 						return false;
 					}
 				}
-				for (int i = mainArgCount; i < argTypes.length; i++) {
-					argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				for (int i = mainArgsCount; i < argsTypes.length; i++) {
+					argsTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
 				}
 			}
 		} else {
-			int argCount = method.argCount;
-			if (argCount != argTypes.length) {
+			int argsCount = method.argsCount;
+			if (argsCount != argsTypes.length) {
 				return false;
 			}
-			if (!isMatchMethodArgumentsPartially(classResolver, method, argTypes, argCount)) {
+			if (!isMatchMethodArgumentsPartially(classResolver, method, argsTypes, argsCount)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean isMatchMethodArgumentsPartially(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, int argCount) {
-		if (argCount > argTypes.length) {
+	private boolean isMatchMethodArgumentsPartially(ClassResolver classResolver, HiMethod method, HiClass[] argsTypes, int argsCount) {
+		if (argsCount > argsTypes.length) {
 			return false;
 		}
 
 		method.resolve(classResolver);
 
-		for (int i = 0; i < argCount; i++) {
-			if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, true)) {
+		for (int i = 0; i < argsCount; i++) {
+			if (!HiClass.autoCast(classResolver, argsTypes[i], method.argsClasses[i], false, true)) {
 				return false;
 			}
 		}
-		for (int i = 0; i < argCount; i++) {
-			argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+		for (int i = 0; i < argsCount; i++) {
+			argsTypes[i].applyLambdaImplementedMethod(classResolver, method.argsClasses[i], method.arguments[i]);
 		}
 		return true;
 	}
 
-	private boolean isMatchMethodDefinition(ClassResolver classResolver, HiMethod method, HiClass[] argTypes, MatchMethodArgumentsType matchType) {
-		if (matchType.isVarargs() && method.hasVarargs()) {
-			int mainArgCount = method.argCount - 1;
-			if (mainArgCount > argTypes.length) {
+	/**
+	 * @param method1	method for invocation with matching arguments
+	 * @param method2	check whether this method may be invoked with arguments from method1
+	 */
+	private boolean isMatchMethodsInvocation(ClassResolver classResolver, HiMethod method1, HiMethod method2, MatchMethodArgumentsType matchType) {
+		if (matchType.isVarargs() && method1.hasVarargs() && !method2.hasVarargs()) {
+			return false;
+		} else if (matchType.isVarargs() && !method1.hasVarargs() && method2.hasVarargs()) {
+			int mainArgsCount = method2.argsCount - 1;
+			if (mainArgsCount > method1.argsCount) {
 				return false;
 			}
 
-			method.resolve(classResolver);
-
-			for (int i = 0; i < mainArgCount; i++) {
-				if (!HiClass.autoCast(classResolver, argTypes[i], method.argClasses[i], false, matchType.isAutobox())) {
+			HiClass[] argsClasses1 = method1.argsClasses;
+			HiClass[] argsClasses2 = method2.argsClasses;
+			for (int i = 0; i < mainArgsCount; i++) {
+				if (!HiClass.autoCast(classResolver, argsClasses1[i], argsClasses2[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
-			for (int i = 0; i < mainArgCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+			for (int i = 0; i < mainArgsCount; i++) {
+				argsClasses2[i].applyLambdaImplementedMethod(classResolver, argsClasses1[i], method1.arguments[i]);
 			}
 
-			HiClass varargsType = method.argClasses[mainArgCount].getArrayType();
-			NodeArgument vararg = method.arguments[mainArgCount];
-			if (argTypes.length == method.argCount && argTypes[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
-				HiClass argType = argTypes[mainArgCount].getArrayType();
+			HiClass varargsType = method2.argsClasses[mainArgsCount].getArrayType();
+			NodeArgument varargs = method2.arguments[mainArgsCount];
+			if (method1.argsCount == method2.argsCount && method1.argsClasses[mainArgsCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
+				HiClass argType = method1.argsClasses[mainArgsCount].getArrayType();
 				if (!HiClass.autoCast(classResolver, varargsType, argType, false, matchType.isAutobox())) {
 					return false;
 				}
-				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				argType.applyLambdaImplementedMethod(classResolver, varargsType, varargs);
 			} else {
-				for (int i = mainArgCount; i < argTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, varargsType, argTypes[i], false, matchType.isAutobox())) {
+				for (int i = mainArgsCount; i < method1.argsCount; i++) {
+					if (!HiClass.autoCast(classResolver, method1.argsClasses[i], varargsType, false, matchType.isAutobox())) {
 						return false;
 					}
 				}
-				for (int i = mainArgCount; i < argTypes.length; i++) {
-					argTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				for (int i = mainArgsCount; i < method2.argsCount; i++) {
+					argsClasses2[i].applyLambdaImplementedMethod(classResolver, varargsType, varargs);
 				}
 			}
 		} else {
-			int argCount = method.argCount;
-			if (argCount != argTypes.length) {
+			int argCount = method1.argsCount;
+			if (argCount != method2.argsCount) {
 				return false;
 			}
-
-			method.resolve(classResolver);
-
+			HiClass[] argsClasses1 = method1.argsClasses;
+			HiClass[] argsClasses2 = method2.argsClasses;
 			for (int i = 0; i < argCount; i++) {
-				if (!HiClass.autoCast(classResolver, method.argClasses[i], argTypes[i], false, matchType.isAutobox())) {
+				if (!HiClass.autoCast(classResolver, argsClasses1[i], argsClasses2[i], false, matchType.isAutobox())) {
 					return false;
 				}
 			}
 			for (int i = 0; i < argCount; i++) {
-				argTypes[i].applyLambdaImplementedMethod(classResolver, method.argClasses[i], method.arguments[i]);
+				argsClasses2[i].applyLambdaImplementedMethod(classResolver, argsClasses1[i], method1.arguments[i]);
 			}
 		}
 		return true;
@@ -1436,8 +1429,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 	}
 
-	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argTypes) {
-		return getMethod(classResolver, new MethodSignature(name, argTypes, false));
+	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argsTypes) {
+		return getMethod(classResolver, new MethodSignature(name, argsTypes, false));
 	}
 
 	private HiMethod getMethod(ClassResolver classResolver, MethodSignature signature) {
@@ -1454,15 +1447,15 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	private HiMethod _getMethod(ClassResolver classResolver, MethodSignature signature) {
 		String name = signature.name;
-		HiClass[] argTypes = signature.argsClasses;
+		HiClass[] argsTypes = signature.argsClasses;
 
 		if (functionalMethod != null) {
-			int argCount = functionalMethod.argCount;
-			if (argCount == argTypes.length) {
+			int argCount = functionalMethod.argsCount;
+			if (argCount == argsTypes.length) {
 				functionalMethod.resolve(classResolver);
 				boolean match = true;
 				for (int i = 0; i < argCount; i++) {
-					if (argTypes[i] != functionalMethod.argClasses[i]) {
+					if (argsTypes[i] != functionalMethod.argsClasses[i]) {
 						match = false;
 						break;
 					}
@@ -1479,15 +1472,15 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				FOR:{
 					HiMethod method = methods[i];
 					if (method.name.equals(name)) {
-						int argCount = method.argCount;
-						if (argCount != argTypes.length) {
+						int argCount = method.argsCount;
+						if (argCount != argsTypes.length) {
 							continue;
 						}
 
 						method.resolve(classResolver);
 
 						for (int j = 0; j < argCount; j++) {
-							if (argTypes[j] != method.argClasses[j]) {
+							if (argsTypes[j] != method.argsClasses[j]) {
 								break FOR;
 							}
 						}
@@ -1518,8 +1511,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	private final Map<ArgumentsSignature, List<HiConstructor>> constructorsHash = new HashMap<>();
 
-	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argTypes) {
-		ArgumentsSignature signature = new ArgumentsSignature(argTypes, false);
+	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argsTypes) {
+		ArgumentsSignature signature = new ArgumentsSignature(argsTypes, false);
 		List<HiConstructor> constructors = constructorsHash.get(signature);
 		if (constructors == null) {
 			constructors = _searchConstructors(classResolver, signature);
@@ -1539,7 +1532,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		if (foundConstructors != null) {
 			for (int i = foundConstructors.size() - 1; i >= 0; i--) {
 				HiConstructor foundConstructor = foundConstructors.get(i);
-				ArgClassPriorityType argPriority = foundConstructor.signature.getArgsPriority(constructor.signature, searchSignature);
+				ArgClassPriorityType argPriority = foundConstructor.signature.getPriority(constructor.signature, searchSignature);
 				if (argPriority == ArgClassPriorityType.higher) {
 					return foundConstructors;
 				} else if (argPriority == ArgClassPriorityType.lower) {
@@ -1577,7 +1570,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return false;
 			}
 
-			HiClass varargsType = constructor.argClasses[mainArgCount].getArrayType();
+			HiClass varargsType = constructor.argsClasses[mainArgCount].getArrayType();
 			NodeArgument vararg = constructor.arguments[mainArgCount];
 			if (matchArgsCount == constructorArgsCount && argsClasses[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
 				HiClass argType = argsClasses[mainArgCount].getArrayType();
@@ -1615,30 +1608,30 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		constructor.resolve(classResolver);
 
 		for (int i = 0; i < constructorArgsCount; i++) {
-			if (!HiClass.autoCast(classResolver, argsClasses[i], constructor.argClasses[i], false, true)) {
+			if (!HiClass.autoCast(classResolver, argsClasses[i], constructor.argsClasses[i], false, true)) {
 				return false;
 			}
 		}
 		for (int i = 0; i < constructorArgsCount; i++) {
-			argsClasses[i].applyLambdaImplementedMethod(classResolver, constructor.argClasses[i], constructor.arguments[i]);
+			argsClasses[i].applyLambdaImplementedMethod(classResolver, constructor.argsClasses[i], constructor.arguments[i]);
 		}
 		return true;
 	}
 
-	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argTypes) {
+	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argsTypes) {
 		if (constructors != null) {
 			int size = constructors.length;
 			for (int i = 0; i < size; i++)
 				FOR:{
 					HiConstructor c = constructors[i];
 					int argCount = c.arguments != null ? c.arguments.length : 0;
-					if (argCount != argTypes.length) {
+					if (argCount != argsTypes.length) {
 						continue;
 					}
 
 					c.resolve(classResolver);
 					for (int j = 0; j < argCount; j++) {
-						if (argTypes[j] != c.argClasses[j]) {
+						if (argsTypes[j] != c.argsClasses[j]) {
 							break FOR;
 						}
 					}

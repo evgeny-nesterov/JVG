@@ -79,15 +79,15 @@ public class MethodNode extends Node {
 			public void invoke(RuntimeContext ctx, Node parent, Object... values) throws ExecuteException {
 				super.invoke(ctx, parent, values);
 
-				int argCount;
+				int argsCount;
 				if (arguments != null) {
 					arguments.execute(ctx);
-					argCount = arguments.getNames().length;
+					argsCount = arguments.getNames().length;
 				} else {
-					argCount = 0;
+					argsCount = 0;
 				}
 
-				for (int i = 0; i < argCount; i++) {
+				for (int i = 0; i < argsCount; i++) {
 					int type = Types.getType(values[i].getClass());
 					ctx.value.setValue(values[i], type);
 

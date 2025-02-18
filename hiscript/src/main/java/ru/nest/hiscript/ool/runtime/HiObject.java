@@ -234,7 +234,7 @@ public class HiObject {
 		boolean result;
 		try {
 			// register variables in method
-			HiField objectField = new HiFieldObject(Type.objectType, equalsMethod.argNames[0], object);
+			HiField objectField = new HiFieldObject(Type.objectType, equalsMethod.argsNames[0], object);
 			ctx.addVariable(objectField);
 
 			// perform method invocation

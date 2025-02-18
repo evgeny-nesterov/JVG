@@ -8,7 +8,7 @@ import java.util.Map;
 public class Methods {
 	private Map<String, Map<String, Map<Integer, List<Method>>>> hash_methods = null;
 
-	public Method get(String namespace, String name, int[] argTypes, int[] argDimensions) {
+	public Method get(String namespace, String name, int[] argsTypes, int[] argsDimensions) {
 		if (hash_methods == null) {
 			return null;
 		}
@@ -21,13 +21,13 @@ public class Methods {
 			return null;
 		}
 
-		Map<Integer, List<Method>> argcount_methods = namespace_methods.get(name);
-		if (argcount_methods == null) {
+		Map<Integer, List<Method>> argscount_methods = namespace_methods.get(name);
+		if (argscount_methods == null) {
 			return null;
 		}
 
-		int argCount = argTypes.length;
-		List<Method> methods = argcount_methods.get(argCount);
+		int argsCount = argsTypes.length;
+		List<Method> methods = argscount_methods.get(argsCount);
 		if (methods == null) {
 			return null;
 		}
@@ -36,8 +36,8 @@ public class Methods {
 		for (int j = 0; j < size; j++) {
 			Method m = methods.get(j);
 			boolean equals = true;
-			for (int i = 0; i < argCount; i++) {
-				if (m.getArgDimensions()[i] != argDimensions[i] || (argDimensions[i] == 0 && !Types.isAutoCast(argTypes[i], m.getArgTypes()[i])) || (argDimensions[i] > 0 && argTypes[i] != m.getArgTypes()[i])) {
+			for (int i = 0; i < argsCount; i++) {
+				if (m.getArgsDimensions()[i] != argsDimensions[i] || (argsDimensions[i] == 0 && !Types.isAutoCast(argsTypes[i], m.getArgsTypes()[i])) || (argsDimensions[i] > 0 && argsTypes[i] != m.getArgsTypes()[i])) {
 					equals = false;
 					break;
 				}
@@ -57,10 +57,10 @@ public class Methods {
 
 		Map<String, Map<Integer, List<Method>>> namespace_methods = hash_methods.computeIfAbsent(method.getNamespace(), k -> new HashMap<>());
 
-		Map<Integer, List<Method>> argcount_methods = namespace_methods.computeIfAbsent(method.getName(), k -> new HashMap<>());
+		Map<Integer, List<Method>> argscount_methods = namespace_methods.computeIfAbsent(method.getName(), k -> new HashMap<>());
 
-		int argCount = method.getArgTypes().length;
-		List<Method> methods = argcount_methods.computeIfAbsent(argCount, k -> new ArrayList<>());
+		int argsCount = method.getArgsTypes().length;
+		List<Method> methods = argscount_methods.computeIfAbsent(argsCount, k -> new ArrayList<>());
 		methods.add(method);
 	}
 }

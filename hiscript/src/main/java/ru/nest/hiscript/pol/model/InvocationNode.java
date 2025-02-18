@@ -1,9 +1,9 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.Words;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import ru.nest.hiscript.tokenizer.Words;
 
 public class InvocationNode extends Node implements Value {
 	public InvocationNode(String namespace, String methodName) {
@@ -68,7 +68,7 @@ public class InvocationNode extends Node implements Value {
 		}
 
 		for (int i = 0; i < size; i++) {
-			int type = method.getArgTypes()[i];
+			int type = method.getArgsTypes()[i];
 			if (type != types[i]) {
 				ctx.value.setValue(values[i], type);
 				values[i] = ctx.value.getValue();

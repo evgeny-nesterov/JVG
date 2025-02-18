@@ -78,8 +78,8 @@ public class NodeInvocation extends HiNode {
 				// @generics
 				if (invocationType.parameters != null) {
 					boolean validArguments = true;
-					for (int i = 0; i < method.argClasses.length; i++) {
-						HiClass methodArgumentClass = method.argClasses[i];
+					for (int i = 0; i < method.argsClasses.length; i++) {
+						HiClass methodArgumentClass = method.argsClasses[i];
 						if (methodArgumentClass.isGeneric()) { // not primitive
 							Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
 							HiClass argumentClass = argumentsClasses[i];
@@ -175,17 +175,17 @@ public class NodeInvocation extends HiNode {
 					validationInfo.error("private method '" + method + "' is not accessible from outside of interface " + method.clazz.getNameDescr(), token);
 					valid = false;
 				}
-				int mainArgsCount = method.hasVarargs() ? method.argCount - 1 : method.argCount;
+				int mainArgsCount = method.hasVarargs() ? method.argsCount - 1 : method.argsCount;
 				for (int i = 0; i < mainArgsCount; i++) {
 					HiNode argument = arguments[i];
-					ctx.level.enclosingClass = method.argClasses[i];
+					ctx.level.enclosingClass = method.argsClasses[i];
 					ctx.level.enclosingType = method.arguments[i].getType();
-					valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, method.argClasses[i]);
+					valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, method.argsClasses[i]);
 					ctx.level.enclosingClass = null;
 					ctx.level.enclosingType = null;
 				}
 				if (method.hasVarargs()) {
-					HiClass varargClass = ((HiClassArray) method.argClasses[mainArgsCount]).cellClass;
+					HiClass varargClass = ((HiClassArray) method.argsClasses[mainArgsCount]).cellClass;
 					Type varargType = method.arguments[mainArgsCount].getType().cellType;
 					for (int i = mainArgsCount; i < arguments.length; i++) {
 						HiNode argument = arguments[i];

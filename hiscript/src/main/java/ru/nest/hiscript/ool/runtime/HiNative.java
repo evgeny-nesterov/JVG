@@ -51,8 +51,8 @@ public class HiNative {
 		Method[] methods = c.getMethods();
 		for (Method method : methods) {
 			String name = method.getName();
-			Class<?>[] argClasses = method.getParameterTypes();
-			if (argClasses.length > 0 && argClasses[0] == RuntimeContext.class && (name.startsWith(methodNamePrefix) || name.startsWith("root$"))) {
+			Class<?>[] argsClasses = method.getParameterTypes();
+			if (argsClasses.length > 0 && argsClasses[0] == RuntimeContext.class && (name.startsWith(methodNamePrefix) || name.startsWith("root$"))) {
 				method.setAccessible(true);
 				this.methods.put(name, method);
 				if (java.lang.reflect.Modifier.isStatic(method.getModifiers())) {

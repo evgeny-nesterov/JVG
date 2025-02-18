@@ -1,16 +1,15 @@
 package ru.nest.hiscript.pol.model;
 
-import java.awt.Toolkit;
+import ru.nest.hiscript.tokenizer.Words;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.JOptionPane;
-
-import ru.nest.hiscript.tokenizer.Words;
 
 //	IO: 
 //	void print(string text)
@@ -604,10 +603,10 @@ public class RuntimeContext {
 		return thread.getId();
 	}
 
-	public static void addNativeMethods(Class<?> c, Class<?>[] argTypes, String... methodNames) {
+	public static void addNativeMethods(Class<?> c, Class<?>[] argsTypes, String... methodNames) {
 		for (String methodName : methodNames) {
 			try {
-				java.lang.reflect.Method method = c.getMethod(methodName, argTypes);
+				java.lang.reflect.Method method = c.getMethod(methodName, argsTypes);
 				addNativeMethod(method, method.getName(), c);
 			} catch (Exception exc) {
 				exc.printStackTrace();
@@ -615,18 +614,18 @@ public class RuntimeContext {
 		}
 	}
 
-	public static void addNativeMethod(Class<System> c, Class<?>[] argTypes, String methodName, String newMethodName) {
+	public static void addNativeMethod(Class<System> c, Class<?>[] argsTypes, String methodName, String newMethodName) {
 		try {
-			addNativeMethod(c.getMethod(methodName, argTypes), newMethodName, c);
+			addNativeMethod(c.getMethod(methodName, argsTypes), newMethodName, c);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
 	}
 
-	public static void addNativeMethods(Object o, Class<?>[] argTypes, String... methodNames) {
+	public static void addNativeMethods(Object o, Class<?>[] argsTypes, String... methodNames) {
 		for (String methodName : methodNames) {
 			try {
-				java.lang.reflect.Method method = o.getClass().getMethod(methodName, argTypes);
+				java.lang.reflect.Method method = o.getClass().getMethod(methodName, argsTypes);
 				addNativeMethod(method, method.getName(), o);
 			} catch (Exception exc) {
 				exc.printStackTrace();
@@ -634,9 +633,9 @@ public class RuntimeContext {
 		}
 	}
 
-	public static void addNativeMethod(Class<?> objectType, Class<?>[] argTypes, String methodName) {
+	public static void addNativeMethod(Class<?> objectType, Class<?>[] argsTypes, String methodName) {
 		try {
-			addNativeMethodByObject(objectType.getMethod(methodName, argTypes), objectType);
+			addNativeMethodByObject(objectType.getMethod(methodName, argsTypes), objectType);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
@@ -646,14 +645,14 @@ public class RuntimeContext {
 		int returnType = Types.getType(method.getReturnType());
 
 		Class<?>[] t = method.getParameterTypes();
-		int[] argTypes = new int[t.length];
-		int[] argDimensions = new int[t.length];
-		for (int i = 0; i < argTypes.length; i++) {
-			argTypes[i] = Types.getType(t[i]);
-			argDimensions[i] = Types.getDimension(t[i]);
+		int[] argsTypes = new int[t.length];
+		int[] argsDimensions = new int[t.length];
+		for (int i = 0; i < argsTypes.length; i++) {
+			argsTypes[i] = Types.getType(t[i]);
+			argsDimensions[i] = Types.getDimension(t[i]);
 		}
 
-		nativeMethods.add(new Method(null, methodName, argTypes, argDimensions, returnType) {
+		nativeMethods.add(new Method(null, methodName, argsTypes, argsDimensions, returnType) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
@@ -671,26 +670,26 @@ public class RuntimeContext {
 		int returnType = Types.getType(method.getReturnType());
 
 		Class<?>[] t = method.getParameterTypes();
-		int[] argTypes = new int[t.length + 1];
-		int[] argDimensions = new int[t.length + 1];
-		argTypes[0] = Types.getType(objectType);
-		argDimensions[0] = Types.getDimension(objectType);
-		for (int i = 1; i < argTypes.length; i++) {
-			argTypes[i] = Types.getType(t[i - 1]);
-			argDimensions[i] = Types.getDimension(t[i - 1]);
+		int[] argsTypes = new int[t.length + 1];
+		int[] argsDimensions = new int[t.length + 1];
+		argsTypes[0] = Types.getType(objectType);
+		argsDimensions[0] = Types.getDimension(objectType);
+		for (int i = 1; i < argsTypes.length; i++) {
+			argsTypes[i] = Types.getType(t[i - 1]);
+			argsDimensions[i] = Types.getDimension(t[i - 1]);
 		}
 
-		nativeMethods.add(new Method(null, method.getName(), argTypes, argDimensions, returnType) {
+		nativeMethods.add(new Method(null, method.getName(), argsTypes, argsDimensions, returnType) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
 				try {
-					Object[] arg = new Object[arguments.length - 1];
-					for (int i = 0; i < arg.length; i++) {
-						arg[i] = arguments[i + 1];
+					Object[] args = new Object[arguments.length - 1];
+					for (int i = 0; i < args.length; i++) {
+						args[i] = arguments[i + 1];
 					}
 
-					Object returnedValue = method.invoke(arguments[0], arg);
+					Object returnedValue = method.invoke(arguments[0], args);
 					ctx.value.setValue(returnedValue, getReturnType());
 				} catch (Exception exc) {
 					exc.printStackTrace();
@@ -701,21 +700,21 @@ public class RuntimeContext {
 
 	private Methods methods = new Methods();
 
-	public Method getMethod(String namespace, String name, int[] argTypes, int[] argDimensions) {
-		Method method = methods.get(namespace, name, argTypes, argDimensions);
+	public Method getMethod(String namespace, String name, int[] argsTypes, int[] argsDimensions) {
+		Method method = methods.get(namespace, name, argsTypes, argsDimensions);
 		if (method != null) {
 			return method;
 		}
 
 		if (parentContext != null) {
-			return parentContext.getMethod(namespace, name, argTypes, argDimensions);
+			return parentContext.getMethod(namespace, name, argsTypes, argsDimensions);
 		}
 
 		return null;
 	}
 
 	public void addMethod(Method method) throws ExecuteException {
-		Method m = getMethod(method.getNamespace(), method.getName(), method.getArgTypes(), method.getArgDimensions());
+		Method m = getMethod(method.getNamespace(), method.getName(), method.getArgsTypes(), method.getArgsDimensions());
 		if (m != null) {
 			throw new ExecuteException(method + " is already defined");
 		}
@@ -728,18 +727,18 @@ public class RuntimeContext {
 	}
 
 	// private Map<String, HashMap<Integer, ArrayList<Method>>> hash_methods = new HashMap();
-	// private Method getOwnMethod(String name, int[] argTypes, int[]
-	// argDimensions)
+	// private Method getOwnMethod(String name, int[] argsTypes, int[]
+	// argsDimensions)
 	// {
-	// HashMap<Integer, ArrayList<Method>> argcount_methods =
+	// HashMap<Integer, ArrayList<Method>> argscount_methods =
 	// hash_methods.get(name);
-	// if(argcount_methods == null)
+	// if(argscount_methods == null)
 	// {
 	// return null;
 	// }
 	//
-	// int argCount = argTypes.length;
-	// ArrayList<Method> methods = argcount_methods.get(argCount);
+	// int argsCount = argsTypes.length;
+	// ArrayList<Method> methods = argscount_methods.get(argsCount);
 	// if(methods == null)
 	// {
 	// return null;
@@ -749,12 +748,12 @@ public class RuntimeContext {
 	// for(int j = 0; j < size; j++)
 	// {
 	// Method m = methods.get(j);
-	// for(int i = 0; i < argCount; i++)
+	// for(int i = 0; i < argsCount; i++)
 	// {
-	// if(m.getArgDimensions()[i] != argDimensions[i] ||
-	// (argDimensions[i] == 0 && !Types.isAutoCast(argTypes[i],
-	// m.getArgTypes()[i])) ||
-	// (argDimensions[i] > 0 && argTypes[i] != m.getArgTypes()[i]))
+	// if(m.getArgsDimensions()[i] != argsDimensions[i] ||
+	// (argsDimensions[i] == 0 && !Types.isAutoCast(argsTypes[i],
+	// m.getArgsTypes()[i])) ||
+	// (argsDimensions[i] > 0 && argsTypes[i] != m.getArgsTypes()[i]))
 	// {
 	// return null;
 	// }
@@ -768,24 +767,24 @@ public class RuntimeContext {
 	//
 	// public void addMethod(Method method)
 	// {
-	// Method m = getMethod(method.getName(), method.getArgTypes(),
-	// method.getArgDimensions());
+	// Method m = getMethod(method.getName(), method.getArgsTypes(),
+	// method.getArgsDimensions());
 	// if(m == null)
 	// {
-	// HashMap<Integer, ArrayList<Method>> argcount_methods =
+	// HashMap<Integer, ArrayList<Method>> argscount_methods =
 	// hash_methods.get(method.getName());
-	// if(argcount_methods == null)
+	// if(argscount_methods == null)
 	// {
-	// argcount_methods = new HashMap();
-	// hash_methods.put(method.getName(), argcount_methods);
+	// argscount_methods = new HashMap();
+	// hash_methods.put(method.getName(), argscount_methods);
 	// }
 	//
-	// int argCount = method.getArgTypes().length;
-	// ArrayList<Method> methods = argcount_methods.get(argCount);
+	// int argsCount = method.getArgsTypes().length;
+	// ArrayList<Method> methods = argscount_methods.get(argsCount);
 	// if(methods == null)
 	// {
 	// methods = new ArrayList();
-	// argcount_methods.put(argCount, methods);
+	// argscount_methods.put(argsCount, methods);
 	// }
 	// methods.add(method);
 	// }

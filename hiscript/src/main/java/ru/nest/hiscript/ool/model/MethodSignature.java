@@ -8,12 +8,12 @@ public class MethodSignature extends ArgumentsSignature {
 		set(signature.name, signature.argsClasses, signature.isVarargs);
 	}
 
-	public MethodSignature(String name, HiClass[] argClasses, boolean isVarargs) {
-		set(name, argClasses, isVarargs);
+	public MethodSignature(String name, HiClass[] argsClasses, boolean isVarargs) {
+		set(name, argsClasses, isVarargs);
 	}
 
-	public void set(String name, HiClass[] argClasses, boolean isVarargs) {
-		super.set(argClasses, isVarargs);
+	public void set(String name, HiClass[] argsClasses, boolean isVarargs) {
+		super.set(argsClasses, isVarargs);
 		this.name = name.intern();
 		hashCode = 31 * hashCode + name.hashCode();
 		isLambda = name.startsWith(HiMethod.LAMBDA_METHOD_NAME);

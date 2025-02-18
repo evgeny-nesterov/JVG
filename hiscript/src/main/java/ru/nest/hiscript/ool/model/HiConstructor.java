@@ -124,7 +124,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public NodeGenerics generics;
 
-	public HiClass[] argClasses;
+	public HiClass[] argsClasses;
 
 	private Token token;
 
@@ -153,17 +153,17 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	public void resolve(ClassResolver classResolver) {
 		if (signature == null) {
-			argClasses = new HiClass[arguments != null ? arguments.length : 0];
-			for (int i = 0; i < argClasses.length; i++) {
+			argsClasses = new HiClass[arguments != null ? arguments.length : 0];
+			for (int i = 0; i < argsClasses.length; i++) {
 				NodeArgument arg = arguments[i];
 				if (arg.clazz != null) {
-					argClasses[i] = arg.clazz;
+					argsClasses[i] = arg.clazz;
 				} else {
-					argClasses[i] = arg.getArgClass(classResolver);
+					argsClasses[i] = arg.getArgClass(classResolver);
 				}
 			}
 			boolean isVarargs = arguments != null && arguments.length > 0 ? arguments[arguments.length - 1].isVarargs() : false;
-			signature = new ArgumentsSignature(argClasses, isVarargs);
+			signature = new ArgumentsSignature(argsClasses, isVarargs);
 		}
 	}
 
@@ -291,7 +291,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 			// execute constructor this(...)
 			if (bodyConstructorType == BodyConstructorType.THIS) {
-				NodeConstructor.invokeConstructor(ctx, clazz, type, bodyConstructor.argValues, object, outboundObject);
+				NodeConstructor.invokeConstructor(ctx, clazz, type, bodyConstructor.argsValues, object, outboundObject);
 				if (ctx.exitFromBlock()) {
 					return null;
 				}
@@ -316,7 +316,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 						superType = Type.getParameterizedType(superType, superTypeParameters);
 					}
 
-					NodeConstructor.invokeConstructor(ctx, clazz.superClass, superType, bodyConstructor.argValues, null, superOutboundObject);
+					NodeConstructor.invokeConstructor(ctx, clazz.superClass, superType, bodyConstructor.argsValues, null, superOutboundObject);
 					if (ctx.exitFromBlock()) {
 						return null;
 					}
@@ -463,8 +463,8 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	public static void appendVariables(StringBuilder buf, NodeVariable[] vars) {
 		buf.append('(');
 		if (vars != null) {
-			int argCount = vars.length;
-			for (int i = 0; i < argCount; i++) {
+			int argsCount = vars.length;
+			for (int i = 0; i < argsCount; i++) {
 				if (i != 0) {
 					buf.append(", ");
 				}
@@ -491,7 +491,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		os.writeNullable(bodyConstructor);
 		os.writeByte(bodyConstructorType.getType());
 		os.writeClasses(throwsClasses);
-		os.writeClasses(argClasses);
+		os.writeClasses(argsClasses);
 	}
 
 	public static HiConstructor decode(DecodeContext os) throws IOException {
@@ -508,7 +508,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 		HiConstructor constructor = new HiConstructor(os.getHiClass(), type, annotations, modifiers, generics, arguments, throwsTypes, body, bodyConstructor, constructorType);
 		constructor.throwsClasses = os.readClasses();
-		constructor.argClasses = os.readClasses();
+		constructor.argsClasses = os.readClasses();
 		constructor.token = token;
 		return constructor;
 	}

@@ -64,7 +64,7 @@ public class NodeMethodReference extends NodeExpression {
 					HiMethod functionalMethod = abstractMethods.get(0);
 					HiMethod matchedMethod = null;
 					for (HiMethod m : methods) {
-						HiMethod im = functionalInterface.getInterfaceAbstractMethod(ctx, m.argClasses);
+						HiMethod im = functionalInterface.getInterfaceAbstractMethod(ctx, m);
 						if (functionalMethod == im) {
 							matchedMethod = m;
 							break;

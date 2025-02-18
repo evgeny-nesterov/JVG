@@ -1,16 +1,5 @@
 package ru.nest.jvg;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import ru.nest.hiscript.pol.model.ExecuteException;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.RuntimeContext;
@@ -43,6 +32,14 @@ import ru.nest.jvg.shape.paint.ColorDraw;
 import ru.nest.jvg.shape.paint.Draw;
 import ru.nest.jvg.shape.paint.FillPainter;
 import ru.nest.jvg.shape.paint.OutlinePainter;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // ===============================================
 // JVG methods:
@@ -1448,16 +1445,16 @@ public class JVGScriptSupport {
 
 	private void addMethod(String name, final Class<?>[] types, int returnType) throws ExecuteException {
 		int argumentsCount = types.length + 1;
-		int[] argTypes = new int[argumentsCount];
-		int[] argDimensions = new int[argumentsCount];
-		argTypes[0] = Words.LONG;
-		argDimensions[0] = 0;
+		int[] argsTypes = new int[argumentsCount];
+		int[] argsDimensions = new int[argumentsCount];
+		argsTypes[0] = Words.LONG;
+		argsDimensions[0] = 0;
 		for (int i = 1; i < argumentsCount; i++) {
-			argTypes[i] = Types.getType(types[i - 1]);
-			argDimensions[i] = Types.getDimension(types[i - 1]);
+			argsTypes[i] = Types.getType(types[i - 1]);
+			argsDimensions[i] = Types.getDimension(types[i - 1]);
 		}
 
-		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, name, argTypes, argDimensions, returnType) {
+		ctx.addMethod(new ru.nest.hiscript.pol.model.Method(NAMESPACE, name, argsTypes, argsDimensions, returnType) {
 			@Override
 			public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 				super.invoke(ctx, node, arguments);
