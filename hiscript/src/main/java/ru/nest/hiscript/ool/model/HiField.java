@@ -265,13 +265,6 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	public boolean initializing = false;
 
-	public boolean isInitialized(RuntimeContext ctx) {
-		if (ctx.validating) {
-			execute(ctx);
-		}
-		return initialized || initializing;
-	}
-
 	@Override
 	public Object clone() {
 		try {
@@ -363,7 +356,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	public String toString() {
-		return (clazz != null ? clazz.fullName : type.fullName) + " " + name + " = " + get();
+		return (clazz != null ? clazz.getNameDescr() : type) + " " + name + " = " + get();
 	}
 
 	public String getStringValue(RuntimeContext ctx) {
@@ -382,6 +375,6 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 
 	@Override
 	public String getVariableType() {
-		return clazz != null ? clazz.fullName : type.fullName;
+		return clazz != null ? clazz.getNameDescr() : type.toString();
 	}
 }

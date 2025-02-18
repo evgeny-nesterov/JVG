@@ -309,7 +309,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 						int genericParametersCount = clazz.superClass.generics.generics.length;
 						Type[] superTypeParameters = new Type[genericParametersCount];
 						for (int i = 0; i < genericParametersCount; i++) {
-							NodeGeneric superGeneric = clazz.superClass.generics.generics[i];
+							// NodeGeneric superGeneric = clazz.superClass.generics.generics[i];
 							superTypeParameters[i] = type.parameters[i];
 							// TODO check cast superTypeParameters[i]=>superGeneric
 						}
@@ -450,7 +450,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	@Override
 	public String toString() {
-		return getConstructorDescr(clazz.fullName, arguments);
+		return getConstructorDescr(clazz.getNameDescr(), arguments);
 	}
 
 	public static String getConstructorDescr(String name, NodeVariable[] arguments) {

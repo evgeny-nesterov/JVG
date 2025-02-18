@@ -37,6 +37,7 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -340,7 +341,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			if (superClass == null && superClassType != null) {
 				superClass = superClassType.getClass(classResolver);
 				if (superClass == null) {
-					classResolver.processResolverException("cannot resolve class '" + superClassType.fullName + "'");
+					classResolver.processResolverException("cannot resolve class '" + superClassType + "'");
 					return;
 				}
 			}
@@ -1343,8 +1344,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	/**
-	 * @param method1	method for invocation with matching arguments
-	 * @param method2	check whether this method may be invoked with arguments from method1
+	 * @param method1    method for invocation with matching arguments
+	 * @param method2    check whether this method may be invoked with arguments from method1
 	 */
 	private boolean isMatchMethodsInvocation(ClassResolver classResolver, HiMethod method1, HiMethod method2, MatchMethodArgumentsType matchType) {
 		if (matchType.isVarargs() && method1.hasVarargs() && !method2.hasVarargs()) {
@@ -1801,24 +1802,53 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		HiClass cellType = null;
 		if (clazz == HiObject.class || clazz == Object.class) {
 			cellType = HiClass.OBJECT_CLASS;
-		} else if (clazz == Boolean.class || clazz == boolean.class) {
+
+		} else if (clazz == boolean.class) {
 			cellType = HiClassPrimitive.BOOLEAN;
-		} else if (clazz == Character.class || clazz == char.class) {
+		} else if (clazz == Boolean.class) {
+			cellType = HiClassPrimitive.BOOLEAN.getAutoboxClass();
+
+		} else if (clazz == char.class) {
 			cellType = HiClassPrimitive.CHAR;
-		} else if (clazz == Byte.class || clazz == byte.class) {
+		} else if (clazz == Character.class) {
+			cellType = HiClassPrimitive.CHAR.getAutoboxClass();
+
+		} else if (clazz == byte.class) {
 			cellType = HiClassPrimitive.BYTE;
-		} else if (clazz == Short.class || clazz == short.class) {
+		} else if (clazz == Byte.class) {
+			cellType = HiClassPrimitive.BYTE.getAutoboxClass();
+
+		} else if (clazz == short.class) {
 			cellType = HiClassPrimitive.SHORT;
-		} else if (clazz == Integer.class || clazz == int.class) {
+		} else if (clazz == Short.class) {
+			cellType = HiClassPrimitive.SHORT.getAutoboxClass();
+
+		} else if (clazz == int.class) {
 			cellType = HiClassPrimitive.INT;
-		} else if (clazz == Float.class || clazz == float.class) {
+		} else if (clazz == Integer.class) {
+			cellType = HiClassPrimitive.INT.getAutoboxClass();
+
+		} else if (clazz == float.class) {
 			cellType = HiClassPrimitive.FLOAT;
-		} else if (clazz == Long.class || clazz == long.class) {
+		} else if (clazz == Float.class) {
+			cellType = HiClassPrimitive.FLOAT.getAutoboxClass();
+
+		} else if (clazz == long.class) {
 			cellType = HiClassPrimitive.LONG;
-		} else if (clazz == Double.class || clazz == double.class) {
+		} else if (clazz == Long.class) {
+			cellType = HiClassPrimitive.LONG.getAutoboxClass();
+
+		} else if (clazz == double.class) {
 			cellType = HiClassPrimitive.DOUBLE;
+		} else if (clazz == Double.class) {
+			cellType = HiClassPrimitive.DOUBLE.getAutoboxClass();
+
 		} else if (clazz == String.class) {
 			cellType = HiClass.STRING_CLASS;
+		} else if (Map.class.isAssignableFrom(clazz)) {
+			cellType = HiClass.getSystemClassLoader().getClass(HiClass.HASHMAP_CLASS_NAME);
+		} else if (Collection.class.isAssignableFrom(clazz)) {
+			cellType = HiClass.getSystemClassLoader().getClass(HiClass.ARRAYLIST_CLASS_NAME);
 		}
 		return cellType;
 	}
@@ -2092,32 +2122,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return this;
 		}
 		if (isPrimitive() || c.isPrimitive()) {
-			// @autoboxing
-			HiClass c1 = this;
-			HiClass c2 = c;
-			if (!c1.isPrimitive()) {
-				if (c1.getAutoboxedPrimitiveClass() != null) {
-					c1 = c1.getAutoboxedPrimitiveClass();
-				}
-			} else if (!c2.isPrimitive()) {
-				if (c2.getAutoboxedPrimitiveClass() != null) {
-					c2 = c2.getAutoboxedPrimitiveClass();
-				}
-			}
-			if (c1.isNumber() && c2.isNumber()) {
-				if (c1 == HiClassPrimitive.DOUBLE || c2 == HiClassPrimitive.DOUBLE) {
-					return HiClassPrimitive.DOUBLE;
-				} else if (c1 == HiClassPrimitive.FLOAT || c2 == HiClassPrimitive.FLOAT) {
-					return HiClassPrimitive.DOUBLE;
-				} else if (c1 == HiClassPrimitive.LONG || c2 == HiClassPrimitive.LONG) {
-					return HiClassPrimitive.LONG;
-				} else if (c1 == HiClassPrimitive.INT || c2 == HiClassPrimitive.INT) {
-					return HiClassPrimitive.INT;
-				} else if (c1 == HiClassPrimitive.CHAR || c2 == HiClassPrimitive.CHAR) {
-					return HiClassPrimitive.INT;
-				} else if (c1 == HiClassPrimitive.SHORT || c2 == HiClassPrimitive.SHORT) {
-					return HiClassPrimitive.SHORT;
-				}
+			if (c == this) {
+				return c;
 			}
 			return null;
 		}

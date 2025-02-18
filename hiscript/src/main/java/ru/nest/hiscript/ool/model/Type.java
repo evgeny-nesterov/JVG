@@ -392,7 +392,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 			HiClass cellClass = cellType.getClass(classResolver);
 			if (cellClass == null) {
 				if (classResolver != null) {
-					classResolver.processResolverException("class '" + fullName + "' can not be resolved");
+					classResolver.processResolverException("class '" + this + "' can not be resolved");
 				}
 				return null;
 			}
@@ -427,7 +427,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 		}
 
 		if (clazz == null && classResolver != null) {
-			classResolver.processResolverException("class '" + fullName + "' can not be resolved");
+			classResolver.processResolverException("class '" + this + "' can not be resolved");
 		}
 		return clazz;
 	}

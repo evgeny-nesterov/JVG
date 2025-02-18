@@ -75,28 +75,19 @@ public class HiClassArray extends HiClass {
 	@Override
 	public Class getJavaClass(HiRuntimeEnvironment env) {
 		Class javaClass = env.javaClassesMap.get(this);
-		if (javaClass != null) {
-			return javaClass;
-		}
-
-		HiClass rootCellClass = cellClass;
-		while (rootCellClass.isArray()) {
-			rootCellClass = ((HiClassArray) rootCellClass).cellClass;
-		}
-		Class javaRootCellClass = cellClass.getJavaClass(env);
-		if (javaRootCellClass != null) {
-			String name = getJavaClassName(javaRootCellClass);
+		if (javaClass == null) {
+			String name = getJavaClassName(env);
 			try {
 				javaClass = Class.forName(name);
 				env.javaClassesMap.put(this, javaClass);
-				return javaClass;
 			} catch (ClassNotFoundException e) {
 			}
 		}
-		return null;
+		return javaClass;
 	}
 
-	private String getJavaClassName(Class javaRootCellClass) {
+	private String getJavaClassName(HiRuntimeEnvironment env) {
+		Class javaRootCellClass = rootCellClass.getJavaClass(env);
 		String name = "";
 		for (int i = 0; i < dimension; i++) {
 			name += '[';
@@ -126,7 +117,6 @@ public class HiClassArray extends HiClass {
 	}
 
 	public static Class<?> getArrayClass(Class<?> componentType) throws ClassNotFoundException {
-		ClassLoader classLoader = componentType.getClassLoader();
 		String name;
 		if (componentType.isArray()) {
 			// just add a leading "["
@@ -151,6 +141,7 @@ public class HiClassArray extends HiClass {
 			// must be an object non-array class
 			name = "[L" + componentType.getName() + ";";
 		}
+		ClassLoader classLoader = componentType.getClassLoader();
 		return classLoader != null ? classLoader.loadClass(name) : Class.forName(name);
 	}
 

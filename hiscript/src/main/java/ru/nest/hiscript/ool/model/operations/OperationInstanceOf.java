@@ -3,10 +3,8 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
@@ -14,6 +12,9 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationInstanceOf extends BinaryOperation {
 	private static final HiOperation instance = new OperationInstanceOf();
@@ -34,6 +35,10 @@ public class OperationInstanceOf extends BinaryOperation {
 			validationInfo.error("type expected", node2.node.getToken());
 		}
 		if (!c1.isVar()) {
+			// @generic
+			if (c1.isGeneric()) {
+				c1 = ((HiClassGeneric) c1).clazz;
+			}
 			if (!c1.isInstanceof(c2) && !c2.isInstanceof(c1) && !c1.isNull()) {
 				validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node.getToken());
 			}

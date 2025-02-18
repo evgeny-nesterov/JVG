@@ -64,7 +64,7 @@ public class NodeCastedIdentifier extends HiNode {
 						if (recordArgument != null) {
 							HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
 							if (recordArgumentClass != null && !HiClass.autoCast(ctx, recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue, true)) {
-								validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' has invalid type, expected '" + recordArgumentClass.fullName + "'", castedRecordArgument.getToken());
+								validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' has invalid type, expected '" + recordArgumentClass.getNameDescr() + "'", castedRecordArgument.getToken());
 								valid = false;
 							}
 						} else {

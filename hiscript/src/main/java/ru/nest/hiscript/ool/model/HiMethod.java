@@ -8,12 +8,10 @@ import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.nodes.HasModifiers;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeNative;
-import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
@@ -343,20 +341,8 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 			// define returnType
 			if (returnType == null) {
-				if (body instanceof NodeBlock) {
-					NodeBlock block = (NodeBlock) body;
-					NodeReturn returnNode = block.getReturnNode();
-					if (returnNode != null) {
-						returnClass = returnNode.getValueClass(validationInfo, ctx);
-						returnType = Type.getType(returnClass);
-					} else {
-						returnClass = HiClassPrimitive.VOID;
-						returnType = Type.voidType;
-					}
-				} else if (body != null) {
-					returnClass = body.getValueClass(validationInfo, ctx);
-					returnType = Type.getType(returnClass);
-				}
+				returnClass = body.getValueClass(validationInfo, ctx);
+				returnType = Type.getType(returnClass);
 			}
 
 			if (returnType != null && returnType.isVar()) {
@@ -380,7 +366,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	public HiClass createLambdaClass(CompileClassContext ctx, HiClass interfaceClass) {
 		String lambdaClassName = LAMBDA_METHOD_NAME;
 		if (ctx.level.enclosingClass != null) {
-			lambdaClassName += ctx.level.enclosingClass.fullName + "/";
+			lambdaClassName += ctx.level.enclosingClass.getNameDescr() + "/";
 		}
 		lambdaClassName += ctx.lambdasCount.getAndIncrement();
 
@@ -595,6 +581,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// ignore argsNames, signature, descr, annotationDefaultValue
 		os.writeByte(HiNode.TYPE_METHOD);
 		os.writeToken(token);
+
 		os.writeShortArray(annotations);
 		modifiers.code(os);
 		os.writeNullable(generics);
@@ -613,8 +600,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// TODO rewrittenMethod
 	}
 
-	public static HiMethod decode(DecodeContext os, boolean readToken) throws IOException {
-		Token token = readToken ? os.readToken() : null;
+	public static HiMethod decode(DecodeContext os) throws IOException {
 		NodeAnnotation[] annotations = os.readShortNodeArray(NodeAnnotation.class);
 		Modifiers modifiers = Modifiers.decode(os);
 		NodeGenerics generics = os.readNullable(NodeGenerics.class);
@@ -630,9 +616,6 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		method.throwsClasses = os.readClasses();
 		method.argsClasses = os.readClasses();
 		os.readClass(clazz -> method.clazz = clazz);
-		if (readToken) {
-			method.setToken(token);
-		}
 		return method;
 	}
 

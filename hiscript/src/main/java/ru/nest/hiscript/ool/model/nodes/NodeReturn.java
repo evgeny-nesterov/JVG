@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.classes.HiClassVar;
@@ -23,9 +24,22 @@ public class NodeReturn extends HiNode {
 
 	private final HiNode value;
 
+	private HiClass returnClass;
+
+	private Type returnType;
+
 	@Override
 	public NodeReturn getReturnNode() {
 		return this;
+	}
+
+	@Override
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		returnClass = value != null ? value.getValueClass(validationInfo, ctx) : HiClassPrimitive.VOID;
+		ctx.nodeValueType.clazz = returnClass;
+		ctx.nodeValueType.type = Type.getType(returnClass);
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		return returnClass;
 	}
 
 	@Override
@@ -33,7 +47,7 @@ public class NodeReturn extends HiNode {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (value != null) {
-			valid = value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx);
+			valid &= value.validate(validationInfo, ctx) && value.expectValue(validationInfo, ctx);
 		}
 
 		CompileClassContext.CompileClassLevel localContextLevel = ctx.level.getLocalContextLevel();
@@ -136,9 +150,14 @@ public class NodeReturn extends HiNode {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeNullable(value);
+		os.writeType(returnType);
+		os.writeClass(returnClass);
 	}
 
 	public static NodeReturn decode(DecodeContext os) throws IOException {
-		return new NodeReturn(os.readNullable(HiNode.class));
+		NodeReturn node = new NodeReturn(os.readNullable(HiNode.class));
+		node.returnType = os.readType();
+		os.readClass(clazz -> node.returnClass = clazz);
+		return node;
 	}
 }

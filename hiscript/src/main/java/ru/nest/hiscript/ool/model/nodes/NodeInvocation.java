@@ -107,7 +107,7 @@ public class NodeInvocation extends HiNode {
 							if (i > 0) {
 								message += ", ";
 							}
-							message += argumentsClasses[i].fullName;
+							message += argumentsClasses[i].getNameDescr();
 						}
 						message += "')";
 						validationInfo.error(message, getToken());

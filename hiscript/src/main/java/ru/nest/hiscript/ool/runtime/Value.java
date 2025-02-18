@@ -136,6 +136,10 @@ public class Value implements PrimitiveTypes {
 		} else if (value == null) {
 			setObjectValue(HiClass.OBJECT_CLASS, null);
 			return true;
+		} else if (value instanceof Value) {
+			Value valueValue = (Value) value;
+			valueValue.copyTo(this);
+			return true;
 		} else {
 			Class<?> clazz = value.getClass();
 			if (clazz.isArray()) {

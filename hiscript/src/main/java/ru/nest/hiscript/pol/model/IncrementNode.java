@@ -24,8 +24,8 @@ public class IncrementNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) throws ExecuteException {
-		String varFullname = value.getFullname();
-		Variable var = getVariable(varFullname);
+		String varFullName = value.getFullname();
+		Variable var = getVariable(varFullName);
 
 		if (var != null) {
 			switch (incrementType) {
@@ -44,7 +44,7 @@ public class IncrementNode extends Node implements Value {
 					break;
 			}
 		} else {
-			throw new ExecuteException("can not find variable '" + varFullname + "'");
+			throw new ExecuteException("can not find variable '" + varFullName + "'");
 		}
 	}
 }

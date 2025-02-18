@@ -2,15 +2,15 @@ package ru.nest.hiscript.ool.model.java;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +81,9 @@ public class HiJava {
 		return object;
 	}
 
+	/**
+	 * @return array of java objects or Value with array value and array class
+	 */
 	private static Object convertArrayFromJava(RuntimeContext ctx, Object javaArray) {
 		Class javaArrayClass = javaArray.getClass();
 		Class rootElementClass = javaArrayClass.getComponentType();
@@ -89,43 +92,22 @@ public class HiJava {
 			rootElementClass = rootElementClass.getComponentType();
 			className += "[";
 		}
-		if (rootElementClass.isPrimitive() || rootElementClass == String.class || Number.class.isAssignableFrom(rootElementClass) || rootElementClass == Boolean.class || rootElementClass == Character.class || HiObject.class.isAssignableFrom(rootElementClass)) {
+		if (rootElementClass.isPrimitive() || rootElementClass == String.class || rootElementClass == int.class || rootElementClass == long.class || rootElementClass == double.class || rootElementClass == char.class || rootElementClass == byte.class || rootElementClass == float.class || rootElementClass == short.class || HiObject.class.isAssignableFrom(rootElementClass)) {
 			return javaArray;
 		}
-		int length = Array.getLength(javaArray);
-		if (Map.class.isAssignableFrom(rootElementClass)) {
-			className += "L" + HashMap.class.getName() + ";";
-		} else if (List.class.isAssignableFrom(rootElementClass)) {
-			className += "L" + ArrayList.class.getName() + ";";
-		} else {
-			className += "L" + Object.class.getName() + ";";
-		}
 		try {
-			Class elementClass = Class.forName(className);
-			Object array = Array.newInstance(elementClass, length);
+			int length = Array.getLength(javaArray);
+			className += "L" + HiObject.class.getName() + ";";
+			Class elementJavaClass = Class.forName(className);
+			Object array = Array.newInstance(elementJavaClass.getComponentType(), length);
 			for (int i = 0; i < length; i++) {
 				Object elementValue = convertFromJava(ctx, Array.get(javaArray, i));
-				if (elementClass.isArray() || HiObject.class.isAssignableFrom(elementClass)) {
-					Array.set(array, i, elementValue);
-				} else if (elementClass == Integer.class) {
-					Array.setInt(array, i, (Integer) elementValue);
-				} else if (elementClass == Long.class) {
-					Array.setLong(array, i, (Long) elementValue);
-				} else if (elementClass == Double.class) {
-					Array.setDouble(array, i, (Double) elementValue);
-				} else if (elementClass == Boolean.class) {
-					Array.setBoolean(array, i, (Boolean) elementValue);
-				} else if (elementClass == Character.class) {
-					Array.setChar(array, i, (Character) elementValue);
-				} else if (elementClass == Byte.class) {
-					Array.setByte(array, i, (Byte) elementValue);
-				} else if (elementClass == Float.class) {
-					Array.setFloat(array, i, (Float) elementValue);
-				} else if (elementClass == Short.class) {
-					Array.setShort(array, i, (Short) elementValue);
-				}
+				Array.set(array, i, elementValue);
 			}
-			return array;
+			HiClass arrayClass = HiClassArray.getArrayType(javaArrayClass);
+			Value value = new Value(ctx);
+			value.setArrayValue(arrayClass, array);
+			return value;
 		} catch (ClassNotFoundException e) {
 			return null;
 		}

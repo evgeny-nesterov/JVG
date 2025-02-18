@@ -183,7 +183,7 @@ public class NodeConstructor extends HiNode {
 		if (clazz.generics != null) {
 			valid &= type.validateClass(clazz, validationInfo, ctx, getToken());
 		} else if (nodeType != null && type.parameters != null) {
-			validationInfo.error("type '" + type.fullName + "' does not have type parameters", getToken());
+			validationInfo.error("type '" + type + "' does not have type parameters", getToken());
 			valid = false;
 		}
 		if (type != null && type.parameters != null) {

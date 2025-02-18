@@ -1,8 +1,11 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.NodeInitializer;
+import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
@@ -67,6 +70,22 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
+		NodeReturn returnNode = getReturnNode();
+		HiClass returnClass;
+		if (returnNode != null) {
+			returnClass = returnNode.getValueClass(validationInfo, ctx);
+			ctx.nodeValueType.type = Type.getType(returnClass);
+		} else {
+			returnClass = HiClassPrimitive.VOID;
+			ctx.nodeValueType.type = Type.charType;
+		}
+		ctx.nodeValueType.clazz = returnClass;
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+		return returnClass;
 	}
 
 	@Override

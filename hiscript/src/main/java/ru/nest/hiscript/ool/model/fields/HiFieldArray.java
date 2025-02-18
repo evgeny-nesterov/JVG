@@ -95,11 +95,13 @@ public class HiFieldArray extends HiField<Object> {
             Object javaCellValue;
             if (cellClass.isArray()) {
                 javaCellValue = getJavaArray(ctx, cellValue, cellClass.getComponentType());
-            } else {
+            } else if(cellValue instanceof HiObject) {
                 HiObject cellObject = (HiObject) cellValue;
                 javaCellValue = cellObject.getJavaValue(ctx);
+            } else {
+                javaCellValue = cellValue;
             }
-            Array.set(array, i, javaCellValue);
+            Array.set(javaArray, i, javaCellValue);
         }
         return javaArray;
     }

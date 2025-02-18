@@ -256,7 +256,6 @@ public class HiArrays implements PrimitiveTypes {
 		if (type.isArray()) {
 			Array.set(array, index, value.getArray());
 		} else if (type.isPrimitive()) {
-			// TODO autoboxing
 			int typeIndex = HiFieldPrimitive.getAutoType(type);
 			switch (typeIndex) {
 				case BOOLEAN:

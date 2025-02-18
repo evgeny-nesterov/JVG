@@ -119,7 +119,7 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 				if (initializationValueType.valid) {
 					if (initializationValueType.isCompileValue()) {
 						if (!initializationValueType.autoCastValue(clazz)) {
-							validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
+							validationInfo.error("incompatible types: " + initializationValueType.valueClass.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
 							valid = false;
 						}
 					} else if (initializationValueType.clazz.isArray() && clazz.isArray()) {

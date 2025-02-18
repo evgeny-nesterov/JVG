@@ -507,7 +507,7 @@ public abstract class HiNode implements HiNodeIF {
 				node = NodeGeneric.decode(os);
 				break;
 			case TYPE_METHOD:
-				node = HiMethod.decode(os, false);
+				node = HiMethod.decode(os);
 				break;
 		}
 		if (node != null) {
