@@ -407,15 +407,19 @@ public class Value implements PrimitiveTypes {
 		} else if (ctx.exitFromBlock()) {
 			return 0;
 		}
-		switch (valueClass.getPrimitiveType()) {
-			case BYTE:
-				return byteNumber;
-			case CHAR:
-				return character;
-			case SHORT:
-				return shortNumber;
+		if (valueClass.isNull()) {
+			ctx.throwRuntimeException("null pointer");
+		} else {
+			switch (valueClass.getPrimitiveType()) {
+				case BYTE:
+					return byteNumber;
+				case CHAR:
+					return character;
+				case SHORT:
+					return shortNumber;
+			}
+			ctx.throwRuntimeException("int is expected");
 		}
-		ctx.throwRuntimeException("int is expected");
 		return 0;
 	}
 

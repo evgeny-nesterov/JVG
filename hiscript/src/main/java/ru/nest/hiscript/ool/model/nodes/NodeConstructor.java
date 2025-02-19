@@ -97,6 +97,8 @@ public class NodeConstructor extends HiNode {
 			Type t = nc.type;
 			while (nc != null) {
 				HiClass c = nc.clazz;
+
+				// @generics
 				if (c.superClass.generics != null && t.parameters != null && t.parameters.length > 0) {
 					int genericParametersCount = c.superClass.generics.generics.length;
 					Type[] superTypeParameters = new Type[genericParametersCount];

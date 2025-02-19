@@ -254,28 +254,25 @@ public class NodeValueType implements PrimitiveTypes {
 		return null;
 	}
 
-	public boolean autoCastValue(HiClass type) {
+	public boolean autoCastValue(HiClass clazz) {
 		// @autoboxing
 		// @generics
-		if (!type.isPrimitive()) {
-			if (type == HiClass.OBJECT_CLASS) {
+		if (!clazz.isPrimitive()) {
+			if (clazz == HiClass.OBJECT_CLASS) {
 				return true;
-			} else if (type == HiClass.NUMBER_CLASS) {
+			} else if (clazz == HiClass.NUMBER_CLASS) {
 				return valueClass.isNumber();
-			} else if (type == HiClass.STRING_CLASS) {
+			} else if (clazz == HiClass.STRING_CLASS) {
 				return valueClass == HiClass.STRING_CLASS;
 			}
 
-			HiClass autoboxedPrimitiveClass = type.getAutoboxedPrimitiveClass();
+			HiClass autoboxedPrimitiveClass = clazz.getAutoboxedPrimitiveClass();
 			if (autoboxedPrimitiveClass != null) {
-				type = autoboxedPrimitiveClass;
-			} else if (type.isGeneric()) {
-				HiClassGeneric genericType = (HiClassGeneric) type;
+				clazz = autoboxedPrimitiveClass;
+			} else if (clazz.isGeneric()) {
+				HiClassGeneric genericType = (HiClassGeneric) clazz;
 				if (genericType.isSuper) {
 					return false;
-				} else if (genericType.clazz.isPrimitive()) {
-					// TODO delete
-					type = genericType.clazz.getAutoboxClass();
 				} else if (genericType.clazz == HiClass.NUMBER_CLASS) {
 					return valueClass.isNumber();
 				} else if (genericType.clazz == HiClass.OBJECT_CLASS) {
@@ -288,13 +285,13 @@ public class NodeValueType implements PrimitiveTypes {
 
 		if (!valueClass.isPrimitive()) {
 			if (valueClass == HiClass.OBJECT_CLASS) {
-				return type == HiClass.OBJECT_CLASS;
+				return clazz == HiClass.OBJECT_CLASS;
 			}
 			return false;
 		}
 
 		int t1 = valueClass.getPrimitiveType();
-		int t2 = type.getPrimitiveType();
+		int t2 = clazz.getPrimitiveType();
 		switch (t1) {
 			case BYTE:
 				switch (t2) {

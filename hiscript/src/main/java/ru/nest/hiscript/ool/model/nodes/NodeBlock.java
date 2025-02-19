@@ -81,7 +81,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 			ctx.nodeValueType.type = Type.getType(returnClass);
 		} else {
 			returnClass = HiClassPrimitive.VOID;
-			ctx.nodeValueType.type = Type.charType;
+			ctx.nodeValueType.type = Type.voidType;
 		}
 		ctx.nodeValueType.clazz = returnClass;
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;

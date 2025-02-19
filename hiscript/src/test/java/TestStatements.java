@@ -233,8 +233,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{} class B{} switch(new A()){case B b:}", //
 				"incompatible switch case types; found B, required A");
 		assertSuccessSerialize("switch(new Integer(1)){case 1:return;} assert false;");
-		assertFail("class A{boolean m(){throw new RuntimeException(\"error\");}} switch(new A()){case A a when a.m(): assert false;} assert false;", //
-				"error");
+		assertFail("class A{boolean m(){throw new RuntimeException(\"exception in switch value\");}} switch(new A()){case A a when a.m(): assert false;} assert false;", //
+				"exception in switch value");
 		assertSuccessSerialize("Object o = new Integer[0]; switch(o){case String[] s: assert false; case Integer[] i: return;} assert false;");
 		assertSuccessSerialize("Object o = new Double[0]; switch(o){case Integer[] s: assert false; case Number[] i: return;} assert false;");
 
@@ -283,7 +283,7 @@ public class TestStatements extends HiTest {
 
 		// failures
 		assertFailCompile("class A{} switch(A){}", //
-				"expression expected");
+				"value is expected");
 		assertFailCompile("class A{void m(){}} switch(new A().m()){}", //
 				"value is expected");
 		assertFail("class A{int get(){throw new RuntimeException(\"error\");}} switch(new A().get()){case 1: break;}", //
@@ -310,6 +310,8 @@ public class TestStatements extends HiTest {
 				"case value 'null' is duplicated");
 		assertFailCompile("switch(null){case null: break; case null: break;}", //
 				"case value 'null' is duplicated");
+		assertFail("switch(1){case 1/0: break;};", //
+				"divide by zero");
 	}
 
 	@Test

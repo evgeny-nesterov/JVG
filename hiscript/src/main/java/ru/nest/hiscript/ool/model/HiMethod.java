@@ -481,13 +481,15 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				body.execute(ctx);
 			}
 
-			if (ctx.exitFromBlock()) {
+			if (ctx.isExit || ctx.exception != null) {
 				return;
 			}
+			ctx.isReturn = false;
 
 			// @autoboxing
 			if (returnClass != null && returnClass.isObject() && ctx.value.valueClass.isPrimitive()) {
-				ctx.value.object = ((HiClassPrimitive) ctx.value.valueClass).box(ctx, ctx.value);
+				HiObject boxedObject = ((HiClassPrimitive) ctx.value.valueClass).box(ctx, ctx.value);
+				ctx.value.object = boxedObject;
 				ctx.value.valueClass = returnClass;
 			}
 		}

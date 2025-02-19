@@ -76,26 +76,29 @@ public class NodeSwitch extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		if (valueNode == null) {
+		NodeValueType valueReturnType = null;
+		HiClass valueClass = null;
+		if (valueNode != null) {
+			if (valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx)) {
+				valueReturnType = valueNode.getNodeValueType(validationInfo, ctx);
+				valueClass = valueReturnType.clazz;
+				if (valueClass.isNull()) {
+					valueClass = HiClass.OBJECT_CLASS;
+				}
+
+				// @autoboxing
+				HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
+
+				if (checkValueClass == HiClassPrimitive.LONG || checkValueClass == HiClassPrimitive.FLOAT || checkValueClass == HiClassPrimitive.DOUBLE || checkValueClass == HiClassPrimitive.BOOLEAN) {
+					validationInfo.error("invalid switch value type: '" + valueClass.getNameDescr() + "'", valueNode.getToken());
+					valueClass = null;
+					valid = false;
+				}
+			} else {
+				valid = false;
+			}
+		} else {
 			validationInfo.error("expression expected", getToken());
-			return false;
-		}
-		valid &= valueNode.validate(validationInfo, ctx) && valueNode.expectValue(validationInfo, ctx);
-
-		NodeValueType valueReturnType = valueNode.getNodeValueType(validationInfo, ctx);
-		HiClass valueClass = valueReturnType.clazz;
-		if (valueClass.isNull()) {
-			valueClass = HiClass.OBJECT_CLASS;
-		}
-
-		// @autoboxing
-		HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
-
-		if (checkValueClass == HiClassPrimitive.LONG || checkValueClass == HiClassPrimitive.FLOAT || checkValueClass == HiClassPrimitive.DOUBLE || checkValueClass == HiClassPrimitive.BOOLEAN) {
-			validationInfo.error("invalid switch value type: '" + valueClass.getNameDescr() + "'", valueNode.getToken());
-			valid = false;
-		} else if (valueNode.getValueReturnType() == NodeValueType.NodeValueReturnType.classValue) {
-			validationInfo.error("expression expected", valueNode.getToken());
 			valid = false;
 		}
 
@@ -178,14 +181,16 @@ public class NodeSwitch extends HiNode {
 										processedValues.add(caseValue);
 									}
 								}
-								if (valueClass.isPrimitive()) {
-									if (!HiClass.autoCast(ctx, caseValueClass, valueClass, valueReturnType.isCompileValue(), true)) {
+								if (valueClass != null) {
+									if (valueClass.isPrimitive()) {
+										if (!HiClass.autoCast(ctx, caseValueClass, valueClass, valueReturnType.isCompileValue(), true)) {
+											validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
+											valid = false;
+										}
+									} else if (!caseValueClass.isNull() && !caseValueClass.boxed().isInstanceof(valueClass.boxed())) {
 										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
 										valid = false;
 									}
-								} else if (!caseValueClass.isNull() && !caseValueClass.boxed().isInstanceof(valueClass.boxed())) {
-									validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
-									valid = false;
 								}
 							}
 						} else {
@@ -271,12 +276,15 @@ public class NodeSwitch extends HiNode {
 		}
 
 		HiClass switchValueClass = ctx.value.valueClass;
+
+		// @autoboxing
 		if (switchValueClass.getAutoboxedPrimitiveClass() != null && ctx.value.object != null) {
 			HiClass primitiveClass = ctx.value.valueClass.getAutoboxedPrimitiveClass();
 			if (primitiveClass == HiClassPrimitive.INT || primitiveClass == HiClassPrimitive.BYTE || primitiveClass == HiClassPrimitive.SHORT || primitiveClass == HiClassPrimitive.CHAR || primitiveClass == HiClassPrimitive.BOOLEAN) {
 				switchValueClass = primitiveClass;
 			}
 		}
+
 		if (switchValueClass.isPrimitive()) {
 			int value = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {
