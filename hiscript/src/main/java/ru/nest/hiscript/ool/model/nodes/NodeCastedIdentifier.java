@@ -5,14 +5,13 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 
-public class NodeCastedIdentifier extends HiNode {
+public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 	public NodeCastedIdentifier(String name, int dimension) {
 		super("identifier", TYPE_CASTED_IDENTIFIER, false);
 		this.name = name.intern();
@@ -23,7 +22,7 @@ public class NodeCastedIdentifier extends HiNode {
 
 	public int dimension;
 
-	public NodeArgument[] castedRecordArguments;
+	public HiNode[] castedRecordArguments; // NodeVariable (NodeArgument or NodeCastedIdentifier)
 
 	public String castedVariableName;
 
@@ -31,13 +30,15 @@ public class NodeCastedIdentifier extends HiNode {
 
 	public NodeDeclaration declarationNode; // only for validation
 
+	public HiConstructor constructor;
+
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz = ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
 		}
-		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
+		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.castedIdentifier;
 		ctx.nodeValueType.type = Type.getType(clazz);
 		return clazz;
 	}
@@ -48,29 +49,29 @@ public class NodeCastedIdentifier extends HiNode {
 		boolean valid = true;
 		if (castedRecordArguments != null) {
 			for (int i = 0; i < castedRecordArguments.length; i++) {
-				NodeArgument castedRecordArgument = castedRecordArguments[i];
+				HiNode castedRecordArgument = castedRecordArguments[i];
 				valid &= castedRecordArgument.validate(validationInfo, ctx) && castedRecordArgument.expectValue(validationInfo, ctx);
 			}
 
 			HiClass recordClass = ctx.getLocalClass(name);
 			if (recordClass != null) {
 				if (recordClass.isRecord()) {
+					HiClass[] castedRecordArgumentsClasses = new HiClass[castedRecordArguments.length];
 					for (int i = 0; i < castedRecordArguments.length; i++) {
-						NodeArgument castedRecordArgument = castedRecordArguments[i];
-						NodeValueType castedRecordArgumentValueType = castedRecordArgument.getNodeValueType(validationInfo, ctx);
-						HiClass castedRecordArgumentClass = castedRecordArgumentValueType.clazz;
-						boolean isCastedRecordArgumentValue = castedRecordArgumentValueType.isCompileValue();
-						NodeArgument recordArgument = getNodeArgument(recordClass, castedRecordArgument);
-						if (recordArgument != null) {
-							HiClass recordArgumentClass = recordArgument.getValueClass(validationInfo, ctx);
-							if (recordArgumentClass != null && !HiClass.autoCast(ctx, recordArgumentClass, castedRecordArgumentClass, isCastedRecordArgumentValue, true)) {
-								validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' has invalid type, expected '" + recordArgumentClass.getNameDescr() + "'", castedRecordArgument.getToken());
-								valid = false;
+						HiNode castedRecordArgument = castedRecordArguments[i];
+						castedRecordArgumentsClasses[i] = castedRecordArgument.getValueClass(validationInfo, ctx);
+					}
+					constructor = recordClass.getConstructor(ctx, castedRecordArgumentsClasses);
+					if (constructor == null) {
+						String argsNames = "";
+						for (int i = 0; i < castedRecordArgumentsClasses.length; i++) {
+							if (i > 0) {
+								argsNames += ", ";
 							}
-						} else {
-							validationInfo.error("record argument '" + castedRecordArgument.getVariableType() + " " + castedRecordArgument.getVariableName() + "' is not found", castedRecordArgument.getToken());
-							valid = false;
+							argsNames += castedRecordArgumentsClasses[i].getNameDescr();
 						}
+						validationInfo.error("record constructor not found: " + recordClass.getNameDescr() + "(" + argsNames + ")", getToken());
+						valid = false;
 					}
 				} else {
 					validationInfo.error("inconvertible types; cannot cast " + name + " to Record", getToken());
@@ -91,38 +92,44 @@ public class NodeCastedIdentifier extends HiNode {
 		return valid;
 	}
 
-	public void removeLocalVariable(CompileClassContext ctx) {
-		if (castedVariableName != null) {
+	public void removeLocalVariables(CompileClassContext ctx) {
+		if (declarationNode != null) {
 			ctx.removeLocalVariable(declarationNode);
 		}
 		if (castedRecordArguments != null) {
 			for (int i = 0; i < castedRecordArguments.length; i++) {
-				ctx.removeLocalVariable(castedRecordArguments[i]);
+				HiNode arg = castedRecordArguments[i];
+				ctx.removeLocalVariable((NodeVariable) arg);
+				if (arg instanceof NodeCastedIdentifier) {
+					((NodeCastedIdentifier) arg).removeLocalVariables(ctx);
+				}
 			}
 		}
 	}
 
-	private static NodeArgument getNodeArgument(HiClass recordClass, NodeArgument castedRecordArgument) {
-		NodeArgument recordArgument = null;
-		for (NodeArgument argument : ((HiClassRecord) recordClass).defaultConstructor.arguments) {
-			if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
-				recordArgument = argument;
-				break;
-			}
+	public void removeLocalVariables(RuntimeContext ctx) {
+		if (castedVariableName != null) {
+			ctx.removeVariable(castedVariableName);
 		}
-		if (recordArgument == null && recordClass.constructors != null) {
-			for (HiConstructor constructor : recordClass.constructors) {
-				if (constructor.arguments != null) {
-					for (NodeArgument argument : constructor.arguments) {
-						if (argument.getVariableName().equals(castedRecordArgument.getVariableName())) {
-							recordArgument = argument;
-							break;
-						}
-					}
+		if (castedRecordArguments != null) {
+			for (int i = 0; i < castedRecordArguments.length; i++) {
+				HiNode arg = castedRecordArguments[i];
+				ctx.removeVariable(((NodeVariable) arg).getVariableName());
+				if (arg instanceof NodeCastedIdentifier) {
+					((NodeCastedIdentifier) arg).removeLocalVariables(ctx);
 				}
 			}
 		}
-		return recordArgument;
+	}
+
+	@Override
+	public String getVariableName() {
+		return castedVariableName != null ? castedVariableName : name;
+	}
+
+	@Override
+	public String getVariableType() {
+		return declarationNode.getVariableType();
 	}
 
 	@Override
@@ -144,13 +151,15 @@ public class NodeCastedIdentifier extends HiNode {
 		os.writeNullable(castedRecordArguments);
 		os.writeNullableUTF(castedVariableName);
 		os.writeNullable(castedCondition);
+		os.writeConstructor(constructor);
 	}
 
 	public static NodeCastedIdentifier decode(DecodeContext os) throws IOException {
 		NodeCastedIdentifier node = new NodeCastedIdentifier(os.readUTF(), os.readByte());
-		node.castedRecordArguments = os.readNullableNodeArray(NodeArgument.class, os.readByte());
+		node.castedRecordArguments = os.readNullableNodeArray(HiNode.class, os.readByte());
 		node.castedVariableName = os.readNullableUTF();
 		node.castedCondition = os.readNullable(HiNode.class);
+		os.readConstructor(constructor -> node.constructor = constructor);
 		return node;
 	}
 }

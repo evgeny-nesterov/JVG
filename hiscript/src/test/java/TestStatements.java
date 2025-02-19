@@ -277,9 +277,9 @@ public class TestStatements extends HiTest {
 		assertFailCompile("switch(void){}", //
 				"expression expected");
 		assertFailCompile("switch(int){}", //
-				"expression expected");
+				"value is expected");
 		assertFailCompile("switch(int x = 1){}", //
-				"expression expected");
+				"variable expected");
 
 		// failures
 		assertFailCompile("class A{} switch(A){}", //

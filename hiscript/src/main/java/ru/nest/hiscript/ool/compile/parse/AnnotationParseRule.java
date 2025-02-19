@@ -4,6 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotationArgument;
 import ru.nest.hiscript.tokenizer.Symbols;
@@ -46,6 +47,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 
 					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 					if (argValue == null) {
+						argValue = EmptyNode.getInstance();
 						tokenizer.error("argument value expected");
 					}
 					args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));

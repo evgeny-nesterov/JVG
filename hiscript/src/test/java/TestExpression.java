@@ -545,7 +545,7 @@ public class TestExpression extends HiTest {
 		assertFailCompile("int x = 1; if(x instanceof Integer){}", //
 				"inconvertible types; cannot cast int to Integer");
 		assertFailCompile("Integer x = 1; if(x instanceof int){}", //
-				"unexpected token");
+				"inconvertible types; cannot cast Integer to int");
 		assertFailCompile("Integer x; if(x instanceof Integer){}", //
 				"variable 'x' is not initialized");
 		assertFailCompile("Integer x = 1; if(x instanceof 1){}", //

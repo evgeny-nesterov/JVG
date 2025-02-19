@@ -85,7 +85,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiNode castedCondition;
 
-	public NodeArgument[] castedRecordArguments;
+	public HiNode[] castedRecordArguments;
 
 	public Type variableType;
 

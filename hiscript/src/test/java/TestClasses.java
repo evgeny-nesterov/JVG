@@ -794,15 +794,17 @@ public class TestClasses extends HiTest {
 		assertSuccessSerialize("class O{} record Rec(O o, int x, String a); new Rec(new O(), 1, \"x\").hashCode();");
 
 		// instanceof
-		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
-		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(long a, Object b) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
+		assertSuccessSerialize("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b, _) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
+		assertSuccessSerialize("record Rec(int a, Object b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a, String b, _) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 		assertSuccessSerialize("record Rec(int a){int b; Rec(int b){a = 1; this.b = b;} int getB(){return b;}}; Rec r = new Rec(3); if(r instanceof Rec(int b) rec) {} else {assert false;}}");
 		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a) rec);", //
-				"record argument 'byte a' has invalid type, expected 'int'");
-		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(String b, String a) rec);", //
-				"record argument 'String a' has invalid type, expected 'int'");
-		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int _a, String b) rec);", //
-				"record argument 'int _a' is not found");
+				"record constructor not found: Rec(byte)");
+		assertFailCompile("record Rec(byte a); Object r = new Rec(1); if(r instanceof Rec(int a) rec);", //
+				"record constructor not found: Rec(int)");
+		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(String b, String a, String _) rec);", //
+				"record constructor not found: Rec(String, String, String)");
+		assertFailCompile("record Rec(int a); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, int b) rec);", //
+				"record constructor not found: Rec(int, int)");
 		assertFailCompile("class Rec{Rec(int a){}} Object r = new Rec(a); if(r instanceof Rec(int a) rec);", //
 				"cannot resolve symbol 'a'");
 

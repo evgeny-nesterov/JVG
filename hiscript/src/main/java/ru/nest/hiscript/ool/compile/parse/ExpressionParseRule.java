@@ -10,7 +10,6 @@ import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.Type;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
@@ -65,7 +64,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			allOperations.add(operations);
 
 			operations = new OperationsGroup();
-			boolean hasOperand = visitSimpleExpression(tokenizer, operations, allOperations, operands, ctx);
+			boolean hasOperand = visitSimpleExpression(tokenizer, allOperations, operands, ctx);
 			expectOperand |= visitArrayIndexes(tokenizer, operations, operands, ctx);
 			expectOperand |= visitIncrement(tokenizer, operations, false);
 
@@ -284,7 +283,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		return found;
 	}
 
-	protected static boolean visitSimpleExpression(Tokenizer tokenizer, OperationsGroup operations, List<OperationsGroup> allOperations, List<HiNodeIF> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+	protected static boolean visitSimpleExpression(Tokenizer tokenizer, List<OperationsGroup> allOperations, List<HiNodeIF> operands, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
 
 		// visit number
@@ -381,66 +380,81 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit identifier as word: package, class, method, field
-		Token identifierToken = startToken(tokenizer);
-		String identifierName = visitWord(tokenizer, NOT_SERVICE);
-		String primitiveTypeName = null;
-		if (identifierName == null) {
-			tokenizer.start();
-			primitiveTypeName = visitWord(tokenizer, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR);
+		boolean visitCastAfterIdentifier = isVisitCastAfterIdentifier(allOperations);
+		if ((node = visitIdentifier(tokenizer, ctx, visitCastAfterIdentifier)) != null) {
+			operands.add(node);
+			return true;
 		}
-		if (identifierName != null || primitiveTypeName != null) {
+		return false;
+	}
+
+	public static HiNode visitIdentifier(Tokenizer tokenizer, CompileClassContext ctx, boolean visitCastAfterIdentifier) throws TokenizerException, HiScriptParseException {
+		tokenizer.start();
+		Token identifierToken = startToken(tokenizer);
+		String identifierName = visitWord(tokenizer, NOT_SERVICE, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR);
+		if (identifierName != null) {
 			int dimension = visitDimension(tokenizer);
-			if (primitiveTypeName != null) {
-				if (dimension > 0) {
-					tokenizer.commit();
-					identifierName = primitiveTypeName;
-				} else {
-					tokenizer.rollback();
-					return false;
-				}
-			}
 
-			boolean visitCastAfterIdentifier = false;
-			if (allOperations.size() > 0) {
-				int index = allOperations.size() - 1;
-				OperationsGroup lastOperation = allOperations.get(index);
-				while (lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INVOCATION) {
-					lastOperation = allOperations.get(--index);
-				}
-				if (lastOperation == null || (lastOperation != null && lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INSTANCE_OF) || !lastOperation.hasOperations()) {
-					visitCastAfterIdentifier = true;
-				}
-			}
-
-			NodeArgument[] castedRecordArguments = null;
+			HiNode[] castedRecordArguments = null;
 			String castedVariableName = null;
 			if (visitCastAfterIdentifier) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-					List<NodeArgument> argumentsList = new ArrayList<>();
-					visitArgumentsDefinitions(tokenizer, argumentsList, ctx);
+					List<HiNode> identifiersList = new ArrayList<>();
+					visitIdentifiers(tokenizer, identifiersList, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-					if (argumentsList.size() > 0) {
-						castedRecordArguments = argumentsList.toArray(new NodeArgument[argumentsList.size()]);
+					if (identifiersList.size() > 0) {
+						castedRecordArguments = identifiersList.toArray(new HiNode[identifiersList.size()]);
 					}
 				}
 				castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
 			}
 
+			tokenizer.commit();
+
 			if (castedRecordArguments != null || castedVariableName != null) {
 				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName, dimension);
-				identifier.setToken(identifierToken);
 				identifier.castedRecordArguments = castedRecordArguments;
 				identifier.castedVariableName = castedVariableName;
 				identifier.setToken(tokenizer.getBlockToken(identifierToken));
-				operands.add(identifier);
+				return identifier;
 			} else {
 				NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
 				identifier.setToken(tokenizer.getBlockToken(identifierToken));
-				operands.add(identifier);
+				return identifier;
 			}
-			return true;
 		}
-		return false;
+		tokenizer.rollback();
+		return null;
+	}
+
+	private static boolean isVisitCastAfterIdentifier(List<OperationsGroup> allOperations) {
+		boolean visitCastAfterIdentifier = false;
+		if (allOperations.size() > 0) {
+			int index = allOperations.size() - 1;
+			OperationsGroup lastOperation = allOperations.get(index);
+			while (lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INVOCATION) {
+				lastOperation = allOperations.get(--index);
+			}
+			if (lastOperation == null || (lastOperation != null && lastOperation.getOperation() != null && lastOperation.getOperation().getOperation() == Operations.INSTANCE_OF) || !lastOperation.hasOperations()) {
+				visitCastAfterIdentifier = true;
+			}
+		}
+		return visitCastAfterIdentifier;
+	}
+
+	protected static void visitIdentifiers(Tokenizer tokenizer, List<HiNode> identifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		HiNode identifier = visitIdentifier(tokenizer, ctx, true);
+		if (identifier != null) {
+			identifiers.add(identifier);
+			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				identifier = visitIdentifier(tokenizer, ctx, true);
+				if (identifier != null) {
+					identifiers.add(identifier);
+				} else {
+					tokenizer.error("identifier is expected");
+				}
+			}
+		}
 	}
 
 	private int visitOperation(Tokenizer tokenizer, List<HiNodeIF> operands) throws TokenizerException {

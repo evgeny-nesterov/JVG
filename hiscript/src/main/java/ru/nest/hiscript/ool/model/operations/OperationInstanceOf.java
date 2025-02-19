@@ -3,14 +3,15 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldObject;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
+import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -31,7 +32,7 @@ public class OperationInstanceOf extends BinaryOperation {
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.clazz;
 		HiClass c2 = node2.clazz;
-		if (node2.returnType != NodeValueType.NodeValueReturnType.classValue) {
+		if (node2.returnType != NodeValueType.NodeValueReturnType.classValue && node2.returnType != NodeValueType.NodeValueReturnType.castedIdentifier) {
 			validationInfo.error("type expected", node2.node.getToken());
 		}
 		if (!c1.isVar()) {
@@ -75,8 +76,8 @@ public class OperationInstanceOf extends BinaryOperation {
 				ctx.addVariable(castedField);
 			}
 			if (v2.castedRecordArguments != null) {
-				for (NodeArgument castedRecordArgument : v2.castedRecordArguments) {
-					HiField castedField = ((HiObject) v1.object).getField(ctx, castedRecordArgument.name, c2);
+				for (HiNode castedRecordArgument : v2.castedRecordArguments) {
+					HiField castedField = ((HiObject) v1.object).getField(ctx, ((NodeVariable) castedRecordArgument).getVariableName(), c2);
 					ctx.addVariable(castedField);
 				}
 			}

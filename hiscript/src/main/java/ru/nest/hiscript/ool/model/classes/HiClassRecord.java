@@ -14,7 +14,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HiClassRecord extends HiClass {
@@ -58,12 +58,25 @@ public class HiClassRecord extends HiClass {
 	@Override
 	protected List<HiConstructor> _searchConstructors(ClassResolver classResolver, ArgumentsSignature signature) {
 		List<HiConstructor> constructors = super._searchConstructors(classResolver, signature);
-		if (constructors == null || constructors.size() == 0) {
-			if (isMatchConstructorArguments(classResolver, defaultConstructor, signature.argsClasses)) {
-				constructors = Arrays.asList(defaultConstructor);
+		if (isMatchConstructorArguments(classResolver, defaultConstructor, signature.argsClasses)) {
+			List<HiConstructor> matchDefaultConstructors = super._searchConstructors(classResolver, defaultConstructor.signature);
+			if (matchDefaultConstructors == null || matchDefaultConstructors.size() == 0) {
+				// default constructor were not rewritten
+				if (constructors == null) {
+					constructors = new ArrayList<>(1);
+				}
+				constructors.add(defaultConstructor);
 			}
 		}
 		return constructors;
+	}
+
+	@Override
+	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argsClasses) {
+		if (isMatchConstructorArguments(classResolver, defaultConstructor, argsClasses)) {
+			return defaultConstructor;
+		}
+		return super.getConstructor(classResolver, argsClasses);
 	}
 
 	@Override

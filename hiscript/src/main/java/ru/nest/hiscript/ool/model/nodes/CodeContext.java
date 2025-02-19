@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.model.Codeable;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
@@ -403,6 +404,14 @@ public class CodeContext {
 			for (HiClass clazz : classes) {
 				writeClass(clazz);
 			}
+		}
+	}
+
+	public void writeConstructor(HiConstructor constructor) throws IOException {
+		if (constructor != null) {
+			constructor.codeLink(this);
+		} else {
+			writeShort(-1);
 		}
 	}
 

@@ -209,7 +209,7 @@ public class NodeSwitch extends HiNode {
 					for (HiNode caseValueNode : caseValueNodes) {
 						NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 						if (identifier != null) {
-							identifier.removeLocalVariable(ctx);
+							identifier.removeLocalVariables(ctx);
 						}
 					}
 				}
@@ -254,12 +254,7 @@ public class NodeSwitch extends HiNode {
 						}
 					} finally {
 						if (identifier != null) {
-							ctx.removeVariable(identifier.castedVariableName);
-							if (identifier.castedRecordArguments != null) {
-								for (int j = 0; j < identifier.castedRecordArguments.length; j++) {
-									ctx.removeVariable(identifier.castedRecordArguments[j].name);
-								}
-							}
+							identifier.removeLocalVariables(ctx);
 						}
 					}
 				}
@@ -369,7 +364,7 @@ public class NodeSwitch extends HiNode {
 							HiClass c2 = ctx.value.valueClass;
 							if (c1.isInstanceof(c2)) {
 								String castedVariableName = ctx.value.castedVariableName;
-								NodeArgument[] castedRecordArguments = ctx.value.castedRecordArguments;
+								HiNode[] castedRecordArguments = ctx.value.castedRecordArguments;
 								HiNode castedCondition = ctx.value.castedCondition;
 								if (castedVariableName != null) { // object or array
 									HiField castedField = HiField.getField(c2, castedVariableName, null);
@@ -378,8 +373,8 @@ public class NodeSwitch extends HiNode {
 								}
 								if (castedRecordArguments != null) {
 									for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-										NodeArgument castedRecordArgument = castedRecordArguments[recordArgumentIndex];
-										HiPojoField castedField = new HiPojoField(hiObject, hiObject.fields[recordArgumentIndex], castedRecordArgument.name);
+										NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
+										HiPojoField castedField = new HiPojoField(hiObject, hiObject.fields[recordArgumentIndex], castedRecordArgument.getVariableName());
 										ctx.addVariable(castedField);
 									}
 								}
@@ -394,8 +389,8 @@ public class NodeSwitch extends HiNode {
 										}
 										if (castedRecordArguments != null) {
 											for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-												NodeArgument castedRecordArgument = castedRecordArguments[recordArgumentIndex];
-												ctx.removeVariable(castedRecordArgument.name);
+												NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
+												ctx.removeVariable(castedRecordArgument.getVariableName());
 											}
 										}
 										continue;

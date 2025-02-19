@@ -514,7 +514,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 	}
 
 	public void codeLink(CodeContext os) throws IOException {
-		int index = -1;
+		int index = -1; // not found
 		if (clazz.constructors != null) {
 			for (int i = 0; i < clazz.constructors.length; i++) {
 				if (clazz.constructors[i] == this) {
@@ -523,21 +523,28 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 				}
 			}
 		}
+		if (index == -1 && clazz.isRecord() && ((HiClassRecord) clazz).defaultConstructor == this) {
+			index = -2; // default record constructor
+		}
 		os.writeShort(index);
-		os.writeClass(clazz);
+		if (index != -1) {
+			os.writeClass(clazz);
+		}
 	}
 
 	public static void decodeLink(DecodeContext os, ClassLoadListener<HiConstructor> callback) throws IOException {
 		int index = os.readShort();
-		os.readClass(clazz -> {
-			HiConstructor constructor;
-			if (index == -1 && clazz.isRecord()) {
-				constructor = ((HiClassRecord) clazz).defaultConstructor;
-			} else {
-				constructor = clazz.constructors[index];
-			}
-			callback.classLoaded(constructor);
-		});
+		if (index != -1) {
+			os.readClass(clazz -> {
+				HiConstructor constructor;
+				if (index == -2 && clazz.isRecord()) {
+					constructor = ((HiClassRecord) clazz).defaultConstructor;
+				} else {
+					constructor = clazz.constructors[index];
+				}
+				callback.classLoaded(constructor);
+			});
+		}
 	}
 
 	@Override

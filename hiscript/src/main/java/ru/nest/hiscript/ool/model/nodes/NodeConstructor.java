@@ -400,7 +400,7 @@ public class NodeConstructor extends HiNode {
 		os.writeTypes(superTypes);
 		os.writeClass(clazz);
 		os.writeClasses(argsClasses);
-		constructor.codeLink(os);
+		os.writeConstructor(constructor);
 	}
 
 	public static NodeConstructor decode(DecodeContext os) throws IOException {
@@ -409,7 +409,7 @@ public class NodeConstructor extends HiNode {
 		node.superTypes = os.readTypes();
 		os.readClass(clazz -> node.clazz = clazz);
 		node.argsClasses = os.readClasses();
-		HiConstructor.decodeLink(os, constructor -> node.constructor = constructor);
+		os.readConstructor(constructor -> node.constructor = constructor);
 		return node;
 	}
 }

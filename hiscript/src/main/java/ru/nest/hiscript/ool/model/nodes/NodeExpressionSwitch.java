@@ -126,7 +126,7 @@ public class NodeExpressionSwitch extends HiNode {
 				for (HiNode caseValueNode : caseValueNodes) {
 					NodeCastedIdentifier identifier = ((NodeExpressionNoLS) caseValueNode).checkCastedIdentifier();
 					if (identifier != null) {
-						identifier.removeLocalVariable(ctx);
+						identifier.removeLocalVariables(ctx);
 					}
 				}
 			}

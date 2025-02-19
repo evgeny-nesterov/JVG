@@ -1148,8 +1148,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	private final Map<MethodSignature, List<HiMethod>> methodsHash = new HashMap<>();
 
-	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argsTypes) {
-		return searchMethod(classResolver, new MethodSignature(name, argsTypes, false));
+	public HiMethod searchMethod(ClassResolver classResolver, String name, HiClass... argsClasses) {
+		return searchMethod(classResolver, new MethodSignature(name, argsClasses, false));
 	}
 
 	public HiMethod searchMethod(ClassResolver classResolver, MethodSignature signature) {
@@ -1474,8 +1474,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 	}
 
-	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argsTypes) {
-		return getMethod(classResolver, new MethodSignature(name, argsTypes, false));
+	public HiMethod getMethod(ClassResolver classResolver, String name, HiClass... argsClasses) {
+		return getMethod(classResolver, new MethodSignature(name, argsClasses, false));
 	}
 
 	private HiMethod getMethod(ClassResolver classResolver, MethodSignature signature) {
@@ -1556,8 +1556,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	private final Map<ArgumentsSignature, List<HiConstructor>> constructorsHash = new HashMap<>();
 
-	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argsTypes) {
-		ArgumentsSignature signature = new ArgumentsSignature(argsTypes, false);
+	public HiConstructor searchConstructor(ClassResolver classResolver, HiClass... argsClasses) {
+		ArgumentsSignature signature = new ArgumentsSignature(argsClasses, false);
 		List<HiConstructor> constructors = constructorsHash.get(signature);
 		if (constructors == null) {
 			constructors = _searchConstructors(classResolver, signature);
@@ -1663,20 +1663,20 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return true;
 	}
 
-	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argsTypes) {
+	public HiConstructor getConstructor(ClassResolver classResolver, HiClass... argsClasses) {
 		if (constructors != null) {
 			int size = constructors.length;
 			for (int i = 0; i < size; i++)
 				FOR:{
 					HiConstructor c = constructors[i];
 					int argCount = c.arguments != null ? c.arguments.length : 0;
-					if (argCount != argsTypes.length) {
+					if (argCount != argsClasses.length) {
 						continue;
 					}
 
 					c.resolve(classResolver);
 					for (int j = 0; j < argCount; j++) {
-						if (argsTypes[j] != c.argsClasses[j]) {
+						if (argsClasses[j] != c.argsClasses[j]) {
 							break FOR;
 						}
 					}

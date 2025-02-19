@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.model.ClassLoadListener;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNoClassException;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -346,6 +347,10 @@ public class DecodeContext {
 				throw new HiScriptRuntimeException("invalid class index " + index + " (max is " + (classes != null ? (classes.length - 1) : 0) + ")");
 			}
 		}
+	}
+
+	public void readConstructor(ClassLoadListener<HiConstructor> callback) throws IOException {
+		HiConstructor.decodeLink(this, callback);
 	}
 
 	public <N> List<N> readList(Class<N> type, int size) throws IOException {

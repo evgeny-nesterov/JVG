@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -15,7 +16,9 @@ import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 
-public class NodeIdentifier extends HiNode {
+public class NodeIdentifier extends HiNode implements NodeVariable {
+	public final static String UNNAMED = "_";
+
 	public NodeIdentifier(String name, int dimension) {
 		super("identifier", TYPE_IDENTIFIER, false);
 		this.name = name.intern();
@@ -50,7 +53,11 @@ public class NodeIdentifier extends HiNode {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (dimension > 0) {
+		if (UNNAMED.equals(name)) {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.type = Type.varType;
+			return HiClassVar.VAR;
+		} else if (dimension > 0) {
 			// <type>[][]...[]
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
 			if (clazz == null) {
@@ -103,6 +110,11 @@ public class NodeIdentifier extends HiNode {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		if (UNNAMED.equals(name)) {
+			clazz = HiClassVar.VAR;
+			return true;
+		}
+
 		ctx.currentNode = this;
 		boolean valid = true;
 		boolean local = false;
@@ -210,6 +222,16 @@ public class NodeIdentifier extends HiNode {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String getVariableName() {
+		return name;
+	}
+
+	@Override
+	public String getVariableType() {
+		return clazz.getTypeName();
 	}
 
 	@Override

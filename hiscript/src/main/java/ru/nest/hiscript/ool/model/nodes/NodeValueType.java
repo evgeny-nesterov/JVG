@@ -13,7 +13,7 @@ import ru.nest.hiscript.tokenizer.Token;
 
 public class NodeValueType implements PrimitiveTypes {
 	public enum NodeValueReturnType {
-		noValue, compileValue, runtimeValue, classValue
+		noValue, compileValue, runtimeValue, classValue, castedIdentifier
 	}
 
 	public HiNodeIF node;

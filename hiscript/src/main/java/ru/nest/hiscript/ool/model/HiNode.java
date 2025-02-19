@@ -562,7 +562,7 @@ public abstract class HiNode implements HiNodeIF {
 				return false;
 			}
 			return true;
-		} else if (castedConditionValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
+		} else if (castedConditionValueType.returnType != NodeValueType.NodeValueReturnType.classValue && castedConditionValueType.returnType != NodeValueType.NodeValueReturnType.castedIdentifier) {
 			if (!HiClass.autoCast(ctx, castedConditionValueType.clazz, valueClass, false, true)) {
 				validationInfo.error(valueClass.getNameDescr() + " is expected", getToken());
 				return false;
