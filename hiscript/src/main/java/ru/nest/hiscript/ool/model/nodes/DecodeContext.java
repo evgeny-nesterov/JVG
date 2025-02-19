@@ -500,10 +500,14 @@ public class DecodeContext {
 		throw new IOException("undefined object type: " + type);
 	}
 
-	public HiNode load() throws IOException {
+	public void prepare() throws IOException {
 		loadStrings();
 		loadTypes();
 		loadClasses();
+	}
+
+	public HiNode loadNode() throws IOException {
+		prepare();
 		return read(HiNode.class);
 	}
 }

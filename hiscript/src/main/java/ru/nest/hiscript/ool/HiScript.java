@@ -87,7 +87,7 @@ public class HiScript implements AutoCloseable {
 		if (serializedCode != null) {
 			clear();
 			DecodeContext ctxDecode = new DecodeContext(env.getUserClassLoader(), serializedCode);
-			node = ctxDecode.load();
+			node = ctxDecode.loadNode();
 		}
 		return this;
 	}

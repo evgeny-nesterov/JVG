@@ -28,6 +28,11 @@ public class HiClassArray extends HiClass {
 		init(cellClass);
 	}
 
+	// for decode
+	public HiClassArray(HiClassLoader classLoader, String cellClassName) {
+		super(classLoader, OBJECT_CLASS, null, "0" + cellClassName, CLASS_TYPE_TOP, null);
+	}
+
 	public HiClass getRootCellClass() {
 		return rootCellClass;
 	}
@@ -47,6 +52,8 @@ public class HiClassArray extends HiClass {
 		} else {
 			dimension = 1;
 		}
+
+		cellClass.arrayClass = this;
 
 		constructors = new HiConstructor[1];
 		// do not set type Type.getType(this)
@@ -149,12 +156,13 @@ public class HiClassArray extends HiClass {
 	public void code(CodeContext os) throws IOException {
 		// write class type
 		os.writeByte(HiClass.CLASS_ARRAY);
+		os.writeUTF(cellClass.fullName);
 		os.writeClass(cellClass);
 	}
 
 	public static HiClass decode(DecodeContext os) throws IOException {
-		// assumed cell class is already loaded
-		HiClass cellClass = os.readClass();
-		return cellClass.getArrayClass();
+		HiClassArray arrayClass = new HiClassArray(os.getClassLoader(), os.readUTF());
+		os.readClass(cellClass -> arrayClass.init(cellClass));
+		return arrayClass;
 	}
 }

@@ -136,12 +136,16 @@ public class NodeArray extends HiNode {
 		os.writeByte(dimensions != null ? dimensions.length : 0);
 		os.writeNullable(dimensions);
 		os.writeByte(dimensionsCountActive);
+		os.writeType(type);
+		os.writeType(cellType);
 		os.writeJavaClass(arrayJavaClass);
 		os.writeClass(clazz);
 	}
 
 	public static NodeArray decode(DecodeContext os) throws IOException {
 		NodeArray node = new NodeArray(os.readNullableNodeArray(HiNode.class, os.readByte()), os.readByte());
+		node.type = os.readType();
+		node.cellType = os.readType();
 		node.arrayJavaClass = os.readJavaClass();
 		os.readClass(clazz -> node.clazz = (HiClassArray) clazz);
 		return node;

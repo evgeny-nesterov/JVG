@@ -1,20 +1,23 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.HiScriptParseException;
-import ru.nest.hiscript.ool.compile.HiCompiler;
-import ru.nest.hiscript.ool.runtime.HiObject;
-import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
-import ru.nest.hiscript.ool.compile.parse.ClassFileParseRule;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.compile.ParserUtil;
+import ru.nest.hiscript.ool.compile.parse.ClassFileParseRule;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
+import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiNative;
+import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -89,7 +92,7 @@ public class HiClassLoader {
 		return parent;
 	}
 
-	private final String name;
+	private String name;
 
 	private HiClassLoader parent;
 
@@ -396,5 +399,44 @@ public class HiClassLoader {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public void code(CodeContext os) throws IOException {
+		loading = true;
+		os.writeUTF(name);
+		for (HiClass clazz : classes.values()) {
+			os.registerClass(clazz);
+		}
+	}
+
+	private boolean loading;
+
+	public boolean isLoading() {
+		return loading;
+	}
+
+	public static HiClassLoader decodeSystem(DataInputStream is) throws IOException {
+		HiClassLoader classLoader = createSystem();
+		DecodeContext os = new DecodeContext(classLoader, is);
+		os.prepare();
+
+		String name = os.readUTF();
+		if (!SYSTEM_CLASS_LOADER_NAME.equals(name)) {
+			throw new RuntimeException("Invalid class loader name: " + name + ". Required system.");
+		}
+		return classLoader;
+	}
+
+	public static HiClassLoader decode(DataInputStream is, HiClassLoader parent, HiRuntimeEnvironment env) throws IOException {
+		HiClassLoader classLoader = new HiClassLoader("tmp", null, null);
+		DecodeContext os = new DecodeContext(classLoader, is);
+		os.prepare();
+
+		String name = is.readUTF();
+		if (SYSTEM_CLASS_LOADER_NAME.equals(name)) {
+			throw new RuntimeException("Invalid class loader name: " + name);
+		}
+		classLoader.name = name;
+		return classLoader;
 	}
 }

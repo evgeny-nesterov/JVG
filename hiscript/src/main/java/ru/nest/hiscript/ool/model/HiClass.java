@@ -35,7 +35,9 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,8 +48,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.GZIPInputStream;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -97,6 +100,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public static String STRING_CLASS_NAME = "String";
 
+	public static String NUMBER_CLASS_NAME = "Number";
+
 	public static String ENUM_CLASS_NAME = "Enum";
 
 	public static String RECORD_CLASS_NAME = "Record";
@@ -115,14 +120,53 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	static {
 		// system class loader is common and has to have null parent
-		HiClassLoader systemClassLoader = HiClassLoader.createSystem();
+		HiClassLoader systemClassLoader = null;
+		boolean loadSystem = true;
+		if (!HiCompiler.compilingSystem) {
+			InputStream is = HiClass.class.getResourceAsStream("/hilibs/bin/system.hilib");
+			if (is != null) {
+				try (DataInputStream dis = new DataInputStream(new GZIPInputStream(is))) {
+					systemClassLoader = HiClassLoader.decodeSystem(dis);
+					loadSystem = false;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (systemClassLoader == null) {
+			systemClassLoader = HiClassLoader.createSystem();
+		}
 		systemClassLoader.getNative().register(SystemImpl.class);
 		systemClassLoader.getNative().register(ObjectImpl.class);
-		loadSystemClasses(systemClassLoader);
+		if (loadSystem) {
+			loadSystemClasses(systemClassLoader);
+		} else {
+			initSystemClasses(systemClassLoader);
+		}
 	}
 
 	public static HiClassLoader getSystemClassLoader() {
 		return HiClassLoader.getSystemClassLoader();
+	}
+
+	private static void initSystemClasses(HiClassLoader systemClassLoader) {
+		OBJECT_CLASS = systemClassLoader.getClass(OBJECT_CLASS_NAME);
+		STRING_CLASS = systemClassLoader.getClass(STRING_CLASS_NAME);
+		NUMBER_CLASS = systemClassLoader.getClass(NUMBER_CLASS_NAME);
+		HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.getClass("Byte"));
+		HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.getClass("Short"));
+		HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.getClass("Integer"));
+		HiClassPrimitive.LONG.setAutoboxingClass(systemClassLoader.getClass("Long"));
+		HiClassPrimitive.FLOAT.setAutoboxingClass(systemClassLoader.getClass("Float"));
+		HiClassPrimitive.DOUBLE.setAutoboxingClass(systemClassLoader.getClass("Double"));
+		HiClassPrimitive.BOOLEAN.setAutoboxingClass(systemClassLoader.getClass("Boolean"));
+		HiClassPrimitive.CHAR.setAutoboxingClass(systemClassLoader.getClass("Character"));
+		HiClassPrimitive.VOID.setAutoboxingClass(HiClassPrimitive.VOID); // to avoid NPE
+		for (HiClassPrimitive primitiveClass : HiClassPrimitive.primitiveClasses.values()) {
+			if (primitiveClass != HiClassPrimitive.VOID) {
+				primitiveClass.getAutoboxClass().autoboxedPrimitiveClass = primitiveClass;
+			}
+		}
 	}
 
 	private static void loadSystemClasses(HiClassLoader systemClassLoader) {
@@ -139,9 +183,9 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 			classes.add(STRING_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false).get(0));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
+			classes.add(NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0));
 
 			// TODO define classes initialization order automatically
-			classes.add(NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0));
 			HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
 			HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
 			HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));
@@ -793,7 +837,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 	}
 
-	private HiClassArray arrayClass;
+	public HiClassArray arrayClass;
 
 	public HiClassArray getArrayClass() {
 		if (arrayClass == null) {
@@ -1344,8 +1388,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	/**
-	 * @param method1    method for invocation with matching arguments
-	 * @param method2    check whether this method may be invoked with arguments from method1
+	 * @param method1 method for invocation with matching arguments
+	 * @param method2 check whether this method may be invoked with arguments from method1
 	 */
 	private boolean isMatchMethodsInvocation(ClassResolver classResolver, HiMethod method1, HiMethod method2, MatchMethodArgumentsType matchType) {
 		if (matchType.isVarargs() && method1.hasVarargs() && !method2.hasVarargs()) {
@@ -1867,7 +1911,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		if (classLoader.isSystem()) {
+		if (classLoader.isSystem() && !classLoader.isLoading()) {
 			os.writeByte(CLASS_SYSTEM);
 			os.writeUTF(fullName);
 		} else {

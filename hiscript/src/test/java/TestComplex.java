@@ -15,8 +15,8 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertFail("class A{boolean get(){throw new RuntimeException(\"exception in switch value\");}} switch(new A()){case A a when a.get(): break;};", //
-				"exception in switch value");
+		assertFailCompile("try {} catch(String | Integer e){}", //
+				"incompatible types: String cannot be converted to Exception");
 	}
 
 	@Test

@@ -406,7 +406,7 @@ public class CodeContext {
 		}
 	}
 
-	private int registerClass(HiClass clazz) {
+	public int registerClass(HiClass clazz) {
 		if (!clazz.isVar()) {
 			if (clazz.isArray()) {
 				registerClass(clazz.getArrayType());

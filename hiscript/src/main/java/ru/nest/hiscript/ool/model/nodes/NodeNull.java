@@ -19,7 +19,7 @@ public class NodeNull extends HiNode {
 
 	@Override
 	public boolean isConstant(CompileClassContext ctx) {
-		return true;
+		return false;
 	}
 
 	@Override

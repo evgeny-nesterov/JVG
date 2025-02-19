@@ -2,16 +2,22 @@ package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.parse.RootParseRule;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiNodeIF;
+import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.zip.GZIPOutputStream;
 
 public class HiCompiler {
 	private final Tokenizer tokenizer;
@@ -117,5 +123,36 @@ public class HiCompiler {
 
 	public void setPrintInvalidCode(boolean printInvalidCode) {
 		this.printInvalidCode = printInvalidCode;
+	}
+
+	public static boolean compilingSystem = false;
+
+	public static void compileSystem() throws IOException {
+		compilingSystem = true;
+		CodeContext os = new CodeContext();
+		HiClass.getSystemClassLoader().code(os);
+		byte[] data = os.code();
+		File dir = new File(HiCompiler.class.getResource("/hilibs").getFile());
+		dir = new File(dir, "bin");
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		GZIPOutputStream zos = new GZIPOutputStream(bos);
+		zos.write(data);
+		zos.close();
+		byte[] compressedData = bos.toByteArray();
+
+		File file = new File(dir, "system.hilib");
+		Files.write(file.toPath(), compressedData);
+	}
+
+	public static void main(String[] args) {
+		try {
+			compileSystem();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
