@@ -8,12 +8,17 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
+import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.JavaString;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
 import ru.nest.hiscript.ool.model.lib.ThreadImpl;
+import ru.nest.hiscript.ool.model.nodes.NodeArgument;
+import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
+import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.util.ArrayList;
@@ -22,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -946,5 +951,44 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			return messageField.getStringValue(this);
 		}
 		return null;
+	}
+
+	public void addCastedVariables(String castedVariableName, HiClass fieldClass, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, HiObject object) {
+		if (object == null) {
+			throwRuntimeException("null pointer");
+			return;
+		}
+		if (castedVariableName != null) {
+			HiField castedField = HiField.getField(fieldClass, castedVariableName, null);
+			castedField.set(object, object.clazz);
+			addVariable(castedField);
+		}
+		if (castedRecordArguments != null) {
+			for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
+				NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
+				NodeArgument originalArgument = castedRecordArgumentsConstructor.arguments[recordArgumentIndex];
+
+				HiField objectField = null;
+				for (int objectFieldIndex = 0; objectFieldIndex < object.fields.length; objectFieldIndex++) {
+					if (object.fields[objectFieldIndex].name.equals(originalArgument.name)) {
+						objectField = object.fields[objectFieldIndex];
+						break;
+					}
+				}
+
+				HiPojoField castedField = new HiPojoField(object, objectField, castedRecordArgument.getVariableName());
+				addVariable(castedField);
+
+				if (castedRecordArgument instanceof NodeCastedIdentifier) {
+					castedField.get(this, value);
+					HiClass argFieldClass = castedField.getClass(this);
+					if (argFieldClass.isObject()) {
+						HiObject castedArgumentObject = (HiObject) value.object;
+						NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) castedRecordArgument;
+						addCastedVariables(castedIdentifier.castedVariableName, argFieldClass, castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject);
+					}
+				}
+			}
+		}
 	}
 }

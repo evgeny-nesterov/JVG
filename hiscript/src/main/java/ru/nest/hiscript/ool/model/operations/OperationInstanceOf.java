@@ -2,16 +2,10 @@ package ru.nest.hiscript.ool.model.operations;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldObject;
-import ru.nest.hiscript.ool.model.fields.HiPojoField;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
@@ -20,7 +14,7 @@ import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class OperationInstanceOf extends BinaryOperation {
 	private static final HiOperation instance = new OperationInstanceOf();
@@ -90,39 +84,10 @@ public class OperationInstanceOf extends BinaryOperation {
 
 		boolean isInstanceof = c1.isInstanceof(c2);
 		if (isInstanceof) {
-			if (v2.castedVariableName != null) {
-				HiFieldObject castedField = (HiFieldObject) HiField.getField(c2, v2.castedVariableName, null);
-				castedField.set(v1.object, v1.valueClass);
-				ctx.addVariable(castedField);
-			}
-			if (v2.castedRecordArguments != null) {
-				addCastedVariables(ctx, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, (HiObject) v1.object);
-			}
+			ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, (HiObject) v1.object);
 		}
 
 		v1.valueClass = TYPE_BOOLEAN;
 		v1.bool = isInstanceof;
-	}
-
-	public void addCastedVariables(RuntimeContext ctx, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, HiObject object) {
-		if (object == null) {
-			ctx.throwRuntimeException("null pointer");
-			return;
-		}
-		for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-			NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
-			NodeArgument originalArgument = castedRecordArgumentsConstructor.arguments[recordArgumentIndex];
-
-			HiField objectField = null;
-			for (int objectFieldIndex = 0; objectFieldIndex < object.fields.length; objectFieldIndex++) {
-				if (object.fields[objectFieldIndex].name.equals(originalArgument.name)) {
-					objectField = object.fields[objectFieldIndex];
-					break;
-				}
-			}
-
-			HiPojoField castedField = new HiPojoField(object, objectField, castedRecordArgument.getVariableName());
-			ctx.addVariable(castedField);
-		}
 	}
 }

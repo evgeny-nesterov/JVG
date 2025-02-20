@@ -3,11 +3,9 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
-import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -368,18 +366,9 @@ public class NodeSwitch extends HiNode {
 								HiNode[] castedRecordArguments = ctx.value.castedRecordArguments;
 								HiConstructor castedRecordArgumentsConstructor = ctx.value.castedRecordArgumentsConstructor;
 								HiNode castedCondition = ctx.value.castedCondition;
-								if (castedVariableName != null) { // object or array
-									HiField castedField = HiField.getField(c2, castedVariableName, null);
-									castedField.set(object, objectClass);
-									ctx.addVariable(castedField);
-								}
-								if (castedRecordArguments != null) {
-									for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
-										NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
-										HiPojoField castedField = new HiPojoField(hiObject, hiObject.fields[recordArgumentIndex], castedRecordArgument.getVariableName());
-										ctx.addVariable(castedField);
-									}
-								}
+
+								ctx.addCastedVariables(castedVariableName, c2, castedRecordArguments, castedRecordArgumentsConstructor, hiObject);
+
 								if (castedCondition != null) {
 									castedCondition.execute(ctx);
 									if (ctx.exitFromBlock()) {

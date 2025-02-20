@@ -146,9 +146,8 @@ public abstract class HiTest {
 
 	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
 		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects). //
-//				execute(). //
-				serialize().deserialize().execute(). //
-				throwExceptionIf();
+				serialize().deserialize(). //
+				execute().throwExceptionIf();
 		result.close();
 		return result;
 	}
