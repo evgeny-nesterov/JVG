@@ -12,9 +12,8 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
-import static ru.nest.hiscript.tokenizer.Words.FINAL;
+import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 	private final static MethodArgumentParseRule instance = new MethodArgumentParseRule();
@@ -34,7 +33,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type != null) {
 			boolean vararg = visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1;
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
 				tokenizer.commit();
 				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);

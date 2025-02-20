@@ -86,6 +86,10 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		return validate(validationInfo, ctx, true);
+	}
+
+	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx, boolean checkUnnamed) {
 		ctx.currentNode = this;
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 		valid &= ctx.level.checkUnreachable(validationInfo, getToken());
@@ -158,13 +162,28 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 		// TODO keep in field only runtime annotations
 		valid &= ctx.addLocalVariable(this, true);
 
+		// @unnamed
+		if (checkUnnamed && UNNAMED.equals(name)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", getToken());
+			valid = false;
+		}
+
 		ctx.exitDeclaration();
 		return valid;
 	}
 
 	@Override
+	public void setValueClass(HiClass clazz) {
+		super.setValueClass(clazz);
+		this.type = Type.getType(clazz);
+		this.clazz = clazz;
+	}
+
+	public HiField<?> field;
+
+	@Override
 	public void execute(RuntimeContext ctx) {
-		HiField<?> field = HiField.getField(clazz, name, initialization, token);
+		field = HiField.getField(clazz, name, initialization, token);
 		if (clazz.isGeneric()) {
 			field.setGenericClass(ctx, ctx.level.object.type);
 		}

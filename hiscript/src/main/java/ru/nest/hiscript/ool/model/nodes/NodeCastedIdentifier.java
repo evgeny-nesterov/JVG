@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
@@ -22,7 +23,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 
 	public int dimension;
 
-	public HiNode[] castedRecordArguments; // NodeVariable (NodeArgument or NodeCastedIdentifier)
+	public NodeCastedIdentifier[] castedRecordArguments; // NodeVariable (NodeArgument or NodeCastedIdentifier)
 
 	public String castedVariableName;
 
@@ -34,7 +35,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		HiClass clazz = ctx.getClass(name);
+		HiClass clazz = Type.varType.name.equals(name) ? HiClassVar.VAR : ctx.getClass(name);
 		if (dimension > 0) {
 			clazz = clazz.getArrayClass(dimension);
 		}
@@ -58,7 +59,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 				if (recordClass.isRecord()) {
 					HiClass[] castedRecordArgumentsClasses = new HiClass[castedRecordArguments.length];
 					for (int i = 0; i < castedRecordArguments.length; i++) {
-						HiNode castedRecordArgument = castedRecordArguments[i];
+						NodeCastedIdentifier castedRecordArgument = castedRecordArguments[i];
 						castedRecordArgumentsClasses[i] = castedRecordArgument.getValueClass(validationInfo, ctx);
 					}
 					constructor = recordClass.getConstructor(ctx, castedRecordArgumentsClasses);
@@ -72,6 +73,12 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 						}
 						validationInfo.error("record constructor not found: " + recordClass.getNameDescr() + "(" + argsNames + ")", getToken());
 						valid = false;
+					} else {
+						for (int i = 0; i < castedRecordArguments.length; i++) {
+							if (castedRecordArgumentsClasses[i].isVar()) {
+								castedRecordArguments[i].setValueClass(constructor.argsClasses[i]);
+							}
+						}
 					}
 				} else {
 					validationInfo.error("inconvertible types; cannot cast " + name + " to Record", getToken());
@@ -79,17 +86,33 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 				}
 			}
 		}
-		if (castedVariableName != null) {
+
+		// @unnamed
+		if (castedVariableName != null && !UNNAMED.equals(castedVariableName)) {
 			Type type = Type.getTypeByFullName(name, ctx.getEnv());
 			declarationNode = new NodeDeclaration(name, type, castedVariableName);
 			declarationNode.setToken(token);
 			valid &= ctx.addLocalVariable(declarationNode, true);
 			ctx.initializedNodes.add(declarationNode);
 		}
+
 		if (castedCondition != null) {
 			valid &= castedCondition.validate(validationInfo, ctx) && castedCondition.expectBooleanValue(validationInfo, ctx);
 		}
 		return valid;
+	}
+
+	@Override
+	public void setValueClass(HiClass clazz) {
+		super.setValueClass(clazz);
+		name = clazz.fullName;
+		if (declarationNode != null) {
+			declarationNode.setValueClass(clazz);
+		} else {
+			Type type = Type.getType(clazz);
+			declarationNode = new NodeDeclaration(name, type, castedVariableName);
+			declarationNode.setToken(token);
+		}
 	}
 
 	public void removeLocalVariables(CompileClassContext ctx) {
@@ -138,6 +161,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 		ctx.value.name = name;
 		ctx.value.nameDimensions = dimension;
 		ctx.value.castedRecordArguments = castedRecordArguments;
+		ctx.value.castedRecordArgumentsConstructor = constructor;
 		ctx.value.castedVariableName = castedVariableName;
 		ctx.value.castedCondition = castedCondition;
 	}
@@ -156,7 +180,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 
 	public static NodeCastedIdentifier decode(DecodeContext os) throws IOException {
 		NodeCastedIdentifier node = new NodeCastedIdentifier(os.readUTF(), os.readByte());
-		node.castedRecordArguments = os.readNullableNodeArray(HiNode.class, os.readByte());
+		node.castedRecordArguments = os.readNullableNodeArray(NodeCastedIdentifier.class, os.readByte());
 		node.castedVariableName = os.readNullableUTF();
 		node.castedCondition = os.readNullable(HiNode.class);
 		os.readConstructor(constructor -> node.constructor = constructor);

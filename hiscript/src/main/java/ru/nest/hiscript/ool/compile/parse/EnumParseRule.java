@@ -13,7 +13,6 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
 import static ru.nest.hiscript.tokenizer.Words.*;
 
@@ -31,14 +30,14 @@ public class EnumParseRule extends ParserUtil {
 		tokenizer.start();
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		if (visitWord(Words.ENUM, tokenizer) != null) {
+		if (visitWord(ENUM, tokenizer) != null) {
 			tokenizer.commit();
 			Modifiers.Changeable modifiers = annotatedModifiers.getModifiers().change();
 			checkModifiers(tokenizer, modifiers, annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC);
 			modifiers.setFinal(true);
 			modifiers.setStatic(true);
 
-			String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
+			String enumName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (enumName == null) {
 				enumName = "";
 				tokenizer.error("enum name is expected");
@@ -62,7 +61,7 @@ public class EnumParseRule extends ParserUtil {
 
 	public void visitContent(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token enumValueToken = startToken(tokenizer);
-		String enumName = visitWord(Words.NOT_SERVICE, tokenizer);
+		String enumName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (enumName != null) {
 			int ordinal = 0;
 			int errorPos = 0;
@@ -86,7 +85,7 @@ public class EnumParseRule extends ParserUtil {
 				}
 
 				enumValueToken = startToken(tokenizer);
-				enumName = expectWord(Words.NOT_SERVICE, tokenizer);
+				enumName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			}
 		}
 

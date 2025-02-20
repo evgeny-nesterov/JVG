@@ -21,6 +21,8 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+
 public class HiMethod implements HiNodeIF, HasModifiers {
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
 
@@ -116,6 +118,11 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
+		// @unnamed
+		if (UNNAMED.equals(name)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+		}
+
 		// @generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
@@ -143,6 +150,12 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			}
 			for (int i = 0; i < arguments.length - 1; i++) {
 				NodeArgument argNode1 = arguments[i];
+
+				// @unnamed
+				if (UNNAMED.equals(argNode1.name)) {
+					continue;
+				}
+
 				for (int j = i + 1; j < arguments.length; j++) {
 					NodeArgument argNode2 = arguments[j];
 					if (argNode1.name.equals(argNode2.name)) {

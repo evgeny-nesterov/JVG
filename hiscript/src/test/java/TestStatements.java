@@ -14,7 +14,6 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("int a;");
 		assertSuccessSerialize("int a123;");
 		assertSuccessSerialize("int _a;");
-		assertSuccessSerialize("int _;");
 		assertSuccessSerialize("int _0123;");
 		assertSuccessSerialize("int _a;");
 		assertSuccessSerialize("int $;");
@@ -28,6 +27,10 @@ public class TestStatements extends HiTest {
 		assertSuccessSerialize("String a = \"a\", b, c = null; assert \"a\".equals(a); assert c == null;");
 		assertSuccessSerialize("{int a = 1;} int a = 2; assert a == 2;");
 
+		assertFailCompile("int _;", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("int _, _;", //
+				"keyword '_' cannot be used as an identifier");
 		assertFailCompile("String 0var;", //
 				"';' is expected");
 		assertFailCompile("String a, a;", //

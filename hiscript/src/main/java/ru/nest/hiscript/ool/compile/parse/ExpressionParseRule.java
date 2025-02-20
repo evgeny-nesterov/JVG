@@ -11,7 +11,6 @@ import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
-import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeGetClass;
@@ -33,7 +32,6 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +108,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				}
 				return new NodeLogicalSwitch(expressionNode, trueValueNode, falseValueNode);
 			} else if (visitSymbol(tokenizer, Symbols.DOUBLE_COLON) != -1) {
-				String methodName = expectWord(NOT_SERVICE, tokenizer);
+				String methodName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				return new NodeMethodReference(expressionNode, methodName);
 			}
 			return expressionNode;
@@ -294,32 +292,32 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit boolean
-		int boolType = visitWordType(tokenizer, Words.TRUE, Words.FALSE);
+		int boolType = visitWordType(tokenizer, TRUE, FALSE);
 		if (boolType != -1) {
-			operands.add(NodeBoolean.getInstance(boolType == Words.TRUE, startToken));
+			operands.add(NodeBoolean.getInstance(boolType == TRUE, startToken));
 			return true;
 		}
 
 		// visit null
-		if (visitWordType(tokenizer, Words.NULL) != -1) {
+		if (visitWordType(tokenizer, NULL) != -1) {
 			operands.add(NodeNull.instance);
 			return true;
 		}
 
 		// visit this
-		if (visitWordType(tokenizer, Words.THIS) != -1) {
+		if (visitWordType(tokenizer, THIS) != -1) {
 			operands.add(new NodeThis());
 			return true;
 		}
 
 		// visit super
-		if (visitWordType(tokenizer, Words.SUPER) != -1) {
+		if (visitWordType(tokenizer, SUPER) != -1) {
 			operands.add(new NodeSuper());
 			return true;
 		}
 
 		// visit class
-		if (visitWordType(tokenizer, Words.CLASS) != -1) {
+		if (visitWordType(tokenizer, CLASS) != -1) {
 			operands.add(new NodeGetClass());
 			return true;
 		}
@@ -367,6 +365,21 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			return true;
 		}
 
+		// @unnamed
+		if (visitWord(tokenizer, UNNAMED_VARIABLE) != null) {
+			NodeIdentifier identifier = new NodeIdentifier(NodeIdentifier.UNNAMED, 0);
+			identifier.setToken(startToken);
+			operands.add(identifier);
+			return true;
+		}
+
+		// visit casted identifier: A(B b, c, var d, var _, _) a
+		boolean visitCastAfterIdentifier = isVisitCastAfterIdentifier(allOperations);
+		if (visitCastAfterIdentifier && (node = visitIdentifier(tokenizer, ctx, true, true, false)) != null) {
+			operands.add(node);
+			return true;
+		}
+
 		// visit method name with arguments
 		if ((node = InvocationParseRule.getInstance().visit(tokenizer, ctx)) != null) {
 			// determine is there prefix before method
@@ -380,51 +393,11 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit identifier as word: package, class, method, field
-		boolean visitCastAfterIdentifier = isVisitCastAfterIdentifier(allOperations);
-		if ((node = visitIdentifier(tokenizer, ctx, visitCastAfterIdentifier)) != null) {
+		if ((node = visitIdentifier(tokenizer, ctx, visitCastAfterIdentifier, false, false)) != null) {
 			operands.add(node);
 			return true;
 		}
 		return false;
-	}
-
-	public static HiNode visitIdentifier(Tokenizer tokenizer, CompileClassContext ctx, boolean visitCastAfterIdentifier) throws TokenizerException, HiScriptParseException {
-		tokenizer.start();
-		Token identifierToken = startToken(tokenizer);
-		String identifierName = visitWord(tokenizer, NOT_SERVICE, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR);
-		if (identifierName != null) {
-			int dimension = visitDimension(tokenizer);
-
-			HiNode[] castedRecordArguments = null;
-			String castedVariableName = null;
-			if (visitCastAfterIdentifier) {
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-					List<HiNode> identifiersList = new ArrayList<>();
-					visitIdentifiers(tokenizer, identifiersList, ctx);
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-					if (identifiersList.size() > 0) {
-						castedRecordArguments = identifiersList.toArray(new HiNode[identifiersList.size()]);
-					}
-				}
-				castedVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
-			}
-
-			tokenizer.commit();
-
-			if (castedRecordArguments != null || castedVariableName != null) {
-				NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName, dimension);
-				identifier.castedRecordArguments = castedRecordArguments;
-				identifier.castedVariableName = castedVariableName;
-				identifier.setToken(tokenizer.getBlockToken(identifierToken));
-				return identifier;
-			} else {
-				NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
-				identifier.setToken(tokenizer.getBlockToken(identifierToken));
-				return identifier;
-			}
-		}
-		tokenizer.rollback();
-		return null;
 	}
 
 	private static boolean isVisitCastAfterIdentifier(List<OperationsGroup> allOperations) {
@@ -440,21 +413,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			}
 		}
 		return visitCastAfterIdentifier;
-	}
-
-	protected static void visitIdentifiers(Tokenizer tokenizer, List<HiNode> identifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		HiNode identifier = visitIdentifier(tokenizer, ctx, true);
-		if (identifier != null) {
-			identifiers.add(identifier);
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				identifier = visitIdentifier(tokenizer, ctx, true);
-				if (identifier != null) {
-					identifiers.add(identifier);
-				} else {
-					tokenizer.error("identifier is expected");
-				}
-			}
-		}
 	}
 
 	private int visitOperation(Tokenizer tokenizer, List<HiNodeIF> operands) throws TokenizerException {

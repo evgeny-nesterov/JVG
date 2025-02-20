@@ -10,6 +10,9 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
 
+import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+
 public class ContinueParseRule extends ParseRule<NodeContinue> {
 	private final static ContinueParseRule instance = new ContinueParseRule();
 
@@ -23,7 +26,7 @@ public class ContinueParseRule extends ParseRule<NodeContinue> {
 	@Override
 	public NodeContinue visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.CONTINUE, tokenizer) != null) {
-			String label = visitWord(Words.NOT_SERVICE, tokenizer);
+			String label = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return new NodeContinue(label);
 		}

@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+
 public class CompileClassContext implements ClassResolver {
 	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, int classType) {
 		this.compiler = compiler;
@@ -687,6 +689,13 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		public void addField(NodeVariable localVariable) {
+			String name = localVariable.getVariableName();
+
+			// @unnamed
+			if (UNNAMED.equals(name)) {
+				return;
+			}
+
 			if (localVariables == null) {
 				localVariables = new HashMap<>(1);
 			}

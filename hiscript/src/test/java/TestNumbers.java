@@ -231,9 +231,12 @@ public class TestNumbers extends HiTest {
 									"' is expected");
 							break;
 						case '$':
+							assertFailCompile(script, //
+									"cannot resolve symbol '$'");
+							break;
 						case '_':
 							assertFailCompile(script, //
-									"cannot resolve symbol '" + c + "'");
+									"unnamed variable cannot be used in expressions");
 							break;
 						case '@':
 							assertFailCompile(script, //

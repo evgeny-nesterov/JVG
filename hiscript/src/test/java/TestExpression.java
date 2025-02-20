@@ -1025,4 +1025,11 @@ public class TestExpression extends HiTest {
 			assertSuccessSerialize("int x = 1; " + t + " y = x;");
 		}
 	}
+
+	@Test
+	public void testUnnamedVariable() {
+		assertSuccessSerialize("try{} catch(Exception _){} ");
+		assertFailCompile("try{} catch(Exception _){_.printStackTrace();}", //
+				"unnamed variable cannot be used in expressions");
+	}
 }

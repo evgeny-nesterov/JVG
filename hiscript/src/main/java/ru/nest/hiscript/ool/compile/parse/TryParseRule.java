@@ -13,13 +13,11 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.FINAL;
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class TryParseRule extends ParseRule<NodeTry> {
 	private final static TryParseRule instance = new TryParseRule();
@@ -33,7 +31,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 
 	@Override
 	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.TRY, tokenizer) != null) {
+		if (visitWord(TRY, tokenizer) != null) {
 			NodeDeclaration[] resources = null;
 			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				tokenizer.nextToken();
@@ -68,7 +66,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				List<Type> excTypes = new ArrayList<>(1);
 				String excName;
 				Token startCatchToken = startToken(tokenizer);
-				if (visitWord(Words.CATCH, tokenizer) != null) {
+				if (visitWord(CATCH, tokenizer) != null) {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
@@ -82,7 +80,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 						// TODO check excType extends Exception
 						excTypes.add(excType);
 					}
-					excName = visitWord(NOT_SERVICE, tokenizer);
+					excName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 					if (excName == null) {
 						tokenizer.error("identifier is expected");
 					}
@@ -107,7 +105,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 			}
 
 			HiNode finallyBody = null;
-			if (visitWord(Words.FINALLY, tokenizer) != null) {
+			if (visitWord(FINALLY, tokenizer) != null) {
 				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 				finallyBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);

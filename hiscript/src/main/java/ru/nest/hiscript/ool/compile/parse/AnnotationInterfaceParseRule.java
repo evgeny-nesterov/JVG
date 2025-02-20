@@ -18,7 +18,6 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
 import static ru.nest.hiscript.tokenizer.Words.*;
 
@@ -37,7 +36,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		if (visitWord(Words.ANNOTATION_INTERFACE, tokenizer) != null) {
+		if (visitWord(ANNOTATION_INTERFACE, tokenizer) != null) {
 			tokenizer.commit();
 
 			Modifiers.Changeable modifiers = annotatedModifiers.getModifiers().change();
@@ -45,7 +44,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			modifiers.setStatic(true);
 			modifiers.setAbstract(true);
 
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name == null) {
 				name = "Null" + new Object().hashCode();
 				tokenizer.error("annotation class name is expected");
@@ -106,7 +105,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			type = Type.getArrayType(type, dimension, ctx.getEnv());
 
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
@@ -116,7 +115,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 					HiNode defaultValue = null;
-					if (visitWord(Words.DEFAULT, tokenizer) != null) {
+					if (visitWord(DEFAULT, tokenizer) != null) {
 						defaultValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 						if (defaultValue == null) {
 							tokenizer.error("value expected", tokenizer.currentToken());

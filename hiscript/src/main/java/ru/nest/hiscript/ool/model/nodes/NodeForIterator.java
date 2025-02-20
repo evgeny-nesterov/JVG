@@ -38,7 +38,7 @@ public class NodeForIterator extends HiNode {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		ctx.enter(RuntimeContext.FOR, this);
-		valid &= declaration.validate(validationInfo, ctx);
+		valid &= declaration.validate(validationInfo, ctx, false);
 		if (declaration.hasModifiers()) {
 			validationInfo.error("modifiers not allowed", declaration.getToken());
 			valid = false;
@@ -87,7 +87,7 @@ public class NodeForIterator extends HiNode {
 			}
 
 			if (ctx.value.valueClass.isArray()) {
-				HiField<?> forVariable = ctx.getVariable(declaration.name);
+				HiField<?> forVariable = declaration.field;
 				Object array = ctx.value.object;
 				int size = Array.getLength(array);
 				for (int i = 0; i < size; i++) {

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
 
 public class LambdaParseRule extends ParseRule<HiMethod> {
 	private final static LambdaParseRule instance = new LambdaParseRule();
@@ -32,7 +33,7 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 		tokenizer.start();
 
 		List<NodeArgument> arguments = new ArrayList<>();
-		String argName = visitWord(tokenizer, NOT_SERVICE);
+		String argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (argName != null) {
 			NodeArgument argNode = new NodeArgument(Type.varType, argName, null, null);
 			argNode.setToken(startToken);
@@ -46,13 +47,13 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 			visitArgumentsDefinitions(tokenizer, arguments, ctx);
 			if (arguments.size() == 0) {
 				Token argToken = startToken(tokenizer);
-				argName = visitWord(tokenizer, NOT_SERVICE);
+				argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				while (argName != null) {
 					NodeArgument argNode = new NodeArgument(Type.varType, argName, null, null);
 					argNode.setToken(argToken);
 					arguments.add(argNode);
 					if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						argName = visitWord(NOT_SERVICE, tokenizer);
+						argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 					} else {
 						argName = null;
 					}

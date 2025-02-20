@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
 
 public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 	private final static AnnotationParseRule instance = new AnnotationParseRule();
@@ -41,7 +42,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 				tokenizer.start();
 
 				startToken = startToken(tokenizer);
-				String argName = visitWord(NOT_SERVICE, tokenizer);
+				String argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				if (argName != null && visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					tokenizer.commit();
 
@@ -54,7 +55,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 						startToken = startToken(tokenizer);
-						argName = expectWord(NOT_SERVICE, tokenizer);
+						argName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 						expectSymbol(tokenizer, Symbols.EQUATE);
 						argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
 						if (argValue == null) {

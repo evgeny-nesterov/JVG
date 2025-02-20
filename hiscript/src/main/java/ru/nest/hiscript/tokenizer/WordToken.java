@@ -71,6 +71,8 @@ public class WordToken extends Token implements Words {
 		serviceWords.put("this", THIS);
 		serviceWords.put("null", NULL);
 
+		serviceWords.put("_", UNNAMED_VARIABLE);
+
 		for (String word : serviceWords.keySet()) {
 			serviceTypes.put(serviceWords.get(word), word);
 		}

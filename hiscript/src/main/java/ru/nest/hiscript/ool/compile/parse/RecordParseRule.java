@@ -29,7 +29,6 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +51,11 @@ public class RecordParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		if (visitWord(Words.RECORD, tokenizer) != null) {
+		if (visitWord(RECORD, tokenizer) != null) {
 			tokenizer.commit();
 			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, STATIC);
 
-			String recordName = visitWord(Words.NOT_SERVICE, tokenizer);
+			String recordName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (recordName == null) {
 				recordName = "Null" + new Object().hashCode();
 				tokenizer.error("record name is expected");

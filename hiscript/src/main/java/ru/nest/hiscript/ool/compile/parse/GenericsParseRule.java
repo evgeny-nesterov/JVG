@@ -15,6 +15,9 @@ import ru.nest.hiscript.tokenizer.Words;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+
 public class GenericsParseRule extends ParseRule<NodeGenerics> {
 	private final static GenericsParseRule instance = new GenericsParseRule();
 
@@ -40,7 +43,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 				if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 					name = null;
 				} else {
-					name = expectWord(Words.NOT_SERVICE, tokenizer);
+					name = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				}
 
 				boolean isSuper;

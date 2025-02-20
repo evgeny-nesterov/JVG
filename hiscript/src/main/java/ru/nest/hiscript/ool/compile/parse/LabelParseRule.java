@@ -9,7 +9,9 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+
+import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
 
 public class LabelParseRule extends ParseRule<NodeLabel> {
 	private final static LabelParseRule instance = new LabelParseRule();
@@ -26,7 +28,7 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 		tokenizer.start();
 
 		String label;
-		if ((label = visitWord(Words.NOT_SERVICE, tokenizer)) != null) {
+		if ((label = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE)) != null) {
 			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
 				tokenizer.commit();
 				HiNode body = expectBody(tokenizer, ctx);

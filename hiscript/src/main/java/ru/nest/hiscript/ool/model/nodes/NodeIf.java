@@ -69,32 +69,32 @@ public class NodeIf extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		if (condition != null) {
-			condition.execute(ctx);
-			if (ctx.exitFromBlock()) {
-				return;
+		ctx.enter(RuntimeContext.IF, token);
+		try {
+			if (condition != null) {
+				condition.execute(ctx);
+				if (ctx.exitFromBlock()) {
+					return;
+				}
 			}
-		}
 
-		boolean is = true;
-		if (condition != null) {
-			is = ctx.value.getBoolean();
-			if (ctx.exitFromBlock()) {
-				return;
+			boolean is = true;
+			if (condition != null) {
+				is = ctx.value.getBoolean();
+				if (ctx.exitFromBlock()) {
+					return;
+				}
 			}
-		}
 
-		if (is) {
-			ctx.enter(RuntimeContext.IF, token);
-			try {
+			if (is) {
 				if (body != null) {
 					body.execute(ctx);
 				}
-			} finally {
-				ctx.exit();
+			} else if (nextIf != null) {
+				nextIf.execute(ctx);
 			}
-		} else if (nextIf != null) {
-			nextIf.execute(ctx);
+		} finally {
+			ctx.exit();
 		}
 	}
 

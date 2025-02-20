@@ -13,7 +13,8 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+
+import static ru.nest.hiscript.tokenizer.Words.*;
 
 /**
  * for (<type> <name> : <iterable>) {<body>}
@@ -31,14 +32,14 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	@Override
 	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
-		if (visitWord(Words.FOR, tokenizer) != null) {
+		if (visitWord(FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
 			startToken = startToken(tokenizer);
 			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 			Type type = visitType(tokenizer, true, ctx.getEnv());
 			if (type != null) {
-				String name = visitWord(Words.NOT_SERVICE, tokenizer);
+				String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				if (name == null) {
 					tokenizer.error("variable name is expected");
 				}

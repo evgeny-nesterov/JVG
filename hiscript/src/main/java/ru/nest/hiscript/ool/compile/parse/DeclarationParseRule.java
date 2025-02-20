@@ -32,7 +32,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
-			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
+			String varName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (varName != null) {
 				Type cellType = baseType.isArray() ? baseType.cellTypeRoot : baseType;
 				int addDimension = visitDimension(tokenizer);
@@ -63,7 +63,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					// Search new declarations with the base type
 					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 						startToken = startToken(tokenizer);
-						varName = expectWord(Words.NOT_SERVICE, tokenizer);
+						varName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 						if (varName == null) {
 							tokenizer.rollback();
 							return null;
@@ -116,7 +116,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
-			String varName = visitWord(Words.NOT_SERVICE, tokenizer);
+			String varName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (varName != null) {
 				Type cellType = baseType.isArray() ? baseType.cellTypeRoot : baseType;
 				int addDimension = visitDimension(tokenizer);

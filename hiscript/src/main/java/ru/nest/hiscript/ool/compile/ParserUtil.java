@@ -14,11 +14,13 @@ import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeAssert;
+import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeChar;
 import ru.nest.hiscript.ool.model.nodes.NodeDouble;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
 import ru.nest.hiscript.ool.model.nodes.NodeFloat;
+import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInt;
 import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
@@ -51,6 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class ParserUtil {
@@ -82,12 +85,35 @@ public class ParserUtil {
 	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException {
 		String word = visitWord(type, tokenizer);
 		if (word == null) {
-			if (type != NOT_SERVICE) {
-				word = WordToken.getWord(type);
-				tokenizer.error("'" + word + "' is expected");
+			if (type != NOT_SERVICE && type != UNNAMED_VARIABLE) {
+				tokenizer.error("'" + WordToken.getWord(type) + "' is expected");
 			} else {
 				tokenizer.error("identifier is expected");
 			}
+		}
+		return word;
+	}
+
+	protected static String expectWords(Tokenizer tokenizer, int... types) throws TokenizerException {
+		if (types.length == 1) {
+			return expectWord(types[0], tokenizer);
+		}
+
+		String word = visitWord(tokenizer, types);
+		if (word == null) {
+			String message = "";
+			for (int type : types) {
+				if (message.length() > 0) {
+					message += " or ";
+				}
+				if (type != NOT_SERVICE && type != UNNAMED_VARIABLE) {
+					tokenizer.error("'" + WordToken.getWord(type) + "'");
+				} else {
+					tokenizer.error("identifier");
+				}
+			}
+			message += " are expected";
+			tokenizer.error(message);
 		}
 		return word;
 	}
@@ -151,8 +177,7 @@ public class ParserUtil {
 
 				String name = wordToken.getWord();
 				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
-					name += ".";
-					name += expectWord(NOT_SERVICE, tokenizer);
+					name += "." + expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				}
 				return name;
 			}
@@ -175,13 +200,13 @@ public class ParserUtil {
 	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = null;
 		tokenizer.start();
-		String name = visitWord(Words.NOT_SERVICE, tokenizer);
+		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
 			type = Type.getType(null, name, env);
 			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
-				name = visitWord(Words.NOT_SERVICE, tokenizer);
+				name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				if (name == null) {
-					if (visitWord(tokenizer, Words.THIS, Words.SUPER, Words.CLASS) != null) {
+					if (visitWord(tokenizer, THIS, SUPER, CLASS) != null) {
 						return null;
 					}
 					tokenizer.error("identifier is expected");
@@ -556,6 +581,75 @@ public class ParserUtil {
 					arguments.add(arg);
 				} else {
 					tokenizer.error("argument is expected");
+				}
+			}
+		}
+	}
+
+	public static HiNode visitIdentifier(Tokenizer tokenizer, CompileClassContext ctx, boolean visitCastAfterIdentifier, boolean requireCast, boolean createOnlyCastedIdentifier) throws TokenizerException, HiScriptParseException {
+		tokenizer.start();
+		Token identifierToken = startToken(tokenizer);
+		String identifierName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR, VAR);
+		IF:
+		if (identifierName != null) {
+			int dimension = visitDimension(tokenizer);
+
+			NodeCastedIdentifier[] castedRecordArguments = null;
+			String castedVariableName = null;
+			if (visitCastAfterIdentifier) {
+				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+					List<NodeCastedIdentifier> identifiersList = new ArrayList<>();
+					visitCastedIdentifiers(tokenizer, identifiersList, ctx);
+					if (requireCast) {
+						if (visitSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) == -1) {
+							break IF;
+						}
+					} else {
+						expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					}
+					if (identifiersList.size() > 0) {
+						castedRecordArguments = identifiersList.toArray(new NodeCastedIdentifier[identifiersList.size()]);
+					}
+				}
+				castedVariableName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
+			}
+			boolean hasCast = castedRecordArguments != null || castedVariableName != null;
+			if (hasCast || !requireCast) {
+				tokenizer.commit();
+
+				if (hasCast) {
+					NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName, dimension);
+					identifier.castedRecordArguments = castedRecordArguments;
+					identifier.castedVariableName = castedVariableName;
+					identifier.setToken(tokenizer.getBlockToken(identifierToken));
+					return identifier;
+				} else if (UNNAMED.equals(identifierName) || createOnlyCastedIdentifier) {
+					// @unnamed
+					NodeCastedIdentifier identifier = new NodeCastedIdentifier(Type.varType.getName(), dimension);
+					identifier.castedVariableName = identifierName;
+					identifier.setToken(tokenizer.getBlockToken(identifierToken));
+					return identifier;
+				} else {
+					NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
+					identifier.setToken(tokenizer.getBlockToken(identifierToken));
+					return identifier;
+				}
+			}
+		}
+		tokenizer.rollback();
+		return null;
+	}
+
+	public static void visitCastedIdentifiers(Tokenizer tokenizer, List<NodeCastedIdentifier> identifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		HiNode identifier = visitIdentifier(tokenizer, ctx, true, false, true);
+		if (identifier != null) {
+			identifiers.add((NodeCastedIdentifier) identifier);
+			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				identifier = visitIdentifier(tokenizer, ctx, true, false, true);
+				if (identifier != null) {
+					identifiers.add((NodeCastedIdentifier) identifier);
+				} else {
+					tokenizer.error("identifier is expected");
 				}
 			}
 		}

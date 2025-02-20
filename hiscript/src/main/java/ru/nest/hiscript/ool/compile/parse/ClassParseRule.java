@@ -25,7 +25,6 @@ import ru.nest.hiscript.tokenizer.Symbols;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +46,14 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		int classType = visitWordType(tokenizer, Words.CLASS, Words.INTERFACE);
+		int classType = visitWordType(tokenizer, CLASS, INTERFACE);
 		if (classType != -1) {
 			tokenizer.commit();
 
-			boolean isInterface = classType == Words.INTERFACE;
+			boolean isInterface = classType == INTERFACE;
 			checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE, FINAL, STATIC, ABSTRACT);
 
-			String className = visitWord(Words.NOT_SERVICE, tokenizer);
+			String className = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (className == null) {
 				tokenizer.error("class name is expected");
 				className = "";
@@ -68,7 +67,7 @@ public class ClassParseRule extends ParserUtil {
 
 			// parse 'extends'
 			List<Type> superClassesList = null;
-			if (visitWord(Words.EXTENDS, tokenizer) != null) {
+			if (visitWord(EXTENDS, tokenizer) != null) {
 				Type superClassType = visitType(tokenizer, false, ctx.getEnv());
 				if (superClassType != null) {
 					superClassesList = new ArrayList<>(1);
@@ -88,7 +87,7 @@ public class ClassParseRule extends ParserUtil {
 
 			// parse 'implements'
 			List<Type> interfacesList = null;
-			if (visitWord(Words.IMPLEMENTS, tokenizer) != null) {
+			if (visitWord(IMPLEMENTS, tokenizer) != null) {
 				Type interfaceType = visitType(tokenizer, false, ctx.getEnv());
 				if (interfaceType != null) {
 					interfacesList = new ArrayList<>(1);
@@ -219,7 +218,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, true);
-		String name = visitWord(Words.NOT_SERVICE, tokenizer);
+		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
@@ -303,7 +302,7 @@ public class ClassParseRule extends ParserUtil {
 
 		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type == null) {
-			if (visitWord(Words.VOID, tokenizer) != null) {
+			if (visitWord(VOID, tokenizer) != null) {
 				type = Type.voidType;
 			}
 		} else {
@@ -312,7 +311,7 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		if (type != null) {
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
@@ -361,7 +360,7 @@ public class ClassParseRule extends ParserUtil {
 
 	public Type[] visitExceptionTypes(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Type[] exceptionTypes = null;
-		if (visitWordType(tokenizer, Words.THROWS) != -1) {
+		if (visitWordType(tokenizer, THROWS) != -1) {
 			Type exceptionType = visitType(tokenizer, true, ctx.getEnv());
 			if (exceptionType == null) {
 				tokenizer.error("identifier expected");
@@ -390,7 +389,7 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 		Type baseType = visitType(tokenizer, true, ctx.getEnv());
 		if (baseType != null) {
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
 				int addDimension = visitDimension(tokenizer);
 
@@ -430,7 +429,7 @@ public class ClassParseRule extends ParserUtil {
 
 	private void expectField(Tokenizer tokenizer, Type baseType, Modifiers modifiers, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
-		String name = expectWord(Words.NOT_SERVICE, tokenizer);
+		String name = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		int addDimension = visitDimension(tokenizer);
 
 		HiNode initializer = null;

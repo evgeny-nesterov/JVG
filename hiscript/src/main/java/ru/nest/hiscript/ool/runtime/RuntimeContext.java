@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
 
@@ -611,6 +613,12 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			if (variable == null) {
 				return;
 			}
+
+			// @unnamed
+			if (UNNAMED.equals(variable.name)) {
+				return;
+			}
+
 			if (variables == null) {
 				variables = new HashMap<>(1);
 			}
@@ -625,7 +633,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 			for (int i = 0; i < size; i++) {
 				HiField<?> variable = list[i];
-				if (variable != null) {
+				// @unnamed
+				if (variable != null && !UNNAMED.equals(variable.name)) {
 					variables.put(variable.name, variable);
 				}
 			}
@@ -760,6 +769,11 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void addLocalField(HiClass clazz, HiField<?> field) {
+		// @unnamed
+		if (UNNAMED.equals(field.name)) {
+			return;
+		}
+
 		if (localVariables == null) {
 			localVariables = new HashMap<>(1);
 		}

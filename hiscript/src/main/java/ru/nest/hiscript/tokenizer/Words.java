@@ -112,4 +112,6 @@ public interface Words {
 	int ANNOTATION_INTERFACE = 54;
 
 	int SEALED = 55;
+
+	int UNNAMED_VARIABLE = 56;
 }

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+
 public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
 
@@ -71,6 +73,11 @@ public class HiClassEnum extends HiClass {
 				HiConstructor constructor = searchConstructor(ctx, argsClasses);
 				if (constructor == null) {
 					validationInfo.error("invalid constructor arguments", enumValue1.getToken());
+				}
+
+				// @unnamed
+				if (UNNAMED.equals(enumValue1.getName())) {
+					validationInfo.error("keyword '_' cannot be used as an identifier", token);
 				}
 
 				for (int i2 = i1 + 1; i2 < enumValues.size(); i2++) {

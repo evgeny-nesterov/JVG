@@ -17,8 +17,6 @@ import ru.nest.hiscript.ool.runtime.Value;
 import java.io.IOException;
 
 public class NodeIdentifier extends HiNode implements NodeVariable {
-	public final static String UNNAMED = "_";
-
 	public NodeIdentifier(String name, int dimension) {
 		super("identifier", TYPE_IDENTIFIER, false);
 		this.name = name.intern();
@@ -53,7 +51,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (UNNAMED.equals(name)) {
+		if (isUnnamed()) {
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = Type.varType;
 			return HiClassVar.VAR;
@@ -103,20 +101,24 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
 				ctx.nodeValueType.type = Type.getType((HiClass) resolvedIdentifier);
 				return this.clazz = (HiClass) resolvedIdentifier;
+			} else {
+				// not resolved, set to match any type
+				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+				ctx.nodeValueType.type = Type.varType;
+				return HiClassVar.VAR;
 			}
 		}
-		return null;
 	}
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		if (UNNAMED.equals(name)) {
+		if (isUnnamed()) {
 			clazz = HiClassVar.VAR;
-			return true;
+			validationInfo.error("unnamed variable cannot be used in expressions", token);
+			return false;
 		}
 
 		ctx.currentNode = this;
-		boolean valid = true;
 		boolean local = false;
 		resolvedIdentifier = ctx.resolveIdentifier(name, true, true, true);
 		if (resolvedIdentifier != null) {
@@ -125,6 +127,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 			resolvedIdentifier = ctx.resolveIdentifier(name);
 		}
 
+		boolean valid = true;
 		if (resolvedIdentifier == null) {
 			validationInfo.error("cannot resolve symbol '" + name + "'", token);
 			valid = false;

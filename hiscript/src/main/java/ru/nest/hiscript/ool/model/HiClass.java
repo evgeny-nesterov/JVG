@@ -51,6 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -556,6 +557,11 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			}
 		}
 
+		// @unnamed
+		if (UNNAMED.equals(name)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+		}
+
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
 		if (interfaces == null && interfaceTypes != null) {
 			interfaces = new HiClass[interfaceTypes.length];
@@ -720,6 +726,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 
 					HiField field = (HiField) initializer;
+					// @unnamed
+					if (UNNAMED.equals(field.name)) {
+						validationInfo.error("keyword '_' cannot be used as an identifier", token);
+					}
 					if (isInterface) {
 						Modifiers fieldModifiers = field.getModifiers();
 						if (fieldModifiers.isProtected()) {

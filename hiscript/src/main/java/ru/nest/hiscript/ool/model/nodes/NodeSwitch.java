@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
@@ -365,6 +366,7 @@ public class NodeSwitch extends HiNode {
 							if (c1.isInstanceof(c2)) {
 								String castedVariableName = ctx.value.castedVariableName;
 								HiNode[] castedRecordArguments = ctx.value.castedRecordArguments;
+								HiConstructor castedRecordArgumentsConstructor = ctx.value.castedRecordArgumentsConstructor;
 								HiNode castedCondition = ctx.value.castedCondition;
 								if (castedVariableName != null) { // object or array
 									HiField castedField = HiField.getField(c2, castedVariableName, null);

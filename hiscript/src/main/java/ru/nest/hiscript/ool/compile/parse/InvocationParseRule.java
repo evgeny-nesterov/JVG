@@ -11,6 +11,7 @@ import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
 import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
 
 public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	private final static InvocationParseRule instance = new InvocationParseRule();
@@ -26,7 +27,7 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	public NodeInvocation visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		String name = visitWord(tokenizer, NOT_SERVICE);
+		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 				HiNode[] args = visitArgumentsValues(tokenizer, ctx);

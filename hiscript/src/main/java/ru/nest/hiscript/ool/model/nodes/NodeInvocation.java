@@ -209,7 +209,9 @@ public class NodeInvocation extends HiNode {
 				valid = false;
 			}
 		} else {
-			validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.getNameDescr() + "'" : ""), token);
+//			if (!invocationClass.isPrimitive()) {
+				validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.getNameDescr() + "'" : ""), token);
+//			}
 			valid = false;
 		}
 		return valid;
