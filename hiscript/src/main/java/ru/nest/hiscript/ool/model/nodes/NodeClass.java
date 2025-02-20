@@ -18,7 +18,7 @@ public class NodeClass extends HiNode {
 		super("class", TYPE_CLASS, true);
 	}
 
-	private HiClass clazz;
+	public HiClass clazz;
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {

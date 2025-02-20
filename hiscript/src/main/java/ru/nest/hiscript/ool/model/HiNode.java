@@ -1,62 +1,11 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.runtime.HiObject;
-import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.nodes.CodeContext;
-import ru.nest.hiscript.ool.model.nodes.DecodeContext;
-import ru.nest.hiscript.ool.model.nodes.EmptyNode;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
-import ru.nest.hiscript.ool.model.nodes.NodeAnnotationArgument;
-import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.ool.model.nodes.NodeArray;
-import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
-import ru.nest.hiscript.ool.model.nodes.NodeAssert;
-import ru.nest.hiscript.ool.model.nodes.NodeBlock;
-import ru.nest.hiscript.ool.model.nodes.NodeBoolean;
-import ru.nest.hiscript.ool.model.nodes.NodeBreak;
-import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
-import ru.nest.hiscript.ool.model.nodes.NodeCatch;
-import ru.nest.hiscript.ool.model.nodes.NodeChar;
-import ru.nest.hiscript.ool.model.nodes.NodeClass;
-import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
-import ru.nest.hiscript.ool.model.nodes.NodeContinue;
-import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
-import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
-import ru.nest.hiscript.ool.model.nodes.NodeDoWhile;
-import ru.nest.hiscript.ool.model.nodes.NodeDouble;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionNoLS;
-import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
-import ru.nest.hiscript.ool.model.nodes.NodeFloat;
-import ru.nest.hiscript.ool.model.nodes.NodeFor;
-import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
-import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
-import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
-import ru.nest.hiscript.ool.model.nodes.NodeGetClass;
-import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
-import ru.nest.hiscript.ool.model.nodes.NodeIf;
-import ru.nest.hiscript.ool.model.nodes.NodeInt;
-import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
-import ru.nest.hiscript.ool.model.nodes.NodeLabel;
-import ru.nest.hiscript.ool.model.nodes.NodeLogicalSwitch;
-import ru.nest.hiscript.ool.model.nodes.NodeLong;
-import ru.nest.hiscript.ool.model.nodes.NodeMainWrapper;
-import ru.nest.hiscript.ool.model.nodes.NodeMethodReference;
-import ru.nest.hiscript.ool.model.nodes.NodeNative;
-import ru.nest.hiscript.ool.model.nodes.NodeNull;
-import ru.nest.hiscript.ool.model.nodes.NodeReturn;
-import ru.nest.hiscript.ool.model.nodes.NodeString;
-import ru.nest.hiscript.ool.model.nodes.NodeSuper;
-import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
-import ru.nest.hiscript.ool.model.nodes.NodeSynchronized;
-import ru.nest.hiscript.ool.model.nodes.NodeThis;
-import ru.nest.hiscript.ool.model.nodes.NodeThrow;
-import ru.nest.hiscript.ool.model.nodes.NodeTry;
-import ru.nest.hiscript.ool.model.nodes.NodeType;
-import ru.nest.hiscript.ool.model.nodes.NodeValueType;
-import ru.nest.hiscript.ool.model.nodes.NodeWhile;
+import ru.nest.hiscript.ool.model.nodes.*;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
@@ -223,6 +172,13 @@ public abstract class HiNode implements HiNodeIF {
 	public HiClass getValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		getNodeValueType(validationInfo, ctx);
 		return nodeValueType.clazz;
+	}
+
+	public void setValueClass(HiClass clazz) {
+		if (nodeValueType!= null) {
+			nodeValueType.type = Type.getType(clazz);
+			nodeValueType.clazz = clazz;
+		} // if null, class will be recalculated
 	}
 
 	public NodeValueType getNodeValueType(ValidationInfo validationInfo, CompileClassContext ctx) {
