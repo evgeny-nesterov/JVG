@@ -157,7 +157,7 @@ public class TestClasses extends HiTest {
 		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();", //
 				"incompatible types: A cannot be converted to B");
 		assertFailCompile("class A{int x; int x;}", //
-				"duplicated local variable x");
+				"variable 'x' is already defined in the scope");
 		assertSuccess("abstract class A{static int x = 1;} assert A.x == 1;");
 		assertSuccess("abstract class A{static int get(){return 1;}} assert A.get() == 1;");
 		assertSuccess("interface I{static int x = 1;} assert I.x == 1;");
@@ -851,7 +851,7 @@ public class TestClasses extends HiTest {
 		assertSuccess("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; case Rec(int a) r: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		assertSuccess("record Rec(int param); Object o = new Rec(1); switch(o){case \"o\": assert false; case Rec(int param) r when param == 1: assert param == 1; param = 2; assert r.getParam() == 2; break;} assert ((Rec)o).getParam() == 2;");
 		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;", //
-				"duplicated local variable a");
+				"variable 'a' is already defined in the scope");
 		assertFailCompile("record R1(int x); record R2(int x) extends R1;", //
 				"no extends clause allowed for record");
 		assertSuccess("record R(int x); int y = switch(new R(2)){case R(int x) when x == 11 -> x; case R(int x) when x > 1 -> 22;}; assert y == 22;");

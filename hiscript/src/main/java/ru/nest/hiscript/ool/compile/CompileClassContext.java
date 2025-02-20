@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class CompileClassContext implements ClassResolver {
 	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, int classType) {
@@ -451,7 +451,7 @@ public class CompileClassContext implements ClassResolver {
 	public boolean addLocalVariable(NodeVariable localVariable, boolean checkDuplicate) {
 		boolean valid = true;
 		if (checkDuplicate && hasLocalVariable(localVariable.getVariableName())) {
-			compiler.getValidationInfo().error("duplicated local variable " + localVariable.getVariableName(), localVariable);
+			compiler.getValidationInfo().error("variable '" + localVariable.getVariableName() + "' is already defined in the scope", localVariable);
 			valid = false;
 		}
 		level.addField(localVariable);
@@ -471,50 +471,73 @@ public class CompileClassContext implements ClassResolver {
 		return resolveIdentifier(name, true, true, false);
 	}
 
+	public HiNodeIF resolveClassIdentifier(String name, HiClass outerClass, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
+		if (outerClass == null) {
+			return null;
+		}
+		if (resolveVariable) {
+			HiField field = outerClass.getField(this, name, onlyLocal);
+			if (field != null) {
+				return field;
+			}
+		}
+		if (resolveClass) {
+			if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
+				return outerClass;
+			}
+
+			HiClass innerClass = outerClass.getInnerClass(this, name, true);
+			if (innerClass != null) {
+				return innerClass;
+			}
+
+			HiClass genericClass = outerClass.getGenericClass(this, name);
+			if (genericClass != null) {
+				return genericClass;
+			}
+		}
+		return null;
+	}
+
 	public HiNodeIF resolveIdentifier(String name, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
 		CompileClassLevel level = this.level;
-		while (level != null) {
-			if (resolveVariable) {
-				NodeVariable variable = level.getField(name, true);
-				if (variable != null) {
-					return variable;
+		if (onlyLocal && level.type == RuntimeContext.STATIC_CLASS) {
+			HiNodeIF resolvedIdentifier = level.resolveLevelIdentifier(name, resolveClass, resolveVariable);
+			if (resolvedIdentifier != null) {
+				return resolvedIdentifier;
+			}
+
+			resolvedIdentifier = resolveClassIdentifier(name, (HiClass) level.node, resolveClass, false, true);
+			if (resolvedIdentifier != null) {
+				return resolvedIdentifier;
+			}
+		} else {
+			// methods, constructors, initializers
+			while (level != null) {
+				if (level.type == RuntimeContext.STATIC_CLASS) {
+					if (onlyLocal) {
+						break;
+					}
+					if (resolveClass) {
+						HiNodeIF resolvedClass = resolveClassIdentifier(name, (HiClass) level.node, resolveClass, resolveVariable, onlyLocal);
+						if (resolvedClass != null) {
+							return resolvedClass;
+						}
+					}
 				}
-			}
-			if (resolveClass) {
-				HiClass clazz = level.getClass(name);
-				if (clazz != null) {
-					checkClassAccess(clazz);
-					return clazz;
+				HiNodeIF resolvedIdentifier = level.resolveLevelIdentifier(name, resolveClass, resolveVariable);
+				if (resolvedIdentifier != null) {
+					return resolvedIdentifier;
 				}
+				level = level.parent;
 			}
-			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
-				break;
-			}
-			level = level.parent;
 		}
 		if (!onlyLocal) {
-			if (resolveClass) {
-				if (this.clazz != null) {
-					HiClass outerClass = this.clazz;
-					while (outerClass != null) {
-						if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
-							return outerClass;
-						}
-
-						HiClass innerClass = outerClass.getInnerClass(this, name, true);
-						if (innerClass != null) {
-							return innerClass;
-						}
-						outerClass = outerClass.enclosingClass;
-					}
-
-					HiClass genericClass = this.clazz.getGenericClass(this, name);
-					if (genericClass != null) {
-						return genericClass;
-					}
-				}
+			HiClass outerClass = this.clazz;
+			HiNodeIF resolvedClass = resolveClassIdentifier(name, outerClass, resolveClass, resolveVariable, false);
+			if (resolvedClass != null) {
+				return resolvedClass;
 			}
-
 			if (parent != null) {
 				HiNodeIF resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
 				if (resolvedIdentifier != null) {
@@ -524,29 +547,11 @@ public class CompileClassContext implements ClassResolver {
 					return resolvedIdentifier;
 				}
 			}
-
-			while (level != null) {
-				if (resolveVariable) {
-					NodeVariable variable = level.getField(name, false);
-					if (variable != null) {
-						return variable;
-					}
-				}
-				if (resolveClass) {
-					HiClass clazz = level.getClass(name);
-					if (clazz != null) {
-						checkClassAccess(clazz);
-						return clazz;
-					}
-				}
-				level = level.parent;
-			}
-
 			if (resolveClass) {
-				if (this.clazz != null && name.indexOf('$') == -1) {
-					int index = this.clazz.fullName.lastIndexOf('$');
+				if (outerClass != null && name.indexOf('$') == -1) {
+					int index = outerClass.fullName.lastIndexOf('$');
 					if (index != -1) {
-						String outboundClassName = this.clazz.fullName.substring(0, index + 1);
+						String outboundClassName = outerClass.fullName.substring(0, index + 1);
 						String extendedName = outboundClassName + '0' + name;
 						HiClass clazz = HiClass.forName(this, extendedName);
 						if (clazz != null) {
@@ -555,20 +560,23 @@ public class CompileClassContext implements ClassResolver {
 						}
 					}
 				}
-				return HiClass.forName(this, name);
-			}
-		}
-		if (runtimeCtx != null) {
-			HiField<?> variable = runtimeCtx.getVariable(name);
-			if (variable != null) {
-				if (variable.initialized) {
-					initializedNodes.add(variable);
+				HiClass clazz = HiClass.forName(this, name);
+				if (clazz != null) {
+					return clazz;
 				}
-				return variable;
 			}
-			HiClass clazz = runtimeCtx.getClass(name);
-			if (clazz != null) {
-				return clazz;
+			if (runtimeCtx != null) {
+				HiField<?> variable = runtimeCtx.getVariable(name);
+				if (variable != null) {
+					if (variable.initialized) {
+						initializedNodes.add(variable);
+					}
+					return variable;
+				}
+				HiClass clazz = runtimeCtx.getClass(name);
+				if (clazz != null) {
+					return clazz;
+				}
 			}
 		}
 		return null;
@@ -671,6 +679,23 @@ public class CompileClassContext implements ClassResolver {
 			} else {
 				deep = 0;
 			}
+		}
+
+		public HiNodeIF resolveLevelIdentifier(String name, boolean resolveClass, boolean resolveVariable) {
+			if (resolveVariable) {
+				NodeVariable variable = getField(name, true);
+				if (variable != null) {
+					return variable;
+				}
+			}
+			if (resolveClass) {
+				HiClass clazz = getClass(name);
+				if (clazz != null) {
+					checkClassAccess(clazz);
+					return clazz;
+				}
+			}
+			return null;
 		}
 
 		public void addClass(HiClass clazz) {

@@ -50,8 +50,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -75,6 +75,28 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_GENERIC = 9;
 
 	public final static int CLASS_SYSTEM = 10; // used only for serializations
+
+	enum ClassType {
+		/**
+		 * No outbound class
+		 */
+		top,
+
+		/**
+		 * static (NESTED) and not
+		 */
+		inner,
+
+		/**
+		 * in method, constructor
+		 */
+		local,
+
+		/**
+		 * like new Object() {...}
+		 */
+		anonymous
+	}
 
 	public final static int CLASS_TYPE_TOP = 0; // No outbound class
 
@@ -710,51 +732,69 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		if (initializers != null) {
+			// validate fields
 			for (int i = 0; i < initializers.length; i++) {
 				HiNode initializer = (HiNode) initializers[i];
-				boolean isField = initializer instanceof HiField;
-				if (!isField) {
-					ctx.enter(RuntimeContext.INITIALIZATION, initializer);
+				if (!(initializer instanceof HiField)) {
+					continue;
 				}
+				HiField field = (HiField) initializer;
+
+				valid &= field.validate(validationInfo, ctx);
+
+				if (field instanceof HiFieldVar) {
+					HiFieldVar varField = (HiFieldVar) field;
+					if (varField.type != Type.varType) {
+						int fieldIndex = -1;
+						for (int j = 0; j < fields.length; j++) {
+							if (field == fields[j]) {
+								fieldIndex = j;
+								break;
+							}
+						}
+						ctx.level.removeField(field);
+						field = HiFieldVar.getField(varField.getClass(ctx), varField.name, varField.initializer, varField.token);
+						initializers[i] = field;
+						ctx.level.addField(field);
+						fields[fieldIndex] = field;
+					}
+				}
+
+				// @unnamed
+				if (UNNAMED.equals(field.name)) {
+					validationInfo.error("keyword '_' cannot be used as an identifier", token);
+					valid = false;
+				}
+				if (isInterface) {
+					Modifiers fieldModifiers = field.getModifiers();
+					if (fieldModifiers.isProtected()) {
+						validationInfo.error("modifier 'protected' not allowed here", token);
+						valid = false;
+					}
+					if (!fieldModifiers.isPublic() || !fieldModifiers.isFinal() || !fieldModifiers.isStatic()) {
+						field.setModifiers(fieldModifiers.change().setPublic().setFinal(true).setStatic(true));
+					}
+				}
+				if (field.isFinal() && field.initializer == null) {
+					// TODO check initialization in all constructors
+					validationInfo.error("variable '" + field.name + "' might not have been initialized", field);
+					valid = false;
+				}
+				ctx.initializedNodes.add(field);
+			}
+
+			// validate initializers after fields
+			for (int i = 0; i < initializers.length; i++) {
+				HiNode initializer = (HiNode) initializers[i];
+				if (initializer instanceof HiField) {
+					continue;
+				}
+
+				ctx.enter(RuntimeContext.INITIALIZATION, initializer);
 				valid &= initializer.validate(validationInfo, ctx);
-				if (!isField) {
-					ctx.exit();
-				}
+				ctx.exit();
 
-				if (isField) {
-					if (initializer instanceof HiFieldVar) {
-						HiFieldVar varField = (HiFieldVar) initializer;
-						if (varField.type != Type.varType) {
-							HiField typedField = HiFieldVar.getField(varField.getClass(ctx), varField.name, varField.initializer, varField.token);
-							initializer = typedField;
-							initializers[i] = typedField;
-							ctx.level.addField(typedField);
-						}
-					}
-
-					HiField field = (HiField) initializer;
-					// @unnamed
-					if (UNNAMED.equals(field.name)) {
-						validationInfo.error("keyword '_' cannot be used as an identifier", token);
-						valid = false;
-					}
-					if (isInterface) {
-						Modifiers fieldModifiers = field.getModifiers();
-						if (fieldModifiers.isProtected()) {
-							validationInfo.error("modifier 'protected' not allowed here", token);
-							valid = false;
-						}
-						if (!fieldModifiers.isPublic() || !fieldModifiers.isFinal() || !fieldModifiers.isStatic()) {
-							field.setModifiers(fieldModifiers.change().setPublic().setFinal(true).setStatic(true));
-						}
-					}
-					if (field.isFinal() && field.initializer == null) {
-						// TODO check initialization in all constructors
-						validationInfo.error("variable '" + field.name + "' might not have been initialized", field);
-						valid = false;
-					}
-					ctx.initializedNodes.add(field);
-				} else if (isInterface) {
+				if (isInterface) {
 					validationInfo.error("interface cannot have initializers", initializer);
 					valid = false;
 				}

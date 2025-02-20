@@ -38,9 +38,9 @@ public class TestStatements extends HiTest {
 		assertFailCompile("String 0var;", //
 				"';' is expected");
 		assertFailCompile("String a, a;", //
-				"duplicated local variable a");
+				"variable 'a' is already defined in the scope");
 		assertFailCompile("int a = 1; String a = \"\";", //
-				"duplicated local variable a");
+				"variable 'a' is already defined in the scope");
 		assertFailCompile("int x; int y = x;", //
 				"variable 'x' is not initialized");
 		assertFailCompile("int x = 1; int y = true || x;", //

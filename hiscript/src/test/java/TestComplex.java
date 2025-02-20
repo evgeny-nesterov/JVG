@@ -15,6 +15,36 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		assertSuccess("""
+				String topLevelVar = "abc";
+				System.exec("topLevelVar = \\"a\\";", false, false);
+				""");
+		assertSuccess("class A{var x = 1; {assert x == 1;}}");
+		assertFailCompile("class A{private int x = 1;} class B extends A{int y = x;}", //
+				"'x' has private access in 'A'");
+		assertSuccess("class C{static{x = 1;} static int x;}");
+		assertSuccess("class A{int x = 1;} class B extends A{int x = 2;}");
+		assertFailCompile("class A{int x; int x;}", //
+				"variable 'x' is already defined in the scope");
+		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();", //
+				"incompatible types: A cannot be converted to B");
+		assertSuccess("class A{interface B{int get();} int m(){ return new A() {int m() {B b = ()->123; return b.get();}}.m(); }} assert new A().m() == 123;");
+		assertSuccess("class A{int xxx = 1;} class B extends A{int yyy = xxx;}");
+		assertSuccess("class A{static class B{} static class C extends B{}} class D extends A.C{} A.C d = new D(); assert d instanceof A.B;");
+		assertSuccess("""
+				class A { // @root$0A
+					class B {} // @root$0A$B
+					{
+						class B {} // @root$0A$0B
+						new B() { // @root$0A$00
+							{
+								B b = new B(){}; // @root$0A$00$00
+							}
+						};
+					}
+				}
+				new A();
+				""");
 	}
 
 	@Test
