@@ -171,27 +171,27 @@ public class TestJava extends HiTest {
 
 	@Test
 	public void test() {
-		assertSuccessSerialize("interface JString{int length(); int indexOf(int ch); String toUpperCase();} " + //
+		assertSuccess("interface JString{int length(); int indexOf(int ch); String toUpperCase();} " + //
 				"JString x = (JString)Java.newInstance(JString.class, \"java.lang.String\", \"abc\"); " + //
 				"assert x.length() == 3; " + //
 				"assert x.indexOf('b') == 1; " + //
 				"assert x.toUpperCase().equals(\"ABC\");");
-		assertSuccessSerialize("interface B{int getX();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getX() == 1;");
-		assertSuccessSerialize("interface B{String getString();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getString());");
-		assertSuccessSerialize("interface B{String getString(String s);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String s = \"abc\"; s = b.getString(s); assert \"abcd\".equals(s);");
-		assertSuccessSerialize("interface B{HashMap getHashMap(HashMap m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); HashMap m = new HashMap(); m.put(\"number\", 123); m = b.getHashMap(m); assert \"v\".equals(m.get(\"k\")); assert new Integer(123).equals(m.get(\"number\")); assert m.get(\"array\") instanceof Byte[];");
-		assertSuccessSerialize("interface B{ArrayList getArrayList(ArrayList m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); ArrayList a = new ArrayList(); a.add(\"e1\"); a.add(null); a = b.getArrayList(a); assert \"e1\".equals(a.get(0)); assert a.get(1) == null; assert \"e2\".equals(a.get(2)); assert a.get(3) == null;");
-		assertSuccessSerialize("interface B{void setByteArray(byte[][] arr); byte[][] getByteArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); b.setByteArray(new byte[][]{{}, {1,2,3,4,5}}); byte[][] x = b.getByteArray(); assert x.length == 2 && x[1].length == 5 && x[1][4] == 5;");
-		assertSuccessSerialize("interface B{void setShortArray(short[] arr); short[] getShortArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); b.setShortArray(new short[]{1,2,3}); short[] x = b.getShortArray(); assert x[2] == 3;");
-		assertSuccessSerialize("interface B{char[] getCharArray(char[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); char[] x = b.getCharArray(new char[]{'x'}); assert x[0] == 'x';");
-		assertSuccessSerialize("interface B{int[] getIntArray(int[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[] x = b.getIntArray(new int[]{1}); assert x[0] == 1;");
-		assertSuccessSerialize("interface B{int[][] getIntArray2();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[][] x = b.getIntArray2(); assert x[0][0] == 1;");
-		assertSuccessSerialize("interface B{long[] getLongArray(long[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); long[] x = b.getLongArray(new long[]{1}); assert x[0] == 1;");
-		assertSuccessSerialize("interface B{float[] getFloatArray(float[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); float[] x = b.getFloatArray(new float[]{1f}); assert x[0] == 1;");
-		assertSuccessSerialize("interface B{double[] getDoubleArray(double[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); double[] x = b.getDoubleArray(new double[]{1.0}); assert x[0] == 1;");
-		assertSuccessSerialize("interface B{boolean[] getBooleanArray(boolean[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); boolean[] x = b.getBooleanArray(new boolean[]{true}); assert x[0];");
-		assertSuccessSerialize("interface B{String[] getStringArray(String[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String[] x = b.getStringArray(new String[]{\"abc\"}); assert x[0].equals(\"abc\");");
-		assertSuccessSerialize("interface B{Object getNull(Object o);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getNull(null) == null;");
+		assertSuccess("interface B{int getX();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getX() == 1;");
+		assertSuccess("interface B{String getString();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert \"abc\".equals(b.getString());");
+		assertSuccess("interface B{String getString(String s);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String s = \"abc\"; s = b.getString(s); assert \"abcd\".equals(s);");
+		assertSuccess("interface B{HashMap getHashMap(HashMap m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); HashMap m = new HashMap(); m.put(\"number\", 123); m = b.getHashMap(m); assert \"v\".equals(m.get(\"k\")); assert new Integer(123).equals(m.get(\"number\")); assert m.get(\"array\") instanceof Byte[];");
+		assertSuccess("interface B{ArrayList getArrayList(ArrayList m);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); ArrayList a = new ArrayList(); a.add(\"e1\"); a.add(null); a = b.getArrayList(a); assert \"e1\".equals(a.get(0)); assert a.get(1) == null; assert \"e2\".equals(a.get(2)); assert a.get(3) == null;");
+		assertSuccess("interface B{void setByteArray(byte[][] arr); byte[][] getByteArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); b.setByteArray(new byte[][]{{}, {1,2,3,4,5}}); byte[][] x = b.getByteArray(); assert x.length == 2 && x[1].length == 5 && x[1][4] == 5;");
+		assertSuccess("interface B{void setShortArray(short[] arr); short[] getShortArray();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); b.setShortArray(new short[]{1,2,3}); short[] x = b.getShortArray(); assert x[2] == 3;");
+		assertSuccess("interface B{char[] getCharArray(char[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); char[] x = b.getCharArray(new char[]{'x'}); assert x[0] == 'x';");
+		assertSuccess("interface B{int[] getIntArray(int[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[] x = b.getIntArray(new int[]{1}); assert x[0] == 1;");
+		assertSuccess("interface B{int[][] getIntArray2();} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); int[][] x = b.getIntArray2(); assert x[0][0] == 1;");
+		assertSuccess("interface B{long[] getLongArray(long[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); long[] x = b.getLongArray(new long[]{1}); assert x[0] == 1;");
+		assertSuccess("interface B{float[] getFloatArray(float[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); float[] x = b.getFloatArray(new float[]{1f}); assert x[0] == 1;");
+		assertSuccess("interface B{double[] getDoubleArray(double[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); double[] x = b.getDoubleArray(new double[]{1.0}); assert x[0] == 1;");
+		assertSuccess("interface B{boolean[] getBooleanArray(boolean[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); boolean[] x = b.getBooleanArray(new boolean[]{true}); assert x[0];");
+		assertSuccess("interface B{String[] getStringArray(String[] arr);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); String[] x = b.getStringArray(new String[]{\"abc\"}); assert x[0].equals(\"abc\");");
+		assertSuccess("interface B{Object getNull(Object o);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getNull(null) == null;");
 
 		// primitive types
 		String[] primitiveNumberTypes = {"byte", "short", "char", "int", "long", "float", "double"};
@@ -199,8 +199,8 @@ public class TestJava extends HiTest {
 		for (int i = 0; i < primitiveNumberTypes.length; i++) {
 			String t = primitiveNumberTypes[i];
 			String T = primitiveNumberBoxedTypes[i];
-			assertSuccessSerialize("interface B{" + t + " get" + T + "(" + t + " x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.get" + T + "((" + t + ")127) == 127;");
+			assertSuccess("interface B{" + t + " get" + T + "(" + t + " x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.get" + T + "((" + t + ")127) == 127;");
 		}
-		assertSuccessSerialize("interface B{boolean getBoolean(boolean x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getBoolean(true);");
+		assertSuccess("interface B{boolean getBoolean(boolean x);} B b = (B)Java.newInstance(B.class, \"TestJava$B\", 1); assert b.getBoolean(true);");
 	}
 }

@@ -1,6 +1,7 @@
 import org.opentest4j.AssertionFailedError;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.HiScript;
+import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -9,10 +10,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class HiTest {
 	private List nativeObjects = new ArrayList<>();
+
+	{
+		// set to true to completely cover code
+		HiCompiler.compilingSystem = false;
+	}
 
 	public void assertCondition(String script, String condition, String message) {
 		try {
@@ -39,16 +45,6 @@ public abstract class HiTest {
 			execute(script);
 			// expected
 		} catch (Throwable e) {
-			e.printStackTrace();
-			onFail(script, e.toString());
-		}
-	}
-
-	public void assertSuccessSerialize(String script) {
-		try {
-			executeSerialized(script);
-			// expected
-		} catch (Throwable e) {
 			if (e instanceof HiScriptRuntimeException) {
 				System.out.println(script);
 			}
@@ -64,20 +60,6 @@ public abstract class HiTest {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			onFail(script, e.toString());
-		}
-	}
-
-	public void assertFail(String script) {
-		try {
-			execute(script);
-			onFail(script, "executed successfully, expected failure");
-		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
-			onFail(script, "Compilation failed: expected exception");
-		} catch (AssertionFailedError e) {
-			throw e;
-		} catch (Throwable e) {
-			// expected
-			System.err.println("Success! Expected failure: " + e.getMessage());
 		}
 	}
 
@@ -117,18 +99,7 @@ public abstract class HiTest {
 		}
 	}
 
-	public void assertFailSerialize(String script) {
-		try {
-			executeSerialized(script);
-			onFail(script, "fail");
-		} catch (TokenizerException | HiScriptParseException | HiScriptValidationException e) {
-			onFail(script, "Compilation failed: expected exception");
-		} catch (Throwable e) {
-			// expected
-			System.err.println("Success! Expected failure: " + e.getMessage());
-		}
-	}
-
+	@Deprecated
 	public void assertFailCompile(String script) {
 		try {
 			compile(script);
@@ -173,13 +144,7 @@ public abstract class HiTest {
 		}
 	}
 
-	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException {
-		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects).execute().throwExceptionIf();
-		result.close();
-		return result;
-	}
-
-	public HiScript executeSerialized(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
+	public HiScript execute(String script) throws TokenizerException, HiScriptParseException, HiScriptValidationException, IOException {
 		HiScript result = HiScript.create().compile(script).registerNative(nativeObjects). //
 //				execute(). //
 				serialize().deserialize().execute(). //

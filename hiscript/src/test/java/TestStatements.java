@@ -1,31 +1,32 @@
 import org.junit.jupiter.api.Test;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 
 public class TestStatements extends HiTest {
 	@Test
 	public void testBody() {
-		assertSuccessSerialize("");
-		assertSuccessSerialize("{}");
-		assertSuccessSerialize("{};");
-		assertSuccessSerialize("{{}} {}");
+		assertSuccess("");
+		assertSuccess("{}");
+		assertSuccess("{};");
+		assertSuccess("{{}} {}");
 	}
 
 	@Test
 	public void testDeclaration() {
-		assertSuccessSerialize("int a;");
-		assertSuccessSerialize("int a123;");
-		assertSuccessSerialize("int _a;");
-		assertSuccessSerialize("int _0123;");
-		assertSuccessSerialize("int _a;");
-		assertSuccessSerialize("int $;");
-		assertSuccessSerialize("int _$;");
-		assertSuccessSerialize("int $a__;");
-		assertSuccessSerialize("int ____$a_$b_$c___;");
-		assertSuccessSerialize("int переменная;");
+		assertSuccess("int a;");
+		assertSuccess("int a123;");
+		assertSuccess("int _a;");
+		assertSuccess("int _0123;");
+		assertSuccess("int _a;");
+		assertSuccess("int $;");
+		assertSuccess("int _$;");
+		assertSuccess("int $a__;");
+		assertSuccess("int ____$a_$b_$c___;");
+		assertSuccess("int переменная;");
 
-		assertSuccessSerialize("int a = 1; assert a == 1;");
-		assertSuccessSerialize("String a, b, c;");
-		assertSuccessSerialize("String a = \"a\", b, c = null; assert \"a\".equals(a); assert c == null;");
-		assertSuccessSerialize("{int a = 1;} int a = 2; assert a == 2;");
+		assertSuccess("int a = 1; assert a == 1;");
+		assertSuccess("String a, b, c;");
+		assertSuccess("String a = \"a\", b, c = null; assert \"a\".equals(a); assert c == null;");
+		assertSuccess("{int a = 1;} int a = 2; assert a == 2;");
 
 		assertFailCompile("int _;", //
 				"keyword '_' cannot be used as an identifier");
@@ -49,28 +50,28 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testFor() {
-		assertSuccessSerialize("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
-		assertSuccessSerialize("int i = 0; for(; i < 10; i++); assert i == 10;");
-		assertSuccessSerialize("int x = 0; for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {x++;} assert x == 10;");
+		assertSuccess("int j = 0; for(int i = 0; i < 10; i++) {assert i == j; j++;}");
+		assertSuccess("int i = 0; for(; i < 10; i++); assert i == 10;");
+		assertSuccess("int x = 0; for(int i = 0, j = 10; i < 10 && j >= 0; i++, j--) {x++;} assert x == 10;");
 
 		// iterable for
-		assertSuccessSerialize("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
-		assertSuccessSerialize("String[] x = {\"a\", \"b\", \"c\"}; for (String i : x) {i += i;};");
-		assertSuccessSerialize("int[] arr = {1, 2, 3}; int i = 0; for (int x : arr) assert x == arr[i++];");
-		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); l.add(\"c\"); int i = 0; for (String s : l) {assert s.equals(l.get(i++));}");
+		assertSuccess("int x[] = {0, 1, 2, 3}; for (int i : x) {i++;}; for (int i : x); for (int i : x) break; for (int i : x) {continue;}");
+		assertSuccess("String[] x = {\"a\", \"b\", \"c\"}; for (String i : x) {i += i;};");
+		assertSuccess("int[] arr = {1, 2, 3}; int i = 0; for (int x : arr) assert x == arr[i++];");
+		assertSuccess("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); l.add(\"c\"); int i = 0; for (String s : l) {assert s.equals(l.get(i++));}");
 
-		assertSuccessSerialize("for(;;) {break;}");
-		assertSuccessSerialize("for(int i = 0;;) {break;}");
-		assertSuccessSerialize("int i = 0; for(;i < 0;); assert i == 0;");
-		assertSuccessSerialize("int i = 0; for(;;i++, i++) {break;} assert i == 0;");
-		assertSuccessSerialize("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
-		assertSuccessSerialize("for(long x : new int[]{1, 2, 3}){}");
-		assertSuccessSerialize("int x = 0; for(int y : new int[]{1, 2, 3}){x=y; break;} assert x == 1;");
-		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); for(String x : l){assert x.equals(\"a\");}");
-		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); String a = \"\"; for(String s : l){a += s;} assert a.equals(\"ab\");");
-		assertSuccessSerialize("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); String a = null; for(String s : l){a = s; break;} assert a.equals(\"a\");");
-		assertSuccessSerialize("for(int x : new ArrayList<Integer>()){}");
-		assertSuccessSerialize("for(Object x : new ArrayList()){}");
+		assertSuccess("for(;;) {break;}");
+		assertSuccess("for(int i = 0;;) {break;}");
+		assertSuccess("int i = 0; for(;i < 0;); assert i == 0;");
+		assertSuccess("int i = 0; for(;;i++, i++) {break;} assert i == 0;");
+		assertSuccess("int i = 0; for(;;i++, i++) {{{break;}}} assert i == 0;");
+		assertSuccess("for(long x : new int[]{1, 2, 3}){}");
+		assertSuccess("int x = 0; for(int y : new int[]{1, 2, 3}){x=y; break;} assert x == 1;");
+		assertSuccess("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); for(String x : l){assert x.equals(\"a\");}");
+		assertSuccess("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); String a = \"\"; for(String s : l){a += s;} assert a.equals(\"ab\");");
+		assertSuccess("ArrayList<String> l = new ArrayList<>(); l.add(\"a\"); l.add(\"b\"); String a = null; for(String s : l){a = s; break;} assert a.equals(\"a\");");
+		assertSuccess("for(int x : new ArrayList<Integer>()){}");
+		assertSuccess("for(Object x : new ArrayList()){}");
 
 		assertFailCompile("for(private int x = 0; x < 10; x++){}", //
 				"modifier 'private' is not allowed");
@@ -111,8 +112,8 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testWhile() {
-		assertSuccessSerialize("int x = 3; while(x != 0) {x--;}");
-		assertSuccessSerialize("int x = 3; while(true) {x--; if(x <= 1) break; else continue; x = 1;} assert x == 1;");
+		assertSuccess("int x = 3; while(x != 0) {x--;}");
+		assertSuccess("int x = 3; while(true) {x--; if(x <= 1) break; else continue; x = 1;} assert x == 1;");
 
 		assertFailCompile("while() {}", //
 				"expression expected");
@@ -132,10 +133,10 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testDoWhile() {
-		assertSuccessSerialize("int x = 3; do{x--;} while(x != 0); assert x == 0;");
-		assertSuccessSerialize("int x = 3; do {x--;} while(x != 0); assert x == 0;");
-		assertSuccessSerialize("int x = 3; do {x--; if(x == 1) break;} while(x != 0); assert x == 1;");
-		assertSuccessSerialize("int x = 3; do {x--; if(x >= 1) continue; break;} while(true); assert x == 0;");
+		assertSuccess("int x = 3; do{x--;} while(x != 0); assert x == 0;");
+		assertSuccess("int x = 3; do {x--;} while(x != 0); assert x == 0;");
+		assertSuccess("int x = 3; do {x--; if(x == 1) break;} while(x != 0); assert x == 1;");
+		assertSuccess("int x = 3; do {x--; if(x >= 1) continue; break;} while(true); assert x == 0;");
 
 		assertFailCompile("do {} do(true);", //
 				"'while' is expected");
@@ -147,14 +148,14 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testIf() {
-		assertSuccessSerialize("int x = 0; if (x == 0) x++; assert x == 1;");
-		assertSuccessSerialize("if (false) assert false;");
-		assertSuccessSerialize("if (true);");
-		assertSuccessSerialize("int x = 0; if (x != 0) {x++;} assert x == 0;");
-		assertSuccessSerialize("int x = 0; if (x != 0) {x = -1;} else {x = 1;} assert x == 1;");
-		assertSuccessSerialize("int x = 2; if (x == 0) {assert false;} else if(x == 1) {assert false;} else x++; assert x == 3;");
-		assertSuccessSerialize("int x = 1; if (x > 0) if(x != 0) if (x == 1) x++; assert x == 2;");
-		assertSuccessSerialize("String s = \"a\"; if (s != null && s.length() == 1 && s.equals(\"a\")) {s = null;} assert s == null;");
+		assertSuccess("int x = 0; if (x == 0) x++; assert x == 1;");
+		assertSuccess("if (false) assert false;");
+		assertSuccess("if (true);");
+		assertSuccess("int x = 0; if (x != 0) {x++;} assert x == 0;");
+		assertSuccess("int x = 0; if (x != 0) {x = -1;} else {x = 1;} assert x == 1;");
+		assertSuccess("int x = 2; if (x == 0) {assert false;} else if(x == 1) {assert false;} else x++; assert x == 3;");
+		assertSuccess("int x = 1; if (x > 0) if(x != 0) if (x == 1) x++; assert x == 2;");
+		assertSuccess("String s = \"a\"; if (s != null && s.length() == 1 && s.equals(\"a\")) {s = null;} assert s == null;");
 
 		assertFailCompile("if() {}", //
 				"expression expected");
@@ -183,17 +184,17 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testSwitch() {
 		// primitives
-		assertSuccessSerialize("switch((byte)1){case (byte)1:}");
-		assertSuccessSerialize("switch((short)1){case (short)1:}");
-		assertSuccessSerialize("switch((char)1){case (char)1:}");
-		assertSuccessSerialize("switch(1){case 1:}");
-		assertSuccessSerialize("switch(1){case 1,2,3: break; case 4,5,6: assert false; break; default: assert false; break;}");
-		assertSuccessSerialize("int x = 1; switch(x){case 1: assert true;break; case 2: assert false;break;}");
-		assertSuccessSerialize("int x = 1; switch(x){case 2: assert false;break; default: assert true;break;}");
-		assertSuccessSerialize("int x = 1; switch(x){case 2, x == 1: assert true;break; case 1, x == 2: assert false;break;}");
-		assertSuccessSerialize("int x = 2; switch(x) {case 0: x=0; break; case 1: x--; break; case 2, 3, x + 1: x++; break;} assert x == 3;");
-		assertSuccessSerialize("int x = 1; switch(x) {case 0: x=0; case 1: x++; case 2: x++;} assert x == 3;");
-		assertSuccessSerialize("int x = 4; switch(x) {case 0: x=0; break; case 1: x--; break; case 2: x++; break; default: x += 2;} assert x == 6;");
+		assertSuccess("switch((byte)1){case (byte)1:}");
+		assertSuccess("switch((short)1){case (short)1:}");
+		assertSuccess("switch((char)1){case (char)1:}");
+		assertSuccess("switch(1){case 1:}");
+		assertSuccess("switch(1){case 1,2,3: break; case 4,5,6: assert false; break; default: assert false; break;}");
+		assertSuccess("int x = 1; switch(x){case 1: assert true;break; case 2: assert false;break;}");
+		assertSuccess("int x = 1; switch(x){case 2: assert false;break; default: assert true;break;}");
+		assertSuccess("int x = 1; switch(x){case 2, x == 1: assert true;break; case 1, x == 2: assert false;break;}");
+		assertSuccess("int x = 2; switch(x) {case 0: x=0; break; case 1: x--; break; case 2, 3, x + 1: x++; break;} assert x == 3;");
+		assertSuccess("int x = 1; switch(x) {case 0: x=0; case 1: x++; case 2: x++;} assert x == 3;");
+		assertSuccess("int x = 4; switch(x) {case 0: x=0; break; case 1: x--; break; case 2: x++; break; default: x += 2;} assert x == 6;");
 		assertFailCompile("int x = 1; switch(x){case 1:break; case \"\":break;}", //
 				"incompatible switch case types; found String, required int");
 		assertFailCompile("switch(1L){}", //
@@ -204,44 +205,44 @@ public class TestStatements extends HiTest {
 				"invalid switch value type: 'double'");
 		assertFailCompile("switch(true){}", //
 				"invalid switch value type: 'boolean'");
-		assertSuccessSerialize("class A{static int get(){System.exit(); return 1;}} switch(A.get()){case 1: break;}");
-		assertSuccessSerialize("switch(1){case Boolean.TRUE: return;} assert false;");
+		assertSuccess("class A{static int get(){System.exit(); return 1;}} switch(A.get()){case 1: break;}");
+		assertSuccess("switch(1){case Boolean.TRUE: return;} assert false;");
 
 		// enums
-		assertSuccessSerialize("enum E{e} switch(E.e){}");
-		assertSuccessSerialize("enum E{a,b,c} E e = E.a; switch(e){case a: break; case b: assert false;}");
-		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b:}");
-		assertSuccessSerialize("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
+		assertSuccess("enum E{e} switch(E.e){}");
+		assertSuccess("enum E{a,b,c} E e = E.a; switch(e){case a: break; case b: assert false;}");
+		assertSuccess("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b:}");
+		assertSuccess("enum E{a,b,c} E e = E.b; switch(e){case a: assert false; case b: break; case E.c: assert false;}");
 		assertFailCompile("enum E{e} switch(E.e){case :}", //
 				"expression expected");
 		assertFailCompile("enum E{a,b,c} E e = E.b; switch(e){case a: break; case b: break; case c: break; case d: break;}", //
 				"cannot resolve symbol 'd'");
 		assertFailCompile("enum E{a,b} switch(E.a){case 1: assert false;} assert false;", //
 				"an enum switch case label must be the unqualified name of an enumeration constant");
-		assertSuccessSerialize("enum E{a,b} switch(E.a){case b: break; default: return;} assert false;");
+		assertSuccess("enum E{a,b} switch(E.a){case b: break; default: return;} assert false;");
 
 		// objects
-		assertSuccessSerialize("switch(\"a\"){case \"a\": break; default: assert false;}");
-		assertSuccessSerialize("switch(\"a\"){case \"a\",\"b\",\"c\": break; case \"d\",\"e\",\"f\": break; default: break;}");
-		assertSuccessSerialize("String s = \"c\"; switch(s) {case \"a\", \"x\": s = \"\"; break; case \"b\": break; case \"c\": s += 1; break;} assert s.equals(\"c1\");");
+		assertSuccess("switch(\"a\"){case \"a\": break; default: assert false;}");
+		assertSuccess("switch(\"a\"){case \"a\",\"b\",\"c\": break; case \"d\",\"e\",\"f\": break; default: break;}");
+		assertSuccess("String s = \"c\"; switch(s) {case \"a\", \"x\": s = \"\"; break; case \"b\": break; case \"c\": s += 1; break;} assert s.equals(\"c1\");");
 
-		assertSuccessSerialize("switch(new Object()){}");
-		assertSuccessSerialize("class A {}; class B{}; A a = new A(); Object b = new B(); switch(b) {case a: break; case new A(): break; case b: b = a;} assert b == a && b.equals(a);");
-		assertSuccessSerialize("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case O o when o.a == 1: assert o.a == 1; return;} assert false : \"case 2\";");
-		assertSuccessSerialize("Object s = \"a\"; switch(s){case \"a\": assert true;break; case \"b\": assert false;break;}");
+		assertSuccess("switch(new Object()){}");
+		assertSuccess("class A {}; class B{}; A a = new A(); Object b = new B(); switch(b) {case a: break; case new A(): break; case b: b = a;} assert b == a && b.equals(a);");
+		assertSuccess("class O{int a; O(int a){this.a=a;}} switch(new O(1)){case O o when o.a == 0: assert false : \"case 1\"; case O o when o.a == 1: assert o.a == 1; return;} assert false : \"case 2\";");
+		assertSuccess("Object s = \"a\"; switch(s){case \"a\": assert true;break; case \"b\": assert false;break;}");
 
-		assertSuccessSerialize("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
-		assertSuccessSerialize("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
+		assertSuccess("Object o = \"a\"; switch(o){case String s: assert s.equals(\"a\"): \"o=\" + o; break; case Integer i: assert false: \"Integer\"; case Object o2: assert false: \"Object\"; default: assert false: \"default\";}");
+		assertSuccess("Object o = \"a\"; switch(o){case String s1 when s1.length() == 1: assert s1.length() == 1; break; case String s2: assert false: \"length != 1\";}");
 
 		assertFailCompile("class A{static void m(){}} switch(new Object()){case A.m():}", //
 				"value or casted identifier is expected");
 		assertFailCompile("class A{} class B{} switch(new A()){case B b:}", //
 				"incompatible switch case types; found B, required A");
-		assertSuccessSerialize("switch(new Integer(1)){case 1:return;} assert false;");
+		assertSuccess("switch(new Integer(1)){case 1:return;} assert false;");
 		assertFail("class A{boolean m(){throw new RuntimeException(\"exception in switch value\");}} switch(new A()){case A a when a.m(): assert false;} assert false;", //
 				"exception in switch value");
-		assertSuccessSerialize("Object o = new Integer[0]; switch(o){case String[] s: assert false; case Integer[] i: return;} assert false;");
-		assertSuccessSerialize("Object o = new Double[0]; switch(o){case Integer[] s: assert false; case Number[] i: return;} assert false;");
+		assertSuccess("Object o = new Integer[0]; switch(o){case String[] s: assert false; case Integer[] i: return;} assert false;");
+		assertSuccess("Object o = new Double[0]; switch(o){case Integer[] s: assert false; case Number[] i: return;} assert false;");
 
 		// casted identifiers
 		assertFailCompile("switch(\"\"){case Integer i, String s: break;}", //
@@ -253,8 +254,8 @@ public class TestStatements extends HiTest {
 				"exception in record rewritten method");
 
 		// nulls
-		assertSuccessSerialize("switch(null){case null: return; break; case 1:} assert false;");
-		assertSuccessSerialize("switch(\"\"){case null: break; case \"\": return;} assert false;");
+		assertSuccess("switch(null){case null: return; break; case 1:} assert false;");
+		assertSuccess("switch(\"\"){case null: break; case \"\": return;} assert false;");
 		assertFailCompile("switch(1){case null: case 1:}", //
 				"incompatible switch case types; found null, required int");
 
@@ -321,8 +322,8 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testExceptions() {
-		assertSuccessSerialize("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
-		assertSuccessSerialize("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
+		assertSuccess("new Exception(); new Exception(\"error\"); new RuntimeException(); new RuntimeException(\"error\");");
+		assertSuccess("class E extends Exception {E(){} E(String msg){super(msg);}}; E e1 = new E(); E e2 = new E(\"error\"); assert \"error\".equals(e2.getMessage()); assert e1 instanceof Exception;");
 
 		// throw in root
 		assertFailCompile("throw new Exception(\"error\");", //
@@ -343,25 +344,27 @@ public class TestStatements extends HiTest {
 				"incompatible types: boolean cannot be converted to Exception");
 		assertFailCompile("class E extends Exception{} throw new E();", //
 				"unreported exception E: exception must be caught or declared to be thrown");
-		assertFail("class E extends RuntimeException{} throw new E();");
+		assertFail("class E extends RuntimeException{} throw new E();", //
+				HiScriptRuntimeException.class);
 		assertFail("Exception exc = null; try {throw new RuntimeException(\"error\");} catch(Exception e) {exc = e;} finally {if (exc != null) throw exc;}", //
 				"error");
 
 		// throw in try
-		assertSuccessSerialize("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
-		assertSuccessSerialize("class E extends Exception{E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
+		assertSuccess("try{throw new Exception(\"error\");} catch(Exception e){assert e.getMessage().equals(\"error\");} ");
+		assertSuccess("class E extends Exception{E(String message){super(message);}} try {throw new E(\"error\");} catch(E e) {assert e.getMessage().equals(\"error\");} ");
 		assertFailCompile("class E extends Exception{} try{throw new Exception();} catch(E e) {}", //
 				"unreported exception Exception: exception must be caught or declared to be thrown");
-		assertFailSerialize("class E extends RuntimeException{} try{throw new RuntimeException();} catch(E e) {}");
-		assertSuccessSerialize("class E extends Exception{} try{throw new Exception();} catch(E e){assert false;} catch(RuntimeException e){assert false;} catch(Exception e){}");
-		assertSuccessSerialize("class E extends Exception {E(String message){super(message);}} " + //
+		assertFail("class E extends RuntimeException{} try{throw new RuntimeException();} catch(E e) {}", //
+				HiScriptRuntimeException.class);
+		assertSuccess("class E extends Exception{} try{throw new Exception();} catch(E e){assert false;} catch(RuntimeException e){assert false;} catch(Exception e){}");
+		assertSuccess("class E extends Exception {E(String message){super(message);}} " + //
 				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
 				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
-		assertSuccessSerialize("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
-		assertSuccessSerialize("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
+		assertSuccess("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
+		assertSuccess("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}", //
 				"declaration expected");
-		assertSuccessSerialize("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
+		assertSuccess("class E1 extends Exception{E1(){} E1(String msg){super(msg);}} class E2 extends Exception{E2(){} E2(String msg){super(msg);}} try{throw new E2(\"error\");} catch(E1 | E2 e){assert e.getMessage().equals(\"error\");}");
 		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"close error\");}} try(A a = new A()) {}", //
 				"close error");
 		assertFail("class A implements AutoCloseable{public void close(){}} try(A a = null) {}", //
@@ -417,7 +420,7 @@ public class TestStatements extends HiTest {
 
 		assertFailCompile("class A{static{throw new Exception();}}", //
 				"unreported exception Exception: exception must be caught or declared to be thrown");
-		assertSuccessSerialize("class A{static{throw new RuntimeException();}}");
+		assertSuccess("class A{static{throw new RuntimeException();}}");
 		assertFail("class A{static int x = 1; static{throw new RuntimeException(\"runtime\");}} int x = A.x;", //
 				"runtime");
 		assertFailCompile("try(int x = 1) {}", //
@@ -429,8 +432,8 @@ public class TestStatements extends HiTest {
 		assertFailCompile("try {} catch(RuntimeException | Integer e){}", //
 				"incompatible types: Integer cannot be converted to Exception");
 
-		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"1\");} catch(Exception e) {} finally{return 1;}}} assert new A().m() == 1;");
-		assertSuccessSerialize("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;"); // cancel exception and return 1 in finally
+		assertSuccess("class A{int m(){try {throw new RuntimeException(\"1\");} catch(Exception e) {} finally{return 1;}}} assert new A().m() == 1;");
+		assertSuccess("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;"); // cancel exception and return 1 in finally
 
 		// resource initialization
 		assertFail("class A implements AutoCloseable{A(){throw new RuntimeException(\"exception in resource initialization\");} public void close(){}} try(A a = new A()){}", //
@@ -438,7 +441,7 @@ public class TestStatements extends HiTest {
 		// resource close
 		assertFail("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){}", //
 				"exception in resource close");
-		assertSuccessSerialize("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){} catch(Exception e){assert e.getMessage().equals(\"exception in resource close\");}");
+		assertSuccess("class A implements AutoCloseable{public void close(){throw new RuntimeException(\"exception in resource close\");}} try(A a = new A()){} catch(Exception e){assert e.getMessage().equals(\"exception in resource close\");}");
 
 		// invalid format
 		assertFailCompile("throw Exception();", //
@@ -471,23 +474,23 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testNew() {
-		assertSuccessSerialize("new Object().toString();");
-		assertSuccessSerialize("assert new Object(){public String toString(){return \"a\";}}.toString().equals(\"a\");");
-		assertSuccessSerialize("assert (new int[]{1})[0] == 1;");
-		assertSuccessSerialize("class A{} A a = new A(); assert a instanceof A;");
-		assertSuccessSerialize("class A{A(int x){}} new A(1);");
-		assertSuccessSerialize("assert (new int[1])[0] == 0;");
-		assertSuccessSerialize("assert (new int[]{1,2,3})[2] == 3;");
-		assertSuccessSerialize("assert (new int[1][1])[0][0] == 0;");
+		assertSuccess("new Object().toString();");
+		assertSuccess("assert new Object(){public String toString(){return \"a\";}}.toString().equals(\"a\");");
+		assertSuccess("assert (new int[]{1})[0] == 1;");
+		assertSuccess("class A{} A a = new A(); assert a instanceof A;");
+		assertSuccess("class A{A(int x){}} new A(1);");
+		assertSuccess("assert (new int[1])[0] == 0;");
+		assertSuccess("assert (new int[]{1,2,3})[2] == 3;");
+		assertSuccess("assert (new int[1][1])[0][0] == 0;");
 
-		assertSuccessSerialize("assert new boolean[][]{{false,false},{false,true}}[(byte)1][(char)1];");
-		assertSuccessSerialize("assert new byte[][]{{(byte)1,(short)2},{(char)3,4}}[(byte)1][(char)1] == 4;");
-		assertSuccessSerialize("assert new short[][]{{(byte)1,(short)2},{(char)3,4}}[(short)1][1] == 4;");
-		assertSuccessSerialize("assert new char[][]{{(byte)1,(short)2},{3,4}}[1][1] == 4;");
-		assertSuccessSerialize("assert new int[][]{{(byte)1,(short)2},{(char)3,4}}[1][1] == 4;");
-		assertSuccessSerialize("assert new long[][]{{(byte)1,(short)2},{(char)3,4,5L}}[1][1] == 4;");
-		assertSuccessSerialize("assert new float[][]{{(byte)1,(short)2},{(char)3,4,5f,6L}}[1][1] == 4;");
-		assertSuccessSerialize("assert new double[][]{{1d,2f},{3L,4,(byte)5,(short)6,(char)7}}[(byte)1][(short)1] == 4;");
+		assertSuccess("assert new boolean[][]{{false,false},{false,true}}[(byte)1][(char)1];");
+		assertSuccess("assert new byte[][]{{(byte)1,(short)2},{(char)3,4}}[(byte)1][(char)1] == 4;");
+		assertSuccess("assert new short[][]{{(byte)1,(short)2},{(char)3,4}}[(short)1][1] == 4;");
+		assertSuccess("assert new char[][]{{(byte)1,(short)2},{3,4}}[1][1] == 4;");
+		assertSuccess("assert new int[][]{{(byte)1,(short)2},{(char)3,4}}[1][1] == 4;");
+		assertSuccess("assert new long[][]{{(byte)1,(short)2},{(char)3,4,5L}}[1][1] == 4;");
+		assertSuccess("assert new float[][]{{(byte)1,(short)2},{(char)3,4,5f,6L}}[1][1] == 4;");
+		assertSuccess("assert new double[][]{{1d,2f},{3L,4,(byte)5,(short)6,(char)7}}[(byte)1][(short)1] == 4;");
 
 		assertFailCompile("boolean[] x = new boolean[]{1};", //
 				"boolean is expected");
@@ -546,17 +549,17 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testBreakContinueLabel() {
-		assertSuccessSerialize("A:{break A;};");
-		assertSuccessSerialize("A:{{{break A;}}};");
-		assertSuccessSerialize("A:break A;");
-		assertSuccessSerialize("A:for(int i=0; i< 3; i++){continue A;};");
+		assertSuccess("A:{break A;};");
+		assertSuccess("A:{{{break A;}}};");
+		assertSuccess("A:break A;");
+		assertSuccess("A:for(int i=0; i< 3; i++){continue A;};");
 		assertFailCompile("A:{continue A;};", //
 				"undefined label 'A'");
-		assertSuccessSerialize("A:for(int i=0; i< 3; i++){{{continue A;}}};");
-		assertSuccessSerialize("A:for(int i=0; i< 3; i++) continue A;");
+		assertSuccess("A:for(int i=0; i< 3; i++){{{continue A;}}};");
+		assertSuccess("A:for(int i=0; i< 3; i++) continue A;");
 		assertFailCompile("A:continue A;", //
 				"undefined label 'A'");
-		assertSuccessSerialize("A:B:C:D:{break B;}");
+		assertSuccess("A:B:C:D:{break B;}");
 		assertFailCompile("break A;", //
 				"undefined label 'A'");
 		assertFailCompile("A:{} break A;", //
@@ -566,25 +569,25 @@ public class TestStatements extends HiTest {
 		assertFailCompile("A:{continue B;}", //
 				"undefined label 'B'");
 
-		assertSuccessSerialize("A:{if(true) break A; assert false;};");
-		assertSuccessSerialize("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
-		assertSuccessSerialize("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
-		assertSuccessSerialize("BLOCK: for (int i = 0; i < 10; i++) {if(i<10) continue BLOCK; assert false;}");
+		assertSuccess("A:{if(true) break A; assert false;};");
+		assertSuccess("FOR: for(;;) {int a = 1; switch(a){case 0: break; case 1: break FOR;} assert false;}");
+		assertSuccess("for (int i = 0; i < 10; i++) {if(i<10) continue; assert false;}");
+		assertSuccess("BLOCK: for (int i = 0; i < 10; i++) {if(i<10) continue BLOCK; assert false;}");
 	}
 
 	@Test
 	public void testReturn() {
 		// methods
-		assertSuccessSerialize("class A{int m(){return 1;}} assert new A().m() == 1;");
-		assertSuccessSerialize("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
-		assertSuccessSerialize("class A{int x; A set(int x){this.x = x; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
-		assertSuccessSerialize("class A{int x; A set(int y){x = y; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
-		assertSuccessSerialize("class A{long m(){return 1l;}}");
-		assertSuccessSerialize("class A{float m(){return 1l;}}");
-		assertSuccessSerialize("class A{double m(){return 1l;}}");
-		assertSuccessSerialize("class A{float m(){return 1f;}}");
-		assertSuccessSerialize("class A{double m(){return 1f;}}");
-		assertSuccessSerialize("class A{double m(){return 1.0;}}");
+		assertSuccess("class A{int m(){return 1;}} assert new A().m() == 1;");
+		assertSuccess("class A{String m(){return \"1\";}} assert new A().m().equals(\"1\");");
+		assertSuccess("class A{int x; A set(int x){this.x = x; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
+		assertSuccess("class A{int x; A set(int y){x = y; return this;} int get(){return this.x;}} assert new A().set(123).get() == 123;");
+		assertSuccess("class A{long m(){return 1l;}}");
+		assertSuccess("class A{float m(){return 1l;}}");
+		assertSuccess("class A{double m(){return 1l;}}");
+		assertSuccess("class A{float m(){return 1f;}}");
+		assertSuccess("class A{double m(){return 1f;}}");
+		assertSuccess("class A{double m(){return 1.0;}}");
 		assertFailCompile("class A{int m(){return \"\";}}", //
 				"incompatible types; found String, required int");
 		assertFailCompile("class A{int m(){return 1L;}}", //
@@ -598,14 +601,14 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{void m(){return A;}}", //
 				"value is expected");
 
-		assertSuccessSerialize("class A{void m(){return;}} new A().m();");
+		assertSuccess("class A{void m(){return;}} new A().m();");
 		assertFailCompile("class A{void m(){return;}} Object x = new A().m();", //
 				"incompatible types: void cannot be converted to Object");
 		assertFailCompile("class A{void m(){return 1;}}", //
 				"incompatible types; found int, required void");
 
-		assertSuccessSerialize("class A{int m(){ if(true) {{{return 1;}}} else return 2; }} assert new A().m() == 1;");
-		assertSuccessSerialize("class A{int m(int x) {if(x == 3) return x; return 0;}} assert new A().m(3) == 3;");
+		assertSuccess("class A{int m(){ if(true) {{{return 1;}}} else return 2; }} assert new A().m() == 1;");
+		assertSuccess("class A{int m(int x) {if(x == 3) return x; return 0;}} assert new A().m(3) == 3;");
 
 		// unreachable statement
 		assertFailCompile("class A{void m(){try{return;} catch(Exception e){return;}; int y = 0;}}", //
@@ -616,7 +619,7 @@ public class TestStatements extends HiTest {
 				"unreachable statement");
 
 		// constructors
-		assertSuccessSerialize("class A{A(){return;}}");
+		assertSuccess("class A{A(){return;}}");
 		assertFailCompile("class A{A(){return \"\";}}", //
 				"incompatible types; found String, required void");
 		assertFailCompile("class A{A(){return; int x = 1;}}", //
@@ -624,11 +627,11 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{A(){return; return;}}", //
 				"unreachable statement");
 
-		assertSuccessSerialize("class A{int x = 0; A(){if(true) return; x = 1;}} assert new A().x == 0;");
+		assertSuccess("class A{int x = 0; A(){if(true) return; x = 1;}} assert new A().x == 0;");
 
 		// initializers
-		assertSuccessSerialize("class A{{int x = 0; return;}}");
-		assertSuccessSerialize("class A{static{int x = 0; return;}}");
+		assertSuccess("class A{{int x = 0; return;}}");
+		assertSuccess("class A{static{int x = 0; return;}}");
 		assertFailCompile("class A{{return \"\";}}", //
 				"incompatible types; found String, required void");
 		assertFailCompile("class A{{return; int x = 0;}}", //
@@ -638,9 +641,9 @@ public class TestStatements extends HiTest {
 		assertFailCompile("class A{static{{return;} return;}}", //
 				"unreachable statement");
 
-		assertSuccessSerialize("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
-		assertSuccessSerialize("class A{int m(){try {return 1;} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
-		assertSuccessSerialize("class A{int m(){try {throw new Exception();} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
+		assertSuccess("class A{int x = 0; {if(true) return; x = 1;}} assert new A().x == 0;");
+		assertSuccess("class A{int m(){try {return 1;} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
+		assertSuccess("class A{int m(){try {throw new Exception();} catch(Exception e) {return 2;} finally {return 3;}}} assert new A().m() == 3;");
 	}
 
 	@Test
@@ -666,7 +669,7 @@ public class TestStatements extends HiTest {
 
 		assertFailCompile("class C{void m(){BLOCK:{break BLOCK; return;} return;}}", //
 				"unreachable statement");
-		assertSuccessSerialize("class C{void m(){BLOCK:{break BLOCK;} return;}}");
+		assertSuccess("class C{void m(){BLOCK:{break BLOCK;} return;}}");
 		assertFailCompile("class C{void m(){BLOCK:{continue BLOCK; return;} return;}}", //
 				"unreachable statement");
 
@@ -679,12 +682,12 @@ public class TestStatements extends HiTest {
 				"unreachable statement");
 		assertFailCompile("int x = 1; switch(x) {case 1: synchronized(this){break;} break;}", //
 				"unreachable statement");
-		assertSuccessSerialize("int x = 1; switch(x) {case 1: do{break;}while(true); break;}");
+		assertSuccess("int x = 1; switch(x) {case 1: do{break;}while(true); break;}");
 
 		// switch
-		assertSuccessSerialize("int x = 1; switch(x) {case 1: break; case 2: break;} return;");
-		assertSuccessSerialize("int x = 1; switch(x) {case 1: return; case 2: return;} return;");
-		assertSuccessSerialize("int x = 1; switch(x) {case 1: return; default: break;} return;");
+		assertSuccess("int x = 1; switch(x) {case 1: break; case 2: break;} return;");
+		assertSuccess("int x = 1; switch(x) {case 1: return; case 2: return;} return;");
+		assertSuccess("int x = 1; switch(x) {case 1: return; default: break;} return;");
 		assertFailCompile("int x = 1; switch(x) {case 1: return; default: return;} return;", //
 				"unreachable statement");
 		assertFailCompile("int x = 1; BLOCK:{switch(x) {case 1: break BLOCK; default: break BLOCK;} break BLOCK;}", //
@@ -693,15 +696,15 @@ public class TestStatements extends HiTest {
 				"unreachable statement");
 
 		// if
-		assertSuccessSerialize("if(true) {return;} return;");
-		assertSuccessSerialize("if(true) {return;} else if(false) {return;} return;");
-		assertSuccessSerialize("if(true) {return;} else if(false) {return;} else {} return;");
+		assertSuccess("if(true) {return;} return;");
+		assertSuccess("if(true) {return;} else if(false) {return;} return;");
+		assertSuccess("if(true) {return;} else if(false) {return;} else {} return;");
 		assertFailCompile("if(true) {return;} else if(false) {return;} else {return;} return;", //
 				"unreachable statement");
 
 		// try
-		assertSuccessSerialize("try {return;} catch(Exception e){} return;");
-		assertSuccessSerialize("try {} catch(Exception e){return;} return;");
+		assertSuccess("try {return;} catch(Exception e){} return;");
+		assertSuccess("try {} catch(Exception e){return;} return;");
 		assertFailCompile("try {} catch(Exception e){} finally{return;} return;", //
 				"unreachable statement");
 		assertFailCompile("try {return;} catch(Exception e){} finally{return;} return;", //
@@ -714,12 +717,12 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testThis() {
-		assertSuccessSerialize("class A{{Object a = this; assert a instanceof A;}} new A();");
-		assertSuccessSerialize("class A{void m(){Object a = A.this; assert a instanceof A;}} new A().m();");
-		assertSuccessSerialize("class A{int x = 1; {this.x = 2;}} assert new A().x == 2;");
-		assertSuccessSerialize("class A{int x = 1; {A.this.x = 2;}} assert new A().x == 2;");
-		assertSuccessSerialize("class A{int x(){return 1;} int y(){return this.x() + 1;}} assert new A().y() == 2;");
-		assertSuccessSerialize("class A{int x(){return 1;} int y(){return A.this.x() + 1;}} assert new A().y() == 2;");
+		assertSuccess("class A{{Object a = this; assert a instanceof A;}} new A();");
+		assertSuccess("class A{void m(){Object a = A.this; assert a instanceof A;}} new A().m();");
+		assertSuccess("class A{int x = 1; {this.x = 2;}} assert new A().x == 2;");
+		assertSuccess("class A{int x = 1; {A.this.x = 2;}} assert new A().x == 2;");
+		assertSuccess("class A{int x(){return 1;} int y(){return this.x() + 1;}} assert new A().y() == 2;");
+		assertSuccess("class A{int x(){return 1;} int y(){return A.this.x() + 1;}} assert new A().y() == 2;");
 		assertFailCompile("this();", //
 				"expression expected"); // TODO Call to 'this()' must be first statement in constructor body
 		assertFailCompile("this;", //
@@ -730,8 +733,8 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testSuper() {
-		assertSuccessSerialize("class A{int x = 1;} class B extends A{int x = 2; int get(){return super.x;}} assert new B().get() == 1;");
-		assertSuccessSerialize("class A{int x(){return 1;}} class B extends A{int x(){return 2;} int get(){return super.x();}} assert new B().get() == 1;");
+		assertSuccess("class A{int x = 1;} class B extends A{int x = 2; int get(){return super.x;}} assert new B().get() == 1;");
+		assertSuccess("class A{int x(){return 1;}} class B extends A{int x(){return 2;} int get(){return super.x();}} assert new B().get() == 1;");
 
 		assertFailCompile("class A{void m1(){} void m2(){super.m1();}}", //
 				"cannot resolve method 'm1' in 'Object'");
@@ -745,8 +748,8 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testAsserts() {
-		assertSuccessSerialize("assert true;");
-		assertSuccessSerialize("assert true : \"failure\";");
+		assertSuccess("assert true;");
+		assertSuccess("assert true : \"failure\";");
 		assertFail("assert false;", //
 				"Assert failed");
 		assertFail("assert false : \"failure\";", //
@@ -766,8 +769,8 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testSynchronized() {
-		assertSuccessSerialize("Object o = new Object(); synchronized(o){}");
-		assertSuccessSerialize("synchronized(new int[0]){}");
+		assertSuccess("Object o = new Object(); synchronized(o){}");
+		assertSuccess("synchronized(new int[0]){}");
 		assertFailCompile("Object o = new Object(); synchronized(o);", //
 				"'{' is expected");
 		assertFailCompile("Object o; synchronized(o){}", //
@@ -786,11 +789,11 @@ public class TestStatements extends HiTest {
 
 	@Test
 	public void testLabels() {
-		assertSuccessSerialize("LABEL: {}");
-		assertSuccessSerialize("LABEL: {break LABEL;}");
+		assertSuccess("LABEL: {}");
+		assertSuccess("LABEL: {break LABEL;}");
 		assertFailCompile("LABEL: {break;}", //
 				"break outside switch or loop");
-		assertSuccessSerialize("LABEL: for(int i = 0; i < 10; i++) {continue LABEL;}");
+		assertSuccess("LABEL: for(int i = 0; i < 10; i++) {continue LABEL;}");
 		assertFailCompile("LABEL: {continue LABEL;}", //
 				"undefined label 'LABEL'");
 		assertFailCompile("LABEL1: {LABEL1: {}}", //

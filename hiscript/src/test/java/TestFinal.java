@@ -11,15 +11,15 @@ public class TestFinal extends HiTest {
 			boolean intNumber = intNumbers[i];
 			boolean allowEquatePlus = allowEquatePlus_[i];
 
-			assertSuccessSerialize("final " + t + " x; x = 1; assert x == 1;");
-			assertSuccessSerialize("final String x; x = \"a\"; assert x.equals(\"a\");");
-			assertSuccessSerialize("final String x; x = null; assert x == null;");
-			assertSuccessSerialize("final " + t + " x = 1; class A{" + t + " y; A(){this.y = x;}} new A();");
-			assertSuccessSerialize("final " + t + " x = 1; class A{" + t + " y = x;} new A();");
-			assertSuccessSerialize("try{" + t + " x = 0;} catch(final Exception e){}");
-			assertSuccessSerialize("class A{final " + t + " x = 1; {" + t + " y = (" + t + ")(x + 1);}}");
-			assertSuccessSerialize("class A{final static " + t + " x = 1; static{" + t + " y = (" + t + ")(x + 1L);}}");
-			assertSuccessSerialize("class A{" + t + " get(final " + t + " x){final " + t + " y = (" + t + ")(x + 1.0); return y;}}");
+			assertSuccess("final " + t + " x; x = 1; assert x == 1;");
+			assertSuccess("final String x; x = \"a\"; assert x.equals(\"a\");");
+			assertSuccess("final String x; x = null; assert x == null;");
+			assertSuccess("final " + t + " x = 1; class A{" + t + " y; A(){this.y = x;}} new A();");
+			assertSuccess("final " + t + " x = 1; class A{" + t + " y = x;} new A();");
+			assertSuccess("try{" + t + " x = 0;} catch(final Exception e){}");
+			assertSuccess("class A{final " + t + " x = 1; {" + t + " y = (" + t + ")(x + 1);}}");
+			assertSuccess("class A{final static " + t + " x = 1; static{" + t + " y = (" + t + ")(x + 1L);}}");
+			assertSuccess("class A{" + t + " get(final " + t + " x){final " + t + " y = (" + t + ")(x + 1.0); return y;}}");
 
 			assertFailCompile("final " + t + " x = 1; x = 1;", //
 					"cannot assign value to final variable");
@@ -118,14 +118,14 @@ public class TestFinal extends HiTest {
 
 	@Test
 	public void testMethod() {
-		assertSuccessSerialize("class A{final void get(){}} new A().get();");
+		assertSuccess("class A{final void get(){}} new A().get();");
 		assertFailCompile("class A{final void get(){}} class B extends A{void get(){}}", //
 				"cannot rewrite final method");
 	}
 
 	@Test
 	public void testClass() {
-		assertSuccessSerialize("final class A{} new A();");
+		assertSuccess("final class A{} new A();");
 		assertFailCompile("final class A{} class B extends A{}", //
 				"the type B cannot subclass the final class A");
 	}

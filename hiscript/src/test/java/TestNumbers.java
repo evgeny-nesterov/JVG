@@ -3,11 +3,11 @@ import org.junit.jupiter.api.Test;
 public class TestNumbers extends HiTest {
 	@Test
 	public void testNumbersDeclarations() {
-		assertSuccessSerialize("int a = 1; assert a == 1;");
-		assertSuccessSerialize("int a = +1; assert a == 1;");
-		assertSuccessSerialize("int a = -1; assert a == -1;");
-		assertSuccessSerialize("int a = --1; assert a == 1;");
-		assertSuccessSerialize("int a = ---1; assert a == -1;");
+		assertSuccess("int a = 1; assert a == 1;");
+		assertSuccess("int a = +1; assert a == 1;");
+		assertSuccess("int a = -1; assert a == -1;");
+		assertSuccess("int a = --1; assert a == 1;");
+		assertSuccess("int a = ---1; assert a == -1;");
 		assertCondition("int a = + -  + -+ -1;", "a == -1", "int");
 		assertFailCompile("int a = 1.;", //
 				"incompatible types: double cannot be converted to int");
@@ -177,7 +177,7 @@ public class TestNumbers extends HiTest {
 		assertCondition("byte a = (byte)1;", "a == 1l", "byte");
 		assertCondition("byte a = (short)1;", "a == 1", "byte");
 		assertCondition("byte a = (char)1;", "a == 1", "byte");
-		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
+		assertSuccess("byte a = 'a'; assert a == 'a';");
 
 		assertCondition("short a = 127;", "a == 127", "short");
 		assertCondition("short a = -+-+-111;", "a == -111", "short");
@@ -215,7 +215,7 @@ public class TestNumbers extends HiTest {
 		assertCondition("short a = (byte)1;", "a == 1l", "short");
 		assertCondition("byte a = (short)1;", "a == 1", "short");
 		assertCondition("byte a = (char)1;", "a == 1", "short");
-		assertSuccessSerialize("byte a = 'a'; assert a == 'a';");
+		assertSuccess("byte a = 'a'; assert a == 'a';");
 
 		for (String t : new String[] {"byte", "short", "int", "long", "float", "double", "boolean"}) {
 			for (char c = 0; c < 255; c++) {
@@ -266,30 +266,30 @@ public class TestNumbers extends HiTest {
 
 	@Test
 	public void testHex() {
-		assertSuccessSerialize("int a = 0x1; assert a == 1;");
-		assertSuccessSerialize("int a = 0x01; assert a == 1;");
-		assertSuccessSerialize("int a = 0x00000000000000000000000000001; assert a == 1;");
-		assertSuccessSerialize("int a = 0x0f; assert a == 15;");
-		assertSuccessSerialize("int a = 0x0F; assert a == 15;");
-		assertSuccessSerialize("long a = 0xffL; assert a == 255;");
-		assertSuccessSerialize("long a = 0x01L; assert a == 1L;");
+		assertSuccess("int a = 0x1; assert a == 1;");
+		assertSuccess("int a = 0x01; assert a == 1;");
+		assertSuccess("int a = 0x00000000000000000000000000001; assert a == 1;");
+		assertSuccess("int a = 0x0f; assert a == 15;");
+		assertSuccess("int a = 0x0F; assert a == 15;");
+		assertSuccess("long a = 0xffL; assert a == 255;");
+		assertSuccess("long a = 0x01L; assert a == 1L;");
 		assertFailCompile("long a = 0x0x;", //
 				"not a statement");
 
-		assertSuccessSerialize("int a = 0x9 + 0x6; assert a == 0x0000f;");
-		assertSuccessSerialize("int a = 0x10<<1; assert a == 0x20;");
-		assertSuccessSerialize("int a = 0x10<<4; assert a == 0x100;");
-		assertSuccessSerialize("int a = 0x10<<4>>4; assert a == 16;");
-		assertSuccessSerialize("int a = 0x10<<4<<4; assert a == 0x1000;");
+		assertSuccess("int a = 0x9 + 0x6; assert a == 0x0000f;");
+		assertSuccess("int a = 0x10<<1; assert a == 0x20;");
+		assertSuccess("int a = 0x10<<4; assert a == 0x100;");
+		assertSuccess("int a = 0x10<<4>>4; assert a == 16;");
+		assertSuccess("int a = 0x10<<4<<4; assert a == 0x1000;");
 	}
 
 	@Test
 	public void testChars() {
-		assertSuccessSerialize("char c = '\\u0030'; assert c == '0'; assert c == 48;");
-		assertSuccessSerialize("char c = '\\uFFEE'; assert c == '￮'; assert c == 65518;");
-		assertSuccessSerialize("char c = 'a' + 1; assert c == 'b';");
-		assertSuccessSerialize("char c = 50; assert c == 50;");
-		assertSuccessSerialize("char c = (byte)50; assert c == 50;");
+		assertSuccess("char c = '\\u0030'; assert c == '0'; assert c == 48;");
+		assertSuccess("char c = '\\uFFEE'; assert c == '￮'; assert c == 65518;");
+		assertSuccess("char c = 'a' + 1; assert c == 'b';");
+		assertSuccess("char c = 50; assert c == 50;");
+		assertSuccess("char c = (byte)50; assert c == 50;");
 		assertFailCompile("char c = 'a;", //
 				"' is expected");
 		assertFailCompile("char c = '';", //
@@ -310,8 +310,8 @@ public class TestNumbers extends HiTest {
 
 	@Test
 	public void testNumbersLimits() {
-		assertSuccessSerialize("byte a = " + Byte.MAX_VALUE + ";");
-		assertSuccessSerialize("byte a = " + Byte.MIN_VALUE + ";");
+		assertSuccess("byte a = " + Byte.MAX_VALUE + ";");
+		assertSuccess("byte a = " + Byte.MIN_VALUE + ";");
 		assertFailCompile("byte a = " + (Byte.MAX_VALUE + 1) + ";", //
 				"incompatible types: int cannot be converted to byte");
 		assertFailCompile("byte a = " + (Byte.MIN_VALUE - 1) + ";", //
@@ -340,18 +340,18 @@ public class TestNumbers extends HiTest {
 
 	@Test
 	public void testNumbersComparison() {
-		assertSuccessSerialize("assert 1>0;");
-		assertSuccessSerialize("assert 0<1;");
-		assertSuccessSerialize("assert 0<=0;");
-		assertSuccessSerialize("assert 1>=1;");
-		assertSuccessSerialize("assert 1==1;");
-		assertSuccessSerialize("assert 1+1>0+0;");
-		assertSuccessSerialize("assert 1+1<2*2;");
+		assertSuccess("assert 1>0;");
+		assertSuccess("assert 0<1;");
+		assertSuccess("assert 0<=0;");
+		assertSuccess("assert 1>=1;");
+		assertSuccess("assert 1==1;");
+		assertSuccess("assert 1+1>0+0;");
+		assertSuccess("assert 1+1<2*2;");
 	}
 
 	@Test
 	public void testNumbersExpressionLimits() {
-		assertSuccessSerialize("byte a = 20 * 6 + 7; assert a == 127;");
+		assertSuccess("byte a = 20 * 6 + 7; assert a == 127;");
 		assertFailCompile("byte a = 127 + 1;", //
 				"incompatible types: int cannot be converted to byte");
 		assertFailCompile("byte a = 20 * 20;", //
@@ -370,8 +370,8 @@ public class TestNumbers extends HiTest {
 		assertFailCompile("short a = -200 * 200;", //
 				"incompatible types: int cannot be converted to short");
 
-		assertSuccessSerialize("int a = 1_000_000 * 1_000_000 * 1_000_000;");
-		assertSuccessSerialize("int a = -1_000_000 * 1_000_000 * 1_000_000;");
+		assertSuccess("int a = 1_000_000 * 1_000_000 * 1_000_000;");
+		assertSuccess("int a = -1_000_000 * 1_000_000 * 1_000_000;");
 	}
 
 	@Test
@@ -384,7 +384,7 @@ public class TestNumbers extends HiTest {
 		assertFailCompile("int x = 1__________;", //
 				"illegal underscore");
 		// hex numbers
-		assertSuccessSerialize("int x = -0xf_f; assert -x == 255;");
+		assertSuccess("int x = -0xf_f; assert -x == 255;");
 		assertFailCompile("int x = 0xFF_;", //
 				"illegal underscore");
 		assertFailCompile("int x = 0x_FF;", //
@@ -392,9 +392,9 @@ public class TestNumbers extends HiTest {
 		assertFailCompile("long x = 0xFF__________L;", //
 				"illegal underscore");
 		// binary numbers
-		assertSuccessSerialize("int x = 0b101; assert x == 5;");
-		assertSuccessSerialize("long x = 0b101L; assert x == 5L;");
-		assertSuccessSerialize("int x = -0b101; assert -x == 5;");
+		assertSuccess("int x = 0b101; assert x == 5;");
+		assertSuccess("long x = 0b101L; assert x == 5L;");
+		assertSuccess("int x = -0b101; assert -x == 5;");
 		assertFailCompile("int x = 0b10000000000_0000000000_0000000000_00;", // 32 bits
 				"integer number too large");
 		assertFailCompile("long x = 0b10000000000_0000000000_0000000000_0000000000_0000000000_0000000000_000L;", // 64 bits
@@ -406,16 +406,16 @@ public class TestNumbers extends HiTest {
 		assertFailCompile("int x = 0b_111;", //
 				"illegal underscore");
 		// octal numbers
-		assertSuccessSerialize("int x = 010; assert x == 8;");
-		assertSuccessSerialize("long x = 010L; assert x == 8L;");
-		assertSuccessSerialize("int x = -010; assert -x == 8;");
+		assertSuccess("int x = 010; assert x == 8;");
+		assertSuccess("long x = 010L; assert x == 8L;");
+		assertSuccess("int x = -010; assert -x == 8;");
 		assertFailCompile("int x = 010000000000_0;", // 11 octals = 11*3=33 bits > 32 bits (max)
 				"integer number too large");
 		assertFailCompile("long x = 010000000000_0000000000_00L;", // 22 octals = 22*3=66 bits > 64 bits (max)
 				"long number too large");
-		assertSuccessSerialize("float x = 077f; assert x == 77;"); // non octal
-		assertSuccessSerialize("double x = 077d; assert x == 77;"); // non octal
-		assertSuccessSerialize("double x = 077e1; assert x == 770;"); // non octal
+		assertSuccess("float x = 077f; assert x == 77;"); // non octal
+		assertSuccess("double x = 077d; assert x == 77;"); // non octal
+		assertSuccess("double x = 077e1; assert x == 770;"); // non octal
 		assertFailCompile("int x = 077_;", //
 				"illegal underscore");
 		// numbers
