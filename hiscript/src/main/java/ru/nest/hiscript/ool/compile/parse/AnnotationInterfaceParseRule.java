@@ -116,7 +116,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 					HiNode defaultValue = null;
 					if (visitWord(DEFAULT, tokenizer) != null) {
-						defaultValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+						defaultValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 						if (defaultValue == null) {
 							tokenizer.error("value expected", tokenizer.currentToken());
 						}

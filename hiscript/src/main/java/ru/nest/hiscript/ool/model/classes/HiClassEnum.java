@@ -78,6 +78,7 @@ public class HiClassEnum extends HiClass {
 				// @unnamed
 				if (UNNAMED.equals(enumValue1.getName())) {
 					validationInfo.error("keyword '_' cannot be used as an identifier", token);
+					valid = false;
 				}
 
 				for (int i2 = i1 + 1; i2 < enumValues.size(); i2++) {

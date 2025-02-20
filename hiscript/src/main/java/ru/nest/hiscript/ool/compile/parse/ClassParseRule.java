@@ -398,7 +398,7 @@ public class ClassParseRule extends ParserUtil {
 				if (checkSymbol(tokenizer, Symbols.SEMICOLON, Symbols.COMMA) != -1) {
 					isField = true;
 				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-					initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+					initializer = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					isField = true;
 				}
 
@@ -434,7 +434,7 @@ public class ClassParseRule extends ParserUtil {
 
 		HiNode initializer = null;
 		if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
-			initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+			initializer = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		}
 
 		Type type = Type.getArrayType(baseType, addDimension, ctx.getEnv());

@@ -53,7 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class ParserUtil {
@@ -377,7 +377,7 @@ public class ParserUtil {
 		skipComments(tokenizer);
 
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
-		NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		NodeExpression condition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (condition == null) {
 			tokenizer.error("expression expected");
 		}
@@ -405,7 +405,7 @@ public class ParserUtil {
 	protected static NodeExpression expectExpression(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		skipComments(tokenizer);
 
-		NodeExpression expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		NodeExpression expression = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (expression == null) {
 			tokenizer.error("expression expected");
 			expression = new NodeExpressionNoLS(new HiNode[0], new HiOperation[0]);
@@ -535,7 +535,7 @@ public class ParserUtil {
 	protected static HiNode[] visitArgumentsValues(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		List<HiNode> args = new ArrayList<>(3);
-		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		NodeExpression arg = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (arg != null) {
 			if (arg.isCastedIdentifier()) {
 				tokenizer.rollback();
@@ -546,7 +546,7 @@ public class ParserUtil {
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
 				Token token = tokenizer.currentToken();
-				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+				arg = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 				if (arg == null || arg.isCastedIdentifier()) {
 					tokenizer.error("expression expected", token);
 				}

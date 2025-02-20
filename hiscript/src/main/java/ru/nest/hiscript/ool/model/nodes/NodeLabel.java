@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import java.io.IOException;
 import java.util.Set;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+
 public class NodeLabel extends HiNode {
 	public NodeLabel(String label, HiNode statement) {
 		super("label", TYPE_LABEL, false);
@@ -34,6 +36,12 @@ public class NodeLabel extends HiNode {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 		if (statement != null) {
+			// @unnamed
+			if (UNNAMED.equals(label)) {
+				validationInfo.error("keyword '_' cannot be used as an identifier", token);
+				valid = false;
+			}
+
 			CompileClassContext.CompileClassLevel level = ctx.level.getLabelLevel(label);
 			if (level != null) {
 				validationInfo.error("label '" + label + "' already in use", token);

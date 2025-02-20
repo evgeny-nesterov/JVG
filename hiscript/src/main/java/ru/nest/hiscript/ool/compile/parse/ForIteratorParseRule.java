@@ -53,7 +53,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 					declaration.setToken(tokenizer.getBlockToken(startToken));
 
-					HiNode iterable = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+					HiNode iterable = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 					HiNode body = expectBody(tokenizer, ctx);
 

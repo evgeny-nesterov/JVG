@@ -124,7 +124,7 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		}
 
 		// expression has to be parsed at the end
-		if ((node = ExpressionParseRule.getInstance().visit(tokenizer, ctx)) != null) {
+		if ((node = ExpressionParseRule.methodPriority.visit(tokenizer, ctx)) != null) {
 			node.setStatement(true);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return node;

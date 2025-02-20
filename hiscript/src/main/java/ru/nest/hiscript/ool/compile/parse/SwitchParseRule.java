@@ -63,16 +63,20 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 
 	protected static HiNode[] visitCaseValue(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		List<HiNode> args = new ArrayList<>(3);
-		NodeExpression arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		NodeExpression arg = ExpressionParseRule.castedIdentifierPriority.visit(tokenizer, ctx);
 		if (arg != null) {
 			NodeCastedIdentifier identifier = arg.checkCastedIdentifier();
 			if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
-				identifier.castedCondition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+				identifier.castedCondition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			}
 			args.add(arg);
 			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				arg = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+				arg = ExpressionParseRule.castedIdentifierPriority.visit(tokenizer, ctx);
 				if (arg != null) {
+					identifier = arg.checkCastedIdentifier();
+					if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
+						identifier.castedCondition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
+					}
 					args.add(arg);
 				} else {
 					tokenizer.error("expression expected");

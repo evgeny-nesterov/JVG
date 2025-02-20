@@ -2,10 +2,10 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.fields.HiFieldObject;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -77,7 +77,7 @@ public class NodeTry extends HiNode {
 		ctx.enter(RuntimeContext.TRY, this);
 		if (resources != null) {
 			for (NodeDeclaration resource : resources) {
-				valid &= resource.validate(validationInfo, ctx);
+				valid &= resource.validate(validationInfo, ctx, false);
 				HiClass resourceClass = resource.getValueClass(validationInfo, ctx);
 				if (!resourceClass.isInstanceof("AutoCloseable")) {
 					validationInfo.error("incompatible types: found: '" + resourceClass.getNameDescr() + "', required: 'AutoCloseable'", resource.getToken());
@@ -114,14 +114,16 @@ public class NodeTry extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		int initializedResources = -1;
+		HiField<?>[] resourcesFields = null;
 		try {
 			if (body != null || resources != null) {
 				ctx.enter(RuntimeContext.TRY, token);
 			}
 
 			if (resources != null) {
+				resourcesFields = new HiField[resources.length];
 				for (int i = 0; i < resources.length; i++) {
-					resources[i].execute(ctx);
+					resourcesFields[i] = resources[i].executeAndGetVariable(ctx);
 					if (ctx.exception != null) {
 						break;
 					}
@@ -139,9 +141,13 @@ public class NodeTry extends HiNode {
 					ctx.exception = null;
 					boolean closeException = false;
 					for (int i = 0; i <= initializedResources; i++) {
-						NodeDeclaration resource = resources[i];
-						HiFieldObject resourceField = (HiFieldObject) ctx.getVariable(resource.name);
-						HiObject resourceObject = (HiObject) resourceField.get();
+						HiField resourcesField = resourcesFields[i];
+						if (resourcesField == null) {
+							// were exception on this resource initialization
+							break;
+						}
+
+						HiObject resourceObject = (HiObject) resourcesField.get();
 						if (resourceObject == null) {
 							ctx.throwRuntimeException("null pointer");
 							return;

@@ -43,6 +43,8 @@ public class TestStatements extends HiTest {
 				"operator '||' can not be applied to boolean, int");
 		assertFailCompile("int x = 1, y = 0.0;", //
 				"incompatible types: double cannot be converted to int");
+		assertFailCompile("int x = 1; int y = x.length;", //
+				"cannot resolve symbol 'length'");
 	}
 
 	@Test

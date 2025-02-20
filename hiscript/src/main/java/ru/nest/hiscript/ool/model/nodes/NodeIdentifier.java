@@ -52,6 +52,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		if (isUnnamed()) {
+			// @unnamed
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = Type.varType;
 			return HiClassVar.VAR;
@@ -112,6 +113,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
+		// @unnamed
 		if (isUnnamed()) {
 			clazz = HiClassVar.VAR;
 			validationInfo.error("unnamed variable cannot be used in expressions", token);

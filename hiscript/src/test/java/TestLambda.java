@@ -35,6 +35,8 @@ public class TestLambda extends HiTest {
 				"multiple non-overriding abstract methods found in interface A");
 		assertFailCompile("interface A{} A a = (x) -> {};", //
 				"no abstract methods found in interface A");
+		assertFailCompile("var r = ()->{};", //
+				"cannot infer type: lambda expression requires an explicit target type");
 
 		// lambda + var
 		assertSuccessSerialize("interface A{void m(int x);} class B{A a = (var x) -> {};}");

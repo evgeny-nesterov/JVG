@@ -560,6 +560,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		// @unnamed
 		if (UNNAMED.equals(name)) {
 			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+			valid = false;
 		}
 
 		// resolve interfaces before set ctx.clazz, as interfaces has to be initialized outsize of this class context
@@ -729,6 +730,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					// @unnamed
 					if (UNNAMED.equals(field.name)) {
 						validationInfo.error("keyword '_' cannot be used as an identifier", token);
+						valid = false;
 					}
 					if (isInterface) {
 						Modifiers fieldModifiers = field.getModifiers();

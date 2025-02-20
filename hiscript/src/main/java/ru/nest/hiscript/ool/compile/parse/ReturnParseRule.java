@@ -24,7 +24,7 @@ public class ReturnParseRule extends ParseRule<NodeReturn> {
 	@Override
 	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.RETURN, tokenizer) != null) {
-			NodeExpression value = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+			NodeExpression value = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			return new NodeReturn(value);
 		}

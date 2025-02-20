@@ -86,6 +86,9 @@ public class EnumParseRule extends ParserUtil {
 
 				enumValueToken = startToken(tokenizer);
 				enumName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
+				if (enumName == null) {
+					enumName = "";
+				}
 			}
 		}
 

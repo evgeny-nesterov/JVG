@@ -811,7 +811,6 @@ public class TestClasses extends HiTest {
 		// switch-case
 		assertSuccessSerialize("record Rec(int a); Object o = new Rec(1); switch(o){case \"o\": assert false; case Rec(int a) r: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;");
 		assertSuccessSerialize("record Rec(int param); Object o = new Rec(1); switch(o){case \"o\": assert false; case Rec(int param) r when param == 1: assert param == 1; param = 2; assert r.getParam() == 2; break;} assert ((Rec)o).getParam() == 2;");
-		// duplicated local variable a
 		assertFailCompile("record Rec(int a); Object o = new Rec(1); boolean a = true; switch(o){case \"o\": assert false; break; case Rec(int a) r when a == 1: assert a == 1; a = 2; assert r.getA() == 2; break;} assert ((Rec)o).getA() == 2;", //
 				"duplicated local variable a");
 		assertFailCompile("record R1(int x); record R2(int x) extends R1;", //

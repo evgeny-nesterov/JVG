@@ -73,7 +73,7 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 
 		tokenizer.commit();
 
-		HiNode body = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		HiNode body = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (body == null) {
 			body = expectBody(tokenizer, ctx);
 		}

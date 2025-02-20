@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import java.io.IOException;
 import java.util.Set;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+
 public class NodeBreak extends HiNode {
 	public NodeBreak(String label) {
 		super("break", TYPE_BREAK, false);
@@ -20,6 +22,13 @@ public class NodeBreak extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+
+		// @unnamed
+		if (label != null && UNNAMED.equals(label)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+			valid = false;
+		}
+
 		CompileClassContext.CompileClassLevel breakLevel = ctx.level.getBreakLevel(label);
 		if (breakLevel == null) {
 			if (label != null) {

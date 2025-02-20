@@ -37,13 +37,19 @@ public class NodeForIterator extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+
 		ctx.enter(RuntimeContext.FOR, this);
+
+		declaration.isInitialized = true;
 		valid &= declaration.validate(validationInfo, ctx, false);
+
 		if (declaration.hasModifiers()) {
 			validationInfo.error("modifiers not allowed", declaration.getToken());
 			valid = false;
 		}
+
 		ctx.initializedNodes.add(declaration);
+
 		if (iterable.validate(validationInfo, ctx) && iterable.expectIterableValue(validationInfo, ctx)) {
 			HiClass declarationClass = declaration.getValueClass(validationInfo, ctx);
 			HiClass iterableClass = iterable.getValueClass(validationInfo, ctx);
@@ -58,6 +64,7 @@ public class NodeForIterator extends HiNode {
 				}
 				iterableElementClass = iterableElementType != null ? iterableElementType.getClass(ctx) : HiClass.OBJECT_CLASS;
 			}
+
 			if (!HiClass.autoCast(ctx, iterableElementClass, declarationClass, false, true)) {
 				validationInfo.error("incompatible types: " + iterableElementClass + " cannot be converted to " + declarationClass, token);
 				valid = false;
@@ -68,6 +75,7 @@ public class NodeForIterator extends HiNode {
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
 		}
+
 		ctx.exit();
 		return valid;
 	}
@@ -76,7 +84,7 @@ public class NodeForIterator extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		ctx.enter(RuntimeContext.FOR, token);
 		try {
-			declaration.execute(ctx);
+			HiField<?> forVariable = declaration.executeAndGetVariable(ctx);
 			if (ctx.exitFromBlock()) {
 				return;
 			}
@@ -87,7 +95,6 @@ public class NodeForIterator extends HiNode {
 			}
 
 			if (ctx.value.valueClass.isArray()) {
-				HiField<?> forVariable = declaration.field;
 				Object array = ctx.value.object;
 				int size = Array.getLength(array);
 				for (int i = 0; i < size; i++) {
@@ -97,7 +104,6 @@ public class NodeForIterator extends HiNode {
 					}
 				}
 			} else if (ctx.value.valueClass.isInstanceof(HiClass.ARRAYLIST_CLASS_NAME)) { // TODO isInstanceof Iterable
-				HiField<?> forVariable = ctx.getVariable(declaration.name);
 				List list = (List) ((HiObject) ctx.value.object).userObject;
 				for (Object value : list) {
 					if (!executeValue(ctx, forVariable, value)) {

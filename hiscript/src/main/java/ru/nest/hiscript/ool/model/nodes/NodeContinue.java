@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import java.io.IOException;
 import java.util.Set;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+
 public class NodeContinue extends HiNode {
 	public NodeContinue(String label) {
 		super("continue", TYPE_CONTINUE, false);
@@ -35,6 +37,13 @@ public class NodeContinue extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+
+		// @unnamed
+		if (label != null && UNNAMED.equals(label)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+			valid = false;
+		}
+
 		CompileClassContext.CompileClassLevel continueLevel = ctx.level.getContinueLevel(label);
 		if (continueLevel == null) {
 			if (label != null) {

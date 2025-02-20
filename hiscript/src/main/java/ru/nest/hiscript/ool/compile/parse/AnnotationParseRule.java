@@ -46,7 +46,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 				if (argName != null && visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
 					tokenizer.commit();
 
-					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+					HiNode argValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					if (argValue == null) {
 						argValue = EmptyNode.getInstance();
 						tokenizer.error("argument value expected");
@@ -57,7 +57,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 						startToken = startToken(tokenizer);
 						argName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 						expectSymbol(tokenizer, Symbols.EQUATE);
-						argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+						argValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 						if (argValue == null) {
 							tokenizer.error("argument value expected");
 						}
@@ -66,7 +66,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 				} else {
 					tokenizer.rollback();
 
-					HiNode argValue = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+					HiNode argValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					if (argValue != null) {
 						args.add(new NodeAnnotationArgument("value", argValue, argValue.getToken()));
 					}

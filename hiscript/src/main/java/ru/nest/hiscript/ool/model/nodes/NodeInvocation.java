@@ -18,6 +18,8 @@ import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+
 public class NodeInvocation extends HiNode {
 	public NodeInvocation(String name, boolean innerInvocation, HiNode[] arguments) {
 		this(name, arguments);
@@ -168,6 +170,13 @@ public class NodeInvocation extends HiNode {
 		returnClass = getValueClass(validationInfo, ctx);
 
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
+
+		// @unnamed
+		if (UNNAMED.equals(name)) {
+			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+			valid = false;
+		}
+
 		valid &= method != null;
 		if (arguments != null) {
 			if (method != null) {
@@ -209,9 +218,7 @@ public class NodeInvocation extends HiNode {
 				valid = false;
 			}
 		} else {
-//			if (!invocationClass.isPrimitive()) {
-				validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.getNameDescr() + "'" : ""), token);
-//			}
+			validationInfo.error("cannot resolve method '" + name + "'" + (invocationClass != null ? " in '" + invocationClass.getNameDescr() + "'" : ""), token);
 			valid = false;
 		}
 		return valid;

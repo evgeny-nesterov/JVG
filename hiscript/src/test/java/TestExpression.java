@@ -1028,8 +1028,100 @@ public class TestExpression extends HiTest {
 
 	@Test
 	public void testUnnamedVariable() {
-		assertSuccessSerialize("try{} catch(Exception _){} ");
+		// lambda
+		assertSuccessSerialize("interface A{int m(int x);} A a = (_) -> 1; assert a.m(0) == 1;");
+		assertSuccessSerialize("interface A{int m(int x);} A a = _ -> 1; assert a.m(0) == 1;");
+		assertSuccessSerialize("interface A{int m(int x, int y);} A a = (_, _) -> 1; assert a.m(0, 0) == 1;");
+		assertFailCompile("interface A{int m(int x, int y);} A a = (_, _) -> _;", //
+				"unnamed variable cannot be used in expressions");
+
+		// class
+		assertFailCompile("class _{};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("class A{void _(){}};", //
+				"keyword '_' cannot be used as an identifier");
+
+		// interface
+		assertFailCompile("interface _{};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("interface A{void _();};", //
+				"keyword '_' cannot be used as an identifier");
+
+		// annotation
+		assertFailCompile("@interface _{};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("@interface A{int _();};", //
+				"keyword '_' cannot be used as an identifier");
+
+		// enum
+		assertFailCompile("enum _{a, b, c};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("enum E{_};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("enum E{_, _};", //
+				"keyword '_' cannot be used as an identifier");
+
+		// record
+		assertFailCompile("record _(int x);", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("record R(int _);", //
+				"keyword '_' cannot be used as an identifier");
+
+		// field
+		assertFailCompile("int _;", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("int _ = 1;", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("class A{int _;};", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("class A{int _ = 1;};", //
+				"keyword '_' cannot be used as an identifier");
+
+		// method
+		assertFailCompile("_(1);", //
+				"keyword '_' cannot be used as an identifier", //
+				"cannot resolve method '_'");
+
+		// instanceof
+		assertSuccessSerialize("class A{int x = 1;} Object o = new A(); if(o instanceof A _) {}");
+		assertSuccessSerialize("record R(int x, int y); Object o = new R(1, 2); if(o instanceof R _) {}");
+		assertSuccessSerialize("record R(int x, int y); Object o = new R(1, 2); if(o instanceof R(int _, int YYY) r && YYY == 2) {assert YYY == 2; YYY = 3; assert r.getY() == 3;}");
+		assertSuccessSerialize("record R(int x); Object o = new R(1); if(o instanceof R(int _) r && r.getX() == 1) {assert r.getX() == 1;}");
+		assertSuccessSerialize("record R(int x); Object o = new R(1); if(o instanceof R(var _) r && r.getX() == 1) {assert r.getX() == 1;}");
+		assertSuccessSerialize("record R(int x); Object o = new R(1); if(o instanceof R(_) r && r.getX() == 1) {assert r.getX() == 1;}");
+		assertSuccessSerialize("record R(int x, int y, int z); Object o = new R(1, 2, 3); if(o instanceof R(_, y, _)) {assert y == 2;}");
+
+		// try-catch
+		assertSuccessSerialize("try{} catch(Exception _){}");
+		assertSuccessSerialize("class E1 extends Exception{} class E2 extends Exception{} try{} catch(E1 | E2 _){}");
+		assertSuccessSerialize("class E1 extends Exception{} class E2 extends Exception{} try{} catch(E1 _) {} catch(E2 _){}");
+		assertSuccessSerialize("AutoCloseable resource = ()->{}; try(var _ = resource){}");
+		assertSuccessSerialize("AutoCloseable r1 = ()->{}; AutoCloseable r2 = ()->{}; try(var _ = r1; var _ = r2){}");
 		assertFailCompile("try{} catch(Exception _){_.printStackTrace();}", //
 				"unnamed variable cannot be used in expressions");
+
+		// for
+		assertSuccessSerialize("var list = new ArrayList(); list.add(\"a\"); for(Object _ : list){}");
+		assertSuccessSerialize("var list = new ArrayList(); list.add(\"a\"); for(var _ : list){}");
+		assertFailCompile("for(int _ = 0; _ < 1; _++) {}", //
+				"keyword '_' cannot be used as an identifier");
+
+		// labels
+		assertFailCompile("_: {break _;}", //
+				"keyword '_' cannot be used as an identifier");
+		assertFailCompile("while(true) _: {continue _;}", //
+				"keyword '_' cannot be used as an identifier");
+
+		// switch
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(int x, int _) r when x == 1 && r.getY() == 2: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(int _, int _) r when r.getX() == 1 && r.getY() == 2: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(var _, var _) r when r.getX() == 1 && r.getY() == 2: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(_, _) r when r.getX() == 1 && r.getY() == 2: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(x, y) when x == 1 && y == 2: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(x, _) _ when x == 1: return;} assert false;");
+		assertSuccessSerialize("record R(int x, int y); switch(new R(1, 2)){case R(int _, int _) r when r.getX() == 1: return;} assert false;");
+
+		//switch expression
+		// TODO
 	}
 }

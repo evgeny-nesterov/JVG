@@ -36,7 +36,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 			}
 
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
-			NodeExpression condition = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+			NodeExpression condition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.SEMICOLON);
 			HiNode assignment = visitExpressions(tokenizer, ctx);
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
@@ -49,7 +49,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	}
 
 	public NodeBlock visitExpressions(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		HiNode expression = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		HiNode expression = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (expression != null) {
 			NodeBlock expressions = new NodeBlock("expressions");
 			expressions.addStatement(expression);

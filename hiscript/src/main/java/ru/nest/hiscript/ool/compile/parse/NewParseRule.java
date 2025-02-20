@@ -104,7 +104,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 	private HiNode visitNewArray(Tokenizer tokenizer, Type type, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		List<HiNode> indexes = new ArrayList<>();
 
-		HiNode index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		HiNode index = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (index == null) {
 			tokenizer.error("index is expected");
 		}
@@ -113,7 +113,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 		while (true) {
 			if (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
-				index = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+				index = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 				indexes.add(index);
 				expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
 			} else if (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
@@ -184,7 +184,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 	}
 
 	public HiNode visitCell(Tokenizer tokenizer, Type type, int requiredDimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		HiNode cell = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		HiNode cell = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (cell != null) {
 			return cell;
 		}

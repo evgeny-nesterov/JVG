@@ -31,9 +31,11 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	public Type type;
 
-	public String name;
+	private String name;
 
 	public HiNode initialization;
+
+	public boolean isInitialized; // only for validation
 
 	private Modifiers modifiers;
 
@@ -64,13 +66,16 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		HiClass clazz;
-		if (type == Type.varType) {
+		if (type == Type.varType && !isInitialized) {
 			// assume initialization is not null
 			if (initialization != null) {
 				clazz = initialization.getValueClass(validationInfo, ctx);
 				if (clazz.isNull()) {
 					clazz = HiClass.OBJECT_CLASS;
 					validationInfo.error("invalid var initialization", initialization.getToken());
+				} else if (clazz.isLambda()) {
+					clazz = HiClass.OBJECT_CLASS;
+					validationInfo.error("cannot infer type: lambda expression requires an explicit target type", initialization.getToken());
 				}
 			} else {
 				clazz = HiClass.OBJECT_CLASS;
@@ -179,11 +184,13 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 		this.clazz = clazz;
 	}
 
-	public HiField<?> field;
-
 	@Override
 	public void execute(RuntimeContext ctx) {
-		field = HiField.getField(clazz, name, initialization, token);
+		executeAndGetVariable(ctx);
+	}
+
+	public HiField<?> executeAndGetVariable(RuntimeContext ctx) {
+		HiField<?> field = HiField.getField(clazz, name, initialization, token);
 		if (clazz.isGeneric()) {
 			field.setGenericClass(ctx, ctx.level.object.type);
 		}
@@ -194,10 +201,11 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 			ctx.addVariable(field);
 		} finally {
 			if (ctx.exitFromBlock()) {
-				return;
+				return null;
 			}
 			field.initialized = initialization != null;
 		}
+		return field;
 	}
 
 	@Override

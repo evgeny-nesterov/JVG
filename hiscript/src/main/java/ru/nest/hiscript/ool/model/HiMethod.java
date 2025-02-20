@@ -121,6 +121,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// @unnamed
 		if (UNNAMED.equals(name)) {
 			validationInfo.error("keyword '_' cannot be used as an identifier", token);
+			valid = false;
 		}
 
 		// @generics

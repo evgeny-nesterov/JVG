@@ -89,7 +89,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 	}
 
 	public HiNode visitInitializer(Tokenizer tokenizer, Type type, int dimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		HiNode initializer = ExpressionParseRule.getInstance().visit(tokenizer, ctx);
+		HiNode initializer = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (initializer != null) {
 			return initializer;
 		}
