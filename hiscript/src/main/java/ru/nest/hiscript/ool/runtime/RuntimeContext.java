@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -816,8 +816,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public List<StackLevel> getStack() {
-		List<StackLevel> list = new ArrayList<>();
-
 		StackLevel level = this.level;
 
 		// remove stack trace for class Exception
@@ -826,6 +824,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			level = level.parent;
 		}
 
+		List<StackLevel> list = new ArrayList<>();
 		while (level != null) {
 			switch (level.levelType) {
 				case INITIALIZATION:
@@ -882,6 +881,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	@Override
 	public String toString() {
+		StackLevel level = this.level;
 		StringBuilder buf = new StringBuilder();
 		buf.append(value);
 		buf.append('\n');
@@ -896,6 +896,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void throwExceptionIf(boolean printStackTrace) {
+		HiObject exception = this.exception;
 		if (exception != null) {
 			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
 				throw new HiScriptRuntimeException("Bad exception value");
@@ -911,6 +912,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public String printException() {
+		HiObject exception = this.exception;
 		if (exception != null) {
 			if (!exception.clazz.isInstanceof(HiClass.EXCEPTION_CLASS_NAME)) {
 				throw new HiScriptRuntimeException("Bad exception value");
@@ -946,6 +948,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public String getExceptionMessage() {
+		HiObject exception = this.exception;
 		if (exception != null) {
 			HiField<?> messageField = exception.getMainObject().getField(this, "message");
 			return messageField.getStringValue(this);
@@ -953,30 +956,31 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		return null;
 	}
 
-	public void addCastedVariables(String castedVariableName, HiClass fieldClass, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, HiObject object) {
+	public void addCastedVariables(String castedVariableName, HiClass fieldClass, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object, HiClass objectClass) {
 		if (object == null) {
 			throwRuntimeException("null pointer");
 			return;
 		}
 		if (castedVariableName != null) {
 			HiField castedField = HiField.getField(fieldClass, castedVariableName, null);
-			castedField.set(object, object.clazz);
+			castedField.set(object, objectClass);
 			addVariable(castedField);
 		}
-		if (castedRecordArguments != null) {
+		if (castedRecordArguments != null && object instanceof HiObject) {
+			HiObject hiObject = (HiObject) object;
 			for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
 				NodeVariable castedRecordArgument = (NodeVariable) castedRecordArguments[recordArgumentIndex];
 				NodeArgument originalArgument = castedRecordArgumentsConstructor.arguments[recordArgumentIndex];
 
 				HiField objectField = null;
-				for (int objectFieldIndex = 0; objectFieldIndex < object.fields.length; objectFieldIndex++) {
-					if (object.fields[objectFieldIndex].name.equals(originalArgument.name)) {
-						objectField = object.fields[objectFieldIndex];
+				for (int objectFieldIndex = 0; objectFieldIndex < hiObject.fields.length; objectFieldIndex++) {
+					if (hiObject.fields[objectFieldIndex].name.equals(originalArgument.name)) {
+						objectField = hiObject.fields[objectFieldIndex];
 						break;
 					}
 				}
 
-				HiPojoField castedField = new HiPojoField(object, objectField, castedRecordArgument.getVariableName());
+				HiPojoField castedField = new HiPojoField(hiObject, objectField, castedRecordArgument.getVariableName());
 				addVariable(castedField);
 
 				if (castedRecordArgument instanceof NodeCastedIdentifier) {
@@ -985,7 +989,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					if (argFieldClass.isObject()) {
 						HiObject castedArgumentObject = (HiObject) value.object;
 						NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) castedRecordArgument;
-						addCastedVariables(castedIdentifier.castedVariableName, argFieldClass, castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject);
+						addCastedVariables(castedIdentifier.castedVariableName, argFieldClass, castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject, castedArgumentObject.clazz);
 					}
 				}
 			}

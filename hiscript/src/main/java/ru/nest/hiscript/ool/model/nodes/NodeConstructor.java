@@ -325,25 +325,27 @@ public class NodeConstructor extends HiNode {
 			}
 
 			for (int i = 0; i < size; i++) {
-				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
+				HiField argField = argsFields[i];
+				HiClass argClass = argField != null ? argField.getClass(ctx) : HiClassNull.NULL;
 
 				// on null argument update field class from ClazzNull on argument class
 				if (argClass.isNull()) {
-					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
+					argField = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
 					ctx.value.valueClass = HiClassNull.NULL;
-					argsFields[i].set(ctx, ctx.value);
+					argField.set(ctx, ctx.value);
 				} else if (!argClass.isArray()) {
 					ctx.value.valueClass = argClass;
-					argsFields[i].get(ctx, ctx.value);
-					argsFields[i] = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
-					argsFields[i].set(ctx, ctx.value);
+					argField.get(ctx, ctx.value);
+					argField = HiField.getField(argClass, constructor.arguments[i].name, constructor.arguments[i].getToken());
+					argField.set(ctx, ctx.value);
 				}
 				// TODO: update array cell type
 
 				if (!clazz.isJava() && i < constructor.arguments.length) {
-					argsFields[i].name = constructor.arguments[i].name;
+					argField.name = constructor.arguments[i].name;
 				}
-				argsFields[i].initialized = true;
+				argField.initialized = true;
+				argsFields[i] = argField;
 			}
 		}
 

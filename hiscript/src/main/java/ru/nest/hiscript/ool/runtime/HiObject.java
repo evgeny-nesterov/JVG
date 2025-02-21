@@ -183,8 +183,8 @@ public class HiObject {
 
 	@Override
 	public String toString() {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
-		return toString(ctx);
+		// do not use this.ctx here, as this.ctx.value will be changed (for example it may affect on runtime values during debugging)
+		return toString(new RuntimeContext(clazz.getEnv()));
 	}
 
 	public String toString(RuntimeContext ctx) {

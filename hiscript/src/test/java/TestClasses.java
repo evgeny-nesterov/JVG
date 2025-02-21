@@ -29,6 +29,8 @@ public class TestClasses extends HiTest {
 				"recursive constructor invocation");
 		assertFailCompile("class A{A(int x){this(x);}} new A(1);", //
 				"recursive constructor invocation");
+		assertFailCompile("class A extends A{}", //
+				"cyclic inheritance involving A");
 		assertFailCompile("class A extends B{} class B extends A{}", //
 				"cyclic inheritance involving B");
 		assertFailCompile("class A extends B{} class B extends C{} class C extends A{}", //
@@ -88,6 +90,9 @@ public class TestClasses extends HiTest {
 				"illegal start of type");
 		assertFailCompile("class A{A()}", //
 				"'{' is expected");
+		assertFailCompile("class int{};", //
+				"class name is expected", //
+				"not a statement");
 
 		assertFailCompile("int x = 0; Object o = x.field;", //
 				"cannot resolve symbol 'field'");
@@ -105,6 +110,12 @@ public class TestClasses extends HiTest {
 				"interface expected");
 		assertFailCompile("interface A{} interface B implements A{}", //
 				"interface cannot implements another interfaces");
+
+		// complex
+		assertSuccess("class __{__(int __){this.__ = __;} int __; int __(int __){return this.__ + __;}} int __ = 1; assert new __(__).__(__) == 2;");
+		assertSuccess("class ${$(int $){this.$ = $;} int $; int $(int $){return this.$ + $;}} int $ = 1; assert new $($).$($) == 2;");
+		assertSuccess("class A{static A A; int a = 1;}; A.A = new A(); assert A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.a == 1;");
+		assertSuccess("class A{static B b = new B();} class B{static A a = new A();} assert A.b == B.a.b; assert A.b.a.b.a.b.a.b.a.b == B.a.b.a.b.a.b;");
 	}
 
 	@Test
@@ -229,6 +240,8 @@ public class TestClasses extends HiTest {
 				"interface cannot implements another interfaces");
 		assertSuccess("interface I{void m();} abstract class A implements I{}");
 		assertSuccess("interface I{void m();} abstract class A implements I{} class C extends A implements I{void m(){}} new C(); new A(){void m(){}};");
+		assertFailCompile("interface I extends I{}", //
+				"cyclic inheritance involving I");
 		assertFailCompile("class C{interface A extends B{} interface B extends A{}}", //
 				"cyclic inheritance involving C$A", "cyclic inheritance involving C$B");
 		assertFailCompile("interface A extends B{} interface B extends A{}", //
@@ -844,6 +857,8 @@ public class TestClasses extends HiTest {
 	@Test
 	public void testStackOverflow() {
 		assertFail("class A {\n\tvoid m1(int i) {\n\t\tm2(i+1);\n\t}\n\n\tvoid m2(int i) {\n\t\tm1(i+1);\n\t}\n}\nnew A().m1(1);", //
+				StackOverflowError.class);
+		assertFail("class A{B b = new B();} class B{A a = new A();} A a = new A();", //
 				StackOverflowError.class);
 	}
 

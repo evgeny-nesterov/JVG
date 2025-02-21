@@ -14,7 +14,7 @@ import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class OperationInstanceOf extends BinaryOperation {
 	private static final HiOperation instance = new OperationInstanceOf();
@@ -84,7 +84,7 @@ public class OperationInstanceOf extends BinaryOperation {
 
 		boolean isInstanceof = c1.isInstanceof(c2);
 		if (isInstanceof) {
-			ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, (HiObject) v1.object);
+			ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, v1.object, c1);
 		}
 
 		v1.valueClass = TYPE_BOOLEAN;

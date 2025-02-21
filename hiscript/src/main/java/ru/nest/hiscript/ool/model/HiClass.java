@@ -91,6 +91,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public static HiClass STRING_CLASS;
 
+	public static HiClass EXCEPTION_CLASS;
+
 	public static HiClass MOCK_CLASS = new HiClass(); // used in validations for invalid class names
 
 	public static String ROOT_CLASS_NAME = "@root";
@@ -154,6 +156,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		OBJECT_CLASS = systemClassLoader.getClass(OBJECT_CLASS_NAME);
 		STRING_CLASS = systemClassLoader.getClass(STRING_CLASS_NAME);
 		NUMBER_CLASS = systemClassLoader.getClass(NUMBER_CLASS_NAME);
+		EXCEPTION_CLASS = systemClassLoader.getClass(EXCEPTION_CLASS_NAME);
 		HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.getClass("Byte"));
 		HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.getClass("Short"));
 		HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.getClass("Integer"));
@@ -1026,6 +1029,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return false;
 		} else {
 			HiClass c = this;
+			HiClass first = this;
 			while (c != null) {
 				if (c == clazz || c.fullName.equals(clazz.fullName)) {
 					return true;
@@ -1034,6 +1038,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					return true;
 				}
 				c = c.superClass;
+				if (c == first) {
+					// isInstanceof may be called before checking on 'cyclic inheritance involving'
+					break;
+				}
 			}
 		}
 		return false;
@@ -1041,6 +1049,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public boolean isInstanceof(String className) {
 		HiClass c = this;
+		HiClass first = this;
 		while (c != null) {
 			if (c.fullName.equals(className)) {
 				return true;
@@ -1049,6 +1058,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return true;
 			}
 			c = c.superClass;
+			if (c == first) {
+				// isInstanceof may be called before checking on 'cyclic inheritance involving'
+				break;
+			}
 		}
 		return false;
 	}

@@ -454,9 +454,13 @@ public class TestStatements extends HiTest {
 				"declaration expected");
 		assertFailCompile("try(){}", //
 				"declaration expected");
+		assertFailCompile("try(_){} finally{}", //
+				"declaration expected");
 		assertFailCompile("try{} catch(Exception ){}", //
 				"identifier is expected");
 		assertFailCompile("try{} catch(Exception | e){}", //
+				"identifier is expected");
+		assertFailCompile("try{} catch(_){}", //
 				"identifier is expected");
 		assertFailCompile("try{} catch(Exception e){} finally", //
 				"'{' is expected");
@@ -470,6 +474,12 @@ public class TestStatements extends HiTest {
 				"incompatible types: Object cannot be converted to Exception");
 		assertFailCompile("try{} catch(Integer | Long | Byte e){}", //
 				"incompatible types: Integer cannot be converted to Exception");
+
+		// method throws
+		assertSuccess("class E1 extends Exception{} class E2 extends E1{} class A{void m() throws E1, E2{throw new E2();}} try{new A().m();}catch(E2 _){return;} assert false;");
+		assertFailCompile("class E2 extends E2{} class A{void m() {throw new E2();}}", //
+				"cyclic inheritance involving E2", //
+				"incompatible types: E2 cannot be converted to Exception");
 	}
 
 	@Test
@@ -823,6 +833,14 @@ public class TestStatements extends HiTest {
 		assertFailCompile("(1+2);", //
 				"not a statement");
 		assertFailCompile("{1}", //
+				"not a statement");
+		assertFailCompile("1 = 1;", //
+				"variable expected");
+		assertFailCompile("\"\";", //
+				"not a statement");
+		assertFailCompile("class A{} + 1;", //
+				"not a statement");
+		assertFailCompile("int public = 1;", //
 				"not a statement");
 	}
 

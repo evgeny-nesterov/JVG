@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class HiTest {
 	private List nativeObjects = new ArrayList<>();
@@ -72,12 +72,13 @@ public abstract class HiTest {
 		} catch (AssertionFailedError e) {
 			throw e;
 		} catch (Throwable e) {
-			if (e.getMessage() != null && e.getMessage().indexOf(expectMessage) != -1) {
+			String realMessage = e.getMessage() != null ? e.getMessage() : "";
+			if (realMessage.indexOf(expectMessage) != -1) {
 				// expected
-				System.err.println("Success! Expected failure: " + e.getMessage());
+				System.err.println("Success! Expected failure: " + realMessage);
 			} else {
 				e.printStackTrace();
-				onFail(script, "Failure! Expected message: " + expectMessage + ". Real message: " + e.getMessage());
+				onFail(script, "Failure! Expected message: " + expectMessage + ". Real message: " + realMessage);
 			}
 		}
 	}

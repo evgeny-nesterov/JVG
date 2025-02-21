@@ -697,10 +697,6 @@ public class TestExpression extends HiTest {
 
 		assertFailCompile("class O{} O o1 = new O(); Object o2 = o1; O o3 = o2;", //
 				"incompatible types: Object cannot be converted to O");
-		assertFailCompile("class O extends O{}", //
-				"cyclic inheritance involving O");
-		assertFailCompile("interface I extends I{}", //
-				"cyclic inheritance involving I");
 		assertFailCompile("Object o = new Object(){void m(){}}; o.m();", //
 				"cannot resolve method 'm' in 'Object'");
 	}
