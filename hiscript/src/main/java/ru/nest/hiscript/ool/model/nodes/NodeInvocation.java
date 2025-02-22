@@ -80,25 +80,27 @@ public class NodeInvocation extends HiNode {
 				// @generics
 				if (invocationType.parameters != null) {
 					boolean validArguments = true;
-					for (int i = 0; i < method.argsClasses.length; i++) {
-						HiClass methodArgumentClass = method.argsClasses[i];
-						if (methodArgumentClass.isGeneric()) { // not primitive
-							Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
-							HiClass argumentClass = argumentsClasses[i];
-							if (argumentType.isWildcard() && !argumentType.isSuper && argumentClass.isPrimitive()) {
-								validArguments = false;
-								break;
-							} else {
-								methodArgumentClass = argumentType.getClass(ctx);
-
-								// @autoboxing
-								if (argumentClass.isPrimitive()) {
-									argumentClass = argumentClass.getAutoboxClass();
-								}
-
-								if (!argumentClass.isInstanceof(methodArgumentClass)) {
+					if (method.argsClasses != null) {
+						for (int i = 0; i < method.argsClasses.length; i++) {
+							HiClass methodArgumentClass = method.argsClasses[i];
+							if (methodArgumentClass.isGeneric()) { // not primitive
+								Type argumentType = invocationType.getParameterType((HiClassGeneric) methodArgumentClass);
+								HiClass argumentClass = argumentsClasses[i];
+								if (argumentType.isWildcard() && !argumentType.isSuper && argumentClass.isPrimitive()) {
 									validArguments = false;
 									break;
+								} else {
+									methodArgumentClass = argumentType.getClass(ctx);
+
+									// @autoboxing
+									if (argumentClass.isPrimitive()) {
+										argumentClass = argumentClass.getAutoboxClass();
+									}
+
+									if (!argumentClass.isInstanceof(methodArgumentClass)) {
+										validArguments = false;
+										break;
+									}
 								}
 							}
 						}
@@ -120,7 +122,7 @@ public class NodeInvocation extends HiNode {
 				Type type = method.returnType;
 				if (invocationType.parameters != null) {
 					Type resolvedType = null;
-					if (returnClass.generics != null) {
+					if (returnClass != null && returnClass.generics != null) {
 						NodeGeneric nodeGeneric = returnClass.generics.getGeneric(type.name);
 						if (nodeGeneric != null) {
 							resolvedType = invocationType.getParameterType(nodeGeneric.clazz);
@@ -133,7 +135,7 @@ public class NodeInvocation extends HiNode {
 							}
 						}
 					}
-					if (resolvedType == null && method.returnClass.isGeneric()) {
+					if (resolvedType == null && method.returnClass != null && method.returnClass.isGeneric()) {
 						resolvedType = invocationType.getParameterType((HiClassGeneric) method.returnClass);
 					}
 					if (resolvedType != null) {

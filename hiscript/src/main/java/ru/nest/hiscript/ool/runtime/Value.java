@@ -675,7 +675,31 @@ public class Value implements PrimitiveTypes {
 			case ARRAY_INDEX:
 				return "ARRAY INDEX: type=" + valueClass + ", parent array=" + parentArray + ", ara index=" + arrayIndex;
 			case NAME:
-				return "NAME: name=" + name + (nameDimensions > 0 ? "[]" : "");
+//				public String name;
+//				public int nameDimensions;
+
+				if (castedRecordArguments != null || castedVariableName != null) {
+					String text = "CASTED: " + variableType;
+					if (castedRecordArguments != null) {
+						text += "(";
+						for (int i = 0; i < castedRecordArguments.length; i++) {
+							if (i > 0) {
+								text += ", ";
+							}
+							text += castedRecordArguments[i];
+						}
+						text += ")";
+					}
+					if (castedVariableName != null) {
+						text += " " + castedVariableName;
+					}
+					if (castedCondition != null) {
+						text += " when <condition>";
+					}
+					return text;
+				} else {
+					return "NAME: name=" + name + (nameDimensions > 0 ? "[]" : "");
+				}
 			case EXECUTE:
 				return "EXECUTE: node=" + node;
 			case TYPE_INVOCATION:

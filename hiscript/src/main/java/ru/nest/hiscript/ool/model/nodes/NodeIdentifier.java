@@ -55,7 +55,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 			// @unnamed
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = Type.varType;
-			return HiClassVar.VAR;
+			return this.clazz = HiClassVar.VAR;
 		} else if (dimension > 0) {
 			// <type>[][]...[]
 			HiClass clazz = HiClassPrimitive.getPrimitiveClass(name);
@@ -106,7 +106,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 				// not resolved, set to match any type
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 				ctx.nodeValueType.type = Type.varType;
-				return HiClassVar.VAR;
+				return this.clazz = HiClassVar.VAR;
 			}
 		}
 	}

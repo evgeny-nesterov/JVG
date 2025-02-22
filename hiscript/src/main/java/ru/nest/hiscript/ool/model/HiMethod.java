@@ -21,7 +21,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiMethod implements HiNodeIF, HasModifiers {
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
@@ -517,7 +517,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	public HiClass resolveGenericClassByArgument(HiClass clazz, HiClass[] invokeArgumentsClasses) {
 		if (clazz != null && clazz.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
-			if (argsClasses.length > 0) {
+			if (argsClasses != null) {
 				for (int i = 0; i < argsClasses.length; i++) {
 					HiClass argClass = argsClasses[i];
 					if (argClass == genericClass) {
@@ -547,7 +547,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			assert invocationClass != null;
 			return invocationClass.resolveGenericClass(classResolver, invocationType, (HiClassGeneric) clazz);
 		}
-		return clazz;
+		return clazz != null ? clazz : HiClass.OBJECT_CLASS;
 	}
 
 	public String getSignatureText(Type invocationType) {

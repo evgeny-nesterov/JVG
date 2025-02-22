@@ -15,6 +15,21 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+		assertSuccess("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;} int getY(){return x + 1;}}\n" + //
+				"record R<O extends A>(O a); Object o = new R<B>(new B(1));\n" + //
+				"if(o instanceof R<B> r) {assert r.getA().getY() == 2; return;} assert false;");
+		assertFailCompile("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;} int getY(){return x + 1;}}\n" + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B(1));\n" + //
+						"if(o instanceof R<A> r) {int y = r.getA().getY()}",
+				"cannot resolve method 'getY' in 'A'");
+		assertFailCompile("interface A<O>{O get();} class B implements A<Integer>{Integer get(){return 1;}} class C implements A<String>{String get(){return \"a\";}} " + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B());" + //
+						"if(o instanceof R<C> r) {Integer value = r.get();}", //
+				"incompatible return type");
+		assertFailCompile("interface A<O>{O get();} class B implements A<Integer>{Integer get(){return 1;}} class C implements A<String>{String get(){return \"a\";}} " + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B());" + //
+						"if(o instanceof R<C> r) {String value = r.get();}", //
+				"incompatible return type");
 	}
 
 	@Test

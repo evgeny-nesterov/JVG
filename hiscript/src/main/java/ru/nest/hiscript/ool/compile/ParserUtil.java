@@ -185,10 +185,19 @@ public class ParserUtil {
 		return null;
 	}
 
+	/**
+	 * Visit complex type:
+	 * T - simple type name (String, Integer, A, B, etc.)
+	 * TT - simple type with package: T.T... (A.B.C, etc.)
+	 * P - parameterized type: TT<C,...> (A.B<C, D>, etc.)
+	 * A - array type: T[]..., TT[]..., P[]... (A[], A.B[][], A.B<C, D>[][], etc.)
+	 * N - any type: T, TT, P, A
+	 * C - complex type: N, ?, ? extends N, ? super N
+	 */
 	protected static Type visitType(Tokenizer tokenizer, boolean allowArray, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
 		if (type == null) {
-			type = visitObjectType(tokenizer, env);
+			type = visitObjectType(tokenizer, env, false);
 		}
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
@@ -197,23 +206,46 @@ public class ParserUtil {
 		return type;
 	}
 
-	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
+	/**
+	 * Visit simple type:
+	 * T - simple type name (String, Integer, A, B, etc.)
+	 * P - parameterized type: T<C,...> (A, A<B, C>, etc.)
+	 * A - array type: P[]... (A[], A[][], A<B, C></>[][], etc.)
+	 * S - simple type: T, P, A (all from visitType except TT and ?)
+	 * C - complex type from visitType
+	 */
+	protected static Type visitSimpleType(Tokenizer tokenizer, boolean allowArray, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
+		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
+		if (type == null) {
+			type = visitObjectType(tokenizer, env, true);
+		}
+		if (allowArray && type != null) {
+			int dimension = visitDimension(tokenizer);
+			type = Type.getArrayType(type, dimension, env);
+		}
+		return type;
+	}
+
+	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env, boolean simple) throws TokenizerException, HiScriptParseException {
 		Type type = null;
 		tokenizer.start();
 		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
 			type = Type.getType(null, name, env);
-			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
-				name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
-				if (name == null) {
-					if (visitWord(tokenizer, THIS, SUPER, CLASS) != null) {
-						return null;
+			if (!simple) {
+				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+					name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
+					if (name == null) {
+						if (visitWord(tokenizer, THIS, SUPER, CLASS) != null) {
+							return null;
+						}
+						tokenizer.error("identifier is expected");
 					}
-					tokenizer.error("identifier is expected");
+					type = Type.getType(type, name, env);
 				}
-				type = Type.getType(type, name, env);
 			}
 
+			tokenizer.start();
 			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
 				List<Type> parametersList = new ArrayList<>();
 				do {
@@ -229,17 +261,20 @@ public class ParserUtil {
 						break;
 					}
 				} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
-				if (!visitGreater(tokenizer, false)) {
+				if (visitGreater(tokenizer, false)) {
+					tokenizer.commit();
+					type = Type.getParameterizedType(type, parametersList.toArray(new Type[parametersList.size()]));
+				} else {
 					tokenizer.rollback();
-					return null;
 				}
-				type = Type.getParameterizedType(type, parametersList.toArray(new Type[parametersList.size()]));
+			} else {
+				tokenizer.commit();
 			}
-		} else if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+		} else if (!simple && visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
 			Type extendedType = Type.objectType;
 			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
 			if (extendsType != -1) {
-				extendedType = visitObjectType(tokenizer, env);
+				extendedType = visitObjectType(tokenizer, env, false);
 			}
 			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
 		}
@@ -589,11 +624,9 @@ public class ParserUtil {
 	public static HiNode visitIdentifier(Tokenizer tokenizer, CompileClassContext ctx, boolean visitCastAfterIdentifier, boolean requireCast, boolean createOnlyCastedIdentifier) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token identifierToken = startToken(tokenizer);
-		String identifierName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BOOLEAN, CHAR, VAR);
+		Type parameterizedType = visitSimpleType(tokenizer, true, ctx.getEnv()); // visit A or A<B,C,...>
 		IF:
-		if (identifierName != null) {
-			int dimension = visitDimension(tokenizer);
-
+		if (parameterizedType != null) {
 			NodeCastedIdentifier[] castedRecordArguments = null;
 			String castedVariableName = null;
 			if (visitCastAfterIdentifier) {
@@ -613,26 +646,33 @@ public class ParserUtil {
 				}
 				castedVariableName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			}
-			boolean hasCast = castedRecordArguments != null || castedVariableName != null;
-			if (hasCast || !requireCast) {
-				tokenizer.commit();
 
+			boolean hasCast = castedRecordArguments != null || castedVariableName != null;
+			int dimension = parameterizedType.getDimension();
+			if (!hasCast && parameterizedType.parameters == null) {
+				castedVariableName = parameterizedType.cellTypeRoot != null ? parameterizedType.cellTypeRoot.name : parameterizedType.name;
+				parameterizedType = Type.varType;
+			}
+
+			if (hasCast || !requireCast) {
 				if (hasCast) {
-					NodeCastedIdentifier identifier = new NodeCastedIdentifier(identifierName, dimension);
-					identifier.castedRecordArguments = castedRecordArguments;
-					identifier.castedVariableName = castedVariableName;
+					tokenizer.commit();
+					NodeCastedIdentifier identifier = new NodeCastedIdentifier(parameterizedType, castedVariableName, castedRecordArguments);
 					identifier.setToken(tokenizer.getBlockToken(identifierToken));
 					return identifier;
-				} else if (UNNAMED.equals(identifierName) || createOnlyCastedIdentifier) {
-					// @unnamed
-					NodeCastedIdentifier identifier = new NodeCastedIdentifier(Type.varType.getName(), dimension);
-					identifier.castedVariableName = identifierName;
-					identifier.setToken(tokenizer.getBlockToken(identifierToken));
-					return identifier;
-				} else {
-					NodeIdentifier identifier = new NodeIdentifier(identifierName, dimension);
-					identifier.setToken(tokenizer.getBlockToken(identifierToken));
-					return identifier;
+				} else if (castedRecordArguments == null) {
+					if (UNNAMED.equals(castedVariableName) || createOnlyCastedIdentifier) {
+						tokenizer.commit();
+						// @unnamed
+						NodeCastedIdentifier identifier = new NodeCastedIdentifier(Type.varType, castedVariableName, null);
+						identifier.setToken(tokenizer.getBlockToken(identifierToken));
+						return identifier;
+					} else if (parameterizedType == null || parameterizedType.parameters == null) {
+						tokenizer.commit();
+						NodeIdentifier identifier = new NodeIdentifier(castedVariableName, dimension);
+						identifier.setToken(tokenizer.getBlockToken(identifierToken));
+						return identifier;
+					}
 				}
 			}
 		}

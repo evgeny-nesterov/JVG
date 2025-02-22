@@ -852,6 +852,20 @@ public class TestClasses extends HiTest {
 				"record argument expected");
 		assertFailCompile("record Rec(){int a;};", //
 				"record argument expected");
+
+		// test matching
+		assertSuccess("record A(int x); record B(A a); record C(B b); record D(C c); " + //
+				"Object o = new D(new C(new B(new A(123))));" + //
+				"if(o instanceof D(C(B(A(int X) a) b) c) d){assert X == 123;}");
+		assertSuccess("record A(int x); record B(A a); record C(B b); record D(C c); " + //
+				"Object o = new D(new C(new B(new A(123))));" + //
+				"switch(o) {case D(C(B(A(int X) a) b) c) d: assert X == 123; return;} assert false;");
+
+		// generics
+		assertSuccess("record R<Value>(Value value); R<String> r1 = new R<>(\"abc\"); assert r1.getValue().equals(\"abc\"); R<Integer> r2 = new R<>(1); assert r2.getValue() == 1;");
+		assertFailCompile("record R<A>(B value);", //
+				"class 'B' can not be resolved");
+		assertSuccess("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;}} record R<O extends A>(O a); R<A> r = new R<>(new B(1)); assert r.getA().getX() == 1;");
 	}
 
 	@Test

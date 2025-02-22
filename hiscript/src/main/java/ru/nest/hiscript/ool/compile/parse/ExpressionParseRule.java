@@ -370,7 +370,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			return true;
 		}
 
-		// visit casted identifier: A(B b, c, var d, var _, _) a
+		// visit casted identifier: A<O|? super O|? extends O>(B b, c, var d, var _, _) a
 		boolean visitCastAfterIdentifier = isVisitCastAfterIdentifier(allOperations);
 		if (visitCastAfterIdentifier && (node = visitIdentifier(tokenizer, ctx, true, true, false)) != null) {
 			operands.add(node);
