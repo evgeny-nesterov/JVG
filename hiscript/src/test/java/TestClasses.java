@@ -3,6 +3,29 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 public class TestClasses extends HiTest {
 	@Test
+	public void testTypes() {
+		assertSuccess("class A{} A o;");
+		assertSuccess("class A{} A[] o;");
+		assertSuccess("class A{} A[][][] o;");
+
+		assertSuccess("class B{} class A<O>{} A<B> o;");
+		assertSuccess("class B{} class C{} class A<O1, O2>{} A<B, C> o;");
+		assertSuccess("class B{} class A<O>{} A<B>[] o;");
+		assertSuccess("class B{} class C{} class A<O1, O2>{} A<B, C>[][] o;");
+
+		assertSuccess("class A{class B{}} A.B o;");
+		assertSuccess("class A{class B{}} A.B[] o;");
+		assertSuccess("class A{class B{class C{}}} A.B.C[][][] o;");
+
+		assertSuccess("class C{} class A<O>{class B<O>{}} A.B<C> o;");
+		assertSuccess("class C{} class A<O>{class B<O>{}} A.B<C>[] o;");
+		assertSuccess("class C{} class A<O>{class B<O>{}} A<C>.B<C>[] o;");
+		assertSuccess("class C{} class A<O>{class B<O>{}} A<C>.B[] o;");
+		assertSuccess("class C{} class A<O>{class B<O>{}} A<?>.B<?>[] o;");
+		assertSuccess("class C{} class A<O>{class B<O>{}} A<? super C>.B<? extends C>[] o;");
+	}
+
+	@Test
 	public void testClasses() {
 		assertSuccess("class C{}");
 		assertSuccess("class C{int c;} assert new C().c == 0;");
@@ -811,7 +834,7 @@ public class TestClasses extends HiTest {
 
 		// instanceof
 		assertSuccess("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(int a, String b, _) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
-		assertSuccess("record Rec(int a, Object b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a, String b, _) rec){assert a == 1; a = 2; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
+		assertSuccess("record Rec(int a, Object b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a, String b, _) rec){assert a == 1; a = 2; byte c = a; assert b.equals(\"abc\"); assert rec.getA() == 2; assert rec.getB().equals(\"abc\");}");
 		assertSuccess("record Rec(int a){int b; Rec(int b){a = 1; this.b = b;} int getB(){return b;}}; Rec r = new Rec(3); if(r instanceof Rec(int b) rec) {} else {assert false;}}");
 		assertFailCompile("record Rec(int a, String b, int c); Object r = new Rec(1, \"abc\", 2); if(r instanceof Rec(byte a) rec);", //
 				"record constructor not found: Rec(byte)");
@@ -866,6 +889,35 @@ public class TestClasses extends HiTest {
 		assertFailCompile("record R<A>(B value);", //
 				"class 'B' can not be resolved");
 		assertSuccess("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;}} record R<O extends A>(O a); R<A> r = new R<>(new B(1)); assert r.getA().getX() == 1;");
+
+		// match patterns
+		assertSuccess("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;} int getY(){return x + 1;}}\n" + //
+				"record R<O extends A>(O a); Object o = new R<B>(new B(1));\n" + //
+				"if(o instanceof R<B> r) {assert r.getA().getY() == 2; return;} assert false;");
+		assertFailCompile("interface A{int getX();} class B implements A {int x; B(int x){this.x = x;} int getX(){return x;} int getY(){return x + 1;}}\n" + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B(1));\n" + //
+						"if(o instanceof R<A> r) {int y = r.getA().getY()}",
+				"cannot resolve method 'getY' in 'A'");
+		assertFailCompile("interface A<O>{O get();} class B implements A<Integer>{Integer get(){return 1;}} class C implements A<String>{String get(){return \"a\";}} " + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B());" + //
+						"if(o instanceof R<C> r) {Integer value = r.get();}", //
+				"incompatible return type");
+		assertFailCompile("interface A<O>{O get();} class B implements A<Integer>{Integer get(){return 1;}} class C implements A<String>{String get(){return \"a\";}} " + //
+						"record R<O extends A>(O a); Object o = new R<B>(new B());" + //
+						"if(o instanceof R<C> r) {String value = r.get();}", //
+				"incompatible return type");
+		assertSuccess("interface A{int getX();}\nclass B implements A {int x; B(int x){this.x = x;} int getX(){return x;} int getY(){return x + 1;}}\n" + //
+				"record R3<O3 extends A>(O3 a);\nrecord R2<O2>(O2 r3);\nrecord R1<O1>(O1 r2);\n" + //
+				"Object o = new R1<R2>(new R2<R3>(new R3<B>(new B(1))));\n" + //
+				"if(o instanceof R1<R2<R3<B>>>(R2<R3<B>>(R3<B>(B b) r3) r2) r1) {\n" + //
+				"  assert b.getY() == 2;\n" + //
+				"  assert r1.getR2().getR3().getA().getY() == 2;\n" + //
+				"  assert r2.getR3().getA().getY() == 2;\n" + //
+				"  assert r3.getA().getY() == 2;\n" + //
+				"  b = new B(11);\n" + //
+				"}\nR1<R2> r1 = (R1<R2>)o; R2<R3> r2 = r1.getR2(); R3<B> r3 = r2.getR3(); B b = r3.getA(); System.println(\"x=\" + b.getX()); assert b.getX() == 11;");
+		assertSuccess("record R<O>(O value); Object o = new R(\"abc\"); " + //
+				"if(o instanceof R<String>(String a) r) {assert a.length() == 3 && a.equals(\"abc\"); return;} assert false;");
 	}
 
 	@Test

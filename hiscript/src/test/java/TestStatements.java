@@ -550,11 +550,11 @@ public class TestStatements extends HiTest {
 				"double is expected");
 
 		assertFailCompile("int x = 0; x.new Object();", //
-				"identifier is expected");
+				"qualified new of static class");
 		assertFailCompile("int[] x = {0}; x.new Object();", //
-				"identifier is expected");
+				"qualified new of static class");
 		assertFailCompile("class A{class B{}} A[] a = {new A()}; a.new B();", //
-				"identifier is expected");
+				"class 'B' can not be resolved");
 	}
 
 	@Test

@@ -382,6 +382,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 		return false;
 	}
 
+	@Override
 	public HiClass getClass(ClassResolver classResolver) {
 		// Нельзя кэшировать класс, т.к. имена разных классов могут совпадать в разных контекстах
 		if (isPrimitive()) {

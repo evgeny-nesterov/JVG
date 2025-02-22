@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -59,8 +60,13 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 	}
 
 	@Override
-	public String getVariableType() {
-		return type.name;
+	public Type getVariableType() {
+		return type;
+	}
+
+	@Override
+	public HiClass getVariableClass(ClassResolver classResolver) {
+		return clazz;
 	}
 
 	@Override

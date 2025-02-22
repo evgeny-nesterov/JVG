@@ -128,8 +128,8 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 	}
 
 	@Override
-	public String getVariableType() {
-		return typeArgument.getName();
+	public Type getVariableType() {
+		return typeArgument.getType();
 	}
 
 	@Override

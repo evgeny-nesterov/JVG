@@ -127,7 +127,7 @@ public class NodeInvocation extends HiNode {
 						if (nodeGeneric != null) {
 							resolvedType = invocationType.getParameterType(nodeGeneric.clazz);
 						}
-						if (resolvedType == null) {
+						if (resolvedType == null && type.parameters != null) {
 							for (int i = 0; i < type.parameters.length; i++) {
 								if (invocationClass.generics.getGenericClass(ctx, type.parameters[i].name) != null) {
 									type.parameters[i] = invocationType.getParameterType(returnClass.generics.generics[i].clazz);

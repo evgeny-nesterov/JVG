@@ -72,11 +72,11 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
 
-					Type excType = visitObjectType(tokenizer, ctx.getEnv(), false);
+					Type excType = visitObjectType(tokenizer, ctx.getEnv());
 					// TODO check excType extends Exception
 					excTypes.add(excType);
 					while (visitSymbol(tokenizer, Symbols.BITWISE_OR) != -1) {
-						excType = visitObjectType(tokenizer, ctx.getEnv(), false);
+						excType = visitObjectType(tokenizer, ctx.getEnv());
 						// TODO check excType extends Exception
 						excTypes.add(excType);
 					}

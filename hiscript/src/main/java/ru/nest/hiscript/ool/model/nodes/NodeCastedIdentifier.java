@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -143,8 +144,13 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 	}
 
 	@Override
-	public String getVariableType() {
-		return declarationNode.getVariableType();
+	public Type getVariableType() {
+		return type;
+	}
+
+	@Override
+	public HiClass getVariableClass(ClassResolver classResolver) {
+		return clazz;
 	}
 
 	@Override

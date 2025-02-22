@@ -1,7 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.runtime.HiObject;
-import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -15,6 +13,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.HiObject;
+import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.tokenizer.Token;
@@ -131,6 +131,10 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	public String name;
 
 	public HiNode initializer;
+
+	public HiClass getValueClass(ClassResolver classResolver) {
+		return valueClass != null ? valueClass : getClass(classResolver);
+	}
 
 	public HiClass getClass(ClassResolver classResolver) {
 		if (clazz == null) {
@@ -374,7 +378,12 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 	}
 
 	@Override
-	public String getVariableType() {
-		return clazz != null ? clazz.getNameDescr() : type.toString();
+	public Type getVariableType() {
+		return type;
+	}
+
+	@Override
+	public HiClass getVariableClass(ClassResolver classResolver) {
+		return getClass(classResolver);
 	}
 }

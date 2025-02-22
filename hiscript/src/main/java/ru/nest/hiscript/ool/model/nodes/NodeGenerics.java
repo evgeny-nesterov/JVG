@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -27,6 +28,10 @@ public class NodeGenerics extends HiNode {
 				generic.sourceType = sourceType;
 			}
 		}
+	}
+
+	public HiClassGeneric getGenericClass(ClassResolver classResolver, Type type) {
+		return getGenericClass(classResolver, type.getName());
 	}
 
 	public HiClassGeneric getGenericClass(ClassResolver classResolver, String name) {

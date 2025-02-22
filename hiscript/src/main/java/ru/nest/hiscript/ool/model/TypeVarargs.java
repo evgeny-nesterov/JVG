@@ -13,6 +13,11 @@ public class TypeVarargs implements TypeArgumentIF {
 	}
 
 	@Override
+	public HiClass getClass(ClassResolver classResolver) {
+		return null;
+	}
+
+	@Override
 	public boolean isArray() {
 		return true;
 	}

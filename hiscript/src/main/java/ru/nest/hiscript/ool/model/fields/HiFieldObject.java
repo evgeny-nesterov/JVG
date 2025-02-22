@@ -33,6 +33,8 @@ public class HiFieldObject extends HiField<Object> {
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
 		HiClass valueClass = valueType.clazz;
+
+		// @lambda
 		if (valueClass.isLambda()) {
 			this.valueClass = valueClass;
 			return true;

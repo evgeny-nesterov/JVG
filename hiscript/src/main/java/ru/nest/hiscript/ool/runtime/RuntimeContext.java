@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -966,6 +966,10 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			castedField.set(object, objectClass);
 			addVariable(castedField);
 		}
+		addCastedRecordArguments(castedRecordArguments, castedRecordArgumentsConstructor, object);
+	}
+
+	private void addCastedRecordArguments(HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object) {
 		if (castedRecordArguments != null && object instanceof HiObject) {
 			HiObject hiObject = (HiObject) object;
 			for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
@@ -980,16 +984,20 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					}
 				}
 
-				HiPojoField castedField = new HiPojoField(hiObject, objectField, castedRecordArgument.getVariableName());
+				HiPojoField castedField = new HiPojoField(castedRecordArgument.getVariableType(), castedRecordArgument.getVariableClass(this), castedRecordArgument.getVariableName(), hiObject, objectField);
 				addVariable(castedField);
 
 				if (castedRecordArgument instanceof NodeCastedIdentifier) {
 					castedField.get(this, value);
 					HiClass argFieldClass = castedField.getClass(this);
-					if (argFieldClass.isObject()) {
+					if (argFieldClass != null && argFieldClass.isObject()) {
 						HiObject castedArgumentObject = (HiObject) value.object;
-						NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) castedRecordArgument;
-						addCastedVariables(castedIdentifier.castedVariableName, argFieldClass, castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject, castedArgumentObject.clazz);
+						if (object != null) {
+							NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) castedRecordArgument;
+							addCastedRecordArguments(castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject);
+						} else {
+							throwRuntimeException("null pointer");
+						}
 					}
 				}
 			}

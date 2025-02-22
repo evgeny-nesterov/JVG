@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -29,6 +30,8 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 
 	public HiNodeIF resolvedIdentifier; // only for validation
 
+	private Type type;
+
 	private HiClass clazz;
 
 	public String getName() {
@@ -54,7 +57,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 		if (isUnnamed()) {
 			// @unnamed
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-			ctx.nodeValueType.type = Type.varType;
+			this.type = ctx.nodeValueType.type = Type.varType;
 			return this.clazz = HiClassVar.VAR;
 		} else if (dimension > 0) {
 			// <type>[][]...[]
@@ -66,7 +69,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 				clazz = clazz.getArrayClass(dimension);
 			}
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
-			ctx.nodeValueType.type = Type.getType(clazz);
+			this.type = ctx.nodeValueType.type = Type.getType(clazz);
 			return this.clazz = clazz;
 		} else {
 			Object resolvedIdentifier = this.resolvedIdentifier != null ? this.resolvedIdentifier : ctx.resolveIdentifier(name); // field priority is higher than class priority
@@ -96,16 +99,16 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 				ctx.nodeValueType.enclosingClass = clazz;
 				ctx.nodeValueType.enclosingType = type;
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-				ctx.nodeValueType.type = type;
+				this.type = ctx.nodeValueType.type = type;
 				return this.clazz = clazz;
 			} else if (resolvedIdentifier instanceof HiClass) {
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.classValue;
-				ctx.nodeValueType.type = Type.getType((HiClass) resolvedIdentifier);
+				this.type = ctx.nodeValueType.type = Type.getType((HiClass) resolvedIdentifier);
 				return this.clazz = (HiClass) resolvedIdentifier;
 			} else {
 				// not resolved, set to match any type
 				ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-				ctx.nodeValueType.type = Type.varType;
+				this.type = ctx.nodeValueType.type = Type.varType;
 				return this.clazz = HiClassVar.VAR;
 			}
 		}
@@ -235,8 +238,13 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 	}
 
 	@Override
-	public String getVariableType() {
-		return clazz.getTypeName();
+	public Type getVariableType() {
+		return type;
+	}
+
+	@Override
+	public HiClass getVariableClass(ClassResolver classResolver) {
+		return clazz;
 	}
 
 	@Override

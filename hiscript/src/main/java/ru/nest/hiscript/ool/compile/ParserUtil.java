@@ -197,7 +197,7 @@ public class ParserUtil {
 	protected static Type visitType(Tokenizer tokenizer, boolean allowArray, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
 		if (type == null) {
-			type = visitObjectType(tokenizer, env, false);
+			type = visitObjectType(tokenizer, env);
 		}
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
@@ -217,7 +217,7 @@ public class ParserUtil {
 	protected static Type visitSimpleType(Tokenizer tokenizer, boolean allowArray, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = Type.getTypeByWord(visitWordType(tokenizer, BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE, VAR));
 		if (type == null) {
-			type = visitObjectType(tokenizer, env, true);
+			type = visitSimpleObjectType(tokenizer, env, null);
 		}
 		if (allowArray && type != null) {
 			int dimension = visitDimension(tokenizer);
@@ -226,24 +226,29 @@ public class ParserUtil {
 		return type;
 	}
 
-	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env, boolean simple) throws TokenizerException, HiScriptParseException {
+	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
+		Type type = visitSimpleObjectType(tokenizer, env, null);
+		if (type != null) {
+			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+				type = visitSimpleObjectType(tokenizer, env, type);
+			}
+		} else if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+			Type extendedType = Type.objectType;
+			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
+			if (extendsType != -1) {
+				extendedType = visitObjectType(tokenizer, env);
+			}
+			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
+		}
+		return type;
+	}
+
+	protected static Type visitSimpleObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env, Type parent) throws TokenizerException, HiScriptParseException {
 		Type type = null;
 		tokenizer.start();
 		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
-			type = Type.getType(null, name, env);
-			if (!simple) {
-				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
-					name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
-					if (name == null) {
-						if (visitWord(tokenizer, THIS, SUPER, CLASS) != null) {
-							return null;
-						}
-						tokenizer.error("identifier is expected");
-					}
-					type = Type.getType(type, name, env);
-				}
-			}
+			type = Type.getType(parent, name, env);
 
 			tokenizer.start();
 			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
@@ -270,13 +275,6 @@ public class ParserUtil {
 			} else {
 				tokenizer.commit();
 			}
-		} else if (!simple && visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
-			Type extendedType = Type.objectType;
-			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
-			if (extendsType != -1) {
-				extendedType = visitObjectType(tokenizer, env, false);
-			}
-			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
 		}
 		tokenizer.commit();
 		return type;
