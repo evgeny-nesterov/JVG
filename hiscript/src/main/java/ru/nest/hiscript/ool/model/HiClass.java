@@ -994,7 +994,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public boolean isInstanceof(HiClass clazz) {
-		if (this == clazz || clazz == HiClass.OBJECT_CLASS) {
+		if (this == clazz || clazz == HiClass.OBJECT_CLASS || this == HiClassVar.VAR) {
 			return true;
 		}
 		if (clazz.isMix()) {

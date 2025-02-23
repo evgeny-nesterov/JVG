@@ -78,7 +78,7 @@ public class HiPojoField extends HiField<Object> {
 	public void set(RuntimeContext ctx, Value value) {
 		if (setMethod == null) {
 			HiClass originalClass = objectField.getValueClass(ctx);
-			setMethod = object.clazz.getMethod(ctx, setMethodName, originalClass);
+			setMethod = object.clazz.searchMethod(ctx, setMethodName, originalClass);
 			NodeArgument arg = setMethod.arguments[0];
 			setArgField = HiField.getField(arg.clazz, arg.name, arg.getToken());
 		}

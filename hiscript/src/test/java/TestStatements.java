@@ -5,6 +5,9 @@ public class TestStatements extends HiTest {
 	@Test
 	public void testBody() {
 		assertSuccess("");
+		assertSuccess("        ");
+		assertSuccess("\t\t\t\t");
+		assertSuccess("   \n\t\t\t\r\n\r    ");
 		assertSuccess("{}");
 		assertSuccess("{};");
 		assertSuccess("{{}} {}");

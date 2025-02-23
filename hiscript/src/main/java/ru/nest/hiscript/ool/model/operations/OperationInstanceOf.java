@@ -84,7 +84,7 @@ public class OperationInstanceOf extends BinaryOperation {
 
 		boolean isInstanceof = c1.isInstanceof(c2);
 		if (isInstanceof) {
-			ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, v1.object, c1);
+			isInstanceof = ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, v1.object, c1);
 		}
 
 		v1.valueClass = TYPE_BOOLEAN;

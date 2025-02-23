@@ -259,9 +259,17 @@ public class DecodeContext {
 
 	private final Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>();
 
+	private final Map<String, List<ClassLoadListener>> classByNameLoadListeners = new HashMap<>();
+
 	public void addClassLoadListener(ClassLoadListener<HiClass> listener, int index) {
 		DecodeContext ctx = getRoot();
 		List<ClassLoadListener> list = ctx.classLoadListeners.computeIfAbsent(index, k -> new ArrayList<>());
+		list.add(listener);
+	}
+
+	public void addClassLoadListener(ClassLoadListener<HiClass> listener, String name) {
+		DecodeContext ctx = getRoot();
+		List<ClassLoadListener> list = ctx.classByNameLoadListeners.computeIfAbsent(name, k -> new ArrayList<>());
 		list.add(listener);
 	}
 
@@ -272,8 +280,9 @@ public class DecodeContext {
 		classes = new HiClass[count];
 		for (int index = 0; index < count; index++) {
 			DecodeContext ctx = new DecodeContext(classLoader, is, this);
-			classes[index] = HiClass.decode(ctx);
-			// do not fire event - class may be yet not initialized
+			HiClass clazz = HiClass.decode(ctx);
+			classes[index] = clazz;
+			fireClassLoaded(clazz, index);
 		}
 		while (!classLoadListeners.isEmpty()) {
 			Map<Integer, List<ClassLoadListener>> classLoadListeners = new HashMap<>(this.classLoadListeners);
@@ -284,6 +293,22 @@ public class DecodeContext {
 				for (ClassLoadListener listener : list) {
 					listener.classLoaded(clazz);
 				}
+			}
+		}
+	}
+
+	public void fireClassLoaded(HiClass clazz, int index) {
+		// Attention! Class may be yet not initialized fully.
+		List<ClassLoadListener> listeners = classLoadListeners.get(index);
+		if (listeners != null) {
+			for (ClassLoadListener l : listeners) {
+				l.classLoaded(clazz);
+			}
+		}
+		listeners = classByNameLoadListeners.get(clazz.getClassName());
+		if (listeners != null) {
+			for (ClassLoadListener l : listeners) {
+				l.classLoaded(clazz);
 			}
 		}
 	}

@@ -79,6 +79,11 @@ public class HiFieldObject extends HiField<Object> {
 			}
 			valueClass = value.valueClass;
 			object = value.getObject(getClass(ctx));
+
+			// @generic
+			if (valueClass.isGeneric() && object instanceof HiObject) {
+				valueClass = ((HiObject) object).clazz;
+			}
 		}
 		initialized = true;
 	}
@@ -98,7 +103,7 @@ public class HiFieldObject extends HiField<Object> {
 		}
 	}
 
-    @Override
+	@Override
 	public void set(Object object, HiClass valueClass) {
 		super.set(valueClass, valueClass);
 		this.object = object;

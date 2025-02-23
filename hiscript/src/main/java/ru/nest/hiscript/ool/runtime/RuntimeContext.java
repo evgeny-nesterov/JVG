@@ -956,20 +956,20 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		return null;
 	}
 
-	public void addCastedVariables(String castedVariableName, HiClass fieldClass, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object, HiClass objectClass) {
+	public boolean addCastedVariables(String castedVariableName, HiClass fieldClass, HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object, HiClass objectClass) {
 		if (object == null) {
 			throwRuntimeException("null pointer");
-			return;
+			return false;
 		}
 		if (castedVariableName != null) {
 			HiField castedField = HiField.getField(fieldClass, castedVariableName, null);
 			castedField.set(object, objectClass);
 			addVariable(castedField);
 		}
-		addCastedRecordArguments(castedRecordArguments, castedRecordArgumentsConstructor, object);
+		return addCastedRecordArguments(castedRecordArguments, castedRecordArgumentsConstructor, object);
 	}
 
-	private void addCastedRecordArguments(HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object) {
+	private boolean addCastedRecordArguments(HiNode[] castedRecordArguments, HiConstructor castedRecordArgumentsConstructor, Object object) {
 		if (castedRecordArguments != null && object instanceof HiObject) {
 			HiObject hiObject = (HiObject) object;
 			for (int recordArgumentIndex = 0; recordArgumentIndex < castedRecordArguments.length; recordArgumentIndex++) {
@@ -984,7 +984,13 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 					}
 				}
 
-				HiPojoField castedField = new HiPojoField(castedRecordArgument.getVariableType(), castedRecordArgument.getVariableClass(this), castedRecordArgument.getVariableName(), hiObject, objectField);
+				HiClass realClass = objectField.getValueClass(this);
+				HiClass castedClass = castedRecordArgument.getVariableClass(this);
+				if (!castedClass.isInstanceof(realClass)) {
+					return false;
+				}
+
+				HiPojoField castedField = new HiPojoField(castedRecordArgument.getVariableType(), castedClass, castedRecordArgument.getVariableName(), hiObject, objectField);
 				addVariable(castedField);
 
 				if (castedRecordArgument instanceof NodeCastedIdentifier) {
@@ -994,7 +1000,9 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 						HiObject castedArgumentObject = (HiObject) value.object;
 						if (object != null) {
 							NodeCastedIdentifier castedIdentifier = (NodeCastedIdentifier) castedRecordArgument;
-							addCastedRecordArguments(castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject);
+							if (!addCastedRecordArguments(castedIdentifier.castedRecordArguments, castedIdentifier.constructor, castedArgumentObject)) {
+								return false;
+							}
 						} else {
 							throwRuntimeException("null pointer");
 						}
@@ -1002,5 +1010,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 				}
 			}
 		}
+		return true;
 	}
 }

@@ -367,7 +367,9 @@ public class NodeSwitch extends HiNode {
 								HiConstructor castedRecordArgumentsConstructor = ctx.value.castedRecordArgumentsConstructor;
 								HiNode castedCondition = ctx.value.castedCondition;
 
-								ctx.addCastedVariables(castedVariableName, c2, castedRecordArguments, castedRecordArgumentsConstructor, object, objectClass);
+								if (!ctx.addCastedVariables(castedVariableName, c2, castedRecordArguments, castedRecordArgumentsConstructor, object, objectClass)) {
+									continue;
+								}
 								if (ctx.exitFromBlock()) {
 									return -2;
 								}

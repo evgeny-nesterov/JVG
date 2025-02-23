@@ -918,6 +918,7 @@ public class TestClasses extends HiTest {
 				"}\nR1<R2> r1 = (R1<R2>)o; R2<R3> r2 = r1.getR2(); R3<B> r3 = r2.getR3(); B b = r3.getA(); System.println(\"x=\" + b.getX()); assert b.getX() == 11;");
 		assertSuccess("record R<O>(O value); Object o = new R(\"abc\"); " + //
 				"if(o instanceof R<String>(String a) r) {assert a.length() == 3 && a.equals(\"abc\"); return;} assert false;");
+		assertSuccess("record R<O>(O value); Object o = new R(\"abc\"); if(o instanceof R(Integer a) r) {assert false;} ");
 	}
 
 	@Test

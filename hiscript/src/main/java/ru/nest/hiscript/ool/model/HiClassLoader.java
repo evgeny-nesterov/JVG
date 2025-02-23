@@ -404,8 +404,13 @@ public class HiClassLoader {
 	public void code(CodeContext os) throws IOException {
 		loading = true;
 		os.writeUTF(name);
+		if (isSystem()) {
+			os.registerClass(HiClass.OBJECT_CLASS);
+		}
 		for (HiClass clazz : classes.values()) {
-			os.registerClass(clazz);
+			if (clazz != HiClass.OBJECT_CLASS) {
+				os.registerClass(clazz);
+			}
 		}
 	}
 
@@ -418,6 +423,7 @@ public class HiClassLoader {
 	public static HiClassLoader decodeSystem(DataInputStream is) throws IOException {
 		HiClassLoader classLoader = createSystem();
 		DecodeContext os = new DecodeContext(classLoader, is);
+		os.addClassLoadListener(clazz -> HiClass.OBJECT_CLASS = clazz, HiClass.OBJECT_CLASS_NAME);
 		os.prepare();
 
 		String name = os.readUTF();
