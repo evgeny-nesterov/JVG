@@ -3,6 +3,9 @@ public final class Double extends Number {
 		System.loadLib("DoubleImpl.class");
 	}
 
+    public static final double MAX_VALUE = 1.7976931348623157e+308;
+    public static final double MIN_VALUE = 4.9e-324;
+
 	private double value;
 
 	public Double(double value) {

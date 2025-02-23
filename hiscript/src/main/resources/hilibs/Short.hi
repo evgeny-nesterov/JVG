@@ -3,6 +3,9 @@ public final class Short extends Number {
 		System.loadLib("ShortImpl.class");
 	}
 
+    public static final short MIN_VALUE = -32768;
+    public static final short MAX_VALUE = 32767;
+
 	private short value;
 
 	public Short(short value) {

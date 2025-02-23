@@ -3,6 +3,9 @@ public final class Byte extends Number {
 		System.loadLib("ByteImpl.class");
 	}
 
+    public static final byte MIN_VALUE = -128;
+    public static final byte MAX_VALUE = 127;
+
 	private byte value;
 
 	public Byte(byte value) {

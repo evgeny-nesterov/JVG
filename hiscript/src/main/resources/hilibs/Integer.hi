@@ -3,6 +3,9 @@ public final class Integer extends Number {
 		System.loadLib("IntegerImpl.class");
 	}
 
+	public static final int MIN_VALUE = 0x80000000;
+    public static final int MAX_VALUE = 0x7fffffff;
+
 	private int value;
 
 	public Integer(int value) {
