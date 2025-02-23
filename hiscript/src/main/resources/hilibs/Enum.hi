@@ -1,4 +1,8 @@
 public abstract class Enum {
+	static {
+		System.loadLib("EnumImpl.class");
+	}
+
 	protected Enum(String name, int ordinal) {
 		this.name = name;
 		this.ordinal = ordinal;
@@ -27,4 +31,8 @@ public abstract class Enum {
 	public final int hashCode() {
 		return super.hashCode();
 	}
+
+	public final static native <E> E[] values();
+
+	public final static native <E> E valueOf(String name);
 }

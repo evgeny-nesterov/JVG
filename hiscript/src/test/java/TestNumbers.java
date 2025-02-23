@@ -397,7 +397,7 @@ public class TestNumbers extends HiTest {
 		assertSuccess("int x = -0b101; assert -x == 5;");
 		assertFailCompile("int x = 0b10000000000_0000000000_0000000000_00;", // 32 bits
 				"integer number too large");
-		assertFailCompile("long x = 0b10000000000_0000000000_0000000000_0000000000_0000000000_0000000000_000L;", // 64 bits
+		assertFailCompile("long x = 0b10000000000_0000000000_0000000000_0000000000_0000000000_0000000000_0000L;", // 64 bits
 				"long number too large");
 		assertFailCompile("int x = 0b2;", //
 				"binary numbers must contain at least one binary digit");

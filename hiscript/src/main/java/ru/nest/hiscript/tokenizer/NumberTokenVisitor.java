@@ -144,7 +144,7 @@ public class NumberTokenVisitor implements TokenVisitor {
 			}
 
 			if (tokenizer.getCurrent() == 'l' || tokenizer.getCurrent() == 'L') {
-				if (tooLarge) {
+				if (tooLarge && value != Long.MIN_VALUE) {
 					tokenizer.error("long number too large", line, offset, tokenizer.getOffset() - offset, lineOffset);
 				}
 				tokenizer.next();
