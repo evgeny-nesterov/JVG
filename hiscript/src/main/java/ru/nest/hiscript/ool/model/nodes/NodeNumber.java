@@ -5,15 +5,8 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.tokenizer.Token;
 
 public abstract class NodeNumber extends HiNode {
-	protected boolean hasSign;
-
-	public boolean hasSign() {
-		return hasSign;
-	}
-
-	public NodeNumber(String name, int type, boolean hasSign, Token token) {
+	public NodeNumber(String name, int type, Token token) {
 		super(name, type, token, false);
-		this.hasSign = hasSign;
 	}
 
 	@Override

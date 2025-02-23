@@ -23,11 +23,6 @@ public class NodeNull extends HiNode {
 	}
 
 	@Override
-	public Object getConstantValue() {
-		return null;
-	}
-
-	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		// TODO compileValue
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;

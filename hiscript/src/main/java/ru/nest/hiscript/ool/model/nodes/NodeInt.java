@@ -11,8 +11,8 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 
 public class NodeInt extends NodeNumber {
-	public NodeInt(int value, boolean hasSign, Token token) {
-		super("int", TYPE_INT, hasSign, token);
+	public NodeInt(int value, Token token) {
+		super("int", TYPE_INT, token);
 		this.value = value;
 	}
 
@@ -43,10 +43,9 @@ public class NodeInt extends NodeNumber {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeInt(value);
-		os.writeBoolean(hasSign);
 	}
 
 	public static NodeInt decode(DecodeContext os) throws IOException {
-		return new NodeInt(os.readInt(), os.readBoolean(), null);
+		return new NodeInt(os.readInt(), null);
 	}
 }

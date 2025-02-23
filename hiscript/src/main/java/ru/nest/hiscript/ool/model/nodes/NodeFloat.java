@@ -13,8 +13,8 @@ import java.io.IOException;
 public class NodeFloat extends NodeNumber {
 	// TODO NaN, Infinite
 
-	public NodeFloat(float value, boolean hasSign, Token token) {
-		super("float", TYPE_FLOAT, hasSign, token);
+	public NodeFloat(float value, Token token) {
+		super("float", TYPE_FLOAT, token);
 		this.value = value;
 	}
 
@@ -45,10 +45,9 @@ public class NodeFloat extends NodeNumber {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeFloat(value);
-		os.writeBoolean(hasSign);
 	}
 
 	public static NodeFloat decode(DecodeContext os) throws IOException {
-		return new NodeFloat(os.readFloat(), os.readBoolean(), null);
+		return new NodeFloat(os.readFloat(), null);
 	}
 }

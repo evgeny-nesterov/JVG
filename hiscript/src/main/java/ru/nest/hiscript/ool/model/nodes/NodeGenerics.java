@@ -10,8 +10,10 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 // @generics
 public class NodeGenerics extends HiNode {
@@ -129,18 +131,12 @@ public class NodeGenerics extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// do nothing
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		for (NodeGeneric generic : generics) {
-			if (s.length() > 0) {
-				s.append(", ");
-			}
-			s.append(generic);
-		}
-		return s.toString();
+		return Arrays.stream(generics).map(NodeGeneric::toString).collect(Collectors.joining(", "));
 	}
 
 	@Override

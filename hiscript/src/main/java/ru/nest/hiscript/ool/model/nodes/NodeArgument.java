@@ -129,7 +129,12 @@ public class NodeArgument extends HiNode implements NodeVariable, HasModifiers {
 
 	@Override
 	public Type getVariableType() {
-		return typeArgument.getType();
+		return getType();
+	}
+
+	@Override
+	public HiClass getVariableClass(ClassResolver classResolver) {
+		return getArgClass(classResolver);
 	}
 
 	@Override

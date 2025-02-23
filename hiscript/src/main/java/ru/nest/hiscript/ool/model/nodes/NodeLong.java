@@ -11,8 +11,8 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 
 public class NodeLong extends NodeNumber {
-	public NodeLong(long value, boolean hasSign, Token token) {
-		super("long", TYPE_LONG, hasSign, token);
+	public NodeLong(long value, Token token) {
+		super("long", TYPE_LONG, token);
 		this.value = value;
 	}
 
@@ -43,10 +43,9 @@ public class NodeLong extends NodeNumber {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeLong(value);
-		os.writeBoolean(hasSign);
 	}
 
 	public static NodeLong decode(DecodeContext os) throws IOException {
-		return new NodeLong(os.readLong(), os.readBoolean(), null);
+		return new NodeLong(os.readLong(), null);
 	}
 }

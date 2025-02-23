@@ -43,11 +43,11 @@ public class TestNodes extends HiTest {
 	}
 
 	private HiNode intNode(int value) {
-		return new NodeInt(value, false, null);
+		return new NodeInt(value, null);
 	}
 
 	private HiNode longNode(long value) {
-		return new NodeLong(value, false, null);
+		return new NodeLong(value, null);
 	}
 
 	private void assertByte(Value value, int n) {

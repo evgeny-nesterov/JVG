@@ -871,7 +871,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 			while (lineLevel != null && lineLevel.getLine() == -1) {
 				lineLevel = lineLevel.parent;
 			}
-			new NodeInt(lineLevel != null ? lineLevel.getLine() : -1, false, null).execute(this);
+			new NodeInt(lineLevel != null ? lineLevel.getLine() : -1, null).execute(this);
 			array[i].getField(this, "line").set(this, value);
 
 			// TODO: set codeLine for StackTraceElement in RuntimeContext, at the current moment codeLine=-1

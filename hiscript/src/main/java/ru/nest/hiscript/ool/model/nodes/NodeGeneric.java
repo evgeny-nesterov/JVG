@@ -13,7 +13,7 @@ import java.io.IOException;
 public class NodeGeneric extends HiNode {
 	public NodeGeneric(String genericName, boolean isSuper, Type genericType, int index) {
 		super("generic", TYPE_GENERIC, false);
-		this.genericName = genericName;
+		this.genericName = genericName != null && genericName.length() > 0 ? genericName : null;
 		this.isSuper = isSuper;
 		this.genericType = genericType;
 		this.index = index;
@@ -64,15 +64,12 @@ public class NodeGeneric extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
+		// do nothing
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append(genericName != null && genericName.length() > 0 ? genericName : "?");
-		s.append(isSuper ? " super " : " extends ");
-		s.append(genericType);
-		return s.toString();
+		return new StringBuilder().append(isWildcard() ? "?" : genericName).append(isSuper ? " super " : " extends ").append(genericType).toString();
 	}
 
 	@Override

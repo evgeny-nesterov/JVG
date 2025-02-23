@@ -13,8 +13,8 @@ import java.io.IOException;
 public class NodeDouble extends NodeNumber {
 	// TODO NaN, Infinite
 
-	public NodeDouble(double value, boolean hasSign, Token token) {
-		super("double", TYPE_DOUBLE, hasSign, token);
+	public NodeDouble(double value, Token token) {
+		super("double", TYPE_DOUBLE, token);
 		this.value = value;
 	}
 
@@ -45,10 +45,9 @@ public class NodeDouble extends NodeNumber {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeDouble(value);
-		os.writeBoolean(hasSign);
 	}
 
 	public static NodeDouble decode(DecodeContext os) throws IOException {
-		return new NodeDouble(os.readDouble(), os.readBoolean(), null);
+		return new NodeDouble(os.readDouble(), null);
 	}
 }

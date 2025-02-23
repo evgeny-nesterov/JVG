@@ -287,19 +287,19 @@ public class ParserUtil {
 		if (currentToken instanceof DoubleToken) {
 			DoubleToken token = (DoubleToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeDouble(token.getNumber(), token.hasSign(), token);
+			return new NodeDouble(token.getNumber(), token);
 		} else if (currentToken instanceof FloatToken) {
 			FloatToken token = (FloatToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeFloat(token.getNumber(), token.hasSign(), token);
+			return new NodeFloat(token.getNumber(), token);
 		} else if (currentToken instanceof LongToken) {
 			LongToken token = (LongToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeLong(token.getNumber(), token.hasSign(), token);
+			return new NodeLong(token.getNumber(), token);
 		} else if (currentToken instanceof IntToken) {
 			IntToken token = (IntToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeInt(token.getNumber(), token.hasSign(), token);
+			return new NodeInt(token.getNumber(), token);
 		}
 		return null;
 	}
