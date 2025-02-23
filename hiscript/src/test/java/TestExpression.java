@@ -808,9 +808,9 @@ public class TestExpression extends HiTest {
 			for (String t2 : new String[] {"byte", "short", "int", "long", "float", "double", "char"}) {
 				if (!t.equals(t2)) {
 					assertFailCompile(t + "[] x = (" + t2 + "[])new " + t + "[]{127}; assert x[0] == 127;", //
-							"cannot cast " + t + "[] to " + t2 + "[]");
+							"inconvertible types; cannot cast '" + t + "[]' to '" + t2 + "[]'");
 					assertFailCompile(t + "[] x = (" + t + "[])new " + t2 + "[]{127}; assert x[0] == 127;", //
-							"cannot cast " + t2 + "[] to " + t + "[]");
+							"inconvertible types; cannot cast '" + t2 + "[]' to '" + t + "[]'");
 				}
 			}
 

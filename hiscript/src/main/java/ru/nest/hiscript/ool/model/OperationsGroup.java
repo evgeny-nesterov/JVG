@@ -1,8 +1,5 @@
 package ru.nest.hiscript.ool.model;
 
-import ru.nest.hiscript.ool.model.nodes.CodeContext;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,42 +94,17 @@ public class OperationsGroup {
 		StringBuilder buf = new StringBuilder();
 		if (postfix != null) {
 			for (HiOperation o : postfix) {
-				buf.append(o.getName());
-				buf.append(' ');
+				buf.append(o.getName()).append(' ');
 			}
 		}
-
 		if (operation != null) {
-			buf.append("[");
-			buf.append(operation.getName());
-			buf.append("] ");
+			buf.append("[").append(operation.getName()).append("] ");
 		}
-
 		if (prefix != null) {
 			for (HiOperation o : prefix) {
-				buf.append(o.getName());
-				buf.append(' ');
+				buf.append(o.getName()).append(' ');
 			}
 		}
 		return buf.toString().trim();
-	}
-
-	public void code(CodeContext os) throws IOException {
-		// TODO: write start operation group data block
-		operation.code(os);
-
-		os.writeByte(prefix != null ? prefix.size() : 0);
-		if (prefix != null) {
-			for (int i = 0; i < prefix.size(); i++) {
-				prefix.get(i).code(os);
-			}
-		}
-
-		os.writeByte(postfix != null ? postfix.size() : 0);
-		if (postfix != null) {
-			for (int i = 0; i < postfix.size(); i++) {
-				postfix.get(i).code(os);
-			}
-		}
 	}
 }

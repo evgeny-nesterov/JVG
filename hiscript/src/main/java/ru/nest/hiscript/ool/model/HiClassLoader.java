@@ -216,19 +216,6 @@ public class HiClassLoader {
 					valid = false;
 				}
 			}
-		} else if (clazz.interfaceTypes != null) {
-			for (Type it : clazz.interfaceTypes) {
-				HiClass i = getClass(it.fullName);
-				if (i == null) {
-					continue;
-				}
-				if (i != origClazz) {
-					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
-				} else {
-					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), null);
-					valid = false;
-				}
-			}
 		}
 		return valid;
 	}

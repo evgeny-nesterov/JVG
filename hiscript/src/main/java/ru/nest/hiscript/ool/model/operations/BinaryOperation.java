@@ -98,25 +98,10 @@ public abstract class BinaryOperation extends HiOperation {
 		v1.longNumber = value;
 	}
 
-//	public void errorInvalidOperator(RuntimeContext ctx, HiClass type1, HiClass type2) {
-//		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
-//		ctx.throwRuntimeException(text);
-//	}
-
 	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type1, HiClass type2) {
 		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
 		validationInfo.error(text, token);
 	}
-
-	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type) {
-		String text = "operator '" + name + "' can not be applied to " + type.getNameDescr();
-		validationInfo.error(text, token);
-	}
-
-//	public void errorUnexpectedType(RuntimeContext ctx) {
-//		String text = "unexpected type";
-//		ctx.throwRuntimeException(text);
-//	}
 
 	public void errorDivideByZero(RuntimeContext ctx) {
 		String text = "divide by zero";
@@ -137,4 +122,10 @@ public abstract class BinaryOperation extends HiOperation {
 		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
 		validationInfo.error(text, token);
 	}
+
+	public void errorInconvertible(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
+		String text = "inconvertible types; cannot cast '" + typeFrom.getNameDescr() + "' to '" + typeTo.getNameDescr() + "'";
+		validationInfo.error(text, token);
+	}
 }
+

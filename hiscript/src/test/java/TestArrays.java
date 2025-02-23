@@ -205,7 +205,7 @@ public class TestArrays extends HiTest {
 		assertFailCompile("byte[] x = {}; int[] y = x;", //
 				"incompatible types: byte[] cannot be converted to int[]");
 		assertFailCompile("byte[] x = {}; int[] y = (int[])x;", //
-				"cannot cast byte[] to int[]");
+				"inconvertible types; cannot cast 'byte[]' to 'int[]'");
 		assertSuccess("class A{} class B extends A{} B[] x = {new B()}; A[] y = x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
 		assertSuccess("class A{} class B extends A{} A[] x = new B[]{new B()}; B[] y = (B[])x; assert x == y; assert y.length == 1; assert y[0] instanceof B;");
 		assertSuccess("int[] x = {}; int[] y = (int[])x;");
@@ -277,6 +277,20 @@ public class TestArrays extends HiTest {
 				"cannot cast int to double[]");
 		assertFail("Object a = new int[0]; Double b = (Double)a;", //
 				"cannot cast int[] to Double");
+
+		assertSuccess("int[] x = {}; Object o = (Object)x;");
+		assertFailCompile("int[] x = {}; int[][] o = (int[][])x;", //
+				"inconvertible types; cannot cast 'int[]' to 'int[][]'");
+		assertFail("Object x = new int[]{}; int[][] o = (int[][])x;", //
+				"cannot cast int[] to int[][]");
+		assertFailCompile("int[][] x = {{}}; int[] o = (int[])x;", //
+				"inconvertible types; cannot cast 'int[][]' to 'int[]'");
+		assertFail("Object x = new int[][]{{}}; int[] o = (int[])x;", //
+				"cannot cast int[][] to int[]");
+		assertFail("Object x = new Object[]{}; int[] o = (int[])x;", //
+				"cannot cast Object[] to int[]");
+		assertFail("Object x = new int[]{}; Object[] o = (Object[])x;", //
+				"cannot cast int[] to Object[]");
 	}
 
 	@Test

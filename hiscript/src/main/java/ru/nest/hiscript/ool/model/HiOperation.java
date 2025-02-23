@@ -136,9 +136,4 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 	public boolean isStatement() {
 		return false;
 	}
-
-	public void code(CodeContext os) throws IOException {
-		// TODO: write start operation data block
-		os.writeByte(operation);
-	}
 }

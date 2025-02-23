@@ -42,8 +42,10 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			}
 		} else if (c1.isArray() && c2.isArray()) {
 			// c1 and c2 has to be in one hierarchy path
-			if (!canCastArray((HiClassArray) c1, c2) && !canCastArray((HiClassArray) c2, c1)) {
-				errorCast(validationInfo, node1.token, c2, c1);
+			HiClassArray ca1 = (HiClassArray) c1;
+			HiClassArray ca2 = (HiClassArray) c2;
+			if (!canCastArray(ca1, ca2) && !canCastArray(ca2, ca1)) {
+				errorInconvertible(validationInfo, node1.token, c2, c1);
 			}
 		} else {
 			// c1 and c2 has to be in one hierarchy path
@@ -242,12 +244,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1;
-		if (v1.node instanceof NodeType) {
-			c1 = ((NodeType) v1.node).getTypeClass();
-		} else {
-			c1 = v1.valueClass;
-		}
+		assert v1.node instanceof NodeType;
+		HiClass c1 = ((NodeType) v1.node).getTypeClass();
 		v1.valueClass = c1;
 
 		HiClass c2;
@@ -259,8 +257,10 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 
 		if (c1.isPrimitive()) {
 			castPrimitive(ctx, v1, v2);
+		} else if (c1 == HiClass.OBJECT_CLASS) {
+			v1.object = v2.object;
 		} else if (c1.isArray()) {
-			if (!canCastArray((HiClassArray) c1, c2)) {
+			if (!c2.isArray() || !canCastArray((HiClassArray) c1, (HiClassArray) c2)) {
 				errorCast(ctx, c2, c1);
 				return;
 			}
@@ -281,29 +281,20 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		v1.valueType = Value.VALUE;
 	}
 
-	public static boolean canCastArray(HiClassArray from, HiClass to) {
-		if (to == HiClass.OBJECT_CLASS) {
+	public static boolean canCastArray(HiClassArray from, HiClassArray to) {
+		if (from.dimension != to.dimension) {
+			return false;
+		}
+		if (from.cellClass.isPrimitive()) {
+			return from.cellClass == to.cellClass;
+		}
+		if (to.cellClass.isPrimitive()) {
+			return false;
+		}
+		if (from.cellClass.isInterface || to.cellClass.isInterface) {
 			return true;
 		}
-		if (!to.isArray()) {
-			return false;
-		}
-
-		HiClassArray at1 = from;
-		HiClassArray at2 = (HiClassArray) to;
-		if (at1.dimension != at2.dimension) {
-			return false;
-		}
-		if (at1.cellClass.isPrimitive()) {
-			return at1.cellClass == at2.cellClass;
-		}
-		if (at2.cellClass.isPrimitive()) {
-			return false;
-		}
-		if (at1.cellClass.isInterface || at2.cellClass.isInterface) {
-			return true;
-		}
-		return at2.cellClass.isInstanceof(at1.cellClass);
+		return to.cellClass.isInstanceof(from.cellClass);
 	}
 
 	private void castPrimitive(RuntimeContext ctx, Value v1, Value v2) {
@@ -313,11 +304,11 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			if (v2.object == null) {
 				ctx.throwRuntimeException("null pointer");
 				return;
-			} else if (v2.originalValueClass != null) {
-				c2 = v2.originalValueClass;
 			} else if (v2.object instanceof HiObject) {
-				// TODO remove?
 				c2 = ((HiObject) v2.object).clazz;
+			} else if (v2.originalValueClass != null) {
+				// for arrays
+				c2 = v2.originalValueClass;
 			}
 		}
 		if (c2.getAutoboxedPrimitiveClass() != null) {
