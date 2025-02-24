@@ -331,8 +331,6 @@ public abstract class HiNode implements HiNodeIF {
 			case TYPE_BREAK:
 				node = NodeBreak.decode(os);
 				break;
-			case TYPE_BYTE: // not used
-				break;
 			case TYPE_CHAR:
 				node = NodeChar.decode(os, token);
 				break;
@@ -377,6 +375,12 @@ public abstract class HiNode implements HiNodeIF {
 				break;
 			case TYPE_IF:
 				node = NodeIf.decode(os);
+				break;
+			case TYPE_BYTE:
+				node = NodeByte.decode(os);
+				break;
+			case TYPE_SHORT:
+				node = NodeShort.decode(os);
 				break;
 			case TYPE_INT:
 				node = NodeInt.decode(os);

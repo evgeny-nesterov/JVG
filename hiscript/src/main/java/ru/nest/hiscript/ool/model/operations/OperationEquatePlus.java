@@ -5,12 +5,12 @@ import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationEquatePlus extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquatePlus();
@@ -258,7 +258,7 @@ public class OperationEquatePlus extends BinaryOperation {
 			char[] chars = new char[chars1.length + chars2.length];
 			System.arraycopy(chars1, 0, chars, 0, chars1.length);
 			System.arraycopy(chars2, 0, chars, chars1.length, chars2.length);
-			NodeString.createString(ctx, chars);
+			NodeString.createString(ctx, chars, false);
 
 			if (v1.valueType == Value.VARIABLE) {
 				v1.variable.set(ctx, ctx.value);

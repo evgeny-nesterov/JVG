@@ -27,7 +27,7 @@ public class HiFieldInt extends HiFieldNumber<Integer> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.intNumber = this.value;
 	}
 

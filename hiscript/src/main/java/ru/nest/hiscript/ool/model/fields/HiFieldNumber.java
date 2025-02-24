@@ -1,6 +1,5 @@
 package ru.nest.hiscript.ool.model.fields;
 
-import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
@@ -12,17 +11,14 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 
 	@Override
 	public final void get(RuntimeContext ctx, Value value) {
-		HiClass valueClass = value.getOperationClass();
-		int valueType = valueClass.getPrimitiveType();
-
-		get(ctx, value, valueType);
+		getPrimitiveValue(ctx, value);
 
 		// after get
 		value.valueType = Value.VALUE;
 		value.valueClass = getClass(ctx);
 	}
 
-	public abstract void get(RuntimeContext ctx, Value value, int valueType);
+	public abstract void getPrimitiveValue(RuntimeContext ctx, Value value);
 
 	@Override
 	public final void set(RuntimeContext ctx, Value value) {

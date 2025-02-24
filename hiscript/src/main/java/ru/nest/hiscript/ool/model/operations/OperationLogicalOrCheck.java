@@ -3,10 +3,10 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationLogicalOrCheck extends UnaryOperation {
 	private static final HiOperation instance = new OperationLogicalOrCheck();
@@ -17,6 +17,11 @@ public class OperationLogicalOrCheck extends UnaryOperation {
 
 	private OperationLogicalOrCheck() {
 		super(LOGICAL_OR_CHECK);
+	}
+
+	@Override
+	public boolean isCollapseCompilation() {
+		return false;
 	}
 
 	@Override

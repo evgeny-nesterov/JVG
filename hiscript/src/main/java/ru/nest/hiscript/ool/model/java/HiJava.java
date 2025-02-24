@@ -43,7 +43,7 @@ public class HiJava {
 			ctx.setValue(javaObject);
 			return HiClassPrimitive.FLOAT.box(ctx, ctx.value);
 		} else if (javaObject instanceof String) {
-			return NodeString.createString(ctx, (String) javaObject);
+			return NodeString.createString(ctx, (String) javaObject, false);
 		} else if (javaObject instanceof Map) {
 			return convertMapFromJava(ctx, (Map) javaObject);
 		} else if (javaObject instanceof List) {

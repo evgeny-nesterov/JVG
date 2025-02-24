@@ -28,9 +28,9 @@ public final class Integer extends Number {
 		return value;
 	}
 
-	public String toString() {
-		return "" + value;
-	}
+	public native String toString();
+
+	public native static String toString(int value);
 
 	public boolean equals(Object o) {
 		return o instanceof Integer && ((Integer) o).value == value;

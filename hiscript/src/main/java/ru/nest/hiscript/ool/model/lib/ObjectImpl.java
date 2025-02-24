@@ -33,7 +33,7 @@ public class ObjectImpl extends ImplUtil {
 				text = "null";
 			}
 		}
-		NodeString.createString(ctx, text);
+		NodeString.createString(ctx, text, false);
 	}
 
 	public static void Object_Object_clone(RuntimeContext ctx) {

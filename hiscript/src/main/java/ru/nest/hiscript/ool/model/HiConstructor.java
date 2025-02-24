@@ -14,6 +14,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeVariable;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
@@ -327,7 +328,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 					if (HiClass.ENUM_CLASS_NAME.equals(clazz.superClass.fullName)) {
 						HiConstructor enumDefaultConstructor = clazz.superClass.getConstructor(ctx, HiClass.forName(ctx, HiClass.STRING_CLASS_NAME), HiClassPrimitive.getPrimitiveClass("int"));
 
-						HiFieldObject enumName = HiFieldObject.createStringField(ctx, "name", ctx.initializingEnumValue.getName());
+						HiFieldObject enumName = new HiFieldObject(ctx.getEnv().stringType, "name", NodeString.createString(ctx, ctx.initializingEnumValue.getName(), true));
 						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());
 						superObject = enumDefaultConstructor.newInstance(ctx, type, new HiField<?>[] {enumName, enumOrdinal}, null);
 						if (ctx.exitFromBlock()) {

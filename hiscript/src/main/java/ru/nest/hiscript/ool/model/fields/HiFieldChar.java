@@ -30,7 +30,7 @@ public class HiFieldChar extends HiFieldNumber<Character> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.character = this.value;
 	}
 

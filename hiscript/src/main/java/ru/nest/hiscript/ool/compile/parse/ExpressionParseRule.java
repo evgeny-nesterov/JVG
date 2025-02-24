@@ -227,7 +227,7 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 
 							boolean isCast = false;
 							Token currentToken = tokenizer.currentToken();
-							if (currentToken instanceof WordToken || currentToken instanceof StringToken) {
+							if (currentToken instanceof WordToken || currentToken instanceof StringToken || currentToken instanceof NumberToken) {
 								isCast = true;
 							} else if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 								isCast = true;

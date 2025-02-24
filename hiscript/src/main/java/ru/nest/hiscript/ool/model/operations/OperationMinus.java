@@ -3,11 +3,11 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationMinus extends BinaryOperation {
 	private static final HiOperation instance = new OperationMinus();
@@ -194,6 +194,7 @@ public class OperationMinus extends BinaryOperation {
 								node1.doubleValue = node1.doubleValue - node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case DOUBLE:
+								node1.doubleValue = node1.doubleValue - node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 				}

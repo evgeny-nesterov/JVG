@@ -198,7 +198,7 @@ public class NodeValueType implements PrimitiveTypes {
 			if (node instanceof NodeInt) {
 				intValue = ((NodeInt) node).getValue();
 			} else if (node instanceof NodeString) {
-				stringValue = ((NodeString) node).text;
+				stringValue = ((NodeString) node).getText();
 			} else if (node instanceof NodeBoolean) {
 				booleanValue = ((NodeBoolean) node).getValue();
 			} else if (node instanceof NodeLong) {

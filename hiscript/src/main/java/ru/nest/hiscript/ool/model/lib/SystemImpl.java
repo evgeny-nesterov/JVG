@@ -117,7 +117,7 @@ public class SystemImpl extends ImplUtil {
 	public static void System_String_formatDate_long_String(RuntimeContext ctx, long time, HiObject formatPatternObj) {
 		String formatPattern = ImplUtil.getString(ctx, formatPatternObj);
 		SimpleDateFormat format = new SimpleDateFormat(formatPattern);
-		NodeString.createString(ctx, format.format(new Date(time)));
+		NodeString.createString(ctx, format.format(new Date(time)), false);
 	}
 
 	public static void System_V_exec_String_boolean_boolean(RuntimeContext ctx, HiObject code, final boolean newInstance, boolean separateThread) {

@@ -21,7 +21,7 @@ public class HiFieldFloat extends HiFieldNumber<Float> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.floatNumber = this.value;
 	}
 

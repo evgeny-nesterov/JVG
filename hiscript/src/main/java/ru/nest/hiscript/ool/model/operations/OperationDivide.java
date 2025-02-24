@@ -3,11 +3,11 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationDivide extends BinaryOperation {
 	private static final HiOperation instance = new OperationDivide();
@@ -68,7 +68,15 @@ public class OperationDivide extends BinaryOperation {
 				}
 			}
 
-			if (node1.isCompileValue() && node2.isCompileValue() && !divisionByZero) {
+			if (node1.isCompileValue() && node2.isCompileValue()) {
+				if (divisionByZero && !(t1 == FLOAT || t1 == DOUBLE || t2 == FLOAT || t2 == DOUBLE)) {
+					// do not compute value during compilation
+					node1.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+					node2.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+				}
+			}
+
+			if (node1.isCompileValue() && node2.isCompileValue()) {
 				switch (t1) {
 					case CHAR:
 						switch (t2) {

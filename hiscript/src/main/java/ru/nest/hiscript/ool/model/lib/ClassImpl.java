@@ -9,12 +9,12 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 public class ClassImpl extends ImplUtil {
 	public static void Class_String_getName(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeString.createString(ctx, clazz.name);
+		NodeString.createString(ctx, clazz.name, true);
 	}
 
 	public static void Class_String_getFullName(RuntimeContext ctx) {
 		HiClass clazz = (HiClass) ((HiObject) ctx.value.object).userObject;
-		NodeString.createString(ctx, clazz.fullName);
+		NodeString.createString(ctx, clazz.fullName, true);
 	}
 
 	public static void Class_Class_forName_String(RuntimeContext ctx, HiObject string) {

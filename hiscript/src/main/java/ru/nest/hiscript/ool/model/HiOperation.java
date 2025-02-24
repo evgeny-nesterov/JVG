@@ -1,7 +1,6 @@
 package ru.nest.hiscript.ool.model;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
@@ -9,8 +8,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
-
-import java.io.IOException;
 
 public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 	protected HiOperation(int operandsCount, int operation) {
@@ -54,6 +51,10 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 
 	public int getIncrement() {
 		return increment;
+	}
+
+	public boolean isCollapseCompilation() {
+		return true;
 	}
 
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {

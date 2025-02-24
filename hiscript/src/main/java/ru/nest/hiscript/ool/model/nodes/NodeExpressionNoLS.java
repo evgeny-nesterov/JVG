@@ -1,12 +1,14 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationsIF;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
@@ -180,7 +182,58 @@ public class NodeExpressionNoLS extends NodeExpression {
 				valuePos++;
 			} else {
 				// do operation and write result to first node
-				bufSize = operations[i].getOperationResultType(validationInfo, ctx, bufSize, nodes);
+				HiOperation operation = operations[i];
+				int messagesCount = validationInfo.messages.size();
+				bufSize = operation.getOperationResultType(validationInfo, ctx, bufSize, nodes);
+				if (operation.isCollapseCompilation() && nodes[bufSize - 1].isCompileValue() && validationInfo.messages.size() == messagesCount) {
+					// collapse compiled value
+					NodeValueType nodeType = nodes[bufSize - 1];
+					HiNodeIF node = nodeType.node;
+					if (nodeType.valueClass == HiClassPrimitive.BYTE) {
+						node = new NodeByte(nodeType.byteValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.SHORT) {
+						node = new NodeShort(nodeType.shortValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.INT) {
+						node = new NodeInt(nodeType.intValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.LONG) {
+						node = new NodeLong(nodeType.longValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.FLOAT) {
+						node = new NodeFloat(nodeType.floatValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.DOUBLE) {
+						node = new NodeDouble(nodeType.doubleValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.CHAR) {
+						node = new NodeChar(nodeType.charValue, node.getToken());
+					} else if (nodeType.valueClass == HiClassPrimitive.BOOLEAN) {
+						node = NodeBoolean.getInstance(nodeType.booleanValue, node.getToken());
+					} else if (nodeType.valueClass == HiClass.STRING_CLASS) {
+						node = new NodeString(nodeType.stringValue, node.getToken());
+					}
+					operands[valuePos - operation.getOperandsCount()] = node;
+
+					if (operation.getOperandsCount() > 1) {
+						HiNodeIF[] collapsedOperands = new HiNodeIF[operands.length - operation.getOperandsCount() + 1];
+						int operandPos = 0;
+						for (int j = 0; j < operands.length; j++) {
+							if (j != valuePos - 1) {
+								collapsedOperands[operandPos++] = operands[j];
+							}
+						}
+						operands = collapsedOperands;
+					}
+
+					HiOperation[] collapsedOperations = new HiOperation[operations.length - operation.getOperandsCount()];
+					int operationPos = 0;
+					for (int j = 0; j < operations.length; j++) {
+						if (j != i && j != valuePos - 1) {
+							collapsedOperations[operationPos++] = operations[j];
+						}
+					}
+					operations = collapsedOperations;
+
+					i -= operation.getOperandsCount();
+					valuePos--;
+					continue;
+				}
 				nodes[bufSize - 1].node = null;
 			}
 		}

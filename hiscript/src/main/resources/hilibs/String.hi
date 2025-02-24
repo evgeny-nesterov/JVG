@@ -71,6 +71,8 @@ public final class String {
 
 	public native int hashCode();
 
+	public native String intern();
+
 	public String toString() {
 	    return this;
 	}

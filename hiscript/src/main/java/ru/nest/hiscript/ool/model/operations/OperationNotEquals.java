@@ -3,11 +3,11 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationNotEquals extends BinaryOperation {
 	private static final HiOperation instance = new OperationNotEquals();
@@ -33,10 +33,203 @@ public class OperationNotEquals extends BinaryOperation {
 		}
 		if (c1.isPrimitive() && c2.isPrimitive()) {
 			if (c1.isNumber() == c2.isNumber()) {
-				return HiClassPrimitive.BOOLEAN;
+				if (node1.isCompileValue() && node2.isCompileValue()) {
+					int t1 = c1.getPrimitiveType();
+					int t2 = c2.getPrimitiveType();
+					switch (t1) {
+						case BOOLEAN:
+							node1.booleanValue = node1.booleanValue != node2.booleanValue;
+							break;
+						case CHAR:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.charValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.charValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.charValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.charValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.charValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.charValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.charValue != node2.doubleValue;
+									break;
+							}
+						case BYTE:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.byteValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.byteValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.byteValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.byteValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.byteValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.byteValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.byteValue != node2.doubleValue;
+									break;
+							}
+						case SHORT:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.shortValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.shortValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.shortValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.shortValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.shortValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.shortValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.shortValue != node2.doubleValue;
+									break;
+							}
+						case INT:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.intValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.intValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.intValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.intValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.intValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.intValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.intValue != node2.doubleValue;
+									break;
+							}
+						case LONG:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.longValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.longValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.longValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.longValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.longValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.longValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.longValue != node2.doubleValue;
+									break;
+							}
+						case FLOAT:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.floatValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.floatValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.floatValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.floatValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.floatValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.floatValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.floatValue != node2.doubleValue;
+									break;
+							}
+						case DOUBLE:
+							switch (t2) {
+								case CHAR:
+									node1.booleanValue = node1.doubleValue != node2.charValue;
+									break;
+								case BYTE:
+									node1.booleanValue = node1.doubleValue != node2.byteValue;
+									break;
+								case SHORT:
+									node1.booleanValue = node1.doubleValue != node2.shortValue;
+									break;
+								case INT:
+									node1.booleanValue = node1.doubleValue != node2.intValue;
+									break;
+								case LONG:
+									node1.booleanValue = node1.doubleValue != node2.longValue;
+									break;
+								case FLOAT:
+									node1.booleanValue = node1.doubleValue != node2.floatValue;
+									break;
+								case DOUBLE:
+									node1.booleanValue = node1.doubleValue != node2.doubleValue;
+									break;
+							}
+					}
+					return node1.valueClass = HiClassPrimitive.BOOLEAN;
+				} else {
+					return HiClassPrimitive.BOOLEAN;
+				}
 			}
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
-			return HiClassPrimitive.BOOLEAN;
+			if (node1.isCompileValue() && node2.isCompileValue()) {
+				if (c1 == HiClass.STRING_CLASS || c2 == HiClass.STRING_CLASS) {
+					if (c1 == HiClass.STRING_CLASS && c2 == HiClass.STRING_CLASS) {
+						node1.booleanValue = !node1.stringValue.equals(node2.stringValue);
+					} else {
+						node1.booleanValue = true;
+					}
+					return HiClassPrimitive.BOOLEAN;
+				} else if (c1.isNull() || c2.isNull()) {
+					node1.booleanValue = c1.isNull() != c2.isNull();
+					return HiClassPrimitive.BOOLEAN;
+				}
+			} else {
+				return HiClassPrimitive.BOOLEAN;
+			}
 		}
 		if (node1.valid && node2.valid) {
 			errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);

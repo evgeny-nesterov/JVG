@@ -1,7 +1,9 @@
 package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.JavaString;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 
@@ -130,5 +132,11 @@ public class StringImpl extends ImplUtil {
 
 	public static void String_int_hashCode(RuntimeContext ctx) {
 		returnInt(ctx, getString(ctx).hashCode());
+	}
+
+	public static void String_String_intern(RuntimeContext ctx) {
+		JavaString string = getJavaString(ctx);
+		HiObject internString = NodeString.createString(ctx, string, true);
+		returnObject(ctx, HiClass.STRING_CLASS, internString);
 	}
 }

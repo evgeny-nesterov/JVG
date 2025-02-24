@@ -10,23 +10,33 @@ import ru.nest.hiscript.ool.model.fields.HiFieldArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
 public class NodeString extends HiNode {
-	public NodeString(String text) {
+	public NodeString(String text, Token token) {
 		super("string", TYPE_STRING, false);
-		this.text = text;
-		this.chars = new JavaString(text);
+		setText(text);
+		setToken(token);
 	}
 
-	public final String text;
+	private String text;
 
-	private final JavaString chars;
+	private JavaString chars;
 
 	private static HiClass clazz;
 
 	private static HiConstructor constructor;
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+		this.chars = new JavaString(text);
+	}
 
 	@Override
 	public boolean isConstant(CompileClassContext ctx) {
@@ -56,33 +66,36 @@ public class NodeString extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		createString(ctx, chars);
+		createString(ctx, chars, true);
 	}
 
-	public static HiObject createString(RuntimeContext ctx, String text) {
-		return createString(ctx, new JavaString(text));
+	public static HiObject createString(RuntimeContext ctx, String text, boolean intern) {
+		return createString(ctx, new JavaString(text), intern);
 	}
 
-	public static HiObject createString(RuntimeContext ctx, char[] chars) {
-		return createString(ctx, new JavaString(chars));
+	public static HiObject createString(RuntimeContext ctx, char[] chars, boolean intern) {
+		return createString(ctx, new JavaString(chars), intern);
 	}
 
-	public static HiObject createString(RuntimeContext ctx, JavaString text) {
+	public static HiObject createString(RuntimeContext ctx, JavaString text, boolean intern) {
 		if (clazz == null) {
 			clazz = HiClass.forName(ctx, HiClass.STRING_CLASS_NAME);
 			constructor = clazz.getConstructor(ctx);
 		}
 
-		HiObject object = ctx.strings.get(text);
-		if (object == null) {
-			object = constructor.newInstance(ctx, null, null, null);
-			HiFieldArray chars = (HiFieldArray) object.getField(ctx, "chars");
+		HiObject object = ctx.getEnv().strings.get(text);
+		if (object == null || !intern) {
+			HiObject newObject = constructor.newInstance(ctx, null, null, null);
+			HiFieldArray chars = (HiFieldArray) newObject.getField(ctx, "chars");
 			chars.array = text.getChars();
-			ctx.strings.put(text, object);
+			if (object == null) {
+				ctx.getEnv().strings.put(text, newObject);
+			}
+			return newObject;
 		} else {
 			ctx.value.setObjectValue(clazz, object);
+			return object;
 		}
-		return object;
 	}
 
 	@Override
@@ -92,6 +105,6 @@ public class NodeString extends HiNode {
 	}
 
 	public static NodeString decode(DecodeContext os) throws IOException {
-		return new NodeString(os.readUTF());
+		return new NodeString(os.readUTF(), null);
 	}
 }

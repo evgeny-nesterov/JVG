@@ -13,6 +13,9 @@ public class ArgumentsSignature implements Cloneable {
 	}
 
 	public void set(HiClass[] argsClasses, boolean isVarargs) {
+		if (argsClasses == null) {
+			argsClasses = new HiClass[0];
+		}
 		this.argsClasses = argsClasses;
 		this.isVarargs = isVarargs;
 		argsCount = argsClasses != null ? argsClasses.length : 0;

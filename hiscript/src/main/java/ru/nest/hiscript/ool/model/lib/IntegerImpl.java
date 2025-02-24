@@ -15,4 +15,8 @@ public class IntegerImpl extends ImplUtil {
 		int value = ((HiFieldInt) ((HiObject) ctx.value.object).getField(ctx, "value")).get();
 		returnString(ctx, Integer.toString(value));
 	}
+
+	public static void Integer_String_toString_int(RuntimeContext ctx, int value) {
+		returnString(ctx, Integer.toString(value));
+	}
 }

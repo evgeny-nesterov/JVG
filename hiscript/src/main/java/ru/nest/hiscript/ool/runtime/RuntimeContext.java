@@ -9,7 +9,6 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.JavaString;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
@@ -25,9 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -93,8 +91,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public HiObject currentThread;
 
 	public boolean validating;
-
-	public Map<JavaString, HiObject> strings = new ConcurrentHashMap<>();
 
 	public RuntimeContext(HiCompiler compiler, boolean main) {
 		this.main = main;
@@ -202,7 +198,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 		HiField<?>[] args = new HiField<?>[1];
 		args[0] = HiField.getField(HiClass.forName(this, HiClass.STRING_CLASS_NAME), "msg", null);
-		NodeString.createString(this, message);
+		NodeString.createString(this, message, false);
 		args[0].set(this, value);
 		args[0].initialized = true;
 
@@ -856,14 +852,14 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 			array[i] = steConstructor.newInstance(this, null, null, null);
 
-			NodeString.createString(this, level.clazz.getNameDescr());
+			NodeString.createString(this, level.clazz.getNameDescr(), true);
 			array[i].getField(this, "className").set(this, value);
 
 			if (level.method != null) {
-				NodeString.createString(this, level.method.toString()); // TODO use getSignatureText
+				NodeString.createString(this, level.method.toString(), true); // TODO use getSignatureText
 				array[i].getField(this, "methodName").set(this, value);
 			} else {
-				NodeString.createString(this, "<init>");
+				NodeString.createString(this, "<init>", true);
 				array[i].getField(this, "methodName").set(this, value);
 			}
 

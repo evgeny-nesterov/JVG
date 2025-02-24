@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.runtime;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
+import ru.nest.hiscript.ool.model.JavaString;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.java.HiConstructorJava;
@@ -18,6 +19,8 @@ public class HiRuntimeEnvironment {
 	public final Map<HiClassArray, Class> javaClassesMap = new ConcurrentHashMap<>();
 
 	public final Map<Integer, HiConstructorJava> javaConstructorsMap = new ConcurrentHashMap<>();
+
+	public Map<JavaString, HiObject> strings = new ConcurrentHashMap<>();
 
 	public HiRuntimeEnvironment() {
 		rootClassLoader = HiClassLoader.createRoot(this);
@@ -65,4 +68,5 @@ public class HiRuntimeEnvironment {
 	public void clear() {
 		userClassLoader.clear();
 	}
+
 }

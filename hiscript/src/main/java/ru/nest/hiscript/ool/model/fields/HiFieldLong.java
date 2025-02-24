@@ -21,7 +21,7 @@ public class HiFieldLong extends HiFieldNumber<Long> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.longNumber = this.value;
 	}
 

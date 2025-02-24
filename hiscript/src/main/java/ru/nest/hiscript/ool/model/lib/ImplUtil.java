@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
+import ru.nest.hiscript.ool.model.JavaString;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -21,6 +22,15 @@ public class ImplUtil {
 
 	public static String getString(RuntimeContext ctx) {
 		return getString(ctx, (HiObject) ctx.value.object);
+	}
+
+	public static JavaString getJavaString(RuntimeContext ctx, HiObject string) {
+		char[] chars = getChars(ctx, string);
+		return chars != null ? new JavaString(chars) : null;
+	}
+
+	public static JavaString getJavaString(RuntimeContext ctx) {
+		return getJavaString(ctx, (HiObject) ctx.value.object);
 	}
 
 	public static char[] getChars(RuntimeContext ctx, HiObject string) {
@@ -76,7 +86,11 @@ public class ImplUtil {
 	}
 
 	protected static void returnString(RuntimeContext ctx, String value) {
-		ctx.value.setObjectValue(HiClass.STRING_CLASS, NodeString.createString(ctx, value));
+		if (value != null) {
+			ctx.value.setObjectValue(HiClass.STRING_CLASS, NodeString.createString(ctx, value, false));
+		} else {
+			ctx.value.setObjectValue(HiClass.STRING_CLASS, null);
+		}
 	}
 
 	protected static void returnObject(RuntimeContext ctx, HiClass clazz, HiObject value) {

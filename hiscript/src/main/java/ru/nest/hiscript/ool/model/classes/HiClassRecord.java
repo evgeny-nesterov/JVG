@@ -20,8 +20,8 @@ import java.util.List;
 public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
 
-	public HiClassRecord(HiClassLoader classLoader, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
-		super(classLoader, Type.recordType, null, null, name, generics, type, classResolver);
+	public HiClassRecord(HiClassLoader classLoader, String name, Type[] interfaces, NodeGenerics generics, int type, ClassResolver classResolver) {
+		super(classLoader, Type.recordType, null, interfaces, name, generics, type, classResolver);
 	}
 
 	// for decode
@@ -47,6 +47,11 @@ public class HiClassRecord extends HiClass {
 
 	@Override
 	public boolean isRecord() {
+		return true;
+	}
+
+	@Override
+	public boolean isFinal() {
 		return true;
 	}
 

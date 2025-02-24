@@ -59,6 +59,11 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				int t1 = c1.getPrimitiveType();
 				int t2 = c2.getPrimitiveType();
 				switch (t1) {
+					case BOOLEAN:
+						if (t2 == BOOLEAN) {
+							node1.booleanValue = node2.booleanValue;
+						}
+						break;
 					case BYTE:
 						switch (t2) {
 							case BYTE:

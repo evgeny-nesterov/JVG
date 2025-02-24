@@ -30,7 +30,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.byteNumber = this.value;
 	}
 

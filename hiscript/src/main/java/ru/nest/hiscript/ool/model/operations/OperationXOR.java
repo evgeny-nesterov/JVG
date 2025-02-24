@@ -3,11 +3,11 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationXOR extends BinaryOperation {
 	private static final HiOperation instance = new OperationXOR();
@@ -33,6 +33,10 @@ public class OperationXOR extends BinaryOperation {
 		int t2 = c2.getPrimitiveType();
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {
 			if (t1 == BOOLEAN && t2 == BOOLEAN) {
+				if (node1.isCompileValue() && node2.isCompileValue()) {
+					node1.booleanValue = node1.booleanValue ^ node2.booleanValue;
+					return node1.valueClass = TYPE_BOOLEAN;
+				}
 				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (node1.isCompileValue() && node2.isCompileValue()) {

@@ -53,7 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class ParserUtil {
@@ -80,6 +80,19 @@ public class ParserUtil {
 			}
 		}
 		return null;
+	}
+
+	protected static boolean checkWord(int type, Tokenizer tokenizer) throws TokenizerException {
+		skipComments(tokenizer);
+
+		Token currentToken = tokenizer.currentToken();
+		if (currentToken instanceof WordToken) {
+			WordToken wordToken = (WordToken) currentToken;
+			if (wordToken.getType() == type) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException {
@@ -323,7 +336,7 @@ public class ParserUtil {
 		if (currentToken instanceof StringToken) {
 			StringToken token = (StringToken) currentToken;
 			tokenizer.nextToken();
-			return new NodeString(token.getString());
+			return new NodeString(token.getString(), token);
 		}
 		return null;
 	}

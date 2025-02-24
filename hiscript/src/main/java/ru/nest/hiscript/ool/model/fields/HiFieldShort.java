@@ -30,7 +30,7 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 	}
 
 	@Override
-	public void get(RuntimeContext ctx, Value value, int valueType) {
+	public void getPrimitiveValue(RuntimeContext ctx, Value value) {
 		value.shortNumber = this.value;
 	}
 

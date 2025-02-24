@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
@@ -107,9 +106,5 @@ public class HiFieldObject extends HiField<Object> {
 	public void set(Object object, HiClass valueClass) {
 		super.set(valueClass, valueClass);
 		this.object = object;
-	}
-
-	public static HiFieldObject createStringField(RuntimeContext ctx, String name, String value) {
-		return new HiFieldObject(ctx.getEnv().stringType, name, NodeString.createString(ctx, value));
 	}
 }

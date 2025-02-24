@@ -77,6 +77,15 @@ public class RecordParseRule extends ParserUtil {
 			}
 			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
+			// parse 'extends'
+			if (checkWord(EXTENDS, tokenizer)) {
+				tokenizer.error("no extends clause allowed for record", tokenizer.currentToken());
+				ClassParseRule.visitExtends(tokenizer, ctx);
+			}
+
+			// parse 'implements'
+			Type[] interfaces = ClassParseRule.visitImplements(tokenizer, ctx);
+
 			boolean hasContent = false;
 			if (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
 				tokenizer.nextToken();
@@ -85,7 +94,7 @@ public class RecordParseRule extends ParserUtil {
 				hasContent = true;
 			}
 
-			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, generics, ctx.classType, ctx);
+			HiClassRecord record = new HiClassRecord(ctx.getClassLoader(), recordName, interfaces, generics, ctx.classType, ctx);
 			record.annotations = annotatedModifiers.getAnnotations();
 			record.defaultConstructor = new HiConstructor(record, null, null, Modifiers.PUBLIC, null, arguments, null, null, null, HiConstructor.BodyConstructorType.NONE);
 			NodeBlock defaultConstructorBody = new NodeBlock();

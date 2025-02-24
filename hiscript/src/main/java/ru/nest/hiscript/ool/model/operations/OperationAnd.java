@@ -33,6 +33,10 @@ public class OperationAnd extends BinaryOperation {
 		int t2 = c2.getPrimitiveType();
 		if (t1 == BOOLEAN || t2 == BOOLEAN) {
 			if (t1 == BOOLEAN && t2 == BOOLEAN) {
+				if (node1.isCompileValue() && node2.isCompileValue()) {
+					node1.booleanValue = node1.booleanValue & node2.booleanValue;
+					return node1.valueClass = TYPE_BOOLEAN;
+				}
 				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (node1.isCompileValue() && node2.isCompileValue()) {

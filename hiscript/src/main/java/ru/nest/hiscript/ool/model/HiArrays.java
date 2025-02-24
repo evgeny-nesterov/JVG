@@ -130,7 +130,7 @@ public class HiArrays implements PrimitiveTypes {
 				v.object = value;
 				v.set(value);
 			} else if (value instanceof String) {
-				v.object = NodeString.createString(v.ctx, (String) value);
+				v.object = NodeString.createString(v.ctx, (String) value, false);
 			} else {
 				throw new HiIllegalArgumentException("array cell: " + value, null);
 			}

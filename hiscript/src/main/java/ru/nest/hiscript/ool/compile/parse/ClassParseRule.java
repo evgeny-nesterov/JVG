@@ -66,69 +66,22 @@ public class ClassParseRule extends ParserUtil {
 			}
 
 			// parse 'extends'
-			List<Type> superClassesList = null;
-			if (visitWord(EXTENDS, tokenizer) != null) {
-				Type superClassType = visitType(tokenizer, false, ctx.getEnv());
-				if (superClassType != null) {
-					superClassesList = new ArrayList<>(1);
-					superClassesList.add(superClassType);
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						superClassType = visitType(tokenizer, false, ctx.getEnv());
-						if (superClassType != null) {
-							superClassesList.add(superClassType);
-						} else {
-							tokenizer.error("illegal start of type");
-						}
-					}
-				} else {
-					tokenizer.error("illegal start of type");
-				}
-			}
+			Type[] superClasses = visitExtends(tokenizer, ctx);
 
 			// parse 'implements'
-			List<Type> interfacesList = null;
-			if (visitWord(IMPLEMENTS, tokenizer) != null) {
-				Type interfaceType = visitType(tokenizer, false, ctx.getEnv());
-				if (interfaceType != null) {
-					interfacesList = new ArrayList<>(1);
-					interfacesList.add(interfaceType);
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-						interfaceType = visitType(tokenizer, false, ctx.getEnv());
-						if (interfaceType != null) {
-							interfacesList.add(interfaceType);
-						} else {
-							tokenizer.error("illegal start of type");
-						}
-					}
-				} else {
-					tokenizer.error("illegal start of type");
-				}
-			}
+			Type[] interfaces = visitImplements(tokenizer, ctx);
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
 			if (isInterface) {
-				Type[] interfaces = null;
-				if (superClassesList != null) {
-					interfaces = new Type[superClassesList.size()];
-					superClassesList.toArray(interfaces);
-				}
-
-				if (interfacesList != null) {
+				if (interfaces != null) {
 					tokenizer.error("interface cannot implements another interfaces");
 				}
-
-				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, superClasses, className, generics, ctx.classType, ctx);
 			} else {
-				Type superClassType = superClassesList != null ? superClassesList.get(0) : null;
-				if (superClassesList != null && superClassesList.size() > 1) {
+				Type superClassType = superClasses != null ? superClasses[0] : null;
+				if (superClasses != null && superClasses.length > 1) {
 					tokenizer.error("cannot extends multiple classes");
-				}
-
-				Type[] interfaces = null;
-				if (interfacesList != null) {
-					interfaces = new Type[interfacesList.size()];
-					interfacesList.toArray(interfaces);
 				}
 
 				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
@@ -145,6 +98,62 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		tokenizer.rollback();
+		return null;
+	}
+
+	public static Type[] visitExtends(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		if (visitWord(EXTENDS, tokenizer) != null) {
+			Type superClassType = visitType(tokenizer, false, ctx.getEnv());
+			if (superClassType != null) {
+				List<Type> superClassesList = new ArrayList<>(1);
+				superClassesList.add(superClassType);
+				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					superClassType = visitType(tokenizer, false, ctx.getEnv());
+					if (superClassType != null) {
+						superClassesList.add(superClassType);
+					} else {
+						tokenizer.error("illegal start of type");
+					}
+				}
+
+				Type[] superClasses = null;
+				if (superClassesList != null) {
+					superClasses = new Type[superClassesList.size()];
+					superClassesList.toArray(superClasses);
+				}
+				return superClasses;
+			} else {
+				tokenizer.error("illegal start of type");
+			}
+		}
+		return null;
+	}
+
+	public static Type[] visitImplements(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
+		if (visitWord(IMPLEMENTS, tokenizer) != null) {
+			Type interfaceType = visitType(tokenizer, false, ctx.getEnv());
+			if (interfaceType != null) {
+				List<Type> interfacesList = new ArrayList<>(1);
+				interfacesList.add(interfaceType);
+				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					interfaceType = visitType(tokenizer, false, ctx.getEnv());
+					if (interfaceType != null) {
+						interfacesList.add(interfaceType);
+					} else {
+						tokenizer.error("illegal start of type");
+					}
+				}
+
+				Type[] interfaces = null;
+				if (interfacesList != null) {
+					interfaces = new Type[interfacesList.size()];
+					interfacesList.toArray(interfaces);
+				}
+				return interfaces;
+			} else {
+				tokenizer.error("illegal start of type");
+			}
+		}
 		return null;
 	}
 
