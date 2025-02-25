@@ -34,7 +34,7 @@ public class ClassFileParseRule extends ParseRule<HiNode> {
 
 		List<HiClass> classes = new ArrayList<>();
 		while (true) {
-			ClassParseRule.getInstance().skipComments(tokenizer);
+			ClassParseRule.skipComments(tokenizer);
 
 			HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, getContext(compiler));
 			if (clazz != null) {

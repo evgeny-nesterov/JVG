@@ -46,8 +46,9 @@ public class NodeTry extends HiNode {
 					return false;
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

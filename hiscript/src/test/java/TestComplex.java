@@ -197,5 +197,8 @@ public class TestComplex extends HiTest {
 		assertSuccess("switch(\"a\") {case false: break; case true: return;} assert false;");
 		assertFail("class A{public boolean equals(Object o){throw new RuntimeException(\"exception in equals\");}} switch(new A()) {case new A(): assert false;} assert false;",
 				"exception in equals");
+
+		// try
+		assertSuccess("class A{int get(){try{return 1;} finally{}}} assert new A().get() == 1;");
 	}
 }
