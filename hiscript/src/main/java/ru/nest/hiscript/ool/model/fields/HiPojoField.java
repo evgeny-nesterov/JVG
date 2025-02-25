@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -59,9 +60,7 @@ public class HiPojoField extends HiField<Object> {
 		ctx.enterMethod(getMethod, object);
 		try {
 			getMethod.invoke(ctx, object.clazz, object, null);
-
-			// @generic
-			if (ctx.value.valueClass.isGeneric()) {
+			if (fieldClass != HiClassVar.VAR) {
 				ctx.value.valueClass = fieldClass;
 			}
 		} finally {

@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.fields;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.Type;
@@ -28,6 +29,14 @@ public class HiFieldObject extends HiField<Object> {
 	}
 
 	private Object object; // HiObject or array (if object class is Object, then use valueClass to define array value type)
+
+	@Override
+	public HiClass getValueClass(ClassResolver classResolver) {
+		if (object instanceof HiObject) {
+			return ((HiObject) object).clazz;
+		}
+		return super.getValueClass(classResolver);
+	}
 
 	@Override
 	protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {

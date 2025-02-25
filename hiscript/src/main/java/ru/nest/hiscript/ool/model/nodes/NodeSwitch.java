@@ -282,6 +282,7 @@ public class NodeSwitch extends HiNode {
 		if (switchValueClass.isPrimitive()) {
 			int value = ctx.value.getInt();
 			if (ctx.exitFromBlock()) {
+				// TODO delete?
 				return -2;
 			}
 			for (int i = 0; i < size; i++) {
@@ -400,6 +401,7 @@ public class NodeSwitch extends HiNode {
 							}
 						} else if (ctx.value.valueClass.isObject()) {
 							if (object == null) {
+								// TODO delete?
 								if (ctx.value.object == null) {
 									return i;
 								}

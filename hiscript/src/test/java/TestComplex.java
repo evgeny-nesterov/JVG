@@ -110,8 +110,8 @@ public class TestComplex extends HiTest {
 
 		// compile value
 		assertSuccess("""
-				 				int a = 1;
-				 				int b = 2;
+					int a = 1;
+					int b = 2;
 					int c = 1 + 2 * switch(1 + 2 * 1) {
 					    case 1 ->                   2;
 					    case 2, 3 ->                2 * 2 - 1; // matched
@@ -189,5 +189,13 @@ public class TestComplex extends HiTest {
 		// class and field priority
 		assertFailCompile("class A{class B{static int C = 2;} int B = 1;} int C = A.B.C;", // field B has more priority than class B in the same level
 				"non-static field 'B' cannot be accessed from static context");
+
+		// switch
+		assertFail("switch(\"a\"){case \"\" + 1/0: break;}", //
+				"divide by zero");
+		assertSuccess("record R(Number a); switch(new R(1.1f)){case R(Byte a): break; case R(Float a): assert a == 1.1f; return;} assert false;");
+		assertSuccess("switch(\"a\") {case false: break; case true: return;} assert false;");
+		assertFail("class A{public boolean equals(Object o){throw new RuntimeException(\"exception in equals\");}} switch(new A()) {case new A(): assert false;} assert false;",
+				"exception in equals");
 	}
 }
