@@ -3,8 +3,11 @@ public final class Double extends Number {
 		System.loadLib("DoubleImpl.class");
 	}
 
-    public static final double MAX_VALUE = 1.7976931348623157e+308;
-    public static final double MIN_VALUE = 4.9e-324;
+	public static final double MAX_VALUE = 1.7976931348623157e+308;
+	public static final double MIN_VALUE = 4.9e-324;
+	public static final double NaN = 0.0d / 0.0;
+	public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
+	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
 
 	private double value;
 
@@ -35,4 +38,20 @@ public final class Double extends Number {
 	}
 
 	public native int hashCode();
+
+	public boolean isNaN() {
+		return isNaN(value);
+	}
+
+	public static boolean isNaN(double v) {
+		return v != v;
+	}
+
+	public boolean isInfinite() {
+		return isInfinite(value);
+	}
+
+	public static boolean isInfinite(double v) {
+		return v == POSITIVE_INFINITY || v == NEGATIVE_INFINITY;
+	}
 }

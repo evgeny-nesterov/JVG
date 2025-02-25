@@ -20,11 +20,6 @@ public class OperationLogicalAndCheck extends UnaryOperation {
 	}
 
 	@Override
-	public boolean isCollapseCompilation() {
-		return false;
-	}
-
-	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		return node.clazz;
 	}

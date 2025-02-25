@@ -22,43 +22,49 @@ public class OperationPrefixMinus extends UnaryOperation {
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		if (type.isPrimitive() && type.getPrimitiveType() != BOOLEAN) {
 			if (node.isCompileValue()) {
 				switch (type.getPrimitiveType()) {
 					case CHAR:
-						node.valueClass = TYPE_INT;
 						node.intValue = -node.charValue;
-						break;
+						return node.valueClass = TYPE_INT;
 					case BYTE:
-						node.valueClass = TYPE_INT;
 						node.intValue = -node.byteValue;
-						break;
+						return node.valueClass = TYPE_INT;
 					case SHORT:
-						node.valueClass = TYPE_INT;
 						node.intValue = -node.shortValue;
-						break;
+						return node.valueClass = TYPE_INT;
 					case INT:
-						node.valueClass = TYPE_INT;
 						node.intValue = -node.intValue;
-						break;
+						return node.valueClass = TYPE_INT;
 					case LONG:
-						node.valueClass = TYPE_LONG;
 						node.longValue = -node.longValue;
-						break;
+						return node.valueClass = TYPE_LONG;
 					case FLOAT:
-						node.valueClass = TYPE_FLOAT;
 						node.floatValue = -node.floatValue;
-						break;
+						return node.valueClass = TYPE_FLOAT;
 					case DOUBLE:
-						node.valueClass = TYPE_DOUBLE;
 						node.doubleValue = -node.doubleValue;
-						break;
+						return node.valueClass = TYPE_DOUBLE;
+				}
+			} else {
+				switch (type.getPrimitiveType()) {
+					case CHAR:
+					case BYTE:
+					case SHORT:
+					case INT:
+						return TYPE_INT;
+					case LONG:
+						return TYPE_LONG;
+					case FLOAT:
+						return TYPE_FLOAT;
+					case DOUBLE:
+						return TYPE_DOUBLE;
 				}
 			}
-		} else {
-			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		}
-		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
+		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		return node.clazz;
 	}
 

@@ -243,14 +243,17 @@ public class TestExpression extends HiTest {
 			assertFailCompile("class A{int m(){return 1;}} new A().m()" + o + "=1;", //
 					"variable expected");
 		}
+		assertFailCompile("!true;", //
+				"not a statement");
 		assertFailCompile("1++;", //
 				"variable expected");
 		assertFailCompile("1--;", //
 				"variable expected");
-		assertFailCompile("++1;", //
+		assertFailCompile("++1;", // TODO variable expected, operations = [null] ???
 				"not a statement");
-		assertFailCompile("--1;", //
+		assertFailCompile("--1;", // TODO variable expected
 				"not a statement");
+
 		assertFailCompile("boolean x = !1;", //
 				"operation '!' cannot be applied to 'int'");
 		assertFailCompile("boolean x = true; x++;", //
@@ -404,50 +407,54 @@ public class TestExpression extends HiTest {
 		assertSuccess("assert \"\" != null;");
 
 		// zero
-		assertFail("double x = 1; x /= (byte)0;", //
+		assertFail("byte x = 1; x /= (byte)0;", //
 				"divide by zero");
-		assertFail("double x = 1; x /= (short)0;", //
+		assertFail("short x = 1; x /= (short)0;", //
 				"divide by zero");
-		assertFail("double x = 1; x /= (char)0;", //
+		assertFail("char x = 1; x /= (char)0;", //
 				"divide by zero");
-		assertFail("double x = 1; x /= 0;", //
+		assertFail("int x = 1; x /= 0;", //
 				"divide by zero");
-		assertFail("double x = 1; x /= 0L;", //
+		assertFail("long x = 1; x /= 0L;", //
 				"divide by zero");
-		assertFail("double x = 1; x /= 0f;", //
-				"divide by zero");
-		assertFail("double x = 1; x /= 0.0;", //
-				"divide by zero");
+		assertSuccess("float x = 1; x /= 0f; assert Float.isInfinite(x);");
+		assertSuccess("double x = 1; x /= 0.0; assert Double.isInfinite(x);");
 
-		assertFail("double x = 1 / (byte)0;", //
-				"divide by zero");
-		assertFail("double x = 1 / (short)0;", //
-				"divide by zero");
-		assertFail("double x = 1 / (char)0;", //
-				"divide by zero");
-		assertFail("double x = 1 / 0;", //
-				"divide by zero");
-		assertFail("double x = 1 / 0L;", //
-				"divide by zero");
-		assertFail("double x = 1 / 0f;", //
-				"divide by zero");
-		assertFail("double x = 1 / 0.0;", //
-				"divide by zero");
+		for (String t1 : new String[] {"int", "long"}) {
+			for (String t2 : new String[] {"byte", "short", "char", "int"}) {
+				assertFail(t1 + " x = 1 / (" + t2 + ")0;", //
+						"divide by zero");
+			}
+		}
+		for (String t1 : new String[] {"byte", "short", "char", "int", "long"}) {
+			for (String t2 : new String[] {"byte", "short", "char", "int", "long"}) {
+				assertFail("float x = (" + t1 + ") 1 / (" + t2 + ")0;", //
+						"divide by zero");
+			}
+		}
+		for (String t1 : new String[] {"byte", "short", "char", "int", "long"}) {
+			for (String t2 : new String[] {"byte", "short", "char", "int", "long"}) {
+				assertFail("double x =  (" + t1 + ") 1 / (" + t2 + ")0;", //
+						"divide by zero");
+			}
+		}
+		assertSuccess("float x = 1; x /= 0f; assert Float.isInfinite(x);");
+		assertSuccess("double x = 1; x /= 0f; assert Double.isInfinite(x);");
+		assertSuccess("double x = 1; x /= 0d; assert Double.isInfinite(x);");
 
-		assertFail("double x = 1; byte y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; short y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; char y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; int y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; long y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; float y = 0; double z = x / y;", //
-				"divide by zero");
-		assertFail("double x = 1; double y = 0; double z = x / y;", //
-				"divide by zero");
+		for (String t1 : new String[] {"byte", "short", "char", "int", "long", "float", "double"}) {
+			for (String t2 : new String[] {"byte", "short", "char", "int", "long", "float", "double"}) {
+				if (t1.equals("float") || t1.equals("double") || t2.equals("float") || t2.equals("double")) {
+					if (!t1.equals("double") && !t2.equals("double")) {
+						assertSuccess(t1 + " x = 1; " + t2 + " y = 0; float z = x / y; Float.isInfinite(x);");
+					}
+					assertSuccess(t1 + " x = 1; " + t2 + " y = 0; double z = x / y; Double.isInfinite(x);");
+				} else {
+					assertFail(t1 + " x = 1; " + t2 + " y = 0; double z = x / y;", //
+							"divide by zero");
+				}
+			}
+		}
 	}
 
 	@Test
@@ -622,8 +629,8 @@ public class TestExpression extends HiTest {
 		assertSuccess("assert 1<0?1>0?1>0?false:false:false:true;");
 		assertSuccess("assert 1>0?1>0?1>0?1>0?true:false:false:false:false;");
 
-		assertFailCompile("Long x = true ? \"\" : new Integer(1);", //
-				"incompatible types: Object cannot be converted to Long");
+		assertFailCompile("Long x = true ? \"\" : new Integer(1);", // compiler set value ""
+				"incompatible types: String cannot be converted to Long");
 		assertFailCompile("int x = true ? 1 : \"\";", //
 				"incompatible switch values types: 'int' and 'String'");
 		assertFailCompile("int x = 1 ? 1 : 2;", //

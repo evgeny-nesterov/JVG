@@ -39,177 +39,176 @@ public class OperationEquals extends BinaryOperation {
 					switch (t1) {
 						case BOOLEAN:
 							node1.booleanValue = node1.booleanValue == node2.booleanValue;
-							break;
+							return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						case CHAR:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.charValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.charValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.charValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.charValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.charValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.charValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.charValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case BYTE:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.byteValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.byteValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.byteValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.byteValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.byteValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.byteValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.byteValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case SHORT:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.shortValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.shortValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.shortValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.shortValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.shortValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.shortValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.shortValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case INT:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.intValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.intValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.intValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.intValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.intValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.intValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.intValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case LONG:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.longValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.longValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.longValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.longValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.longValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.longValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.longValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case FLOAT:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.floatValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.floatValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.floatValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.floatValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.floatValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.floatValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.floatValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 						case DOUBLE:
 							switch (t2) {
 								case CHAR:
 									node1.booleanValue = node1.doubleValue == node2.charValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case BYTE:
 									node1.booleanValue = node1.doubleValue == node2.byteValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case SHORT:
 									node1.booleanValue = node1.doubleValue == node2.shortValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case INT:
 									node1.booleanValue = node1.doubleValue == node2.intValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case LONG:
 									node1.booleanValue = node1.doubleValue == node2.longValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case FLOAT:
 									node1.booleanValue = node1.doubleValue == node2.floatValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 								case DOUBLE:
 									node1.booleanValue = node1.doubleValue == node2.doubleValue;
-									break;
+									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 					}
-					return node1.valueClass = HiClassPrimitive.BOOLEAN;
 				} else {
 					return HiClassPrimitive.BOOLEAN;
 				}
@@ -222,10 +221,10 @@ public class OperationEquals extends BinaryOperation {
 					} else {
 						node1.booleanValue = false;
 					}
-					return HiClassPrimitive.BOOLEAN;
+					return node1.valueClass = HiClassPrimitive.BOOLEAN;
 				} else if (c1.isNull() || c2.isNull()) {
 					node1.booleanValue = c1.isNull() == c2.isNull();
-					return HiClassPrimitive.BOOLEAN;
+					return node1.valueClass = HiClassPrimitive.BOOLEAN;
 				}
 			} else {
 				return HiClassPrimitive.BOOLEAN;

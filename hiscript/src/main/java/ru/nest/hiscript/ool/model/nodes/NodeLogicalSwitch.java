@@ -28,12 +28,27 @@ public class NodeLogicalSwitch extends NodeExpression {
 		HiClass type1 = trueValueNode != null ? trueValueNode.getValueClass(validationInfo, ctx) : null;
 		HiClass type2 = falseValueNode != null ? falseValueNode.getValueClass(validationInfo, ctx) : null;
 		if (type1 != null && type2 != null) {
-			HiClass commonClass = type1.getCommonClass(type2);
-			ctx.nodeValueType.enclosingClass = commonClass;
-			ctx.nodeValueType.enclosingType = commonClass != null ? commonClass.superClassType : null;
-			ctx.nodeValueType.returnType = commonClass != null && commonClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
-			ctx.nodeValueType.type = Type.getType(commonClass);
-			return commonClass;
+			NodeValueType compiledValueType = null;
+			NodeValueType conditionValueType = condition.getNodeValueType(validationInfo, ctx);
+			if (conditionValueType.isCompileValue()) {
+				NodeExpression valueNode = conditionValueType.booleanValue ? trueValueNode : falseValueNode;
+				NodeValueType valueType = valueNode.getNodeValueType(validationInfo, ctx);
+				if (valueType.isCompileValue()) {
+					compiledValueType = valueType;
+				}
+			}
+
+			if (compiledValueType != null) {
+				compiledValueType.copyTo(ctx.nodeValueType);
+				return compiledValueType.clazz;
+			} else {
+				HiClass commonClass = type1.getCommonClass(type2);
+				ctx.nodeValueType.enclosingClass = commonClass;
+				ctx.nodeValueType.enclosingType = commonClass != null ? commonClass.superClassType : null;
+				ctx.nodeValueType.returnType = commonClass != null && commonClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
+				ctx.nodeValueType.type = Type.getType(commonClass);
+				return commonClass;
+			}
 		}
 		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		return null;

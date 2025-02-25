@@ -4,11 +4,11 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationEquateDivide extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquateDivide();
@@ -58,50 +58,41 @@ public class OperationEquateDivide extends BinaryOperation {
 		HiClass c2 = v2.getOperationClass();
 		int t1 = c1.getPrimitiveType();
 		int t2 = c2.getPrimitiveType();
-		switch (t2) {
-			case CHAR:
-				if (v2.character == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case BYTE:
-				if (v2.byteNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case SHORT:
-				if (v2.shortNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case INT:
-				if (v2.intNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case LONG:
-				if (v2.longNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case FLOAT:
-				if (v2.floatNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
-			case DOUBLE:
-				if (v2.doubleNumber == 0) {
-					errorDivideByZero(ctx);
-					return;
-				}
-				break;
+		if (t1 != DOUBLE && t1 != FLOAT) {
+			switch (t2) {
+				case CHAR:
+					if (v2.character == 0) {
+						errorDivideByZero(ctx);
+						return;
+					}
+					break;
+				case BYTE:
+					if (v2.byteNumber == 0) {
+						errorDivideByZero(ctx);
+						return;
+					}
+					break;
+				case SHORT:
+					if (v2.shortNumber == 0) {
+						errorDivideByZero(ctx);
+						return;
+					}
+					break;
+				case INT:
+					if (v2.intNumber == 0) {
+						errorDivideByZero(ctx);
+						return;
+					}
+					break;
+				case LONG:
+					if (v2.longNumber == 0) {
+						errorDivideByZero(ctx);
+						return;
+					}
+					break;
+			}
 		}
+
 		switch (t1) {
 			case CHAR:
 				switch (t2) {

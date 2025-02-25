@@ -68,12 +68,10 @@ public class OperationDivide extends BinaryOperation {
 				}
 			}
 
-			if (node1.isCompileValue() && node2.isCompileValue()) {
-				if (divisionByZero && !(t1 == FLOAT || t1 == DOUBLE || t2 == FLOAT || t2 == DOUBLE)) {
-					// do not compute value during compilation
-					node1.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-					node2.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-				}
+			if (node1.isCompileValue() && node2.isCompileValue() && divisionByZero) {
+				// do not compute value during compilation
+				node1.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
+				node2.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			}
 
 			if (node1.isCompileValue() && node2.isCompileValue()) {
@@ -214,7 +212,7 @@ public class OperationDivide extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case LONG:
 								node1.floatValue = node1.floatValue / node2.longValue;
-								return node1.valueClass = HiClassPrimitive.INT;
+								return node1.valueClass = HiClassPrimitive.FLOAT;
 							case FLOAT:
 								node1.floatValue = node1.floatValue / node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.FLOAT;
@@ -243,6 +241,7 @@ public class OperationDivide extends BinaryOperation {
 								node1.doubleValue = node1.doubleValue / node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case DOUBLE:
+								node1.doubleValue = node1.doubleValue / node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 				}
@@ -306,49 +305,39 @@ public class OperationDivide extends BinaryOperation {
 		if (c1.isNumber() && c2.isNumber()) {
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
-			switch (t2) {
-				case CHAR:
-					if (v2.character == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case BYTE:
-					if (v2.byteNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case SHORT:
-					if (v2.shortNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case INT:
-					if (v2.intNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case LONG:
-					if (v2.longNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case FLOAT:
-					if (v2.floatNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
-				case DOUBLE:
-					if (v2.doubleNumber == 0) {
-						errorDivideByZero(ctx);
-						return;
-					}
-					break;
+			if (t1 != DOUBLE && t1 != FLOAT) {
+				switch (t2) {
+					case CHAR:
+						if (v2.character == 0) {
+							errorDivideByZero(ctx);
+							return;
+						}
+						break;
+					case BYTE:
+						if (v2.byteNumber == 0) {
+							errorDivideByZero(ctx);
+							return;
+						}
+						break;
+					case SHORT:
+						if (v2.shortNumber == 0) {
+							errorDivideByZero(ctx);
+							return;
+						}
+						break;
+					case INT:
+						if (v2.intNumber == 0) {
+							errorDivideByZero(ctx);
+							return;
+						}
+						break;
+					case LONG:
+						if (v2.longNumber == 0) {
+							errorDivideByZero(ctx);
+							return;
+						}
+						break;
+				}
 			}
 
 			if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {

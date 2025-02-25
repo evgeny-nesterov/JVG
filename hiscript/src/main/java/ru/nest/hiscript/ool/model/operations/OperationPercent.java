@@ -194,6 +194,7 @@ public class OperationPercent extends BinaryOperation {
 								node1.doubleValue = node1.doubleValue % node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 							case DOUBLE:
+								node1.doubleValue = node1.doubleValue % node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.DOUBLE;
 						}
 				}

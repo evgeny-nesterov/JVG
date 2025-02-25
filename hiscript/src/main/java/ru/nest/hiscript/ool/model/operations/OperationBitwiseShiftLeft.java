@@ -27,22 +27,117 @@ public class OperationBitwiseShiftLeft extends BinaryOperation {
 		if (c1.isPrimitive() && c2.isPrimitive()) {
 			int t1 = c1.getPrimitiveType();
 			int t2 = c2.getPrimitiveType();
-			switch (t1) {
-				case VAR:
-				case CHAR:
-				case BYTE:
-				case SHORT:
-				case INT:
-				case LONG:
-					switch (t2) {
-						case VAR:
-						case CHAR:
-						case BYTE:
-						case SHORT:
-						case INT:
-						case LONG:
-							return t1 == LONG ? c1 : HiClassPrimitive.INT;
-					}
+			if (node1.isCompileValue() && node2.isCompileValue()) {
+				switch (t1) {
+					case CHAR:
+						switch (t2) {
+							case CHAR:
+								node1.intValue = node1.charValue << node2.charValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case BYTE:
+								node1.intValue = node1.charValue << node2.byteValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case SHORT:
+								node1.intValue = node1.charValue << node2.shortValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case INT:
+								node1.intValue = node1.charValue << node2.intValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case LONG:
+								node1.longValue = node1.charValue << node2.longValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+						}
+					case BYTE:
+						switch (t2) {
+							case CHAR:
+								node1.intValue = node1.byteValue << node2.charValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case BYTE:
+								node1.intValue = node1.byteValue << node2.byteValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case SHORT:
+								node1.intValue = node1.byteValue << node2.shortValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case INT:
+								node1.intValue = node1.byteValue << node2.intValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case LONG:
+								node1.longValue = node1.byteValue << node2.longValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+						}
+					case SHORT:
+						switch (t2) {
+							case CHAR:
+								node1.intValue = node1.shortValue << node2.charValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case BYTE:
+								node1.intValue = node1.shortValue << node2.byteValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case SHORT:
+								node1.intValue = node1.shortValue << node2.shortValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case INT:
+								node1.intValue = node1.shortValue << node2.intValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case LONG:
+								node1.longValue = node1.shortValue << node2.longValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+						}
+					case INT:
+						switch (t2) {
+							case CHAR:
+								node1.intValue = node1.intValue << node2.charValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case BYTE:
+								node1.intValue = node1.intValue << node2.byteValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case SHORT:
+								node1.intValue = node1.intValue << node2.shortValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case INT:
+								node1.intValue = node1.intValue << node2.intValue;
+								return node1.valueClass = HiClassPrimitive.INT;
+							case LONG:
+								node1.longValue = node1.intValue << node2.longValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+						}
+					case LONG:
+						switch (t2) {
+							case CHAR:
+								node1.longValue = node1.longValue << node2.charValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+							case BYTE:
+								node1.longValue = node1.longValue << node2.byteValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+							case SHORT:
+								node1.longValue = node1.longValue << node2.shortValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+							case INT:
+								node1.longValue = node1.longValue << node2.intValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+							case LONG:
+								node1.longValue = node1.longValue << node2.longValue;
+								return node1.valueClass = HiClassPrimitive.LONG;
+						}
+				}
+			} else {
+				switch (t1) {
+					case VAR:
+					case CHAR:
+					case BYTE:
+					case SHORT:
+					case INT:
+					case LONG:
+						switch (t2) {
+							case VAR:
+							case CHAR:
+							case BYTE:
+							case SHORT:
+							case INT:
+							case LONG:
+								return t1 == LONG ? c1 : HiClassPrimitive.INT;
+						}
+				}
 			}
 		}
 		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);

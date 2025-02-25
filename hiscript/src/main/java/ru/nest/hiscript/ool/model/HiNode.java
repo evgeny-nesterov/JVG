@@ -608,6 +608,20 @@ public abstract class HiNode implements HiNodeIF {
 		return null;
 	}
 
+	public int byteValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.BYTE) {
+			return ((NodeByte) this).getValue();
+		}
+		return computeValue(ctx).value.getByte();
+	}
+
+	public int shortValue(CompileClassContext ctx) {
+		if (type == PrimitiveTypes.SHORT) {
+			return ((NodeShort) this).getValue();
+		}
+		return computeValue(ctx).value.getShort();
+	}
+
 	public int intValue(CompileClassContext ctx) {
 		if (type == PrimitiveTypes.INT) {
 			return ((NodeInt) this).getValue();

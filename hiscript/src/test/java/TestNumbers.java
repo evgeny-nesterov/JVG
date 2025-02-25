@@ -250,18 +250,6 @@ public class TestNumbers extends HiTest {
 				}
 			}
 		}
-
-		// var
-		assertFailCompile("!true;", //
-				"not a statement");
-		assertFailCompile("1++;", //
-				"variable expected");
-		assertFailCompile("1--;", //
-				"variable expected");
-		assertFailCompile("++1;", //
-				"not a statement");
-		assertFailCompile("--1;", //
-				"not a statement");
 	}
 
 	@Test
@@ -336,6 +324,12 @@ public class TestNumbers extends HiTest {
 				"incompatible types: double cannot be converted to float");
 		assertFailCompile("float a = 1" + Float.MIN_VALUE + ";", //
 				"incompatible types: double cannot be converted to float");
+
+		// NaN
+		assertSuccess("double x = 0d / 0d; assert Double.isNaN(x);");
+		assertSuccess("float x = 0f / 0f; assert Float.isNaN(x);");
+		assertSuccess("double x = 1d / 0d; assert Double.isInfinite(x);");
+		assertSuccess("float x = 1f / 0f; assert Float.isInfinite(x);");
 	}
 
 	@Test

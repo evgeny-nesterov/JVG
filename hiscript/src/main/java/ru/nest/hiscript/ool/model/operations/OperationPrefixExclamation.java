@@ -22,15 +22,15 @@ public class OperationPrefixExclamation extends UnaryOperation {
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
 		if (type.getPrimitiveType() == BOOLEAN) {
 			if (node.isCompileValue()) {
 				node.booleanValue = !node.booleanValue;
 			}
-		} else {
-			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+			return TYPE_BOOLEAN;
 		}
-		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		return node.clazz;
+		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+		return TYPE_BOOLEAN;
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NodeExpressionSwitch extends HiNode {
 	public NodeExpressionSwitch(HiNode valueNode) {
@@ -40,6 +41,43 @@ public class NodeExpressionSwitch extends HiNode {
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
 		if (size > 0) {
+			if (valueNode != null) {
+				NodeValueType valueType = valueNode.getNodeValueType(validationInfo, ctx);
+				COMPILE:
+				if (valueType.isCompileValue()) {
+					Object compileValue = valueType.getCompileValue();
+					HiNode matchedCaseResult = null;
+					for (int i = 0; i < size; i++) {
+						HiNode caseResult = casesNodes.get(i);
+						HiNode[] caseConditions = casesValues.get(i);
+						if (caseConditions != null) {
+							for (HiNode caseCondition : caseConditions) {
+								NodeValueType caseValueType = caseCondition.getNodeValueType(validationInfo, ctx);
+								if (!caseValueType.isCompileValue()) {
+									if (matchedCaseResult != null) {
+										validationInfo.warning("case never will be reached", caseCondition.getToken());
+									}
+									break COMPILE;
+								}
+								if (matchedCaseResult == null) {
+									if (caseResult.isCompileValue()) {
+										Object caseValue = caseValueType.getCompileValue();
+										if (Objects.equals(compileValue, caseValue)) {
+											matchedCaseResult = caseResult;
+										}
+									}
+								}
+							}
+						}
+					}
+					if (matchedCaseResult != null) {
+						NodeValueType resultValueType = matchedCaseResult.getNodeValueType(validationInfo, ctx);
+						resultValueType.copyTo(ctx.nodeValueType);
+						return resultValueType.clazz;
+					}
+				}
+			}
+
 			HiClass topClass = null;
 			for (int i = 0; i < size; i++) {
 				HiClass caseValueType = casesNodes.get(i).getValueClass(validationInfo, ctx);
@@ -48,9 +86,10 @@ public class NodeExpressionSwitch extends HiNode {
 					break;
 				}
 			}
+
 			ctx.nodeValueType.enclosingClass = topClass;
 			ctx.nodeValueType.enclosingType = Type.getType(topClass);
-			ctx.nodeValueType.returnType = topClass != null && topClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 			ctx.nodeValueType.type = Type.getType(topClass);
 			return topClass;
 		} else {

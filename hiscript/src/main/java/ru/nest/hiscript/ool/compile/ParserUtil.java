@@ -313,7 +313,7 @@ public class ParserUtil {
 			IntToken token = (IntToken) currentToken;
 			tokenizer.nextToken();
 			return new NodeInt(token.getNumber(), token);
-		}
+		} // byte and short not parsed (always int)
 		return null;
 	}
 

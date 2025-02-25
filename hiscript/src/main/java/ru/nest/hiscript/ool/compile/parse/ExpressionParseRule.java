@@ -71,12 +71,10 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 			expectOperand |= visitArrayIndexes(tokenizer, operations, operands, ctx);
 			expectOperand |= visitIncrement(tokenizer, operations, false);
 
-			// tokenizer.start();
 			operation = visitOperation(tokenizer, operands);
 			if (operation != -1) {
 				expectOperand = true;
 
-				// tokenizer.commit();
 				if (operation == OperationsIF.LOGICAL_AND) {
 					operations.addPostfixOperation(OperationsIF.LOGICAL_AND_CHECK);
 				} else if (operation == OperationsIF.LOGICAL_OR) {
@@ -84,8 +82,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 				}
 
 				operations.setOperation(operation);
-			} else {
-				// tokenizer.rollback();
 			}
 
 			if (!hasOperand && expectOperand) {

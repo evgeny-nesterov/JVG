@@ -185,33 +185,34 @@ public class NodeExpressionNoLS extends NodeExpression {
 				HiOperation operation = operations[i];
 				int messagesCount = validationInfo.messages.size();
 				bufSize = operation.getOperationResultType(validationInfo, ctx, bufSize, nodes);
-				if (operation.isCollapseCompilation() && nodes[bufSize - 1].isCompileValue() && validationInfo.messages.size() == messagesCount) {
+				if (nodes[bufSize - 1].isCompileValue() && validationInfo.messages.size() == messagesCount) {
 					// collapse compiled value
 					NodeValueType nodeType = nodes[bufSize - 1];
-					HiNodeIF node = nodeType.node;
+					HiNodeIF node = null;
 					if (nodeType.valueClass == HiClassPrimitive.BYTE) {
-						node = new NodeByte(nodeType.byteValue, node.getToken());
+						node = new NodeByte(nodeType.byteValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.SHORT) {
-						node = new NodeShort(nodeType.shortValue, node.getToken());
+						node = new NodeShort(nodeType.shortValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.INT) {
-						node = new NodeInt(nodeType.intValue, node.getToken());
+						node = new NodeInt(nodeType.intValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.LONG) {
-						node = new NodeLong(nodeType.longValue, node.getToken());
+						node = new NodeLong(nodeType.longValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.FLOAT) {
-						node = new NodeFloat(nodeType.floatValue, node.getToken());
+						node = new NodeFloat(nodeType.floatValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.DOUBLE) {
-						node = new NodeDouble(nodeType.doubleValue, node.getToken());
+						node = new NodeDouble(nodeType.doubleValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.CHAR) {
-						node = new NodeChar(nodeType.charValue, node.getToken());
+						node = new NodeChar(nodeType.charValue, null);
 					} else if (nodeType.valueClass == HiClassPrimitive.BOOLEAN) {
-						node = NodeBoolean.getInstance(nodeType.booleanValue, node.getToken());
+						node = NodeBoolean.getInstance(nodeType.booleanValue, null);
 					} else if (nodeType.valueClass == HiClass.STRING_CLASS) {
-						node = new NodeString(nodeType.stringValue, node.getToken());
+						node = new NodeString(nodeType.stringValue, null);
 					}
-					operands[valuePos - operation.getOperandsCount()] = node;
 
-					if (operation.getOperandsCount() > 1) {
-						HiNodeIF[] collapsedOperands = new HiNodeIF[operands.length - operation.getOperandsCount() + 1];
+					if (operation.getOperandsCount() == 2) {
+						operands[valuePos - 2] = node;
+
+						HiNodeIF[] collapsedOperands = new HiNodeIF[operands.length - 1];
 						int operandPos = 0;
 						for (int j = 0; j < operands.length; j++) {
 							if (j != valuePos - 1) {
@@ -219,19 +220,38 @@ public class NodeExpressionNoLS extends NodeExpression {
 							}
 						}
 						operands = collapsedOperands;
-					}
 
-					HiOperation[] collapsedOperations = new HiOperation[operations.length - operation.getOperandsCount()];
-					int operationPos = 0;
-					for (int j = 0; j < operations.length; j++) {
-						if (j != i && j != valuePos - 1) {
-							collapsedOperations[operationPos++] = operations[j];
+						HiOperation[] collapsedOperations = new HiOperation[operations.length - 2];
+						int operationPos = 0;
+						for (int j = 0; j < operations.length; j++) {
+							if (j != i && j != i - 1) {
+								collapsedOperations[operationPos++] = operations[j];
+							}
 						}
-					}
-					operations = collapsedOperations;
+						operations = collapsedOperations;
 
-					i -= operation.getOperandsCount();
-					valuePos--;
+						i -= 3;
+						valuePos -= 2;
+						bufSize--;
+					} else { // operation.getOperandsCount() == 1
+						operands[valuePos - 1] = node;
+
+						HiOperation[] collapsedOperations = new HiOperation[operations.length - 1];
+						int operationPos = 0;
+						for (int j = 0; j < operations.length; j++) {
+							if (j != i) {
+								collapsedOperations[operationPos++] = operations[j];
+							}
+						}
+						operations = collapsedOperations;
+
+						i -= 2;
+						valuePos -= 1;
+						bufSize--;
+					}
+					if (operations.length == 1) {
+						break;
+					}
 					continue;
 				}
 				nodes[bufSize - 1].node = null;

@@ -22,6 +22,8 @@ public class TestComplex extends HiTest {
 		// assertFailCompile("switch(\"\"){case String s: break;}"); // default required
 		// assertFailCompile("switch(\"\"){case Object o: break; case String s: break;}"); // Object before String
 		// assertFailCompile("switch(\"\"){case Integer i: break; case String s: break;}"); // not all cases
+		// assertFailCompile("++1;", // TODO variable expected, operations = [null] ???
+		//		"not a statement");
 
 		// Tasks
 		// 1. assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler change C.get() to C
@@ -105,5 +107,17 @@ public class TestComplex extends HiTest {
 		assertSuccess("String abcd = \"abcd\";  assert abcd == (\"a\" + ((\"b\") + \"c\")) + \"d\";");
 		assertSuccess("String a = \"a\"; String abc1 = \"abc\"; String abc2 = a + \"b\" + \"c\"; assert abc1 != abc2; assert abc1.equals(abc2);");
 		assertSuccess("String a = \"a\"; String abc2 = a + \"b\" + \"c\"; String abc1 = \"abc\";  assert abc1 == abc2; assert abc1.equals(abc2);");
+
+		// compile value
+		assertSuccess("""
+     				int a = 1;
+     				int b = 2;
+					int c = 1 + 2 * switch(1 + 2 * 1) {
+					    case 1 ->                   2;
+					    case 2, 3 ->                2 * 2 - 1; // matched
+					    case 3, a + 2, 2 + 1 ->     2 + b; // never return
+					};
+					assert c == 7;
+				""");
 	}
 }

@@ -53,10 +53,6 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 		return increment;
 	}
 
-	public boolean isCollapseCompilation() {
-		return true;
-	}
-
 	public void getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType... nodes) {
 	}
 

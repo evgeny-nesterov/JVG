@@ -27,7 +27,6 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
 		HiClass c1 = node1.clazz;
 		HiClass c2 = node2.clazz;
-		ctx.nodeValueType.returnType = node2.returnType;
 		if (c1.isPrimitive()) {
 			if (c2 == HiClass.NUMBER_CLASS) {
 				if (!c1.isNumber()) {
@@ -53,7 +52,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 				errorCast(validationInfo, node1.token, c2, c1);
 			}
 		}
-		if (node2.isCompileValue()) {
+		if (node2.isCompileValue() && (c1.isPrimitive() || c1 == HiClass.STRING_CLASS)) {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.compileValue;
 			node1.valueClass = c1;
 			if (c1.isPrimitive() && c2.isPrimitive()) {
 				int t1 = c1.getPrimitiveType();
@@ -243,6 +243,8 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			} else if (c1 == HiClass.STRING_CLASS && c2 == HiClass.STRING_CLASS) {
 				node1.stringValue = node2.stringValue;
 			}
+		} else {
+			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
 		}
 		return node1.clazz;
 	}

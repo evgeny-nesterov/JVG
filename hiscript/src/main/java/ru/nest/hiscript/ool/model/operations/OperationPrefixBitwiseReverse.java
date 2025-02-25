@@ -56,7 +56,6 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 				}
 			}
 		}
-
 		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
 		return node.clazz;
 	}

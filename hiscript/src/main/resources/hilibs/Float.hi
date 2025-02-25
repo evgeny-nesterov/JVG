@@ -3,11 +3,11 @@ public final class Float extends Number {
 		System.loadLib("FloatImpl.class");
 	}
 
-    // public static final float POSITIVE_INFINITY = 1.0f / 0.0f;
-    // public static final float NEGATIVE_INFINITY = -1.0f / 0.0f;
-    // public static final float NaN = 0.0f / 0.0f;
-    public static final float MAX_VALUE = 3.4028235e+38f;
-    public static final float MIN_VALUE = 1.4e-45f;
+	public static final float MAX_VALUE = 3.4028235e+38f;
+	public static final float MIN_VALUE = 1.4e-45f;
+	public static final float NaN = 0.0f / 0.0f;
+	public static final float POSITIVE_INFINITY = 1.0f / 0.0f;
+	public static final float NEGATIVE_INFINITY = -1.0f / 0.0f;
 
 	private float value;
 
@@ -38,4 +38,20 @@ public final class Float extends Number {
 	}
 
 	public native int hashCode();
+
+	public boolean isNaN() {
+		return isNaN(value);
+	}
+
+	public static boolean isNaN(float v) {
+		return v != v;
+	}
+
+	public boolean isInfinite() {
+		return isInfinite(value);
+	}
+
+	public static boolean isInfinite(float v) {
+		return v == POSITIVE_INFINITY || v == NEGATIVE_INFINITY;
+	}
 }

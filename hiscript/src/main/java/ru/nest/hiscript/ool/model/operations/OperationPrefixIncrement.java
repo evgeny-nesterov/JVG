@@ -29,6 +29,9 @@ public class OperationPrefixIncrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
+		if (!node.isVariable()) {
+			validationInfo.error("variable expected", node.token);
+		}
 		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
