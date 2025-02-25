@@ -88,7 +88,7 @@ public class NodeGenerics extends HiNode {
 					invalidGenerics = new ArrayList<>(1);
 				}
 				invalidGenerics.addAll(processed);
-				validationInfo.error("cyclic inheritance involving '" + generic.genericName + "'", generic.getToken());
+				validationInfo.error("cyclic inheritance involving '" + generic.genericName + "'", generic);
 			}
 			ignore.addAll(processed);
 		}
@@ -115,7 +115,7 @@ public class NodeGenerics extends HiNode {
 				for (int j = i + 1; j < initOrder.size(); j++) {
 					NodeGeneric generic2 = initOrder.get(j);
 					if (Objects.equals(generic.genericName, generic2.genericName)) {
-						validationInfo.error("duplicate type parameter: '" + generic.genericName + "'", generic2.getToken());
+						validationInfo.error("duplicate type parameter: '" + generic.genericName + "'", generic2);
 						valid = false;
 						hasDuplicate = true;
 					}

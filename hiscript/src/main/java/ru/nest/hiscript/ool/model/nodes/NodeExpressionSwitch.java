@@ -55,7 +55,7 @@ public class NodeExpressionSwitch extends HiNode {
 								NodeValueType caseValueType = caseCondition.getNodeValueType(validationInfo, ctx);
 								if (!caseValueType.isCompileValue()) {
 									if (matchedCaseResult != null) {
-										validationInfo.warning("case never will be reached", caseCondition.getToken());
+										validationInfo.warning("case never will be reached", caseCondition);
 									}
 									break COMPILE;
 								}
@@ -122,7 +122,7 @@ public class NodeExpressionSwitch extends HiNode {
 								if (c != null) {
 									topCaseClass = c;
 								} else {
-									validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode.getToken());
+									validationInfo.error("incompatible switch case types; found " + caseValueClass + ", required " + topCaseClass, caseValueNode);
 									valid = false;
 								}
 							}
@@ -133,7 +133,7 @@ public class NodeExpressionSwitch extends HiNode {
 							NodeCastedIdentifier identifier = ((NodeExpression) caseValueNode).checkCastedIdentifier();
 							if (identifier != null) {
 								if (caseValueNodes.length > 1) {
-									validationInfo.error("only one casted identifier is allowed in the case condition", caseValueNode.getToken());
+									validationInfo.error("only one casted identifier is allowed in the case condition", caseValueNode);
 								}
 								ctx.initializedNodes.add(identifier.declarationNode);
 							}
@@ -153,7 +153,7 @@ public class NodeExpressionSwitch extends HiNode {
 					if (c != null) {
 						topResultClass = c;
 					} else {
-						validationInfo.error("incompatible switch values types; found " + caseNodeClass + ", required " + topResultClass, caseNode.getToken());
+						validationInfo.error("incompatible switch values types; found " + caseNodeClass + ", required " + topResultClass, caseNode);
 						valid = false;
 					}
 				}

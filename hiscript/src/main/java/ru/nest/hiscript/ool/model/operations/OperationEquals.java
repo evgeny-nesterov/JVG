@@ -209,20 +209,16 @@ public class OperationEquals extends BinaryOperation {
 									return node1.valueClass = HiClassPrimitive.BOOLEAN;
 							}
 					}
-				} else {
-					return HiClassPrimitive.BOOLEAN;
 				}
+				return HiClassPrimitive.BOOLEAN;
 			}
 		} else if (!c1.isPrimitive() && !c2.isPrimitive()) {
 			if (node1.isCompileValue() && node2.isCompileValue()) {
-				if (c1 == HiClass.STRING_CLASS || c2 == HiClass.STRING_CLASS) {
-					if (c1 == HiClass.STRING_CLASS && c2 == HiClass.STRING_CLASS) {
-						node1.booleanValue = node1.stringValue.equals(node2.stringValue);
-					} else {
-						node1.booleanValue = false;
-					}
+				if (c1 == HiClass.STRING_CLASS && c2 == HiClass.STRING_CLASS) {
+					node1.booleanValue = node1.stringValue.equals(node2.stringValue);
 					return node1.valueClass = HiClassPrimitive.BOOLEAN;
 				} else if (c1.isNull() || c2.isNull()) {
+					// TODO delete?
 					node1.booleanValue = c1.isNull() == c2.isNull();
 					return node1.valueClass = HiClassPrimitive.BOOLEAN;
 				}

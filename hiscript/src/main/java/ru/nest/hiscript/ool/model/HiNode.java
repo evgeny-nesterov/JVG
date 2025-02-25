@@ -274,7 +274,7 @@ public abstract class HiNode implements HiNodeIF {
 			for (NodeAnnotation annotation : annotations) {
 				valid &= annotation.validate(validationInfo, ctx);
 				if (names.contains(annotation.name)) {
-					validationInfo.error("duplicate annotation", annotation.getToken());
+					validationInfo.error("duplicate annotation", annotation);
 					valid = false;
 				} else {
 					names.add(annotation.name);

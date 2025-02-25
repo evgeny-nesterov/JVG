@@ -65,7 +65,7 @@ public class NodeThrow extends HiNode {
 					level = level.parent;
 				}
 				if (!checked) {
-					validationInfo.error("unreported exception " + excClass.getNameDescr() + ": exception must be caught or declared to be thrown", exception.getToken());
+					validationInfo.error("unreported exception " + excClass.getNameDescr() + ": exception must be caught or declared to be thrown", exception);
 					valid = false;
 				}
 				if (level != null) {

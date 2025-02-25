@@ -32,7 +32,7 @@ public class OperationInstanceOf extends BinaryOperation {
 		HiClass c1 = node1.clazz;
 		HiClass c2 = node2.clazz;
 		if (node2.returnType != NodeValueType.NodeValueReturnType.classValue && node2.returnType != NodeValueType.NodeValueReturnType.castedIdentifier) {
-			validationInfo.error("type expected", node2.node.getToken());
+			validationInfo.error("type expected", node2.node);
 		}
 		if (!c1.isVar()) {
 			// @generic
@@ -40,7 +40,7 @@ public class OperationInstanceOf extends BinaryOperation {
 				c1 = ((HiClassGeneric) c1).clazz;
 			}
 			if (!c1.isInstanceof(c2) && !c2.isInstanceof(c1) && !c1.isNull()) {
-				validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node.getToken());
+				validationInfo.error("inconvertible types; cannot cast " + c1.getNameDescr() + " to " + c2.getNameDescr(), node2.node);
 			}
 			if (node2.node instanceof NodeCastedIdentifier) {
 				initializeCastedIdentifier(validationInfo, ctx, (NodeCastedIdentifier) node2.node);

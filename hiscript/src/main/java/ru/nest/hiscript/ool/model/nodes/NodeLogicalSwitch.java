@@ -64,7 +64,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 			HiClass trueClass = trueValueNode.getValueClass(validationInfo, ctx);
 			HiClass falseClass = falseValueNode.getValueClass(validationInfo, ctx);
 			if (trueClass.getCommonClass(falseClass) == null) {
-				validationInfo.error("incompatible switch values types: '" + trueClass + "' and '" + falseClass + "'", trueClass.getToken());
+				validationInfo.error("incompatible switch values types: '" + trueClass + "' and '" + falseClass + "'", trueClass);
 				valid = false;
 			}
 		} else {

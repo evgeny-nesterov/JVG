@@ -198,9 +198,8 @@ public class OperationGreater extends BinaryOperation {
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
 				}
-			} else {
-				return HiClassPrimitive.BOOLEAN;
 			}
+			return HiClassPrimitive.BOOLEAN;
 		}
 		errorInvalidOperator(validationInfo, node1.token, node1.clazz, node2.clazz);
 		return HiClassPrimitive.BOOLEAN;

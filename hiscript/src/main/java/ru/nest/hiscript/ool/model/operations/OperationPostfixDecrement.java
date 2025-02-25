@@ -5,11 +5,11 @@ import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
 
 public class OperationPostfixDecrement extends UnaryOperation {
     private static final HiOperation instance = new OperationPostfixDecrement();
@@ -34,7 +34,7 @@ public class OperationPostfixDecrement extends UnaryOperation {
         }
         HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
         if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
-            validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+            validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
         }
         checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
         return node.clazz;

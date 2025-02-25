@@ -6,7 +6,7 @@ import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
 
-public class HiEnumValue implements Codeable {
+public class HiEnumValue implements Codeable, TokenAccessible {
 	private final String name;
 
 	private final int ordinal;
@@ -34,6 +34,7 @@ public class HiEnumValue implements Codeable {
 		return arguments;
 	}
 
+	@Override
 	public Token getToken() {
 		return token;
 	}

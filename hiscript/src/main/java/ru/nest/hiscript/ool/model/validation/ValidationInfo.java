@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.model.validation;
 
 import ru.nest.hiscript.ool.compile.HiCompiler;
-import ru.nest.hiscript.tokenizer.Token;
+import ru.nest.hiscript.ool.model.TokenAccessible;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -30,20 +30,20 @@ public class ValidationInfo {
 		return false;
 	}
 
-	public void error(String message, Token token) {
-		ValidationMessage validationMessage = new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token);
+	public void error(String message, TokenAccessible token) {
+		ValidationMessage validationMessage = new ValidationMessage(ValidationMessage.ValidationLevel.error, message, token != null ? token.getToken() : null);
 		if (!messages.contains(validationMessage)) {
 			messages.add(validationMessage);
 		}
 		valid = false;
 	}
 
-	public void warning(String message, Token token) {
-		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.warning, message, token));
+	public void warning(String message, TokenAccessible token) {
+		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.warning, message, token != null ? token.getToken() : null));
 	}
 
-	public void info(String message, Token token) {
-		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.info, message, token));
+	public void info(String message, TokenAccessible token) {
+		messages.add(new ValidationMessage(ValidationMessage.ValidationLevel.info, message, token != null ? token.getToken() : null));
 	}
 
 	public void printError() {

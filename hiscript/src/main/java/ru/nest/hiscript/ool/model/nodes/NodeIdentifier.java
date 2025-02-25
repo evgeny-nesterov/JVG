@@ -124,10 +124,10 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 		}
 
 		ctx.currentNode = this;
-		boolean local = false;
+		boolean checkStaticField = true;
 		resolvedIdentifier = ctx.resolveIdentifier(name, true, true, true);
 		if (resolvedIdentifier != null) {
-			local = true;
+			checkStaticField = ctx.level.enclosingClass != null && !ctx.level.isEnclosingObject;
 		} else {
 			resolvedIdentifier = ctx.resolveIdentifier(name);
 		}
@@ -143,7 +143,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 			valid = false;
 		}
 
-		if (!local) {
+		if (checkStaticField && !(resolvedIdentifier instanceof HiClass)) {
 			boolean nonStaticField = false;
 			if (resolvedIdentifier instanceof HasModifiers) {
 				nonStaticField = !((HasModifiers) resolvedIdentifier).isStatic();

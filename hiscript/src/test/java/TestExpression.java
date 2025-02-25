@@ -51,6 +51,9 @@ public class TestExpression extends HiTest {
 		assertSuccess("int a = 11 ^ 7; assert a == " + (11 ^ 7) + ";");
 		assertSuccess("boolean a = true; a &= false; assert !a;");
 		assertSuccess("boolean a = false; a |= true; assert a;");
+		assertSuccess("boolean a = true ^ false; assert a;");
+		assertSuccess("boolean a = true & false; assert !a;");
+		assertSuccess("boolean a = true | false; assert a;");
 
 		assertFailCompile("int a = 1 + true;", //
 				"operator '+' can not be applied to int, boolean");

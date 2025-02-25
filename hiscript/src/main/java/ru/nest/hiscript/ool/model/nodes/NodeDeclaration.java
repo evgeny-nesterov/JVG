@@ -78,10 +78,10 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 				clazz = initialization.getValueClass(validationInfo, ctx);
 				if (clazz.isNull()) {
 					clazz = HiClass.OBJECT_CLASS;
-					validationInfo.error("invalid var initialization", initialization.getToken());
+					validationInfo.error("invalid var initialization", initialization);
 				} else if (clazz.isLambda()) {
 					clazz = HiClass.OBJECT_CLASS;
-					validationInfo.error("cannot infer type: lambda expression requires an explicit target type", initialization.getToken());
+					validationInfo.error("cannot infer type: lambda expression requires an explicit target type", initialization);
 				}
 			} else {
 				clazz = HiClass.OBJECT_CLASS;
@@ -134,14 +134,14 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 				if (initializationValueType.valid) {
 					if (initializationValueType.isCompileValue()) {
 						if (!initializationValueType.autoCastValue(clazz)) {
-							validationInfo.error("incompatible types: " + initializationValueType.valueClass.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
+							validationInfo.error("incompatible types: " + initializationValueType.valueClass.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization);
 							valid = false;
 						}
 					} else if (initializationValueType.clazz.isArray() && clazz.isArray()) {
 						valid &= HiClass.validateCastArray(validationInfo, ctx, initialization, (HiClassArray) initializationValueType.clazz, (HiClassArray) clazz);
 					} else if (initializationValueType.returnType != NodeValueType.NodeValueReturnType.classValue) {
 						if (!HiClass.autoCast(ctx, initializationValueType.clazz, clazz, false, true)) {
-							validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization.getToken());
+							validationInfo.error("incompatible types: " + initializationValueType.clazz.getNameDescr() + " cannot be converted to " + clazz.getNameDescr(), initialization);
 							valid = false;
 						}
 					}

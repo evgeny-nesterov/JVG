@@ -199,7 +199,7 @@ public class HiClassLoader {
 			if (superClass != origClazz) {
 				valid &= checkCyclicDependencies(origClazz, superClass, validationInfo);
 			} else {
-				validationInfo.error("cyclic inheritance involving " + superClass.getNameDescr(), superClass.getToken());
+				validationInfo.error("cyclic inheritance involving " + superClass.getNameDescr(), superClass);
 				valid = false;
 			}
 		}
@@ -212,7 +212,7 @@ public class HiClassLoader {
 				if (i != origClazz) {
 					valid &= checkCyclicDependencies(origClazz, i, validationInfo);
 				} else {
-					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), i.getToken());
+					validationInfo.error("cyclic inheritance involving " + i.getNameDescr(), i);
 					valid = false;
 				}
 			}

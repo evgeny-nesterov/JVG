@@ -110,8 +110,8 @@ public class TestComplex extends HiTest {
 
 		// compile value
 		assertSuccess("""
-     				int a = 1;
-     				int b = 2;
+				 				int a = 1;
+				 				int b = 2;
 					int c = 1 + 2 * switch(1 + 2 * 1) {
 					    case 1 ->                   2;
 					    case 2, 3 ->                2 * 2 - 1; // matched
@@ -119,5 +119,75 @@ public class TestComplex extends HiTest {
 					};
 					assert c == 7;
 				""");
+		assertSuccess("boolean x = true && true; assert x;");
+		assertSuccess("boolean x = 1 == 1 && 2 == 1 + 1; assert x;");
+
+		// cast
+		assertSuccess("boolean x = true; boolean y = (boolean)x; assert x == y;");
+		String[] primitives = {"byte", "short", "char", "int", "long", "float", "double"};
+		String[] boxes = {"Byte", "Short", "Character", "Integer", "Long", "Float", "Double"};
+		for (int i1 = 0; i1 < primitives.length; i1++) {
+			String t1 = primitives[i1];
+			for (int i2 = 0; i2 < primitives.length; i2++) {
+				String t2 = primitives[i2];
+				assertSuccess(t1 + " x = (" + t1 + ")1; " + t2 + " y = (" + t2 + ")x; assert x == y;");
+			}
+			for (int i2 = 0; i2 < primitives.length; i2++) {
+				String t2 = boxes[i2];
+				if (i1 == i2) {
+					assertSuccess(t2 + " x = (" + t1 + ")1; " + t1 + " y = (" + t1 + ")x; assert x == y;");
+				} else {
+					assertFailCompile(t2 + " x = (" + t1 + ")1; " + t1 + " y = (" + t1 + ")x; assert x == y;", //
+							"cannot cast " + t2 + " to " + t1);
+				}
+			}
+			assertFailCompile("boolean x = true; " + t1 + " y = (" + t1 + ")x;", //
+					"cannot cast boolean to " + t1);
+			assertFailCompile("String x = \"\"; " + t1 + " y = (" + t1 + ")x;", //
+					"cannot cast String to " + t1);
+			assertFailCompile(t1 + " x = (" + t1 + ")null;", //
+					"cannot cast null to " + t1);
+			assertFailCompile("Object x = null; " + t1 + " y = (" + t1 + ")x;", //
+					"cannot cast Object to " + t1);
+			assertFailCompile("int[] x = {1}; " + t1 + " y = (" + t1 + ")x;", //
+					"cannot cast int[] to " + t1);
+		}
+
+		// equate
+		assertFailCompile("int x; long y = 1L; x = y;", //
+				"operator '=' can not be applied to int, long");
+		assertFailCompile("int x; float y = 1F; x = y;", //
+				"operator '=' can not be applied to int, float");
+		assertFailCompile("int x; double y = 1D; x = y;", //
+				"operator '=' can not be applied to int, double");
+
+		assertFailCompile("long x; float y = 1F; x = y;", //
+				"operator '=' can not be applied to long, float");
+		assertFailCompile("long x; double y = 1D; x = y;", //
+				"operator '=' can not be applied to long, double");
+
+		assertFailCompile("float x; double y = 1D; x = y;", //
+				"operator '=' can not be applied to float, double");
+
+		// operations
+		assertSuccess("assert \"\" != null;");
+		assertSuccess("assert true == true;");
+		assertSuccess("long x = ~(byte)1;");
+		assertSuccess("long x = ~(short)1;");
+		assertSuccess("long x = ~(char)1;");
+		assertSuccess("long x = ~1;");
+		assertSuccess("long x = ~1L;");
+		assertSuccess("float x = 1f; float y = -x;");
+		assertSuccess("double x = 1d; double y = -x;");
+		assertSuccess("float x = 1f; float y = +x;");
+		assertSuccess("double x = 1d; double y = +x;");
+
+		// arrays
+		assertFailCompile("int x = 1; int y = x[0];", //
+				"operator '[]' can not be applied to int, int");
+
+		// class and field priority
+		assertFailCompile("class A{class B{static int C = 2;} int B = 1;} int C = A.B.C;", // field B has more priority than class B in the same level
+				"non-static field 'B' cannot be accessed from static context");
 	}
 }

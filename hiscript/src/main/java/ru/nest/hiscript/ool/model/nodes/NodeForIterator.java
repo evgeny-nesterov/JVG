@@ -44,7 +44,7 @@ public class NodeForIterator extends HiNode {
 		valid &= declaration.validate(validationInfo, ctx, false);
 
 		if (declaration.hasModifiers()) {
-			validationInfo.error("modifiers not allowed", declaration.getToken());
+			validationInfo.error("modifiers not allowed", declaration);
 			valid = false;
 		}
 

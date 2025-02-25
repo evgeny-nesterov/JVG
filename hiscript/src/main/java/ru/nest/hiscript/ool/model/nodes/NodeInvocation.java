@@ -18,7 +18,7 @@ import ru.nest.hiscript.ool.runtime.Value;
 
 import java.io.IOException;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class NodeInvocation extends HiNode {
 	public NodeInvocation(String name, boolean innerInvocation, HiNode[] arguments) {
@@ -189,24 +189,19 @@ public class NodeInvocation extends HiNode {
 				int mainArgsCount = method.hasVarargs() ? method.argsCount - 1 : method.argsCount;
 				for (int i = 0; i < mainArgsCount; i++) {
 					HiNode argument = arguments[i];
-					ctx.level.enclosingClass = method.argsClasses[i];
-					ctx.level.enclosingType = method.arguments[i].getType();
+					ctx.setObjectContext(method.argsClasses[i], method.arguments[i].getType(), true);
 					valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, method.argsClasses[i]);
-					ctx.level.enclosingClass = null;
-					ctx.level.enclosingType = null;
 				}
 				if (method.hasVarargs()) {
 					HiClass varargClass = ((HiClassArray) method.argsClasses[mainArgsCount]).cellClass;
 					Type varargType = method.arguments[mainArgsCount].getType().cellType;
 					for (int i = mainArgsCount; i < arguments.length; i++) {
 						HiNode argument = arguments[i];
-						ctx.level.enclosingClass = varargClass;
-						ctx.level.enclosingType = varargType;
+						ctx.setObjectContext(varargClass, varargType, true);
 						valid &= argument.validate(validationInfo, ctx) && argument.expectValueClass(validationInfo, ctx, varargClass);
-						ctx.level.enclosingClass = null;
-						ctx.level.enclosingType = null;
 					}
 				}
+				ctx.clearObjectContext();
 			} else {
 				for (HiNode argument : arguments) {
 					valid &= argument.validate(validationInfo, ctx) && argument.expectValue(validationInfo, ctx);

@@ -21,7 +21,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class HiMethod implements HiNodeIF, HasModifiers {
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
@@ -127,7 +127,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 		// @generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
-				validationInfo.error("type parameter expected", generics.getToken());
+				validationInfo.error("type parameter expected", generics);
 				valid = false;
 			} else {
 				valid &= generics.validate(validationInfo, ctx);
@@ -135,10 +135,10 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			for (int i = 0; i < generics.generics.length; i++) {
 				NodeGeneric generic = generics.generics[i];
 				if (generic.isWildcard()) {
-					validationInfo.error("unexpected wildcard", generic.getToken());
+					validationInfo.error("unexpected wildcard", generic);
 					valid = false;
 				} else if (generic.isSuper) {
-					validationInfo.error("super is unsupported", generic.getToken());
+					validationInfo.error("super is unsupported", generic);
 					valid = false;
 				}
 			}
@@ -160,7 +160,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				for (int j = i + 1; j < arguments.length; j++) {
 					NodeArgument argNode2 = arguments[j];
 					if (argNode1.name.equals(argNode2.name)) {
-						validationInfo.error("argument with name '" + argNode2.name + "' already exists", argNode1.getToken());
+						validationInfo.error("argument with name '" + argNode2.name + "' already exists", argNode1);
 						valid = false;
 					}
 				}
@@ -266,14 +266,14 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 				if (variableClass.isInterface) {
 					int methodsCount = variableClass.getAbstractMethodsCount(ctx);
 					if (methodsCount > 1) {
-						validationInfo.error("multiple non-overriding abstract methods found in interface " + variableClass.getNameDescr(), variableNode.getToken());
+						validationInfo.error("multiple non-overriding abstract methods found in interface " + variableClass.getNameDescr(), variableNode);
 						valid = false;
 					} else if (methodsCount == 0) {
-						validationInfo.error("no abstract methods found in interface " + variableClass.getNameDescr(), variableNode.getToken());
+						validationInfo.error("no abstract methods found in interface " + variableClass.getNameDescr(), variableNode);
 						valid = false;
 					}
 				} else {
-					validationInfo.error("target type of a lambda conversion must be an interface", variableNode.getToken());
+					validationInfo.error("target type of a lambda conversion must be an interface", variableNode);
 					valid = false;
 				}
 
@@ -306,7 +306,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 								}
 
 								if (receivedClass != checkClass) {
-									validationInfo.error("incompatible parameter types in lambda expression: expected " + checkClass.getNameDescr() + " but found " + receivedClass.getNameDescr(), receivedArgument.getToken());
+									validationInfo.error("incompatible parameter types in lambda expression: expected " + checkClass.getNameDescr() + " but found " + receivedClass.getNameDescr(), receivedArgument);
 								}
 							}
 							receivedArgument.clazz = requiredArgumentClass;
@@ -329,7 +329,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 					signature = new MethodSignature(name, argsClasses, isVarargs);
 				} else {
-					validationInfo.error("incompatible parameters signature in lambda expression", variableNode.getToken());
+					validationInfo.error("incompatible parameters signature in lambda expression", variableNode);
 					valid = false;
 				}
 				isResolved = true;
@@ -366,7 +366,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			if (arguments != null) {
 				for (NodeArgument argument : arguments) {
 					if (argument.getValueClass(validationInfo, ctx).isVar()) {
-						validationInfo.error("'var' not allowed here", argument.getToken());
+						validationInfo.error("'var' not allowed here", argument);
 						valid = false;
 					}
 				}

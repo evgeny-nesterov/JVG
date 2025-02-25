@@ -41,20 +41,20 @@ public class NodeAnnotation extends HiNode {
 			for (NodeAnnotationArgument arg : args) {
 				valid &= arg.validate(validationInfo, ctx);
 				if (argsNames.contains(arg.name)) {
-					validationInfo.error("duplicate annotation argument", arg.getToken());
+					validationInfo.error("duplicate annotation argument", arg);
 					valid = false;
 				} else {
 					argsNames.add(arg.name);
 					if (clazz != null && clazz.isAnnotation()) {
 						HiMethod method = clazz.searchMethod(ctx, arg.name);
 						if (method == null || !method.isAnnotationArgument) {
-							validationInfo.error("annotation argument with name '" + arg.name + "' is not found", arg.getToken());
+							validationInfo.error("annotation argument with name '" + arg.name + "' is not found", arg);
 							valid = false;
 						} else {
 							NodeValueType argValueType = arg.getNodeValueType(validationInfo, ctx);
 							valid &= argValueType.valid;
 							if (argValueType.valid && !argValueType.clazz.boxed().isInstanceof(method.returnClass.boxed())) {
-								validationInfo.error("incompatible types: " + argValueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), arg.valueNode.getToken());
+								validationInfo.error("incompatible types: " + argValueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), arg.valueNode);
 								valid = false;
 							}
 						}

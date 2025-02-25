@@ -80,7 +80,7 @@ public class NodeTry extends HiNode {
 				valid &= resource.validate(validationInfo, ctx, false);
 				HiClass resourceClass = resource.getValueClass(validationInfo, ctx);
 				if (!resourceClass.isInstanceof("AutoCloseable")) {
-					validationInfo.error("incompatible types: found: '" + resourceClass.getNameDescr() + "', required: 'AutoCloseable'", resource.getToken());
+					validationInfo.error("incompatible types: found: '" + resourceClass.getNameDescr() + "', required: 'AutoCloseable'", resource);
 					valid = false;
 				}
 			}
@@ -95,7 +95,7 @@ public class NodeTry extends HiNode {
 				if (catchNode.excClass != null) {
 					for (HiClass prevExcClass : excClasses) {
 						if (catchNode.excClass.isInstanceof(prevExcClass)) {
-							validationInfo.error("exception '" + catchNode.excClass.getNameDescr() + "' has already been caught", catchNode.getToken());
+							validationInfo.error("exception '" + catchNode.excClass.getNameDescr() + "' has already been caught", catchNode);
 							valid = false;
 						}
 					}

@@ -79,7 +79,7 @@ public class NodeArray extends HiNode {
 		for (int i = 0; i < dimensionsCount; i++) {
 			if (dimensions[i] != null) {
 				if (dimensionsCountActive != -1) {
-					validationInfo.error("invalid array size value", dimensions[i].getToken());
+					validationInfo.error("invalid array size value", dimensions[i]);
 					valid = false;
 				}
 				valid &= dimensions[i].validate(validationInfo, ctx) && dimensions[i].expectIntValue(validationInfo, ctx);

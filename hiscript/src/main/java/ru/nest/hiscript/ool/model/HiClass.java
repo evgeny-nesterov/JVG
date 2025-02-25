@@ -613,7 +613,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		// @generics (after init)
 		if (generics != null) {
 			if (generics.generics.length == 0) {
-				validationInfo.error("type parameter expected", generics.getToken());
+				validationInfo.error("type parameter expected", generics);
 				valid = false;
 			} else {
 				valid &= generics.validate(validationInfo, ctx);
@@ -621,10 +621,10 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			for (int i = 0; i < generics.generics.length; i++) {
 				NodeGeneric generic = generics.generics[i];
 				if (generic.isWildcard()) {
-					validationInfo.error("unexpected wildcard", generic.getToken());
+					validationInfo.error("unexpected wildcard", generic);
 					valid = false;
 				} else if (generic.isSuper) {
-					validationInfo.error("super is unsupported", generic.getToken());
+					validationInfo.error("super is unsupported", generic);
 					valid = false;
 				}
 			}
@@ -747,12 +747,12 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 					if (field.isFinal() && field.initializer == null) {
 						// TODO check initialization in all constructors
-						validationInfo.error("variable '" + field.name + "' might not have been initialized", field.getToken());
+						validationInfo.error("variable '" + field.name + "' might not have been initialized", field);
 						valid = false;
 					}
 					ctx.initializedNodes.add(field);
 				} else if (isInterface) {
-					validationInfo.error("interface cannot have initializers", initializer.getToken());
+					validationInfo.error("interface cannot have initializers", initializer);
 					valid = false;
 				}
 			}
@@ -770,7 +770,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				HiConstructor constructor = constructors[i];
 				valid &= constructor.validate(validationInfo, ctx);
 				if (isInterface) {
-					validationInfo.error("interface cannot have constructors", constructor.getToken());
+					validationInfo.error("interface cannot have constructors", constructor);
 					valid = false;
 				}
 			}
@@ -2224,7 +2224,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 		if (src.getRootCellClass().isPrimitive() || dst.getRootCellClass().isPrimitive()) {
 			if (src.getRootCellClass() != dst.getRootCellClass() || src.dimension != dst.dimension) {
-				validationInfo.error("incompatible types: " + src.getNameDescr() + " cannot be converted to " + dst.getNameDescr(), node.getToken());
+				validationInfo.error("incompatible types: " + src.getNameDescr() + " cannot be converted to " + dst.getNameDescr(), node);
 				return false;
 			}
 			return true;
@@ -2233,7 +2233,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			return true;
 		}
 		if (!autoCast(ctx, src.getRootCellClass(), dst.getRootCellClass(), false, true)) {
-			validationInfo.error("incompatible types: " + src.getNameDescr() + " cannot be converted to " + dst.getNameDescr(), node.getToken());
+			validationInfo.error("incompatible types: " + src.getNameDescr() + " cannot be converted to " + dst.getNameDescr(), node);
 			return false;
 		}
 
@@ -2256,7 +2256,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					valid &= autoCast(ctx, srcCellClass, dstCellClass, false, true);
 				} else if (cellValue != NodeNull.instance) {
 					if (!autoCast(ctx, srcCellClass, dstCellClass, false, true)) {
-						validationInfo.error("incompatible types: " + cellValue.getValueClass(validationInfo, ctx).getNameDescr() + " cannot be converted to " + dst.cellClass.getNameDescr(), cellValue.getToken());
+						validationInfo.error("incompatible types: " + cellValue.getValueClass(validationInfo, ctx).getNameDescr() + " cannot be converted to " + dst.cellClass.getNameDescr(), cellValue);
 						valid = false;
 					}
 				}

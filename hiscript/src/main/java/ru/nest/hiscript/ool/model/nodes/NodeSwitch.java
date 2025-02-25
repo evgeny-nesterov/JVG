@@ -89,7 +89,7 @@ public class NodeSwitch extends HiNode {
 				HiClass checkValueClass = valueClass.getAutoboxedPrimitiveClass() != null ? valueClass.getAutoboxedPrimitiveClass() : valueClass;
 
 				if (checkValueClass == HiClassPrimitive.LONG || checkValueClass == HiClassPrimitive.FLOAT || checkValueClass == HiClassPrimitive.DOUBLE || checkValueClass == HiClassPrimitive.BOOLEAN) {
-					validationInfo.error("invalid switch value type: '" + valueClass.getNameDescr() + "'", valueNode.getToken());
+					validationInfo.error("invalid switch value type: '" + valueClass.getNameDescr() + "'", valueNode);
 					valueClass = null;
 					valid = false;
 				}
@@ -120,11 +120,11 @@ public class NodeSwitch extends HiNode {
 							if (identifier != null) {
 								int enumOrdinal = enumClass.getEnumOrdinal(identifier.getName());
 								if (enumOrdinal == -1) {
-									validationInfo.error("cannot resolve symbol '" + identifier.getName() + "'", caseValueNode.getToken());
+									validationInfo.error("cannot resolve symbol '" + identifier.getName() + "'", caseValueNode);
 									valid = false;
 								} else {
 									if (enumProcessedValues[enumOrdinal]) {
-										validationInfo.error("case enum value '" + identifier.getName() + "' is duplicated", caseValueNode.getToken());
+										validationInfo.error("case enum value '" + identifier.getName() + "' is duplicated", caseValueNode);
 										valid = false;
 									} else {
 										enumProcessedValues[enumOrdinal] = true;
@@ -136,7 +136,7 @@ public class NodeSwitch extends HiNode {
 						if (valid &= caseValueNode.validate(validationInfo, ctx)) {
 							HiClass caseValueClass = caseValueNode.getValueClass(validationInfo, ctx);
 							if (caseValueClass != valueClass) {
-								validationInfo.error("an enum switch case label must be the unqualified name of an enumeration constant", caseValueNode.getToken());
+								validationInfo.error("an enum switch case label must be the unqualified name of an enumeration constant", caseValueNode);
 							}
 						}
 					}
@@ -162,7 +162,7 @@ public class NodeSwitch extends HiNode {
 						boolean isCaseCastedIdentifiers = castedIdentifier != null;
 						if (isCaseCastedIdentifiers) {
 							if (caseValueNodes.length > 1) {
-								validationInfo.error("only one casted identifier is allowed in the case condition", castedIdentifier.getToken());
+								validationInfo.error("only one casted identifier is allowed in the case condition", castedIdentifier);
 								valid = false;
 							}
 							ctx.initializedNodes.add(castedIdentifier.declarationNode);
@@ -174,7 +174,7 @@ public class NodeSwitch extends HiNode {
 								Object caseValue = ctx.nodeValueType.getCompileValue();
 								if (caseValue != null || caseValueClass.isNull()) {
 									if (processedValues.contains(caseValue)) {
-										validationInfo.error("case value '" + caseValue + "' is duplicated", caseValueNode.getToken());
+										validationInfo.error("case value '" + caseValue + "' is duplicated", caseValueNode);
 										valid = false;
 									} else {
 										processedValues.add(caseValue);
@@ -183,11 +183,11 @@ public class NodeSwitch extends HiNode {
 								if (valueClass != null) {
 									if (valueClass.isPrimitive()) {
 										if (!HiClass.autoCast(ctx, caseValueClass, valueClass, valueReturnType.isCompileValue(), true)) {
-											validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
+											validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode);
 											valid = false;
 										}
 									} else if (!caseValueClass.isNull() && !caseValueClass.boxed().isInstanceof(valueClass.boxed())) {
-										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode.getToken());
+										validationInfo.error("incompatible switch case types; found " + caseValueClass.getNameDescr() + ", required " + valueClass.getNameDescr(), caseValueNode);
 										valid = false;
 									}
 								}

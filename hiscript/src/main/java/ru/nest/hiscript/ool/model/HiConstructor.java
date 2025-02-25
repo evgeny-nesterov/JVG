@@ -180,7 +180,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 		// @generics
 		if (generics != null) {
 			if (generics.generics.length == 0) {
-				validationInfo.error("type parameter expected", generics.getToken());
+				validationInfo.error("type parameter expected", generics);
 				valid = false;
 			} else {
 				valid &= generics.validate(validationInfo, ctx);
@@ -188,10 +188,10 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 			for (int i = 0; i < generics.generics.length; i++) {
 				NodeGeneric generic = generics.generics[i];
 				if (generic.isWildcard()) {
-					validationInfo.error("unexpected wildcard", generic.getToken());
+					validationInfo.error("unexpected wildcard", generic);
 					valid = false;
 				} else if (generic.isSuper) {
-					validationInfo.error("super is unsupported", generic.getToken());
+					validationInfo.error("super is unsupported", generic);
 					valid = false;
 				}
 			}

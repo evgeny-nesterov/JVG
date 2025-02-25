@@ -57,7 +57,8 @@ public abstract class BinaryOperation extends HiOperation {
 			if (node1.clazz != null) {
 				valid = node1.valid;
 			} else {
-				validationInfo.error("cannot resolve expression type", node1.node.getToken());
+				// TODO delete?
+				validationInfo.error("cannot resolve expression type", node1.node);
 				valid = false;
 			}
 		}
@@ -66,7 +67,8 @@ public abstract class BinaryOperation extends HiOperation {
 			if (node2.clazz != null) {
 				valid &= node2.valid;
 			} else {
-				validationInfo.error("cannot resolve expression type", node2.node.getToken());
+				// TODO delete?
+				validationInfo.error("cannot resolve expression type", node2.node);
 				valid = false;
 			}
 		}
@@ -113,11 +115,6 @@ public abstract class BinaryOperation extends HiOperation {
 		ctx.throwRuntimeException(text);
 	}
 
-	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
-		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
-		ctx.throwRuntimeException(text);
-	}
-
 	public void errorCast(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
 		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
 		validationInfo.error(text, token);
@@ -127,5 +124,9 @@ public abstract class BinaryOperation extends HiOperation {
 		String text = "inconvertible types; cannot cast '" + typeFrom.getNameDescr() + "' to '" + typeTo.getNameDescr() + "'";
 		validationInfo.error(text, token);
 	}
-}
 
+	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
+		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
+		ctx.throwRuntimeException(text);
+	}
+}

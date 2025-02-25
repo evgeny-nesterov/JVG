@@ -89,7 +89,6 @@ public class Token implements Codeable, TokenAccessible {
 		return this;
 	}
 
-	@Override
 	public void setToken(Token token) {
 		this.offset = token.offset;
 		this.length = token.length;

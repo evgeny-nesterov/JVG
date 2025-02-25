@@ -123,7 +123,7 @@ public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
 		}
 		if (modifiers != null) {
 			if (modifiers.isFinal() && ctx.initializedNodes.contains(fieldNode)) {
-				validationInfo.error("cannot assign value to final variable", node.getToken());
+				validationInfo.error("cannot assign value to final variable", node);
 			} else if (initialize) {
 				ctx.initializedNodes.add(fieldNode);
 			}

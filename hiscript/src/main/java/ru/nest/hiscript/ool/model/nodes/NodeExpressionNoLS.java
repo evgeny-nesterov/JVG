@@ -147,7 +147,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		if (operands.length == 1 && operations.length == 1 && operations[0] == null) {
 			HiNodeIF operand = operands[0];
 			if (isStatement() && !operand.isStatement()) {
-				validationInfo.error("not a statement", operand.getToken());
+				validationInfo.error("not a statement", operand);
 			} else {
 				ctx.nodeValueType.get(validationInfo, ctx, operand);
 			}

@@ -47,42 +47,42 @@ public class OperationInvocation extends BinaryOperation {
 
 	@Override
 	public HiClass getOperationResultClass(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node1, NodeValueType node2) {
+		assert node1.clazz != null;
+
 		ctx.nodeValueType.returnType = null;
-		if (node1.clazz != null) {
-			HiClass enclosingClass = node1.enclosingClass != null ? node1.enclosingClass : node1.clazz;
-			Type enclosingType = node1.enclosingType != null ? node1.enclosingType : node1.type;
-			ctx.enterObject(enclosingClass, enclosingType, node1.enclosingClass != null);
-			if (node2.clazz == null) {
-				if (node2.node.getInvocationValueType() != -1) {
-					ctx.invocationNode = node1;
-				} else {
-					ctx.invocationNode = null;
-				}
-				node2.get(validationInfo, ctx);
-				if (node2.clazz == null) {
-					validationInfo.error("cannot resolve expression type", node2.node.getToken());
-				}
-				if (node1.returnType == NodeValueType.NodeValueReturnType.classValue && node1.clazz.isInterface && node2.node.getClass() == NodeThis.class) {
-					validationInfo.error("'" + node1.clazz.getNameDescr() + "' is not an enclosing class", node1.node.getToken());
-				}
-			}
-			ctx.exit();
-			ctx.nodeValueType.returnType = node2.returnType != NodeValueType.NodeValueReturnType.noValue ? node2.returnType : NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
+		HiClass enclosingClass = node1.enclosingClass != null ? node1.enclosingClass : node1.clazz;
+		Type enclosingType = node1.enclosingType != null ? node1.enclosingType : node1.type;
+		boolean isEnclosingObject = node1.enclosingClass != null;
 
-			// @generics
-			HiClass clazz = node2.clazz;
-			if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
-				HiClassGeneric genericClass = (HiClassGeneric) clazz;
-				HiClassGeneric genericEnclosingClass = (HiClassGeneric) enclosingClass;
-				if (genericClass.sourceClass == genericEnclosingClass.clazz) {
-					clazz = genericEnclosingClass.parametersClasses[genericClass.index];
+		ctx.enterObject(enclosingClass, enclosingType, isEnclosingObject);
+		if (node2.clazz == null) {
+			if (node2.node.getInvocationValueType() != -1) {
+				ctx.invocationNode = node1;
+			} else {
+				ctx.invocationNode = null;
+			}
+			node2.get(validationInfo, ctx);
+			assert node2.clazz != null;
+
+			if (node1.returnType == NodeValueType.NodeValueReturnType.classValue) {
+				if (node1.clazz.isInterface && node2.node.getClass() == NodeThis.class) {
+					validationInfo.error("'" + node1.clazz.getNameDescr() + "' is not an enclosing class", node1.node);
 				}
 			}
-			return clazz;
 		}
+		ctx.exit();
+		ctx.nodeValueType.returnType = node2.returnType != NodeValueType.NodeValueReturnType.noValue ? node2.returnType : NodeValueType.NodeValueReturnType.runtimeValue; // after ctx.exit()
 
-		ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.runtimeValue;
-		return null;
+		// @generics
+		HiClass clazz = node2.clazz;
+		if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
+			HiClassGeneric genericClass = (HiClassGeneric) clazz;
+			HiClassGeneric genericEnclosingClass = (HiClassGeneric) enclosingClass;
+			if (genericClass.sourceClass == genericEnclosingClass.clazz) {
+				clazz = genericEnclosingClass.parametersClasses[genericClass.index];
+			}
+		}
+		return clazz;
 	}
 
 	@Override

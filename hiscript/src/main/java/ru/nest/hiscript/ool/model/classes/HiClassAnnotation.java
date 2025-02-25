@@ -43,14 +43,14 @@ public class HiClassAnnotation extends HiClass {
 			for (HiMethod method : methods) {
 				method.resolve(ctx);
 				if (!method.returnClass.isConstant()) {
-					validationInfo.error("invalid type '" + method.name + "' for annotation member", method.getToken());
+					validationInfo.error("invalid type '" + method.name + "' for annotation member", method);
 					valid = false;
 				} else if (method.isAnnotationArgument && method.body != null) {
 					NodeValueType valueType = method.body.getNodeValueType(validationInfo, ctx);
 					valid &= valueType.valid;
 					if (valueType.isConstant) {
 						if (valueType.valid && !valueType.clazz.isInstanceof(method.returnClass)) {
-							validationInfo.error("incompatible types: " + valueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), method.body.getToken());
+							validationInfo.error("incompatible types: " + valueType.clazz.getNameDescr() + " cannot be converted to " + method.returnClass.getNameDescr(), method.body);
 							valid = false;
 						}
 
@@ -59,7 +59,7 @@ public class HiClassAnnotation extends HiClass {
 						method.annotationDefaultValue = method.body.getObjectValue(validationInfo, ctx, method.body.getToken());
 						ctx.clazz = outboundClass;
 					} else {
-						validationInfo.error("constant expected", method.getToken());
+						validationInfo.error("constant expected", method);
 						valid = false;
 					}
 				}

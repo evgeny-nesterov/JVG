@@ -7,7 +7,6 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
-import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.TokenAccessible;
@@ -313,9 +312,19 @@ public class CompileClassContext implements ClassResolver {
 
 	public void enterObject(HiClass enclosingClass, Type enclosingType, boolean isEnclosingObject) {
 		level = new CompileClassLevel(RuntimeContext.OBJECT, enclosingClass, level);
+		setObjectContext(enclosingClass, enclosingType, isEnclosingObject);
+	}
+
+	public void setObjectContext(HiClass enclosingClass, Type enclosingType, boolean isEnclosingObject) {
 		level.enclosingClass = enclosingClass;
 		level.enclosingType = enclosingType;
 		level.isEnclosingObject = isEnclosingObject;
+	}
+
+	public void clearObjectContext() {
+		level.enclosingClass = null;
+		level.enclosingType = null;
+		level.isEnclosingObject = false;
 	}
 
 	public void exit() {
@@ -335,7 +344,7 @@ public class CompileClassContext implements ClassResolver {
 	public boolean addLocalClass(HiClass clazz) {
 		boolean valid = true;
 		if (getLocalClass(clazz.name) != null) {
-			compiler.getValidationInfo().error("duplicated nested type " + clazz.getNameDescr(), clazz.getToken());
+			compiler.getValidationInfo().error("duplicated nested type " + clazz.getNameDescr(), clazz);
 			valid = false;
 		}
 		level.addClass(clazz);
@@ -429,7 +438,7 @@ public class CompileClassContext implements ClassResolver {
 	public boolean addLocalVariable(NodeVariable localVariable, boolean checkDuplicate) {
 		boolean valid = true;
 		if (checkDuplicate && hasLocalVariable(localVariable.getVariableName())) {
-			compiler.getValidationInfo().error("duplicated local variable " + localVariable.getVariableName(), ((HiNode) localVariable).getToken());
+			compiler.getValidationInfo().error("duplicated local variable " + localVariable.getVariableName(), localVariable);
 			valid = false;
 		}
 		level.addField(localVariable);
@@ -926,6 +935,8 @@ public class CompileClassContext implements ClassResolver {
 				return ((HiMethod) level.node).isStatic();
 			} else if (level.type == RuntimeContext.INITIALIZATION) {
 				return ((NodeBlock) level.node).isStatic();
+			} else if (level.enclosingClass != null && !level.isEnclosingObject) {
+				return level.enclosingClass.isStatic();
 			}
 			level = level.parent;
 		}

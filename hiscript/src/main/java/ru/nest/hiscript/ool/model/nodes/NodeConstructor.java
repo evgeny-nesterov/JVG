@@ -108,7 +108,7 @@ public class NodeConstructor extends HiNode {
 						superTypeParameters[i] = superTypeParameter;
 						HiClass superTypeClass = superTypeParameter.getClass(ctx);
 						if (superTypeClass != null && !superTypeClass.isInstanceof(superGeneric.clazz.clazz)) {
-							validationInfo.error("cannot cast " + superTypeClass.getNameDescr() + " to " + superGeneric.clazz.getNameDescr(), superGeneric.getToken());
+							validationInfo.error("cannot cast " + superTypeClass.getNameDescr() + " to " + superGeneric.clazz.getNameDescr(), superGeneric);
 						}
 					}
 					Type superType = Type.getParameterizedType(t, superTypeParameters);

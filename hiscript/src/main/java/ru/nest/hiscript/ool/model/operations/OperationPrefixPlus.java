@@ -60,7 +60,7 @@ public class OperationPrefixPlus extends UnaryOperation {
 				}
 			}
 		}
-		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
 		return node.clazz;
 	}
 

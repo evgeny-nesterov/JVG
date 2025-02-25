@@ -29,7 +29,7 @@ public class OperationPrefixExclamation extends UnaryOperation {
 			}
 			return TYPE_BOOLEAN;
 		}
-		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node.getToken());
+		validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
 		return TYPE_BOOLEAN;
 	}
 

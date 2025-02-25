@@ -33,7 +33,9 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 					errorCast(validationInfo, node1.token, c2, c1);
 				}
 			} else if (!c2.isPrimitive()) {
-				errorCast(validationInfo, node1.token, c2, c1);
+				if (c2.getAutoboxedPrimitiveClass() != c1) {
+					errorCast(validationInfo, node1.token, c2, c1);
+				}
 			} else {
 				if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
 					errorCast(validationInfo, node1.token, c2, c1);
@@ -305,261 +307,195 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	}
 
 	private void castPrimitive(RuntimeContext ctx, Value v1, Value v2) {
-		HiClass c1 = v1.valueClass;
-		HiClass c2 = v2.valueClass;
+		HiClass c1 = v1.valueClass; // primitive
+		HiClass c2 = v2.valueClass; // primitive or box or Number
 		if (c2 == HiClass.NUMBER_CLASS) {
 			if (v2.object == null) {
 				ctx.throwRuntimeException("null pointer");
 				return;
-			} else if (v2.object instanceof HiObject) {
-				c2 = ((HiObject) v2.object).clazz;
 			} else if (v2.originalValueClass != null) {
-				// for arrays
 				c2 = v2.originalValueClass;
 			}
 		}
 		if (c2.getAutoboxedPrimitiveClass() != null) {
 			c2 = c2.getAutoboxedPrimitiveClass();
 		}
-
-		if (!c2.isPrimitive()) {
-			errorCast(ctx, v2.valueClass, v1.valueClass);
-			return;
-		}
+		assert c2.isPrimitive();
 
 		int type1 = c1.getPrimitiveType();
 		int type2 = c2.getPrimitiveType();
 		switch (type1) {
 			case BOOLEAN:
-				castBoolean(ctx, v1, v2, type2);
+				v1.bool = v2.bool;
 				break;
 			case CHAR:
-				castCharacter(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.character = (char) v2.byteNumber;
+						break;
+					case SHORT:
+						v1.character = (char) v2.shortNumber;
+						break;
+					case CHAR:
+						v1.character = v2.character;
+						break;
+					case INT:
+						v1.character = (char) v2.intNumber;
+						break;
+					case LONG:
+						v1.character = (char) v2.longNumber;
+						break;
+					case FLOAT:
+						v1.character = (char) v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.character = (char) v2.doubleNumber;
+						break;
+				}
 			case BYTE:
-				castByte(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.byteNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.byteNumber = (byte) v2.shortNumber;
+						break;
+					case CHAR:
+						v1.byteNumber = (byte) v2.character;
+						break;
+					case INT:
+						v1.byteNumber = (byte) v2.intNumber;
+						break;
+					case LONG:
+						v1.byteNumber = (byte) v2.longNumber;
+						break;
+					case FLOAT:
+						v1.byteNumber = (byte) v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.byteNumber = (byte) v2.doubleNumber;
+						break;
+				}
 			case SHORT:
-				castShort(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.shortNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.shortNumber = v2.shortNumber;
+						break;
+					case CHAR:
+						v1.shortNumber = (short) v2.character;
+						break;
+					case INT:
+						v1.shortNumber = (short) v2.intNumber;
+						break;
+					case LONG:
+						v1.shortNumber = (short) v2.longNumber;
+						break;
+					case FLOAT:
+						v1.shortNumber = (short) v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.shortNumber = (short) v2.doubleNumber;
+						break;
+				}
 			case INT:
-				castInt(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.intNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.intNumber = v2.shortNumber;
+						break;
+					case CHAR:
+						v1.intNumber = v2.character;
+						break;
+					case INT:
+						v1.intNumber = v2.intNumber;
+						break;
+					case LONG:
+						v1.intNumber = (int) v2.longNumber;
+						break;
+					case FLOAT:
+						v1.intNumber = (int) v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.intNumber = (int) v2.doubleNumber;
+						break;
+				}
 			case LONG:
-				castLong(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.longNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.longNumber = v2.shortNumber;
+						break;
+					case CHAR:
+						v1.longNumber = v2.character;
+						break;
+					case INT:
+						v1.longNumber = v2.intNumber;
+						break;
+					case LONG:
+						v1.longNumber = v2.longNumber;
+						break;
+					case FLOAT:
+						v1.longNumber = (long) v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.longNumber = (long) v2.doubleNumber;
+						break;
+				}
 			case FLOAT:
-				castFloat(ctx, v1, v2, type2);
-				break;
+				switch (type2) {
+					case BYTE:
+						v1.floatNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.floatNumber = v2.shortNumber;
+						break;
+					case CHAR:
+						v1.floatNumber = v2.character;
+						break;
+					case INT:
+						v1.floatNumber = v2.intNumber;
+						break;
+					case LONG:
+						v1.floatNumber = v2.longNumber;
+						break;
+					case FLOAT:
+						v1.floatNumber = v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.floatNumber = (float) v2.doubleNumber;
+						break;
+				}
 			case DOUBLE:
-				castDouble(ctx, v1, v2, type2);
-				break;
-		}
-	}
-
-	private void castBoolean(RuntimeContext ctx, Value v1, Value v2, int type) {
-		// TODO remove?
-		if (type != BOOLEAN) {
-			// TODO checked in validation?
-			errorCast(ctx, v2.valueClass, v1.valueClass);
-			return;
-		}
-		v1.bool = v2.bool;
-	}
-
-	private void castCharacter(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.character = (char) v2.byteNumber;
-				break;
-			case SHORT:
-				v1.character = (char) v2.shortNumber;
-				break;
-			case CHAR:
-				v1.character = v2.character;
-				break;
-			case INT:
-				v1.character = (char) v2.intNumber;
-				break;
-			case LONG:
-				v1.character = (char) v2.longNumber;
-				break;
-			case FLOAT:
-				v1.character = (char) v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.character = (char) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castByte(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.byteNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.byteNumber = (byte) v2.shortNumber;
-				break;
-			case CHAR:
-				v1.byteNumber = (byte) v2.character;
-				break;
-			case INT:
-				v1.byteNumber = (byte) v2.intNumber;
-				break;
-			case LONG:
-				v1.byteNumber = (byte) v2.longNumber;
-				break;
-			case FLOAT:
-				v1.byteNumber = (byte) v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.byteNumber = (byte) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castShort(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.shortNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.shortNumber = v2.shortNumber;
-				break;
-			case CHAR:
-				v1.shortNumber = (short) v2.character;
-				break;
-			case INT:
-				v1.shortNumber = (short) v2.intNumber;
-				break;
-			case LONG:
-				v1.shortNumber = (short) v2.longNumber;
-				break;
-			case FLOAT:
-				v1.shortNumber = (short) v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.shortNumber = (short) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castInt(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.intNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.intNumber = v2.shortNumber;
-				break;
-			case CHAR:
-				v1.intNumber = v2.character;
-				break;
-			case INT:
-				v1.intNumber = v2.intNumber;
-				break;
-			case LONG:
-				v1.intNumber = (int) v2.longNumber;
-				break;
-			case FLOAT:
-				v1.intNumber = (int) v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.intNumber = (int) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castFloat(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.floatNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.floatNumber = v2.shortNumber;
-				break;
-			case CHAR:
-				v1.floatNumber = v2.character;
-				break;
-			case INT:
-				v1.floatNumber = v2.intNumber;
-				break;
-			case LONG:
-				v1.floatNumber = v2.longNumber;
-				break;
-			case FLOAT:
-				v1.floatNumber = v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.floatNumber = (float) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castLong(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.longNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.longNumber = v2.shortNumber;
-				break;
-			case CHAR:
-				v1.longNumber = v2.character;
-				break;
-			case INT:
-				v1.longNumber = v2.intNumber;
-				break;
-			case LONG:
-				v1.longNumber = v2.longNumber;
-				break;
-			case FLOAT:
-				v1.longNumber = (long) v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.longNumber = (long) v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
-		}
-	}
-
-	private void castDouble(RuntimeContext ctx, Value v1, Value v2, int type) {
-		switch (type) {
-			case BYTE:
-				v1.doubleNumber = v2.byteNumber;
-				break;
-			case SHORT:
-				v1.doubleNumber = v2.shortNumber;
-				break;
-			case CHAR:
-				v1.doubleNumber = v2.character;
-				break;
-			case INT:
-				v1.doubleNumber = v2.intNumber;
-				break;
-			case LONG:
-				v1.doubleNumber = v2.longNumber;
-				break;
-			case FLOAT:
-				v1.doubleNumber = v2.floatNumber;
-				break;
-			case DOUBLE:
-				v1.doubleNumber = v2.doubleNumber;
-				break;
-			default:
-				errorCast(ctx, v2.valueClass, v1.valueClass);
+				switch (type2) {
+					case BYTE:
+						v1.doubleNumber = v2.byteNumber;
+						break;
+					case SHORT:
+						v1.doubleNumber = v2.shortNumber;
+						break;
+					case CHAR:
+						v1.doubleNumber = v2.character;
+						break;
+					case INT:
+						v1.doubleNumber = v2.intNumber;
+						break;
+					case LONG:
+						v1.doubleNumber = v2.longNumber;
+						break;
+					case FLOAT:
+						v1.doubleNumber = v2.floatNumber;
+						break;
+					case DOUBLE:
+						v1.doubleNumber = v2.doubleNumber;
+						break;
+				}
 		}
 	}
 }
