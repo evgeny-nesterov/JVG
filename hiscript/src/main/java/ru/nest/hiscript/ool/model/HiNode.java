@@ -123,6 +123,10 @@ public abstract class HiNode implements HiNodeIF {
 
 	public final static byte TYPE_METHOD = 52;
 
+	public final static byte TYPE_PACKAGE = 53;
+
+	public final static byte TYPE_IMPORT = 54;
+
 	public HiNode(String name, int type, boolean isStatement) {
 		this(name, type, null, isStatement);
 	}

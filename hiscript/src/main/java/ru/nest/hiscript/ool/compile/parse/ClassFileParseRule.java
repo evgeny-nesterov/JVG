@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.nodes.NodePackage;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -32,18 +33,21 @@ public class ClassFileParseRule extends ParseRule<HiNode> {
 	public List<HiClass> visit(Tokenizer tokenizer, HiCompiler compiler) throws TokenizerException, HiScriptParseException {
 		tokenizer.nextToken();
 
+		NodePackage packageNode = PackageParseRule.getInstance().visit(tokenizer, null);
+		String[] packagePath = packageNode != null ? packageNode.getPath() : null;
+
 		List<HiClass> classes = new ArrayList<>();
 		while (true) {
-			ClassParseRule.skipComments(tokenizer);
-
 			HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, getContext(compiler));
 			if (clazz != null) {
+				clazz.packagePath = packagePath;
 				classes.add(clazz);
 				continue;
 			}
 
 			HiClass enumClass = EnumParseRule.getInstance().visit(tokenizer, getContext(compiler));
 			if (enumClass != null) {
+				enumClass.packagePath = packagePath;
 				classes.add(enumClass);
 				continue;
 			}

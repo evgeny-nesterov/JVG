@@ -166,6 +166,8 @@ public class ClassParseRule extends ParserUtil {
 		HiClass clazz = ctx.clazz;
 		Type type = ctx.type;
 
+		skipSymbols(tokenizer, ";");
+
 		if (visitor != null && visitor.visit(tokenizer, ctx)) {
 			return true;
 		}

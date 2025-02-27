@@ -6,7 +6,7 @@ public class TestClasses extends HiTest {
 	public void testTypes() {
 		assertSuccess("class A{} A o;");
 		assertSuccess("class A{} A[] o;");
-		assertSuccess("class A{} A[][][] o;");
+		assertSuccess("; ; ; class A{} ;;; A[][][] o;;");
 
 		assertSuccess("class B{} class A<O>{} A<B> o;");
 		assertSuccess("class B{} class C{} class A<O1, O2>{} A<B, C> o;");

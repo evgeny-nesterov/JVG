@@ -418,8 +418,6 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	}
 
 	private int visitOperation(Tokenizer tokenizer, List<HiNodeIF> operands) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;

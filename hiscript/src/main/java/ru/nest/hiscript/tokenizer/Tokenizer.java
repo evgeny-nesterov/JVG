@@ -142,6 +142,13 @@ public class Tokenizer {
 	}
 
 	public Token nextToken() throws TokenizerException {
+		do {
+			_nextToken();
+		} while (currentToken instanceof CommentToken);
+		return currentToken;
+	}
+
+	private Token _nextToken() throws TokenizerException {
 		if (repeatCount > 0) {
 			repeatCount--;
 			return currentToken;

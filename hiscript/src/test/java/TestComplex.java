@@ -110,14 +110,14 @@ public class TestComplex extends HiTest {
 
 		// compile value
 		assertSuccess("""
-					int a = 1;
-					int b = 2;
-					int c = 1 + 2 * switch(1 + 2 * 1) {
-					    case 1 ->                   2;
-					    case 2, 3 ->                2 * 2 - 1; // matched
-					    case 3, a + 2, 2 + 1 ->     2 + b; // never return
-					};
-					assert c == 7;
+				int a = 1;
+				int b = 2;
+				int c = 1 + 2 * switch(1 + 2 * 1) {
+					case 1 ->                   2;
+					case 2, 3 ->                2 * 2 - 1; // matched
+					case 3, a + 2, 2 + 1 ->     2 + b; // never return
+				};
+				assert c == 7;
 				""");
 		assertSuccess("boolean x = true && true; assert x;");
 		assertSuccess("boolean x = 1 == 1 && 2 == 1 + 1; assert x;");
@@ -195,11 +195,20 @@ public class TestComplex extends HiTest {
 				"divide by zero");
 		assertSuccess("record R(Number a); switch(new R(1.1f)){case R(Byte a): break; case R(Float a): assert a == 1.1f; return;} assert false;");
 		assertSuccess("switch(\"a\") {case false: break; case true: return;} assert false;");
-		assertFail("class A{public boolean equals(Object o){throw new RuntimeException(\"exception in equals\");}} switch(new A()) {case new A(): assert false;} assert false;",
-				"exception in equals");
+		assertFail("class A{public boolean equals(Object o){throw new RuntimeException(\"exception in equals\");}} switch(new A()) {case new A(): assert false;} assert false;", "exception in equals");
 
 		// try
 		assertSuccess("class A{int get(){try{return 1;} finally{}}} assert new A().get() == 1;");
+
+		// class initialization
+		assertSuccess("class A{{assert false;} int x = 1/0;} A a;");
+		assertSuccess("class A{{assert false;} int x = 1/0;} class B{void m(A a){int x = a.x;}}; new B();");
+		assertSuccess("class A{static int x = 1;} class B extends A{{assert false;} int y = 1/0;} assert B.x == 1;");
+		assertSuccess("class A{static int m(){return 1;}} class B extends A{{assert false;} int y = 1/0;} assert B.m() == 1;");
+		assertSuccess("class A{A(){assert getX() == 0;}; int getX(){return 1;}} class B extends A{int x = 2; int getX(){return x;}}");
+
+		// rewrite field
+		assertSuccess("class A{int x = 1; {assert x == 1;}} class B extends A{int x = 2; {assert x == 2;}} new B();");
 
 		// statements
 		assertFailCompile("() -> {};", //

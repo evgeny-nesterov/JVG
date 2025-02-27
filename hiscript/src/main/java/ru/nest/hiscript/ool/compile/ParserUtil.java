@@ -53,38 +53,38 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class ParserUtil {
-	public static void skipComments(Tokenizer tokenizer) throws TokenizerException {
-		while (tokenizer.currentToken() instanceof CommentToken) {
+	public static void skipSymbols(Tokenizer tokenizer, String symbol) throws TokenizerException {
+		while (tokenizer.currentToken() instanceof SymbolToken && ((SymbolToken) tokenizer.currentToken()).getSymbol().equals(symbol)) {
 			tokenizer.nextToken();
 		}
 	}
 
 	protected static Token startToken(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
 		return tokenizer.currentToken();
 	}
 
 	protected static String visitWord(int type, Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
+		WordToken token = visitWordToken(type, tokenizer);
+		return token != null ? token.getWord() : null;
+	}
 
+	protected static WordToken visitWordToken(int type, Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
 			if (wordToken.getType() == type) {
 				tokenizer.nextToken();
-				return wordToken.getWord();
+				return wordToken;
 			}
 		}
 		return null;
 	}
 
 	protected static boolean checkWord(int type, Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -96,15 +96,20 @@ public class ParserUtil {
 	}
 
 	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException {
-		String word = visitWord(type, tokenizer);
-		if (word == null) {
+		WordToken token = expectWordToken(type, tokenizer);
+		return token != null ? token.getWord() : null;
+	}
+
+	protected static WordToken expectWordToken(int type, Tokenizer tokenizer) throws TokenizerException {
+		WordToken token = visitWordToken(type, tokenizer);
+		if (token == null) {
 			if (type != NOT_SERVICE && type != UNNAMED_VARIABLE) {
 				tokenizer.error("'" + WordToken.getWord(type) + "' is expected");
 			} else {
 				tokenizer.error("identifier is expected");
 			}
 		}
-		return word;
+		return token;
 	}
 
 	protected static String expectWords(Tokenizer tokenizer, int... types) throws TokenizerException {
@@ -132,8 +137,6 @@ public class ParserUtil {
 	}
 
 	protected static int visitWordType(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -148,8 +151,6 @@ public class ParserUtil {
 	}
 
 	protected static String visitWord(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -164,8 +165,6 @@ public class ParserUtil {
 	}
 
 	protected static int visitServiceWord(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -180,8 +179,6 @@ public class ParserUtil {
 	}
 
 	protected static String visitAnnotationWord(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof AnnotationWordToken) {
 			AnnotationWordToken wordToken = (AnnotationWordToken) currentToken;
@@ -294,8 +291,6 @@ public class ParserUtil {
 	}
 
 	protected static NodeNumber visitNumber(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof DoubleToken) {
 			DoubleToken token = (DoubleToken) currentToken;
@@ -318,8 +313,6 @@ public class ParserUtil {
 	}
 
 	protected static NodeChar visitCharacter(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof CharToken) {
 			CharToken token = (CharToken) currentToken;
@@ -330,8 +323,6 @@ public class ParserUtil {
 	}
 
 	protected static NodeString visitString(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof StringToken) {
 			StringToken token = (StringToken) currentToken;
@@ -342,8 +333,6 @@ public class ParserUtil {
 	}
 
 	protected static boolean visitGreater(Tokenizer tokenizer, boolean expect) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -367,8 +356,6 @@ public class ParserUtil {
 	}
 
 	protected static int visitSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -383,8 +370,6 @@ public class ParserUtil {
 	}
 
 	protected static int checkSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -420,8 +405,6 @@ public class ParserUtil {
 	}
 
 	protected static NodeExpression expectCondition(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		skipComments(tokenizer);
-
 		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 		NodeExpression condition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (condition == null) {
@@ -432,8 +415,6 @@ public class ParserUtil {
 	}
 
 	protected static HiNode expectBody(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		skipComments(tokenizer);
-
 		ctx.enter(RuntimeContext.BLOCK, startToken(tokenizer));
 		HiNode body = StatementParseRule.getInstance().visit(tokenizer, ctx);
 		ctx.exit();
@@ -449,8 +430,6 @@ public class ParserUtil {
 	}
 
 	protected static NodeExpression expectExpression(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		skipComments(tokenizer);
-
 		NodeExpression expression = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (expression == null) {
 			tokenizer.error("expression expected");

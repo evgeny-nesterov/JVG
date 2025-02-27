@@ -228,8 +228,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 	}
 
 	private int visitOperation(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -243,8 +241,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 
 	private int visitOperation(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;

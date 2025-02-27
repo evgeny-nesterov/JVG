@@ -11,7 +11,6 @@ import ru.nest.hiscript.pol.model.StringNode;
 import ru.nest.hiscript.pol.model.Types;
 import ru.nest.hiscript.pol.model.VariableNode;
 import ru.nest.hiscript.tokenizer.CharToken;
-import ru.nest.hiscript.tokenizer.CommentToken;
 import ru.nest.hiscript.tokenizer.DoubleToken;
 import ru.nest.hiscript.tokenizer.FloatToken;
 import ru.nest.hiscript.tokenizer.IntToken;
@@ -27,15 +26,7 @@ import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
 public abstract class ParseRule<N extends Node> {
-	protected void skipComments(Tokenizer tokenizer) throws TokenizerException {
-		while (tokenizer.currentToken() instanceof CommentToken) {
-			tokenizer.nextToken();
-		}
-	}
-
 	protected String visitWord(int type, Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -69,8 +60,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected String visitWord(int type, Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
 				WordToken wordToken = (WordToken) currentToken;
@@ -86,8 +75,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected int visitWords(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -104,8 +91,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected int visitWords(Tokenizer tokenizer, CompileHandler handler, int... types) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
 				WordToken wordToken = (WordToken) currentToken;
@@ -124,8 +109,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected int visitType(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -139,8 +122,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected int visitType(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
 				WordToken wordToken = (WordToken) currentToken;
@@ -156,8 +137,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected Node visitNumber(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof DoubleToken) {
 			DoubleToken token = (DoubleToken) currentToken;
@@ -181,8 +160,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected boolean visitNumber(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof DoubleToken || currentToken instanceof FloatToken || currentToken instanceof LongToken || currentToken instanceof IntToken) {
 				tokenizer.nextToken();
@@ -195,8 +172,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected CharacterNode visitCharacter(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof CharToken) {
 			CharToken token = (CharToken) currentToken;
@@ -208,8 +183,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected boolean visitCharacter(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof CharToken) {
 				tokenizer.nextToken();
@@ -222,8 +195,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected StringNode visitString(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof StringToken) {
 			StringToken token = (StringToken) currentToken;
@@ -235,8 +206,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected boolean visitString(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof StringToken) {
 				tokenizer.nextToken();
@@ -249,8 +218,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected int visitSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -266,8 +233,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected int visitSymbol(Tokenizer tokenizer, CompileHandler handler, int... types) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -313,8 +278,6 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected int visitEquate(Tokenizer tokenizer) throws TokenizerException {
-		skipComments(tokenizer);
-
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -328,8 +291,6 @@ public abstract class ParseRule<N extends Node> {
 
 	protected int visitEquate(Tokenizer tokenizer, CompileHandler handler) {
 		try {
-			skipComments(tokenizer);
-
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;

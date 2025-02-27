@@ -23,7 +23,6 @@ public class RootParseRule extends ParseRule<Node> {
 		tokenizer.nextToken();
 		BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
 
-		skipComments(tokenizer);
 		if (tokenizer.hasNext()) {
 			throw new HiScriptParseException("unexpected token", tokenizer.currentToken());
 		}
@@ -40,7 +39,6 @@ public class RootParseRule extends ParseRule<Node> {
 			tokenizer.nextToken();
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 
-			skipComments(tokenizer);
 			if (tokenizer.hasNext()) {
 				errorOccurred(tokenizer, handler, "unexpected token");
 			}

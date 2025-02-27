@@ -73,7 +73,6 @@ public class RootParseRule extends ParseRule<HiNode> {
 			node = body;
 		}
 
-		skipComments(tokenizer);
 		if (tokenizer.hasNext()) {
 			tokenizer.error("unexpected token");
 		}
