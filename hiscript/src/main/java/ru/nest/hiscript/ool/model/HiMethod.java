@@ -109,11 +109,6 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 	}
 
 	@Override
-	public boolean isStatement() {
-		return true;
-	}
-
-	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.enter(RuntimeContext.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);

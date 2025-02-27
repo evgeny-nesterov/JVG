@@ -200,5 +200,20 @@ public class TestComplex extends HiTest {
 
 		// try
 		assertSuccess("class A{int get(){try{return 1;} finally{}}} assert new A().get() == 1;");
+
+		// statements
+		assertFailCompile("() -> {};", //
+				"not a statement");
+		assertFailCompile("int m(){return 0;}", //
+				"not a statement");
+		assertFailCompile("void m(){}", //
+				"unexpected token");
+		assertFailCompile("C(){}", //
+				"';' is expected", //
+				"cannot resolve method 'C'");
+
+		// lambda
+		assertFailCompile("interface A{int get(int x);} A a = ()->{int x = 0;};", //
+				"incompatible parameters signature in lambda expression");
 	}
 }
