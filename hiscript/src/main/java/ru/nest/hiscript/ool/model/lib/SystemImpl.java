@@ -134,7 +134,7 @@ public class SystemImpl extends ImplUtil {
 			if (newInstance) {
 				compileCtx = new CompileClassContext(ctx.compiler, null, null, HiClass.CLASS_TYPE_TOP);
 			} else {
-				compileCtx = new CompileClassContext(ctx.compiler, ctx.level.clazz, ctx.level.type, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx);
 			}
 
 			final NodeBlock node = (NodeBlock) new RootParseRule(ctx.compiler, false, false).visit(tokenizer, compileCtx);
@@ -149,6 +149,8 @@ public class SystemImpl extends ImplUtil {
 				}
 				valid &= node.validate(validationInfo, compileCtx);
 				valid &= ctx.getClassLoader().validate(validationInfo);
+			} else {
+				return;
 			}
 
 			if (validationInfo.messages.size() > 0) {
@@ -173,7 +175,9 @@ public class SystemImpl extends ImplUtil {
 
 				node.execute(newCtx);
 				if (newCtx.exception == null) {
-					if (newCtx.value.valueClass.isPrimitive()) {
+					if (newCtx.value.valueClass == HiClassPrimitive.VOID) {
+						returnValue = null;
+					} else if (newCtx.value.valueClass.isPrimitive()) {
 						returnValue = ((HiClassPrimitive) newCtx.value.valueClass).box(ctx, ctx.value);
 					} else if (!newCtx.value.valueClass.isNull()) {
 						returnValue = newCtx.value.object;

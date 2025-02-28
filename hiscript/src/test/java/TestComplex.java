@@ -228,5 +228,13 @@ public class TestComplex extends HiTest {
 		// class initialization
 		assertFail("class A{static {m(1);} static void m(int x){m(x + 1);}} A a = new A();", //
 				"cannot initialize class A: stack overflow");
+
+		// exec script
+		assertSuccess("""
+				String topLevelVar = "abc";
+				String script = "assert topLevelVar.equals(\\"abc\\"); System.println(\\"topLevelVar=\\" + topLevelVar);";
+				System.println(script);
+				System.exec(script, false, false);
+				""");
 	}
 }

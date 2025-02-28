@@ -53,6 +53,17 @@ public class CompileClassContext implements ClassResolver {
 		this.classType = classType;
 	}
 
+	// for script execution in runtime context
+	public CompileClassContext(RuntimeContext ctx) {
+		this.runtimeCtx = ctx;
+		this.compiler = ctx.compiler;
+		this.tokenizer = ctx.compiler.getTokenizer();
+		this.parent = null;
+		this.enclosingClass = ctx.level.clazz;
+		this.enclosingType = ctx.level.type;
+		this.classType = HiClass.CLASS_TYPE_TOP;
+	}
+
 	private final HiCompiler compiler;
 
 	private final Tokenizer tokenizer;
@@ -98,6 +109,8 @@ public class CompileClassContext implements ClassResolver {
 	public final Set<String> breaksLabels = new HashSet<>();
 
 	public final AtomicInteger lambdasCount = new AtomicInteger();
+
+	public RuntimeContext runtimeCtx;
 
 	public NodeValueType[] getNodesValueTypesCache(int size) {
 		if (this.nodesValueTypesCache.size() > 0) {
@@ -479,73 +492,84 @@ public class CompileClassContext implements ClassResolver {
 			}
 			level = level.parent;
 		}
-		if (onlyLocal) {
-			return null;
-		}
-
-		if (resolveClass) {
-			if (this.clazz != null) {
-				HiClass outerClass = this.clazz;
-				while (outerClass != null) {
-					if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
-						return outerClass;
-					}
-
-					HiClass innerClass = outerClass.getInnerClass(this, name, true);
-					if (innerClass != null) {
-						return innerClass;
-					}
-					outerClass = outerClass.enclosingClass;
-				}
-
-				HiClass genericClass = this.clazz.getGenericClass(this, name);
-				if (genericClass != null) {
-					return genericClass;
-				}
-			}
-		}
-
-		if (parent != null) {
-			HiNodeIF resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
-			if (resolvedIdentifier != null) {
-				if (resolvedIdentifier instanceof HiClass) {
-					checkClassAccess((HiClass) resolvedIdentifier);
-				}
-				return resolvedIdentifier;
-			}
-		}
-
-		while (level != null) {
-			if (resolveVariable) {
-				NodeVariable variable = level.getField(name, false);
-				if (variable != null) {
-					return variable;
-				}
-			}
+		if (!onlyLocal) {
 			if (resolveClass) {
-				HiClass clazz = level.getClass(name);
-				if (clazz != null) {
-					checkClassAccess(clazz);
-					return clazz;
+				if (this.clazz != null) {
+					HiClass outerClass = this.clazz;
+					while (outerClass != null) {
+						if ((outerClass.name.equals(name) || outerClass.fullName.equals(name))) {
+							return outerClass;
+						}
+
+						HiClass innerClass = outerClass.getInnerClass(this, name, true);
+						if (innerClass != null) {
+							return innerClass;
+						}
+						outerClass = outerClass.enclosingClass;
+					}
+
+					HiClass genericClass = this.clazz.getGenericClass(this, name);
+					if (genericClass != null) {
+						return genericClass;
+					}
 				}
 			}
-			level = level.parent;
-		}
 
-		if (resolveClass) {
-			if (this.clazz != null && name.indexOf('$') == -1) {
-				int index = this.clazz.fullName.lastIndexOf('$');
-				if (index != -1) {
-					String outboundClassName = this.clazz.fullName.substring(0, index + 1);
-					String extendedName = outboundClassName + '0' + name;
-					HiClass clazz = HiClass.forName(this, extendedName);
+			if (parent != null) {
+				HiNodeIF resolvedIdentifier = parent.resolveIdentifier(name, resolveClass, resolveVariable, false);
+				if (resolvedIdentifier != null) {
+					if (resolvedIdentifier instanceof HiClass) {
+						checkClassAccess((HiClass) resolvedIdentifier);
+					}
+					return resolvedIdentifier;
+				}
+			}
+
+			while (level != null) {
+				if (resolveVariable) {
+					NodeVariable variable = level.getField(name, false);
+					if (variable != null) {
+						return variable;
+					}
+				}
+				if (resolveClass) {
+					HiClass clazz = level.getClass(name);
 					if (clazz != null) {
 						checkClassAccess(clazz);
 						return clazz;
 					}
 				}
+				level = level.parent;
 			}
-			return HiClass.forName(this, name);
+
+			if (resolveClass) {
+				if (this.clazz != null && name.indexOf('$') == -1) {
+					int index = this.clazz.fullName.lastIndexOf('$');
+					if (index != -1) {
+						String outboundClassName = this.clazz.fullName.substring(0, index + 1);
+						String extendedName = outboundClassName + '0' + name;
+						HiClass clazz = HiClass.forName(this, extendedName);
+						if (clazz != null) {
+							checkClassAccess(clazz);
+							return clazz;
+						}
+					}
+				}
+				return HiClass.forName(this, name);
+			}
+		}
+		if (runtimeCtx != null) {
+			HiField<?> variable = runtimeCtx.getVariable(name);
+			if (variable != null) {
+				if (variable.initialized) {
+					initializedNodes.add(variable);
+				}
+				return variable;
+			}
+			HiClass clazz = runtimeCtx.getClass(name);
+			if (clazz != null) {
+				return clazz;
+			}
 		}
 		return null;
 	}
