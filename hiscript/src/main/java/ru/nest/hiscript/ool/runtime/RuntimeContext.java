@@ -64,7 +64,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public final static int STATIC_CLASS = 16;
 
-	public static int MAX_STACK_SIZE = 1000;
+	public static int MAX_STACK_SIZE = 500;
 
 	public boolean isExit;
 
@@ -175,34 +175,47 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	public void throwRuntimeException(String message) {
-		throwException("RuntimeException", message);
+		throwException("RuntimeException", message, null);
+	}
+
+	public void throwRuntimeException(String message, HiObject cause) {
+		throwException("RuntimeException", message, cause);
 	}
 
 	boolean hasException = false;
 
-	// TODO cause exception
-	public void throwException(String exceptionClass, String message) {
-		if (hasException) {
+	public void throwException(String exceptionClass, String message, HiObject cause) {
+		if (hasException && exception != cause) {
 			return;
 		}
+		exception = null;
 		hasException = true;
 
 		if (message == null) {
 			message = "";
 		}
 
+		int mainLevel = level.mainLevel;
+		level.mainLevel = 0;
+
 		if (excClass == null) {
 			excClass = HiClass.forName(this, exceptionClass);
-			excConstructor = excClass.getConstructor(this, HiClass.forName(this, HiClass.STRING_CLASS_NAME));
+			excConstructor = excClass.getConstructor(this, HiClass.STRING_CLASS, HiClass.EXCEPTION_CLASS);
 		}
 
-		HiField<?>[] args = new HiField<?>[1];
-		args[0] = HiField.getField(HiClass.forName(this, HiClass.STRING_CLASS_NAME), "msg", null);
+		HiField<?>[] args = new HiField<?>[2];
+		args[0] = HiField.getField(HiClass.STRING_CLASS, "msg", null);
 		NodeString.createString(this, message, false);
 		args[0].set(this, value);
 		args[0].initialized = true;
 
+		args[1] = HiField.getField(HiClass.EXCEPTION_CLASS, "cause", null);
+		value.setObjectValue(HiClass.EXCEPTION_CLASS, cause);
+		args[1].set(this, value);
+		args[1].initialized = true;
+
 		exception = excConstructor.newInstance(this, null, args, null);
+		level.mainLevel = mainLevel;
 	}
 
 	public boolean exitFromBlock() {
@@ -216,7 +229,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
-			throw new StackOverflowError();
+			throw new StackOverflowError("stack overflow");
 		}
 		if (level != null) {
 			level = getStack(type, level, level.clazz, level.constructor, level.method, level.object, null, token);
@@ -238,7 +251,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
-			throw new StackOverflowError();
+			throw new StackOverflowError("stack overflow");
 		}
 		while (object != null && !object.clazz.isInstanceof(method.clazz)) {
 			// method called from local class
@@ -252,7 +265,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
-			throw new StackOverflowError();
+			throw new StackOverflowError("stack overflow");
 		}
 		level = getStack(CONSTRUCTOR, level, constructor.clazz, constructor, null, object, null, token);
 		level.mainLevel++;
@@ -262,7 +275,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
-			throw new StackOverflowError();
+			throw new StackOverflowError("stack overflow");
 		}
 		level = getStack(INITIALIZATION, level, clazz, null, null, object, null, token);
 	}
@@ -275,7 +288,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		if (this.level != null && this.level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
-			throw new StackOverflowError();
+			throw new StackOverflowError("stack overflow");
 		}
 		level.parent = this.level;
 		level.level = this.level != null ? this.level.level + 1 : 0;

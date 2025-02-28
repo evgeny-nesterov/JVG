@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
+import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.lang.reflect.Array;
 
@@ -141,6 +142,10 @@ public class Value implements PrimitiveTypes {
 		} else if (value instanceof Value) {
 			Value valueValue = (Value) value;
 			valueValue.copyTo(this);
+			return true;
+		} else if (value instanceof String) {
+			HiObject object = NodeString.createString(ctx, (String) value, false);
+			setObjectValue(object.clazz, object);
 			return true;
 		} else {
 			Class<?> clazz = value.getClass();

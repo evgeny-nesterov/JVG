@@ -331,9 +331,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 						HiFieldObject enumName = new HiFieldObject(ctx.getEnv().stringType, "name", NodeString.createString(ctx, ctx.initializingEnumValue.getName(), true));
 						HiFieldInt enumOrdinal = new HiFieldInt("ordinal", ctx.initializingEnumValue.getOrdinal());
 						superObject = enumDefaultConstructor.newInstance(ctx, type, new HiField<?>[] {enumName, enumOrdinal}, null);
-						if (ctx.exitFromBlock()) {
-							return null;
-						}
+						assert !ctx.exitFromBlock();
 					} else {
 						HiConstructor superDefaultConstructor;
 						if (clazz.superClass.isInterface) {

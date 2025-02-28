@@ -26,7 +26,6 @@ import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeNull;
-import ru.nest.hiscript.ool.model.nodes.NodePackage;
 import ru.nest.hiscript.ool.model.validation.HiScriptValidationException;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
@@ -51,8 +50,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.PrimitiveTypes.CHAR;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public final static int CLASS_OBJECT = 0;
@@ -522,7 +521,8 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				}
 			} catch (Throwable exc) {
 				exc.printStackTrace();
-				ctx.throwRuntimeException("cannot initialize class " + getNameDescr() + ": " + exc.getMessage());
+				String message = exc.getMessage() != null ? exc.getMessage() : exc.getClass().getName();
+				ctx.throwRuntimeException("cannot initialize class " + getNameDescr() + ": " + message, ctx.exception);
 			} finally {
 				ctx.exit();
 			}

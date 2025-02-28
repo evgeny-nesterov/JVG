@@ -224,5 +224,9 @@ public class TestComplex extends HiTest {
 		// lambda
 		assertFailCompile("interface A{int get(int x);} A a = ()->{int x = 0;};", //
 				"incompatible parameters signature in lambda expression");
+
+		// class initialization
+		assertFail("class A{static {m(1);} static void m(int x){m(x + 1);}} A a = new A();", //
+				"cannot initialize class A: stack overflow");
 	}
 }

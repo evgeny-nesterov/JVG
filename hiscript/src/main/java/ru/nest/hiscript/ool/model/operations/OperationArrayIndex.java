@@ -82,7 +82,7 @@ public class OperationArrayIndex extends BinaryOperation {
 			return;
 		}
 
-		HiArrays.getArrayIndex(v1, array, index);
+		HiArrays.getArrayCellValue(v1, array, index);
 
 		v1.valueType = Value.ARRAY_INDEX;
 		v1.valueClass = type.cellClass;

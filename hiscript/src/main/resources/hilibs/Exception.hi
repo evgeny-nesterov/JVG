@@ -5,6 +5,7 @@ public class Exception {
 
 	private String message;
 	private StackTraceElement[] stackTrace;
+	private Exception cause;
 
 	public Exception() {
 		fillTrace();
@@ -16,8 +17,18 @@ public class Exception {
 		message = msg;
 	}
 
+	public Exception(String msg, Exception cause) {
+		fillTrace();
+		message = msg;
+		this.cause = cause;
+	}
+
 	public String getMessage() {
 		return message;
+	}
+
+	public Exception getCause() {
+	    return cause;
 	}
 
 	public void printStackTrace() {

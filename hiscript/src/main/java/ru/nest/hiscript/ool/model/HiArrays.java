@@ -3,43 +3,14 @@ package ru.nest.hiscript.ool.model;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.fields.HiFieldPrimitive;
-import ru.nest.hiscript.ool.model.nodes.NodeString;
-import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Array;
-import java.util.HashSet;
-import java.util.Set;
 
 public class HiArrays implements PrimitiveTypes {
-	private static Set<Class<?>> primitiveArrayClasses;
-
-	private static boolean initialized = false;
-
-	private static void init() {
-		if (!initialized) {
-			primitiveArrayClasses = new HashSet<>(8);
-
-			primitiveArrayClasses.add(boolean[].class);
-			primitiveArrayClasses.add(char[].class);
-			primitiveArrayClasses.add(byte[].class);
-			primitiveArrayClasses.add(short[].class);
-			primitiveArrayClasses.add(int[].class);
-			primitiveArrayClasses.add(float[].class);
-			primitiveArrayClasses.add(long[].class);
-			primitiveArrayClasses.add(double[].class);
-
-			initialized = true;
-		}
-	}
-
 	public static Class<?> getClass(HiClass clazz, int dimension) {
 		Class<?> c = null;
 		assert !clazz.isArray();
-//		while (clazz.isArray()) {
-//			clazz = ((HiClassArray) clazz).cellClass;
-//			dimension++;
-//		}
 		if (dimension > 0) {
 			StringBuilder prefix = new StringBuilder();
 			for (int i = 0; i < dimension; i++) {
@@ -79,7 +50,6 @@ public class HiArrays implements PrimitiveTypes {
 					c = Class.forName(prefix + "L" + Object.class.getName() + ";");
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(e);
 			}
 		} else {
 			if (clazz.isPrimitive()) {
@@ -117,23 +87,10 @@ public class HiArrays implements PrimitiveTypes {
 		return c;
 	}
 
-	public static void getArrayIndex(Value v, Object array, int index) {
+	public static void getArrayCellValue(Value v, Object array, int index) {
 		if (array instanceof Object[]) {
-			init();
-
 			Object value = Array.get(array, index);
-			if (value == null) {
-				v.object = null;
-			} else if (value instanceof Object[] || primitiveArrayClasses.contains(value.getClass())) {
-				v.object = value;
-			} else if (value instanceof HiObject) {
-				v.object = value;
-				v.set(value);
-			} else if (value instanceof String) {
-				v.object = NodeString.createString(v.ctx, (String) value, false);
-			} else {
-				throw new HiIllegalArgumentException("array cell: " + value, null);
-			}
+			assert v.set(value);
 		} else {
 			HiClassArray arrayClass = (HiClassArray) v.valueClass;
 			HiClass cellType = arrayClass.cellClass;

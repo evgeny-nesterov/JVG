@@ -54,7 +54,7 @@ public class NodeAssert extends HiNode {
 			} else {
 				message = "Assert failed";
 			}
-			ctx.throwException("AssertException", message);
+			ctx.throwException("AssertException", message, null);
 		}
 	}
 

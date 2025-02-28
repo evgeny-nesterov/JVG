@@ -774,10 +774,10 @@ public class TestClasses extends HiTest {
 		assertSuccess("enum E{} E e = null;");
 		assertSuccess("enum E{A, a}");
 		assertSuccess("enum E{e1, e2(1); int x; E(){} E(int x){this.x = x;}} assert E.e1.x == 0; assert E.e2.x == 1;");
-		assertFail("enum E{e1; E(){throw new RuntimeException(\"error\");}} E e = E.e1;", //
-				"error");
-		assertFail("enum E{e1; {throw new RuntimeException(\"error\");}} E e = E.e1;", //
-				"error");
+		assertFail("enum E{e1; E(){throw new RuntimeException(\"exception in enum constructor\");}} E e = E.e1;", //
+				"exception in enum constructor");
+		assertFail("enum E{e1; {throw new RuntimeException(\"exception in enum initializer\");}} E e = E.e1;", //
+				"exception in enum initializer");
 
 		// failures
 		assertFailCompile("enum {}", //
