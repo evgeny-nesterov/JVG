@@ -142,12 +142,14 @@ public class SystemImpl extends ImplUtil {
 			ValidationInfo validationInfo = new ValidationInfo(ctx.compiler);
 			boolean valid = node != null;
 			if (node != null) {
-				if (node.statements.size() == 1 && node.statements.get(0) instanceof NodeExpressionNoLS) {
-					NodeExpressionNoLS expressionNode = (NodeExpressionNoLS) node.statements.get(0);
+				NodeExpressionNoLS expressionNode = node.getSingleStatement(NodeExpressionNoLS.class);
+				if (expressionNode != null) {
 					expressionNode.setStatement(false);
 					node.statements.set(0, new NodeReturn(expressionNode));
+					valid &= expressionNode.validate(validationInfo, compileCtx);
+				} else {
+					valid &= node.validate(validationInfo, compileCtx);
 				}
-				valid &= node.validate(validationInfo, compileCtx);
 				valid &= ctx.getClassLoader().validate(validationInfo);
 			} else {
 				return;
@@ -211,7 +213,8 @@ public class SystemImpl extends ImplUtil {
 			}
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			ctx.throwRuntimeException("script execution error");
+			String message = exc.getMessage() != null ? exc.getMessage() : exc.getClass().getName();
+			ctx.throwRuntimeException("script execution error: " + message);
 			return;
 		}
 		returnObjectOrArray(ctx, HiClass.OBJECT_CLASS, originalValueClass, returnValue);

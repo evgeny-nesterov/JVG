@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -49,6 +50,21 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 	public void setEnterType(int enterType) {
 		this.enterType = enterType;
+	}
+
+	public <N extends HiNodeIF> N getSingleStatement() {
+		if (statements != null && statements.size() == 1) {
+			return (N) statements.get(0);
+		}
+		return null;
+	}
+
+	public <N extends HiNodeIF> N getSingleStatement(Class<N> clazz) {
+		HiNodeIF singleStatement = getSingleStatement();
+		if (singleStatement != null && clazz.isAssignableFrom(singleStatement.getClass())) {
+			return (N) singleStatement;
+		}
+		return null;
 	}
 
 	@Override

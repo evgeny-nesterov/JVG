@@ -83,8 +83,7 @@ public interface HiNodeIF extends TokenAccessible, Codeable {
 	default <N extends HiNodeIF> N getExpressionSingleNode() {
 		if (this instanceof NodeExpressionNoLS) {
 			NodeExpressionNoLS expressionNode = (NodeExpressionNoLS) this;
-			HiNode expressionSingleNode = expressionNode.getSingleNode();
-			return (N) expressionSingleNode;
+			return (N) expressionNode.getSingleNode();
 		}
 		return (N) this;
 	}

@@ -232,9 +232,15 @@ public class TestComplex extends HiTest {
 		// exec script
 		assertSuccess("""
 				String topLevelVar = "abc";
-				String script = "assert topLevelVar.equals(\\"abc\\"); System.println(\\"topLevelVar=\\" + topLevelVar);";
-				System.println(script);
-				System.exec(script, false, false);
+				System.exec("assert topLevelVar.equals(\\"abc\\"); topLevelVar = \\"a\\";", false, false);
+				assert topLevelVar.equals("a");
+				""");
+		assertSuccess("int x= 1; System.exec(\"x = 2;\", false, false); assert x == 2;");
+		assertSuccess("""
+				int x1 = 1;
+				class A{int x = 1;} A a = new A();
+				System.exec("int x2 = 2; assert x1 == 1; assert a.x == 1; System.exec(\\"assert x1 == 1; assert x2 == 2; a.x = 3;\\", false, false);", false, false);
+				assert a.x == 3;
 				""");
 	}
 }
