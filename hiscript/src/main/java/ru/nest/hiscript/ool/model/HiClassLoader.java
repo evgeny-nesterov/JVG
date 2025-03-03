@@ -355,7 +355,7 @@ public class HiClassLoader {
 		if (validate) {
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
+				CompileClassContext ctx = new CompileClassContext(compiler, null, null, ClassLocationType.top);
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();

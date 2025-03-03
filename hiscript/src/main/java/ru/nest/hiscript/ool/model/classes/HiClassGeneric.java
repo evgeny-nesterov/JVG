@@ -1,7 +1,9 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.ClassResolver;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -15,7 +17,7 @@ import java.io.IOException;
 
 public class HiClassGeneric extends HiClass {
 	public HiClassGeneric(String genericName, Type genericType, HiClass clazz, HiClass[] parametersClasses, boolean isSuper, NodeGeneric.GenericSourceType sourceType, int index, HiClass sourceClass, ClassResolver classResolver) {
-		super(classResolver.getClassLoader(), Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, CLASS_GENERIC, classResolver);
+		super(classResolver.getClassLoader(), Type.objectType, clazz.enclosingClass, clazz.interfaceTypes, genericName, null, ClassLocationType.top, classResolver);
 		this.genericType = genericType;
 		this.clazz = clazz;
 		this.parametersClasses = parametersClasses;
@@ -26,8 +28,8 @@ public class HiClassGeneric extends HiClass {
 	}
 
 	// for decode
-	public HiClassGeneric(String genericName, int type) {
-		super(Type.objectType, genericName, null, type);
+	public HiClassGeneric(String genericName, ClassLocationType locationType) {
+		super(Type.objectType, genericName, null, locationType);
 	}
 
 	public Type genericType;
@@ -90,7 +92,7 @@ public class HiClassGeneric extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		code(os, CLASS_GENERIC);
+		code(os, ClassType.CLASS_GENERIC);
 		os.writeType(genericType);
 		os.writeBoolean(isSuper);
 		os.writeByte(sourceType.ordinal());
@@ -101,7 +103,7 @@ public class HiClassGeneric extends HiClass {
 	}
 
 	public static HiClassGeneric decode(DecodeContext os, int classIndex) throws IOException {
-		HiClassGeneric clazz = (HiClassGeneric) HiClass.decodeObject(os, CLASS_GENERIC, classIndex);
+		HiClassGeneric clazz = (HiClassGeneric) HiClass.decodeObject(os, ClassType.CLASS_GENERIC, classIndex);
 		clazz.genericType = os.readType();
 		clazz.isSuper = os.readBoolean();
 		clazz.sourceType = NodeGeneric.GenericSourceType.values()[os.readByte()];

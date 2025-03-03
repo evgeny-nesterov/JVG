@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.model.ArgumentsSignature;
 import ru.nest.hiscript.ool.model.ClassResolver;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -33,7 +34,7 @@ public class HiClassJava extends HiClass {
 	private final static HiConstructorJava noJavaConstructor = new HiConstructorJava(null, null, null);
 
 	public HiClassJava(HiClassLoader classLoader, String name, Class javaClass) {
-		super(classLoader, null, null, name, CLASS_TYPE_TOP, null);
+		super(classLoader, null, null, name, ClassLocationType.top, null);
 		this.javaClass = javaClass;
 	}
 

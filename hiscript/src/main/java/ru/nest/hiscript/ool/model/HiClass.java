@@ -54,59 +54,6 @@ import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
-	public final static int CLASS_OBJECT = 0;
-
-	public final static int CLASS_PRIMITIVE = 1;
-
-	public final static int CLASS_ARRAY = 2;
-
-	public final static int CLASS_ENUM = 3;
-
-	public final static int CLASS_RECORD = 4;
-
-	public final static int CLASS_ANNOTATION = 5;
-
-	public final static int CLASS_NULL = 6;
-
-	public final static int CLASS_VAR = 7;
-
-	public final static int CLASS_MIX = 8;
-
-	public final static int CLASS_GENERIC = 9;
-
-	public final static int CLASS_SYSTEM = 10; // used only for serializations
-
-	enum ClassType {
-		/**
-		 * No outbound class
-		 */
-		top,
-
-		/**
-		 * static (NESTED) and not
-		 */
-		inner,
-
-		/**
-		 * in method, constructor
-		 */
-		local,
-
-		/**
-		 * like new Object() {...}
-		 */
-		anonymous
-	}
-
-	public final static int CLASS_TYPE_TOP = 0; // No outbound class
-
-	public final static int CLASS_TYPE_INNER = 1; // static (NESTED) and not
-
-	// static (INNER)
-	public final static int CLASS_TYPE_LOCAL = 2; // in method, constructor
-
-	public final static int CLASS_TYPE_ANONYMOUS = 3; // like new Object() {...}
-
 	public static HiClass OBJECT_CLASS;
 
 	public static HiClass NUMBER_CLASS;
@@ -245,7 +192,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			HiCompiler compiler = new HiCompiler(systemClassLoader, null);
 			ValidationInfo validationInfo = new ValidationInfo(compiler);
 			for (HiClass clazz : classes) {
-				CompileClassContext ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
+				CompileClassContext ctx = new CompileClassContext(compiler, null, null, ClassLocationType.top);
 				clazz.validate(validationInfo, ctx);
 			}
 			validationInfo.throwExceptionIf();
@@ -284,7 +231,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public int hashCode;
 
-	public int type;
+	public ClassLocationType locationType;
 
 	public HiClass enclosingClass;
 
@@ -316,33 +263,33 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	// for ClassPrimitive, ClassArray and ClassNull
-	public HiClass(HiClassLoader classLoader, HiClass superClass, HiClass enclosingClass, String name, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, HiClass superClass, HiClass enclosingClass, String name, ClassLocationType locationType, ClassResolver classResolver) {
 		this.superClass = superClass;
 		if (superClass != null) {
 			this.superClassType = Type.getType(superClass);
 		}
-		init(classLoader, classResolver, enclosingClass, name, null, type);
+		init(classLoader, classResolver, enclosingClass, name, null, locationType);
 	}
 
 	// for ClassParseRule and NewParseRule
-	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, NodeGenerics generics, int type, ClassResolver classResolver) {
+	public HiClass(HiClassLoader classLoader, Type superClassType, HiClass enclosingClass, Type[] interfaceTypes, String name, NodeGenerics generics, ClassLocationType locationType, ClassResolver classResolver) {
 		this.superClassType = superClassType;
 		this.interfaceTypes = interfaceTypes;
-		init(classLoader, classResolver, enclosingClass, name, generics, type);
+		init(classLoader, classResolver, enclosingClass, name, generics, locationType);
 	}
 
 	// for decode
-	protected HiClass(Type superClassType, String name, NodeGenerics generics, int type) {
+	protected HiClass(Type superClassType, String name, NodeGenerics generics, ClassLocationType locationType) {
 		this.superClassType = superClassType;
 		this.name = name.intern();
-		this.type = type;
+		this.locationType = locationType;
 		this.generics = generics;
 		// init(...) is in decode
 	}
 
-	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
+	private void init(HiClassLoader classLoader, ClassResolver classResolver, HiClass enclosingClass, String name, NodeGenerics generics, ClassLocationType locationType) {
 		this.enclosingClass = enclosingClass;
-		this.type = type;
+		this.locationType = locationType;
 		this.classLoader = classLoader;
 		// intern name to optimize via a == b
 		this.name = (name != null ? name : "").intern();
@@ -357,13 +304,13 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public String getFullName(HiClassLoader classLoader) {
 		if (this.fullName == null) {
 			if (enclosingClass != null && !isEnum() && classLoader != null) {
-				switch (type) {
-					case CLASS_TYPE_TOP:
-					case CLASS_TYPE_INNER:
+				switch (locationType) {
+					case top:
+					case inner:
 						fullName = enclosingClass.fullName + "$" + name;
 						break;
 
-					case CLASS_TYPE_LOCAL:
+					case local:
 						int number = 0;
 						do {
 							fullName = enclosingClass.fullName + "$" + number + name;
@@ -371,7 +318,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 						} while (classLoader.getClass(fullName) != null);
 						break;
 
-					case CLASS_TYPE_ANONYMOUS:
+					case anonymous:
 						number = 0;
 						do {
 							name = Integer.toString(number);
@@ -1837,15 +1784,15 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public boolean isAnonymous() {
-		return type == CLASS_TYPE_ANONYMOUS; // or name.equals("")
+		return locationType == ClassLocationType.anonymous; // or name.equals("")
 	}
 
 	public boolean isLocal() {
-		return type == CLASS_TYPE_LOCAL;
+		return locationType == ClassLocationType.local;
 	}
 
 	public boolean isInner() {
-		return type == CLASS_TYPE_INNER;
+		return locationType == ClassLocationType.inner;
 	}
 
 	public boolean isNull() {
@@ -1980,16 +1927,16 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		if (classLoader.isSystem() && !classLoader.isLoading()) {
-			os.writeByte(CLASS_SYSTEM);
+			os.writeEnum(ClassType.CLASS_SYSTEM);
 			os.writeUTF(fullName);
 		} else {
-			code(os, CLASS_OBJECT);
+			code(os, ClassType.CLASS_OBJECT);
 		}
 	}
 
-	public void code(CodeContext os, int classType) throws IOException {
+	public void code(CodeContext os, ClassType classType) throws IOException {
 		// write class type
-		os.writeByte(classType);
+		os.writeEnum(classType);
 		os.writeToken(token);
 		os.writeUTF(name);
 		os.writeUTF(classLoader.getName());
@@ -2008,7 +1955,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		}
 
 		os.writeNullable(generics);
-		os.writeByte(type);
+		os.writeEnum(locationType);
 		os.writeUTF(fullName);
 
 		// content
@@ -2034,7 +1981,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 
 	public static HiClass decode(DecodeContext os) throws IOException {
 		int classIndex = os.readShort(); // written in CodeContext.getClassContext(int index)
-		int classType = os.readByte();
+		ClassType classType = ClassType.values()[os.readByte()];
 		switch (classType) {
 			case CLASS_SYSTEM:
 				return decodeSystem(os);
@@ -2066,7 +2013,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return os.getClassLoader().getClass(os.readUTF());
 	}
 
-	public static HiClass decodeObject(DecodeContext os, int classType, int classIndex) throws IOException {
+	public static HiClass decodeObject(DecodeContext os, ClassType classType, int classIndex) throws IOException {
 		final HiClass[] classAccess = new HiClass[1];
 		Token token = os.readToken();
 		String name = os.readUTF();
@@ -2085,32 +2032,32 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				outerClass = os.readClass();
 			} catch (HiNoClassException exc) {
 				initClass = false;
-				os.addClassLoadListener(clazz -> classAccess[0].init(os, classLoaderName, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].type), exc.getIndex());
+				os.addClassLoadListener(clazz -> classAccess[0].init(os, classLoaderName, clazz, classAccess[0].name, classAccess[0].generics, classAccess[0].locationType), exc.getIndex());
 			}
 		}
 
 		NodeGenerics generics = os.readNullable(NodeGenerics.class);
-		int type = os.readByte();
+		ClassLocationType locationType = ClassLocationType.values()[os.readByte()];
 
 		HiClass clazz;
-		if (classType == CLASS_ENUM) {
-			clazz = new HiClassEnum(name, type);
-		} else if (classType == CLASS_RECORD) {
-			clazz = new HiClassRecord(name, generics, type);
-		} else if (classType == CLASS_ANNOTATION) {
-			clazz = new HiClassAnnotation(name, type);
-		} else if (classType == CLASS_GENERIC) {
-			clazz = new HiClassGeneric(name, type);
-		} else if (classType == CLASS_MIX) {
+		if (classType == ClassType.CLASS_ENUM) {
+			clazz = new HiClassEnum(name, locationType);
+		} else if (classType == ClassType.CLASS_RECORD) {
+			clazz = new HiClassRecord(name, generics, locationType);
+		} else if (classType == ClassType.CLASS_ANNOTATION) {
+			clazz = new HiClassAnnotation(name, locationType);
+		} else if (classType == ClassType.CLASS_GENERIC) {
+			clazz = new HiClassGeneric(name, locationType);
+		} else if (classType == ClassType.CLASS_MIX) {
 			clazz = new HiClassMix(os.getClassLoader());
 		} else {
-			clazz = new HiClass(superClassType, name, generics, type);
+			clazz = new HiClass(superClassType, name, generics, locationType);
 		}
 		clazz.fullName = os.readUTF();
 		clazz.token = token;
 		classAccess[0] = clazz;
 		if (initClass) {
-			clazz.init(os, classLoaderName, outerClass, name, generics, type);
+			clazz.init(os, classLoaderName, outerClass, name, generics, locationType);
 		}
 
 		HiClass oldClass = os.getHiClass();
@@ -2155,7 +2102,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return clazz;
 	}
 
-	private void init(DecodeContext os, String classLoaderName, HiClass enclosingClass, String name, NodeGenerics generics, int type) {
+	private void init(DecodeContext os, String classLoaderName, HiClass enclosingClass, String name, NodeGenerics generics, ClassLocationType locationType) {
 		HiClassLoader classLoader;
 		if (isPrimitive()) {
 			// TODO delete?
@@ -2165,7 +2112,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		} else {
 			classLoader = os.getClassLoader();
 		}
-		init(classLoader, null, enclosingClass, name, generics, type);
+		init(classLoader, null, enclosingClass, name, generics, locationType);
 	}
 
 	@Override

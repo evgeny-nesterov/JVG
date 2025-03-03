@@ -381,7 +381,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 		Type type = Type.getType(interfaceClass);
 		Type[] interfaces = interfaceClass != null ? new Type[] {type} : null;
-		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+		HiClass clazz = new HiClass(ctx.getClassLoader(), Type.objectType, ctx.level.enclosingClass, interfaces, lambdaClassName, null, ClassLocationType.anonymous, ctx);
 		clazz.modifiers = Modifiers.PUBLIC;
 		clazz.functionalMethod = this;
 		clazz.setToken(token);

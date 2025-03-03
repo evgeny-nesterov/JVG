@@ -45,7 +45,7 @@ public class EnumParseRule extends ParserUtil {
 
 			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
 
-			ctx.clazz = new HiClassEnum(ctx.getClassLoader(), enumName, ctx.classType);
+			ctx.clazz = new HiClassEnum(ctx.getClassLoader(), enumName, ctx.classLocationType);
 			ctx.clazz.modifiers = modifiers;
 			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 

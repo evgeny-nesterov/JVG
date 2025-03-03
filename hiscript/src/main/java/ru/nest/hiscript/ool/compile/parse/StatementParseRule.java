@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compile.parse;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
@@ -37,15 +38,15 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		}
 
 		// local class / interface
-		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_LOCAL));
+		HiClass clazz = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.local));
 		if (clazz == null) {
-			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_LOCAL));
+			clazz = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.local));
 		}
 		if (clazz == null) {
-			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_LOCAL));
+			clazz = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.local));
 		}
 		if (clazz == null) {
-			clazz = AnnotationInterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_LOCAL));
+			clazz = AnnotationInterfaceParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.local));
 		}
 		if (clazz != null) {
 			return new NodeClass(clazz);

@@ -2,7 +2,9 @@ package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ArgumentsSignature;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.ClassResolver;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -20,13 +22,13 @@ import java.util.List;
 public class HiClassRecord extends HiClass {
 	public HiConstructor defaultConstructor;
 
-	public HiClassRecord(HiClassLoader classLoader, String name, Type[] interfaces, NodeGenerics generics, int type, ClassResolver classResolver) {
-		super(classLoader, Type.recordType, null, interfaces, name, generics, type, classResolver);
+	public HiClassRecord(HiClassLoader classLoader, String name, Type[] interfaces, NodeGenerics generics, ClassLocationType locationType, ClassResolver classResolver) {
+		super(classLoader, Type.recordType, null, interfaces, name, generics, locationType, classResolver);
 	}
 
 	// for decode
-	public HiClassRecord(String name, NodeGenerics generics, int type) {
-		super(Type.recordType, name, generics, type);
+	public HiClassRecord(String name, NodeGenerics generics, ClassLocationType locationType) {
+		super(Type.recordType, name, generics, locationType);
 		// init(...) is in decode
 	}
 
@@ -86,12 +88,12 @@ public class HiClassRecord extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		code(os, CLASS_RECORD);
+		code(os, ClassType.CLASS_RECORD);
 		os.write(defaultConstructor);
 	}
 
 	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
-		HiClassRecord recordClass = (HiClassRecord) HiClass.decodeObject(os, CLASS_RECORD, classIndex);
+		HiClassRecord recordClass = (HiClassRecord) HiClass.decodeObject(os, ClassType.CLASS_RECORD, classIndex);
 		recordClass.defaultConstructor = os.read(HiConstructor.class);
 		recordClass.defaultConstructor.clazz = recordClass;
 		return recordClass;

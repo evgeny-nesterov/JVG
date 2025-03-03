@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseVisitor;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
@@ -77,14 +78,14 @@ public class ClassParseRule extends ParserUtil {
 				if (interfaces != null) {
 					tokenizer.error("interface cannot implements another interfaces");
 				}
-				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, superClasses, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), null, ctx.enclosingClass, superClasses, className, generics, ctx.classLocationType, ctx);
 			} else {
 				Type superClassType = superClasses != null ? superClasses[0] : null;
 				if (superClasses != null && superClasses.length > 1) {
 					tokenizer.error("cannot extends multiple classes");
 				}
 
-				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classType, ctx);
+				ctx.clazz = new HiClass(ctx.getClassLoader(), superClassType, ctx.enclosingClass, interfaces, className, generics, ctx.classLocationType, ctx);
 			}
 			ctx.clazz.isInterface = isInterface;
 			ctx.clazz.modifiers = annotatedModifiers.getModifiers();
@@ -173,12 +174,12 @@ public class ClassParseRule extends ParserUtil {
 		}
 
 		// inner class / interface
-		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
+		HiClass innerClass = ClassParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, ClassLocationType.inner));
 		if (innerClass == null) {
-			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
+			innerClass = EnumParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, ClassLocationType.inner));
 		}
 		if (innerClass == null) {
-			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, HiClass.CLASS_TYPE_INNER));
+			innerClass = RecordParseRule.getInstance().visit(tokenizer, new CompileClassContext(ctx, clazz, type, ClassLocationType.inner));
 		}
 		if (innerClass != null) {
 			// TODO keep in class only runtime annotations
@@ -232,7 +233,7 @@ public class ClassParseRule extends ParserUtil {
 		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
 			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
-				if (!name.equals(clazz.name) || clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
+				if (!name.equals(clazz.name) || clazz.locationType == ClassLocationType.anonymous) {
 					tokenizer.error("invalid method declaration; return type is expected");
 				}
 

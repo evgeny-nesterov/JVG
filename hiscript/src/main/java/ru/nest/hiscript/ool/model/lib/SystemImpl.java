@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.lib;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.parse.RootParseRule;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -132,7 +133,7 @@ public class SystemImpl extends ImplUtil {
 
 			CompileClassContext compileCtx;
 			if (newInstance) {
-				compileCtx = new CompileClassContext(ctx.compiler, null, null, HiClass.CLASS_TYPE_TOP);
+				compileCtx = new CompileClassContext(ctx.compiler, null, null, ClassLocationType.top);
 			} else {
 				compileCtx = new CompileClassContext(ctx);
 			}

@@ -1,6 +1,8 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -23,18 +25,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiClassEnum extends HiClass {
 	public List<HiEnumValue> enumValues;
 
-	public HiClassEnum(HiClassLoader classLoader, String name, int type) {
-		super(classLoader, Type.enumType, null, null, name, null, type, null);
+	public HiClassEnum(HiClassLoader classLoader, String name, ClassLocationType locationType) {
+		super(classLoader, Type.enumType, null, null, name, null, locationType, null);
 	}
 
 	// for decode
-	public HiClassEnum(String name, int type) {
-		super(Type.recordType, name, null, type);
+	public HiClassEnum(String name, ClassLocationType locationType) {
+		super(Type.recordType, name, null, locationType);
 		// init(...) is in decode
 	}
 
@@ -152,7 +154,7 @@ public class HiClassEnum extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		code(os, CLASS_ENUM);
+		code(os, ClassType.CLASS_ENUM);
 		if (enumValues != null) {
 			os.writeShort(enumValues.size());
 			os.write(enumValues);
@@ -162,7 +164,7 @@ public class HiClassEnum extends HiClass {
 	}
 
 	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
-		HiClassEnum enumClass = (HiClassEnum) HiClass.decodeObject(os, CLASS_ENUM, classIndex);
+		HiClassEnum enumClass = (HiClassEnum) HiClass.decodeObject(os, ClassType.CLASS_ENUM, classIndex);
 		enumClass.enumValues = os.readList(HiEnumValue.class, os.readShort());
 		return enumClass;
 	}

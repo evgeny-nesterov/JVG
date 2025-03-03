@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -198,7 +199,7 @@ public class NodeConstructor extends HiNode {
 			}
 		}
 
-		if (clazz.type == HiClass.CLASS_TYPE_ANONYMOUS) {
+		if (clazz.locationType == ClassLocationType.anonymous) {
 			valid &= clazz.validate(validationInfo, ctx);
 		}
 

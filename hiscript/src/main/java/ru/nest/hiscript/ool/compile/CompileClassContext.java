@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.compile;
 
 import ru.nest.hiscript.ool.model.ClassResolver;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -35,22 +36,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class CompileClassContext implements ClassResolver {
-	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, int classType) {
+	public CompileClassContext(HiCompiler compiler, HiClass enclosingClass, Type enclosingType, ClassLocationType classLocationType) {
 		this.compiler = compiler;
 		this.tokenizer = compiler.getTokenizer();
 		this.parent = null;
 		this.enclosingClass = enclosingClass;
 		this.enclosingType = enclosingType;
-		this.classType = classType;
+		this.classLocationType = classLocationType;
 	}
 
-	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, Type enclosingType, int classType) {
+	public CompileClassContext(CompileClassContext parent, HiClass enclosingClass, Type enclosingType, ClassLocationType classLocationType) {
 		this.compiler = parent.getCompiler();
 		this.tokenizer = compiler.getTokenizer();
 		this.parent = parent;
 		this.enclosingClass = enclosingClass;
 		this.enclosingType = enclosingType;
-		this.classType = classType;
+		this.classLocationType = classLocationType;
 	}
 
 	// for script execution in runtime context
@@ -61,7 +62,7 @@ public class CompileClassContext implements ClassResolver {
 		this.parent = null;
 		this.enclosingClass = ctx.level.clazz;
 		this.enclosingType = ctx.level.type;
-		this.classType = HiClass.CLASS_TYPE_TOP;
+		this.classLocationType = ClassLocationType.top;
 	}
 
 	private final HiCompiler compiler;
@@ -76,7 +77,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public Type enclosingType;
 
-	public int classType;
+	public ClassLocationType classLocationType;
 
 	public TokenAccessible currentNode;
 

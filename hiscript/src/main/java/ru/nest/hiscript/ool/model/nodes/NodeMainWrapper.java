@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -40,7 +41,7 @@ public class NodeMainWrapper extends HiNode {
 
 	private HiClass getRootClass(NodeBlock body) {
 		if (rootClass == null) {
-			rootClass = new HiClass(classLoader, null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, null);
+			rootClass = new HiClass(classLoader, null, null, HiClass.ROOT_CLASS_NAME, ClassLocationType.top, null);
 		}
 		if (rootClass.methods == null) {
 			rootClass.methods = new HiMethod[1];
@@ -64,7 +65,7 @@ public class NodeMainWrapper extends HiNode {
 			if (this.ctx != null) {
 				ctx = this.ctx;
 			} else {
-				ctx = new CompileClassContext(validationInfo.getCompiler(), null, null, HiClass.CLASS_TYPE_TOP);
+				ctx = new CompileClassContext(validationInfo.getCompiler(), null, null, ClassLocationType.top);
 			}
 		}
 		this.ctx = ctx;

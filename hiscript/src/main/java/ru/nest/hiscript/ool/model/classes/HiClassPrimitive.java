@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -154,7 +156,7 @@ public class HiClassPrimitive extends HiClass {
 	public final int typeId;
 
 	private HiClassPrimitive(int typeId, String name) {
-		super(HiClassLoader.primitiveClassLoader, null, null, name, CLASS_TYPE_TOP, null);
+		super(HiClassLoader.primitiveClassLoader, null, null, name, ClassLocationType.top, null);
 		this.typeId = typeId;
 	}
 
@@ -232,7 +234,7 @@ public class HiClassPrimitive extends HiClass {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
-		os.writeByte(HiClass.CLASS_PRIMITIVE);
+		os.writeEnum(ClassType.CLASS_PRIMITIVE);
 		os.writeUTF(name);
 	}
 

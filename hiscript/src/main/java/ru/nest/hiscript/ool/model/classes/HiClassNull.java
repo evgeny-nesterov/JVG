@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
@@ -11,7 +13,7 @@ public class HiClassNull extends HiClass {
 	public final static HiClassNull NULL = new HiClassNull();
 
 	private HiClassNull() {
-		super(null, null, null, "null", CLASS_TYPE_TOP, null);
+		super(null, null, null, "null", ClassLocationType.top, null);
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class HiClassNull extends HiClass {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
-		os.writeByte(HiClass.CLASS_NULL);
+		os.writeEnum(ClassType.CLASS_NULL);
 	}
 
 	public static HiClass decode(DecodeContext os) {

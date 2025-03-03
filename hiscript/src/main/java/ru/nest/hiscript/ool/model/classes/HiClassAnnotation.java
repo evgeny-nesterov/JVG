@@ -1,6 +1,8 @@
 package ru.nest.hiscript.ool.model.classes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -14,13 +16,13 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import java.io.IOException;
 
 public class HiClassAnnotation extends HiClass {
-	public HiClassAnnotation(HiClassLoader classLoader, HiClass enclosingClass, String name, int type) {
-		super(classLoader, null, enclosingClass, name, type, null);
+	public HiClassAnnotation(HiClassLoader classLoader, HiClass enclosingClass, String name, ClassLocationType locationType) {
+		super(classLoader, null, enclosingClass, name, locationType, null);
 	}
 
 	// for decode
-	public HiClassAnnotation(String name, int type) {
-		super(null, name, null, type);
+	public HiClassAnnotation(String name, ClassLocationType locationType) {
+		super(null, name, null, locationType);
 		// init(...) is in decode
 	}
 
@@ -71,11 +73,11 @@ public class HiClassAnnotation extends HiClass {
 
 	@Override
 	public void code(CodeContext os) throws IOException {
-		super.code(os, CLASS_ANNOTATION);
+		super.code(os, ClassType.CLASS_ANNOTATION);
 	}
 
 	public static HiClass decode(DecodeContext os, int classIndex) throws IOException {
-		return HiClass.decodeObject(os, CLASS_ANNOTATION, classIndex);
+		return HiClass.decodeObject(os, ClassType.CLASS_ANNOTATION, classIndex);
 	}
 
 	@Override

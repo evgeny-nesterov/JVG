@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.PrimitiveTypes;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
@@ -12,7 +14,7 @@ public class HiClassVar extends HiClass {
 	public final static HiClassVar VAR = new HiClassVar();
 
 	private HiClassVar() {
-		super(null, null, null, "var", CLASS_TYPE_TOP, null);
+		super(null, null, null, "var", ClassLocationType.top, null);
 	}
 
 	@Override
@@ -73,7 +75,7 @@ public class HiClassVar extends HiClass {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
-		os.writeByte(HiClass.CLASS_VAR);
+		os.writeEnum(ClassType.CLASS_VAR);
 	}
 
 	public static HiClass decode(DecodeContext os) {

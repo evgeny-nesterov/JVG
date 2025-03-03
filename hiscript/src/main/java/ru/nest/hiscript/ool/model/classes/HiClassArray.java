@@ -1,5 +1,7 @@
 package ru.nest.hiscript.ool.model.classes;
 
+import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -24,13 +26,13 @@ public class HiClassArray extends HiClass {
 	public String className;
 
 	public HiClassArray(HiClassLoader classLoader, HiClass cellClass) {
-		super(classLoader, OBJECT_CLASS, null, "0" + cellClass.fullName, CLASS_TYPE_TOP, null);
+		super(classLoader, OBJECT_CLASS, null, "0" + cellClass.fullName, ClassLocationType.top, null);
 		init(cellClass);
 	}
 
 	// for decode
 	public HiClassArray(HiClassLoader classLoader, String cellClassName) {
-		super(classLoader, OBJECT_CLASS, null, "0" + cellClassName, CLASS_TYPE_TOP, null);
+		super(classLoader, OBJECT_CLASS, null, "0" + cellClassName, ClassLocationType.top, null);
 	}
 
 	public HiClass getRootCellClass() {
@@ -155,7 +157,7 @@ public class HiClassArray extends HiClass {
 	@Override
 	public void code(CodeContext os) throws IOException {
 		// write class type
-		os.writeByte(HiClass.CLASS_ARRAY);
+		os.writeEnum(ClassType.CLASS_ARRAY);
 		os.writeUTF(cellClass.fullName);
 		os.writeClass(cellClass);
 	}

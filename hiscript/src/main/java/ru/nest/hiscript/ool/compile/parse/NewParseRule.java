@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compile.parse;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
@@ -84,8 +85,8 @@ public class NewParseRule extends ParseRule<HiNode> {
 		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
 
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
-			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, ctx.type, HiClass.CLASS_TYPE_ANONYMOUS);
-			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", generics, HiClass.CLASS_TYPE_ANONYMOUS, ctx);
+			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.anonymous);
+			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", generics, ClassLocationType.anonymous, ctx);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);

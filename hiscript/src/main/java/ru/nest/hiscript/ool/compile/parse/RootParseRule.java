@@ -4,6 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.compile.ParseRule;
+import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
@@ -41,11 +42,11 @@ public class RootParseRule extends ParseRule<HiNode> {
 			createMainMethod = wrapped;
 		}
 		if (ctx == null) {
-			ctx = new CompileClassContext(compiler, null, null, HiClass.CLASS_TYPE_TOP);
+			ctx = new CompileClassContext(compiler, null, null, ClassLocationType.top);
 
 			rootClass = compiler.getClassLoader().getClass(HiClass.ROOT_CLASS_NAME);
 			if (rootClass == null) {
-				rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, HiClass.CLASS_TYPE_TOP, ctx);
+				rootClass = new HiClass(compiler.getClassLoader(), null, null, HiClass.ROOT_CLASS_NAME, ClassLocationType.top, ctx);
 			}
 			ctx.clazz = rootClass;
 
