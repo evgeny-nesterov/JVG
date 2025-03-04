@@ -3,6 +3,8 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.PrimitiveType;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -26,33 +28,33 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 		if (clazz.isPrimitive()) {
 			if (node.isCompileValue()) {
 				switch (clazz.getPrimitiveType()) {
-					case CHAR:
+					case CHAR_TYPE:
 						node.intValue = ~node.charValue;
-						return node.valueClass = TYPE_INT;
-					case BYTE:
+						return node.valueClass = HiClassPrimitive.INT;
+					case BYTE_TYPE:
 						node.intValue = ~node.byteValue;
-						return node.valueClass = TYPE_INT;
-					case SHORT:
+						return node.valueClass = HiClassPrimitive.INT;
+					case SHORT_TYPE:
 						node.intValue = ~node.shortValue;
-						return node.valueClass = TYPE_INT;
-					case INT:
+						return node.valueClass = HiClassPrimitive.INT;
+					case INT_TYPE:
 						node.intValue = ~node.intValue;
-						return node.valueClass = TYPE_INT; // switch to primitive from boxed type
-					case LONG:
+						return node.valueClass = HiClassPrimitive.INT; // switch to primitive from boxed type
+					case LONG_TYPE:
 						node.longValue = ~node.longValue;
-						return node.valueClass = TYPE_LONG; // switch to primitive from boxed type
+						return node.valueClass = HiClassPrimitive.LONG; // switch to primitive from boxed type
 				}
 			} else {
-				int t = clazz.getPrimitiveType();
+				PrimitiveType t = clazz.getPrimitiveType();
 				switch (t) {
-					case VAR:
-					case CHAR:
-					case BYTE:
-					case SHORT:
-					case INT:
-						return TYPE_INT;
-					case LONG:
-						return TYPE_LONG;
+					case VAR_TYPE:
+					case CHAR_TYPE:
+					case BYTE_TYPE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+						return HiClassPrimitive.INT;
+					case LONG_TYPE:
+						return HiClassPrimitive.LONG;
 				}
 			}
 		}
@@ -64,24 +66,24 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v) {
 		HiClass c = v.getOperationClass();
 		switch (c.getPrimitiveType()) {
-			case CHAR:
-				v.valueClass = TYPE_INT;
+			case CHAR_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = ~v.character;
 				return;
-			case BYTE:
-				v.valueClass = TYPE_INT;
+			case BYTE_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = ~v.byteNumber;
 				return;
-			case SHORT:
-				v.valueClass = TYPE_INT;
+			case SHORT_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = ~v.shortNumber;
 				return;
-			case INT:
-				v.valueClass = TYPE_INT; // switch to primitive from boxed type
+			case INT_TYPE:
+				v.valueClass = HiClassPrimitive.INT; // switch to primitive from boxed type
 				v.intNumber = ~v.intNumber;
 				return;
-			case LONG:
-				v.valueClass = TYPE_LONG; // switch to primitive from boxed type
+			case LONG_TYPE:
+				v.valueClass = HiClassPrimitive.LONG; // switch to primitive from boxed type
 				v.longNumber = ~v.longNumber;
 				return;
 		}

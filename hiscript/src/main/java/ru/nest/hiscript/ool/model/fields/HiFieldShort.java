@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.fields;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -36,25 +37,25 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 	}
 
 	@Override
-	public void set(RuntimeContext ctx, Value value, int valueType) {
+	public void set(RuntimeContext ctx, Value value, PrimitiveType valueType) {
 		switch (valueType) {
-			case BYTE:
+			case BYTE_TYPE:
 				this.value = value.byteNumber;
 				break;
-			case SHORT:
+			case SHORT_TYPE:
 				this.value = value.shortNumber;
 				break;
 			default:
 				// autocast
 				if (value.valueType == ValueType.VALUE) {
 					switch (valueType) {
-						case CHAR:
+						case CHAR_TYPE:
 							if (value.character >= Short.MIN_VALUE && value.character <= Short.MAX_VALUE) {
 								this.value = (short) value.character;
 								return;
 							}
 							break;
-						case INT:
+						case INT_TYPE:
 							if (value.intNumber >= Short.MIN_VALUE && value.intNumber <= Short.MAX_VALUE) {
 								this.value = (short) value.intNumber;
 								return;

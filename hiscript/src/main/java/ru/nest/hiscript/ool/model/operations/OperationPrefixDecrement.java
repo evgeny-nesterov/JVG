@@ -12,6 +12,8 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
+
 public class OperationPrefixDecrement extends UnaryOperation {
 	private static final HiOperation instance = new OperationPrefixDecrement();
 
@@ -34,7 +36,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 			validationInfo.error("variable expected", node.token);
 		}
 		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
-		if (!clazz.isPrimitive() || clazz.getPrimitiveType() == BOOLEAN) {
+		if (!clazz.isPrimitive() || clazz.getPrimitiveType() == BOOLEAN_TYPE) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
@@ -45,25 +47,25 @@ public class OperationPrefixDecrement extends UnaryOperation {
 	public void doOperation(RuntimeContext ctx, Value value) {
 		HiClass c = value.getOperationClass();
 		switch (c.getPrimitiveType()) {
-			case CHAR:
+			case CHAR_TYPE:
 				value.character--;
 				break;
-			case BYTE:
+			case BYTE_TYPE:
 				value.byteNumber--;
 				break;
-			case SHORT:
+			case SHORT_TYPE:
 				value.shortNumber--;
 				break;
-			case INT:
+			case INT_TYPE:
 				value.intNumber--;
 				break;
-			case LONG:
+			case LONG_TYPE:
 				value.longNumber--;
 				break;
-			case FLOAT:
+			case FLOAT_TYPE:
 				value.floatNumber--;
 				break;
-			case DOUBLE:
+			case DOUBLE_TYPE:
 				value.doubleNumber--;
 				break;
 		}

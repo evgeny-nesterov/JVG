@@ -5,7 +5,7 @@ import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -14,12 +14,13 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.lang.reflect.Array;
 
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 import static ru.nest.hiscript.ool.runtime.ValueType.*;
 
 /**
  * Буфер обмена данных. Содержит переменные всех типов данных.
  */
-public class Value implements PrimitiveTypes {
+public class Value {
 	private final static char[] NULL_CHARS = "null".toCharArray();
 
 	public RuntimeContext ctx;
@@ -91,23 +92,23 @@ public class Value implements PrimitiveTypes {
 
 		// primitives
 		if (valueClass.isPrimitive()) {
-			int typeIndex = valueClass.getPrimitiveType();
+			PrimitiveType typeIndex = valueClass.getPrimitiveType();
 			switch (typeIndex) {
-				case BOOLEAN:
+				case BOOLEAN_TYPE:
 					return bool;
-				case CHAR:
+				case CHAR_TYPE:
 					return character;
-				case BYTE:
+				case BYTE_TYPE:
 					return byteNumber;
-				case SHORT:
+				case SHORT_TYPE:
 					return shortNumber;
-				case INT:
+				case INT_TYPE:
 					return intNumber;
-				case LONG:
+				case LONG_TYPE:
 					return longNumber;
-				case FLOAT:
+				case FLOAT_TYPE:
 					return floatNumber;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					return doubleNumber;
 			}
 		}
@@ -194,18 +195,18 @@ public class Value implements PrimitiveTypes {
 	}
 
 	// @autoboxing
-	public boolean getAutoboxPrimitiveValue(int expectedTypeIndex) {
+	public boolean getAutoboxPrimitiveValue(PrimitiveType expectedType) {
 		if (valueClass.isPrimitive()) {
-			if (valueClass.getPrimitiveType() == expectedTypeIndex) {
+			if (valueClass.getPrimitiveType() == expectedType) {
 				return true;
 			}
 		} else if (valueClass.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
-			if (typeIndex == expectedTypeIndex) {
+			PrimitiveType type = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
+			if (type == expectedType) {
 				if (object instanceof HiObject) {
 					((HiObject) object).getAutoboxedValue(ctx, this);
-					int autoboxTypeIndex = valueClass.getPrimitiveType();
-					if (autoboxTypeIndex == expectedTypeIndex) {
+					PrimitiveType autoboxType = valueClass.getPrimitiveType();
+					if (autoboxType == expectedType) {
 						return true;
 					}
 				} else if (object == null) {
@@ -218,34 +219,34 @@ public class Value implements PrimitiveTypes {
 	}
 
 	// @autoboxing
-	public int getAutoboxValues(int... expectedTypesIndexes) {
+	public PrimitiveType getAutoboxValues(PrimitiveType... expectedTypes) {
 		if (valueClass.isPrimitive()) {
-			int typeIndex = valueClass.getPrimitiveType();
-			for (int i = 0; i < expectedTypesIndexes.length; i++) {
-				int expectedTypeIndex = expectedTypesIndexes[i];
-				if (typeIndex == expectedTypeIndex) {
-					return typeIndex;
+			PrimitiveType type = valueClass.getPrimitiveType();
+			for (int i = 0; i < expectedTypes.length; i++) {
+				PrimitiveType expectedType = expectedTypes[i];
+				if (type == expectedType) {
+					return type;
 				}
 			}
 		} else if (valueClass.getAutoboxedPrimitiveClass() != null) {
-			int typeIndex = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
-			for (int i = 0; i < expectedTypesIndexes.length; i++) {
-				int expectedTypeIndex = expectedTypesIndexes[i];
-				if (typeIndex == expectedTypeIndex) {
+			PrimitiveType type = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
+			for (int i = 0; i < expectedTypes.length; i++) {
+				PrimitiveType expectedType = expectedTypes[i];
+				if (type == expectedType) {
 					if (object instanceof HiObject) {
 						((HiObject) object).getAutoboxedValue(ctx, this);
-						int autoboxTypeIndex = valueClass.getPrimitiveType();
-						if (autoboxTypeIndex == expectedTypeIndex) {
-							return autoboxTypeIndex;
+						PrimitiveType autoboxType = valueClass.getPrimitiveType();
+						if (autoboxType == expectedType) {
+							return autoboxType;
 						}
 					} else {
 						ctx.throwRuntimeException("null pointer");
 					}
-					return -1;
+					return UNDEFINED_TYPE;
 				}
 			}
 		}
-		return -1;
+		return UNDEFINED_TYPE;
 	}
 
 	// @autoboxing
@@ -268,12 +269,12 @@ public class Value implements PrimitiveTypes {
 		}
 		if (object instanceof HiObject) {
 			HiField valueField = ((HiObject) object).getField(ctx, "value");
-			int t = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
+			PrimitiveType t = valueClass.getAutoboxedPrimitiveClass().getPrimitiveType();
 			switch (t) {
-				case BOOLEAN:
+				case BOOLEAN_TYPE:
 					bool = (Boolean) valueField.get();
 					break;
-				case CHAR:
+				case CHAR_TYPE:
 					Object valueObject = valueField.get();
 					if (valueObject instanceof Character) {
 						character = (Character) valueObject;
@@ -281,22 +282,22 @@ public class Value implements PrimitiveTypes {
 						character = (char) ((Number) valueField.get()).intValue();
 					}
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					byteNumber = ((Number) valueField.get()).byteValue();
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					shortNumber = ((Number) valueField.get()).shortValue();
 					break;
-				case INT:
+				case INT_TYPE:
 					intNumber = ((Number) valueField.get()).intValue();
 					break;
-				case LONG:
+				case LONG_TYPE:
 					longNumber = ((Number) valueField.get()).longValue();
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					floatNumber = ((Number) valueField.get()).floatValue();
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					doubleNumber = ((Number) valueField.get()).doubleValue();
 					break;
 			}
@@ -304,7 +305,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public boolean getBoolean() {
-		if (getAutoboxPrimitiveValue(BOOLEAN)) {
+		if (getAutoboxPrimitiveValue(BOOLEAN_TYPE)) {
 			return bool;
 		} else if (ctx.exitFromBlock()) {
 			// TODO delete?
@@ -315,23 +316,23 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public char getChar() {
-		if (getAutoboxPrimitiveValue(CHAR)) {
+		if (getAutoboxPrimitiveValue(CHAR_TYPE)) {
 			return character;
 		} else if (ctx.exitFromBlock()) {
 			return 0;
 		}
 		switch (valueClass.getPrimitiveType()) {
-			case BYTE:
+			case BYTE_TYPE:
 				if (byteNumber >= Character.MIN_VALUE) {
 					return (char) byteNumber;
 				}
 				break;
-			case SHORT:
+			case SHORT_TYPE:
 				if (shortNumber >= Character.MIN_VALUE && shortNumber <= Character.MAX_VALUE) {
 					return (char) shortNumber;
 				}
 				break;
-			case INT:
+			case INT_TYPE:
 				if (intNumber >= Character.MIN_VALUE && intNumber <= Character.MAX_VALUE) {
 					return (char) intNumber;
 				}
@@ -342,23 +343,23 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public byte getByte() {
-		if (getAutoboxPrimitiveValue(BYTE)) {
+		if (getAutoboxPrimitiveValue(BYTE_TYPE)) {
 			return byteNumber;
 		} else if (ctx.exitFromBlock()) {
 			return 0;
 		}
 		switch (valueClass.getPrimitiveType()) {
-			case SHORT:
+			case SHORT_TYPE:
 				if (shortNumber >= Byte.MIN_VALUE && shortNumber <= Byte.MAX_VALUE) {
 					return (byte) shortNumber;
 				}
 				break;
-			case CHAR:
+			case CHAR_TYPE:
 				if (character <= Byte.MAX_VALUE) {
 					return (byte) character;
 				}
 				break;
-			case INT:
+			case INT_TYPE:
 				if (intNumber >= Byte.MIN_VALUE && intNumber <= Byte.MAX_VALUE) {
 					return (byte) intNumber;
 				}
@@ -369,20 +370,20 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public short getShort() {
-		if (getAutoboxPrimitiveValue(SHORT)) {
+		if (getAutoboxPrimitiveValue(SHORT_TYPE)) {
 			return shortNumber;
 		} else if (ctx.exitFromBlock()) {
 			return 0;
 		}
 		switch (valueClass.getPrimitiveType()) {
-			case BYTE:
+			case BYTE_TYPE:
 				return byteNumber;
-			case CHAR:
+			case CHAR_TYPE:
 				if (character <= Short.MAX_VALUE) {
 					return (short) character;
 				}
 				break;
-			case INT:
+			case INT_TYPE:
 				if (intNumber >= Short.MIN_VALUE && intNumber <= Short.MAX_VALUE) {
 					return (short) intNumber;
 				}
@@ -393,7 +394,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public int getInt() {
-		if (getAutoboxPrimitiveValue(INT)) {
+		if (getAutoboxPrimitiveValue(INT_TYPE)) {
 			return intNumber;
 		} else if (ctx.exitFromBlock()) {
 			return 0;
@@ -402,11 +403,11 @@ public class Value implements PrimitiveTypes {
 			ctx.throwRuntimeException("null pointer");
 		} else {
 			switch (valueClass.getPrimitiveType()) {
-				case BYTE:
+				case BYTE_TYPE:
 					return byteNumber;
-				case CHAR:
+				case CHAR_TYPE:
 					return character;
-				case SHORT:
+				case SHORT_TYPE:
 					return shortNumber;
 			}
 			ctx.throwRuntimeException("int is expected");
@@ -415,21 +416,21 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public long getLong() {
-		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG);
+		PrimitiveType type = getAutoboxValues(BYTE_TYPE, SHORT_TYPE, CHAR_TYPE, INT_TYPE, LONG_TYPE);
 		if (ctx.exitFromBlock()) {
 			return 0;
 		}
-		if (typeIndex != -1) {
-			switch (typeIndex) {
-				case BYTE:
+		if (type != UNDEFINED_TYPE) {
+			switch (type) {
+				case BYTE_TYPE:
 					return byteNumber;
-				case SHORT:
+				case SHORT_TYPE:
 					return shortNumber;
-				case CHAR:
+				case CHAR_TYPE:
 					return character;
-				case INT:
+				case INT_TYPE:
 					return intNumber;
-				case LONG:
+				case LONG_TYPE:
 					return longNumber;
 			}
 		}
@@ -438,23 +439,23 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public float getFloat() {
-		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG, FLOAT);
+		PrimitiveType type = getAutoboxValues(BYTE_TYPE, SHORT_TYPE, CHAR_TYPE, INT_TYPE, LONG_TYPE, FLOAT_TYPE);
 		if (ctx.exitFromBlock()) {
 			return 0;
 		}
-		if (typeIndex != -1) {
-			switch (typeIndex) {
-				case BYTE:
+		if (type != UNDEFINED_TYPE) {
+			switch (type) {
+				case BYTE_TYPE:
 					return byteNumber;
-				case SHORT:
+				case SHORT_TYPE:
 					return shortNumber;
-				case CHAR:
+				case CHAR_TYPE:
 					return character;
-				case INT:
+				case INT_TYPE:
 					return intNumber;
-				case LONG:
+				case LONG_TYPE:
 					return longNumber;
-				case FLOAT:
+				case FLOAT_TYPE:
 					return floatNumber;
 			}
 		}
@@ -463,25 +464,25 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public double getDouble() {
-		int typeIndex = getAutoboxValues(BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE);
+		PrimitiveType type = getAutoboxValues(BYTE_TYPE, SHORT_TYPE, CHAR_TYPE, INT_TYPE, LONG_TYPE, FLOAT_TYPE, DOUBLE_TYPE);
 		if (ctx.exitFromBlock()) {
 			return 0;
 		}
-		if (typeIndex != -1) {
-			switch (typeIndex) {
-				case BYTE:
+		if (type != UNDEFINED_TYPE) {
+			switch (type) {
+				case BYTE_TYPE:
 					return byteNumber;
-				case SHORT:
+				case SHORT_TYPE:
 					return shortNumber;
-				case CHAR:
+				case CHAR_TYPE:
 					return character;
-				case INT:
+				case INT_TYPE:
 					return intNumber;
-				case LONG:
+				case LONG_TYPE:
 					return longNumber;
-				case FLOAT:
+				case FLOAT_TYPE:
 					return floatNumber;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					return doubleNumber;
 			}
 		}
@@ -504,28 +505,28 @@ public class Value implements PrimitiveTypes {
 		// VALUE
 		if (valueClass.isPrimitive()) {
 			switch (valueClass.getPrimitiveType()) {
-				case CHAR:
+				case CHAR_TYPE:
 					dst.character = character;
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					dst.byteNumber = byteNumber;
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					dst.shortNumber = shortNumber;
 					break;
-				case INT:
+				case INT_TYPE:
 					dst.intNumber = intNumber;
 					break;
-				case LONG:
+				case LONG_TYPE:
 					dst.longNumber = longNumber;
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					dst.floatNumber = floatNumber;
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					dst.doubleNumber = doubleNumber;
 					break;
-				case BOOLEAN:
+				case BOOLEAN_TYPE:
 					dst.bool = bool;
 					break;
 			}
@@ -566,30 +567,30 @@ public class Value implements PrimitiveTypes {
 
 	public void copyToArray(Value value) {
 		if (parentArray.getClass().getComponentType().isPrimitive()) {
-			int typeIndex = valueClass.getPrimitiveType();
+			PrimitiveType typeIndex = valueClass.getPrimitiveType();
 			switch (typeIndex) {
-				case BOOLEAN:
+				case BOOLEAN_TYPE:
 					Array.setBoolean(parentArray, arrayIndex, value.bool);
 					break;
-				case CHAR:
+				case CHAR_TYPE:
 					Array.setChar(parentArray, arrayIndex, value.character);
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					Array.setByte(parentArray, arrayIndex, value.byteNumber);
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					Array.setShort(parentArray, arrayIndex, value.shortNumber);
 					break;
-				case INT:
+				case INT_TYPE:
 					Array.setInt(parentArray, arrayIndex, value.intNumber);
 					break;
-				case LONG:
+				case LONG_TYPE:
 					Array.setLong(parentArray, arrayIndex, value.longNumber);
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					Array.setFloat(parentArray, arrayIndex, value.floatNumber);
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					Array.setDouble(parentArray, arrayIndex, value.doubleNumber);
 					break;
 			}
@@ -600,23 +601,23 @@ public class Value implements PrimitiveTypes {
 
 	public char[] getString(RuntimeContext ctx) {
 		if (valueClass.isPrimitive()) {
-			int t = valueClass.getPrimitiveType();
+			PrimitiveType t = valueClass.getPrimitiveType();
 			switch (t) {
-				case BOOLEAN:
+				case BOOLEAN_TYPE:
 					return Boolean.toString(bool).toCharArray();
-				case CHAR:
+				case CHAR_TYPE:
 					return Character.toString(character).toCharArray();
-				case BYTE:
+				case BYTE_TYPE:
 					return Byte.toString(byteNumber).toCharArray();
-				case SHORT:
+				case SHORT_TYPE:
 					return Short.toString(shortNumber).toCharArray();
-				case INT:
+				case INT_TYPE:
 					return Integer.toString(intNumber).toCharArray();
-				case LONG:
+				case LONG_TYPE:
 					return Long.toString(longNumber).toCharArray();
-				case FLOAT:
+				case FLOAT_TYPE:
 					return Float.toString(floatNumber).toCharArray();
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					return Double.toString(doubleNumber).toCharArray();
 			}
 		}

@@ -2,12 +2,15 @@ package ru.nest.hiscript.ool.model.fields;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
+
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 
 public class HiFieldByte extends HiFieldNumber<Byte> {
 	public HiFieldByte(String name) {
@@ -36,26 +39,26 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 	}
 
 	@Override
-	public void set(RuntimeContext ctx, Value value, int valueType) {
-		if (valueType == BYTE) {
+	public void set(RuntimeContext ctx, Value value, PrimitiveType valueType) {
+		if (valueType == BYTE_TYPE) {
 			this.value = value.byteNumber;
 		} else {
 			// auto-cast
 			if (value.valueType == ValueType.VALUE) {
 				switch (valueType) {
-					case CHAR:
+					case CHAR_TYPE:
 						if (value.character <= Byte.MAX_VALUE) {
 							this.value = (byte) value.character;
 							return;
 						}
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						if (value.shortNumber >= Byte.MIN_VALUE && value.shortNumber <= Byte.MAX_VALUE) {
 							this.value = (byte) value.shortNumber;
 							return;
 						}
 						break;
-					case INT:
+					case INT_TYPE:
 						if (value.intNumber >= Byte.MIN_VALUE && value.intNumber <= Byte.MAX_VALUE) {
 							this.value = (byte) value.intNumber;
 							return;

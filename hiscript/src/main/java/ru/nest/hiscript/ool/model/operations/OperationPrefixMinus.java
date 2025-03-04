@@ -3,10 +3,13 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 
 public class OperationPrefixMinus extends UnaryOperation {
 	private static final HiOperation instance = new OperationPrefixMinus();
@@ -23,44 +26,44 @@ public class OperationPrefixMinus extends UnaryOperation {
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
 		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		if (clazz.isPrimitive() && clazz.getPrimitiveType() != BOOLEAN) {
+		if (clazz.isPrimitive() && clazz.getPrimitiveType() != BOOLEAN_TYPE) {
 			if (node.isCompileValue()) {
 				switch (clazz.getPrimitiveType()) {
-					case CHAR:
+					case CHAR_TYPE:
 						node.intValue = -node.charValue;
-						return node.valueClass = TYPE_INT;
-					case BYTE:
+						return node.valueClass = HiClassPrimitive.INT;
+					case BYTE_TYPE:
 						node.intValue = -node.byteValue;
-						return node.valueClass = TYPE_INT;
-					case SHORT:
+						return node.valueClass = HiClassPrimitive.INT;
+					case SHORT_TYPE:
 						node.intValue = -node.shortValue;
-						return node.valueClass = TYPE_INT;
-					case INT:
+						return node.valueClass = HiClassPrimitive.INT;
+					case INT_TYPE:
 						node.intValue = -node.intValue;
-						return node.valueClass = TYPE_INT;
-					case LONG:
+						return node.valueClass = HiClassPrimitive.INT;
+					case LONG_TYPE:
 						node.longValue = -node.longValue;
-						return node.valueClass = TYPE_LONG;
-					case FLOAT:
+						return node.valueClass = HiClassPrimitive.LONG;
+					case FLOAT_TYPE:
 						node.floatValue = -node.floatValue;
-						return node.valueClass = TYPE_FLOAT;
-					case DOUBLE:
+						return node.valueClass = HiClassPrimitive.FLOAT;
+					case DOUBLE_TYPE:
 						node.doubleValue = -node.doubleValue;
-						return node.valueClass = TYPE_DOUBLE;
+						return node.valueClass = HiClassPrimitive.DOUBLE;
 				}
 			} else {
 				switch (clazz.getPrimitiveType()) {
-					case CHAR:
-					case BYTE:
-					case SHORT:
-					case INT:
-						return TYPE_INT;
-					case LONG:
-						return TYPE_LONG;
-					case FLOAT:
-						return TYPE_FLOAT;
-					case DOUBLE:
-						return TYPE_DOUBLE;
+					case CHAR_TYPE:
+					case BYTE_TYPE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+						return HiClassPrimitive.INT;
+					case LONG_TYPE:
+						return HiClassPrimitive.LONG;
+					case FLOAT_TYPE:
+						return HiClassPrimitive.FLOAT;
+					case DOUBLE_TYPE:
+						return HiClassPrimitive.DOUBLE;
 				}
 			}
 		}
@@ -73,32 +76,32 @@ public class OperationPrefixMinus extends UnaryOperation {
 		HiClass c = v.getOperationClass();
 		boolean isP = c.isPrimitive();
 		switch (c.getPrimitiveType()) {
-			case CHAR:
-				v.valueClass = TYPE_INT;
+			case CHAR_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = -v.character;
 				break;
-			case BYTE:
-				v.valueClass = TYPE_INT;
+			case BYTE_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = -v.byteNumber;
 				break;
-			case SHORT:
-				v.valueClass = TYPE_INT;
+			case SHORT_TYPE:
+				v.valueClass = HiClassPrimitive.INT;
 				v.intNumber = -v.shortNumber;
 				break;
-			case INT:
-				v.valueClass = TYPE_INT; // switch to primitive from boxed type
+			case INT_TYPE:
+				v.valueClass = HiClassPrimitive.INT; // switch to primitive from boxed type
 				v.intNumber = -v.intNumber;
 				break;
-			case LONG:
-				v.valueClass = TYPE_LONG; // switch to primitive from boxed type
+			case LONG_TYPE:
+				v.valueClass = HiClassPrimitive.LONG; // switch to primitive from boxed type
 				v.longNumber = -v.longNumber;
 				break;
-			case FLOAT:
-				v.valueClass = TYPE_FLOAT; // switch to primitive from boxed type
+			case FLOAT_TYPE:
+				v.valueClass = HiClassPrimitive.FLOAT; // switch to primitive from boxed type
 				v.floatNumber = -v.floatNumber;
 				break;
-			case DOUBLE:
-				v.valueClass = TYPE_DOUBLE; // switch to primitive from boxed type
+			case DOUBLE_TYPE:
+				v.valueClass = HiClassPrimitive.DOUBLE; // switch to primitive from boxed type
 				v.doubleNumber = -v.doubleNumber;
 				break;
 		}

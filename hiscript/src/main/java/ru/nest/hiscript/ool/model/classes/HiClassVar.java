@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.ClassType;
 import ru.nest.hiscript.ool.model.HiClass;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.nodes.CodeContext;
 import ru.nest.hiscript.ool.model.nodes.DecodeContext;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
@@ -87,8 +87,9 @@ public class HiClassVar extends HiClass {
 		return null;
 	}
 
-	public int getPrimitiveType() {
-		return PrimitiveTypes.VAR;
+	@Override
+	public PrimitiveType getPrimitiveType() {
+		return PrimitiveType.VAR_TYPE;
 	}
 
 	@Override

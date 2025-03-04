@@ -12,6 +12,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
 import ru.nest.hiscript.ool.model.classes.HiClassNull;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeArrayValue;
@@ -156,12 +157,12 @@ public class OperationInvocation extends BinaryOperation {
 //				if (fieldDefinition != null && fieldDefinition.isStatic()) {
 //					field = fieldDefinition;
 //				} else {
-					object = (HiObject) v1.object;
-					if (object == null) {
-						ctx.throwRuntimeException("null pointer");
-						return false;
-					}
-					field = object.getField(ctx, name, clazz);
+				object = (HiObject) v1.object;
+				if (object == null) {
+					ctx.throwRuntimeException("null pointer");
+					return false;
+				}
+				field = object.getField(ctx, name, clazz);
 //				}
 			}
 			assert field != null; // checked in validation
@@ -421,7 +422,7 @@ public class OperationInvocation extends BinaryOperation {
 				}
 
 				// @autoboxing
-				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {
+				if (method.returnClass != null && method.returnClass != HiClassPrimitive.VOID && method.returnClass.isPrimitive()) {
 					if (v1.valueClass.isObject()) {
 						v1.unbox();
 					}

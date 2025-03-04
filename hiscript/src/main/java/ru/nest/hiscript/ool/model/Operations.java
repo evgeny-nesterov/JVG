@@ -47,7 +47,7 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
 import ru.nest.hiscript.tokenizer.Symbols;
 
-public class Operations implements OperationsIF, PrimitiveTypes {
+public class Operations implements OperationsIF {
 	public static int getPriority(int operation) {
 		switch (operation) {
 			case INVOCATION:

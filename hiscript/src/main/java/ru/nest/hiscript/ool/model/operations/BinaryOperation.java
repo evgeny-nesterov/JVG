@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Type;
+import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -92,12 +93,12 @@ public abstract class BinaryOperation extends HiOperation {
 	public abstract void doOperation(RuntimeContext ctx, Value v1, Value v2);
 
 	protected void autoCastInt(Value v1, int value) {
-		v1.valueClass = TYPE_INT;
+		v1.valueClass = HiClassPrimitive.INT;
 		v1.intNumber = value;
 	}
 
 	protected void autoCastLong(Value v1, long value) {
-		v1.valueClass = TYPE_LONG;
+		v1.valueClass = HiClassPrimitive.LONG;
 		v1.longNumber = value;
 	}
 

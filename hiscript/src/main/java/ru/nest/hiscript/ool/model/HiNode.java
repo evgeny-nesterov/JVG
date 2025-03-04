@@ -60,7 +60,6 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
@@ -667,49 +666,49 @@ public abstract class HiNode implements HiNodeIF {
 	}
 
 	public int byteValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.BYTE) {
+		if (type == TYPE_BYTE) {
 			return ((NodeByte) this).getValue();
 		}
 		return computeValue(ctx).value.getByte();
 	}
 
 	public int shortValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.SHORT) {
+		if (type == TYPE_SHORT) {
 			return ((NodeShort) this).getValue();
 		}
 		return computeValue(ctx).value.getShort();
 	}
 
 	public int intValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.INT) {
+		if (type == TYPE_INT) {
 			return ((NodeInt) this).getValue();
 		}
 		return computeValue(ctx).value.getInt();
 	}
 
 	public long longValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.LONG) {
+		if (type == TYPE_LONG) {
 			return ((NodeLong) this).getValue();
 		}
 		return computeValue(ctx).value.getLong();
 	}
 
 	public float floatValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.FLOAT) {
+		if (type == TYPE_FLOAT) {
 			return ((NodeFloat) this).getValue();
 		}
 		return computeValue(ctx).value.getFloat();
 	}
 
 	public double doubleValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.DOUBLE) {
+		if (type == TYPE_DOUBLE) {
 			return ((NodeDouble) this).getValue();
 		}
 		return computeValue(ctx).value.getDouble();
 	}
 
 	public char charValue(CompileClassContext ctx) {
-		if (type == PrimitiveTypes.CHAR) {
+		if (type == TYPE_CHAR) {
 			return ((NodeChar) this).getValue();
 		}
 		return computeValue(ctx).value.getChar();

@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.nodes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNodeIF;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
@@ -12,7 +12,9 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.Token;
 
-public class NodeValueType implements PrimitiveTypes, TokenAccessible {
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
+
+public class NodeValueType implements TokenAccessible {
 	@Override
 	public Token getToken() {
 		return token;
@@ -124,28 +126,28 @@ public class NodeValueType implements PrimitiveTypes, TokenAccessible {
 			nodeValueType.valueClass = valueClass;
 			if (valueClass.isPrimitive()) {
 				switch (valueClass.getPrimitiveType()) {
-					case CHAR:
+					case CHAR_TYPE:
 						nodeValueType.charValue = charValue;
 						break;
-					case BYTE:
+					case BYTE_TYPE:
 						nodeValueType.byteValue = byteValue;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						nodeValueType.shortValue = shortValue;
 						break;
-					case INT:
+					case INT_TYPE:
 						nodeValueType.intValue = intValue;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						nodeValueType.longValue = longValue;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						nodeValueType.floatValue = floatValue;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						nodeValueType.doubleValue = doubleValue;
 						break;
-					case BOOLEAN:
+					case BOOLEAN_TYPE:
 						nodeValueType.booleanValue = booleanValue;
 						break;
 				}
@@ -300,79 +302,79 @@ public class NodeValueType implements PrimitiveTypes, TokenAccessible {
 			return false;
 		}
 
-		int t1 = valueClass.getPrimitiveType();
-		int t2 = clazz.getPrimitiveType();
+		PrimitiveType t1 = valueClass.getPrimitiveType();
+		PrimitiveType t2 = clazz.getPrimitiveType();
 		switch (t1) {
-			case BYTE:
+			case BYTE_TYPE:
 				switch (t2) {
-					case CHAR:
+					case CHAR_TYPE:
 						return byteValue >= Character.MIN_VALUE;
-					case BYTE:
-					case SHORT:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case BYTE_TYPE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case SHORT:
+			case SHORT_TYPE:
 				switch (t2) {
-					case CHAR:
+					case CHAR_TYPE:
 						return shortValue >= Character.MIN_VALUE && shortValue <= Character.MAX_VALUE;
-					case BYTE:
+					case BYTE_TYPE:
 						return shortValue >= Byte.MIN_VALUE && shortValue <= Byte.MAX_VALUE;
-					case SHORT:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case INT:
+			case INT_TYPE:
 				switch (t2) {
-					case CHAR:
+					case CHAR_TYPE:
 						return intValue >= Character.MIN_VALUE && intValue <= Character.MAX_VALUE;
-					case BYTE:
+					case BYTE_TYPE:
 						return intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE;
-					case SHORT:
+					case SHORT_TYPE:
 						return intValue >= Short.MIN_VALUE && intValue <= Short.MAX_VALUE;
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case LONG:
+			case LONG_TYPE:
 				switch (t2) {
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case FLOAT:
+			case FLOAT_TYPE:
 				switch (t2) {
-					case FLOAT:
-					case DOUBLE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case DOUBLE:
-				return t2 == DOUBLE;
-			case CHAR:
+			case DOUBLE_TYPE:
+				return t2 == DOUBLE_TYPE;
+			case CHAR_TYPE:
 				switch (t2) {
-					case CHAR:
+					case CHAR_TYPE:
 						return true;
-					case BYTE:
+					case BYTE_TYPE:
 						return charValue >= Byte.MIN_VALUE && charValue <= Byte.MAX_VALUE;
-					case SHORT:
+					case SHORT_TYPE:
 						return charValue >= Short.MIN_VALUE && charValue <= Short.MAX_VALUE;
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
-			case BOOLEAN:
-				return t2 == BOOLEAN;
+			case BOOLEAN_TYPE:
+				return t2 == BOOLEAN_TYPE;
 		}
 		return false;
 	}

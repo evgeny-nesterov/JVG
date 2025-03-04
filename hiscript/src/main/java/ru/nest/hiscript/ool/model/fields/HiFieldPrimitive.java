@@ -3,13 +3,15 @@ package ru.nest.hiscript.ool.model.fields;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
-public abstract class HiFieldPrimitive<T> extends HiField<T> implements PrimitiveTypes {
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
+
+public abstract class HiFieldPrimitive<T> extends HiField<T> {
 	public HiFieldPrimitive(Type type, String name) {
 		super(type, name);
 	}
@@ -21,7 +23,7 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 
-	public static int getAutoType(HiClass clazz) {
+	public static PrimitiveType getAutoType(HiClass clazz) {
 		if (clazz.getAutoboxedPrimitiveClass() != null) {
 			clazz = clazz.getAutoboxedPrimitiveClass();
 		}
@@ -33,105 +35,105 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 	 */
 	// TODO check value!!!
 	public static boolean autoCastValue(HiClass src, HiClass dst) {
-		int srcType = src.getPrimitiveType();
-		int dstType = dst.getPrimitiveType();
+		PrimitiveType srcType = src.getPrimitiveType();
+		PrimitiveType dstType = dst.getPrimitiveType();
 		switch (srcType) {
-			case BYTE:
-			case CHAR:
-			case SHORT:
-			case INT:
+			case BYTE_TYPE:
+			case CHAR_TYPE:
+			case SHORT_TYPE:
+			case INT_TYPE:
 				switch (dstType) {
-					case BYTE:
-					case CHAR:
-					case SHORT:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case BYTE_TYPE:
+					case CHAR_TYPE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case LONG:
+			case LONG_TYPE:
 				switch (dstType) {
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case FLOAT:
-				return dstType == FLOAT || dstType == DOUBLE;
-			case DOUBLE:
-				return dstType == DOUBLE;
-			case BOOLEAN:
-				return dstType == BOOLEAN;
+			case FLOAT_TYPE:
+				return dstType == FLOAT_TYPE || dstType == DOUBLE_TYPE;
+			case DOUBLE_TYPE:
+				return dstType == DOUBLE_TYPE;
+			case BOOLEAN_TYPE:
+				return dstType == BOOLEAN_TYPE;
 		}
 		return false;
 	}
 
 	public static boolean autoCast(HiClass src, HiClass dst) {
-		int srcType = src.getPrimitiveType();
-		int dstType = dst.getPrimitiveType();
+		PrimitiveType srcType = src.getPrimitiveType();
+		PrimitiveType dstType = dst.getPrimitiveType();
 		switch (srcType) {
-			case CHAR:
+			case CHAR_TYPE:
 				switch (dstType) {
-					case CHAR:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case CHAR_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case BYTE:
+			case BYTE_TYPE:
 				switch (dstType) {
-					case BYTE:
-					case SHORT:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case BYTE_TYPE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case SHORT:
+			case SHORT_TYPE:
 				switch (dstType) {
-					case SHORT:
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case SHORT_TYPE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case INT:
+			case INT_TYPE:
 				switch (dstType) {
-					case INT:
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case INT_TYPE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case LONG:
+			case LONG_TYPE:
 				switch (dstType) {
-					case LONG:
-					case FLOAT:
-					case DOUBLE:
+					case LONG_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case FLOAT:
+			case FLOAT_TYPE:
 				switch (dstType) {
-					case FLOAT:
-					case DOUBLE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
 						return true;
 				}
 				break;
-			case DOUBLE:
-				return dstType == DOUBLE;
-			case BOOLEAN:
-				return dstType == BOOLEAN;
+			case DOUBLE_TYPE:
+				return dstType == DOUBLE_TYPE;
+			case BOOLEAN_TYPE:
+				return dstType == BOOLEAN_TYPE;
 		}
 		return false;
 	}

@@ -20,44 +20,46 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, Comparable<Type> {
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
+
+public class Type implements HiType, TypeArgumentIF, Codeable, Comparable<Type> {
 	public final static int PRIMITIVE = 0;
 
 	public final static int OBJECT = 1;
 
 	public final static int ARRAY = 2;
 
-	public final static Type byteType = new Type(BYTE, "byte", true);
-	public final static Type byteBoxType = new Type(-1, "Byte", false);
+	public final static Type byteType = new Type(BYTE_TYPE, "byte", true);
+	public final static Type byteBoxType = new Type(UNDEFINED_TYPE, "Byte", false);
 
-	public final static Type charType = new Type(CHAR, "char", true);
-	public final static Type charBoxType = new Type(-1, "Character", false);
+	public final static Type charType = new Type(CHAR_TYPE, "char", true);
+	public final static Type charBoxType = new Type(UNDEFINED_TYPE, "Character", false);
 
-	public final static Type shortType = new Type(SHORT, "short", true);
-	public final static Type shortBoxType = new Type(-1, "Short", false);
+	public final static Type shortType = new Type(SHORT_TYPE, "short", true);
+	public final static Type shortBoxType = new Type(UNDEFINED_TYPE, "Short", false);
 
-	public final static Type intType = new Type(INT, "int", true);
-	public final static Type intBoxType = new Type(-1, "Integer", false);
+	public final static Type intType = new Type(INT_TYPE, "int", true);
+	public final static Type intBoxType = new Type(UNDEFINED_TYPE, "Integer", false);
 
-	public final static Type longType = new Type(LONG, "long", true);
-	public final static Type longBoxType = new Type(-1, "Long", false);
+	public final static Type longType = new Type(LONG_TYPE, "long", true);
+	public final static Type longBoxType = new Type(UNDEFINED_TYPE, "Long", false);
 
-	public final static Type floatType = new Type(FLOAT, "float", true);
-	public final static Type floatBoxType = new Type(-1, "Float", false);
+	public final static Type floatType = new Type(FLOAT_TYPE, "float", true);
+	public final static Type floatBoxType = new Type(UNDEFINED_TYPE, "Float", false);
 
-	public final static Type doubleType = new Type(DOUBLE, "double", true);
-	public final static Type doubleBoxType = new Type(-1, "Double", false);
+	public final static Type doubleType = new Type(DOUBLE_TYPE, "double", true);
+	public final static Type doubleBoxType = new Type(UNDEFINED_TYPE, "Double", false);
 
-	public final static Type booleanType = new Type(BOOLEAN, "boolean", true);
-	public final static Type booleanBoxType = new Type(-1, "Boolean", false);
+	public final static Type booleanType = new Type(BOOLEAN_TYPE, "boolean", true);
+	public final static Type booleanBoxType = new Type(UNDEFINED_TYPE, "Boolean", false);
 
-	public final static Type voidType = new Type(VOID, "void", true);
+	public final static Type voidType = new Type(VOID_TYPE, "void", true);
 
-	public final static Type nullType = new Type(-1, "null", false);
+	public final static Type nullType = new Type(UNDEFINED_TYPE, "null", false);
 
-	public final static Type varType = new Type(VAR, "var", false);
+	public final static Type varType = new Type(VAR_TYPE, "var", false);
 
-	public final static Type invalidType = new Type(INVALID, "", false);
+	public final static Type invalidType = new Type(INVALID_TYPE, "", false);
 
 	private final static Map<String, Type> primitiveTypes = new HashMap<>();
 
@@ -92,7 +94,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 	}
 
 	public Type(Type parent, String name) {
-		this.id = -1;
+		this.id = UNDEFINED_TYPE;
 		this.parent = parent;
 		this.cellType = null;
 		this.name = (name != null ? name : "").intern();
@@ -132,7 +134,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 	/**
 	 * Primitive type
 	 */
-	private Type(int id, String name, boolean primitive) {
+	private Type(PrimitiveType id, String name, boolean primitive) {
 		this.id = id;
 		this.parent = null;
 		this.cellType = null;
@@ -147,7 +149,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 	 * Array type
 	 */
 	public Type(Type cellType) {
-		this.id = -1;
+		this.id = UNDEFINED_TYPE;
 		this.parent = null;
 		this.cellType = cellType;
 		this.name = ("0" + cellType.name).intern();
@@ -167,7 +169,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 	}
 
 	public Type(Type extendedType, boolean isSuper) {
-		this.id = -1;
+		this.id = UNDEFINED_TYPE;
 		this.primitive = false;
 		this.parent = extendedType.parent;
 		this.name = extendedType.name;
@@ -281,7 +283,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 		return rootCellClass.getArrayClassIf(dimensions);
 	}
 
-	private int id;
+	private PrimitiveType id;
 
 	public Type parent;
 

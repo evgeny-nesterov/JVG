@@ -39,7 +39,7 @@ public class OperationLogicalOR extends BinaryOperation {
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		v1.unbox();
 		v2.unbox();
-		v1.valueClass = TYPE_BOOLEAN;
+		v1.valueClass = HiClassPrimitive.BOOLEAN;
 		v1.bool = v1.bool || v2.bool;
 	}
 }

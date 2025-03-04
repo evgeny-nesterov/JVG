@@ -33,11 +33,11 @@ public class OperationArrayIndex extends BinaryOperation {
 		boolean validIndex = false;
 		if (node2.clazz.isPrimitive()) {
 			switch (node2.clazz.getPrimitiveType()) {
-				case VAR:
-				case CHAR:
-				case BYTE:
-				case SHORT:
-				case INT:
+				case VAR_TYPE:
+				case CHAR_TYPE:
+				case BYTE_TYPE:
+				case SHORT_TYPE:
+				case INT_TYPE:
 					validIndex = true;
 			}
 		}

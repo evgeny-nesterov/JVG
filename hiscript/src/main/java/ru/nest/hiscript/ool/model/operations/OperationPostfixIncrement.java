@@ -5,12 +5,15 @@ import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
+
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 
 public class OperationPostfixIncrement extends UnaryOperation {
 	private static final HiOperation instance = new OperationPostfixIncrement();
@@ -30,11 +33,11 @@ public class OperationPostfixIncrement extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-        if (!node.isVariable()) {
-            validationInfo.error("variable expected", node.token);
-        }
+		if (!node.isVariable()) {
+			validationInfo.error("variable expected", node.token);
+		}
 		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
-		if (!clazz.isPrimitive() || clazz.getPrimitiveType() == BOOLEAN) {
+		if (!clazz.isPrimitive() || clazz.getPrimitiveType() == BOOLEAN_TYPE) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
@@ -44,7 +47,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value value) {
 		HiClass c = value.getOperationClass();
-		int type = c.getPrimitiveType();
+		PrimitiveType type = c.getPrimitiveType();
 		HiField<?> var = value.variable;
 		Value[] tmpValues = ctx.getValues(1);
 		try {
@@ -52,25 +55,25 @@ public class OperationPostfixIncrement extends UnaryOperation {
 			value.copyTo(tmp); // copy primitive value
 
 			switch (type) {
-				case CHAR:
+				case CHAR_TYPE:
 					tmp.character++;
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					tmp.byteNumber++;
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					tmp.shortNumber++;
 					break;
-				case INT:
+				case INT_TYPE:
 					tmp.intNumber++;
 					break;
-				case LONG:
+				case LONG_TYPE:
 					tmp.longNumber++;
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					tmp.floatNumber++;
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					tmp.doubleNumber++;
 					break;
 			}

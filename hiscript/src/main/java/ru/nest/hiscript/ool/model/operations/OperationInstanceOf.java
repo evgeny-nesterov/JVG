@@ -87,7 +87,7 @@ public class OperationInstanceOf extends BinaryOperation {
 			isInstanceof = ctx.addCastedVariables(v2.castedVariableName, c2, v2.castedRecordArguments, v2.castedRecordArgumentsConstructor, v1.object, c1);
 		}
 
-		v1.valueClass = TYPE_BOOLEAN;
+		v1.valueClass = HiClassPrimitive.BOOLEAN;
 		v1.bool = isInstanceof;
 	}
 }

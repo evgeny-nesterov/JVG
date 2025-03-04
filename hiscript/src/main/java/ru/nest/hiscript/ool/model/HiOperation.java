@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
-public abstract class HiOperation implements PrimitiveTypes, OperationsIF {
+public abstract class HiOperation implements OperationsIF {
 	protected HiOperation(int operandsCount, int operation) {
 		this.name = Operations.getName(operation);
 		this.operandsCount = operandsCount;

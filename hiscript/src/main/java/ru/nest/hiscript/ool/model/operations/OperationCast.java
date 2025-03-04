@@ -3,7 +3,7 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.model.PrimitiveTypes;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
@@ -13,7 +13,9 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
-public class OperationCast extends BinaryOperation implements PrimitiveTypes {
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
+
+public class OperationCast extends BinaryOperation {
 	private static final HiOperation instance = new OperationCast();
 
 	public static HiOperation getInstance() {
@@ -38,7 +40,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 					errorCast(validationInfo, node1.token, c2, c1);
 				}
 			} else {
-				if ((c1.getPrimitiveType() == BOOLEAN && c2.getPrimitiveType() != BOOLEAN) || (c1.getPrimitiveType() != BOOLEAN && c2.getPrimitiveType() == BOOLEAN)) {
+				if ((c1.getPrimitiveType() == BOOLEAN_TYPE && c2.getPrimitiveType() != BOOLEAN_TYPE) || (c1.getPrimitiveType() != BOOLEAN_TYPE && c2.getPrimitiveType() == BOOLEAN_TYPE)) {
 					errorCast(validationInfo, node1.token, c2, c1);
 				}
 			}
@@ -59,185 +61,185 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			ctx.nodeValueType.returnType = NodeValueType.NodeValueReturnType.compileValue;
 			node1.valueClass = c1;
 			if (c1.isPrimitive() && c2.isPrimitive()) {
-				int t1 = c1.getPrimitiveType();
-				int t2 = c2.getPrimitiveType();
+				PrimitiveType t1 = c1.getPrimitiveType();
+				PrimitiveType t2 = c2.getPrimitiveType();
 				switch (t1) {
-					case BOOLEAN:
-						if (t2 == BOOLEAN) {
+					case BOOLEAN_TYPE:
+						if (t2 == BOOLEAN_TYPE) {
 							node1.booleanValue = node2.booleanValue;
 						}
 						break;
-					case BYTE:
+					case BYTE_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.byteValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.byteValue = (byte) node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.byteValue = (byte) node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.byteValue = (byte) node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.byteValue = (byte) node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.byteValue = (byte) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.byteValue = (byte) node2.charValue;
 								break;
 						}
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.shortValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.shortValue = node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.shortValue = (short) node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.shortValue = (short) node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.shortValue = (short) node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.shortValue = (short) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.shortValue = (short) node2.charValue;
 								break;
 						}
 						break;
-					case INT:
+					case INT_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.intValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.intValue = node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.intValue = node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.intValue = (int) node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.intValue = (int) node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.intValue = (int) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.intValue = node2.charValue;
 								break;
 						}
 						break;
-					case LONG:
+					case LONG_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.longValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.longValue = node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.longValue = node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.longValue = node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.longValue = (long) node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.longValue = (long) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.longValue = node2.charValue;
 								break;
 						}
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.floatValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.floatValue = node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.floatValue = node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.floatValue = node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.floatValue = node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.floatValue = (float) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.floatValue = node2.charValue;
 								break;
 						}
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.doubleValue = node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.doubleValue = node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.doubleValue = node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.doubleValue = node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.doubleValue = node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.doubleValue = node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.doubleValue = node2.charValue;
 								break;
 						}
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						switch (t2) {
-							case BYTE:
+							case BYTE_TYPE:
 								node1.charValue = (char) node2.byteValue;
 								break;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.charValue = (char) node2.shortValue;
 								break;
-							case INT:
+							case INT_TYPE:
 								node1.charValue = (char) node2.intValue;
 								break;
-							case LONG:
+							case LONG_TYPE:
 								node1.charValue = (char) node2.longValue;
 								break;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.charValue = (char) node2.floatValue;
 								break;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.charValue = (char) node2.doubleValue;
 								break;
-							case CHAR:
+							case CHAR_TYPE:
 								node1.charValue = node2.charValue;
 								break;
 						}
@@ -323,177 +325,177 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 		}
 		assert c2.isPrimitive();
 
-		int type1 = c1.getPrimitiveType();
-		int type2 = c2.getPrimitiveType();
+		PrimitiveType type1 = c1.getPrimitiveType();
+		PrimitiveType type2 = c2.getPrimitiveType();
 		switch (type1) {
-			case BOOLEAN:
+			case BOOLEAN_TYPE:
 				v1.bool = v2.bool;
 				break;
-			case CHAR:
+			case CHAR_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.character = (char) v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.character = (char) v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.character = v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.character = (char) v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.character = (char) v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.character = (char) v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.character = (char) v2.doubleNumber;
 						break;
 				}
-			case BYTE:
+			case BYTE_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.byteNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.byteNumber = (byte) v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.byteNumber = (byte) v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.byteNumber = (byte) v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.byteNumber = (byte) v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.byteNumber = (byte) v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.byteNumber = (byte) v2.doubleNumber;
 						break;
 				}
-			case SHORT:
+			case SHORT_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.shortNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.shortNumber = v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.shortNumber = (short) v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.shortNumber = (short) v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.shortNumber = (short) v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.shortNumber = (short) v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.shortNumber = (short) v2.doubleNumber;
 						break;
 				}
-			case INT:
+			case INT_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.intNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.intNumber = v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.intNumber = v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.intNumber = v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.intNumber = (int) v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.intNumber = (int) v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.intNumber = (int) v2.doubleNumber;
 						break;
 				}
-			case LONG:
+			case LONG_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.longNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.longNumber = v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.longNumber = v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.longNumber = v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.longNumber = v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.longNumber = (long) v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.longNumber = (long) v2.doubleNumber;
 						break;
 				}
-			case FLOAT:
+			case FLOAT_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.floatNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.floatNumber = v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.floatNumber = v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.floatNumber = v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.floatNumber = v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.floatNumber = v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.floatNumber = (float) v2.doubleNumber;
 						break;
 				}
-			case DOUBLE:
+			case DOUBLE_TYPE:
 				switch (type2) {
-					case BYTE:
+					case BYTE_TYPE:
 						v1.doubleNumber = v2.byteNumber;
 						break;
-					case SHORT:
+					case SHORT_TYPE:
 						v1.doubleNumber = v2.shortNumber;
 						break;
-					case CHAR:
+					case CHAR_TYPE:
 						v1.doubleNumber = v2.character;
 						break;
-					case INT:
+					case INT_TYPE:
 						v1.doubleNumber = v2.intNumber;
 						break;
-					case LONG:
+					case LONG_TYPE:
 						v1.doubleNumber = v2.longNumber;
 						break;
-					case FLOAT:
+					case FLOAT_TYPE:
 						v1.doubleNumber = v2.floatNumber;
 						break;
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						v1.doubleNumber = v2.doubleNumber;
 						break;
 				}

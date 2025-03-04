@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.runtime.Value;
 
 import java.lang.reflect.Array;
 
-public class HiArrays implements PrimitiveTypes {
+public class HiArrays {
 	public static Class<?> getClass(HiClass clazz, int dimension) {
 		Class<?> c = null;
 		assert !clazz.isArray();
@@ -19,30 +19,29 @@ public class HiArrays implements PrimitiveTypes {
 
 			try {
 				if (clazz.isPrimitive()) {
-					int typeIndex = clazz.getPrimitiveType();
-					switch (typeIndex) {
-						case PrimitiveTypes.BOOLEAN:
+					switch (clazz.getPrimitiveType()) {
+						case BOOLEAN_TYPE:
 							c = Class.forName(prefix + "Z");
 							break;
-						case PrimitiveTypes.CHAR:
+						case CHAR_TYPE:
 							c = Class.forName(prefix + "C");
 							break;
-						case PrimitiveTypes.BYTE:
+						case BYTE_TYPE:
 							c = Class.forName(prefix + "B");
 							break;
-						case PrimitiveTypes.SHORT:
+						case SHORT_TYPE:
 							c = Class.forName(prefix + "S");
 							break;
-						case PrimitiveTypes.INT:
+						case INT_TYPE:
 							c = Class.forName(prefix + "I");
 							break;
-						case PrimitiveTypes.LONG:
+						case LONG_TYPE:
 							c = Class.forName(prefix + "J");
 							break;
-						case PrimitiveTypes.FLOAT:
+						case FLOAT_TYPE:
 							c = Class.forName(prefix + "F");
 							break;
-						case PrimitiveTypes.DOUBLE:
+						case DOUBLE_TYPE:
 							c = Class.forName(prefix + "D");
 							break;
 					}
@@ -53,30 +52,29 @@ public class HiArrays implements PrimitiveTypes {
 			}
 		} else {
 			if (clazz.isPrimitive()) {
-				int typeIndex = clazz.getPrimitiveType();
-				switch (typeIndex) {
-					case PrimitiveTypes.BOOLEAN:
+				switch (clazz.getPrimitiveType()) {
+					case BOOLEAN_TYPE:
 						c = boolean.class;
 						break;
-					case PrimitiveTypes.CHAR:
+					case CHAR_TYPE:
 						c = char.class;
 						break;
-					case PrimitiveTypes.BYTE:
+					case BYTE_TYPE:
 						c = byte.class;
 						break;
-					case PrimitiveTypes.SHORT:
+					case SHORT_TYPE:
 						c = short.class;
 						break;
-					case PrimitiveTypes.INT:
+					case INT_TYPE:
 						c = int.class;
 						break;
-					case PrimitiveTypes.LONG:
+					case LONG_TYPE:
 						c = long.class;
 						break;
-					case PrimitiveTypes.FLOAT:
+					case FLOAT_TYPE:
 						c = float.class;
 						break;
-					case PrimitiveTypes.DOUBLE:
+					case DOUBLE_TYPE:
 						c = double.class;
 						break;
 				}
@@ -94,30 +92,30 @@ public class HiArrays implements PrimitiveTypes {
 		} else {
 			HiClassArray arrayClass = (HiClassArray) v.valueClass;
 			HiClass cellClass = arrayClass.cellClass;
-			int typeIndex = cellClass.getPrimitiveType();
-			switch (typeIndex) {
-				case BOOLEAN:
+			PrimitiveType type = cellClass.getPrimitiveType();
+			switch (type) {
+				case BOOLEAN_TYPE:
 					v.bool = Array.getBoolean(array, index);
 					break;
-				case CHAR:
+				case CHAR_TYPE:
 					v.character = Array.getChar(array, index);
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					v.byteNumber = Array.getByte(array, index);
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					v.shortNumber = Array.getShort(array, index);
 					break;
-				case INT:
+				case INT_TYPE:
 					v.intNumber = Array.getInt(array, index);
 					break;
-				case LONG:
+				case LONG_TYPE:
 					v.longNumber = Array.getLong(array, index);
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					v.floatNumber = Array.getFloat(array, index);
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					v.doubleNumber = Array.getDouble(array, index);
 					break;
 			}
@@ -135,58 +133,57 @@ public class HiArrays implements PrimitiveTypes {
 			Array.set(parentArray, index, dst.object);
 		} else if (clazz.isPrimitive()) {
 			// @autoboxing
-			int typeIndex = clazz.getPrimitiveType();
-			switch (typeIndex) {
-				case BOOLEAN:
+			switch (clazz.getPrimitiveType()) {
+				case BOOLEAN_TYPE:
 					dst.bool = value.getBoolean();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setBoolean(parentArray, index, dst.bool);
 					break;
-				case CHAR:
+				case CHAR_TYPE:
 					dst.character = value.getChar();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setChar(parentArray, index, dst.character);
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					dst.byteNumber = value.getByte();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setByte(parentArray, index, dst.byteNumber);
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					dst.shortNumber = value.getShort();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setShort(parentArray, index, dst.shortNumber);
 					break;
-				case INT:
+				case INT_TYPE:
 					dst.intNumber = value.getInt();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setInt(parentArray, index, dst.intNumber);
 					break;
-				case LONG:
+				case LONG_TYPE:
 					dst.longNumber = value.getLong();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setLong(parentArray, index, dst.longNumber);
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					dst.floatNumber = value.getFloat();
 					if (value.ctx.exitFromBlock()) {
 						return;
 					}
 					Array.setFloat(parentArray, index, dst.floatNumber);
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					dst.doubleNumber = value.getDouble();
 					if (value.ctx.exitFromBlock()) {
 						return;
@@ -213,30 +210,29 @@ public class HiArrays implements PrimitiveTypes {
 		if (clazz.isArray()) {
 			Array.set(array, index, value.getArray());
 		} else if (clazz.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getAutoType(clazz);
-			switch (typeIndex) {
-				case BOOLEAN:
+			switch (HiFieldPrimitive.getAutoType(clazz)) {
+				case BOOLEAN_TYPE:
 					Array.setBoolean(array, index, value.getBoolean());
 					break;
-				case CHAR:
+				case CHAR_TYPE:
 					Array.setChar(array, index, value.getChar());
 					break;
-				case BYTE:
+				case BYTE_TYPE:
 					Array.setByte(array, index, value.getByte());
 					break;
-				case SHORT:
+				case SHORT_TYPE:
 					Array.setShort(array, index, value.getShort());
 					break;
-				case INT:
+				case INT_TYPE:
 					Array.setInt(array, index, value.getInt());
 					break;
-				case LONG:
+				case LONG_TYPE:
 					Array.setLong(array, index, value.getLong());
 					break;
-				case FLOAT:
+				case FLOAT_TYPE:
 					Array.setFloat(array, index, value.getFloat());
 					break;
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					Array.setDouble(array, index, value.getDouble());
 					break;
 			}

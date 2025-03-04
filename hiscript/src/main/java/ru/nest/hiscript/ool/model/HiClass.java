@@ -50,7 +50,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
-import static ru.nest.hiscript.ool.model.PrimitiveTypes.*;
+import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
@@ -1745,7 +1745,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return false;
 	}
 
-	public int getPrimitiveType() {
+	public PrimitiveType getPrimitiveType() {
 		throw new HiScriptRuntimeException("unknown type: " + name);
 	}
 
@@ -2491,18 +2491,18 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					}
 				} else if (isNumber1 && isNumber2) {
 					// matched next closed type (except char and short)
-					int t1 = c1.getPrimitiveType();
-					if (t1 == CHAR) {
+					PrimitiveType t1 = c1.getPrimitiveType();
+					if (t1 == CHAR_TYPE) {
 						return ArgClassPriorityType.nonComparable;
 					}
-					int t2 = c2.getPrimitiveType();
-					if (t2 == CHAR) {
+					PrimitiveType t2 = c2.getPrimitiveType();
+					if (t2 == CHAR_TYPE) {
 						return ArgClassPriorityType.nonComparable;
 					}
-					int t = argClass.getPrimitiveType();
-					if (t <= t1 && (t1 < t2 || t2 < t)) {
+					PrimitiveType t = argClass.getPrimitiveType();
+					if (t.ordinal() <= t1.ordinal() && (t1.ordinal() < t2.ordinal() || t2.ordinal() < t.ordinal())) {
 						return ArgClassPriorityType.higher;
-					} else if (t <= t2 && (t2 < t1 || t1 < t)) {
+					} else if (t.ordinal() <= t2.ordinal() && (t2.ordinal() < t1.ordinal() || t1.ordinal() < t.ordinal())) {
 						return ArgClassPriorityType.lower;
 					} else {
 						return ArgClassPriorityType.nonComparable;

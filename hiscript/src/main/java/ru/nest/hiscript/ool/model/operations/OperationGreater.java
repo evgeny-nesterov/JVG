@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -26,174 +27,174 @@ public class OperationGreater extends BinaryOperation {
 		HiClass c2 = node2.clazz.getAutoboxedPrimitiveClass() == null ? node2.clazz : node2.clazz.getAutoboxedPrimitiveClass();
 		if (c1.isNumber() && c2.isNumber()) {
 			if (node1.isCompileValue() && node2.isCompileValue()) {
-				int t1 = c1.getPrimitiveType();
-				int t2 = c2.getPrimitiveType();
+				PrimitiveType t1 = c1.getPrimitiveType();
+				PrimitiveType t2 = c2.getPrimitiveType();
 				switch (t1) {
-					case CHAR:
+					case CHAR_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.charValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.charValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.charValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.charValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.charValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.charValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.charValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case BYTE:
+					case BYTE_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.byteValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.byteValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.byteValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.byteValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.byteValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.byteValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.byteValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case SHORT:
+					case SHORT_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.shortValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.shortValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.shortValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.shortValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.shortValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.shortValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.shortValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case INT:
+					case INT_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.intValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.intValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.intValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.intValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.intValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.intValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.intValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case LONG:
+					case LONG_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.longValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.longValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.longValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.longValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.longValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.longValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.longValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case FLOAT:
+					case FLOAT_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.floatValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.floatValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.floatValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.floatValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.floatValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.floatValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.floatValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
-					case DOUBLE:
+					case DOUBLE_TYPE:
 						switch (t2) {
-							case CHAR:
+							case CHAR_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.charValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case BYTE:
+							case BYTE_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.byteValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case SHORT:
+							case SHORT_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.shortValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case INT:
+							case INT_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.intValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case LONG:
+							case LONG_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.longValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case FLOAT:
+							case FLOAT_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.floatValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
-							case DOUBLE:
+							case DOUBLE_TYPE:
 								node1.booleanValue = node1.doubleValue > node2.doubleValue;
 								return node1.valueClass = HiClassPrimitive.BOOLEAN;
 						}
@@ -210,175 +211,175 @@ public class OperationGreater extends BinaryOperation {
 		HiClass c1 = v1.getOperationClass();
 		HiClass c2 = v2.getOperationClass();
 		if (c1.isPrimitive() && c2.isPrimitive()) {
-			int t1 = c1.getPrimitiveType();
-			int t2 = c2.getPrimitiveType();
-			v1.valueClass = TYPE_BOOLEAN;
+			PrimitiveType t1 = c1.getPrimitiveType();
+			PrimitiveType t2 = c2.getPrimitiveType();
+			v1.valueClass = HiClassPrimitive.BOOLEAN;
 			switch (t1) {
-				case CHAR:
+				case CHAR_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.character > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.character > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.character > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.character > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.character > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.character > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.character > v2.doubleNumber;
 							return;
 					}
-				case BYTE:
+				case BYTE_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.byteNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.byteNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.byteNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.byteNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.byteNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.byteNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.byteNumber > v2.doubleNumber;
 							return;
 					}
-				case SHORT:
+				case SHORT_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.shortNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.shortNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.shortNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.shortNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.shortNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.shortNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.shortNumber > v2.doubleNumber;
 							return;
 					}
-				case INT:
+				case INT_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.intNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.intNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.intNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.intNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.intNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.intNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.intNumber > v2.doubleNumber;
 							return;
 					}
-				case LONG:
+				case LONG_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.longNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.longNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.longNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.longNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.longNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.longNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.longNumber > v2.doubleNumber;
 							return;
 					}
-				case FLOAT:
+				case FLOAT_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.floatNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.floatNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.floatNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.floatNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.floatNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.floatNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.floatNumber > v2.doubleNumber;
 							return;
 					}
-				case DOUBLE:
+				case DOUBLE_TYPE:
 					switch (t2) {
-						case CHAR:
+						case CHAR_TYPE:
 							v1.bool = v1.doubleNumber > v2.character;
 							return;
-						case BYTE:
+						case BYTE_TYPE:
 							v1.bool = v1.doubleNumber > v2.byteNumber;
 							return;
-						case SHORT:
+						case SHORT_TYPE:
 							v1.bool = v1.doubleNumber > v2.shortNumber;
 							return;
-						case INT:
+						case INT_TYPE:
 							v1.bool = v1.doubleNumber > v2.intNumber;
 							return;
-						case LONG:
+						case LONG_TYPE:
 							v1.bool = v1.doubleNumber > v2.longNumber;
 							return;
-						case FLOAT:
+						case FLOAT_TYPE:
 							v1.bool = v1.doubleNumber > v2.floatNumber;
 							return;
-						case DOUBLE:
+						case DOUBLE_TYPE:
 							v1.bool = v1.doubleNumber > v2.doubleNumber;
 							return;
 					}
