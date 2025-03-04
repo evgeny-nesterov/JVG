@@ -151,17 +151,17 @@ public class OperationInvocation extends BinaryOperation {
 					return true;
 				}
 			} else {
-//				HiField fieldDefinition = clazz.getField(ctx, name); // TODO return real class not HiClassNull
-//				if (fieldDefinition != null && fieldDefinition.isStatic()) {
-//					field = fieldDefinition;
-//				} else {
-				object = (HiObject) v1.object;
-				if (object == null) {
-					ctx.throwRuntimeException("null pointer");
-					return false;
+				HiField fieldDefinition = clazz.getField(ctx, name);
+				if (fieldDefinition != null && fieldDefinition.isStatic()) {
+					field = fieldDefinition;
+				} else {
+					object = (HiObject) v1.object;
+					if (object == null) {
+						ctx.throwRuntimeException("null pointer");
+						return false;
+					}
+					field = object.getField(ctx, name, clazz);
 				}
-				field = object.getField(ctx, name, clazz);
-//				}
 			}
 			assert field != null; // checked in validation
 		} else if (v1.valueType == Value.CLASS) {
@@ -415,6 +415,9 @@ public class OperationInvocation extends BinaryOperation {
 			try {
 				ctx.value = v1;
 				method.invoke(ctx, clazz, object, argsFields);
+				if (ctx.value.valueClass.isNull()) {
+					ctx.value.valueClass = method.returnClass;
+				}
 
 				// @autoboxing
 				if (method.returnClass != null && method.returnClass != TYPE_VOID && method.returnClass.isPrimitive()) {

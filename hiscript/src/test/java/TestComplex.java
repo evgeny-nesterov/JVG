@@ -15,7 +15,7 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler has to change C.get() to C for x
+		assertSuccess("class A{final static Boolean x = true;} System.println(\"A.x=\" + A.x); assert A.x == Boolean.TRUE;");
 	}
 
 	@Test
@@ -239,5 +239,9 @@ public class TestComplex extends HiTest {
 		// numbers
 		assertSuccess("Float f1 = new Float(Float.NaN); Float f2 = new Float(Float.NaN); assert f1 != f2; assert f1.equals(f2); assert Float.NaN != Float.NaN;");
 		assertSuccess("Double f1 = new Double(Double.NaN); Double f2 = new Double(Double.NaN); assert f1 != f2; assert f1.equals(f2); assert Double.NaN != Double.NaN;");
+
+		// static
+		assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler has to change C.get() to C for x
+		assertSuccess("class C{static int x = 1; static C c = null;} assert C.c.x == 1;"); // compiler has to change C.c to C for x
 	}
 }
