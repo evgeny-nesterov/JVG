@@ -77,25 +77,30 @@ public class NodeIf extends HiNode {
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-			}
 
-			boolean is = true;
-			if (condition != null) {
-				is = ctx.value.getBoolean();
+				boolean is = ctx.value.getBoolean();
 				if (ctx.exitFromBlock()) {
 					return;
 				}
-			}
 
-			if (is) {
+				if (is) {
+					if (body != null) {
+						body.execute(ctx);
+					}
+					return;
+				}
+			} else {
 				if (body != null) {
 					body.execute(ctx);
 				}
-			} else if (nextIf != null) {
-				nextIf.execute(ctx);
+				return;
 			}
 		} finally {
 			ctx.exit();
+		}
+
+		if (nextIf != null) {
+			nextIf.execute(ctx);
 		}
 	}
 

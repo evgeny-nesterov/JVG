@@ -6,7 +6,6 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.PrimitiveType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -197,10 +196,12 @@ public class NodeDeclaration extends HiNode implements NodeVariable, HasModifier
 
 	public HiField<?> executeAndGetVariable(RuntimeContext ctx) {
 		HiField<?> field = HiField.getField(clazz, name, initialization, token);
+		field.setModifiers(modifiers);
+
+		// @generics
 		if (clazz.isGeneric()) {
 			field.setGenericClass(ctx, ctx.level.object.type);
 		}
-		field.setModifiers(modifiers);
 
 		try {
 			field.execute(ctx);

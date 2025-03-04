@@ -187,6 +187,7 @@ public class NodeTry extends HiNode {
 			for (NodeCatch catchNode : catches) {
 				if (ctx.exception.clazz.isInstanceof(catchNode.excClass)) {
 					catchNode.execute(ctx);
+					// do not return on exception
 					break;
 				}
 			}
@@ -195,7 +196,11 @@ public class NodeTry extends HiNode {
 		if (finallyBody != null) {
 			ctx.enter(ContextType.FINALLY, token);
 			try {
+				HiObject exception = ctx.exception;
 				finallyBody.execute(ctx);
+				if (ctx.exception == null && exception != null) {
+					ctx.setException(exception);
+				}
 			} finally {
 				ctx.exit();
 			}

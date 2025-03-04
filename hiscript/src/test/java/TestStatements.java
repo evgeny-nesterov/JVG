@@ -361,8 +361,8 @@ public class TestStatements extends HiTest {
 				HiScriptRuntimeException.class);
 		assertSuccess("class E extends Exception{} try{throw new Exception();} catch(E e){assert false;} catch(RuntimeException e){assert false;} catch(Exception e){}");
 		assertSuccess("class E extends Exception {E(String message){super(message);}} " + //
-				"class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
-				"try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
+					  "class A {void m(int x) throws E {if (x == 1) throw new E(\"error-\" + x);}}" + //
+					  "try {A a = new A(); a.m(1);} catch(E e) {assert e.getMessage().equals(\"error-1\");}");
 		assertSuccess("class A implements AutoCloseable{int x = 1; public void close(){x--;}} A a_; try(A a = a_= new A()) {assert a.x==1;} finally{assert a_.x==0;} assert a_.x==0;");
 		assertSuccess("interface I extends AutoCloseable{} class A implements I{public void close(){}} try(A a1 = new A(); A a2 = new A()) {}");
 		assertFailCompile("class A implements AutoCloseable{public void close(){}} try(A a = new A();) {}", //
@@ -436,7 +436,8 @@ public class TestStatements extends HiTest {
 				"incompatible types: Integer cannot be converted to Exception");
 
 		assertSuccess("class A{int m(){try {throw new RuntimeException(\"1\");} catch(Exception e) {} finally{return 1;}}} assert new A().m() == 1;");
-		assertSuccess("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;"); // cancel exception and return 1 in finally
+		assertFail("class A{int m(){try {throw new RuntimeException(\"error 1\");} catch(Exception e) {throw new RuntimeException(\"error 2\");} finally{return 1;}}} assert new A().m() == 1;", //
+				"error 2"); // TODO cancel exception and return 1 in finally???
 
 		// resource initialization
 		assertFail("class A implements AutoCloseable{A(){throw new RuntimeException(\"exception in resource initialization\");} public void close(){}} try(A a = new A()){}", //

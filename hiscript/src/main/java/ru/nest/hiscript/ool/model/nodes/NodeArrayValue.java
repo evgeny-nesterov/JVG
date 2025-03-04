@@ -74,7 +74,7 @@ public class NodeArrayValue extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		int size = array.length;
-		Object value = Array.newInstance(javaClass, array.length);
+		Object value = Array.newInstance(javaClass, size);
 		for (int i = 0; i < size; i++) {
 			array[i].execute(ctx);
 			if (ctx.exitFromBlock()) {

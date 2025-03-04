@@ -1,10 +1,10 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassMix;
@@ -107,24 +107,21 @@ public class NodeCatch extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		if (ctx.exception != null && !ctx.exception.clazz.name.equals("AssertException")) {
-			HiObject exception = ctx.exception;
-			if (exception.clazz.isInstanceof(excClass)) {
-				ctx.exception = null;
-				if (catchBody != null) {
-					ctx.enter(ContextType.CATCH, token);
+		HiObject exception = ctx.exception;
+		if (exception != null && !"AssertException".equals(exception.clazz.name) && exception.clazz.isInstanceof(excClass)) {
+			ctx.exception = null;
+			if (catchBody != null) {
+				ctx.enter(ContextType.CATCH, token);
+				try {
+					HiFieldObject exceptionField = (HiFieldObject) HiField.getField(excClass, excName, null);
+					exceptionField.set(exception, excClass);
+					exceptionField.initialized = true;
 
-					HiFieldObject exc = (HiFieldObject) HiField.getField(excClass, excName, null);
-					exc.set(exception, excClass);
-					exc.initialized = true;
+					ctx.addVariable(exceptionField);
 
-					ctx.addVariable(exc);
-
-					try {
-						catchBody.execute(ctx);
-					} finally {
-						ctx.exit();
-					}
+					catchBody.execute(ctx);
+				} finally {
+					ctx.exit();
 				}
 			}
 		}

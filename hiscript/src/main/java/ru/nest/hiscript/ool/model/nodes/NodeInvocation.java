@@ -5,8 +5,8 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationType;
+import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
@@ -19,7 +19,7 @@ import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class NodeInvocation extends HiNode {
 	public NodeInvocation(String name, boolean innerInvocation, HiNode[] arguments) {
@@ -230,7 +230,7 @@ public class NodeInvocation extends HiNode {
 			ctx.value.arguments = arguments;
 			ctx.value.valueClass = returnClass;
 		} else {
-			Value[] vs = ctx.getValues(1);
+			Value[] values = ctx.getValues(1);
 			try {
 				// v1 - contains value as object
 				ctx.value.object = ctx.level.object;
@@ -244,16 +244,16 @@ public class NodeInvocation extends HiNode {
 				}
 
 				// v2 - contains method attributes (name, arguments)
-				Value v = vs[0];
-				v.valueType = ValueType.METHOD_INVOCATION;
-				v.name = name;
-				v.arguments = arguments;
-				v.node = this;
+				Value value = values[0];
+				value.valueType = ValueType.METHOD_INVOCATION;
+				value.name = name;
+				value.arguments = arguments;
+				value.node = this;
 
-				HiOperation o = Operations.getOperation(OperationType.INVOCATION);
-				o.doOperation(ctx, ctx.value, v);
+				HiOperation operation = Operations.getOperation(OperationType.INVOCATION);
+				operation.doOperation(ctx, ctx.value, value);
 			} finally {
-				ctx.putValues(vs);
+				ctx.putValues(values);
 			}
 		}
 	}

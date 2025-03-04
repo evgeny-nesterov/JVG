@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.runtime;
 
 import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.model.ClassResolver;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -9,7 +10,6 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
-import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
@@ -59,6 +59,8 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public HiObject currentThread;
 
 	public boolean validating;
+
+	public StackLevel level;
 
 	public RuntimeContext(HiCompiler compiler, HiClassLoader classLoader, boolean main) {
 		this.main = main;
@@ -151,6 +153,11 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	boolean hasException = false;
 
+	public void setException(HiObject exception) {
+		this.exception = exception;
+		this.hasException = exception != null;
+	}
+
 	public void throwException(String exceptionClass, String message, HiObject cause) {
 		if (hasException && exception != cause) {
 			return;
@@ -199,8 +206,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public boolean exitFromBlock() {
 		return isReturn || isExit || exception != null;
 	}
-
-	public StackLevel level;
 
 	// inside method, constructor and initializers
 	public void enter(ContextType type, Token token) {

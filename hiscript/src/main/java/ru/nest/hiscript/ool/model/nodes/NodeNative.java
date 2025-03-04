@@ -65,8 +65,8 @@ public class NodeNative extends HiNode {
 		Object[] args = new Object[1 + argsCount];
 		args[0] = ctx;
 		for (int i = 0; i < argsCount; i++) {
-			HiField<?> f = ctx.getVariable(argsNames[i]);
-			args[i + 1] = f.get();
+			HiField<?> field = ctx.getVariable(argsNames[i]);
+			args[i + 1] = field.get();
 		}
 		ctx.getClassLoader().getNative().invoke(ctx, method, args);
 	}
