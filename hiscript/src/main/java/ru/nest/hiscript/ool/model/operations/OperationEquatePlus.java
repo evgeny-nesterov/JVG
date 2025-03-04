@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationEquatePlus extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquatePlus();
@@ -247,9 +248,9 @@ public class OperationEquatePlus extends BinaryOperation {
 				v1.object = ((HiClassPrimitive) c1).box(ctx, v1);
 			}
 
-			if (v1.valueType == Value.VARIABLE) {
+			if (v1.valueType == ValueType.VARIABLE) {
 				v1.variable.set(ctx, v1);
-			} else if (v1.valueType == Value.ARRAY_INDEX) {
+			} else if (v1.valueType == ValueType.ARRAY_INDEX) {
 				v1.copyToArray(v1);
 			}
 		} else if (c1.isStringClass()) {
@@ -260,9 +261,9 @@ public class OperationEquatePlus extends BinaryOperation {
 			System.arraycopy(chars2, 0, chars, chars1.length, chars2.length);
 			NodeString.createString(ctx, chars, false);
 
-			if (v1.valueType == Value.VARIABLE) {
+			if (v1.valueType == ValueType.VARIABLE) {
 				v1.variable.set(ctx, ctx.value);
-			} else if (v1.valueType == Value.ARRAY_INDEX) {
+			} else if (v1.valueType == ValueType.ARRAY_INDEX) {
 				HiArrays.setArrayIndex(v1.valueClass, v1.parentArray, v1.arrayIndex, ctx.value, v1);
 			}
 		}

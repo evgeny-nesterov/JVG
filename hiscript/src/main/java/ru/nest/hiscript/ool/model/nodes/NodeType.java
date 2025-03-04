@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
@@ -37,7 +38,7 @@ public class NodeType extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.TYPE;
+		ctx.value.valueType = ValueType.TYPE;
 		ctx.value.variableType = type;
 	}
 

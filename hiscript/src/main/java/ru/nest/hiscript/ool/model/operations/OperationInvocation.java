@@ -23,6 +23,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.lang.reflect.Array;
 
@@ -56,7 +57,7 @@ public class OperationInvocation extends BinaryOperation {
 
 		ctx.enterObject(enclosingClass, enclosingType, isEnclosingObject);
 		if (node2.clazz == null) {
-			if (node2.node.getInvocationValueType() != -1) {
+			if (node2.node.getInvocationValueType() != ValueType.UNDEFINED) {
 				ctx.invocationNode = node1;
 			} else {
 				ctx.invocationNode = null;
@@ -88,16 +89,16 @@ public class OperationInvocation extends BinaryOperation {
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
 		switch (v2.valueType) {
-			case Value.NAME:
+			case NAME:
 				invokeName(ctx, v1, v2);
 				break;
-			case Value.METHOD_INVOCATION:
+			case METHOD_INVOCATION:
 				invokeMethod(ctx, v1, v2);
 				break;
-			case Value.EXECUTE:
+			case EXECUTE:
 				invokeExecute(ctx, v1, v2);
 				break;
-			case Value.TYPE_INVOCATION:
+			case TYPE_INVOCATION:
 				invokeClass(ctx, v1, v2);
 				break;
 		}
@@ -139,7 +140,7 @@ public class OperationInvocation extends BinaryOperation {
 		HiClass clazz = null;
 		HiObject object;
 		// find by pattern: <VARIABLE|ARRAY>.<STATIC CLASS>
-		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.VALUE || v1.valueType == Value.ARRAY_INDEX) {
+		if (v1.valueType == ValueType.VARIABLE || v1.valueType == ValueType.VALUE || v1.valueType == ValueType.ARRAY_INDEX) {
 			clazz = v1.valueClass;
 			if (clazz.isArray()) {
 				if (name.equals("length")) {
@@ -151,20 +152,20 @@ public class OperationInvocation extends BinaryOperation {
 					return true;
 				}
 			} else {
-				HiField fieldDefinition = clazz.getField(ctx, name);
-				if (fieldDefinition != null && fieldDefinition.isStatic()) {
-					field = fieldDefinition;
-				} else {
+//				HiField fieldDefinition = clazz.getField(ctx, name);
+//				if (fieldDefinition != null && fieldDefinition.isStatic()) {
+//					field = fieldDefinition;
+//				} else {
 					object = (HiObject) v1.object;
 					if (object == null) {
 						ctx.throwRuntimeException("null pointer");
 						return false;
 					}
 					field = object.getField(ctx, name, clazz);
-				}
+//				}
 			}
 			assert field != null; // checked in validation
-		} else if (v1.valueType == Value.CLASS) {
+		} else if (v1.valueType == ValueType.CLASS) {
 			clazz = v1.valueClass;
 
 			// find by pattern: <ENUM CLASS>.<ENUM VALUE>
@@ -187,7 +188,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		if (field != null) {
-			v1.valueType = Value.VALUE;
+			v1.valueType = ValueType.VALUE;
 			v1.valueClass = field.getClass(ctx);
 
 			// @generics
@@ -200,7 +201,7 @@ public class OperationInvocation extends BinaryOperation {
 				v1.valueClass = clazz.resolveGenericClass(ctx, null, (HiClassGeneric) v1.valueClass);
 			}
 
-			v1.valueType = Value.VARIABLE;
+			v1.valueType = ValueType.VARIABLE;
 			v1.name = name;
 			v1.variable = field;
 			return true;
@@ -209,14 +210,14 @@ public class OperationInvocation extends BinaryOperation {
 			if (nameDimension > 0) {
 				clazz = clazz.getArrayClass(nameDimension);
 			}
-			v1.valueType = Value.CLASS;
+			v1.valueType = ValueType.CLASS;
 			v1.valueClass = clazz;
 			return true;
 		}
 	}
 
 	public void invokeClass(RuntimeContext ctx, Value v1, Value v2) {
-		assert v1.valueType == Value.CLASS; // checked in validation
+		assert v1.valueType == ValueType.CLASS; // checked in validation
 
 		HiNodeIF valueNode = v2.node;
 		Value oldValue = ctx.value;
@@ -231,13 +232,13 @@ public class OperationInvocation extends BinaryOperation {
 	public void invokeMethod(RuntimeContext ctx, Value v1, Value v2) {
 		String name = v2.name;
 		HiNode[] argsValues = v2.arguments;
-		int v1ValueType = v1.valueType;
+		ValueType v1ValueType = v1.valueType;
 		HiClass v1Clazz = v1.valueClass;
 		HiClass clazz = v1Clazz;
 		HiObject obj = null;
 		Object object = null;
 		boolean isStatic = false;
-		if (v1.valueType == Value.VARIABLE || v1.valueType == Value.VALUE || v1.valueType == Value.ARRAY_INDEX) {
+		if (v1.valueType == ValueType.VARIABLE || v1.valueType == ValueType.VALUE || v1.valueType == ValueType.ARRAY_INDEX) {
 			if (v1.valueClass.isArray()) {
 				object = v1.object;
 				obj = null;
@@ -262,7 +263,7 @@ public class OperationInvocation extends BinaryOperation {
 				return;
 			}
 		} else {
-			assert v1.valueType == Value.CLASS; // checked in validation
+			assert v1.valueType == ValueType.CLASS; // checked in validation
 			isStatic = true;
 		}
 
@@ -283,7 +284,7 @@ public class OperationInvocation extends BinaryOperation {
 				argsClasses[i] = valueClass;
 
 				if (valueClass != null) {
-					if (ctx.value.valueType == Value.NAME) {
+					if (ctx.value.valueType == ValueType.NAME) {
 						assert NodeIdentifier.resolve(ctx, ctx.value); // node resolved in validation
 					}
 
@@ -294,7 +295,7 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		HiMethod method = null;
-		if ((v1ValueType == Value.VARIABLE || v1ValueType == Value.VALUE) && clazz != v1Clazz) {
+		if ((v1ValueType == ValueType.VARIABLE || v1ValueType == ValueType.VALUE) && clazz != v1Clazz) {
 			// find super method
 			HiMethod superMethod = v1Clazz.searchMethod(ctx, name, argsClasses);
 			assert superMethod != null; // checked in validation

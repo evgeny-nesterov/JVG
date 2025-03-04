@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -359,7 +360,7 @@ public class NodeSwitch extends HiNode {
 							return -2;
 						}
 
-						if (ctx.value.valueType == Value.CLASS) {
+						if (ctx.value.valueType == ValueType.CLASS) {
 							HiClass c1 = objectClass;
 							HiClass c2 = ctx.value.valueClass;
 							if (c1.isInstanceof(c2)) {

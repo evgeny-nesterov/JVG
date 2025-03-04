@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 	private static final HiOperation instance = new OperationCast();
@@ -287,7 +288,7 @@ public class OperationCast extends BinaryOperation implements PrimitiveTypes {
 			}
 			v1.object = v2.object;
 		}
-		v1.valueType = Value.VALUE;
+		v1.valueType = ValueType.VALUE;
 	}
 
 	public static boolean canCastArray(HiClassArray from, HiClassArray to) {

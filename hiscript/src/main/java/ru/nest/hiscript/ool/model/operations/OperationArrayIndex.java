@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.lang.reflect.Array;
 
@@ -63,7 +64,7 @@ public class OperationArrayIndex extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		// Expected v1.valueType == Value.VARIABLE || v1.valueType == Value.ARRAY_INDEX || (v1.valueType == Value.VALUE && v1.valueClass.isArray())
+		// Expected v1.valueType == ValueType.VARIABLE || v1.valueType == ValueType.ARRAY_INDEX || (v1.valueType == ValueType.VALUE && v1.valueClass.isArray())
 		HiClassArray type = (HiClassArray) v1.valueClass;
 		Object array = v1.getArray();
 		if (array == null) {
@@ -84,7 +85,7 @@ public class OperationArrayIndex extends BinaryOperation {
 
 		HiArrays.getArrayCellValue(v1, array, index);
 
-		v1.valueType = Value.ARRAY_INDEX;
+		v1.valueType = ValueType.ARRAY_INDEX;
 		v1.valueClass = type.cellClass;
 		v1.parentArray = array;
 		v1.arrayIndex = index;

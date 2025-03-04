@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
 public abstract class BinaryOperation extends HiOperation {
@@ -79,10 +80,10 @@ public abstract class BinaryOperation extends HiOperation {
 	public final void doOperation(RuntimeContext ctx, Value... values) {
 		Value v1 = values[0];
 		Value v2 = values[1];
-		if (v1.valueType == Value.NAME) {
+		if (v1.valueType == ValueType.NAME) {
 			NodeIdentifier.resolve(ctx, v1);
 		}
-		if (operation != INVOCATION && v2.valueType == Value.NAME) {
+		if (operation != INVOCATION && v2.valueType == ValueType.NAME) {
 			NodeIdentifier.resolve(ctx, v2);
 		}
 		doOperation(ctx, v1, v2);

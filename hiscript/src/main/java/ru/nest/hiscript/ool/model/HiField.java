@@ -17,6 +17,7 @@ import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -253,7 +254,7 @@ public abstract class HiField<T> extends HiNode implements NodeInitializer, Node
 			}
 		}
 
-		ctx.value.valueType = Value.VALUE;
+		ctx.value.valueType = ValueType.VALUE;
 		ctx.value.valueClass = getClass(ctx);
 		get(ctx, ctx.value);
 	}

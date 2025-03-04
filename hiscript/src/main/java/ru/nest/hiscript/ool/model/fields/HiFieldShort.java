@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class HiFieldShort extends HiFieldNumber<Short> {
 	public HiFieldShort(String name) {
@@ -45,7 +46,7 @@ public class HiFieldShort extends HiFieldNumber<Short> {
 				break;
 			default:
 				// autocast
-				if (value.valueType == Value.VALUE) {
+				if (value.valueType == ValueType.VALUE) {
 					switch (valueType) {
 						case CHAR:
 							if (value.character >= Short.MIN_VALUE && value.character <= Short.MAX_VALUE) {

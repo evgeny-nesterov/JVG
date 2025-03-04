@@ -14,29 +14,13 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 
 import java.lang.reflect.Array;
 
+import static ru.nest.hiscript.ool.runtime.ValueType.*;
+
 /**
  * Буфер обмена данных. Содержит переменные всех типов данных.
  */
 public class Value implements PrimitiveTypes {
-	private final static char[] NULL = "null".toCharArray();
-
-	public final static int VALUE = 0;
-
-	public final static int TYPE = 1;
-
-	public final static int VARIABLE = 2;
-
-	public final static int CLASS = 3;
-
-	public final static int METHOD_INVOCATION = 4;
-
-	public final static int ARRAY_INDEX = 5;
-
-	public final static int NAME = 6;
-
-	public final static int EXECUTE = 7; // for node
-
-	public final static int TYPE_INVOCATION = 8; // for .class, .this, .super
+	private final static char[] NULL_CHARS = "null".toCharArray();
 
 	public RuntimeContext ctx;
 
@@ -46,7 +30,7 @@ public class Value implements PrimitiveTypes {
 
 	public HiNodeIF node;
 
-	public int valueType;
+	public ValueType valueType;
 
 	public HiClass valueClass;
 
@@ -639,7 +623,7 @@ public class Value implements PrimitiveTypes {
 
 		if (valueClass.isArray()) {
 			if (object == null) {
-				return NULL;
+				return NULL_CHARS;
 			} else {
 				HiClassArray arrayType = (HiClassArray) valueClass;
 				return (arrayType.className + "@" + Integer.toHexString(object.hashCode())).toCharArray();
@@ -647,7 +631,7 @@ public class Value implements PrimitiveTypes {
 		}
 
 		if (valueClass.isNull() || object == null) {
-			return NULL;
+			return NULL_CHARS;
 		}
 
 		HiObject object = (HiObject) this.object;
@@ -660,7 +644,7 @@ public class Value implements PrimitiveTypes {
 		if (toString != null) {
 			return toString;
 		} else {
-			return NULL;
+			return NULL_CHARS;
 		}
 	}
 
@@ -725,7 +709,7 @@ public class Value implements PrimitiveTypes {
 	}
 
 	public void setObjectValue(HiClass clazz, HiObject value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = clazz;
 		originalValueClass = value != null ? value.clazz : null;
 		object = value;
@@ -733,68 +717,68 @@ public class Value implements PrimitiveTypes {
 
 	public void setArrayValue(HiClass clazz, Object array) {
 		assert clazz.isArray();
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = clazz;
 		originalValueClass = clazz;
 		object = array;
 	}
 
 	public void setObjectOrArrayValue(HiClass clazz, HiClass originalValueClass, Object value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = clazz;
 		this.originalValueClass = originalValueClass;
 		object = value;
 	}
 
 	public void setVoidValue() {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.VOID;
 	}
 
 	public void setByteValue(byte value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.BYTE;
 		byteNumber = value;
 	}
 
 	public void setShortValue(short value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.SHORT;
 		shortNumber = value;
 	}
 
 	public void setCharValue(char value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.CHAR;
 		character = value;
 	}
 
 	public void setIntValue(int value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.INT;
 		intNumber = value;
 	}
 
 	public void setLongValue(long value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.LONG;
 		longNumber = value;
 	}
 
 	public void setFloatValue(float value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.FLOAT;
 		floatNumber = value;
 	}
 
 	public void setDoubleValue(double value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.DOUBLE;
 		doubleNumber = value;
 	}
 
 	public void setBooleanValue(boolean value) {
-		valueType = Value.VALUE;
+		valueType = VALUE;
 		valueClass = HiClassPrimitive.BOOLEAN;
 		bool = value;
 	}

@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -66,8 +67,8 @@ public class NodeArrayValue extends HiNode {
 	}
 
 	@Override
-	public int getInvocationValueType() {
-		return Value.EXECUTE;
+	public ValueType getInvocationValueType() {
+		return ValueType.EXECUTE;
 	}
 
 	@Override

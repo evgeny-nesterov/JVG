@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationEquateAnd extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquateAnd();
@@ -165,9 +166,9 @@ public class OperationEquateAnd extends BinaryOperation {
 			v1.object = ((HiClassPrimitive) c1).box(ctx, v1);
 		}
 
-		if (v1.valueType == Value.VARIABLE) {
+		if (v1.valueType == ValueType.VARIABLE) {
 			v1.variable.set(ctx, v1);
-		} else if (v1.valueType == Value.ARRAY_INDEX) {
+		} else if (v1.valueType == ValueType.ARRAY_INDEX) {
 			v1.copyToArray(v1);
 		}
 	}

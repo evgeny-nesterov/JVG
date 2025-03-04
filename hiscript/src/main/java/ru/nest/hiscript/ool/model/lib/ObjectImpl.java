@@ -67,7 +67,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwRuntimeException(e.toString());
 		}
-		ctx.value.valueType = PrimitiveTypes.VOID;
+		returnVoid(ctx);
 	}
 
 	public static void Object_void_wait_long(RuntimeContext ctx, long timeout) {
@@ -76,7 +76,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwRuntimeException(e.toString());
 		}
-		ctx.value.valueType = PrimitiveTypes.VOID;
+		returnVoid(ctx);
 	}
 
 	public static void Object_void_notify(RuntimeContext ctx) {
@@ -85,7 +85,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwRuntimeException(e.getMessage());
 		}
-		ctx.value.valueType = PrimitiveTypes.VOID;
+		returnVoid(ctx);
 	}
 
 	public static void Object_void_notifyAll(RuntimeContext ctx) {
@@ -94,7 +94,7 @@ public class ObjectImpl extends ImplUtil {
 		} catch (Throwable e) {
 			ctx.throwRuntimeException(e.getMessage());
 		}
-		ctx.value.valueType = PrimitiveTypes.VOID;
+		returnVoid(ctx);
 	}
 
 	public static void Object_Class_getClass(RuntimeContext ctx) {

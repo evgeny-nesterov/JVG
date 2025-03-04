@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.operations.OperationPlus;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class TestNodes extends HiTest {
 	@Test
@@ -51,25 +52,25 @@ public class TestNodes extends HiTest {
 	}
 
 	private void assertByte(Value value, int n) {
-		Assertions.assertTrue(value.valueType == Value.VALUE);
+		Assertions.assertTrue(value.valueType == ValueType.VALUE);
 		Assertions.assertTrue(value.valueClass == HiClassPrimitive.BYTE);
 		Assertions.assertTrue(value.byteNumber == (byte) n);
 	}
 
 	private void assertShort(Value value, int n) {
-		Assertions.assertTrue(value.valueType == Value.VALUE);
+		Assertions.assertTrue(value.valueType == ValueType.VALUE);
 		Assertions.assertTrue(value.valueClass == HiClassPrimitive.SHORT);
 		Assertions.assertTrue(value.shortNumber == (short) n);
 	}
 
 	private void assertInt(Value value, int n) {
-		Assertions.assertTrue(value.valueType == Value.VALUE);
+		Assertions.assertTrue(value.valueType == ValueType.VALUE);
 		Assertions.assertTrue(value.valueClass == HiClassPrimitive.INT);
 		Assertions.assertTrue(value.intNumber == n);
 	}
 
 	private void assertLong(Value value, long n) {
-		Assertions.assertTrue(value.valueType == Value.VALUE);
+		Assertions.assertTrue(value.valueType == ValueType.VALUE);
 		Assertions.assertTrue(value.valueClass == HiClassPrimitive.LONG);
 		Assertions.assertTrue(value.longNumber == n);
 	}

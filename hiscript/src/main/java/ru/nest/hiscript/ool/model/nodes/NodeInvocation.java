@@ -15,6 +15,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
@@ -224,7 +225,7 @@ public class NodeInvocation extends HiNode {
 	@Override
 	public void execute(RuntimeContext ctx) {
 		if (!innerInvocation) {
-			ctx.value.valueType = Value.METHOD_INVOCATION;
+			ctx.value.valueType = ValueType.METHOD_INVOCATION;
 			ctx.value.name = name;
 			ctx.value.arguments = arguments;
 			ctx.value.valueClass = returnClass;
@@ -236,15 +237,15 @@ public class NodeInvocation extends HiNode {
 				ctx.value.valueClass = ctx.level.clazz;
 				ctx.value.originalValueClass = null;
 				if (ctx.value.object != null) {
-					ctx.value.valueType = Value.VALUE;
+					ctx.value.valueType = ValueType.VALUE;
 				} else {
 					// static context
-					ctx.value.valueType = Value.CLASS;
+					ctx.value.valueType = ValueType.CLASS;
 				}
 
 				// v2 - contains method attributes (name, arguments)
 				Value v = vs[0];
-				v.valueType = Value.METHOD_INVOCATION;
+				v.valueType = ValueType.METHOD_INVOCATION;
 				v.name = name;
 				v.arguments = arguments;
 				v.node = this;
@@ -266,7 +267,7 @@ public class NodeInvocation extends HiNode {
 
 			// v2 - contains method attributes (name, arguments)
 			Value v = vs[0];
-			v.valueType = Value.METHOD_INVOCATION;
+			v.valueType = ValueType.METHOD_INVOCATION;
 			v.name = methodName;
 			v.arguments = arguments;
 

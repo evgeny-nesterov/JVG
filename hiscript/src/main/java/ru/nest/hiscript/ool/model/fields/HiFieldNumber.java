@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.fields;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 	public HiFieldNumber(String typeName, String name) {
@@ -14,7 +15,7 @@ public abstract class HiFieldNumber<T> extends HiFieldPrimitive<T> {
 		getPrimitiveValue(ctx, value);
 
 		// after get
-		value.valueType = Value.VALUE;
+		value.valueType = ValueType.VALUE;
 		value.valueClass = getClass(ctx);
 	}
 

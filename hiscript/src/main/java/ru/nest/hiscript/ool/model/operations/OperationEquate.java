@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeArray;
 import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationEquate extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquate();
@@ -293,7 +294,7 @@ public class OperationEquate extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
-		if (v1.valueType == Value.VARIABLE) {
+		if (v1.valueType == ValueType.VARIABLE) {
 			// 1. copy variable from v1
 			HiField<?> variable = v1.variable;
 
@@ -301,13 +302,13 @@ public class OperationEquate extends BinaryOperation {
 			v2.copyTo(v1);
 
 			// 3. set v1 variable again
-			v1.valueType = Value.VARIABLE;
+			v1.valueType = ValueType.VARIABLE;
 			v1.variable = variable;
 
 			// 4. set value of variable from v2
 			variable.set(ctx, v2);
 			variable.initialized = true;
-		} else if (v1.valueType == Value.ARRAY_INDEX) {
+		} else if (v1.valueType == ValueType.ARRAY_INDEX) {
 			HiArrays.setArrayIndex(v1.valueClass, v1.parentArray, v1.arrayIndex, v2, v1);
 		}
 	}

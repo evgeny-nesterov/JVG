@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
@@ -27,8 +28,8 @@ public class NodeGetClass extends HiNode {
 	}
 
 	@Override
-	public int getInvocationValueType() {
-		return Value.TYPE_INVOCATION;
+	public ValueType getInvocationValueType() {
+		return ValueType.TYPE_INVOCATION;
 	}
 
 	@Override

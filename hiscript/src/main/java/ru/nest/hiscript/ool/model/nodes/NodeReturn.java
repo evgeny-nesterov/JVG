@@ -11,6 +11,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassVar;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -129,7 +130,7 @@ public class NodeReturn extends HiNode {
 					return;
 				}
 
-				if (ctx.value.valueType == Value.NAME) {
+				if (ctx.value.valueType == ValueType.NAME) {
 					assert NodeIdentifier.resolveVariable(ctx, ctx.value);
 				}
 			} else {

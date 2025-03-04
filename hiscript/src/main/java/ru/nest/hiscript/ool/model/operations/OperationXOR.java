@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationXOR extends BinaryOperation {
 	private static final HiOperation instance = new OperationXOR();
@@ -173,7 +174,7 @@ public class OperationXOR extends BinaryOperation {
 				v1.valueClass = TYPE_BOOLEAN;
 				v1.bool = v1.bool ^ v2.bool;
 			}
-		} else if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
+		} else if (v1.valueType == ValueType.VALUE && v2.valueType == ValueType.VALUE) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {

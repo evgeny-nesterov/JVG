@@ -3,11 +3,12 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
+import ru.nest.hiscript.ool.runtime.RuntimeContext;
+import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public abstract class UnaryOperation extends HiOperation {
 	UnaryOperation(int operation) {
@@ -43,7 +44,7 @@ public abstract class UnaryOperation extends HiOperation {
 	@Override
 	public final void doOperation(RuntimeContext ctx, Value... values) {
 		Value v = values[0];
-		if (v.valueType == Value.NAME) {
+		if (v.valueType == ValueType.NAME) {
 			NodeIdentifier.resolve(ctx, v);
 		}
 		doOperation(ctx, v);

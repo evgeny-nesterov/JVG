@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationPrefixDecrement extends UnaryOperation {
 	private static final HiOperation instance = new OperationPrefixDecrement();
@@ -74,7 +75,7 @@ public class OperationPrefixDecrement extends UnaryOperation {
 		}
 
 		HiField<?> var = value.variable;
-		if (value.valueType == Value.ARRAY_INDEX) {
+		if (value.valueType == ValueType.ARRAY_INDEX) {
 			HiArrays.setArrayIndex(value.valueClass, value.parentArray, value.arrayIndex, value, ctx.value);
 		} else {
 			var.set(ctx, value);

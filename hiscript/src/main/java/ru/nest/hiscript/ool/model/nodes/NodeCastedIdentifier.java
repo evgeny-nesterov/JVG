@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
@@ -155,7 +156,7 @@ public class NodeCastedIdentifier extends HiNode implements NodeVariable {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.NAME;
+		ctx.value.valueType = ValueType.NAME;
 		ctx.value.valueClass = clazz;
 		ctx.value.name = type.cellTypeRoot != null ? type.cellTypeRoot.name : type.name;
 		ctx.value.nameDimensions = type.getDimension();

@@ -12,6 +12,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 import java.util.List;
@@ -284,7 +285,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 	}
 
 	public void resolveValue(RuntimeContext ctx, Value value) {
-		if (value.valueType == Value.NAME) {
+		if (value.valueType == ValueType.NAME) {
 			assert NodeIdentifier.resolve(ctx, value); // node resolved in validation
 			if (ctx.exitFromBlock()) {
 				return;
@@ -333,10 +334,10 @@ public class NodeExpressionNoLS extends NodeExpression {
 						// Check for a.new B()
 						boolean executeLater = false;
 						if (bufSize > 0 && i < operationsCount - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
-							if (valueNode.getInvocationValueType() != -1) {
+							if (valueNode.getInvocationValueType() != ValueType.UNDEFINED) {
 								executeLater = true;
 								// Previous operand may be not calculated yet
-								// For example, in the case of Value.NAME
+								// For example, in the case of ValueType.NAME
 								ctx.value.valueType = valueNode.getInvocationValueType();
 							}
 						}

@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationPostfixIncrement extends UnaryOperation {
 	private static final HiOperation instance = new OperationPostfixIncrement();
@@ -80,7 +81,7 @@ public class OperationPostfixIncrement extends UnaryOperation {
 				tmp.object = ((HiClassPrimitive) c).box(ctx, tmp);
 			}
 
-			if (value.valueType == Value.ARRAY_INDEX) {
+			if (value.valueType == ValueType.ARRAY_INDEX) {
 				HiArrays.setArrayIndex(value.valueClass, value.parentArray, value.arrayIndex, tmp, ctx.value);
 			} else {
 				var.set(ctx, tmp);

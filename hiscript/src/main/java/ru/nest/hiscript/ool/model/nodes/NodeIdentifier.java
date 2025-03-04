@@ -14,6 +14,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 
@@ -158,7 +159,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.valueType = Value.NAME;
+		ctx.value.valueType = ValueType.NAME;
 		ctx.value.name = name;
 		ctx.value.nameDimensions = dimension;
 		ctx.value.valueClass = clazz;
@@ -189,7 +190,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 
 		HiField<?> field = ctx.getVariable(name);
 		if (field != null) {
-			ctx.value.valueType = Value.VALUE;
+			ctx.value.valueType = ValueType.VALUE;
 			ctx.value.valueClass = field.getClass(ctx);
 			field.execute(ctx);
 			if (ctx.exitFromBlock()) {
@@ -205,7 +206,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 			}
 
 			ctx.value.copyTo(value);
-			value.valueType = Value.VARIABLE;
+			value.valueType = ValueType.VARIABLE;
 			value.name = name;
 			value.variable = field;
 			return true;
@@ -224,7 +225,7 @@ public class NodeIdentifier extends HiNode implements NodeVariable {
 			if (nameDimensions > 0) {
 				clazz = clazz.getArrayClass(nameDimensions);
 			}
-			v.valueType = Value.CLASS;
+			v.valueType = ValueType.CLASS;
 			v.valueClass = clazz;
 			v.name = name;
 			return true;

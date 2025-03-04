@@ -10,6 +10,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.io.IOException;
 import java.util.List;
@@ -100,7 +101,7 @@ public class NodeMethodReference extends NodeExpression {
 		}
 
 		HiObject object = null;
-		if (ctx.value.valueType == Value.VALUE) {
+		if (ctx.value.valueType == ValueType.VALUE) {
 			object = (HiObject) ctx.value.object;
 		}
 		HiMethod.execute(ctx, lambdaClass, null, object);

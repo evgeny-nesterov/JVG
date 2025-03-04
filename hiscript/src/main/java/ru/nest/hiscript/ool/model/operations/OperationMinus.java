@@ -8,6 +8,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class OperationMinus extends BinaryOperation {
 	private static final HiOperation instance = new OperationMinus();
@@ -257,7 +258,7 @@ public class OperationMinus extends BinaryOperation {
 		HiClass c2 = v2.getOperationClass();
 		int t1 = c1.getPrimitiveType();
 		int t2 = c2.getPrimitiveType();
-		if (v1.valueType == Value.VALUE && v2.valueType == Value.VALUE) {
+		if (v1.valueType == ValueType.VALUE && v2.valueType == ValueType.VALUE) {
 			switch (t1) {
 				case CHAR:
 					switch (t2) {

@@ -61,6 +61,7 @@ import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
 import java.io.IOException;
@@ -654,9 +655,9 @@ public abstract class HiNode implements HiNodeIF {
 		}
 		RuntimeContext rctx = computeValue(ctx);
 		if (rctx.exception == null) {
-			if (rctx.value.valueType == Value.VALUE) {
+			if (rctx.value.valueType == ValueType.VALUE) {
 				return rctx.value.get();
-			} else if (rctx.value.valueType == Value.VARIABLE) {
+			} else if (rctx.value.valueType == ValueType.VARIABLE) {
 				return rctx.value.variable;
 			}
 		} else {

@@ -7,6 +7,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
+import ru.nest.hiscript.ool.runtime.ValueType;
 
 public class HiFieldByte extends HiFieldNumber<Byte> {
 	public HiFieldByte(String name) {
@@ -40,7 +41,7 @@ public class HiFieldByte extends HiFieldNumber<Byte> {
 			this.value = value.byteNumber;
 		} else {
 			// auto-cast
-			if (value.valueType == Value.VALUE) {
+			if (value.valueType == ValueType.VALUE) {
 				switch (valueType) {
 					case CHAR:
 						if (value.character <= Byte.MAX_VALUE) {
