@@ -317,7 +317,7 @@ public abstract class HiNode implements HiNodeIF {
 		if (this instanceof NodeBlock) {
 			validate(validationInfo, ctx);
 		} else {
-			ctx.enter(RuntimeContext.BLOCK, this);
+			ctx.enter(ContextType.BLOCK, this);
 			validate(validationInfo, ctx);
 			ctx.exit();
 		}

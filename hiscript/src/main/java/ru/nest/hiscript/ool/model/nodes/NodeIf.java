@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -54,7 +55,7 @@ public class NodeIf extends HiNode {
 	}
 
 	public boolean validateIf(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.IF, this);
+		ctx.enter(ContextType.IF, this);
 		boolean valid = true;
 		if (condition != null) {
 			valid &= condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
@@ -69,7 +70,7 @@ public class NodeIf extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.IF, token);
+		ctx.enter(ContextType.IF, token);
 		try {
 			if (condition != null) {
 				condition.execute(ctx);

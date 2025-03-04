@@ -21,7 +21,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import java.io.IOException;
 import java.util.List;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class HiMethod implements HiNodeIF, HasModifiers {
 	public final static String LAMBDA_METHOD_NAME = "lambda$$";
@@ -110,7 +110,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.METHOD, this);
+		ctx.enter(ContextType.METHOD, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		// @unnamed
@@ -414,7 +414,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 
 					if (body != null && classResolver instanceof CompileClassContext) {
 						CompileClassContext ctx = (CompileClassContext) classResolver;
-						ctx.enter(RuntimeContext.METHOD, this);
+						ctx.enter(ContextType.METHOD, this);
 						if (arguments != null) {
 							for (NodeArgument argument : arguments) {
 								ctx.level.addField(argument);

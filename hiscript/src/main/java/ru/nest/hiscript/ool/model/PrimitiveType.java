@@ -25,5 +25,5 @@ public enum PrimitiveType {
 
 	INVALID_TYPE,
 
-	ANY_TYPE;
+	ANY_TYPE
 }

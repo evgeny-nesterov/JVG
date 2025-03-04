@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -102,7 +103,7 @@ public class NodeSwitch extends HiNode {
 			valid = false;
 		}
 
-		ctx.enter(RuntimeContext.SWITCH, this);
+		ctx.enter(ContextType.SWITCH, this);
 		if (valueClass != null && valueClass.isEnum()) {
 			HiClassEnum enumClass = (HiClassEnum) valueClass;
 			boolean[] enumProcessedValues = new boolean[enumClass.enumValues.size()];
@@ -231,7 +232,7 @@ public class NodeSwitch extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.SWITCH, token);
+		ctx.enter(ContextType.SWITCH, token);
 		try {
 			int index = getCaseIndex(ctx, valueNode, size, casesValues);
 			if (index >= 0) {

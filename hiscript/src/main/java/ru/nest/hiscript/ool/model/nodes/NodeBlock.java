@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
@@ -33,7 +34,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 	private boolean isStatic;
 
-	private int enterType = RuntimeContext.BLOCK;
+	private ContextType enterType = ContextType.BLOCK;
 
 	public void addStatement(HiNode statement) {
 		statements.add(statement);
@@ -48,7 +49,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 		this.isStatic = isStatic;
 	}
 
-	public void setEnterType(int enterType) {
+	public void setEnterType(ContextType enterType) {
 		this.enterType = enterType;
 	}
 
@@ -107,8 +108,8 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		if (enterType != RuntimeContext.SAME) {
-			ctx.enter(RuntimeContext.BLOCK, this);
+		if (enterType != ContextType.SAME) {
+			ctx.enter(ContextType.BLOCK, this);
 		}
 
 		for (HiNode statement : statements) {
@@ -117,7 +118,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 		// TODO check isStatic
 
-		if (enterType != RuntimeContext.SAME) {
+		if (enterType != ContextType.SAME) {
 			ctx.exit();
 		}
 
@@ -127,7 +128,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		if (enterType != RuntimeContext.SAME) {
+		if (enterType != ContextType.SAME) {
 			ctx.enter(enterType, token);
 		}
 
@@ -144,7 +145,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 				}
 			}
 		} finally {
-			if (enterType != RuntimeContext.SAME) {
+			if (enterType != ContextType.SAME) {
 				ctx.exit();
 			}
 		}
@@ -154,7 +155,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 	public void code(CodeContext os) throws IOException {
 		super.code(os);
 		os.writeBoolean(isStatic);
-		os.writeByte(enterType);
+		os.writeEnum(enterType);
 		os.writeShort(statements.size());
 		os.write(statements);
 	}
@@ -162,7 +163,7 @@ public class NodeBlock extends HiNode implements NodeInitializer {
 	public static NodeBlock decode(DecodeContext os) throws IOException {
 		NodeBlock node = new NodeBlock();
 		node.setStatic(os.readBoolean());
-		node.setEnterType(os.readByte());
+		node.setEnterType(ContextType.values()[os.readByte()]);
 		node.statements = os.readList(HiNode.class, os.readShort());
 		return node;
 	}

@@ -4,6 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -109,7 +110,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
-					ctx.enter(RuntimeContext.METHOD, startToken);
+					ctx.enter(ContextType.METHOD, startToken);
 
 					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), allowed);
 					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);

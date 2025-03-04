@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -34,7 +35,7 @@ public class NodeSynchronized extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		ctx.enter(RuntimeContext.SYNCHRONIZED, this);
+		ctx.enter(ContextType.SYNCHRONIZED, this);
 		valid &= lock.validate(validationInfo, ctx) && lock.expectObjectValue(validationInfo, ctx);
 		if (body != null) {
 			valid &= body.validateBlock(validationInfo, ctx);
@@ -63,7 +64,7 @@ public class NodeSynchronized extends HiNode {
 		}
 
 		if (body != null) {
-			ctx.enter(RuntimeContext.TRY, token);
+			ctx.enter(ContextType.TRY, token);
 			try {
 				synchronized (lockObject) {
 					body.execute(ctx);

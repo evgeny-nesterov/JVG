@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.classes;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLocationType;
 import ru.nest.hiscript.ool.model.ClassType;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -40,7 +41,7 @@ public class HiClassAnnotation extends HiClass {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = super.validate(validationInfo, ctx);
-		ctx.enter(RuntimeContext.INITIALIZATION, this);
+		ctx.enter(ContextType.INITIALIZATION, this);
 		if (methods != null) {
 			for (HiMethod method : methods) {
 				method.resolve(ctx);

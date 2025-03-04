@@ -634,7 +634,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			}
 		}
 
-		ctx.enter(RuntimeContext.STATIC_CLASS, this);
+		ctx.enter(ContextType.STATIC_CLASS, this);
 		valid &= HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		if (superClassType != null && superClass == null && !name.equals(OBJECT_CLASS_NAME)) {
@@ -737,7 +737,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 					continue;
 				}
 
-				ctx.enter(RuntimeContext.INITIALIZATION, initializer);
+				ctx.enter(ContextType.INITIALIZATION, initializer);
 				valid &= initializer.validate(validationInfo, ctx);
 				ctx.exit();
 

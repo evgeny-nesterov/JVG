@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.compile.parse;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
@@ -29,7 +30,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 		if (visitWord(Words.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
 
-			ctx.enter(RuntimeContext.FOR, startToken);
+			ctx.enter(ContextType.FOR, startToken);
 			HiNode initialization = DeclarationParseRule.getInstance().visit(tokenizer, ctx);
 			if (initialization == null) {
 				initialization = visitExpressions(tokenizer, ctx);

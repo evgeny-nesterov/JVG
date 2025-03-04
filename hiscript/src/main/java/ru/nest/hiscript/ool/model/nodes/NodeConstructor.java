@@ -2,6 +2,7 @@ package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiArrays;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -231,7 +232,7 @@ public class NodeConstructor extends HiNode {
 			if (constructor != null) {
 				CompileClassContext.CompileClassLevel level = ctx.level;
 				while (level != null) {
-					if (level.type == RuntimeContext.CONSTRUCTOR && level.node == constructor) {
+					if (level.type == ContextType.CONSTRUCTOR && level.node == constructor) {
 						validationInfo.error("recursive constructor invocation", getToken());
 						valid = false;
 					}
@@ -279,7 +280,7 @@ public class NodeConstructor extends HiNode {
 
 		RuntimeContext.StackLevel level = ctx.level;
 		while (level != null) {
-			if (level.levelType == RuntimeContext.CONSTRUCTOR && level.constructor == constructor) {
+			if (level.levelType == ContextType.CONSTRUCTOR && level.constructor == constructor) {
 				ctx.throwRuntimeException("recursive constructor invocation");
 				return;
 			}

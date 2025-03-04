@@ -5,6 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.HiCompiler;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
@@ -56,7 +57,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 
 		NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
 		if (outerContext && body != null) {
-			body.setEnterType(RuntimeContext.SAME);
+			body.setEnterType(ContextType.SAME);
 		}
 
 		HiNode node;
@@ -69,7 +70,7 @@ public class RootParseRule extends ParseRule<HiNode> {
 			node = mainWrapperNode;
 		} else {
 			if (body != null) {
-				body.setEnterType(RuntimeContext.START);
+				body.setEnterType(ContextType.START);
 			}
 			node = body;
 		}

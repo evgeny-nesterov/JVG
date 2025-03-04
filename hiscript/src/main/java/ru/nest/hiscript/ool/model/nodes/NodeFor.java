@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -33,7 +34,7 @@ public class NodeFor extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		ctx.enter(RuntimeContext.FOR, this);
+		ctx.enter(ContextType.FOR, this);
 		if (initialization != null) {
 			valid &= initialization.validate(validationInfo, ctx);
 			if (initialization instanceof HasModifiers && ((HasModifiers) initialization).hasModifiers()) {
@@ -56,7 +57,7 @@ public class NodeFor extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.FOR, token);
+		ctx.enter(ContextType.FOR, token);
 		try {
 			if (initialization != null) {
 				initialization.execute(ctx);

@@ -174,7 +174,7 @@ public class HiConstructor implements HiNodeIF, HasModifiers {
 
 	@Override
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
-		ctx.enter(RuntimeContext.CONSTRUCTOR, this);
+		ctx.enter(ContextType.CONSTRUCTOR, this);
 		boolean valid = HiNode.validateAnnotations(validationInfo, ctx, annotations);
 
 		// @generics

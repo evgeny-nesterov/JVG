@@ -4,6 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
@@ -48,7 +49,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					tokenizer.commit();
 					tokenizer.nextToken();
 
-					ctx.enter(RuntimeContext.FOR, startToken);
+					ctx.enter(ContextType.FOR, startToken);
 
 					NodeDeclaration declaration = new NodeDeclaration(type, name, null, annotatedModifiers.getModifiers(), annotatedModifiers.getAnnotations());
 					declaration.setToken(tokenizer.getBlockToken(startToken));

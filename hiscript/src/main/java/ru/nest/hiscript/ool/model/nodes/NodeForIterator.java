@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
@@ -38,7 +39,7 @@ public class NodeForIterator extends HiNode {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
 
-		ctx.enter(RuntimeContext.FOR, this);
+		ctx.enter(ContextType.FOR, this);
 
 		declaration.isInitialized = true;
 		valid &= declaration.validate(validationInfo, ctx, false);
@@ -82,7 +83,7 @@ public class NodeForIterator extends HiNode {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.enter(RuntimeContext.FOR, token);
+		ctx.enter(ContextType.FOR, token);
 		try {
 			HiField<?> forVariable = declaration.executeAndGetVariable(ctx);
 			if (ctx.exitFromBlock()) {

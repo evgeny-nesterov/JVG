@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.compile.parse.ExpressionParseRule;
 import ru.nest.hiscript.ool.compile.parse.MethodArgumentParseRule;
 import ru.nest.hiscript.ool.compile.parse.StatementParseRule;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
@@ -415,7 +416,7 @@ public class ParserUtil {
 	}
 
 	protected static HiNode expectBody(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		ctx.enter(RuntimeContext.BLOCK, startToken(tokenizer));
+		ctx.enter(ContextType.BLOCK, startToken(tokenizer));
 		HiNode body = StatementParseRule.getInstance().visit(tokenizer, ctx);
 		ctx.exit();
 		if (body == null) {

@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -75,7 +76,7 @@ public class NodeTry extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		ctx.enter(RuntimeContext.TRY, this);
+		ctx.enter(ContextType.TRY, this);
 		if (resources != null) {
 			for (NodeDeclaration resource : resources) {
 				valid &= resource.validate(validationInfo, ctx, false);
@@ -118,7 +119,7 @@ public class NodeTry extends HiNode {
 		HiField<?>[] resourcesFields = null;
 		try {
 			if (body != null || resources != null) {
-				ctx.enter(RuntimeContext.TRY, token);
+				ctx.enter(ContextType.TRY, token);
 			}
 
 			if (resources != null) {
@@ -192,7 +193,7 @@ public class NodeTry extends HiNode {
 		}
 
 		if (finallyBody != null) {
-			ctx.enter(RuntimeContext.FINALLY, token);
+			ctx.enter(ContextType.FINALLY, token);
 			try {
 				finallyBody.execute(ctx);
 			} finally {

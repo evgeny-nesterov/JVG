@@ -6,6 +6,7 @@ import ru.nest.hiscript.ool.compile.ParseVisitor;
 import ru.nest.hiscript.ool.compile.ParserUtil;
 import ru.nest.hiscript.ool.model.AnnotatedModifiers;
 import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiConstructor.BodyConstructorType;
@@ -239,7 +240,7 @@ public class ClassParseRule extends ParserUtil {
 
 				tokenizer.commit();
 				checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), PUBLIC, PROTECTED, PRIVATE);
-				ctx.enter(RuntimeContext.CONSTRUCTOR, startToken); // before arguments
+				ctx.enter(ContextType.CONSTRUCTOR, startToken); // before arguments
 
 				// visit arguments
 				List<NodeArgument> arguments = new ArrayList<>();
@@ -327,7 +328,7 @@ public class ClassParseRule extends ParserUtil {
 			if (name != null) {
 				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
 					tokenizer.commit();
-					ctx.enter(RuntimeContext.METHOD, startToken);
+					ctx.enter(ContextType.METHOD, startToken);
 
 					Token modifiersToken = startToken(tokenizer);
 					Modifiers modifiers = annotatedModifiers.getModifiers();
@@ -462,7 +463,7 @@ public class ClassParseRule extends ParserUtil {
 		boolean isStatic = visitWordType(tokenizer, STATIC) != -1;
 		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
 			tokenizer.commit();
-			ctx.enter(RuntimeContext.BLOCK, tokenizer.currentToken());
+			ctx.enter(ContextType.BLOCK, tokenizer.currentToken());
 
 			NodeBlock block = BlockParseRule.getInstance().visit(tokenizer, ctx);
 			if (block != null) {

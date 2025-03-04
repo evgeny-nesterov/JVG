@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.fields.HiPojoField;
 import ru.nest.hiscript.ool.model.lib.ImplUtil;
@@ -25,45 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.nest.hiscript.ool.model.ContextType.*;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
-	public final static int SAME = -1;
-
-	public final static int METHOD = 0; // local context
-
-	public final static int CONSTRUCTOR = 1; // local context
-
-	public final static int INITIALIZATION = 2; // local context
-
-	public final static int BLOCK = 3; // transparent for return
-
-	public final static int FOR = 4;
-
-	public final static int WHILE = 5;
-
-	public final static int IF = 6;
-
-	public final static int DO_WHILE = 7; // transparent for return
-
-	public final static int SWITCH = 8;
-
-	public final static int TRY = 9;
-
-	public final static int CATCH = 10; // used with try
-
-	public final static int FINALLY = 11; // used with try
-
-	public final static int LABEL = 12; // transparent for return
-
-	public final static int START = 13;
-
-	public final static int OBJECT = 14;
-
-	public final static int SYNCHRONIZED = 15; // transparent for return
-
-	public final static int STATIC_CLASS = 16;
-
 	public static int MAX_STACK_SIZE = 500;
 
 	public boolean isExit;
@@ -237,7 +203,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public StackLevel level;
 
 	// inside method, constructor and initializers
-	public void enter(int type, Token token) {
+	public void enter(ContextType type, Token token) {
 		if (level != null && level.mainLevel == MAX_STACK_SIZE) {
 			level.mainLevel = 0;
 			throwRuntimeException("stack overflow");
@@ -558,7 +524,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	private final List<StackLevel> stacksCache = new ArrayList<>(1);
 
-	private StackLevel getStack(int type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, Token token) {
+	private StackLevel getStack(ContextType type, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String name, Token token) {
 		StackLevel stack;
 		int cache_size = stacksCache.size();
 		if (cache_size > 0) {
@@ -583,7 +549,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public class StackLevel {
 		public StackLevel parent;
 
-		public int levelType;
+		public ContextType levelType;
 
 		public String label;
 
@@ -609,7 +575,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		public StackLevel() {
 		}
 
-		public StackLevel set(int levelType, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, Token token) {
+		public StackLevel set(ContextType levelType, StackLevel parent, HiClass clazz, HiConstructor constructor, HiMethod method, HiObject object, String label, Token token) {
 			this.parent = parent;
 			this.clazz = clazz;
 			this.constructor = constructor;

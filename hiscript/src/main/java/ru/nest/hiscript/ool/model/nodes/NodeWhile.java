@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -27,7 +28,7 @@ public class NodeWhile extends HiNode {
 	public boolean validate(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.currentNode = this;
 		boolean valid = ctx.level.checkUnreachable(validationInfo, getToken());
-		ctx.enter(RuntimeContext.WHILE, this);
+		ctx.enter(ContextType.WHILE, this);
 		try {
 			valid &= condition != null && condition.validate(validationInfo, ctx) && condition.expectBooleanValue(validationInfo, ctx);
 			valid &= body == null || body.validateBlock(validationInfo, ctx);
@@ -49,7 +50,7 @@ public class NodeWhile extends HiNode {
 				return;
 			}
 
-			ctx.enter(RuntimeContext.WHILE, token);
+			ctx.enter(ContextType.WHILE, token);
 			try {
 				if (body != null) {
 					body.execute(ctx);

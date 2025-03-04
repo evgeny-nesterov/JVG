@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.lib;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.parse.RootParseRule;
 import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
@@ -162,7 +163,7 @@ public class SystemImpl extends ImplUtil {
 				throw new HiScriptValidationException("Validation error", null);
 			}
 
-			node.setEnterType(RuntimeContext.SAME);
+			node.setEnterType(ContextType.SAME);
 
 			if (!separateThread) {
 				RuntimeContext newCtx;

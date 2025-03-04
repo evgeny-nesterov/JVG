@@ -4,6 +4,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiNode;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassMix;
@@ -111,7 +112,7 @@ public class NodeCatch extends HiNode {
 			if (exception.clazz.isInstanceof(excClass)) {
 				ctx.exception = null;
 				if (catchBody != null) {
-					ctx.enter(RuntimeContext.CATCH, token);
+					ctx.enter(ContextType.CATCH, token);
 
 					HiFieldObject exc = (HiFieldObject) HiField.getField(excClass, excName, null);
 					exc.set(exception, excClass);

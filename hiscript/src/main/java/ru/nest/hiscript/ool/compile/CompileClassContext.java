@@ -1,7 +1,7 @@
 package ru.nest.hiscript.ool.compile;
 
-import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.ClassLocationType;
+import ru.nest.hiscript.ool.model.ClassResolver;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiClassLoader;
 import ru.nest.hiscript.ool.model.HiConstructor;
@@ -9,6 +9,7 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiField;
 import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNodeIF;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.NodeInitializer;
 import ru.nest.hiscript.ool.model.TokenAccessible;
 import ru.nest.hiscript.ool.model.Type;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static ru.nest.hiscript.ool.model.ContextType.*;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class CompileClassContext implements ClassResolver {
@@ -81,7 +83,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public TokenAccessible currentNode;
 
-	public CompileClassLevel level = new CompileClassLevel(RuntimeContext.BLOCK, null, null);
+	public CompileClassLevel level = new CompileClassLevel(BLOCK, null, null);
 
 	public List<HiField<?>> fields = null;
 
@@ -305,12 +307,12 @@ public class CompileClassContext implements ClassResolver {
 		}
 	}
 
-	public void enter(int type, TokenAccessible node) {
+	public void enter(ContextType type, TokenAccessible node) {
 		level = new CompileClassLevel(type, node, level);
 	}
 
 	public void enterLabel(String label, TokenAccessible node) {
-		level = new CompileClassLevel(RuntimeContext.LABEL, node, level);
+		level = new CompileClassLevel(LABEL, node, level);
 		level.label = label;
 	}
 
@@ -325,7 +327,7 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public void enterObject(HiClass enclosingClass, Type enclosingType, boolean isEnclosingObject) {
-		level = new CompileClassLevel(RuntimeContext.OBJECT, enclosingClass, level);
+		level = new CompileClassLevel(OBJECT, enclosingClass, level);
 		setObjectContext(enclosingClass, enclosingType, isEnclosingObject);
 	}
 
@@ -372,7 +374,7 @@ public class CompileClassContext implements ClassResolver {
 			if (clazz != null) {
 				return clazz;
 			}
-			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
+			if (level.type == METHOD || level.type == CONSTRUCTOR || level.type == INITIALIZATION || level.type == STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;
@@ -389,7 +391,7 @@ public class CompileClassContext implements ClassResolver {
 					return clazz;
 				}
 			}
-			if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION || level.type == RuntimeContext.STATIC_CLASS) {
+			if (level.type == METHOD || level.type == CONSTRUCTOR || level.type == INITIALIZATION || level.type == STATIC_CLASS) {
 				break;
 			}
 			level = level.parent;
@@ -502,7 +504,7 @@ public class CompileClassContext implements ClassResolver {
 
 	public HiNodeIF resolveIdentifier(String name, boolean resolveClass, boolean resolveVariable, boolean onlyLocal) {
 		CompileClassLevel level = this.level;
-		if (onlyLocal && level.type == RuntimeContext.STATIC_CLASS) {
+		if (onlyLocal && level.type == STATIC_CLASS) {
 			HiNodeIF resolvedIdentifier = level.resolveLevelIdentifier(name, resolveClass, resolveVariable);
 			if (resolvedIdentifier != null) {
 				return resolvedIdentifier;
@@ -515,7 +517,7 @@ public class CompileClassContext implements ClassResolver {
 		} else {
 			// methods, constructors, initializers
 			while (level != null) {
-				if (level.type == RuntimeContext.STATIC_CLASS) {
+				if (level.type == STATIC_CLASS) {
 					if (onlyLocal) {
 						break;
 					}
@@ -631,7 +633,7 @@ public class CompileClassContext implements ClassResolver {
 	}
 
 	public class CompileClassLevel {
-		public int type;
+		public ContextType type;
 
 		Map<String, HiClass> classes = null;
 
@@ -665,7 +667,7 @@ public class CompileClassContext implements ClassResolver {
 
 		boolean unreachableError;
 
-		public CompileClassLevel(int type, TokenAccessible node, CompileClassLevel parent) {
+		public CompileClassLevel(ContextType type, TokenAccessible node, CompileClassLevel parent) {
 			this.type = type;
 			this.node = node;
 			setParent(parent);
@@ -799,9 +801,9 @@ public class CompileClassContext implements ClassResolver {
 		public CompileClassLevel getLabelLevel(String label) {
 			CompileClassLevel level = this;
 			while (level != null) {
-				if (level.type == RuntimeContext.LABEL && level.label.equals(label)) {
+				if (level.type == LABEL && level.label.equals(label)) {
 					return level;
-				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+				} else if (level.type == METHOD || level.type == CONSTRUCTOR || level.type == INITIALIZATION) {
 					break;
 				}
 				level = level.parent;
@@ -810,14 +812,14 @@ public class CompileClassContext implements ClassResolver {
 		}
 
 		public boolean isInsideBlock() {
-			return type != RuntimeContext.METHOD && type != RuntimeContext.CONSTRUCTOR && type != RuntimeContext.STATIC_CLASS;
+			return type != METHOD && type != CONSTRUCTOR && type != STATIC_CLASS;
 		}
 
 		public boolean isBreakable(String label) {
 			if (label != null && label.length() > 0) {
-				return type == RuntimeContext.LABEL && label.equals(this.label);
+				return type == LABEL && label.equals(this.label);
 			} else {
-				return type == RuntimeContext.FOR || type == RuntimeContext.WHILE || type == RuntimeContext.DO_WHILE || type == RuntimeContext.SWITCH;
+				return type == FOR || type == WHILE || type == DO_WHILE || type == SWITCH;
 			}
 		}
 
@@ -826,7 +828,7 @@ public class CompileClassContext implements ClassResolver {
 			while (level != null) {
 				if (level.isBreakable(label)) {
 					return level;
-				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+				} else if (level.type == METHOD || level.type == CONSTRUCTOR || level.type == INITIALIZATION) {
 					break;
 				}
 				level = level.parent;
@@ -836,9 +838,9 @@ public class CompileClassContext implements ClassResolver {
 
 		public boolean isContinuable(String label) {
 			if (label != null) {
-				return type == RuntimeContext.LABEL && label.equals(this.label) && child != null && (child.type == RuntimeContext.FOR || child.type == RuntimeContext.WHILE || child.type == RuntimeContext.DO_WHILE);
+				return type == LABEL && label.equals(this.label) && child != null && (child.type == FOR || child.type == WHILE || child.type == DO_WHILE);
 			} else {
-				return type == RuntimeContext.FOR || type == RuntimeContext.WHILE || type == RuntimeContext.DO_WHILE;
+				return type == FOR || type == WHILE || type == DO_WHILE;
 			}
 		}
 
@@ -847,7 +849,7 @@ public class CompileClassContext implements ClassResolver {
 			while (level != null) {
 				if (level.isContinuable(label)) {
 					return level;
-				} else if (level.type == RuntimeContext.METHOD || level.type == RuntimeContext.CONSTRUCTOR || level.type == RuntimeContext.INITIALIZATION) {
+				} else if (level.type == METHOD || level.type == CONSTRUCTOR || level.type == INITIALIZATION) {
 					break;
 				}
 				level = level.parent;
@@ -858,7 +860,7 @@ public class CompileClassContext implements ClassResolver {
 		public CompileClassLevel getLocalContextLevel() {
 			CompileClassLevel terminateLevel = this;
 			while (terminateLevel != null) {
-				if (terminateLevel.type == RuntimeContext.METHOD || terminateLevel.type == RuntimeContext.CONSTRUCTOR || terminateLevel.type == RuntimeContext.INITIALIZATION) {
+				if (terminateLevel.type == METHOD || terminateLevel.type == CONSTRUCTOR || terminateLevel.type == INITIALIZATION) {
 					return terminateLevel;
 				}
 				terminateLevel = terminateLevel.parent;
@@ -869,7 +871,7 @@ public class CompileClassContext implements ClassResolver {
 		public HiClass getCurrentStaticClass() {
 			CompileClassLevel level = this;
 			while (level != null) {
-				if (level.type == RuntimeContext.STATIC_CLASS) {
+				if (level.type == STATIC_CLASS) {
 					return (HiClass) level.node;
 				}
 				level = level.parent;
@@ -882,17 +884,17 @@ public class CompileClassContext implements ClassResolver {
 			CompileClassLevel level = this;
 			NodeGeneric generic = null;
 			while (level != null && generic == null) {
-				if (level.type == RuntimeContext.METHOD) {
+				if (level.type == METHOD) {
 					HiMethod method = (HiMethod) level.node;
 					if (method.generics != null) {
 						generic = method.generics.getGeneric(name);
 					}
-				} else if (level.type == RuntimeContext.CONSTRUCTOR) {
+				} else if (level.type == CONSTRUCTOR) {
 					HiConstructor constructor = (HiConstructor) level.node;
 					if (constructor.generics != null) {
 						generic = constructor.generics.getGeneric(name);
 					}
-				} else if (level.type == RuntimeContext.STATIC_CLASS) {
+				} else if (level.type == STATIC_CLASS) {
 					HiClass clazz = (HiClass) level.node;
 					if (clazz.generics != null) {
 						generic = clazz.generics.getGeneric(name);
@@ -928,7 +930,7 @@ public class CompileClassContext implements ClassResolver {
 		public void terminate(CompileClassLevel toLevel) {
 			CompileClassLevel terminateLevel = this;
 			while (terminateLevel != null) {
-				if (terminateLevel.type == RuntimeContext.BLOCK || terminateLevel.type == RuntimeContext.LABEL || terminateLevel.type == RuntimeContext.DO_WHILE || terminateLevel.type == RuntimeContext.SYNCHRONIZED) {
+				if (terminateLevel.type == BLOCK || terminateLevel.type == LABEL || terminateLevel.type == DO_WHILE || terminateLevel.type == SYNCHRONIZED) {
 					terminateLevel.isTerminated = true;
 					if (terminateLevel == toLevel) {
 						break;
@@ -981,9 +983,9 @@ public class CompileClassContext implements ClassResolver {
 		}
 		CompileClassLevel level = this.level;
 		while (level != null) {
-			if (level.type == RuntimeContext.METHOD) {
+			if (level.type == METHOD) {
 				return ((HiMethod) level.node).isStatic();
-			} else if (level.type == RuntimeContext.INITIALIZATION) {
+			} else if (level.type == INITIALIZATION) {
 				return ((NodeBlock) level.node).isStatic();
 			} else if (level.enclosingClass != null && !level.isEnclosingObject) {
 				return level.enclosingClass.isStatic();

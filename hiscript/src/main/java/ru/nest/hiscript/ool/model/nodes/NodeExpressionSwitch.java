@@ -1,6 +1,7 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
+import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
@@ -186,7 +187,7 @@ public class NodeExpressionSwitch extends HiNode {
 	public void execute(RuntimeContext ctx) {
 		int index = NodeSwitch.getCaseIndex(ctx, valueNode, size, casesValues);
 		if (index >= 0) {
-			ctx.enter(RuntimeContext.SWITCH, token);
+			ctx.enter(ContextType.SWITCH, token);
 			try {
 				for (int i = index; i < size; i++) {
 					HiNode caseBody = casesNodes.get(i);
