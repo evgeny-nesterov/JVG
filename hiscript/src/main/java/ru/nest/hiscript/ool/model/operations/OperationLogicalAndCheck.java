@@ -8,6 +8,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationLogicalAndCheck extends UnaryOperation {
 	private static final HiOperation instance = new OperationLogicalAndCheck();
 

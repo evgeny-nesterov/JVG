@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.OperationType;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
@@ -11,7 +12,7 @@ import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
 public abstract class UnaryOperation extends HiOperation {
-	UnaryOperation(int operation) {
+	UnaryOperation(OperationType operation) {
 		super(1, operation);
 	}
 

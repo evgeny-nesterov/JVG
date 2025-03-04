@@ -9,8 +9,8 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
-public abstract class HiOperation implements OperationsIF {
-	protected HiOperation(int operandsCount, int operation) {
+public abstract class HiOperation {
+	protected HiOperation(int operandsCount, OperationType operation) {
 		this.name = Operations.getName(operation);
 		this.operandsCount = operandsCount;
 		this.operation = operation;
@@ -18,9 +18,9 @@ public abstract class HiOperation implements OperationsIF {
 		this.increment = operandsCount == 1 ? 0 : 1;
 	}
 
-	protected int operation;
+	protected OperationType operation;
 
-	public int getOperation() {
+	public OperationType getOperation() {
 		return operation;
 	}
 

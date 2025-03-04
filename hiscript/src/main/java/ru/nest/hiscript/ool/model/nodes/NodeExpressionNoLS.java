@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
-import ru.nest.hiscript.ool.model.OperationsIF;
+import ru.nest.hiscript.ool.model.OperationType;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
@@ -333,7 +333,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 						// Check for a.new B()
 						boolean executeLater = false;
-						if (bufSize > 0 && i < operationsCount - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationsIF.INVOCATION) {
+						if (bufSize > 0 && i < operationsCount - 1 && operations[i + 1] != null && operations[i + 1].getOperation() == OperationType.INVOCATION) {
 							if (valueNode.getInvocationValueType() != ValueType.UNDEFINED) {
 								executeLater = true;
 								// Previous operand may be not calculated yet
@@ -352,30 +352,30 @@ public class NodeExpressionNoLS extends NodeExpression {
 						ctx.value = ctxValue;
 					}
 				} else {
-					int skipToOperation = -1;
+					OperationType skipToOperation = null;
 					// TODO do not check && and || of inner blocks
-					if (operations[i].getOperation() == OperationsIF.LOGICAL_AND_CHECK) {
+					if (operations[i].getOperation() == OperationType.LOGICAL_AND_CHECK) {
 						Value lastValue = values[bufSize - 1];
 						resolveValue(ctx, lastValue);
 						if (!lastValue.bool) {
-							skipToOperation = OperationsIF.LOGICAL_AND;
+							skipToOperation = OperationType.LOGICAL_AND;
 						}
-					} else if (operations[i].getOperation() == OperationsIF.LOGICAL_OR_CHECK) {
+					} else if (operations[i].getOperation() == OperationType.LOGICAL_OR_CHECK) {
 						Value lastValue = values[bufSize - 1];
 						resolveValue(ctx, lastValue);
 						if (lastValue.bool) {
-							skipToOperation = OperationsIF.LOGICAL_OR;
+							skipToOperation = OperationType.LOGICAL_OR;
 						}
 					}
 
-					if (skipToOperation != -1) {
+					if (skipToOperation != null) {
 						i++;
 						while (operations[i] == null || operations[i].getOperation() != skipToOperation) {
 							if (operations[i] == null) {
 								bufSize++;
 								valuePos++;
 							} else {
-								if (operations[i].getOperation() != OperationsIF.LOGICAL_AND_CHECK && operations[i].getOperation() != OperationsIF.LOGICAL_OR_CHECK) {
+								if (operations[i].getOperation() != OperationType.LOGICAL_AND_CHECK && operations[i].getOperation() != OperationType.LOGICAL_OR_CHECK) {
 									bufSize = operations[i].getOperationBufIndex(bufSize);
 								}
 							}
@@ -431,7 +431,7 @@ public class NodeExpressionNoLS extends NodeExpression {
 		int operationsCount = operations.length;
 		os.writeShort(operationsCount);
 		for (int i = 0; i < operationsCount; i++) {
-			os.writeByte(operations[i] != null ? operations[i].getOperation() : -1);
+			os.writeEnum(operations[i] != null ? operations[i].getOperation() : null);
 		}
 	}
 
@@ -440,8 +440,8 @@ public class NodeExpressionNoLS extends NodeExpression {
 
 		HiOperation[] operations = new HiOperation[os.readShort()];
 		for (int i = 0; i < operations.length; i++) {
-			int operationType = os.readByte();
-			if (operationType != -1) {
+			OperationType operationType = os.readEnum(OperationType.class);
+			if (operationType != null) {
 				operations[i] = Operations.getOperation(operationType);
 			}
 		}

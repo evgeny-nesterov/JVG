@@ -3,6 +3,7 @@ package ru.nest.hiscript.ool.model.operations;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiOperation;
+import ru.nest.hiscript.ool.model.OperationType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
@@ -13,8 +14,10 @@ import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 import ru.nest.hiscript.tokenizer.Token;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public abstract class BinaryOperation extends HiOperation {
-	BinaryOperation(int operation) {
+	BinaryOperation(OperationType operation) {
 		super(2, operation);
 	}
 

@@ -11,6 +11,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationMultiply extends BinaryOperation {
 	private static final HiOperation instance = new OperationMultiply();
 

@@ -14,6 +14,8 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationEquatePlus extends BinaryOperation {
 	private static final HiOperation instance = new OperationEquatePlus();
 

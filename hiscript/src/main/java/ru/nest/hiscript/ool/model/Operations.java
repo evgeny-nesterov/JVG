@@ -47,8 +47,10 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
 import ru.nest.hiscript.tokenizer.Symbols;
 
-public class Operations implements OperationsIF {
-	public static int getPriority(int operation) {
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
+public class Operations {
+	public static int getPriority(OperationType operation) {
 		switch (operation) {
 			case INVOCATION:
 			case ARRAY_INDEX:
@@ -137,7 +139,7 @@ public class Operations implements OperationsIF {
 
 	public final static int OPERANDS_TRINARY = 3;
 
-	public static int getOperandsCount(int operation) {
+	public static int getOperandsCount(OperationType operation) {
 		switch (operation) {
 			case POST_INCREMENT:
 			case POST_DECREMENT:
@@ -152,7 +154,7 @@ public class Operations implements OperationsIF {
 		return OPERANDS_BINARY;
 	}
 
-	public static boolean isOperation(int operation) {
+	public static boolean isOperation(OperationType operation) {
 		switch (operation) {
 			case ARRAY_INDEX:
 			case INVOCATION:
@@ -204,7 +206,7 @@ public class Operations implements OperationsIF {
 		return false;
 	}
 
-	public static int mapSymbolToOperation(int symbol) {
+	public static OperationType mapSymbolToOperation(int symbol) {
 		// POST_INCREMENT
 		// POST_DECREMENT
 		// PREFIX_INCREMENT
@@ -315,10 +317,10 @@ public class Operations implements OperationsIF {
 			case Symbols.EQUATE_BITWISE_OR:
 				return EQUATE_OR;
 		}
-		return -1;
+		return null;
 	}
 
-	public static String getName(int operation) {
+	public static String getName(OperationType operation) {
 		switch (operation) {
 			case ARRAY_INDEX:
 				return "[]";
@@ -450,7 +452,7 @@ public class Operations implements OperationsIF {
 		return "<No such operation: " + operation + ">";
 	}
 
-	public static HiOperation getOperation(int operation) {
+	public static HiOperation getOperation(OperationType operation) {
 		switch (operation) {
 			// Unary operations
 			case PREFIX_INCREMENT:

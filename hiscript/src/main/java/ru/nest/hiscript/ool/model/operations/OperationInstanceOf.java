@@ -14,6 +14,7 @@ import ru.nest.hiscript.ool.runtime.HiObject;
 import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class OperationInstanceOf extends BinaryOperation {

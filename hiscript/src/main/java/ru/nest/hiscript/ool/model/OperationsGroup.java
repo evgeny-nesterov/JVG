@@ -16,7 +16,7 @@ public class OperationsGroup {
 	public OperationsGroup() {
 	}
 
-	public OperationsGroup(int operation) {
+	public OperationsGroup(OperationType operation) {
 		this.operation = Operations.getOperation(operation);
 	}
 
@@ -63,7 +63,7 @@ public class OperationsGroup {
 		return count;
 	}
 
-	public void setOperation(int o) {
+	public void setOperation(OperationType o) {
 		operation = Operations.getOperation(o);
 	}
 
@@ -71,14 +71,14 @@ public class OperationsGroup {
 		return operation;
 	}
 
-	public void addPrefixOperation(int o) {
+	public void addPrefixOperation(OperationType o) {
 		if (prefix == null) {
 			prefix = new ArrayList<>(1);
 		}
 		prefix.add(Operations.getOperation(o));
 	}
 
-	public void addPostfixOperation(int o) {
+	public void addPostfixOperation(OperationType o) {
 		if (postfix == null) {
 			postfix = new ArrayList<>(1);
 		}

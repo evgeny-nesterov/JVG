@@ -15,6 +15,8 @@ import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.lang.reflect.Array;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationArrayIndex extends BinaryOperation {
 	private static final HiOperation instance = new OperationArrayIndex();
 

@@ -13,6 +13,7 @@ import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.ool.runtime.Value;
 import ru.nest.hiscript.ool.runtime.ValueType;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
 import static ru.nest.hiscript.ool.model.PrimitiveType.*;
 
 public class OperationPostfixIncrement extends UnaryOperation {

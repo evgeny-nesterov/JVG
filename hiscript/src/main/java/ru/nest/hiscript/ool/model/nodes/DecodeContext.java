@@ -87,6 +87,16 @@ public class DecodeContext {
 		return is.readByte();
 	}
 
+	public <E extends Enum> E readEnum(Class<E> enumClass) throws IOException {
+		len_byte += 1;
+		int ordinal = is.readByte();
+		if (ordinal != -1) {
+			return (E) enumClass.getEnumConstants()[ordinal];
+		} else {
+			return null;
+		}
+	}
+
 	private int len_char = 0;
 
 	public char readChar() throws IOException {

@@ -9,6 +9,8 @@ import ru.nest.hiscript.ool.model.classes.HiClassPrimitive;
 import ru.nest.hiscript.ool.model.nodes.NodeValueType;
 import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationLogicalOR extends BinaryOperation {
 	private static final HiOperation instance = new OperationLogicalOR();
 

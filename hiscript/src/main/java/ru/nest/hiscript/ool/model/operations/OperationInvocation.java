@@ -28,6 +28,8 @@ import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.lang.reflect.Array;
 
+import static ru.nest.hiscript.ool.model.OperationType.*;
+
 public class OperationInvocation extends BinaryOperation {
 	private static HiOperation instance;
 

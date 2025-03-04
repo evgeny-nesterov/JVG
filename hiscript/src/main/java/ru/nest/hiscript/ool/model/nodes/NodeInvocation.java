@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Operations;
-import ru.nest.hiscript.ool.model.OperationsIF;
+import ru.nest.hiscript.ool.model.OperationType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassArray;
 import ru.nest.hiscript.ool.model.classes.HiClassGeneric;
@@ -250,7 +250,7 @@ public class NodeInvocation extends HiNode {
 				v.arguments = arguments;
 				v.node = this;
 
-				HiOperation o = Operations.getOperation(OperationsIF.INVOCATION);
+				HiOperation o = Operations.getOperation(OperationType.INVOCATION);
 				o.doOperation(ctx, ctx.value, v);
 			} finally {
 				ctx.putValues(vs);
@@ -271,7 +271,7 @@ public class NodeInvocation extends HiNode {
 			v.name = methodName;
 			v.arguments = arguments;
 
-			HiOperation o = Operations.getOperation(OperationsIF.INVOCATION);
+			HiOperation o = Operations.getOperation(OperationType.INVOCATION);
 			o.doOperation(ctx, ctx.value, v);
 		} finally {
 			ctx.putValues(vs);

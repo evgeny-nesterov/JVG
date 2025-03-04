@@ -62,7 +62,7 @@ public class CodeContext {
 	}
 
 	public void writeEnum(Enum value) throws IOException {
-		dos.writeByte(value.ordinal());
+		dos.writeByte(value != null ? value.ordinal() : -1);
 		len_byte += 1;
 	}
 

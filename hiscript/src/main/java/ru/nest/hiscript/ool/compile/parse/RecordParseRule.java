@@ -12,8 +12,8 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.Operations;
 import ru.nest.hiscript.ool.model.OperationsGroup;
+import ru.nest.hiscript.ool.model.OperationType;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -118,7 +118,7 @@ public class RecordParseRule extends ParserUtil {
 
 				NodeIdentifier argIdentifier = new NodeIdentifier(name, 0);
 				HiNodeIF[] operands = new HiNode[] {new NodeThis(), argIdentifier, argIdentifier};
-				HiOperation[] operations = NodeExpressionNoLS.compile(operands, Arrays.asList(new OperationsGroup(Operations.INVOCATION), new OperationsGroup(Operations.EQUATE)));
+				HiOperation[] operations = NodeExpressionNoLS.compile(operands, Arrays.asList(new OperationsGroup(OperationType.INVOCATION), new OperationsGroup(OperationType.EQUATE)));
 				NodeExpressionNoLS setExpression = new NodeExpressionNoLS(operands, operations);
 				setExpression.setToken(argument.getToken());
 				HiNode setMethodBody = new NodeBlock(setExpression);
