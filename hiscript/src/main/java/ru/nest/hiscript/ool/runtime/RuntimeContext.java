@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
 
 public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public final static int SAME = -1;
@@ -86,15 +86,18 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	public final HiCompiler compiler;
 
+	public final HiClassLoader classLoader;
+
 	public final HiRuntimeEnvironment env;
 
 	public HiObject currentThread;
 
 	public boolean validating;
 
-	public RuntimeContext(HiCompiler compiler, boolean main) {
+	public RuntimeContext(HiCompiler compiler, HiClassLoader classLoader, boolean main) {
 		this.main = main;
 		this.compiler = compiler;
+		this.classLoader = classLoader != null ? classLoader : (compiler != null ? compiler.getClassLoader() : null);
 		this.env = compiler.getClassLoader().getEnv();
 		if (main) {
 			ThreadImpl.createThread(this);
@@ -102,18 +105,19 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	}
 
 	// TODO: Used for a new thread to access to context of the parent thread
-	public RuntimeContext(HiRuntimeEnvironment env) {
-		this(null, env);
+	public RuntimeContext(HiRuntimeEnvironment env, HiClassLoader classLoader) {
+		this(null, env, classLoader);
 	}
 
-	public RuntimeContext(RuntimeContext root) {
-		this(root, null);
+	public RuntimeContext(RuntimeContext root, HiClassLoader classLoader) {
+		this(root, null, classLoader);
 	}
 
-	public RuntimeContext(RuntimeContext root, HiRuntimeEnvironment env) {
+	public RuntimeContext(RuntimeContext root, HiRuntimeEnvironment env, HiClassLoader classLoader) {
 		this.root = root;
 		if (root != null) {
 			this.compiler = root.compiler;
+			this.classLoader = classLoader != null ? classLoader : root.classLoader;
 			this.env = root.env;
 
 			// copy local context
@@ -129,6 +133,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		} else {
 			this.compiler = null;
 			this.env = env;
+			this.classLoader = classLoader != null ? classLoader : (env != null ? env.getUserClassLoader() : null);
 		}
 	}
 
@@ -144,7 +149,7 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 
 	@Override
 	public HiClassLoader getClassLoader() {
-		return compiler.getClassLoader();
+		return classLoader;
 	}
 
 	public boolean isCurrentLabel() {
@@ -160,10 +165,6 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 	public Value value = new Value(this);
 
 	public HiObject exception;
-
-	private static HiClass excClass;
-
-	private static HiConstructor excConstructor;
 
 	public void setValue(Object value) {
 		this.value.set(value);
@@ -198,21 +199,32 @@ public class RuntimeContext implements AutoCloseable, ClassResolver {
 		int mainLevel = level.mainLevel;
 		level.mainLevel = 0;
 
-		if (excClass == null) {
-			excClass = HiClass.forName(this, exceptionClass);
+		HiClass excClass = HiClass.forName(this, exceptionClass);
+
+		HiConstructor excConstructor;
+		HiField<?>[] args;
+		if (cause == null) {
+			excConstructor = excClass.getConstructor(this, HiClass.STRING_CLASS);
+			args = new HiField<?>[1];
+		} else {
 			excConstructor = excClass.getConstructor(this, HiClass.STRING_CLASS, HiClass.EXCEPTION_CLASS);
+			if (excConstructor != null) {
+				args = new HiField<?>[2];
+
+				args[1] = HiField.getField(HiClass.EXCEPTION_CLASS, "cause", null);
+				value.setObjectValue(HiClass.EXCEPTION_CLASS, cause);
+				args[1].set(this, value);
+				args[1].initialized = true;
+			} else {
+				excConstructor = excClass.getConstructor(this, HiClass.STRING_CLASS);
+				args = new HiField<?>[1];
+			}
 		}
 
-		HiField<?>[] args = new HiField<?>[2];
 		args[0] = HiField.getField(HiClass.STRING_CLASS, "msg", null);
 		NodeString.createString(this, message, false);
 		args[0].set(this, value);
 		args[0].initialized = true;
-
-		args[1] = HiField.getField(HiClass.EXCEPTION_CLASS, "cause", null);
-		value.setObjectValue(HiClass.EXCEPTION_CLASS, cause);
-		args[1].set(this, value);
-		args[1].initialized = true;
 
 		exception = excConstructor.newInstance(this, null, args, null);
 		level.mainLevel = mainLevel;

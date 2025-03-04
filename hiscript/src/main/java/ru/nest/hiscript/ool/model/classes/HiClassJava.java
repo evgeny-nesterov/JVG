@@ -43,16 +43,16 @@ public class HiClassJava extends HiClass {
 		HiClass[] argsTypes = signature.argsClasses;
 		Class[] javaArgsClasses = new Class[argsTypes.length];
 		for (int i = 0; i < argsTypes.length; i++) {
-			HiClass argType = argsTypes[i];
-			if (argType.isNull()) {
+			HiClass argClass = argsTypes[i];
+			if (argClass.isNull()) {
 				continue;
 			}
-			Class argTypeJavaClass = argType.getJavaClass(classResolver.getEnv());
-			if (argTypeJavaClass == null) {
-				classResolver.processResolverException("inconvertible java class argument: " + argType.getNameDescr());
+			Class argJavaClass = argClass.getJavaClass(classResolver.getEnv());
+			if (argJavaClass == null) {
+				classResolver.processResolverException("inconvertible java class argument: " + argClass.getNameDescr());
 				return null;
 			}
-			javaArgsClasses[i] = argTypeJavaClass;
+			javaArgsClasses[i] = argJavaClass;
 		}
 		try {
 			Integer signatureId = Objects.hash((Object[]) javaArgsClasses);
@@ -186,13 +186,13 @@ public class HiClassJava extends HiClass {
 		HiClass[] argsTypes = signature.argsClasses;
 		Class[] javaArgsClasses = new Class[argsTypes.length];
 		for (int i = 0; i < argsTypes.length; i++) {
-			HiClass argType = argsTypes[i];
-			if (argType.isNull()) {
+			HiClass argClass = argsTypes[i];
+			if (argClass.isNull()) {
 				continue;
 			}
-			Class argTypeJavaClass = argType.getJavaClass(classResolver.getEnv());
+			Class argTypeJavaClass = argClass.getJavaClass(classResolver.getEnv());
 			if (argTypeJavaClass == null) {
-				classResolver.processResolverException("Inconvertible java class argument: " + argType.getNameDescr());
+				classResolver.processResolverException("Inconvertible java class argument: " + argClass.getNameDescr());
 				return null;
 			}
 			javaArgsClasses[i] = argTypeJavaClass;

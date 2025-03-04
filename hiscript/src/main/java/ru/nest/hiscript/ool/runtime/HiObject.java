@@ -184,7 +184,7 @@ public class HiObject {
 	@Override
 	public String toString() {
 		// do not use this.ctx here, as this.ctx.value will be changed (for example it may affect on runtime values during debugging)
-		return toString(new RuntimeContext(clazz.getEnv()));
+		return toString(new RuntimeContext(clazz.getEnv(), clazz.getClassLoader()));
 	}
 
 	public String toString(RuntimeContext ctx) {
@@ -217,7 +217,7 @@ public class HiObject {
 
 	@Override
 	public boolean equals(Object object) {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv(), clazz.getClassLoader());
 		return equals(ctx, (HiObject) object);
 	}
 
@@ -255,7 +255,7 @@ public class HiObject {
 
 	@Override
 	public int hashCode() {
-		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv());
+		RuntimeContext ctx = this.ctx != null ? this.ctx : new RuntimeContext(clazz.getEnv(), clazz.getClassLoader());
 		return hashCode(ctx);
 	}
 

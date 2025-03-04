@@ -21,11 +21,11 @@ public class OperationPrefixMinus extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		if (type.isPrimitive() && type.getPrimitiveType() != BOOLEAN) {
+		if (clazz.isPrimitive() && clazz.getPrimitiveType() != BOOLEAN) {
 			if (node.isCompileValue()) {
-				switch (type.getPrimitiveType()) {
+				switch (clazz.getPrimitiveType()) {
 					case CHAR:
 						node.intValue = -node.charValue;
 						return node.valueClass = TYPE_INT;
@@ -49,7 +49,7 @@ public class OperationPrefixMinus extends UnaryOperation {
 						return node.valueClass = TYPE_DOUBLE;
 				}
 			} else {
-				switch (type.getPrimitiveType()) {
+				switch (clazz.getPrimitiveType()) {
 					case CHAR:
 					case BYTE:
 					case SHORT:

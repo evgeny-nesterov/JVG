@@ -32,8 +32,8 @@ public class OperationPrefixDecrement extends UnaryOperation {
 		if (!node.isVariable()) {
 			validationInfo.error("variable expected", node.token);
 		}
-		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
-		if (!type.isPrimitive() || type.getPrimitiveType() == BOOLEAN) {
+		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		if (!clazz.isPrimitive() || clazz.getPrimitiveType() == BOOLEAN) {
 			validationInfo.error("operation '" + name + "' cannot be applied to '" + node.clazz.getNameDescr() + "'", node.node);
 		}
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);

@@ -56,8 +56,8 @@ public class HiJava {
 	}
 
 	private static HiObject convertMapFromJava(RuntimeContext ctx, Map<?, ?> javaMap) {
-		HiClass type = HiClass.forName(ctx, HiClass.HASHMAP_CLASS_NAME);
-		HiObject object = type.getConstructor(ctx).newInstance(ctx, Type.getType(type), null, null);
+		HiClass clazz = HiClass.forName(ctx, HiClass.HASHMAP_CLASS_NAME);
+		HiObject object = clazz.getConstructor(ctx).newInstance(ctx, Type.getType(clazz), null, null);
 		if (object != null) {
 			Map map = (Map) object.userObject;
 			for (Map.Entry e : javaMap.entrySet()) {
@@ -70,8 +70,8 @@ public class HiJava {
 	}
 
 	private static HiObject convertListFromJava(RuntimeContext ctx, List javaList) {
-		HiClass type = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
-		HiObject object = type.getConstructor(ctx).newInstance(ctx, null, null, null);
+		HiClass clazz = HiClass.forName(ctx, HiClass.ARRAYLIST_CLASS_NAME);
+		HiObject object = clazz.getConstructor(ctx).newInstance(ctx, null, null, null);
 		if (object != null) {
 			List list = (List) object.userObject;
 			for (Object o : javaList) {
@@ -104,7 +104,7 @@ public class HiJava {
 				Object elementValue = convertFromJava(ctx, Array.get(javaArray, i));
 				Array.set(array, i, elementValue);
 			}
-			HiClass arrayClass = HiClassArray.getArrayType(javaArrayClass);
+			HiClass arrayClass = HiClassArray.getArrayElementClass(javaArrayClass);
 			Value value = new Value(ctx);
 			value.setArrayValue(arrayClass, array);
 			return value;

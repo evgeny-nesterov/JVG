@@ -100,8 +100,8 @@ public abstract class BinaryOperation extends HiOperation {
 		v1.longNumber = value;
 	}
 
-	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass type1, HiClass type2) {
-		String text = "operator '" + name + "' can not be applied to " + type1.getNameDescr() + ", " + type2.getNameDescr();
+	public void errorInvalidOperator(ValidationInfo validationInfo, Token token, HiClass class1, HiClass class2) {
+		String text = "operator '" + name + "' can not be applied to " + class1.getNameDescr() + ", " + class2.getNameDescr();
 		validationInfo.error(text, token);
 	}
 
@@ -115,18 +115,18 @@ public abstract class BinaryOperation extends HiOperation {
 		ctx.throwRuntimeException(text);
 	}
 
-	public void errorCast(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
-		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
+	public void errorCast(ValidationInfo validationInfo, Token token, HiClass classFrom, HiClass classTo) {
+		String text = "cannot cast " + classFrom.getNameDescr() + " to " + classTo.getNameDescr();
 		validationInfo.error(text, token);
 	}
 
-	public void errorInconvertible(ValidationInfo validationInfo, Token token, HiClass typeFrom, HiClass typeTo) {
-		String text = "inconvertible types; cannot cast '" + typeFrom.getNameDescr() + "' to '" + typeTo.getNameDescr() + "'";
+	public void errorInconvertible(ValidationInfo validationInfo, Token token, HiClass classFrom, HiClass classTo) {
+		String text = "inconvertible types; cannot cast '" + classFrom.getNameDescr() + "' to '" + classTo.getNameDescr() + "'";
 		validationInfo.error(text, token);
 	}
 
-	public void errorCast(RuntimeContext ctx, HiClass typeFrom, HiClass typeTo) {
-		String text = "cannot cast " + typeFrom.getNameDescr() + " to " + typeTo.getNameDescr();
+	public void errorCast(RuntimeContext ctx, HiClass classFrom, HiClass classTo) {
+		String text = "cannot cast " + classFrom.getNameDescr() + " to " + classTo.getNameDescr();
 		ctx.throwRuntimeException(text);
 	}
 }

@@ -80,8 +80,8 @@ public class NodeExpressionSwitch extends HiNode {
 
 			HiClass topClass = null;
 			for (int i = 0; i < size; i++) {
-				HiClass caseValueType = casesNodes.get(i).getValueClass(validationInfo, ctx);
-				topClass = caseValueType.getCommonClass(topClass);
+				HiClass caseValueClass = casesNodes.get(i).getValueClass(validationInfo, ctx);
+				topClass = caseValueClass.getCommonClass(topClass);
 				if (topClass == null) {
 					break;
 				}

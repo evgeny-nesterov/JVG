@@ -15,36 +15,7 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccess("""
-				String topLevelVar = "abc";
-				System.exec("topLevelVar = \\"a\\";", false, false);
-				""");
-		assertSuccess("class A{var x = 1; {assert x == 1;}}");
-		assertFailCompile("class A{private int x = 1;} class B extends A{int y = x;}", //
-				"'x' has private access in 'A'");
-		assertSuccess("class C{static{x = 1;} static int x;}");
-		assertSuccess("class A{int x = 1;} class B extends A{int x = 2;}");
-		assertFailCompile("class A{int x; int x;}", //
-				"variable 'x' is already defined in the scope");
-		assertFailCompile("class A{} class B extends A{} class C{B get(){B b = new A(); return b;}} new C().get();", //
-				"incompatible types: A cannot be converted to B");
-		assertSuccess("class A{interface B{int get();} int m(){ return new A() {int m() {B b = ()->123; return b.get();}}.m(); }} assert new A().m() == 123;");
-		assertSuccess("class A{int xxx = 1;} class B extends A{int yyy = xxx;}");
-		assertSuccess("class A{static class B{} static class C extends B{}} class D extends A.C{} A.C d = new D(); assert d instanceof A.B;");
-		assertSuccess("""
-				class A { // @root$0A
-					class B {} // @root$0A$B
-					{
-						class B {} // @root$0A$0B
-						new B() { // @root$0A$00
-							{
-								B b = new B(){}; // @root$0A$00$00
-							}
-						};
-					}
-				}
-				new A();
-				""");
+		assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler has to change C.get() to C for x
 	}
 
 	@Test
@@ -56,16 +27,8 @@ public class TestComplex extends HiTest {
 		//		"not a statement");
 
 		// Tasks
-		// 1. assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler change C.get() to C
-		// 2. assertSuccess("float f1 = 0.0f; float f2 = -0.0f; assert f1 != f2;");
-		// 3. assertSuccess("Float f1 = new Float(Float.NaN); Float f2 = new Float(Float.NaN); assert f1 != f2; assert f1.equals(f2); assert Float.NaN != Float.NaN;");
-		// 4. assertSuccess("class A{static String ab = \"ab\"; static String a = \"a\"; static String b = \"b\";} class B{static String ab = \"ab\";} assert A.ab == B.ab; assert A.ab == (A.a + A.b); String b = \"b\"; assert A.ab != A.a + b; assert A.ab == (A.a + b).intern(); final String fb = \"b\"; assert A.ab == (A.a + fb);");
-		// 5. assertSuccess("");
-		// 6. assertSuccess("");
-		// 7. assertSuccess("");
-		// 8. assertSuccess("");
-		// 9. assertSuccess("");
-		// 10. assertSuccess("");
+		// 1. assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler has to change C.get() to C
+		// 2. assertSuccess("class A{static String ab = \"ab\"; static String a = \"a\"; static String b = \"b\";} class B{static String ab = \"ab\";} assert A.ab == B.ab; assert A.ab == (A.a + A.b); String b = \"b\"; assert A.ab != A.a + b; assert A.ab == (A.a + b).intern(); final String fb = \"b\"; assert A.ab == (A.a + fb);");
 	}
 
 	@Test
@@ -272,5 +235,9 @@ public class TestComplex extends HiTest {
 				System.exec("int x2 = 2; assert x1 == 1; assert a.x == 1; System.exec(\\"assert x1 == 1; assert x2 == 2; a.x = 3;\\", false, false);", false, false);
 				assert a.x == 3;
 				""");
+
+		// numbers
+		assertSuccess("Float f1 = new Float(Float.NaN); Float f2 = new Float(Float.NaN); assert f1 != f2; assert f1.equals(f2); assert Float.NaN != Float.NaN;");
+		assertSuccess("Double f1 = new Double(Double.NaN); Double f2 = new Double(Double.NaN); assert f1 != f2; assert f1.equals(f2); assert Double.NaN != Double.NaN;");
 	}
 }

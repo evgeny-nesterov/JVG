@@ -31,7 +31,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxingClass(HiClass autoboxClass) {
 			super.setAutoboxingClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
 			ctx.value.valueClass = this;
 			ctx.value.bool = true;
 			trueValue = super.box(ctx, ctx.value);
@@ -54,7 +54,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxingClass(HiClass autoboxClass) {
 			super.setAutoboxingClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.byteNumber = (byte) intValue;
@@ -79,7 +79,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxingClass(HiClass autoboxClass) {
 			super.setAutoboxingClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.shortNumber = (short) intValue;
@@ -104,7 +104,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxingClass(HiClass autoboxClass) {
 			super.setAutoboxingClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.intNumber = intValue;
@@ -131,7 +131,7 @@ public class HiClassPrimitive extends HiClass {
 		public void setAutoboxingClass(HiClass autoboxClass) {
 			super.setAutoboxingClass(autoboxClass);
 
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv());
+			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
 			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
 				ctx.value.valueClass = this;
 				ctx.value.longNumber = intValue;

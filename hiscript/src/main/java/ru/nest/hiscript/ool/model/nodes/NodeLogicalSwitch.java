@@ -25,9 +25,9 @@ public class NodeLogicalSwitch extends NodeExpression {
 	@Override
 	protected HiClass computeValueClass(ValidationInfo validationInfo, CompileClassContext ctx) {
 		ctx.nodeValueType.resolvedValueVariable = this;
-		HiClass type1 = trueValueNode != null ? trueValueNode.getValueClass(validationInfo, ctx) : null;
-		HiClass type2 = falseValueNode != null ? falseValueNode.getValueClass(validationInfo, ctx) : null;
-		if (type1 != null && type2 != null) {
+		HiClass class1 = trueValueNode != null ? trueValueNode.getValueClass(validationInfo, ctx) : null;
+		HiClass class2 = falseValueNode != null ? falseValueNode.getValueClass(validationInfo, ctx) : null;
+		if (class1 != null && class2 != null) {
 			NodeValueType compiledValueType = null;
 			NodeValueType conditionValueType = condition.getNodeValueType(validationInfo, ctx);
 			if (conditionValueType.isCompileValue()) {
@@ -42,7 +42,7 @@ public class NodeLogicalSwitch extends NodeExpression {
 				compiledValueType.copyTo(ctx.nodeValueType);
 				return compiledValueType.clazz;
 			} else {
-				HiClass commonClass = type1.getCommonClass(type2);
+				HiClass commonClass = class1.getCommonClass(class2);
 				ctx.nodeValueType.enclosingClass = commonClass;
 				ctx.nodeValueType.enclosingType = commonClass != null ? commonClass.superClassType : null;
 				ctx.nodeValueType.returnType = commonClass != null && commonClass.isPrimitive() ? NodeValueType.NodeValueReturnType.compileValue : NodeValueType.NodeValueReturnType.runtimeValue;

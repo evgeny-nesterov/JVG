@@ -33,9 +33,7 @@ public final class Double extends Number {
 
 	public native String toString();
 
-	public boolean equals(Object o) {
-		return o instanceof Double && ((Double) o).value == value;
-	}
+	public native boolean equals(Object o);
 
 	public native int hashCode();
 

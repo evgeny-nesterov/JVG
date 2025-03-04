@@ -77,7 +77,7 @@ public class TestNodes extends HiTest {
 	private Value doBinaryOperation(HiOperation operation, HiNode n1, HiNode n2) {
 		HiRuntimeEnvironment env = new HiRuntimeEnvironment();
 		HiCompiler compiler = new HiCompiler(env.getUserClassLoader(), null);
-		RuntimeContext ctx = new RuntimeContext(compiler, true);
+		RuntimeContext ctx = new RuntimeContext(compiler, null, true);
 		Value v1 = getValue(ctx, n1);
 		Value v2 = getValue(ctx, n2);
 		operation.doOperation(ctx, v1, v2);

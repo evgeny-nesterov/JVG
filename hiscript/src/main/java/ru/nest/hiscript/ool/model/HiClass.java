@@ -1354,22 +1354,22 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return false;
 			}
 
-			HiClass varargsType = method.argsClasses[mainArgsCount].getArrayType();
+			HiClass varargsClass = method.argsClasses[mainArgsCount].getArrayElementClass();
 			NodeArgument vararg = method.arguments[mainArgsCount];
-			if (argsTypes.length == method.argsCount && argsTypes[mainArgsCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
-				HiClass argType = argsTypes[mainArgsCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, argType, varargsType, false, true)) {
+			if (argsTypes.length == method.argsCount && argsTypes[mainArgsCount].getArrayDimension() == varargsClass.getArrayDimension() + 1) {
+				HiClass argClass = argsTypes[mainArgsCount].getArrayElementClass();
+				if (!HiClass.autoCast(classResolver, argClass, varargsClass, false, true)) {
 					return false;
 				}
-				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				argClass.applyLambdaImplementedMethod(classResolver, varargsClass, vararg);
 			} else {
 				for (int i = mainArgsCount; i < argsTypes.length; i++) {
-					if (!HiClass.autoCast(classResolver, argsTypes[i], varargsType, false, true)) {
+					if (!HiClass.autoCast(classResolver, argsTypes[i], varargsClass, false, true)) {
 						return false;
 					}
 				}
 				for (int i = mainArgsCount; i < argsTypes.length; i++) {
-					argsTypes[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+					argsTypes[i].applyLambdaImplementedMethod(classResolver, varargsClass, vararg);
 				}
 			}
 		} else {
@@ -1426,22 +1426,22 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				argsClasses2[i].applyLambdaImplementedMethod(classResolver, argsClasses1[i], method1.arguments[i]);
 			}
 
-			HiClass varargsType = method2.argsClasses[mainArgsCount].getArrayType();
+			HiClass varargsClass = method2.argsClasses[mainArgsCount].getArrayElementClass();
 			NodeArgument varargs = method2.arguments[mainArgsCount];
-			if (method1.argsCount == method2.argsCount && method1.argsClasses[mainArgsCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
-				HiClass argType = method1.argsClasses[mainArgsCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, varargsType, argType, false, matchType.isAutobox())) {
+			if (method1.argsCount == method2.argsCount && method1.argsClasses[mainArgsCount].getArrayDimension() == varargsClass.getArrayDimension() + 1) {
+				HiClass argClass = method1.argsClasses[mainArgsCount].getArrayElementClass();
+				if (!HiClass.autoCast(classResolver, varargsClass, argClass, false, matchType.isAutobox())) {
 					return false;
 				}
-				argType.applyLambdaImplementedMethod(classResolver, varargsType, varargs);
+				argClass.applyLambdaImplementedMethod(classResolver, varargsClass, varargs);
 			} else {
 				for (int i = mainArgsCount; i < method1.argsCount; i++) {
-					if (!HiClass.autoCast(classResolver, method1.argsClasses[i], varargsType, false, matchType.isAutobox())) {
+					if (!HiClass.autoCast(classResolver, method1.argsClasses[i], varargsClass, false, matchType.isAutobox())) {
 						return false;
 					}
 				}
 				for (int i = mainArgsCount; i < method2.argsCount; i++) {
-					argsClasses2[i].applyLambdaImplementedMethod(classResolver, varargsType, varargs);
+					argsClasses2[i].applyLambdaImplementedMethod(classResolver, varargsClass, varargs);
 				}
 			}
 		} else {
@@ -1630,22 +1630,22 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 				return false;
 			}
 
-			HiClass varargsType = constructor.argsClasses[mainArgCount].getArrayType();
+			HiClass varargsClass = constructor.argsClasses[mainArgCount].getArrayElementClass();
 			NodeArgument vararg = constructor.arguments[mainArgCount];
-			if (matchArgsCount == constructorArgsCount && argsClasses[mainArgCount].getArrayDimension() == varargsType.getArrayDimension() + 1) {
-				HiClass argType = argsClasses[mainArgCount].getArrayType();
-				if (!HiClass.autoCast(classResolver, argType, varargsType, false, true)) {
+			if (matchArgsCount == constructorArgsCount && argsClasses[mainArgCount].getArrayDimension() == varargsClass.getArrayDimension() + 1) {
+				HiClass argClass = argsClasses[mainArgCount].getArrayElementClass();
+				if (!HiClass.autoCast(classResolver, argClass, varargsClass, false, true)) {
 					return false;
 				}
-				argType.applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+				argClass.applyLambdaImplementedMethod(classResolver, varargsClass, vararg);
 			} else {
 				for (int i = mainArgCount; i < matchArgsCount; i++) {
-					if (!HiClass.autoCast(classResolver, argsClasses[i], varargsType, false, true)) {
+					if (!HiClass.autoCast(classResolver, argsClasses[i], varargsClass, false, true)) {
 						return false;
 					}
 				}
 				for (int i = mainArgCount; i < matchArgsCount; i++) {
-					argsClasses[i].applyLambdaImplementedMethod(classResolver, varargsType, vararg);
+					argsClasses[i].applyLambdaImplementedMethod(classResolver, varargsClass, vararg);
 				}
 			}
 		} else {
@@ -1827,7 +1827,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return false;
 	}
 
-	public HiClass getArrayType() {
+	public HiClass getArrayElementClass() {
 		return null;
 	}
 
@@ -1857,71 +1857,71 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		return fullName != null ? fullName : name;
 	}
 
-	public static HiClass getCellType(Class<?> clazz) {
-		HiClass cellType = null;
-		if (clazz == HiObject.class || clazz == Object.class) {
-			cellType = HiClass.OBJECT_CLASS;
+	public static HiClass getCellClass(Class<?> javaClass) {
+		HiClass cellClass = null;
+		if (javaClass == HiObject.class || javaClass == Object.class) {
+			cellClass = HiClass.OBJECT_CLASS;
 
-		} else if (clazz == boolean.class) {
-			cellType = HiClassPrimitive.BOOLEAN;
-		} else if (clazz == Boolean.class) {
-			cellType = HiClassPrimitive.BOOLEAN.getAutoboxClass();
+		} else if (javaClass == boolean.class) {
+			cellClass = HiClassPrimitive.BOOLEAN;
+		} else if (javaClass == Boolean.class) {
+			cellClass = HiClassPrimitive.BOOLEAN.getAutoboxClass();
 
-		} else if (clazz == char.class) {
-			cellType = HiClassPrimitive.CHAR;
-		} else if (clazz == Character.class) {
-			cellType = HiClassPrimitive.CHAR.getAutoboxClass();
+		} else if (javaClass == char.class) {
+			cellClass = HiClassPrimitive.CHAR;
+		} else if (javaClass == Character.class) {
+			cellClass = HiClassPrimitive.CHAR.getAutoboxClass();
 
-		} else if (clazz == byte.class) {
-			cellType = HiClassPrimitive.BYTE;
-		} else if (clazz == Byte.class) {
-			cellType = HiClassPrimitive.BYTE.getAutoboxClass();
+		} else if (javaClass == byte.class) {
+			cellClass = HiClassPrimitive.BYTE;
+		} else if (javaClass == Byte.class) {
+			cellClass = HiClassPrimitive.BYTE.getAutoboxClass();
 
-		} else if (clazz == short.class) {
-			cellType = HiClassPrimitive.SHORT;
-		} else if (clazz == Short.class) {
-			cellType = HiClassPrimitive.SHORT.getAutoboxClass();
+		} else if (javaClass == short.class) {
+			cellClass = HiClassPrimitive.SHORT;
+		} else if (javaClass == Short.class) {
+			cellClass = HiClassPrimitive.SHORT.getAutoboxClass();
 
-		} else if (clazz == int.class) {
-			cellType = HiClassPrimitive.INT;
-		} else if (clazz == Integer.class) {
-			cellType = HiClassPrimitive.INT.getAutoboxClass();
+		} else if (javaClass == int.class) {
+			cellClass = HiClassPrimitive.INT;
+		} else if (javaClass == Integer.class) {
+			cellClass = HiClassPrimitive.INT.getAutoboxClass();
 
-		} else if (clazz == float.class) {
-			cellType = HiClassPrimitive.FLOAT;
-		} else if (clazz == Float.class) {
-			cellType = HiClassPrimitive.FLOAT.getAutoboxClass();
+		} else if (javaClass == float.class) {
+			cellClass = HiClassPrimitive.FLOAT;
+		} else if (javaClass == Float.class) {
+			cellClass = HiClassPrimitive.FLOAT.getAutoboxClass();
 
-		} else if (clazz == long.class) {
-			cellType = HiClassPrimitive.LONG;
-		} else if (clazz == Long.class) {
-			cellType = HiClassPrimitive.LONG.getAutoboxClass();
+		} else if (javaClass == long.class) {
+			cellClass = HiClassPrimitive.LONG;
+		} else if (javaClass == Long.class) {
+			cellClass = HiClassPrimitive.LONG.getAutoboxClass();
 
-		} else if (clazz == double.class) {
-			cellType = HiClassPrimitive.DOUBLE;
-		} else if (clazz == Double.class) {
-			cellType = HiClassPrimitive.DOUBLE.getAutoboxClass();
+		} else if (javaClass == double.class) {
+			cellClass = HiClassPrimitive.DOUBLE;
+		} else if (javaClass == Double.class) {
+			cellClass = HiClassPrimitive.DOUBLE.getAutoboxClass();
 
-		} else if (clazz == String.class) {
-			cellType = HiClass.STRING_CLASS;
-		} else if (Map.class.isAssignableFrom(clazz)) {
-			cellType = HiClass.getSystemClassLoader().getClass(HiClass.HASHMAP_CLASS_NAME);
-		} else if (Collection.class.isAssignableFrom(clazz)) {
-			cellType = HiClass.getSystemClassLoader().getClass(HiClass.ARRAYLIST_CLASS_NAME);
+		} else if (javaClass == String.class) {
+			cellClass = HiClass.STRING_CLASS;
+		} else if (Map.class.isAssignableFrom(javaClass)) {
+			cellClass = HiClass.getSystemClassLoader().getClass(HiClass.HASHMAP_CLASS_NAME);
+		} else if (Collection.class.isAssignableFrom(javaClass)) {
+			cellClass = HiClass.getSystemClassLoader().getClass(HiClass.ARRAYLIST_CLASS_NAME);
 		}
-		return cellType;
+		return cellClass;
 	}
 
-	public static HiClassArray getArrayType(Class<?> clazz) {
+	public static HiClassArray getArrayElementClass(Class<?> clazz) {
 		int dimension = 0;
-		Class<?> cellClass = clazz;
-		while (cellClass.isArray()) {
-			cellClass = cellClass.getComponentType();
+		Class<?> cellJavaClass = clazz;
+		while (cellJavaClass.isArray()) {
+			cellJavaClass = cellJavaClass.getComponentType();
 			dimension++;
 		}
 
-		HiClass cellType = getCellType(cellClass);
-		return cellType.getArrayClass(dimension);
+		HiClass cellClass = getCellClass(cellJavaClass);
+		return cellClass.getArrayClass(dimension);
 	}
 
 	@Override
@@ -2434,7 +2434,7 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	}
 
 	public String getNameDescr() {
-		String fullName = isArray() ? getArrayType().fullName : this.fullName;
+		String fullName = isArray() ? getArrayElementClass().fullName : this.fullName;
 		String descr = fullName;
 		int index = 0;
 		if (fullName.startsWith(ROOT_CLASS_NAME_PREFIX)) {

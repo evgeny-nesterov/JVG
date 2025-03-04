@@ -60,8 +60,8 @@ public class ArgumentsSignature implements Cloneable {
 			if (args.argsCount > 0) {
 				for (int i = 0; i < args.argsCount; i++) {
 					// assumed args.argsCount >= argsCount - 1
-					HiClass c1 = i < argsClasses.length - 1 ? argsClasses[i] : (isVarargs ? argsClasses[argsClasses.length - 1].getArrayType() : argsClasses[argsClasses.length - 1]);
-					HiClass c2 = i < m.argsClasses.length - 1 ? m.argsClasses[i] : (m.isVarargs ? m.argsClasses[m.argsClasses.length - 1].getArrayType() : m.argsClasses[m.argsClasses.length - 1]);
+					HiClass c1 = i < argsClasses.length - 1 ? argsClasses[i] : (isVarargs ? argsClasses[argsClasses.length - 1].getArrayElementClass() : argsClasses[argsClasses.length - 1]);
+					HiClass c2 = i < m.argsClasses.length - 1 ? m.argsClasses[i] : (m.isVarargs ? m.argsClasses[m.argsClasses.length - 1].getArrayElementClass() : m.argsClasses[m.argsClasses.length - 1]);
 					HiClass argClass = args.argsClasses[i];
 					HiClass.ArgClassPriorityType argPriority = c1.getArgPriority(c2, argClass);
 					switch (argPriority) {
@@ -143,7 +143,7 @@ public class ArgumentsSignature implements Cloneable {
 					buf.append(", ");
 				}
 				if (isVarargs && i == argsCount - 1) {
-					buf.append(argsClasses[i].getArrayType().getNameDescr());
+					buf.append(argsClasses[i].getArrayElementClass().getNameDescr());
 					buf.append("...");
 				} else {
 					buf.append(argsClasses[i].getNameDescr());

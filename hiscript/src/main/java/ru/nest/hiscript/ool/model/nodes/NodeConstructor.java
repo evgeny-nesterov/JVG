@@ -102,17 +102,17 @@ public class NodeConstructor extends HiNode {
 				// @generics
 				if (c.superClass.generics != null && t.parameters != null && t.parameters.length > 0) {
 					int genericParametersCount = c.superClass.generics.generics.length;
-					Type[] superTypeParameters = new Type[genericParametersCount];
+					Type[] superClassParameters = new Type[genericParametersCount];
 					for (int i = 0; i < genericParametersCount; i++) {
 						NodeGeneric superGeneric = c.superClass.generics.generics[i];
-						Type superTypeParameter = t.parameters[i];
-						superTypeParameters[i] = superTypeParameter;
-						HiClass superTypeClass = superTypeParameter.getClass(ctx);
-						if (superTypeClass != null && !superTypeClass.isInstanceof(superGeneric.clazz.clazz)) {
-							validationInfo.error("cannot cast " + superTypeClass.getNameDescr() + " to " + superGeneric.clazz.getNameDescr(), superGeneric);
+						Type superClassParameter = t.parameters[i];
+						superClassParameters[i] = superClassParameter;
+						HiClass superClass = superClassParameter.getClass(ctx);
+						if (superClass != null && !superClass.isInstanceof(superGeneric.clazz.clazz)) {
+							validationInfo.error("cannot cast " + superClass.getNameDescr() + " to " + superGeneric.clazz.getNameDescr(), superGeneric);
 						}
 					}
-					Type superType = Type.getParameterizedType(t, superTypeParameters);
+					Type superType = Type.getParameterizedType(t, superClassParameters);
 					if (superTypes == null) {
 						superTypes = new ArrayList<>(1);
 					}

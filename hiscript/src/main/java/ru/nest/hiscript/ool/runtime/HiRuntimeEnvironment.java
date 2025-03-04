@@ -25,6 +25,7 @@ public class HiRuntimeEnvironment {
 	public HiRuntimeEnvironment() {
 		rootClassLoader = HiClassLoader.createRoot(this);
 		userClassLoader = new HiClassLoader(HiClassLoader.USER_CLASS_LOADER_NAME, rootClassLoader, this);
+		stringType = Type.getTopType(HiClass.STRING_CLASS_NAME, this);
 	}
 
 	public Type getTopType(String name) {
@@ -45,7 +46,7 @@ public class HiRuntimeEnvironment {
 		return arrayType;
 	}
 
-	public final Type stringType = Type.getTopType(HiClass.STRING_CLASS_NAME, this);
+	public Type stringType;
 
 	public HiClassLoader rootClassLoader;
 

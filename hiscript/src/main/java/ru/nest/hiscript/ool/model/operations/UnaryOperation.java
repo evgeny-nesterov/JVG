@@ -51,7 +51,7 @@ public abstract class UnaryOperation extends HiOperation {
 
 	public abstract void doOperation(RuntimeContext ctx, Value v);
 
-	public void errorInvalidOperator(RuntimeContext ctx, HiClass type) {
+	public void errorInvalidOperator(RuntimeContext ctx, HiClass clazz) {
 		// operator '<operator>' can not be applied to <type>
 	}
 }

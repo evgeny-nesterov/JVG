@@ -89,7 +89,7 @@ public class HiNative {
 		Method method = methods.get(name);
 		if (method == null) {
 			String className = name.substring(0, name.indexOf('_'));
-			HiClass.forName(new RuntimeContext(classResolver.getCompiler(), false), className);
+			HiClass.forName(new RuntimeContext(classResolver.getCompiler(), classResolver.getClassLoader(), false), className);
 			method = methods.get(name);
 		}
 		return method;

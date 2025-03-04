@@ -150,7 +150,7 @@ public class Value implements PrimitiveTypes {
 		} else {
 			Class<?> clazz = value.getClass();
 			if (clazz.isArray()) {
-				setArrayValue(HiClass.getArrayType(clazz), value);
+				setArrayValue(HiClass.getArrayElementClass(clazz), value);
 				return true;
 			} else if (clazz == Integer.class) {
 				setIntValue((Integer) value);

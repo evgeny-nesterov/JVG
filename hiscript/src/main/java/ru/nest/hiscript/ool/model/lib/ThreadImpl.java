@@ -30,7 +30,7 @@ public class ThreadImpl extends ImplUtil {
 	public static class Run implements Runnable {
 		public Run(RuntimeContext ctx, HiObject object) {
 			this.object = object; // object fot thread
-			newCtx = new RuntimeContext(ctx);
+			newCtx = new RuntimeContext(ctx, ctx.getClassLoader());
 		}
 
 		private final RuntimeContext newCtx;

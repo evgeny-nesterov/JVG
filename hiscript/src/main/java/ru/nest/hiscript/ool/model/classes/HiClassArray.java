@@ -72,7 +72,7 @@ public class HiClassArray extends HiClass {
 	}
 
 	@Override
-	public HiClass getArrayType() {
+	public HiClass getArrayElementClass() {
 		return cellClass;
 	}
 

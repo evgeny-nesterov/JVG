@@ -108,7 +108,7 @@ public class HiScript implements AutoCloseable {
 
 	public HiScript execute() {
 		if (ctx == null) {
-			ctx = new RuntimeContext(compiler, true);
+			ctx = new RuntimeContext(compiler, null, true);
 		}
 		node.execute(ctx);
 		return this;

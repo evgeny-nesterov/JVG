@@ -588,7 +588,7 @@ public class Type implements HiType, TypeArgumentIF, PrimitiveTypes, Codeable, C
 			return getArrayType(cellType, arrayClass.dimension, env);
 		}
 		if (clazz.isNull()) {
-			return null;
+			return nullType;
 		}
 		return getTypeByFullName(clazz.fullName, clazz.getClassLoader().getEnv());
 	}

@@ -168,7 +168,7 @@ public class SystemImpl extends ImplUtil {
 				RuntimeContext newCtx;
 				StackLevel level = null;
 				if (newInstance) {
-					newCtx = new RuntimeContext(ctx.compiler, true);
+					newCtx = new RuntimeContext(ctx.compiler, ctx.getClassLoader(), true);
 				} else {
 					newCtx = ctx;
 
@@ -197,9 +197,9 @@ public class SystemImpl extends ImplUtil {
 			} else {
 				final RuntimeContext newCtx;
 				if (newInstance) {
-					newCtx = new RuntimeContext(ctx.compiler, false);
+					newCtx = new RuntimeContext(ctx.compiler, ctx.getClassLoader(), false);
 				} else {
-					newCtx = new RuntimeContext(ctx);
+					newCtx = new RuntimeContext(ctx, ctx.getClassLoader());
 				}
 
 				new Thread(() -> {

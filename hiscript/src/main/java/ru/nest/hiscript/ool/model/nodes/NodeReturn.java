@@ -82,18 +82,18 @@ public class NodeReturn extends HiNode {
 	}
 
 	public static boolean validateReturn(ValidationInfo validationInfo, CompileClassContext ctx, HiMethod method, HiNode value, Token token) {
-		HiClass expectedType = HiClassPrimitive.VOID;
+		HiClass expectedClass = HiClassPrimitive.VOID;
 		if (method != null) {
 			method.resolve(ctx);
-			expectedType = method.returnClass == null ? HiClassVar.VAR : method.returnClass;
+			expectedClass = method.returnClass == null ? HiClassVar.VAR : method.returnClass;
 		}
 		if (value != null) {
 			NodeValueType returnValueType = value.getNodeValueType(validationInfo, ctx);
 			if (returnValueType.valid) {
 				boolean match = false;
-				if (expectedType.isGeneric()) {
+				if (expectedClass.isGeneric()) {
 					// @generics
-					HiClassGeneric dstGenericClass = (HiClassGeneric) expectedType;
+					HiClassGeneric dstGenericClass = (HiClassGeneric) expectedClass;
 					if (returnValueType.clazz == dstGenericClass) {
 						match = true;
 					} else if (returnValueType.clazz.isGeneric()) {
@@ -106,15 +106,15 @@ public class NodeReturn extends HiNode {
 						}
 					}
 				} else {
-					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedType, returnValueType.isCompileValue(), true);
+					match = HiClass.autoCast(ctx, returnValueType.clazz, expectedClass, returnValueType.isCompileValue(), true);
 				}
 				if (!match) {
-					validationInfo.error("incompatible types; found " + returnValueType.clazz.getNameDescr() + ", required " + expectedType.getNameDescr(), value);
+					validationInfo.error("incompatible types; found " + returnValueType.clazz.getNameDescr() + ", required " + expectedClass.getNameDescr(), value);
 					return false;
 				}
 			}
-		} else if (expectedType != HiClassPrimitive.VOID) {
-			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedType.getNameDescr(), token);
+		} else if (expectedClass != HiClassPrimitive.VOID) {
+			validationInfo.error("incompatible types; found " + HiClassPrimitive.VOID + ", required " + expectedClass.getNameDescr(), token);
 			return false;
 		}
 		return true;

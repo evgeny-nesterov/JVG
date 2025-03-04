@@ -21,9 +21,9 @@ public class OperationPrefixExclamation extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		if (type.getPrimitiveType() == BOOLEAN) {
+		if (clazz.getPrimitiveType() == BOOLEAN) {
 			if (node.isCompileValue()) {
 				node.booleanValue = !node.booleanValue;
 			}

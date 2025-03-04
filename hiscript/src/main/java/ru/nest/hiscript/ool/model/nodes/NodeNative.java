@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class NodeNative extends HiNode {
-	public NodeNative(HiClass clazz, HiClass returnType, String name, HiClass[] argsTypes, String[] argsNames) {
+	public NodeNative(HiClass clazz, HiClass returnClass, String name, HiClass[] argsTypes, String[] argsNames) {
 		super("native", TYPE_NATIVE, false);
 
 		this.argsNames = argsNames;
@@ -19,7 +19,7 @@ public class NodeNative extends HiNode {
 		StringBuilder id = new StringBuilder();
 		id.append(clazz.fullName.startsWith(HiClass.ROOT_CLASS_NAME) ? clazz.fullName.substring(1) : clazz.fullName);
 		id.append('_');
-		id.append(returnType != null ? returnType.fullName : "void");
+		id.append(returnClass != null ? returnClass.fullName : "void");
 		id.append('_');
 		id.append(name);
 		if (argsTypes != null) {

@@ -151,13 +151,17 @@ public class OperationInvocation extends BinaryOperation {
 					return true;
 				}
 			} else {
+//				HiField fieldDefinition = clazz.getField(ctx, name); // TODO return real class not HiClassNull
+//				if (fieldDefinition != null && fieldDefinition.isStatic()) {
+//					field = fieldDefinition;
+//				} else {
 				object = (HiObject) v1.object;
 				if (object == null) {
 					ctx.throwRuntimeException("null pointer");
 					return false;
 				}
-
 				field = object.getField(ctx, name, clazz);
+//				}
 			}
 			assert field != null; // checked in validation
 		} else if (v1.valueType == Value.CLASS) {
@@ -275,15 +279,15 @@ public class OperationInvocation extends BinaryOperation {
 					return;
 				}
 
-				HiClass type = ctx.value.valueClass;
-				argsClasses[i] = type;
+				HiClass valueClass = ctx.value.valueClass;
+				argsClasses[i] = valueClass;
 
-				if (type != null) {
+				if (valueClass != null) {
 					if (ctx.value.valueType == Value.NAME) {
 						assert NodeIdentifier.resolve(ctx, ctx.value); // node resolved in validation
 					}
 
-					argsFields[i] = HiField.getField(type, null, argsValues[i].getToken());
+					argsFields[i] = HiField.getField(valueClass, null, argsValues[i].getToken());
 					argsFields[i].set(ctx, ctx.value);
 				}
 			}
@@ -353,7 +357,7 @@ public class OperationInvocation extends BinaryOperation {
 			}
 
 			for (int i = 0; i < size; i++) {
-				HiClass argClass = argsFields[i] != null ? argsFields[i].getClass(ctx) : HiClassNull.NULL;
+				HiClass argClass = argsFields[i].getClass(ctx);
 
 				// @autoboxing
 				NodeArgument methodArgument = i < method.arguments.length ? method.arguments[i] : method.arguments[method.arguments.length - 1];

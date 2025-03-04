@@ -21,11 +21,11 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 
 	@Override
 	public HiClass getOperationResultType(ValidationInfo validationInfo, CompileClassContext ctx, NodeValueType node) {
-		HiClass type = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
+		HiClass clazz = node.clazz.getAutoboxedPrimitiveClass() == null ? node.clazz : node.clazz.getAutoboxedPrimitiveClass();
 		checkFinal(validationInfo, ctx, node.node != null ? node.node : node.resolvedValueVariable, true);
-		if (type.isPrimitive()) {
+		if (clazz.isPrimitive()) {
 			if (node.isCompileValue()) {
-				switch (type.getPrimitiveType()) {
+				switch (clazz.getPrimitiveType()) {
 					case CHAR:
 						node.intValue = ~node.charValue;
 						return node.valueClass = TYPE_INT;
@@ -43,7 +43,7 @@ public class OperationPrefixBitwiseReverse extends UnaryOperation {
 						return node.valueClass = TYPE_LONG; // switch to primitive from boxed type
 				}
 			} else {
-				int t = type.getPrimitiveType();
+				int t = clazz.getPrimitiveType();
 				switch (t) {
 					case VAR:
 					case CHAR:

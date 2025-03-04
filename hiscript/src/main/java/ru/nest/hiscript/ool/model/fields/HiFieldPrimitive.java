@@ -21,11 +21,11 @@ public abstract class HiFieldPrimitive<T> extends HiField<T> implements Primitiv
 		return HiClassPrimitive.getPrimitiveClass(type.fullName);
 	}
 
-	public static int getAutoType(HiClass type) {
-		if (type.getAutoboxedPrimitiveClass() != null) {
-			type = type.getAutoboxedPrimitiveClass();
+	public static int getAutoType(HiClass clazz) {
+		if (clazz.getAutoboxedPrimitiveClass() != null) {
+			clazz = clazz.getAutoboxedPrimitiveClass();
 		}
-		return type.getPrimitiveType();
+		return clazz.getPrimitiveType();
 	}
 
 	/**

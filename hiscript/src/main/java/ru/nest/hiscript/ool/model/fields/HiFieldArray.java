@@ -24,7 +24,7 @@ public class HiFieldArray extends HiField<Object> {
 
     public Object array;
 
-    public HiClass arrayType;
+    public HiClass arrayClass;
 
     @Override
     protected boolean validateType(ValidationInfo validationInfo, CompileClassContext ctx, HiClass fieldClass, NodeValueType valueType) {
@@ -33,7 +33,7 @@ public class HiFieldArray extends HiField<Object> {
 
     @Override
     public void get(RuntimeContext ctx, Value value) {
-        HiClass valueClass = arrayType != null ? arrayType : getClass(ctx);
+        HiClass valueClass = arrayClass != null ? arrayClass : getClass(ctx);
         value.setArrayValue(valueClass, array);
     }
 
@@ -42,19 +42,19 @@ public class HiFieldArray extends HiField<Object> {
         declared = true;
         if (value.valueClass == HiClassNull.NULL) {
             array = null;
-            arrayType = getClass(ctx);
+            arrayClass = getClass(ctx);
         } else {
             array = value.object;
-            arrayType = value.valueClass;
+            arrayClass = value.valueClass;
         }
         initialized = true;
     }
 
     @Override
-    public void set(Object array, HiClass arrayType) {
+    public void set(Object array, HiClass arrayClass) {
 		this.declared = true;
 		this.array = array;
-		this.arrayType = arrayType;
+		this.arrayClass = arrayClass;
 		this.initialized = true;
 	}
 
@@ -65,11 +65,11 @@ public class HiFieldArray extends HiField<Object> {
 
     @Override
     public Object getJava(RuntimeContext ctx) {
-        return getJava(ctx, arrayType, array);
+        return getJava(ctx, arrayClass, array);
     }
 
-    public static Object getJava(RuntimeContext ctx, HiClass arrayType, Object array) {
-        Class javaClass = arrayType.getJavaClass(ctx.getEnv());
+    public static Object getJava(RuntimeContext ctx, HiClass arrayClass, Object array) {
+        Class javaClass = arrayClass.getJavaClass(ctx.getEnv());
         if (javaClass != null) {
             Class rootCellClass = javaClass;
             while (rootCellClass.isArray()) {

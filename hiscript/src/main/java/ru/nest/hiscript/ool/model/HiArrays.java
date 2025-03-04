@@ -93,8 +93,8 @@ public class HiArrays implements PrimitiveTypes {
 			assert v.set(value);
 		} else {
 			HiClassArray arrayClass = (HiClassArray) v.valueClass;
-			HiClass cellType = arrayClass.cellClass;
-			int typeIndex = cellType.getPrimitiveType();
+			HiClass cellClass = arrayClass.cellClass;
+			int typeIndex = cellClass.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					v.bool = Array.getBoolean(array, index);
@@ -124,18 +124,18 @@ public class HiArrays implements PrimitiveTypes {
 		}
 	}
 
-	public static void setArrayIndex(HiClass type, Object parentArray, int index, Value value, Value dst) {
-		dst.valueClass = type;
+	public static void setArrayIndex(HiClass clazz, Object parentArray, int index, Value value, Value dst) {
+		dst.valueClass = clazz;
 
-		if (type.isArray()) {
+		if (clazz.isArray()) {
 			dst.object = value.getArray();
 			if (value.ctx.exitFromBlock()) {
 				return;
 			}
 			Array.set(parentArray, index, dst.object);
-		} else if (type.isPrimitive()) {
+		} else if (clazz.isPrimitive()) {
 			// @autoboxing
-			int typeIndex = type.getPrimitiveType();
+			int typeIndex = clazz.getPrimitiveType();
 			switch (typeIndex) {
 				case BOOLEAN:
 					dst.bool = value.getBoolean();
@@ -209,11 +209,11 @@ public class HiArrays implements PrimitiveTypes {
 		}
 	}
 
-	public static void setArray(HiClass type, Object array, int index, Value value) {
-		if (type.isArray()) {
+	public static void setArray(HiClass clazz, Object array, int index, Value value) {
+		if (clazz.isArray()) {
 			Array.set(array, index, value.getArray());
-		} else if (type.isPrimitive()) {
-			int typeIndex = HiFieldPrimitive.getAutoType(type);
+		} else if (clazz.isPrimitive()) {
+			int typeIndex = HiFieldPrimitive.getAutoType(clazz);
 			switch (typeIndex) {
 				case BOOLEAN:
 					Array.setBoolean(array, index, value.getBoolean());
@@ -241,7 +241,7 @@ public class HiArrays implements PrimitiveTypes {
 					break;
 			}
 		} else {
-			Array.set(array, index, value.getObject(type));
+			Array.set(array, index, value.getObject(clazz));
 		}
 	}
 }

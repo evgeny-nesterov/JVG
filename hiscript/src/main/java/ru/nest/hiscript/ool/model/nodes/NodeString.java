@@ -83,12 +83,12 @@ public class NodeString extends HiNode {
 			constructor = clazz.getConstructor(ctx);
 		}
 
-		HiObject object = ctx.getEnv().strings.get(text);
+		HiObject object = ctx.getEnv() != null ? ctx.getEnv().strings.get(text) : null;
 		if (object == null || !intern) {
 			HiObject newObject = constructor.newInstance(ctx, null, null, null);
 			HiFieldArray chars = (HiFieldArray) newObject.getField(ctx, "chars");
 			chars.array = text.getChars();
-			if (object == null) {
+			if (object == null && ctx.getEnv() != null) {
 				ctx.getEnv().strings.put(text, newObject);
 			}
 			return newObject;
