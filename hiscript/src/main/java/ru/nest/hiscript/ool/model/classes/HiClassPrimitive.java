@@ -29,22 +29,18 @@ public class HiClassPrimitive extends HiClass {
 		HiObject falseValue;
 
 		@Override
-		public void setAutoboxingClass(HiClass autoboxClass) {
-			super.setAutoboxingClass(autoboxClass);
-
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
-			ctx.value.valueClass = this;
-			ctx.value.bool = true;
-			trueValue = super.box(ctx, ctx.value);
-
-			ctx.value.valueClass = this;
-			ctx.value.bool = false;
-			falseValue = super.box(ctx, ctx.value);
-		}
-
-		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
-			return value.getBoolean() ? trueValue : falseValue;
+			boolean booleanValue = value.getBoolean();
+			if (trueValue == null) {
+				ctx.value.valueClass = this;
+				ctx.value.bool = true;
+				trueValue = super.box(ctx, ctx.value);
+
+				ctx.value.valueClass = this;
+				ctx.value.bool = false;
+				falseValue = super.box(ctx, ctx.value);
+			}
+			return booleanValue ? trueValue : falseValue;
 		}
 	};
 
@@ -52,22 +48,17 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxingClass(HiClass autoboxClass) {
-			super.setAutoboxingClass(autoboxClass);
-
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
-			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.valueClass = this;
-				ctx.value.byteNumber = (byte) intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
-			}
-		}
-
-		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
-				return cachedValues[intValue + (-Byte.MIN_VALUE)];
+				HiObject object = cachedValues[intValue + (-Byte.MIN_VALUE)];
+				if (object == null) {
+					ctx.value.valueClass = this;
+					ctx.value.byteNumber = (byte) intValue;
+					object = super.box(ctx, ctx.value);
+					cachedValues[intValue + (-Byte.MIN_VALUE)] = object;
+				}
+				return object;
 			}
 			return super.box(ctx, value);
 		}
@@ -77,22 +68,17 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxingClass(HiClass autoboxClass) {
-			super.setAutoboxingClass(autoboxClass);
-
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
-			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.valueClass = this;
-				ctx.value.shortNumber = (short) intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
-			}
-		}
-
-		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
-				return cachedValues[intValue + (-Byte.MIN_VALUE)];
+				HiObject object = cachedValues[intValue + (-Byte.MIN_VALUE)];
+				if (object == null) {
+					ctx.value.valueClass = this;
+					ctx.value.shortNumber = (short) intValue;
+					object = super.box(ctx, ctx.value);
+					cachedValues[intValue + (-Byte.MIN_VALUE)] = object;
+				}
+				return object;
 			}
 			return super.box(ctx, value);
 		}
@@ -102,22 +88,17 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxingClass(HiClass autoboxClass) {
-			super.setAutoboxingClass(autoboxClass);
-
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
-			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.valueClass = this;
-				ctx.value.intNumber = intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
-			}
-		}
-
-		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
 			if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
-				return cachedValues[intValue + (-Byte.MIN_VALUE)];
+				HiObject object = cachedValues[intValue + (-Byte.MIN_VALUE)];
+				if (object == null) {
+					ctx.value.valueClass = this;
+					ctx.value.intNumber = intValue;
+					object = super.box(ctx, ctx.value);
+					cachedValues[intValue + (-Byte.MIN_VALUE)] = object;
+				}
+				return object;
 			}
 			return super.box(ctx, value);
 		}
@@ -129,22 +110,17 @@ public class HiClassPrimitive extends HiClass {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
 		@Override
-		public void setAutoboxingClass(HiClass autoboxClass) {
-			super.setAutoboxingClass(autoboxClass);
-
-			RuntimeContext ctx = new RuntimeContext(autoboxClass.getEnv(), autoboxClass.getClassLoader());
-			for (int intValue = Byte.MIN_VALUE; intValue <= Byte.MAX_VALUE; intValue++) {
-				ctx.value.valueClass = this;
-				ctx.value.longNumber = intValue;
-				cachedValues[intValue + (-Byte.MIN_VALUE)] = super.box(ctx, ctx.value);
-			}
-		}
-
-		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			long longValue = value.getLong();
 			if (longValue >= Byte.MIN_VALUE && longValue <= Byte.MAX_VALUE) {
-				return cachedValues[(int) longValue + (-Byte.MIN_VALUE)];
+				HiObject object = cachedValues[(int) longValue + (-Byte.MIN_VALUE)];
+				if (object == null) {
+					ctx.value.valueClass = this;
+					ctx.value.longNumber = longValue;
+					object = super.box(ctx, ctx.value);
+					cachedValues[(int) longValue + (-Byte.MIN_VALUE)] = object;
+				}
+				return object;
 			}
 			return super.box(ctx, value);
 		}

@@ -28,7 +28,7 @@ import ru.nest.hiscript.ool.runtime.ValueType;
 
 import java.lang.reflect.Array;
 
-import static ru.nest.hiscript.ool.model.OperationType.*;
+import static ru.nest.hiscript.ool.model.OperationType.INVOCATION;
 
 public class OperationInvocation extends BinaryOperation {
 	private static HiOperation instance;
@@ -155,17 +155,17 @@ public class OperationInvocation extends BinaryOperation {
 					return true;
 				}
 			} else {
-//				HiField fieldDefinition = clazz.getField(ctx, name);
-//				if (fieldDefinition != null && fieldDefinition.isStatic()) {
-//					field = fieldDefinition;
-//				} else {
-				object = (HiObject) v1.object;
-				if (object == null) {
-					ctx.throwRuntimeException("null pointer");
-					return false;
+				HiField fieldDefinition = clazz.getField(ctx, name);
+				if (fieldDefinition != null && fieldDefinition.isStatic()) {
+					field = fieldDefinition;
+				} else {
+					object = (HiObject) v1.object;
+					if (object == null) {
+						ctx.throwRuntimeException("null pointer");
+						return false;
+					}
+					field = object.getField(ctx, name, clazz);
 				}
-				field = object.getField(ctx, name, clazz);
-//				}
 			}
 			assert field != null; // checked in validation
 		} else if (v1.valueType == ValueType.CLASS) {

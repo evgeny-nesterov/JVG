@@ -15,7 +15,8 @@ import ru.nest.hiscript.ool.model.nodes.NodeString;
 import java.lang.reflect.Array;
 
 import static ru.nest.hiscript.ool.model.PrimitiveType.*;
-import static ru.nest.hiscript.ool.runtime.ValueType.*;
+import static ru.nest.hiscript.ool.runtime.ValueType.VALUE;
+import static ru.nest.hiscript.ool.runtime.ValueType.VARIABLE;
 
 /**
  * Буфер обмена данных. Содержит переменные всех типов данных.
@@ -699,7 +700,7 @@ public class Value {
 	}
 
 	public HiClass getOperationClass() {
-		if (valueClass.getAutoboxedPrimitiveClass() != null) {
+		if (valueClass.getAutoboxedPrimitiveClass() != null && object != null) {
 			// @autoboxing
 			substitutePrimitiveValueFromAutoboxValue();
 			return valueClass.getAutoboxedPrimitiveClass();

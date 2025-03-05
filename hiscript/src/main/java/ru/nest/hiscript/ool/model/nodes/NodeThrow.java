@@ -1,7 +1,6 @@
 package ru.nest.hiscript.ool.model.nodes;
 
 import ru.nest.hiscript.ool.compile.CompileClassContext;
-import ru.nest.hiscript.ool.model.ContextType;
 import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiConstructor;
 import ru.nest.hiscript.ool.model.HiMethod;
@@ -39,17 +38,17 @@ public class NodeThrow extends HiNode {
 				WHILE:
 				while (level != null) {
 					switch (level.type) {
-						case ContextType.METHOD:
+						case METHOD:
 							if (excClass.isInstanceofAny(((HiMethod) level.node).throwsClasses)) {
 								checked = true;
 							}
 							break WHILE;
-						case ContextType.CONSTRUCTOR:
+						case CONSTRUCTOR:
 							if (excClass.isInstanceofAny(((HiConstructor) level.node).throwsClasses)) {
 								checked = true;
 							}
 							break WHILE;
-						case ContextType.TRY:
+						case TRY:
 							NodeTry tryNode = (NodeTry) level.node;
 							if (tryNode.catches != null) {
 								for (NodeCatch catchNode : tryNode.catches) {

@@ -50,8 +50,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
-import static ru.nest.hiscript.ool.model.PrimitiveType.*;
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.PrimitiveType.CHAR_TYPE;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 
 public class HiClass implements HiNodeIF, HiType, HasModifiers {
 	public static HiClass OBJECT_CLASS;
@@ -148,29 +148,38 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 		try {
 			List<HiClass> classes = new ArrayList<>();
 
+			// TODO define classes initialization order automatically
+
 			// object
 			OBJECT_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Object.hi"), false).get(0);
 			OBJECT_CLASS.superClassType = null;
 			OBJECT_CLASS.constructors = new HiConstructor[] {HiConstructor.createDefaultConstructor(OBJECT_CLASS, Type.objectType)};
 			classes.add(OBJECT_CLASS);
 
+			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/System.hi"), false));
 			classes.add(STRING_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/String.hi"), false).get(0));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Class.hi"), false));
 			classes.add(NUMBER_CLASS = systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Number.hi"), false).get(0));
 
-			// TODO define classes initialization order automatically
-			HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
-			HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
-			HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));
-			HiClassPrimitive.LONG.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Long.hi"), false).get(0));
-			HiClassPrimitive.FLOAT.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Float.hi"), false).get(0));
-			HiClassPrimitive.DOUBLE.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0));
-			HiClassPrimitive.BOOLEAN.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0));
-			HiClassPrimitive.CHAR.setAutoboxingClass(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Byte.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Short.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Integer.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Long.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Float.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Double.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Boolean.hi"), false).get(0));
+			classes.add(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Character.hi"), false).get(0));
+			HiClassPrimitive.BYTE.setAutoboxingClass(systemClassLoader.getClass("Byte"));
+			HiClassPrimitive.SHORT.setAutoboxingClass(systemClassLoader.getClass("Short"));
+			HiClassPrimitive.INT.setAutoboxingClass(systemClassLoader.getClass("Integer"));
+			HiClassPrimitive.LONG.setAutoboxingClass(systemClassLoader.getClass("Long"));
+			HiClassPrimitive.FLOAT.setAutoboxingClass(systemClassLoader.getClass("Float"));
+			HiClassPrimitive.DOUBLE.setAutoboxingClass(systemClassLoader.getClass("Double"));
+			HiClassPrimitive.BOOLEAN.setAutoboxingClass(systemClassLoader.getClass("Boolean"));
+			HiClassPrimitive.CHAR.setAutoboxingClass(systemClassLoader.getClass("Character"));
 			HiClassPrimitive.VOID.setAutoboxingClass(HiClassPrimitive.VOID); // to avoid NPE
 			for (HiClassPrimitive primitiveClass : HiClassPrimitive.primitiveClasses.values()) {
 				if (primitiveClass != HiClassPrimitive.VOID) {
-					classes.add(primitiveClass.getAutoboxClass());
 					primitiveClass.getAutoboxClass().autoboxedPrimitiveClass = primitiveClass;
 				}
 			}
@@ -178,7 +187,6 @@ public class HiClass implements HiNodeIF, HiType, HasModifiers {
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Enum.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Record.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/AutoCloseable.hi"), false));
-			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/System.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Math.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/Exception.hi"), false));
 			classes.addAll(systemClassLoader.load(HiCompiler.class.getResource("/hilibs/RuntimeException.hi"), false));

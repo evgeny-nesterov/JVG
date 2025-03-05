@@ -15,7 +15,6 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
-		assertSuccess("class A{final static Boolean x = true;} System.println(\"A.x=\" + A.x); assert A.x == Boolean.TRUE;");
 	}
 
 	@Test
