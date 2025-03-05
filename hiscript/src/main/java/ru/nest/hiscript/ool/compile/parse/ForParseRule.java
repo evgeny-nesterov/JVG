@@ -12,7 +12,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ForParseRule extends ParseRule<NodeFor> {
 	private final static ForParseRule instance = new ForParseRule();
@@ -26,7 +26,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 
 	@Override
 	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.FOR, tokenizer) != null) {
+		if (visitWord(WordType.FOR, tokenizer) != null) {
 			expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 
 			ctx.enter(ContextType.FOR, startToken);

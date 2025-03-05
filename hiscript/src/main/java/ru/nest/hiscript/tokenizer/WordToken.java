@@ -3,10 +3,12 @@ package ru.nest.hiscript.tokenizer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WordToken extends Token implements Words {
-	private final static Map<String, Integer> serviceWords = new HashMap<>();
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
-	private final static Map<Integer, String> serviceTypes = new HashMap<>();
+public class WordToken extends Token {
+	private final static Map<String, WordType> serviceWords = new HashMap<>();
+
+	private final static Map<WordType, String> serviceTypes = new HashMap<>();
 
 	static {
 		serviceWords.put("do", DO);
@@ -78,15 +80,15 @@ public class WordToken extends Token implements Words {
 		}
 	}
 
-	public static String getWord(int type) {
+	public static String getWord(WordType type) {
 		return serviceTypes.get(type);
 	}
 
-	public static int getType(String word) {
+	public static WordType getType(String word) {
 		return serviceWords.getOrDefault(word, NOT_SERVICE);
 	}
 
-	protected int type;
+	protected WordType type;
 
 	private String word;
 
@@ -100,7 +102,7 @@ public class WordToken extends Token implements Words {
 		}
 	}
 
-	public int getType() {
+	public WordType getType() {
 		return type;
 	}
 

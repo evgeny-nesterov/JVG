@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.SymbolType;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,14 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class DeclarationsNode extends Node {
-	public DeclarationsNode(int type) {
+	public DeclarationsNode(WordType type) {
 		super("declarations");
 		this.type = type;
 	}
 
-	private final int type;
+	private final WordType type;
 
-	public int getType() {
+	public WordType getType() {
 		return type;
 	}
 

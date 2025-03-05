@@ -3,12 +3,14 @@ package ru.nest.hiscript.pol.model;
 import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.lang.reflect.Array;
 
-public class ValueContainer implements Words {
-	public int type;
+import static ru.nest.hiscript.tokenizer.WordType.*;
+
+public class ValueContainer {
+	public WordType type;
 
 	public int dimension;
 
@@ -124,7 +126,7 @@ public class ValueContainer implements Words {
 		}
 	}
 
-	public void setValue(Object o, int type) throws ExecuteException {
+	public void setValue(Object o, WordType type) throws ExecuteException {
 		if (o == null) {
 			return;
 		}
@@ -412,7 +414,7 @@ public class ValueContainer implements Words {
 		return getArray(type, dimension);
 	}
 
-	public Object getArray(int type, int dimension) throws ExecuteException {
+	public Object getArray(WordType type, int dimension) throws ExecuteException {
 		if (type != this.type || dimension != this.dimension) {
 			throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + Types.getTypeDescr(type, dimension));
 		}
@@ -868,13 +870,13 @@ public class ValueContainer implements Words {
 		type = DOUBLE;
 	}
 
-	public void castArray(int type, int dimension) throws ExecuteException {
+	public void castArray(WordType type, int dimension) throws ExecuteException {
 		if (this.type != type || this.dimension != dimension) {
 			throw new ExecuteException("inconvertible types; found " + getTypeDescr() + ", required " + Types.getTypeDescr(type, dimension));
 		}
 	}
 
-	public void cast(int type, int dimension) throws ExecuteException {
+	public void cast(WordType type, int dimension) throws ExecuteException {
 		if (!isArray()) {
 			if (dimension > 0) {
 				throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + Types.getTypeDescr(type, dimension));

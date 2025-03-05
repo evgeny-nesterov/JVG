@@ -9,7 +9,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class StatementParseRule extends ParseRule<Node> {
 	private final static StatementParseRule instance = new StatementParseRule();
@@ -207,7 +207,7 @@ public class StatementParseRule extends ParseRule<Node> {
 
 			if (currentToken instanceof WordToken) {
 				WordToken wordToken = (WordToken) currentToken;
-				if (wordToken.getType() == Words.CASE || wordToken.getType() == Words.DEFAULT || wordToken.getType() == Words.CATCH || wordToken.getType() == Words.FINALLY || wordToken.getType() == Words.ELSE) {
+				if (wordToken.getType() == WordType.CASE || wordToken.getType() == WordType.DEFAULT || wordToken.getType() == WordType.CATCH || wordToken.getType() == WordType.FINALLY || wordToken.getType() == WordType.ELSE) {
 					found = false;
 					break;
 				}

@@ -13,9 +13,10 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
 
-public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements Words {
+import static ru.nest.hiscript.tokenizer.WordType.*;
+
+public class DeclarationParseRule extends ParseRule<NodeDeclarations> {
 	private final static DeclarationParseRule instance = new DeclarationParseRule();
 
 	public static DeclarationParseRule getInstance() {

@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class InvocationNode extends Node implements Value {
 		argument.setParent(this);
 	}
 
-	private int[] types;
+	private WordType[] types;
 
 	private int[] dimensions;
 
@@ -40,7 +40,7 @@ public class InvocationNode extends Node implements Value {
 	@Override
 	public void compile() throws ExecuteException {
 		int size = arguments.size();
-		types = new int[size];
+		types = new WordType[size];
 		dimensions = new int[size];
 		values = new Object[size];
 
@@ -64,11 +64,11 @@ public class InvocationNode extends Node implements Value {
 
 		Method method = getMethod(ctx, namespace, methodName, types, dimensions);
 		if (method == null) {
-			throw new ExecuteException("method " + Method.getMethodDescr(namespace, methodName, types, dimensions, Words.VOID) + " not found");
+			throw new ExecuteException("method " + Method.getMethodDescr(namespace, methodName, types, dimensions, WordType.VOID) + " not found");
 		}
 
 		for (int i = 0; i < size; i++) {
-			int type = method.getArgsTypes()[i];
+			WordType type = method.getArgsTypes()[i];
 			if (type != types[i]) {
 				ctx.value.setValue(values[i], type);
 				values[i] = ctx.value.getValue();

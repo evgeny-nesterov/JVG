@@ -1,9 +1,10 @@
 package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.SymbolType;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class MethodNode extends Node {
-	public MethodNode(String name, int type, int dimension, ArgumentsNode arguments, BlockNode body) {
+	public MethodNode(String name, WordType type, int dimension, ArgumentsNode arguments, BlockNode body) {
 		super("method");
 		this.name = name;
 		this.type = type;
@@ -27,9 +28,9 @@ public class MethodNode extends Node {
 		return name;
 	}
 
-	private final int type;
+	private final WordType type;
 
-	public int getType() {
+	public WordType getType() {
 		return type;
 	}
 
@@ -59,14 +60,14 @@ public class MethodNode extends Node {
 
 	@Override
 	public void compile() throws ExecuteException {
-		int[] types;
+		WordType[] types;
 		int[] dimensions;
 		if (arguments != null) {
 			arguments.compile();
 			types = arguments.getTypes();
 			dimensions = arguments.getDimensions();
 		} else {
-			types = new int[0];
+			types = new WordType[0];
 			dimensions = new int[0];
 		}
 
@@ -88,7 +89,7 @@ public class MethodNode extends Node {
 				}
 
 				for (int i = 0; i < argsCount; i++) {
-					int type = Types.getType(values[i].getClass());
+					WordType type = Types.getType(values[i].getClass());
 					ctx.value.setValue(values[i], type);
 
 					Variable var = getVariable(arguments.getNames()[i]);

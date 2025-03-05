@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class TryCatchNode extends Node {
 	public TryCatchNode(Node tryBody, Node catchBody, Node finallyBody, String errorVariableName) {
@@ -58,7 +58,7 @@ public class TryCatchNode extends Node {
 
 		if (catchBody != null) {
 			catchBody.compile();
-			errorVariable = new Variable(null, errorVariableName, Words.STRING, 0);
+			errorVariable = new Variable(null, errorVariableName, WordType.STRING, 0);
 		}
 
 		if (finallyBody != null) {
@@ -75,7 +75,7 @@ public class TryCatchNode extends Node {
 		} catch (Throwable exc) {
 			if (catchBody != null) {
 				Variable error = catchBody.addVariable(errorVariable);
-				error.getValue().setValue(exc.getMessage(), Words.STRING);
+				error.getValue().setValue(exc.getMessage(), WordType.STRING);
 				catchBody.execute(ctx);
 			}
 		} finally {

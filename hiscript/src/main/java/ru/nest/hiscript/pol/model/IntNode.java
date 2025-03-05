@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class IntNode extends Node implements Value {
 	public IntNode(int value) {
@@ -20,7 +20,7 @@ public class IntNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.INT;
+		ctx.value.type = WordType.INT;
 		ctx.value.dimension = 0;
 		ctx.value.intNumber = value;
 	}

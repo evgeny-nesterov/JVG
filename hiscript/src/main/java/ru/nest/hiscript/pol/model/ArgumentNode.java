@@ -1,16 +1,18 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 public class ArgumentNode extends Node {
-	public ArgumentNode(int type, int dimension, String name) {
+	public ArgumentNode(WordType type, int dimension, String name) {
 		super("argument");
 		this.type = type;
 		this.dimension = dimension;
 		this.name = name;
 	}
 
-	private final int type;
+	private final WordType type;
 
-	public int getType() {
+	public WordType getType() {
 		return type;
 	}
 

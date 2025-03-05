@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class RecordParseRule extends ParserUtil {
 	private final static RecordParseRule instance = new RecordParseRule();

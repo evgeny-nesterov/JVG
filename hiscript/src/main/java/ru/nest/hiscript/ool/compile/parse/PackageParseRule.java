@@ -13,8 +13,8 @@ import ru.nest.hiscript.tokenizer.WordToken;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
-import static ru.nest.hiscript.tokenizer.Words.PACKAGE;
+import static ru.nest.hiscript.tokenizer.WordType.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.WordType.PACKAGE;
 
 public class PackageParseRule extends ParseRule<NodePackage> {
 	private final static PackageParseRule instance = new PackageParseRule();
@@ -28,7 +28,7 @@ public class PackageParseRule extends ParseRule<NodePackage> {
 
 	@Override
 	public NodePackage visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWordType(tokenizer, PACKAGE) != -1) {
+		if (visitWordType(tokenizer, PACKAGE) != null) {
 			List<WordToken> path = new ArrayList<>();
 			WordToken nameToken;
 			if ((nameToken = visitWordToken(NOT_SERVICE, tokenizer)) != null) {

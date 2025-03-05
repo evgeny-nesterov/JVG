@@ -13,7 +13,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 	private final static ExpressionParseRule instance = new ExpressionParseRule();
@@ -119,9 +119,9 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit boolean
-		int boolType = visitWords(tokenizer, Words.TRUE, Words.FALSE);
-		if (boolType != -1) {
-			return new BooleanNode(boolType == Words.TRUE);
+		WordType boolType = visitWords(tokenizer, WordType.TRUE, WordType.FALSE);
+		if (boolType != null) {
+			return new BooleanNode(boolType == WordType.TRUE);
 		}
 
 		// visit method invocation
@@ -180,8 +180,8 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit boolean
-		int boolType = visitWords(tokenizer, handler, Words.TRUE, Words.FALSE);
-		if (boolType != -1) {
+		WordType boolType = visitWords(tokenizer, handler, WordType.TRUE, WordType.FALSE);
+		if (boolType != null) {
 			return true;
 		}
 

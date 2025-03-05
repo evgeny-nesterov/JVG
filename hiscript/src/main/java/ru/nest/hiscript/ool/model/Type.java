@@ -11,7 +11,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
 import ru.nest.hiscript.ool.runtime.HiScriptRuntimeException;
 import ru.nest.hiscript.tokenizer.Token;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -521,30 +521,32 @@ public class Type implements HiType, TypeArgumentIF, Codeable, Comparable<Type> 
 		return primitiveTypes.get(name);
 	}
 
-	public static Type getTypeByWord(int wordType) {
-		switch (wordType) {
-			case Words.BYTE:
-				return byteType;
-			case Words.CHAR:
-				return charType;
-			case Words.SHORT:
-				return shortType;
-			case Words.INT:
-				return intType;
-			case Words.LONG:
-				return longType;
-			case Words.FLOAT:
-				return floatType;
-			case Words.DOUBLE:
-				return doubleType;
-			case Words.BOOLEAN:
-				return booleanType;
-			case Words.VOID:
-				return voidType;
-			case Words.NULL:
-				return nullType;
-			case Words.VAR:
-				return varType;
+	public static Type getTypeByWord(WordType wordType) {
+		if (wordType != null) {
+			switch (wordType) {
+				case BYTE:
+					return byteType;
+				case CHAR:
+					return charType;
+				case SHORT:
+					return shortType;
+				case INT:
+					return intType;
+				case LONG:
+					return longType;
+				case FLOAT:
+					return floatType;
+				case DOUBLE:
+					return doubleType;
+				case BOOLEAN:
+					return booleanType;
+				case VOID:
+					return voidType;
+				case NULL:
+					return nullType;
+				case VAR:
+					return varType;
+			}
 		}
 		return null;
 	}

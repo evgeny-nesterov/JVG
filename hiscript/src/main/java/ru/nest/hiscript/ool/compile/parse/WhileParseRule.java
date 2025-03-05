@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeWhile;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class WhileParseRule extends ParseRule<NodeWhile> {
 	private final static WhileParseRule instance = new WhileParseRule();
@@ -23,7 +23,7 @@ public class WhileParseRule extends ParseRule<NodeWhile> {
 
 	@Override
 	public NodeWhile visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.WHILE, tokenizer) != null) {
+		if (visitWord(WordType.WHILE, tokenizer) != null) {
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			HiNode body = expectBody(tokenizer, ctx);
 			return new NodeWhile(condition, body);

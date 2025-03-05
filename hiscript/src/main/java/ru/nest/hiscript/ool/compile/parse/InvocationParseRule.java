@@ -10,8 +10,8 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
-import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+import static ru.nest.hiscript.tokenizer.WordType.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.WordType.UNNAMED_VARIABLE;
 
 public class InvocationParseRule extends ParseRule<NodeInvocation> {
 	private final static InvocationParseRule instance = new InvocationParseRule();

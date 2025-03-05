@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.model.validation.ValidationInfo;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.io.IOException;
 
@@ -17,33 +17,25 @@ public class Modifiers implements ModifiersIF, Codeable {
 
 	public final static Modifiers PUBLIC_FINAL = new Modifiers(ACCESS_PUBLIC | FINAL);
 
-	public static int mapWordsToModification(int word) {
+	public static int mapWordsToModification(WordType word) {
 		switch (word) {
-			case Words.PUBLIC:
+			case PUBLIC:
 				return ACCESS_PUBLIC;
-
-			case Words.PROTECTED:
+			case PROTECTED:
 				return ACCESS_PROTECTED;
-
-			case Words.PRIVATE:
+			case PRIVATE:
 				return ACCESS_PRIVATE;
-
-			case Words.STATIC:
+			case STATIC:
 				return STATIC;
-
-			case Words.FINAL:
+			case FINAL:
 				return FINAL;
-
-			case Words.NATIVE:
+			case NATIVE:
 				return NATIVE;
-
-			case Words.ABSTRACT:
+			case ABSTRACT:
 				return ABSTRACT;
-
-			case Words.DEFAULT:
+			case DEFAULT:
 				return DEFAULT;
-
-			case Words.SYNCHRONIZED:
+			case SYNCHRONIZED:
 				return SYNCHRONIZED;
 		}
 		return -1;
@@ -243,9 +235,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return modifiers;
 	}
 
-	public boolean check(Tokenizer tokenizer, Token modifiersToken, int... allowed) throws TokenizerException {
+	public boolean check(Tokenizer tokenizer, Token modifiersToken, WordType... allowed) throws TokenizerException {
 		int allowedMask = ACCESS_DEFAULT;
-		for (int word : allowed) {
+		for (WordType word : allowed) {
 			allowedMask |= mapWordsToModification(word);
 		}
 
@@ -294,9 +286,9 @@ public class Modifiers implements ModifiersIF, Codeable {
 		return valid;
 	}
 
-	public int check(int... allowed) {
+	public int check(WordType... allowed) {
 		int allowedMask = ACCESS_DEFAULT;
-		for (int word : allowed) {
+		for (WordType word : allowed) {
 			allowedMask |= mapWordsToModification(word);
 		}
 

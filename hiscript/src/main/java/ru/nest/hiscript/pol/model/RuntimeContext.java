@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -162,42 +162,42 @@ public class RuntimeContext {
 			addNativeMethods(Math.class, new Class[] { double.class, double.class }, "min", "max", "pow");
 
 			// arrays
-			nativeMethods.add(new Method(null, "length", new int[] { Words.BYTE }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.BYTE }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
 					ctx.value.intNumber = ((byte[]) arguments[0]).length;
 				}
 			});
-			nativeMethods.add(new Method(null, "length", new int[] { Words.SHORT }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.SHORT }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
 					ctx.value.intNumber = ((short[]) arguments[0]).length;
 				}
 			});
-			nativeMethods.add(new Method(null, "length", new int[] { Words.INT }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.INT }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
 					ctx.value.intNumber = ((int[]) arguments[0]).length;
 				}
 			});
-			nativeMethods.add(new Method(null, "length", new int[] { Words.LONG }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.LONG }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
 					ctx.value.intNumber = ((long[]) arguments[0]).length;
 				}
 			});
-			nativeMethods.add(new Method(null, "length", new int[] { Words.FLOAT }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.FLOAT }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
 					ctx.value.intNumber = ((float[]) arguments[0]).length;
 				}
 			});
-			nativeMethods.add(new Method(null, "length", new int[] { Words.DOUBLE }, new int[] { 1 }, Words.INT) {
+			nativeMethods.add(new Method(null, "length", new WordType[] { WordType.DOUBLE }, new int[] { 1 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -214,7 +214,7 @@ public class RuntimeContext {
 
 			addNativeMethod(System.class, new Class[] { int.class }, "exit", "exit");
 
-			nativeMethods.add(new Method(null, "hasSystemProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "hasSystemProperty", new WordType[] { WordType.STRING }, new int[] { 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -223,7 +223,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "removeSystemProperty", new int[] { Words.STRING }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "removeSystemProperty", new WordType[] { WordType.STRING }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -235,7 +235,7 @@ public class RuntimeContext {
 			// Toolkit
 			addNativeMethods(Toolkit.getDefaultToolkit(), new Class[] {}, new String[] { "beep", "getScreenResolution" });
 
-			nativeMethods.add(new Method(null, "getScreenWidth", new int[] {}, new int[] {}, Words.INT) {
+			nativeMethods.add(new Method(null, "getScreenWidth", new WordType[] {}, new int[] {}, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -243,7 +243,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "getScreenHeight", new int[] {}, new int[] {}, Words.INT) {
+			nativeMethods.add(new Method(null, "getScreenHeight", new WordType[] {}, new int[] {}, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -252,7 +252,7 @@ public class RuntimeContext {
 			});
 
 			// Dialog
-			nativeMethods.add(new Method(null, "showMessage", new int[] { Words.STRING, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "showMessage", new WordType[] { WordType.STRING, WordType.STRING }, new int[] { 0, 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -263,7 +263,7 @@ public class RuntimeContext {
 			});
 
 			// Thread
-			nativeMethods.add(new Method(null, "getCurrentThread", new int[] {}, new int[] {}, Words.LONG) {
+			nativeMethods.add(new Method(null, "getCurrentThread", new WordType[] {}, new int[] {}, WordType.LONG) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -271,7 +271,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "join", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "join", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -287,7 +287,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "join", new int[] { Words.LONG, Words.LONG }, new int[] { 0, 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "join", new WordType[] { WordType.LONG, WordType.LONG }, new int[] { 0, 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -304,7 +304,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "interrupt", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "interrupt", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -316,7 +316,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "interrupted", new int[] { Words.LONG }, new int[] { 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "interrupted", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -326,7 +326,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "yield", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "yield", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -338,7 +338,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "setPriority", new int[] { Words.LONG, Words.INT }, new int[] { 0, 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "setPriority", new WordType[] { WordType.LONG, WordType.INT }, new int[] { 0, 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -351,7 +351,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "getPriority", new int[] { Words.LONG }, new int[] { 0 }, Words.INT) {
+			nativeMethods.add(new Method(null, "getPriority", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.INT) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -363,7 +363,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "setThreadName", new int[] { Words.LONG, Words.STRING }, new int[] { 0, 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "setThreadName", new WordType[] { WordType.LONG, WordType.STRING }, new int[] { 0, 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -376,7 +376,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "getThreadName", new int[] { Words.LONG }, new int[] { 0 }, Words.STRING) {
+			nativeMethods.add(new Method(null, "getThreadName", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.STRING) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -388,7 +388,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "sleep", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "sleep", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -400,7 +400,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "getLock", new int[] {}, new int[] {}, Words.LONG) {
+			nativeMethods.add(new Method(null, "getLock", new WordType[] {}, new int[] {}, WordType.LONG) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -408,7 +408,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "unlock", new int[] { Words.LONG }, new int[] { 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "unlock", new WordType[] { WordType.LONG }, new int[] { 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -419,7 +419,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "lock", new int[] { Words.LONG, Words.LONG }, new int[] { 0, 0 }, Words.VOID) {
+			nativeMethods.add(new Method(null, "lock", new WordType[] { WordType.LONG, WordType.LONG }, new int[] { 0, 0 }, WordType.VOID) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -461,21 +461,21 @@ public class RuntimeContext {
 
 			addNativeMethod(String.class, new Class[] { String.class, String.class }, "replaceAll");
 
-			nativeMethods.add(new Method(null, "getString", new int[] { Words.BYTE }, new int[] { 1 }, Words.STRING) {
+			nativeMethods.add(new Method(null, "getString", new WordType[] { WordType.BYTE }, new int[] { 1 }, WordType.STRING) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
-					ctx.value.type = Words.STRING;
+					ctx.value.type = WordType.STRING;
 					ctx.value.dimension = 0;
 					ctx.value.string = new String((byte[]) arguments[0]);
 				}
 			});
 
-			nativeMethods.add(new Method(null, "getString", new int[] { Words.CHAR }, new int[] { 1 }, Words.STRING) {
+			nativeMethods.add(new Method(null, "getString", new WordType[] { WordType.CHAR }, new int[] { 1 }, WordType.STRING) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
-					ctx.value.type = Words.STRING;
+					ctx.value.type = WordType.STRING;
 					ctx.value.dimension = 0;
 					ctx.value.string = new String((char[]) arguments[0]);
 				}
@@ -498,7 +498,7 @@ public class RuntimeContext {
 			addNativeMethods(Double.class, new Class[] { String.class }, "parseDouble");
 
 			// execute script
-			nativeMethods.add(new Method(null, "execute", new int[] { Words.STRING, Words.BOOLEAN }, new int[] { 0, 0 }, Words.LONG) {
+			nativeMethods.add(new Method(null, "execute", new WordType[] { WordType.STRING, WordType.BOOLEAN }, new int[] { 0, 0 }, WordType.LONG) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node parent, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, parent, arguments);
@@ -513,7 +513,7 @@ public class RuntimeContext {
 			});
 
 			// reflection
-			nativeMethods.add(new Method(null, "isVariableExists", new int[] { Words.STRING }, new int[] { 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "isVariableExists", new WordType[] { WordType.STRING }, new int[] { 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -523,7 +523,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "isVariableExists", new int[] { Words.STRING, Words.STRING }, new int[] { 0, 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "isVariableExists", new WordType[] { WordType.STRING, WordType.STRING }, new int[] { 0, 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -542,7 +542,7 @@ public class RuntimeContext {
 				}
 			});
 
-			nativeMethods.add(new Method(null, "isVariableDefined", new int[] { Words.STRING }, new int[] { 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "isVariableDefined", new WordType[] { WordType.STRING }, new int[] { 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -551,7 +551,7 @@ public class RuntimeContext {
 					ctx.value.bool = variable != null && variable.isDefined();
 				}
 			});
-			nativeMethods.add(new Method(null, "isVariableDefined", new int[] { Words.STRING, Words.STRING }, new int[] { 0, 0 }, Words.BOOLEAN) {
+			nativeMethods.add(new Method(null, "isVariableDefined", new WordType[] { WordType.STRING, WordType.STRING }, new int[] { 0, 0 }, WordType.BOOLEAN) {
 				@Override
 				public void invoke(RuntimeContext ctx, Node node, Object... arguments) throws ExecuteException {
 					super.invoke(ctx, node, arguments);
@@ -642,10 +642,10 @@ public class RuntimeContext {
 	}
 
 	public static void addNativeMethod(final java.lang.reflect.Method method, String methodName, final Object o) {
-		int returnType = Types.getType(method.getReturnType());
+		WordType returnType = Types.getType(method.getReturnType());
 
 		Class<?>[] t = method.getParameterTypes();
-		int[] argsTypes = new int[t.length];
+		WordType[] argsTypes = new WordType[t.length];
 		int[] argsDimensions = new int[t.length];
 		for (int i = 0; i < argsTypes.length; i++) {
 			argsTypes[i] = Types.getType(t[i]);
@@ -667,10 +667,10 @@ public class RuntimeContext {
 	}
 
 	public static void addNativeMethodByObject(final java.lang.reflect.Method method, Class<?> objectType) {
-		int returnType = Types.getType(method.getReturnType());
+		WordType returnType = Types.getType(method.getReturnType());
 
 		Class<?>[] t = method.getParameterTypes();
-		int[] argsTypes = new int[t.length + 1];
+		WordType[] argsTypes = new WordType[t.length + 1];
 		int[] argsDimensions = new int[t.length + 1];
 		argsTypes[0] = Types.getType(objectType);
 		argsDimensions[0] = Types.getDimension(objectType);
@@ -700,7 +700,7 @@ public class RuntimeContext {
 
 	private Methods methods = new Methods();
 
-	public Method getMethod(String namespace, String name, int[] argsTypes, int[] argsDimensions) {
+	public Method getMethod(String namespace, String name, WordType[] argsTypes, int[] argsDimensions) {
 		Method method = methods.get(namespace, name, argsTypes, argsDimensions);
 		if (method != null) {
 			return method;

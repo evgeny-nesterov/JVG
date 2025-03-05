@@ -26,11 +26,12 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class ClassParseRule extends ParserUtil {
 	private final static ClassParseRule instance = new ClassParseRule();
@@ -47,8 +48,8 @@ public class ClassParseRule extends ParserUtil {
 		Token startToken = startToken(tokenizer);
 
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
-		int classType = visitWordType(tokenizer, CLASS, INTERFACE);
-		if (classType != -1) {
+		WordType classType = visitWordType(tokenizer, CLASS, INTERFACE);
+		if (classType != null) {
 			tokenizer.commit();
 
 			boolean isInterface = classType == INTERFACE;
@@ -257,8 +258,8 @@ public class ClassParseRule extends ParserUtil {
 				// visit super or this constructor invocation
 				tokenizer.start();
 				try {
-					int constructorType = visitServiceWord(tokenizer, THIS, SUPER);
-					if (constructorType != -1) {
+					WordType constructorType = visitServiceWord(tokenizer, THIS, SUPER);
+					if (constructorType != null) {
 						if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 							HiNode[] args = visitArgumentsValues(tokenizer, ctx);
 							expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
@@ -299,7 +300,7 @@ public class ClassParseRule extends ParserUtil {
 		return null;
 	}
 
-	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, WordType... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;
@@ -372,7 +373,7 @@ public class ClassParseRule extends ParserUtil {
 
 	public Type[] visitExceptionTypes(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Type[] exceptionTypes = null;
-		if (visitWordType(tokenizer, THROWS) != -1) {
+		if (visitWordType(tokenizer, THROWS) != null) {
 			Type exceptionType = visitType(tokenizer, true, ctx.getEnv());
 			if (exceptionType == null) {
 				tokenizer.error("identifier expected");
@@ -459,7 +460,7 @@ public class ClassParseRule extends ParserUtil {
 	private NodeInitializer visitBlock(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		boolean isStatic = visitWordType(tokenizer, STATIC) != -1;
+		boolean isStatic = visitWordType(tokenizer, STATIC) != null;
 		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			tokenizer.commit();
 			ctx.enter(ContextType.BLOCK, tokenizer.currentToken());

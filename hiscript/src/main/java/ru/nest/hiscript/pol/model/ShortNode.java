@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ShortNode extends Node implements Value {
 	public ShortNode(short value) {
@@ -20,7 +20,7 @@ public class ShortNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.SHORT;
+		ctx.value.type = WordType.SHORT;
 		ctx.value.dimension = 0;
 		ctx.value.shortNumber = value;
 	}

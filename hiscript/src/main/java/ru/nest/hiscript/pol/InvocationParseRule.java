@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class InvocationParseRule extends ParseRule<InvocationNode> {
 	private final static InvocationParseRule instance = new InvocationParseRule();
@@ -23,10 +23,10 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 		tokenizer.start();
 
 		String namespace = null;
-		String methodName = visitWord(Words.NOT_SERVICE, tokenizer);
+		String methodName = visitWord(WordType.NOT_SERVICE, tokenizer);
 		if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 			namespace = methodName;
-			methodName = visitWord(Words.NOT_SERVICE, tokenizer);
+			methodName = visitWord(WordType.NOT_SERVICE, tokenizer);
 		}
 
 		if (methodName != null) {
@@ -61,10 +61,10 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 		tokenizer.start();
 
 		// TODO String namespace = null;
-		String methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
+		String methodName = visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 		if (visitSymbol(tokenizer, handler, SymbolType.POINT) != null) {
 			// TODO namespace = methodName;
-			methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
+			methodName = visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 		}
 
 		// String methodName = visitWord(WordToken.NOT_SERVICE, tokenizer, handler);

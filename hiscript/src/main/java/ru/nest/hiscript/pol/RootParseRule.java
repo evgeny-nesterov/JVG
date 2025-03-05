@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.Variable;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class RootParseRule extends ParseRule<Node> {
 	private final static RootParseRule instance = new RootParseRule();
@@ -52,8 +52,8 @@ public class RootParseRule extends ParseRule<Node> {
 
 	private void initGlobals(BlockNode body) {
 		try {
-			body.addVariable(new Variable("math", "E", Words.DOUBLE, 0)).getValue().setValue(2.7182818284590452354, Words.DOUBLE);
-			body.addVariable(new Variable("math", "PI", Words.DOUBLE, 0)).getValue().setValue(3.14159265358979323846, Words.DOUBLE);
+			body.addVariable(new Variable("math", "E", WordType.DOUBLE, 0)).getValue().setValue(2.7182818284590452354, WordType.DOUBLE);
+			body.addVariable(new Variable("math", "PI", WordType.DOUBLE, 0)).getValue().setValue(3.14159265358979323846, WordType.DOUBLE);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}

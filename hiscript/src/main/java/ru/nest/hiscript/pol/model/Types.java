@@ -1,15 +1,17 @@
 package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Types implements Words {
+import static ru.nest.hiscript.tokenizer.WordType.*;
+
+public class Types {
 	public final static int OBJECT = 28;
 
-	public static boolean isType(int type) {
+	public static boolean isType(WordType type) {
 		switch (type) {
 			case VOID:
 			case CHAR:
@@ -26,7 +28,7 @@ public class Types implements Words {
 		return false;
 	}
 
-	public static boolean isAutoCast(int srcType, int dstType) {
+	public static boolean isAutoCast(WordType srcType, WordType dstType) {
 		switch (srcType) {
 			case CHAR:
 				switch (dstType) {
@@ -98,9 +100,9 @@ public class Types implements Words {
 		return false;
 	}
 
-	private final static Map<Class<?>, Integer> types = new HashMap<>();
+	private final static Map<Class<?>, WordType> types = new HashMap<>();
 
-	public static int getType(Class<?> c) {
+	public static WordType getType(Class<?> c) {
 		Class<?> clazz;
 		while ((clazz = c.getComponentType()) != null) {
 			c = clazz;
@@ -112,7 +114,7 @@ public class Types implements Words {
 		// c = superClass;
 		// }
 
-		Integer type = types.get(c);
+		WordType type = types.get(c);
 		if (type != null) {
 			return type;
 		}
@@ -142,7 +144,7 @@ public class Types implements Words {
 		return type;
 	}
 
-	public static Class<?> getType(int type) {
+	public static Class<?> getType(WordType type) {
 		switch (type) {
 			case CHAR:
 				return char.class;
@@ -175,7 +177,7 @@ public class Types implements Words {
 		return null;
 	}
 
-	public static Class<?> getArrayType(int type, int dimension) {
+	public static Class<?> getArrayType(WordType type, int dimension) {
 		String prefix = "";
 		for (int i = 0; i < dimension; i++) {
 			prefix += "[";
@@ -240,7 +242,7 @@ public class Types implements Words {
 		return s;
 	}
 
-	public static String getTypeDescr(int type, int dimension) {
+	public static String getTypeDescr(WordType type, int dimension) {
 		return WordToken.getWord(type) + getArrayPostfix(dimension);
 	}
 

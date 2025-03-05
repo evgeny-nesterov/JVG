@@ -1,0 +1,117 @@
+package ru.nest.hiscript.tokenizer;
+
+public enum WordType {
+	NOT_SERVICE,
+
+	DO,
+
+	WHILE,
+
+	IF,
+
+	ELSE,
+
+	FOR,
+
+	BREAK,
+
+	CONTINUE,
+
+	RETURN,
+
+	SWITCH,
+
+	CASE,
+
+	TRUE,
+
+	FALSE,
+
+	CHAR,
+
+	STRING,
+
+	BOOLEAN,
+
+	BYTE,
+
+	SHORT,
+
+	INT,
+
+	FLOAT,
+
+	LONG,
+
+	DOUBLE,
+
+	VOID,
+
+	TRY,
+
+	CATCH,
+
+	FINALLY,
+
+	DEFAULT,
+
+	CLASS,
+
+	NEW,
+
+	STATIC,
+
+	NATIVE,
+
+	FINAL,
+
+	PUBLIC,
+
+	PROTECTED,
+
+	PRIVATE,
+
+	THROW,
+
+	THROWS,
+
+	INTERFACE,
+
+	INSTANCE_OF,
+
+	IMPLEMENTS,
+
+	EXTENDS,
+
+	SUPER,
+
+	NULL,
+
+	ABSTRACT,
+
+	SYNCHRONIZED,
+
+	THIS,
+
+	ASSERT,
+
+	ENUM,
+
+	VAR,
+
+	RECORD,
+
+	IMPORT,
+
+	PACKAGE,
+
+	VOLATILE,
+
+	WHEN,
+
+	ANNOTATION_INTERFACE,
+
+	SEALED,
+
+	UNNAMED_VARIABLE
+}

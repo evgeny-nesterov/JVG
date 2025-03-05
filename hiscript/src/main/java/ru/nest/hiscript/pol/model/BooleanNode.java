@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class BooleanNode extends Node {
 	public BooleanNode(boolean value) {
@@ -20,7 +20,7 @@ public class BooleanNode extends Node {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.BOOLEAN;
+		ctx.value.type = WordType.BOOLEAN;
 		ctx.value.dimension = 0;
 		ctx.value.bool = value;
 	}

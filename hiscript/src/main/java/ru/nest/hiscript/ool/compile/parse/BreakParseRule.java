@@ -8,10 +8,10 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
-import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+import static ru.nest.hiscript.tokenizer.WordType.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.WordType.UNNAMED_VARIABLE;
 
 public class BreakParseRule extends ParseRule<NodeBreak> {
 	private final static BreakParseRule instance = new BreakParseRule();
@@ -25,7 +25,7 @@ public class BreakParseRule extends ParseRule<NodeBreak> {
 
 	@Override
 	public NodeBreak visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.BREAK, tokenizer) != null) {
+		if (visitWord(WordType.BREAK, tokenizer) != null) {
 			String label = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			return new NodeBreak(label);

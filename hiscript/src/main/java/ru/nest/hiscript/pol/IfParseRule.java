@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class IfParseRule extends ParseRule<IfNode> {
 	private final static IfParseRule instance = new IfParseRule();
@@ -20,7 +20,7 @@ public class IfParseRule extends ParseRule<IfNode> {
 
 	@Override
 	public IfNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.IF, tokenizer) != null) {
+		if (visitWord(WordType.IF, tokenizer) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
@@ -52,7 +52,7 @@ public class IfParseRule extends ParseRule<IfNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.IF, tokenizer, handler) != null) {
+		if (visitWord(WordType.IF, tokenizer, handler) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {

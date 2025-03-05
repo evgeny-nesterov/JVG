@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.pol.model.BreakNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class BreakParseRule extends ParseRule<BreakNode> {
 	private final static BreakParseRule instance = new BreakParseRule();
@@ -17,8 +17,8 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 
 	@Override
 	public BreakNode visit(Tokenizer tokenizer) throws TokenizerException {
-		if (visitWord(Words.BREAK, tokenizer) != null) {
-			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (visitWord(WordType.BREAK, tokenizer) != null) {
+			String mark = visitWord(WordType.NOT_SERVICE, tokenizer);
 			return new BreakNode(mark);
 		}
 		return null;
@@ -26,8 +26,8 @@ public class BreakParseRule extends ParseRule<BreakNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.BREAK, tokenizer, handler) != null) {
-			visitWord(Words.NOT_SERVICE, tokenizer, handler);
+		if (visitWord(WordType.BREAK, tokenizer, handler) != null) {
+			visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 			return true;
 		}
 		return false;

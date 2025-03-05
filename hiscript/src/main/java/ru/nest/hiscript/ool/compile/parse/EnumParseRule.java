@@ -14,7 +14,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class EnumParseRule extends ParserUtil {
 	private final static EnumParseRule instance = new EnumParseRule();

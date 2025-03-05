@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class FloatNode extends Node implements Value {
 	public FloatNode(float value) {
@@ -20,7 +20,7 @@ public class FloatNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.FLOAT;
+		ctx.value.type = WordType.FLOAT;
 		ctx.value.dimension = 0;
 		ctx.value.floatNumber = value;
 	}

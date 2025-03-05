@@ -9,7 +9,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class SwitchParseRule extends ParseRule<SwitchNode> {
 	private final static SwitchParseRule instance = new SwitchParseRule();
@@ -23,7 +23,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 
 	@Override
 	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.SWITCH, tokenizer) != null) {
+		if (visitWord(WordType.SWITCH, tokenizer) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
@@ -43,7 +43,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 					continue;
 				}
 
-				if (visitWord(Words.DEFAULT, tokenizer) != null) {
+				if (visitWord(WordType.DEFAULT, tokenizer) != null) {
 					expectSymbol(SymbolType.COLON, tokenizer);
 					if (defaultFound) {
 						throw new HiScriptParseException("duplicate default label", tokenizer.currentToken());
@@ -65,7 +65,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.SWITCH, tokenizer, handler) != null) {
+		if (visitWord(WordType.SWITCH, tokenizer, handler) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
@@ -81,7 +81,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				}
 
 				Token token = tokenizer.currentToken();
-				if (visitWord(Words.DEFAULT, tokenizer, handler) != null) {
+				if (visitWord(WordType.DEFAULT, tokenizer, handler) != null) {
 					if (defaultFound) {
 						errorOccurred(handler, "duplicate default label", token);
 					}

@@ -17,7 +17,7 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class TryParseRule extends ParseRule<NodeTry> {
 	private final static TryParseRule instance = new TryParseRule();

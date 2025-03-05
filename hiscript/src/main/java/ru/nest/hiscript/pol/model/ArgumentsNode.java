@@ -1,5 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +23,9 @@ public class ArgumentsNode extends Node {
 		argument.setParent(this);
 	}
 
-	private int[] types;
+	private WordType[] types;
 
-	public int[] getTypes() {
+	public WordType[] getTypes() {
 		return types;
 	}
 
@@ -42,7 +44,7 @@ public class ArgumentsNode extends Node {
 	@Override
 	public void compile() throws ExecuteException {
 		int size = arguments.size();
-		types = new int[size];
+		types = new WordType[size];
 		dimensions = new int[size];
 		names = new String[size];
 

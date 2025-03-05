@@ -9,7 +9,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ReturnParseRule extends ParseRule<NodeReturn> {
 	private final static ReturnParseRule instance = new ReturnParseRule();
@@ -23,7 +23,7 @@ public class ReturnParseRule extends ParseRule<NodeReturn> {
 
 	@Override
 	public NodeReturn visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.RETURN, tokenizer) != null) {
+		if (visitWord(WordType.RETURN, tokenizer) != null) {
 			NodeExpression value = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			return new NodeReturn(value);

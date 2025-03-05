@@ -1,5 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,7 +98,7 @@ public abstract class Node {
 
 	private Methods methods = null;
 
-	public Method getMethod(RuntimeContext ctx, String namespace, String name, int[] argsTypes, int[] argsDimensions) {
+	public Method getMethod(RuntimeContext ctx, String namespace, String name, WordType[] argsTypes, int[] argsDimensions) {
 		if (methods != null) {
 			Method method = methods.get(namespace, name, argsTypes, argsDimensions);
 			if (method != null) {
@@ -109,7 +111,6 @@ public abstract class Node {
 		} else if (ctx != null) {
 			return ctx.getMethod(namespace, name, argsTypes, argsDimensions);
 		}
-
 		return null;
 	}
 

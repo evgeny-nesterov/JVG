@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ReturnNode extends Node {
 	public ReturnNode(Node value) {
@@ -33,7 +33,7 @@ public class ReturnNode extends Node {
 			value.execute(ctx);
 		} else {
 			ctx.value.dimension = 0;
-			ctx.value.type = Words.VOID;
+			ctx.value.type = WordType.VOID;
 		}
 	}
 }

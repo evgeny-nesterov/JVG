@@ -15,8 +15,8 @@ import ru.nest.hiscript.tokenizer.TokenizerException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
-import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+import static ru.nest.hiscript.tokenizer.WordType.NOT_SERVICE;
+import static ru.nest.hiscript.tokenizer.WordType.UNNAMED_VARIABLE;
 
 public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 	private final static AnnotationParseRule instance = new AnnotationParseRule();

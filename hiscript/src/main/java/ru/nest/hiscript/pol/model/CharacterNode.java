@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class CharacterNode extends Node implements Value {
 	public CharacterNode(char character) {
@@ -20,7 +20,7 @@ public class CharacterNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.CHAR;
+		ctx.value.type = WordType.CHAR;
 		ctx.value.dimension = 0;
 		ctx.value.character = character;
 	}

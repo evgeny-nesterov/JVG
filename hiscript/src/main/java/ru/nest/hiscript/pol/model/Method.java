@@ -1,7 +1,9 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 public abstract class Method {
-	public Method(String namespace, String name, int[] argsTypes, int[] argsDimensions, int returnType, int returnDimension) {
+	public Method(String namespace, String name, WordType[] argsTypes, int[] argsDimensions, WordType returnType, int returnDimension) {
 		if (namespace == null) {
 			namespace = "";
 		}
@@ -14,7 +16,7 @@ public abstract class Method {
 		hashCode = getHash(namespace, name, argsTypes);
 	}
 
-	public Method(String namespace, String name, int[] argsTypes, int[] argsDimensions, int returnType) {
+	public Method(String namespace, String name, WordType[] argsTypes, int[] argsDimensions, WordType returnType) {
 		this(namespace, name, argsTypes, argsDimensions, returnType, 0);
 	}
 
@@ -30,9 +32,9 @@ public abstract class Method {
 		return name;
 	}
 
-	private final int[] argsTypes;
+	private final WordType[] argsTypes;
 
-	public int[] getArgsTypes() {
+	public WordType[] getArgsTypes() {
 		return argsTypes;
 	}
 
@@ -42,9 +44,9 @@ public abstract class Method {
 		return argsDimensions;
 	}
 
-	private final int returnType;
+	private final WordType returnType;
 
-	public int getReturnType() {
+	public WordType getReturnType() {
 		return returnType;
 	}
 
@@ -54,10 +56,10 @@ public abstract class Method {
 		return returnDimension;
 	}
 
-	public static int getHash(String namespace, String name, int... argsTypes) {
+	public static int getHash(String namespace, String name, WordType... argsTypes) {
 		int hash = name.hashCode();
-		for (int t : argsTypes) {
-			hash = 31 * hash + t;
+		for (WordType t : argsTypes) {
+			hash = 31 * hash + t.ordinal();
 		}
 		if (namespace != null && namespace.length() > 0) {
 			hash = 31 * hash + namespace.hashCode();
@@ -82,11 +84,11 @@ public abstract class Method {
 		return getMethodDescr(namespace, name, argsTypes, argsDimensions, returnType, returnDimension);
 	}
 
-	public static String getMethodDescr(String namespace, String name, int[] argsTypes, int[] argsDimensions, int returnType) {
+	public static String getMethodDescr(String namespace, String name, WordType[] argsTypes, int[] argsDimensions, WordType returnType) {
 		return getMethodDescr(namespace, name, argsTypes, argsDimensions, returnType, 0);
 	}
 
-	public static String getMethodDescr(String namespace, String name, int[] argsTypes, int[] argsDimensions, int returnType, int returnDimension) {
+	public static String getMethodDescr(String namespace, String name, WordType[] argsTypes, int[] argsDimensions, WordType returnType, int returnDimension) {
 		String args = "";
 		for (int i = 0; i < argsTypes.length; i++) {
 			args += Types.getTypeDescr(argsTypes[i], argsDimensions != null ? argsDimensions[i] : 0);

@@ -7,7 +7,7 @@ import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class CaseParseRule extends ParseRule<CaseNode> {
 	private final static CaseParseRule instance = new CaseParseRule();
@@ -21,7 +21,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 
 	@Override
 	public CaseNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.CASE, tokenizer) != null) {
+		if (visitWord(WordType.CASE, tokenizer) != null) {
 			Node value;
 			if ((value = ExpressionParseRule.getInstance().visit(tokenizer)) == null) {
 				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
@@ -35,7 +35,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.CASE, tokenizer, handler) != null) {
+		if (visitWord(WordType.CASE, tokenizer, handler) != null) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
 			}

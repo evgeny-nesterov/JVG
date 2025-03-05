@@ -6,6 +6,7 @@ import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ArrayParseRule extends ParseRule<ArrayNode> {
 	private final static ArrayParseRule instance = new ArrayParseRule();
@@ -22,8 +23,8 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 	 */
 	@Override
 	public ArrayNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		int type = visitType(tokenizer);
-		if (type != -1) {
+		WordType type = visitType(tokenizer);
+		if (type != null) {
 			expectSymbol(SymbolType.SQUARE_BRACES_LEFT, tokenizer);
 			ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (index == null) {
@@ -54,8 +55,8 @@ public class ArrayParseRule extends ParseRule<ArrayNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		int type = visitType(tokenizer, handler);
-		if (type != -1) {
+		WordType type = visitType(tokenizer, handler);
+		if (type != null) {
 			expectSymbol(SymbolType.SQUARE_BRACES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "array dimension missing");

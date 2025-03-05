@@ -1,18 +1,20 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayNode extends Node {
-	public ArrayNode(int type) {
+	public ArrayNode(WordType type) {
 		super("array");
 		this.type = type;
 	}
 
-	private final int type;
+	private final WordType type;
 
-	public int getType() {
+	public WordType getType() {
 		return type;
 	}
 

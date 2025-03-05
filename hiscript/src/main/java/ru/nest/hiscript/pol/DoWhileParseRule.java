@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 	private final static DoWhileParseRule instance = new DoWhileParseRule();
@@ -20,13 +20,13 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 
 	@Override
 	public DoWhileNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.DO, tokenizer) != null) {
+		if (visitWord(WordType.DO, tokenizer) != null) {
 			expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 			Node body = BlockParseRule.getInstance().visit(tokenizer); // may be
 			// empty;
 			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 
-			if (visitWord(Words.WHILE, tokenizer) == null) {
+			if (visitWord(WordType.WHILE, tokenizer) == null) {
 				throw new HiScriptParseException("while expected", tokenizer.currentToken());
 			}
 
@@ -46,12 +46,12 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.DO, tokenizer, handler) != null) {
+		if (visitWord(WordType.DO, tokenizer, handler) != null) {
 			expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 
-			if (visitWord(Words.WHILE, tokenizer, handler) == null) {
+			if (visitWord(WordType.WHILE, tokenizer, handler) == null) {
 				errorOccurred(tokenizer, handler, "while expected");
 			}
 

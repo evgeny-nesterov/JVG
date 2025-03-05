@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeIf;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class IfParseRule extends ParseRule<NodeIf> {
 	private final static IfParseRule instance = new IfParseRule();
@@ -23,7 +23,7 @@ public class IfParseRule extends ParseRule<NodeIf> {
 
 	@Override
 	public NodeIf visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.IF, tokenizer) != null) {
+		if (visitWord(WordType.IF, tokenizer) != null) {
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			HiNode body = expectBody(tokenizer, ctx);
 			NodeIf elseIfNode = visitNext(tokenizer, ctx);
@@ -34,8 +34,8 @@ public class IfParseRule extends ParseRule<NodeIf> {
 
 	public NodeIf visitNext(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
-		if (visitWord(Words.ELSE, tokenizer) != null) {
-			if (visitWord(Words.IF, tokenizer) != null) {
+		if (visitWord(WordType.ELSE, tokenizer) != null) {
+			if (visitWord(WordType.IF, tokenizer) != null) {
 				NodeExpression condition = expectCondition(tokenizer, ctx);
 				HiNode body = expectBody(tokenizer, ctx);
 				NodeIf elseIfNode = visitNext(tokenizer, ctx);

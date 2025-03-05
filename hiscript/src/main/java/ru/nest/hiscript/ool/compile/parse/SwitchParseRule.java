@@ -12,7 +12,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +29,14 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 
 	@Override
 	public NodeSwitch visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.SWITCH, tokenizer) != null) {
+		if (visitWord(WordType.SWITCH, tokenizer) != null) {
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
 
 			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			while (true) {
-				if (visitWord(Words.CASE, tokenizer) != null) {
+				if (visitWord(WordType.CASE, tokenizer) != null) {
 					HiNode[] caseValue = visitCaseValue(tokenizer, ctx);
 					expectSymbol(tokenizer, SymbolType.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
@@ -45,7 +45,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 					continue;
 				}
 
-				if (visitWord(Words.DEFAULT, tokenizer) != null) {
+				if (visitWord(WordType.DEFAULT, tokenizer) != null) {
 					expectSymbol(tokenizer, SymbolType.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 
@@ -66,7 +66,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 		NodeExpression arg = ExpressionParseRule.castedIdentifierPriority.visit(tokenizer, ctx);
 		if (arg != null) {
 			NodeCastedIdentifier identifier = arg.checkCastedIdentifier();
-			if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
+			if (identifier != null && visitWord(WordType.WHEN, tokenizer) != null) {
 				identifier.castedCondition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			}
 			args.add(arg);
@@ -74,7 +74,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 				arg = ExpressionParseRule.castedIdentifierPriority.visit(tokenizer, ctx);
 				if (arg != null) {
 					identifier = arg.checkCastedIdentifier();
-					if (identifier != null && visitWord(Words.WHEN, tokenizer) != null) {
+					if (identifier != null && visitWord(WordType.WHEN, tokenizer) != null) {
 						identifier.castedCondition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					}
 					args.add(arg);

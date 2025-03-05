@@ -5,6 +5,7 @@ import ru.nest.hiscript.pol.model.CastNode;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class CastParseRule extends ParseRule<CastNode> {
 	private final static CastParseRule instance = new CastParseRule();
@@ -20,8 +21,8 @@ public class CastParseRule extends ParseRule<CastNode> {
 	public CastNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
-			int type = visitType(tokenizer);
-			if (type != -1) {
+			WordType type = visitType(tokenizer);
+			if (type != null) {
 				int dimension = visitDimension(tokenizer);
 
 				if (dimension == 0) {
@@ -45,8 +46,8 @@ public class CastParseRule extends ParseRule<CastNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		tokenizer.start();
 		if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_LEFT) != null) {
-			int type = visitType(tokenizer, handler);
-			if (type != -1) {
+			WordType type = visitType(tokenizer, handler);
+			if (type != null) {
 				int dimension = visitDimension(tokenizer, handler);
 				if (dimension == 0) {
 					if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_RIGHT) != null) {

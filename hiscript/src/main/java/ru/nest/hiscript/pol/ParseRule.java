@@ -23,10 +23,10 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public abstract class ParseRule<N extends Node> {
-	protected String visitWord(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected String visitWord(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -45,20 +45,20 @@ public abstract class ParseRule<N extends Node> {
 	}
 
 	protected NamespaceName visitNamespaceName(Tokenizer tokenizer) throws TokenizerException {
-		String name = visitWord(Words.NOT_SERVICE, tokenizer);
+		String name = visitWord(WordType.NOT_SERVICE, tokenizer);
 		if (name != null) {
 			NamespaceName namespaceName = new NamespaceName();
 			namespaceName.name = name;
 			if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				namespaceName.namespace = namespaceName.name;
-				namespaceName.name = visitWord(Words.NOT_SERVICE, tokenizer);
+				namespaceName.name = visitWord(WordType.NOT_SERVICE, tokenizer);
 			}
 			return namespaceName;
 		}
 		return null;
 	}
 
-	protected String visitWord(int type, Tokenizer tokenizer, CompileHandler handler) {
+	protected String visitWord(WordType type, Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
@@ -74,28 +74,26 @@ public abstract class ParseRule<N extends Node> {
 		return null;
 	}
 
-	protected int visitWords(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected WordType visitWords(Tokenizer tokenizer, WordType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-
-			for (int type : types) {
+			for (WordType type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected int visitWords(Tokenizer tokenizer, CompileHandler handler, int... types) {
+	protected WordType visitWords(Tokenizer tokenizer, CompileHandler handler, WordType... types) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
 				WordToken wordToken = (WordToken) currentToken;
-
-				for (int type : types) {
+				for (WordType type : types) {
 					if (wordToken.getType() == type) {
 						tokenizer.nextToken();
 						return type;
@@ -105,10 +103,10 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-		return -1;
+		return null;
 	}
 
-	protected int visitType(Tokenizer tokenizer) throws TokenizerException {
+	protected WordType visitType(Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -117,10 +115,10 @@ public abstract class ParseRule<N extends Node> {
 				return wordToken.getType();
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected int visitType(Tokenizer tokenizer, CompileHandler handler) {
+	protected WordType visitType(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof WordToken) {
@@ -133,7 +131,7 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-		return -1;
+		return null;
 	}
 
 	protected Node visitNumber(Tokenizer tokenizer) throws TokenizerException {
@@ -327,10 +325,10 @@ public abstract class ParseRule<N extends Node> {
 
 	protected VariableNode visitVariable(Tokenizer tokenizer) throws TokenizerException {
 		String namespace = null;
-		String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+		String variableName = visitWord(WordType.NOT_SERVICE, tokenizer);
 		if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 			namespace = variableName;
-			variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+			variableName = visitWord(WordType.NOT_SERVICE, tokenizer);
 		}
 
 		if (variableName != null) {
@@ -342,10 +340,10 @@ public abstract class ParseRule<N extends Node> {
 	protected VariableNode visitVariable(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			String namespace = null;
-			String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+			String variableName = visitWord(WordType.NOT_SERVICE, tokenizer);
 			if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				namespace = variableName;
-				variableName = visitWord(Words.NOT_SERVICE, tokenizer);
+				variableName = visitWord(WordType.NOT_SERVICE, tokenizer);
 			}
 
 			if (variableName != null) {

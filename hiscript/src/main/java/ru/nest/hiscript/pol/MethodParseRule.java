@@ -7,7 +7,7 @@ import ru.nest.hiscript.pol.model.MethodNode;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class MethodParseRule extends ParseRule<MethodNode> {
 	private final static MethodParseRule instance = new MethodParseRule();
@@ -23,10 +23,10 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 	public MethodNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 
-		int type = visitType(tokenizer);
-		if (type != -1) {
+		WordType type = visitType(tokenizer);
+		if (type != null) {
 			int dimension = visitDimension(tokenizer);
-			String name = visitWord(Words.NOT_SERVICE, tokenizer);
+			String name = visitWord(WordType.NOT_SERVICE, tokenizer);
 			if (name != null) {
 				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();
@@ -50,10 +50,10 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		tokenizer.start();
 
-		int type = visitType(tokenizer, handler);
-		if (type != -1) {
+		WordType type = visitType(tokenizer, handler);
+		if (type != null) {
 			visitDimension(tokenizer, handler);
-			String name = visitWord(Words.NOT_SERVICE, tokenizer, handler);
+			String name = visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 			if (name != null) {
 				if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();

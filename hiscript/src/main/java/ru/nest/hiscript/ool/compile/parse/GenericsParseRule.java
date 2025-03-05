@@ -10,13 +10,12 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.NOT_SERVICE;
-import static ru.nest.hiscript.tokenizer.Words.UNNAMED_VARIABLE;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class GenericsParseRule extends ParseRule<NodeGenerics> {
 	private final static GenericsParseRule instance = new GenericsParseRule();
@@ -48,9 +47,9 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 
 				boolean isSuper;
 				Type type;
-				int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
-				if (extendsType != -1) {
-					isSuper = extendsType == Words.SUPER;
+				WordType extendsType = visitWordType(tokenizer, EXTENDS, SUPER);
+				if (extendsType != null) {
+					isSuper = extendsType == SUPER;
 					Token typeToken = startToken(tokenizer);
 					type = visitType(tokenizer, false, ctx.getEnv());
 					if (type == null) {

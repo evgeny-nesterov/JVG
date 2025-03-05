@@ -18,8 +18,9 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
+import ru.nest.hiscript.tokenizer.WordType;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class AnnotationInterfaceParseRule extends ParserUtil {
 	private final static AnnotationInterfaceParseRule instance = new AnnotationInterfaceParseRule();
@@ -87,7 +88,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 		ctx.initClass();
 	}
 
-	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, int... allowed) throws TokenizerException, HiScriptParseException {
+	public HiMethod visitMethod(Tokenizer tokenizer, CompileClassContext ctx, WordType... allowed) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		Token startToken = startToken(tokenizer);
 		HiClass clazz = ctx.clazz;

@@ -4,11 +4,11 @@ import ru.nest.hiscript.tokenizer.OperationSymbols;
 import ru.nest.hiscript.tokenizer.SymbolToken;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
 
 import static ru.nest.hiscript.tokenizer.SymbolType.MINUS;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
-public class Operations extends OperationSymbols implements Words {
+public class Operations extends OperationSymbols {
 	public static void doOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		if (left.type == VOID || right.type == VOID) {
 			throw new ExecuteException("void type not allowed here");

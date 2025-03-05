@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ByteNode extends Node implements Value {
 	public ByteNode(byte value) {
@@ -20,7 +20,7 @@ public class ByteNode extends Node implements Value {
 
 	@Override
 	public void execute(RuntimeContext ctx) {
-		ctx.value.type = Words.BYTE;
+		ctx.value.type = WordType.BYTE;
 		ctx.value.dimension = 0;
 		ctx.value.byteNumber = value;
 	}

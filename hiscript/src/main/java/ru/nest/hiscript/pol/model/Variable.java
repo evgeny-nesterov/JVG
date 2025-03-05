@@ -1,7 +1,9 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 public class Variable {
-	public Variable(String namespace, String name, int type, int dimension) {
+	public Variable(String namespace, String name, WordType type, int dimension) {
 		if (namespace != null && namespace.length() > 0) {
 			this.fullname = namespace + "." + name;
 		} else {

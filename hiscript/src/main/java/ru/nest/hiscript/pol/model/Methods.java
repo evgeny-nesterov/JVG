@@ -1,5 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.WordType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.Map;
 public class Methods {
 	private Map<String, Map<String, Map<Integer, List<Method>>>> hash_methods = null;
 
-	public Method get(String namespace, String name, int[] argsTypes, int[] argsDimensions) {
+	public Method get(String namespace, String name, WordType[] argsTypes, int[] argsDimensions) {
 		if (hash_methods == null) {
 			return null;
 		}

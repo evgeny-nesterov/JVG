@@ -9,7 +9,7 @@ import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class AssertParseRule extends ParseRule<NodeAssert> {
 	private final static AssertParseRule instance = new AssertParseRule();
@@ -23,7 +23,7 @@ public class AssertParseRule extends ParseRule<NodeAssert> {
 
 	@Override
 	public NodeAssert visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.ASSERT, tokenizer) != null) {
+		if (visitWord(WordType.ASSERT, tokenizer) != null) {
 			NodeExpression condition = expectExpression(tokenizer, ctx);
 			// TODO check condition.getExpressionType() on boolean type
 

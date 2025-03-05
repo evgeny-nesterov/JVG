@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.pol.model.ContinueNode;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class ContinueParseRule extends ParseRule<ContinueNode> {
 	private final static ContinueParseRule instance = new ContinueParseRule();
@@ -17,8 +17,8 @@ public class ContinueParseRule extends ParseRule<ContinueNode> {
 
 	@Override
 	public ContinueNode visit(Tokenizer tokenizer) throws TokenizerException {
-		if (visitWord(Words.CONTINUE, tokenizer) != null) {
-			String mark = visitWord(Words.NOT_SERVICE, tokenizer);
+		if (visitWord(WordType.CONTINUE, tokenizer) != null) {
+			String mark = visitWord(WordType.NOT_SERVICE, tokenizer);
 			return new ContinueNode(mark);
 		}
 		return null;
@@ -26,8 +26,8 @@ public class ContinueParseRule extends ParseRule<ContinueNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.CONTINUE, tokenizer, handler) != null) {
-			visitWord(Words.NOT_SERVICE, tokenizer, handler);
+		if (visitWord(WordType.CONTINUE, tokenizer, handler) != null) {
+			visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 			return true;
 		}
 

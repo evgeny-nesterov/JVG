@@ -40,7 +40,7 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class ParserUtil {
 	public static void skipSymbols(Tokenizer tokenizer, String symbol) throws TokenizerException {
@@ -66,12 +66,12 @@ public class ParserUtil {
 		return tokenizer.currentToken();
 	}
 
-	protected static String visitWord(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected static String visitWord(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		WordToken token = visitWordToken(type, tokenizer);
 		return token != null ? token.getWord() : null;
 	}
 
-	protected static WordToken visitWordToken(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected static WordToken visitWordToken(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -83,7 +83,7 @@ public class ParserUtil {
 		return null;
 	}
 
-	protected static boolean checkWord(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected static boolean checkWord(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
@@ -94,12 +94,12 @@ public class ParserUtil {
 		return false;
 	}
 
-	protected static String expectWord(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected static String expectWord(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		WordToken token = expectWordToken(type, tokenizer);
 		return token != null ? token.getWord() : null;
 	}
 
-	protected static WordToken expectWordToken(int type, Tokenizer tokenizer) throws TokenizerException {
+	protected static WordToken expectWordToken(WordType type, Tokenizer tokenizer) throws TokenizerException {
 		WordToken token = visitWordToken(type, tokenizer);
 		if (token == null) {
 			if (type != NOT_SERVICE && type != UNNAMED_VARIABLE) {
@@ -111,7 +111,7 @@ public class ParserUtil {
 		return token;
 	}
 
-	protected static String expectWords(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static String expectWords(Tokenizer tokenizer, WordType... types) throws TokenizerException {
 		if (types.length == 1) {
 			return expectWord(types[0], tokenizer);
 		}
@@ -119,7 +119,7 @@ public class ParserUtil {
 		String word = visitWord(tokenizer, types);
 		if (word == null) {
 			String message = "";
-			for (int type : types) {
+			for (WordType type : types) {
 				if (message.length() > 0) {
 					message += " or ";
 				}
@@ -135,25 +135,25 @@ public class ParserUtil {
 		return word;
 	}
 
-	protected static int visitWordType(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static WordType visitWordType(Tokenizer tokenizer, WordType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-			for (int type : types) {
+			for (WordType type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected static String visitWord(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static String visitWord(Tokenizer tokenizer, WordType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-			for (int type : types) {
+			for (WordType type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
 					return wordToken.getWord();
@@ -163,18 +163,18 @@ public class ParserUtil {
 		return null;
 	}
 
-	protected static int visitServiceWord(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static WordType visitServiceWord(Tokenizer tokenizer, WordType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof WordToken) {
 			WordToken wordToken = (WordToken) currentToken;
-			for (int type : types) {
+			for (WordType type : types) {
 				if (wordToken.getType() == type) {
 					tokenizer.nextToken();
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
 	protected static String visitAnnotationWord(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
@@ -243,11 +243,11 @@ public class ParserUtil {
 			}
 		} else if (visitSymbol(tokenizer, SymbolType.QUESTION) != null) {
 			Type extendedType = Type.objectType;
-			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
-			if (extendsType != -1) {
+			WordType extendsType = visitWordType(tokenizer, WordType.EXTENDS, WordType.SUPER);
+			if (extendsType != null) {
 				extendedType = visitObjectType(tokenizer, env);
 			}
-			type = Type.getExtendedType(extendedType, extendsType == Words.SUPER);
+			type = Type.getExtendedType(extendedType, extendsType == WordType.SUPER);
 		}
 		return type;
 	}
@@ -441,11 +441,11 @@ public class ParserUtil {
 		Token startToken = startToken(tokenizer);
 		Modifiers.Changeable modifiers = null;
 		List<NodeAnnotation> annotations = null;
-		int word;
+		WordType word;
 		while (true) {
 			annotations = AnnotationParseRule.getInstance().visitAnnotations(tokenizer, ctx, annotations);
 
-			if ((word = visitWordType(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != -1) {
+			if ((word = visitWordType(tokenizer, PUBLIC, PROTECTED, PRIVATE)) != null) {
 				if (modifiers != null && !modifiers.isDefaultAccess()) {
 					tokenizer.error("illegal combination of modifiers: '" + modifiers.getName(modifiers.getAccess()) + "' and '" + Modifiers.mapWordsToModification(word) + "'");
 				}
@@ -458,7 +458,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (visitWordType(tokenizer, FINAL) != -1) {
+			if (visitWordType(tokenizer, FINAL) != null) {
 				if (modifiers != null && modifiers.isFinal()) {
 					tokenizer.error("illegal combination of modifiers: 'final' and 'final'");
 				}
@@ -471,7 +471,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (visitWordType(tokenizer, STATIC) != -1) {
+			if (visitWordType(tokenizer, STATIC) != null) {
 				if (modifiers != null && modifiers.isStatic()) {
 					tokenizer.error("illegal combination of modifiers: 'static' and 'static'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
@@ -488,7 +488,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (visitWordType(tokenizer, NATIVE) != -1) {
+			if (visitWordType(tokenizer, NATIVE) != null) {
 				if (modifiers != null && modifiers.isNative()) {
 					tokenizer.error("illegal combination of modifiers: 'native' and 'native'");
 				} else if (modifiers != null && modifiers.isDefault()) {
@@ -503,7 +503,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (visitWordType(tokenizer, ABSTRACT) != -1) {
+			if (visitWordType(tokenizer, ABSTRACT) != null) {
 				if (modifiers != null && modifiers.isAbstract()) {
 					tokenizer.error("illegal combination of modifiers: 'abstract' and 'abstract'");
 				} else if (modifiers != null && modifiers.isDefault()) {
@@ -520,7 +520,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (visitWordType(tokenizer, DEFAULT) != -1) {
+			if (visitWordType(tokenizer, DEFAULT) != null) {
 				if (modifiers != null && modifiers.isDefault()) {
 					tokenizer.error("illegal combination of modifiers: 'default' and 'default'");
 				} else if (modifiers != null && modifiers.isAbstract()) {
@@ -539,7 +539,7 @@ public class ParserUtil {
 				continue;
 			}
 
-			if (sync && visitWordType(tokenizer, SYNCHRONIZED) != -1) {
+			if (sync && visitWordType(tokenizer, SYNCHRONIZED) != null) {
 				if (modifiers == null) {
 					modifiers = new Modifiers.Changeable();
 				}
@@ -552,7 +552,7 @@ public class ParserUtil {
 		return new AnnotatedModifiers(annotations != null ? annotations.toArray(new NodeAnnotation[annotations.size()]) : null, modifiers, tokenizer.getBlockToken(startToken));
 	}
 
-	public static boolean checkModifiers(Tokenizer tokenizer, Modifiers m, Token modifiersToken, int... allowed) throws TokenizerException {
+	public static boolean checkModifiers(Tokenizer tokenizer, Modifiers m, Token modifiersToken, WordType... allowed) throws TokenizerException {
 		return m.check(tokenizer, modifiersToken, allowed);
 	}
 

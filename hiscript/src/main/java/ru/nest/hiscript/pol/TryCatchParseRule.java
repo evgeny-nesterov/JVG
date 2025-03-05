@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.TryCatchNode;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 	private final static TryCatchParseRule instance = new TryCatchParseRule();
@@ -20,7 +20,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 
 	@Override
 	public TryCatchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.TRY, tokenizer) != null) {
+		if (visitWord(WordType.TRY, tokenizer) != null) {
 			expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 			BlockNode tryBody = BlockParseRule.getInstance().visit(tokenizer);
 			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
@@ -28,14 +28,14 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			BlockNode catchBody = null;
 			String errorVariableName = null;
 			boolean thereIsCatch = false;
-			if (visitWord(Words.CATCH, tokenizer) != null) {
+			if (visitWord(WordType.CATCH, tokenizer) != null) {
 				thereIsCatch = true;
 
 				expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
-				if (visitWord(Words.STRING, tokenizer) == null) {
+				if (visitWord(WordType.STRING, tokenizer) == null) {
 					throw new HiScriptParseException("'string' expected", tokenizer.currentToken());
 				}
-				errorVariableName = visitWord(Words.NOT_SERVICE, tokenizer);
+				errorVariableName = visitWord(WordType.NOT_SERVICE, tokenizer);
 				if (errorVariableName == null) {
 					throw new HiScriptParseException("variable expected", tokenizer.currentToken());
 				}
@@ -48,7 +48,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 
 			BlockNode finallyBody = null;
 			boolean thereIsFinally = false;
-			if (visitWord(Words.FINALLY, tokenizer) != null) {
+			if (visitWord(WordType.FINALLY, tokenizer) != null) {
 				thereIsFinally = true;
 				expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 				finallyBody = BlockParseRule.getInstance().visit(tokenizer);
@@ -65,21 +65,21 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.TRY, tokenizer, handler) != null) {
+		if (visitWord(WordType.TRY, tokenizer, handler) != null) {
 			expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 
 			String errorVariableName;
 			boolean thereIsCatch = false;
-			if (visitWord(Words.CATCH, tokenizer, handler) != null) {
+			if (visitWord(WordType.CATCH, tokenizer, handler) != null) {
 				thereIsCatch = true;
 
 				expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
-				if (visitWord(Words.STRING, tokenizer, handler) == null) {
+				if (visitWord(WordType.STRING, tokenizer, handler) == null) {
 					errorOccurred(tokenizer, handler, "'string' expected");
 				}
-				errorVariableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
+				errorVariableName = visitWord(WordType.NOT_SERVICE, tokenizer, handler);
 				if (errorVariableName == null) {
 					errorOccurred(tokenizer, handler, "variable expected");
 				}
@@ -91,7 +91,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			}
 
 			boolean thereIsFinally = false;
-			if (visitWord(Words.FINALLY, tokenizer, handler) != null) {
+			if (visitWord(WordType.FINALLY, tokenizer, handler) != null) {
 				thereIsFinally = true;
 				expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 				BlockParseRule.getInstance().visit(tokenizer, handler);

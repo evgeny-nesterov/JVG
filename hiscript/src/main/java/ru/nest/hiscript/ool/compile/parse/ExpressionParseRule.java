@@ -32,11 +32,12 @@ import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.WordToken;
+import ru.nest.hiscript.tokenizer.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.nest.hiscript.tokenizer.Words.*;
+import static ru.nest.hiscript.tokenizer.WordType.*;
 
 public class ExpressionParseRule extends ParseRule<NodeExpression> {
 	public final static ExpressionParseRule methodPriority = new ExpressionParseRule(Priority.method);
@@ -295,32 +296,32 @@ public class ExpressionParseRule extends ParseRule<NodeExpression> {
 		}
 
 		// visit boolean
-		int boolType = visitWordType(tokenizer, TRUE, FALSE);
-		if (boolType != -1) {
+		WordType boolType = visitWordType(tokenizer, TRUE, FALSE);
+		if (boolType != null) {
 			operands.add(NodeBoolean.getInstance(boolType == TRUE, startToken));
 			return true;
 		}
 
 		// visit null
-		if (visitWordType(tokenizer, NULL) != -1) {
+		if (visitWordType(tokenizer, NULL) != null) {
 			operands.add(NodeNull.instance);
 			return true;
 		}
 
 		// visit this
-		if (visitWordType(tokenizer, THIS) != -1) {
+		if (visitWordType(tokenizer, THIS) != null) {
 			operands.add(new NodeThis());
 			return true;
 		}
 
 		// visit super
-		if (visitWordType(tokenizer, SUPER) != -1) {
+		if (visitWordType(tokenizer, SUPER) != null) {
 			operands.add(new NodeSuper());
 			return true;
 		}
 
 		// visit class
-		if (visitWordType(tokenizer, CLASS) != -1) {
+		if (visitWordType(tokenizer, CLASS) != null) {
 			operands.add(new NodeGetClass());
 			return true;
 		}

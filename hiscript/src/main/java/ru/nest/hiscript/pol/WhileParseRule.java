@@ -6,7 +6,7 @@ import ru.nest.hiscript.pol.model.WhileNode;
 import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
-import ru.nest.hiscript.tokenizer.Words;
+import ru.nest.hiscript.tokenizer.WordType;
 
 public class WhileParseRule extends ParseRule<WhileNode> {
 	private final static WhileParseRule instance = new WhileParseRule();
@@ -20,7 +20,7 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 
 	@Override
 	public WhileNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitWord(Words.WHILE, tokenizer) != null) {
+		if (visitWord(WordType.WHILE, tokenizer) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
@@ -42,7 +42,7 @@ public class WhileParseRule extends ParseRule<WhileNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		if (visitWord(Words.WHILE, tokenizer, handler) != null) {
+		if (visitWord(WordType.WHILE, tokenizer, handler) != null) {
 			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
