@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.InvocationNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -24,13 +24,13 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 
 		String namespace = null;
 		String methodName = visitWord(Words.NOT_SERVICE, tokenizer);
-		if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 			namespace = methodName;
 			methodName = visitWord(Words.NOT_SERVICE, tokenizer);
 		}
 
 		if (methodName != null) {
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 				tokenizer.commit();
 				InvocationNode node = new InvocationNode(namespace, methodName);
 
@@ -38,7 +38,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 				if (argument != null) {
 					node.addArgument(argument);
 
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						argument = ExpressionParseRule.getInstance().visit(tokenizer);
 						if (argument == null) {
 							throw new HiScriptParseException("Argument is expected", tokenizer.currentToken());
@@ -47,7 +47,7 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 					}
 				}
 
-				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
+				expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
 				return node;
 			}
 		}
@@ -62,25 +62,25 @@ public class InvocationParseRule extends ParseRule<InvocationNode> {
 
 		// TODO String namespace = null;
 		String methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
-		if (visitSymbol(tokenizer, handler, Symbols.POINT) != -1) {
+		if (visitSymbol(tokenizer, handler, SymbolType.POINT) != null) {
 			// TODO namespace = methodName;
 			methodName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 		}
 
 		// String methodName = visitWord(WordToken.NOT_SERVICE, tokenizer, handler);
 		if (methodName != null) {
-			if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_LEFT) != null) {
 				tokenizer.commit();
 
 				if (ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
-					while (visitSymbol(tokenizer, handler, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, handler, SymbolType.COMMA) != null) {
 						if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 							errorOccurred(tokenizer, handler, "Argument is expected");
 						}
 					}
 				}
 
-				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
 				return true;
 			}
 		}

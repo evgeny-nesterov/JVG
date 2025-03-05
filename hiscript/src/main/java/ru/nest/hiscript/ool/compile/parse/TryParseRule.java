@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeCatch;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeTry;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -33,7 +33,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 	public NodeTry visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(TRY, tokenizer) != null) {
 			NodeDeclaration[] resources = null;
-			if (checkSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+			if (checkSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 				tokenizer.nextToken();
 
 				List<NodeDeclaration> resourcesList = new ArrayList<>(1);
@@ -43,7 +43,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				} else {
 					tokenizer.error("declaration expected");
 				}
-				while (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+				while (checkSymbol(tokenizer, SymbolType.SEMICOLON) != null) {
 					tokenizer.nextToken();
 					resource = DeclarationParseRule.getInstance().visitSingle(tokenizer, ctx, true);
 					if (resource != null) {
@@ -53,12 +53,12 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					}
 				}
 				resources = resourcesList.toArray(new NodeDeclaration[resourcesList.size()]);
-				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 			}
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 			HiNode tryBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 
 			List<NodeCatch> catchNodes = null;
 			while (true) {
@@ -67,7 +67,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 				String excName;
 				Token startCatchToken = startToken(tokenizer);
 				if (visitWord(CATCH, tokenizer) != null) {
-					expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 
 					AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), FINAL);
@@ -75,7 +75,7 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					Type excType = visitObjectType(tokenizer, ctx.getEnv());
 					// TODO check excType extends Exception
 					excTypes.add(excType);
-					while (visitSymbol(tokenizer, Symbols.BITWISE_OR) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.BITWISE_OR) != null) {
 						excType = visitObjectType(tokenizer, ctx.getEnv());
 						// TODO check excType extends Exception
 						excTypes.add(excType);
@@ -84,11 +84,11 @@ public class TryParseRule extends ParseRule<NodeTry> {
 					if (excName == null) {
 						tokenizer.error("identifier is expected");
 					}
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
-					expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+					expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 					catchBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 
 					if (catchNodes == null) {
 						catchNodes = new ArrayList<>(1);
@@ -106,9 +106,9 @@ public class TryParseRule extends ParseRule<NodeTry> {
 
 			HiNode finallyBody = null;
 			if (visitWord(FINALLY, tokenizer) != null) {
-				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+				expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 				finallyBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
-				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			}
 			return new NodeTry(tryBody, catchNodes != null ? catchNodes.toArray(new NodeCatch[catchNodes.size()]) : null, finallyBody, resources);
 		}

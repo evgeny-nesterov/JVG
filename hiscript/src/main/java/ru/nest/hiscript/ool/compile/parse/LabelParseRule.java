@@ -5,7 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeLabel;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -29,7 +29,7 @@ public class LabelParseRule extends ParseRule<NodeLabel> {
 
 		String label;
 		if ((label = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE)) != null) {
-			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.COLON) != null) {
 				tokenizer.commit();
 				HiNode body = expectBody(tokenizer, ctx);
 				return new NodeLabel(label, body);

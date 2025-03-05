@@ -8,7 +8,7 @@ import ru.nest.hiscript.ool.model.HiClass;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeClass;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -30,7 +30,7 @@ public class StatementParseRule extends ParseRule<HiNode> {
 	@Override
 	public HiNode visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		int emptyCount = 0;
-		while (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+		while (visitSymbol(tokenizer, SymbolType.SEMICOLON) != null) {
 			emptyCount++;
 		}
 		if (emptyCount > 0) {
@@ -114,9 +114,9 @@ public class StatementParseRule extends ParseRule<HiNode> {
 			return node;
 		}
 
-		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			node = BlockParseRule.getInstance().visit(tokenizer, ctx);
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			if (node != null) {
 				return node;
 			} else {
@@ -127,7 +127,7 @@ public class StatementParseRule extends ParseRule<HiNode> {
 		// expression has to be parsed at the end
 		if ((node = ExpressionParseRule.methodPriority.visit(tokenizer, ctx)) != null) {
 			node.setStatement(true);
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			return node;
 		}
 		return null;

@@ -1,7 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
@@ -983,7 +983,7 @@ public class ValueContainer implements Words {
 		}
 	}
 
-	public void setArrayValue(int[] indexes, ValueContainer value, int equateType) throws ExecuteException {
+	public void setArrayValue(int[] indexes, ValueContainer value, SymbolType equateType) throws ExecuteException {
 		int deltaDimension = dimension - indexes.length;
 		if (deltaDimension != value.dimension) {
 			throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + value.getTypeDescr());
@@ -999,7 +999,7 @@ public class ValueContainer implements Words {
 				throw new ExecuteException("incompatible types; found " + getTypeDescr() + ", required " + value.getTypeDescr());
 			}
 
-			if (equateType != Symbols.EQUATE) {
+			if (equateType != SymbolType.EQUATE) {
 				throw new ExecuteException("operator " + SymbolToken.getSymbol(equateType) + " can not be applied to " + getTypeDescr() + ", " + value.getTypeDescr());
 			}
 

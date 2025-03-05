@@ -8,7 +8,7 @@ import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.TypeArgumentIF;
 import ru.nest.hiscript.ool.model.TypeVarargs;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -32,7 +32,7 @@ public class MethodArgumentParseRule extends ParseRule<NodeArgument> {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
 		Type type = visitType(tokenizer, true, ctx.getEnv());
 		if (type != null) {
-			boolean vararg = visitSymbol(tokenizer, Symbols.TRIPLE_POINTS) != -1;
+			boolean vararg = visitSymbol(tokenizer, SymbolType.TRIPLE_POINTS) != null;
 			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
 				tokenizer.commit();

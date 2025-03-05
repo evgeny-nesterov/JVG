@@ -5,7 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -29,9 +29,9 @@ public class InvocationParseRule extends ParseRule<NodeInvocation> {
 
 		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 				HiNode[] args = visitArgumentsValues(tokenizer, ctx);
-				if (checkSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) != -1) {
+				if (checkSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT) != null) {
 					tokenizer.nextToken();
 					tokenizer.commit();
 					return new NodeInvocation(name, args);

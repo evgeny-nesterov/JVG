@@ -12,8 +12,8 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.HiNodeIF;
 import ru.nest.hiscript.ool.model.HiOperation;
 import ru.nest.hiscript.ool.model.Modifiers;
-import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.OperationType;
+import ru.nest.hiscript.ool.model.OperationsGroup;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.classes.HiClassRecord;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
@@ -25,7 +25,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeInvocation;
 import ru.nest.hiscript.ool.model.nodes.NodeReturn;
 import ru.nest.hiscript.ool.model.nodes.NodeThis;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -67,7 +67,7 @@ public class RecordParseRule extends ParserUtil {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
 			}
 
-			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+			expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 
 			List<NodeArgument> arguments = new ArrayList<>();
 			Token token = tokenizer.currentToken();
@@ -75,7 +75,7 @@ public class RecordParseRule extends ParserUtil {
 			if (arguments.size() == 0) {
 				tokenizer.error("record argument expected", token);
 			}
-			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
 			// parse 'extends'
 			if (checkWord(EXTENDS, tokenizer)) {
@@ -87,10 +87,10 @@ public class RecordParseRule extends ParserUtil {
 			Type[] interfaces = ClassParseRule.visitImplements(tokenizer, ctx);
 
 			boolean hasContent = false;
-			if (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+			if (checkSymbol(tokenizer, SymbolType.SEMICOLON) != null) {
 				tokenizer.nextToken();
 			} else {
-				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+				expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 				hasContent = true;
 			}
 
@@ -139,7 +139,7 @@ public class RecordParseRule extends ParserUtil {
 					// TODO parse specific content
 					return false;
 				});
-				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			} else {
 				ctx.initClass();
 			}

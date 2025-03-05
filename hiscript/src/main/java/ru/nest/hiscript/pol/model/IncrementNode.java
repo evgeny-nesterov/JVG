@@ -1,11 +1,13 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.SymbolType;
+
 public class IncrementNode extends Node implements Value {
 	public final static int INCREMENT_PREFIX = 0;
 
 	public final static int INCREMENT_POSTFIX = 1;
 
-	public IncrementNode(VariableNode value, int incrementType, int incrementOperation) {
+	public IncrementNode(VariableNode value, int incrementType, SymbolType incrementOperation) {
 		super("increment");
 		this.value = value;
 		this.incrementType = incrementType;
@@ -16,7 +18,7 @@ public class IncrementNode extends Node implements Value {
 
 	private final int incrementType;
 
-	private final int incrementOperation;
+	private final SymbolType incrementOperation;
 
 	@Override
 	public void compile() {

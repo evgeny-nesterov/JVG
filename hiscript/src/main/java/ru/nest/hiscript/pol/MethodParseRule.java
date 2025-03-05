@@ -4,7 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.ArgumentsNode;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.MethodNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -28,14 +28,14 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 			int dimension = visitDimension(tokenizer);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer);
 			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();
 					ArgumentsNode arguments = ArgumentsParseRule.getInstance().visit(tokenizer);
-					expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
+					expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
 
-					expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+					expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 					BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
-					expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+					expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 
 					return new MethodNode(name, type, dimension, arguments, body);
 				}
@@ -55,14 +55,14 @@ public class MethodParseRule extends ParseRule<MethodNode> {
 			visitDimension(tokenizer, handler);
 			String name = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			if (name != null) {
-				if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();
 					ArgumentsParseRule.getInstance().visit(tokenizer, handler);
-					expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
+					expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
 
-					expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+					expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 					BlockParseRule.getInstance().visit(tokenizer, handler);
-					expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+					expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 
 					return true;
 				}

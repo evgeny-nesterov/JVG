@@ -13,7 +13,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -46,32 +46,34 @@ public class NewParseRule extends ParseRule<HiNode> {
 				generics.setSourceType(NodeGeneric.GenericSourceType.classSource);
 			}
 
-			int braceType = visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT, Symbols.SQUARE_BRACES_LEFT, Symbols.MASSIVE);
+			SymbolType braceType = visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT, SymbolType.SQUARE_BRACES_LEFT, SymbolType.MASSIVE);
 			HiNode node = null;
-			switch (braceType) {
-				case Symbols.PARENTHESES_LEFT:
-					// new Type<generics>(arg1, ...)
-					if (type.isPrimitive()) {
-						tokenizer.error("'[' expected"); // primitive array expected
-					}
-					node = visitNewObject(tokenizer, type, generics, ctx, startToken);
-					break;
+			if (braceType != null) {
+				switch (braceType) {
+					case PARENTHESES_LEFT:
+						// new Type<generics>(arg1, ...)
+						if (type.isPrimitive()) {
+							tokenizer.error("'[' expected"); // primitive array expected
+						}
+						node = visitNewObject(tokenizer, type, generics, ctx, startToken);
+						break;
 
-				case Symbols.SQUARE_BRACES_LEFT:
-					// new Type[size1][size2]...[]...
-					if (generics != null) {
-						tokenizer.error("generic array creation", generics.getToken());
-					}
-					node = visitNewArray(tokenizer, type, ctx);
-					break;
+					case SQUARE_BRACES_LEFT:
+						// new Type[size1][size2]...[]...
+						if (generics != null) {
+							tokenizer.error("generic array creation", generics.getToken());
+						}
+						node = visitNewArray(tokenizer, type, ctx);
+						break;
 
-				case Symbols.MASSIVE:
-					// new Type[]...[]{{...},...}
-					if (generics != null) {
-						tokenizer.error("generic array creation", generics.getToken());
-					}
-					node = visitNewArrayValue(tokenizer, type, ctx);
-					break;
+					case MASSIVE:
+						// new Type[]...[]{{...},...}
+						if (generics != null) {
+							tokenizer.error("generic array creation", generics.getToken());
+						}
+						node = visitNewArrayValue(tokenizer, type, ctx);
+						break;
+				}
 			}
 			return node;
 		}
@@ -82,16 +84,16 @@ public class NewParseRule extends ParseRule<HiNode> {
 	private HiNode visitNewObject(Tokenizer tokenizer, Type type, NodeGenerics generics, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		HiNode[] arguments = visitArgumentsValues(tokenizer, ctx);
 
-		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+		expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
-		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			CompileClassContext innerCtx = new CompileClassContext(ctx, ctx.clazz, ctx.type, ClassLocationType.anonymous);
 			innerCtx.clazz = new HiClass(ctx.getClassLoader(), type, ctx.clazz, null, "", generics, ClassLocationType.anonymous, ctx);
 
 			// TODO: do not allow parse constructors. ??? name is empty => constructors will be not found
 			ClassParseRule.getInstance().visitContent(tokenizer, innerCtx, null);
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 
 			innerCtx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			return new NodeConstructor(innerCtx.clazz, type, arguments);
@@ -109,15 +111,15 @@ public class NewParseRule extends ParseRule<HiNode> {
 		if (index == null) {
 			tokenizer.error("index is expected");
 		}
-		expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
+		expectSymbol(tokenizer, SymbolType.SQUARE_BRACES_RIGHT);
 		indexes.add(index);
 
 		while (true) {
-			if (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.SQUARE_BRACES_LEFT) != null) {
 				index = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 				indexes.add(index);
-				expectSymbol(tokenizer, Symbols.SQUARE_BRACES_RIGHT);
-			} else if (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
+				expectSymbol(tokenizer, SymbolType.SQUARE_BRACES_RIGHT);
+			} else if (visitSymbol(tokenizer, SymbolType.MASSIVE) != null) {
 				if (indexes.size() == 0) {
 					tokenizer.error("index is expected");
 				}
@@ -146,7 +148,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 
 	public NodeArrayValue visitArrayValue(Tokenizer tokenizer, Type type, int requiredDimensions, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
 		Token startToken = startToken(tokenizer);
-		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			if (requiredDimensions > 0) {
 				List<HiNode> list = new ArrayList<>(1);
 				int actualDimensions = Integer.MAX_VALUE;
@@ -156,7 +158,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 					if (actualDimensions > 0) {
 						actualDimensions = Math.min(cell.getArrayDimension(), actualDimensions);
 					}
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						cell = visitCell(tokenizer, type, requiredDimensions - 1, ctx);
 						if (cell != null) {
 							if (actualDimensions > 0) {
@@ -172,7 +174,7 @@ public class NewParseRule extends ParseRule<HiNode> {
 					actualDimensions = 1;
 				}
 
-				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 
 				HiNode[] array = new HiNode[list.size()];
 				list.toArray(array);

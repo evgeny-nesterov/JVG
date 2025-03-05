@@ -9,7 +9,7 @@ import ru.nest.hiscript.pol.model.PrefixNode;
 import ru.nest.hiscript.pol.model.TriggerNode;
 import ru.nest.hiscript.tokenizer.OperationSymbols;
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -37,8 +37,8 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			ArrayIndexesNode index = ArrayIndexesParseRule.getInstance().visit(tokenizer);
 			ExpressionNode node = new ExpressionNode(prefix, value, index);
 
-			int operation;
-			while ((operation = visitOperation(tokenizer)) != -1) {
+			SymbolType operation;
+			while ((operation = visitOperation(tokenizer)) != null) {
 				prefix = PrefixParseRule.getInstance().visit(tokenizer);
 				value = visitSimpleExpression(tokenizer);
 				if (value == null) {
@@ -49,13 +49,13 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			}
 
 			// visit trigger
-			if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.QUESTION) != null) {
 				Node trueValue = visit(tokenizer);
 				if (trueValue == null) {
 					throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 				}
 
-				expectSymbol(Symbols.COLON, tokenizer);
+				expectSymbol(SymbolType.COLON, tokenizer);
 
 				Node falseValue = visit(tokenizer);
 				if (falseValue == null) {
@@ -83,7 +83,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		if (value) {
 			ArrayIndexesParseRule.getInstance().visit(tokenizer, handler);
 
-			while (visitOperation(tokenizer, handler) != -1) {
+			while (visitOperation(tokenizer, handler) != null) {
 				prefix = PrefixParseRule.getInstance().visit(tokenizer, handler);
 				value = visitSimpleExpression(tokenizer, handler);
 				if (!value) {
@@ -93,13 +93,13 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 			}
 
 			// visit trigger
-			if (visitSymbol(tokenizer, handler, Symbols.QUESTION) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.QUESTION) != null) {
 				boolean trueValue = visit(tokenizer, handler);
 				if (!trueValue) {
 					errorOccurred(tokenizer, handler, "expression expected");
 				}
 
-				expectSymbol(Symbols.COLON, tokenizer, handler);
+				expectSymbol(SymbolType.COLON, tokenizer, handler);
 
 				boolean falseValue = visit(tokenizer, handler);
 				if (!falseValue) {
@@ -155,7 +155,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 			ExpressionNode enode = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (enode == null) {
 				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
@@ -167,7 +167,7 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				node = enode;
 			}
 
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
 			return node;
 		}
 		return null;
@@ -216,18 +216,18 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		}
 
 		// visit block
-		if (visitSymbol(tokenizer, handler, Symbols.PARENTHESES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, handler, SymbolType.PARENTHESES_LEFT) != null) {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
 			}
 
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
 			return true;
 		}
 		return false;
 	}
 
-	private int visitOperation(Tokenizer tokenizer) throws TokenizerException {
+	private SymbolType visitOperation(Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -236,10 +236,10 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 				return symbolToken.getType();
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	private int visitOperation(Tokenizer tokenizer, CompileHandler handler) {
+	private SymbolType visitOperation(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
@@ -252,6 +252,6 @@ public class ExpressionParseRule extends ParseRule<ExpressionNode> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-		return -1;
+		return null;
 	}
 }

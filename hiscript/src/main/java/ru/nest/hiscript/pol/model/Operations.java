@@ -2,12 +2,14 @@ package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.OperationSymbols;
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.WordToken;
 import ru.nest.hiscript.tokenizer.Words;
 
-public class Operations extends OperationSymbols implements Words, Symbols {
-	public static void doOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+import static ru.nest.hiscript.tokenizer.SymbolType.MINUS;
+
+public class Operations extends OperationSymbols implements Words {
+	public static void doOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		if (left.type == VOID || right.type == VOID) {
 			throw new ExecuteException("void type not allowed here");
 		} else if ((!left.isArray() && left.type == STRING) || (!right.isArray() && right.type == STRING)) {
@@ -72,7 +74,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doArrayOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doArrayOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		if (left.dimension == right.dimension && left.type == right.type) {
 			switch (operation) {
 				case EQUATE:
@@ -96,7 +98,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		throw new ExecuteException("operator '" + SymbolToken.getSymbol(operation) + "' can not be applied to " + left.getTypeDescr() + ", " + right.getTypeDescr());
 	}
 
-	public static void doStringOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doStringOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case PLUS:
 			case EQUATE_PLUS:
@@ -125,7 +127,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doBooleanOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doBooleanOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case LOGICAL_AND:
 				left.bool = left.getBoolean() && right.getBoolean();
@@ -176,7 +178,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doDoubleOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doDoubleOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case GREATER:
 				left.bool = left.getDouble() > right.getDouble();
@@ -249,7 +251,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doFloatOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doFloatOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case GREATER:
 				left.bool = left.getFloat() > right.getFloat();
@@ -322,7 +324,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doLongOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doLongOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case GREATER:
 				left.bool = left.getLong() > right.getLong();
@@ -431,7 +433,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doIntOperation(ValueContainer left, ValueContainer right, int operation) throws ExecuteException {
+	public static void doIntOperation(ValueContainer left, ValueContainer right, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case GREATER:
 				left.bool = left.getInt() > right.getInt();
@@ -545,7 +547,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doPrefixOperation(ValueContainer value, int operation) throws ExecuteException {
+	public static void doPrefixOperation(ValueContainer value, SymbolType operation) throws ExecuteException {
 		switch (operation) {
 			case PLUS:
 			case MINUS:
@@ -584,7 +586,7 @@ public class Operations extends OperationSymbols implements Words, Symbols {
 		}
 	}
 
-	public static void doIncrementOperation(ValueContainer value, int operation) throws ExecuteException {
+	public static void doIncrementOperation(ValueContainer value, SymbolType operation) throws ExecuteException {
 		switch (value.type) {
 			case DOUBLE:
 				switch (operation) {

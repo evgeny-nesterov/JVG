@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.DeclarationsNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -28,7 +28,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 
 			String namespace = null;
 			String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
-			if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				namespace = variableName;
 				variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 			}
@@ -40,7 +40,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				DeclarationsNode node = new DeclarationsNode(type);
 
 				Node value = null;
-				if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 					value = ExpressionParseRule.getInstance().visit(tokenizer);
 					if (value == null) {
 						throw new HiScriptParseException("expression expected", tokenizer.currentToken());
@@ -48,14 +48,14 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				}
 				node.addVariable(namespace, variableName, dimension, value);
 
-				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 					if ((variableName = visitWord(Words.NOT_SERVICE, tokenizer)) == null) {
 						throw new HiScriptParseException("<identifier> is expected", tokenizer.currentToken());
 					}
 					dimension = commonDimension + visitDimension(tokenizer);
 
 					value = null;
-					if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+					if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 						value = ExpressionParseRule.getInstance().visit(tokenizer);
 						if (value == null) {
 							throw new HiScriptParseException("expression expected", tokenizer.currentToken());
@@ -81,7 +81,7 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 
 			// TODO String namespace = null;
 			String variableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
-			if (visitSymbol(tokenizer, handler, Symbols.POINT) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.POINT) != null) {
 				// TODO namespace = variableName;
 				variableName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 			}
@@ -90,19 +90,19 @@ public class DeclarationsParseRule extends ParseRule<DeclarationsNode> {
 				tokenizer.commit();
 
 				int dimension = commonDimension + visitDimension(tokenizer, handler);
-				if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
+				if (visitSymbol(tokenizer, handler, SymbolType.EQUATE) != null) {
 					if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 						errorOccurred(tokenizer, handler, "expression expected");
 					}
 				}
 
-				while (visitSymbol(tokenizer, handler, Symbols.COMMA) != -1) {
+				while (visitSymbol(tokenizer, handler, SymbolType.COMMA) != null) {
 					if (visitWord(Words.NOT_SERVICE, tokenizer, handler) == null) {
 						errorOccurred(tokenizer, handler, "<identifier> is expected");
 					}
 					dimension = commonDimension + visitDimension(tokenizer, handler);
 
-					if (visitSymbol(tokenizer, handler, Symbols.EQUATE) != -1) {
+					if (visitSymbol(tokenizer, handler, SymbolType.EQUATE) != null) {
 						if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 							errorOccurred(tokenizer, handler, "expression expected");
 						}

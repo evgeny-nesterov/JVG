@@ -1,6 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
 import ru.nest.hiscript.tokenizer.OperationSymbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class ExpressionNode extends Node implements Value {
 		addValue(prefix, value, index);
 	}
 
-	public void doOperation(int operation, PrefixNode prefix, Node value, ArrayIndexesNode index) {
+	public void doOperation(SymbolType operation, PrefixNode prefix, Node value, ArrayIndexesNode index) {
 		operations.add(operation);
 		addValue(prefix, value, index);
 	}
@@ -31,9 +32,9 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private final List<Integer> operations = new ArrayList<>();
+	private final List<SymbolType> operations = new ArrayList<>();
 
-	public List<Integer> getOperations() {
+	public List<SymbolType> getOperations() {
 		return operations;
 	}
 
@@ -59,7 +60,7 @@ public class ExpressionNode extends Node implements Value {
 	public void compile() throws ExecuteException {
 		int valuesCount = values.size();
 		int operationsCount = operations.size();
-		list = new int[valuesCount + operationsCount];
+		list = new SymbolType[valuesCount + operationsCount];
 
 		for (int i = 0; i < valuesCount; i++) {
 			Node value = values.get(i);
@@ -77,30 +78,30 @@ public class ExpressionNode extends Node implements Value {
 		}
 
 		if (valuesCount == 1) {
-			list[0] = 0;
+			list[0] = null;
 			return;
 		} else if (valuesCount == 2) {
-			list[0] = 0;
-			list[1] = 0;
+			list[0] = null;
+			list[1] = null;
 			list[2] = operations.get(0);
 			buffer = new ValueContainer[2];
 			return;
 		}
 
 		buffer = new ValueContainer[valuesCount];
-		list[0] = 0;
-		list[1] = 0;
+		list[0] = null;
+		list[1] = null;
 
-		int[] buf = new int[operationsCount];
+		SymbolType[] buf = new SymbolType[operationsCount];
 		buf[0] = operations.get(0);
 		int bufSize = 1;
 
 		int pos = 2;
 		for (int i = 1; i < operationsCount; i++) {
-			int o = operations.get(i);
+			SymbolType o = operations.get(i);
 			int p = OperationSymbols.getPriority(o);
 
-			int lo = buf[bufSize - 1];
+			SymbolType lo = buf[bufSize - 1];
 			int lp = OperationSymbols.getPriority(lo);
 			while (lp >= p) {
 				list[pos++] = lo; // operation
@@ -114,7 +115,7 @@ public class ExpressionNode extends Node implements Value {
 				lp = OperationSymbols.getPriority(lo);
 			}
 
-			list[pos++] = 0; // value
+			list[pos++] = null; // value
 			buf[bufSize++] = operations.get(i);
 		}
 
@@ -123,7 +124,7 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private int[] list = null;
+	private SymbolType[] list = null;
 
 	private ValueContainer[] buffer = null;
 
@@ -147,7 +148,7 @@ public class ExpressionNode extends Node implements Value {
 			int bufSize = 0;
 			int valuePos = 0;
 			for (int i = 0; i < list.length; i++) {
-				if (list[i] == 0) // value
+				if (list[i] == null) // value
 				{
 					Node valueNode = values.get(valuePos);
 					valueNode.execute(ctx);
@@ -188,7 +189,7 @@ public class ExpressionNode extends Node implements Value {
 		}
 	}
 
-	private void processEquateOperation(int equateType, int valueIndex, ValueContainer left, ValueContainer right) throws ExecuteException {
+	private void processEquateOperation(SymbolType equateType, int valueIndex, ValueContainer left, ValueContainer right) throws ExecuteException {
 		Variable var = getVariable(valueIndex);
 		if (valueIndex != 0) {
 			while (--valueIndex >= 0) {

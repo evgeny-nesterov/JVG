@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.IncrementNode;
 import ru.nest.hiscript.pol.model.VariableNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -19,10 +19,10 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 
 	@Override
 	public IncrementNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		int operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
+		SymbolType operation = visitSymbol(tokenizer, SymbolType.PLUS_PLUS, SymbolType.MINUS_MINUS);
 
 		tokenizer.start();
-		if (operation != -1) {
+		if (operation != null) {
 			VariableNode variable = visitVariable(tokenizer);
 			if (variable == null) {
 				throw new HiScriptParseException("variable is expected", tokenizer.currentToken());
@@ -35,8 +35,8 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 		tokenizer.start();
 		VariableNode variable = visitVariable(tokenizer);
 		if (variable != null) {
-			operation = visitSymbol(tokenizer, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
-			if (operation != -1) {
+			operation = visitSymbol(tokenizer, SymbolType.PLUS_PLUS, SymbolType.MINUS_MINUS);
+			if (operation != null) {
 				tokenizer.commit();
 				return new IncrementNode(variable, IncrementNode.INCREMENT_POSTFIX, operation);
 			}
@@ -48,10 +48,10 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
-		int operation = visitSymbol(tokenizer, handler, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
+		SymbolType operation = visitSymbol(tokenizer, handler, SymbolType.PLUS_PLUS, SymbolType.MINUS_MINUS);
 		tokenizer.start();
 
-		if (operation != -1) {
+		if (operation != null) {
 			VariableNode variable = visitVariable(tokenizer, handler);
 			if (variable == null) {
 				errorOccurred(tokenizer, handler, "variable is expected");
@@ -62,8 +62,8 @@ public class IncrementParseRule extends ParseRule<IncrementNode> {
 
 		VariableNode variable = visitVariable(tokenizer, handler);
 		if (variable != null) {
-			operation = visitSymbol(tokenizer, handler, Symbols.PLUS_PLUS, Symbols.MINUS_MINUS);
-			if (operation != -1) {
+			operation = visitSymbol(tokenizer, handler, SymbolType.PLUS_PLUS, SymbolType.MINUS_MINUS);
+			if (operation != null) {
 				tokenizer.commit();
 				return true;
 			}

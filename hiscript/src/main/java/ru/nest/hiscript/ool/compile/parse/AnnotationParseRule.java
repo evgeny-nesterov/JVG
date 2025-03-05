@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.EmptyNode;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeAnnotationArgument;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -38,12 +38,12 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 			}
 
 			List<NodeAnnotationArgument> args = new ArrayList<>();
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 				tokenizer.start();
 
 				startToken = startToken(tokenizer);
 				String argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
-				if (argName != null && visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+				if (argName != null && visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 					tokenizer.commit();
 
 					HiNode argValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
@@ -53,10 +53,10 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 					}
 					args.add(new NodeAnnotationArgument(argName, argValue, tokenizer.getBlockToken(startToken)));
 
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						startToken = startToken(tokenizer);
 						argName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
-						expectSymbol(tokenizer, Symbols.EQUATE);
+						expectSymbol(tokenizer, SymbolType.EQUATE);
 						argValue = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 						if (argValue == null) {
 							tokenizer.error("argument value expected");
@@ -71,7 +71,7 @@ public class AnnotationParseRule extends ParseRule<NodeAnnotation> {
 						args.add(new NodeAnnotationArgument("value", argValue, argValue.getToken()));
 					}
 				}
-				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 			}
 			return new NodeAnnotation(name, args.toArray(new NodeAnnotationArgument[args.size()]));
 		}

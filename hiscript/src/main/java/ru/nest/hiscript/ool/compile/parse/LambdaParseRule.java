@@ -7,7 +7,7 @@ import ru.nest.hiscript.ool.model.HiMethod;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -39,7 +39,7 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 			argNode.setToken(startToken);
 			arguments.add(argNode);
 		} else {
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) == -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) == null) {
 				tokenizer.rollback();
 				return null;
 			}
@@ -52,7 +52,7 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 					NodeArgument argNode = new NodeArgument(Type.varType, argName, null, null);
 					argNode.setToken(argToken);
 					arguments.add(argNode);
-					if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					if (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						argName = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 					} else {
 						argName = null;
@@ -60,13 +60,13 @@ public class LambdaParseRule extends ParseRule<HiMethod> {
 				}
 			}
 
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) == -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT) == null) {
 				tokenizer.rollback();
 				return null;
 			}
 		}
 
-		if (visitSymbol(tokenizer, Symbols.REFERENCE) == -1) {
+		if (visitSymbol(tokenizer, SymbolType.REFERENCE) == null) {
 			tokenizer.rollback();
 			return null;
 		}

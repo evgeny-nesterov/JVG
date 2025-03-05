@@ -27,17 +27,15 @@ import ru.nest.hiscript.ool.model.nodes.NodeLong;
 import ru.nest.hiscript.ool.model.nodes.NodeNumber;
 import ru.nest.hiscript.ool.model.nodes.NodeString;
 import ru.nest.hiscript.ool.runtime.HiRuntimeEnvironment;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
 import ru.nest.hiscript.tokenizer.AnnotationWordToken;
 import ru.nest.hiscript.tokenizer.CharToken;
-import ru.nest.hiscript.tokenizer.CommentToken;
 import ru.nest.hiscript.tokenizer.DoubleToken;
 import ru.nest.hiscript.tokenizer.FloatToken;
 import ru.nest.hiscript.tokenizer.IntToken;
 import ru.nest.hiscript.tokenizer.LongToken;
 import ru.nest.hiscript.tokenizer.StringToken;
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -54,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.nest.hiscript.ool.model.nodes.NodeVariable.*;
+import static ru.nest.hiscript.ool.model.nodes.NodeVariable.UNNAMED;
 import static ru.nest.hiscript.tokenizer.Words.*;
 
 public class ParserUtil {
@@ -187,7 +185,7 @@ public class ParserUtil {
 				tokenizer.nextToken();
 
 				String name = wordToken.getWord();
-				while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+				while (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 					name += "." + expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 				}
 				return name;
@@ -240,10 +238,10 @@ public class ParserUtil {
 	protected static Type visitObjectType(Tokenizer tokenizer, HiRuntimeEnvironment env) throws TokenizerException, HiScriptParseException {
 		Type type = visitSimpleObjectType(tokenizer, env, null);
 		if (type != null) {
-			while (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				type = visitSimpleObjectType(tokenizer, env, type);
 			}
-		} else if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+		} else if (visitSymbol(tokenizer, SymbolType.QUESTION) != null) {
 			Type extendedType = Type.objectType;
 			int extendsType = visitWordType(tokenizer, Words.EXTENDS, Words.SUPER);
 			if (extendsType != -1) {
@@ -262,7 +260,7 @@ public class ParserUtil {
 			type = Type.getType(parent, name, env);
 
 			tokenizer.start();
-			if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.LOWER) != null) {
 				List<Type> parametersList = new ArrayList<>();
 				do {
 					Token parameterTypeToken = startToken(tokenizer);
@@ -276,7 +274,7 @@ public class ParserUtil {
 					} else {
 						break;
 					}
-				} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
+				} while (visitSymbol(tokenizer, SymbolType.COMMA) != null);
 				if (visitGreater(tokenizer, false)) {
 					tokenizer.commit();
 					type = Type.getParameterizedType(type, parametersList.toArray(new Type[parametersList.size()]));
@@ -337,81 +335,81 @@ public class ParserUtil {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT) {
-				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 1);
+			if (symbolToken.getType() == SymbolType.BITWISE_SHIFT_RIGHT) {
+				tokenizer.repeat(new SymbolToken(SymbolType.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 1);
 				tokenizer.nextToken();
 				return true;
-			} else if (symbolToken.getType() == Symbols.BITWISE_SHIFT_RIGHT_CYCLIC) {
-				tokenizer.repeat(new SymbolToken(Symbols.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 2);
+			} else if (symbolToken.getType() == SymbolType.BITWISE_SHIFT_RIGHT_CYCLIC) {
+				tokenizer.repeat(new SymbolToken(SymbolType.GREATER, currentToken.getLine(), currentToken.getOffset() + 1, 1, currentToken.getLineOffset() + 1), 2);
 				tokenizer.nextToken();
 				return true;
-			} else if (symbolToken.getType() == Symbols.GREATER) {
+			} else if (symbolToken.getType() == SymbolType.GREATER) {
 				tokenizer.nextToken();
 				return true;
 			}
 		}
 		if (expect) {
-			tokenizer.error("'" + SymbolToken.getSymbol(Symbols.GREATER) + "' is expected");
+			tokenizer.error("'" + SymbolToken.getSymbol(SymbolType.GREATER) + "' is expected");
 		}
 		return false;
 	}
 
-	protected static int visitSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static SymbolType visitSymbol(Tokenizer tokenizer, SymbolType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			for (int type : types) {
+			for (SymbolType type : types) {
 				if (symbolToken.getType() == type) {
 					tokenizer.nextToken();
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected static int checkSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected static SymbolType checkSymbol(Tokenizer tokenizer, SymbolType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			for (int type : types) {
+			for (SymbolType type : types) {
 				if (symbolToken.getType() == type) {
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected static void expectSymbol(Tokenizer tokenizer, int type) throws TokenizerException {
-		if (visitSymbol(tokenizer, type) == -1) {
+	protected static void expectSymbol(Tokenizer tokenizer, SymbolType type) throws TokenizerException {
+		if (visitSymbol(tokenizer, type) == null) {
 			tokenizer.error("'" + SymbolToken.getSymbol(type) + "' is expected");
 		}
 	}
 
-	protected static int expectSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
-		int symbol = visitSymbol(tokenizer, types);
-		if (symbol == -1) {
-			tokenizer.error(Arrays.stream(types).mapToObj(type -> "'" + SymbolToken.getSymbol(type) + "'").collect(Collectors.joining(" or ")) + " is expected");
+	protected static SymbolType expectSymbol(Tokenizer tokenizer, SymbolType... types) throws TokenizerException {
+		SymbolType symbol = visitSymbol(tokenizer, types);
+		if (symbol == null) {
+			tokenizer.error(Arrays.stream(types).map(type -> "'" + SymbolToken.getSymbol(type) + "'").collect(Collectors.joining(" or ")) + " is expected");
 		}
 		return symbol;
 	}
 
 	protected static int visitDimension(Tokenizer tokenizer) throws TokenizerException {
 		int dimension = 0;
-		while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
+		while (visitSymbol(tokenizer, SymbolType.MASSIVE) != null) {
 			dimension++;
 		}
 		return dimension;
 	}
 
 	protected static NodeExpression expectCondition(Tokenizer tokenizer, CompileClassContext ctx) throws TokenizerException, HiScriptParseException {
-		expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+		expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 		NodeExpression condition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		if (condition == null) {
 			tokenizer.error("expression expected");
 		}
-		expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+		expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 		return condition;
 	}
 
@@ -570,7 +568,7 @@ public class ParserUtil {
 
 			tokenizer.commit();
 			args.add(arg);
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				Token token = tokenizer.currentToken();
 				arg = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 				if (arg == null || arg.isCastedIdentifier()) {
@@ -592,7 +590,7 @@ public class ParserUtil {
 		if (arg != null) {
 			arguments.add(arg);
 			boolean hasVarargs = arg.isVarargs();
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				arg = MethodArgumentParseRule.getInstance().visit(tokenizer, ctx);
 				if (arg != null) {
 					if (arg.isVarargs()) {
@@ -621,15 +619,15 @@ public class ParserUtil {
 			NodeCastedIdentifier[] castedRecordArguments = null;
 			String castedVariableName = null;
 			if (visitCastAfterIdentifier) {
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					List<NodeCastedIdentifier> identifiersList = new ArrayList<>();
 					visitCastedIdentifiers(tokenizer, identifiersList, ctx);
 					if (requireCast) {
-						if (visitSymbol(tokenizer, Symbols.PARENTHESES_RIGHT) == -1) {
+						if (visitSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT) == null) {
 							break IF;
 						}
 					} else {
-						expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+						expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 					}
 					if (identifiersList.size() > 0) {
 						castedRecordArguments = identifiersList.toArray(new NodeCastedIdentifier[identifiersList.size()]);
@@ -675,7 +673,7 @@ public class ParserUtil {
 		HiNode identifier = visitIdentifier(tokenizer, ctx, true, false, true);
 		if (identifier != null) {
 			identifiers.add((NodeCastedIdentifier) identifier);
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				identifier = visitIdentifier(tokenizer, ctx, true, false, true);
 				if (identifier != null) {
 					identifiers.add((NodeCastedIdentifier) identifier);

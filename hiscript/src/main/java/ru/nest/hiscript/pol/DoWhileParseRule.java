@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.DoWhileNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -21,22 +21,22 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 	@Override
 	public DoWhileNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.DO, tokenizer) != null) {
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 			Node body = BlockParseRule.getInstance().visit(tokenizer); // may be
 			// empty;
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 
 			if (visitWord(Words.WHILE, tokenizer) == null) {
 				throw new HiScriptParseException("while expected", tokenizer.currentToken());
 			}
 
-			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
+			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 			Node condition = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (condition == null) {
 				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 
 			return new DoWhileNode(condition, body);
 		}
@@ -47,20 +47,20 @@ public class DoWhileParseRule extends ParseRule<DoWhileNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.DO, tokenizer, handler) != null) {
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 
 			if (visitWord(Words.WHILE, tokenizer, handler) == null) {
 				errorOccurred(tokenizer, handler, "while expected");
 			}
 
-			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
+			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
 			}
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
-			expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 
 			return true;
 		}

@@ -9,8 +9,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeForIterator;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -34,7 +33,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 	public NodeForIterator visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		tokenizer.start();
 		if (visitWord(FOR, tokenizer) != null) {
-			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+			expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 
 			startToken = startToken(tokenizer);
 			AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, false);
@@ -45,7 +44,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					tokenizer.error("variable name is expected");
 				}
 
-				if (checkSymbol(tokenizer, Symbols.COLON) != -1) {
+				if (checkSymbol(tokenizer, SymbolType.COLON) != null) {
 					tokenizer.commit();
 					tokenizer.nextToken();
 
@@ -55,7 +54,7 @@ public class ForIteratorParseRule extends ParseRule<NodeForIterator> {
 					declaration.setToken(tokenizer.getBlockToken(startToken));
 
 					HiNode iterable = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 					HiNode body = expectBody(tokenizer, ctx);
 
 					ctx.exit();

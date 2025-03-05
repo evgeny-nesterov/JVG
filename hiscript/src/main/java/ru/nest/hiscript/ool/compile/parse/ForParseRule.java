@@ -8,8 +8,7 @@ import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeFor;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -28,7 +27,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 	@Override
 	public NodeFor visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.FOR, tokenizer) != null) {
-			expectSymbol(tokenizer, Symbols.PARENTHESES_LEFT);
+			expectSymbol(tokenizer, SymbolType.PARENTHESES_LEFT);
 
 			ctx.enter(ContextType.FOR, startToken);
 			HiNode initialization = DeclarationParseRule.getInstance().visit(tokenizer, ctx);
@@ -36,11 +35,11 @@ public class ForParseRule extends ParseRule<NodeFor> {
 				initialization = visitExpressions(tokenizer, ctx);
 			}
 
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			NodeExpression condition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			HiNode assignment = visitExpressions(tokenizer, ctx);
-			expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 			HiNode body = expectBody(tokenizer, ctx);
 
 			ctx.exit();
@@ -54,7 +53,7 @@ public class ForParseRule extends ParseRule<NodeFor> {
 		if (expression != null) {
 			NodeBlock expressions = new NodeBlock("expressions");
 			expressions.addStatement(expression);
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				expression = expectExpression(tokenizer, ctx);
 				expressions.addStatement(expression);
 			}

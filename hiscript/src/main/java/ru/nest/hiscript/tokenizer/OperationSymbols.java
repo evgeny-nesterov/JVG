@@ -1,7 +1,7 @@
 package ru.nest.hiscript.tokenizer;
 
-public class OperationSymbols implements Symbols {
-	public static boolean isOperation(int type) {
+public class OperationSymbols {
+	public static boolean isOperation(SymbolType type) {
 		switch (type) {
 			case GREATER:
 			case GREATER_OR_EQUAL:
@@ -43,7 +43,7 @@ public class OperationSymbols implements Symbols {
 		return false;
 	}
 
-	public static boolean isPrefixOperation(int type) {
+	public static boolean isPrefixOperation(SymbolType type) {
 		switch (type) {
 			case PLUS:
 			case PLUS_PLUS:
@@ -56,7 +56,7 @@ public class OperationSymbols implements Symbols {
 		return false;
 	}
 
-	public static int getPriority(int type) {
+	public static int getPriority(SymbolType type) {
 		switch (type) {
 			case EQUATE:
 			case EQUATE_PLUS:
@@ -104,7 +104,7 @@ public class OperationSymbols implements Symbols {
 		return 0;
 	}
 
-	public static boolean isEquate(int operation) {
+	public static boolean isEquate(SymbolType operation) {
 		switch (operation) {
 			case EQUATE:
 			case EQUATE_BITWISE_AND:

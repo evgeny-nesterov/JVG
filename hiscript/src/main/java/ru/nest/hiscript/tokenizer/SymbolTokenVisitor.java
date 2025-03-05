@@ -7,43 +7,43 @@ public class SymbolTokenVisitor implements TokenVisitor {
 		int line = tokenizer.getLine();
 		int lineOffset = tokenizer.getLineOffset();
 
-		int type = -1;
+		SymbolType type = null;
 		int length = 1;
 
 		char c = tokenizer.getCurrent();
 		switch (c) {
 			case '(':
-				type = Symbols.PARENTHESES_LEFT;
+				type = SymbolType.PARENTHESES_LEFT;
 				break;
 
 			case ')':
-				type = Symbols.PARENTHESES_RIGHT;
+				type = SymbolType.PARENTHESES_RIGHT;
 				break;
 
 			case '{':
-				type = Symbols.BRACES_LEFT;
+				type = SymbolType.BRACES_LEFT;
 				break;
 
 			case '}':
-				type = Symbols.BRACES_RIGHT;
+				type = SymbolType.BRACES_RIGHT;
 				break;
 
 			case ';':
-				type = Symbols.SEMICOLON;
+				type = SymbolType.SEMICOLON;
 				break;
 
 			case ':':
 				if (tokenizer.lookForward() == ':') {
 					tokenizer.next();
-					type = Symbols.DOUBLE_COLON;
+					type = SymbolType.DOUBLE_COLON;
 					length = 2;
 				} else {
-					type = Symbols.COLON;
+					type = SymbolType.COLON;
 				}
 				break;
 
 			case ',':
-				type = Symbols.COMMA;
+				type = SymbolType.COMMA;
 				break;
 
 			case '.':
@@ -51,114 +51,114 @@ public class SymbolTokenVisitor implements TokenVisitor {
 					tokenizer.next();
 					if (tokenizer.lookForward() == '.') {
 						tokenizer.next();
-						type = Symbols.TRIPLE_POINTS;
+						type = SymbolType.TRIPLE_POINTS;
 						length = 3;
 					} else {
 						return null;
 					}
 				} else {
-					type = Symbols.POINT;
+					type = SymbolType.POINT;
 				}
 				break;
 
 			case '\'':
-				type = Symbols.SINGLE_QUOTE;
+				type = SymbolType.SINGLE_QUOTE;
 				break;
 
 			case '\\':
-				type = Symbols.BACK_SLASH;
+				type = SymbolType.BACK_SLASH;
 				break;
 
 			case '/':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_DIVIDE;
+					type = SymbolType.EQUATE_DIVIDE;
 					length = 2;
 				} else {
-					type = Symbols.DIVIDE;
+					type = SymbolType.DIVIDE;
 				}
 				break;
 
 			case '*':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_MULTIPLY;
+					type = SymbolType.EQUATE_MULTIPLY;
 					length = 2;
 				} else {
-					type = Symbols.MULTIPLY;
+					type = SymbolType.MULTIPLY;
 				}
 				break;
 
 			case '?':
-				type = Symbols.QUESTION;
+				type = SymbolType.QUESTION;
 				break;
 
 			case '!':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.NOT_EQUALS;
+					type = SymbolType.NOT_EQUALS;
 					length = 2;
 				} else {
-					type = Symbols.EXCLAMATION;
+					type = SymbolType.EXCLAMATION;
 				}
 				break;
 
 			case '^':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_BITWISE_XOR;
+					type = SymbolType.EQUATE_BITWISE_XOR;
 					length = 2;
 				} else {
-					type = Symbols.BITWISE_XOR;
+					type = SymbolType.BITWISE_XOR;
 				}
 				break;
 
 			case '%':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_PERCENT;
+					type = SymbolType.EQUATE_PERCENT;
 					length = 2;
 				} else {
-					type = Symbols.PERCENT;
+					type = SymbolType.PERCENT;
 				}
 				break;
 
 			case '+':
 				if (tokenizer.lookForward() == '+') {
 					tokenizer.next();
-					type = Symbols.PLUS_PLUS;
+					type = SymbolType.PLUS_PLUS;
 					length = 2;
 				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_PLUS;
+					type = SymbolType.EQUATE_PLUS;
 					length = 2;
 				} else {
-					type = Symbols.PLUS;
+					type = SymbolType.PLUS;
 				}
 				break;
 
 			case '-':
 				if (tokenizer.lookForward() == '-') {
 					tokenizer.next();
-					type = Symbols.MINUS_MINUS;
+					type = SymbolType.MINUS_MINUS;
 					length = 2;
 				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_MINUS;
+					type = SymbolType.EQUATE_MINUS;
 					length = 2;
 				} else if (tokenizer.lookForward() == '>') {
 					tokenizer.next();
-					type = Symbols.REFERENCE;
+					type = SymbolType.REFERENCE;
 					length = 2;
 				} else {
-					type = Symbols.MINUS;
+					type = SymbolType.MINUS;
 				}
 				break;
 
 			case '>':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.GREATER_OR_EQUAL;
+					type = SymbolType.GREATER_OR_EQUAL;
 					length = 2;
 				} else if (tokenizer.lookForward() == '>') {
 					tokenizer.next();
@@ -169,34 +169,34 @@ public class SymbolTokenVisitor implements TokenVisitor {
 					}
 					if (tokenizer.lookForward() == '=') {
 						tokenizer.next();
-						type = cyclic ? Symbols.EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC : Symbols.EQUATE_BITWISE_SHIFT_RIGHT;
+						type = cyclic ? SymbolType.EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC : SymbolType.EQUATE_BITWISE_SHIFT_RIGHT;
 						length = 3;
 					} else {
-						type = cyclic ? Symbols.BITWISE_SHIFT_RIGHT_CYCLIC : Symbols.BITWISE_SHIFT_RIGHT;
+						type = cyclic ? SymbolType.BITWISE_SHIFT_RIGHT_CYCLIC : SymbolType.BITWISE_SHIFT_RIGHT;
 						length = 2;
 					}
 				} else {
-					type = Symbols.GREATER;
+					type = SymbolType.GREATER;
 				}
 				break;
 
 			case '<':
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.LOWER_OR_EQUAL;
+					type = SymbolType.LOWER_OR_EQUAL;
 					length = 2;
 				} else if (tokenizer.lookForward() == '<') {
 					tokenizer.next();
 					if (tokenizer.lookForward() == '=') {
 						tokenizer.next();
-						type = Symbols.EQUATE_BITWISE_SHIFT_LEFT;
+						type = SymbolType.EQUATE_BITWISE_SHIFT_LEFT;
 						length = 3;
 					} else {
-						type = Symbols.BITWISE_SHIFT_LEFT;
+						type = SymbolType.BITWISE_SHIFT_LEFT;
 						length = 2;
 					}
 				} else {
-					type = Symbols.LOWER;
+					type = SymbolType.LOWER;
 				}
 				break;
 
@@ -204,62 +204,62 @@ public class SymbolTokenVisitor implements TokenVisitor {
 				length = 2;
 				if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUALS;
+					type = SymbolType.EQUALS;
 					length = 2;
 				} else {
-					type = Symbols.EQUATE;
+					type = SymbolType.EQUATE;
 				}
 				break;
 
 			case '&':
 				if (tokenizer.lookForward() == '&') {
 					tokenizer.next();
-					type = Symbols.LOGICAL_AND;
+					type = SymbolType.LOGICAL_AND;
 					length = 2;
 				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_BITWISE_AND;
+					type = SymbolType.EQUATE_BITWISE_AND;
 					length = 2;
 				} else {
-					type = Symbols.BITWISE_AND;
+					type = SymbolType.BITWISE_AND;
 				}
 				break;
 
 			case '|':
 				if (tokenizer.lookForward() == '|') {
 					tokenizer.next();
-					type = Symbols.LOGICAL_OR;
+					type = SymbolType.LOGICAL_OR;
 					length = 2;
 				} else if (tokenizer.lookForward() == '=') {
 					tokenizer.next();
-					type = Symbols.EQUATE_BITWISE_OR;
+					type = SymbolType.EQUATE_BITWISE_OR;
 					length = 2;
 				} else {
-					type = Symbols.BITWISE_OR;
+					type = SymbolType.BITWISE_OR;
 				}
 				break;
 
 			case '[':
 				if (tokenizer.lookForward() == ']') {
 					tokenizer.next();
-					type = Symbols.MASSIVE;
+					type = SymbolType.MASSIVE;
 					length = 2;
 				} else {
-					type = Symbols.SQUARE_BRACES_LEFT;
+					type = SymbolType.SQUARE_BRACES_LEFT;
 				}
 				break;
 
 			case ']':
-				type = Symbols.SQUARE_BRACES_RIGHT;
+				type = SymbolType.SQUARE_BRACES_RIGHT;
 				break;
 
 			case '~':
-				type = Symbols.TILDA;
+				type = SymbolType.TILDA;
 				break;
 		}
 		tokenizer.next();
 
-		if (type != -1) {
+		if (type != null) {
 			return new SymbolToken(type, line, offset, length, lineOffset);
 		} else {
 			return null;

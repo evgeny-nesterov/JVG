@@ -1,18 +1,18 @@
 package ru.nest.hiscript.tokenizer;
 
-public class SymbolToken extends Token implements Symbols {
-	public SymbolToken(int type, int line, int offset, int length, int lineOffset) {
+public class SymbolToken extends Token {
+	public SymbolToken(SymbolType type, int line, int offset, int length, int lineOffset) {
 		super(line, offset, length, lineOffset);
 		this.type = type;
 	}
 
-	private final int type;
+	private final SymbolType type;
 
-	public int getType() {
+	public SymbolType getType() {
 		return type;
 	}
 
-	public static String getSymbol(int type) {
+	public static String getSymbol(SymbolType type) {
 		switch (type) {
 			case BACK_SLASH:
 				return "\\";

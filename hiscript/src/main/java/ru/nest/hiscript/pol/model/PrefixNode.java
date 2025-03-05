@@ -1,5 +1,7 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.SymbolType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class PrefixNode extends Node {
 
 	private final List<Object> prefixes = new ArrayList<>();
 
-	public void addPrefix(int operation) {
+	public void addPrefix(SymbolType operation) {
 		prefixes.add(operation);
 	}
 
@@ -37,8 +39,8 @@ public class PrefixNode extends Node {
 			if (prefix instanceof CastNode) {
 				CastNode cast = (CastNode) prefix;
 				cast.execute(ctx);
-			} else if (prefix instanceof Integer) {
-				int operation = (Integer) prefix;
+			} else if (prefix instanceof SymbolType) {
+				SymbolType operation = (SymbolType) prefix;
 				Operations.doPrefixOperation(ctx.value, operation);
 			}
 		}

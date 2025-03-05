@@ -14,8 +14,7 @@ import ru.nest.hiscript.ool.model.classes.HiClassAnnotation;
 import ru.nest.hiscript.ool.model.nodes.NodeArgument;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -51,7 +50,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 				tokenizer.error("annotation class name is expected");
 			}
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			ctx.clazz = new HiClassAnnotation(ctx.getClassLoader(), ctx.enclosingClass, name, ctx.classLocationType);
 			ctx.clazz.isInterface = true;
@@ -60,7 +59,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			visitContent(tokenizer, ctx);
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			ctx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			return ctx.clazz;
 		}
@@ -108,12 +107,12 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 
 			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();
 					ctx.enter(ContextType.METHOD, startToken);
 
 					checkModifiers(tokenizer, annotatedModifiers.getModifiers(), annotatedModifiers.getToken(), allowed);
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
 					HiNode defaultValue = null;
 					if (visitWord(DEFAULT, tokenizer) != null) {
@@ -122,7 +121,7 @@ public class AnnotationInterfaceParseRule extends ParserUtil {
 							tokenizer.error("value expected", tokenizer.currentToken());
 						}
 					}
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
+					expectSymbol(tokenizer, SymbolType.SEMICOLON);
 
 					ctx.exit();
 					HiMethod method = new HiMethod(clazz, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, type, name, (NodeArgument[]) null, null, defaultValue);

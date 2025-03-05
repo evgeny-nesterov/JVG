@@ -22,8 +22,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeConstructor;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
 import ru.nest.hiscript.ool.model.nodes.NodeType;
-import ru.nest.hiscript.ool.runtime.RuntimeContext;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -73,7 +72,7 @@ public class ClassParseRule extends ParserUtil {
 			// parse 'implements'
 			Type[] interfaces = visitImplements(tokenizer, ctx);
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			if (isInterface) {
 				if (interfaces != null) {
@@ -93,7 +92,7 @@ public class ClassParseRule extends ParserUtil {
 
 			visitContent(tokenizer, ctx, null);
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			ctx.clazz.setToken(tokenizer.getBlockToken(startToken));
 			ctx.clazz.annotations = annotatedModifiers.getAnnotations();
 			return ctx.clazz;
@@ -109,7 +108,7 @@ public class ClassParseRule extends ParserUtil {
 			if (superClassType != null) {
 				List<Type> superClassesList = new ArrayList<>(1);
 				superClassesList.add(superClassType);
-				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 					superClassType = visitType(tokenizer, false, ctx.getEnv());
 					if (superClassType != null) {
 						superClassesList.add(superClassType);
@@ -137,7 +136,7 @@ public class ClassParseRule extends ParserUtil {
 			if (interfaceType != null) {
 				List<Type> interfacesList = new ArrayList<>(1);
 				interfacesList.add(interfaceType);
-				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 					interfaceType = visitType(tokenizer, false, ctx.getEnv());
 					if (interfaceType != null) {
 						interfacesList.add(interfaceType);
@@ -233,7 +232,7 @@ public class ClassParseRule extends ParserUtil {
 		AnnotatedModifiers annotatedModifiers = visitAnnotatedModifiers(tokenizer, ctx, true);
 		String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 		if (name != null) {
-			if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 				if (!name.equals(clazz.name) || clazz.locationType == ClassLocationType.anonymous) {
 					tokenizer.error("invalid method declaration; return type is expected");
 				}
@@ -246,11 +245,11 @@ public class ClassParseRule extends ParserUtil {
 				List<NodeArgument> arguments = new ArrayList<>();
 				visitArgumentsDefinitions(tokenizer, arguments, ctx);
 
-				expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
 				Type[] exceptionTypes = visitExceptionTypes(tokenizer, ctx);
 
-				expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+				expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 				NodeConstructor enclosingConstructor = null;
 				BodyConstructorType bodyConstructorType = BodyConstructorType.NONE;
@@ -260,10 +259,10 @@ public class ClassParseRule extends ParserUtil {
 				try {
 					int constructorType = visitServiceWord(tokenizer, THIS, SUPER);
 					if (constructorType != -1) {
-						if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+						if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 							HiNode[] args = visitArgumentsValues(tokenizer, ctx);
-							expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
-							expectSymbol(tokenizer, Symbols.SEMICOLON);
+							expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
+							expectSymbol(tokenizer, SymbolType.SEMICOLON);
 
 							if (constructorType == SUPER) {
 								type = clazz.superClassType != null ? clazz.superClassType : Type.objectType;
@@ -287,7 +286,7 @@ public class ClassParseRule extends ParserUtil {
 
 				// visit body
 				HiNode body = BlockParseRule.getInstance().visit(tokenizer, ctx);
-				expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+				expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 				ctx.exit();
 
 				HiConstructor constructor = new HiConstructor(clazz, type, annotatedModifiers.getAnnotations(), annotatedModifiers.getModifiers(), generics, arguments, exceptionTypes, body, enclosingConstructor, bodyConstructorType);
@@ -326,7 +325,7 @@ public class ClassParseRule extends ParserUtil {
 		if (type != null) {
 			String name = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 			if (name != null) {
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					tokenizer.commit();
 					ctx.enter(ContextType.METHOD, startToken);
 
@@ -337,24 +336,24 @@ public class ClassParseRule extends ParserUtil {
 					List<NodeArgument> arguments = new ArrayList<>();
 					visitArgumentsDefinitions(tokenizer, arguments, ctx);
 
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 
 					Type[] exceptionTypes = visitExceptionTypes(tokenizer, ctx);
 
 					HiNode body = null;
 					if (modifiers.isNative() || modifiers.isAbstract()) {
-						expectSymbol(tokenizer, Symbols.SEMICOLON);
+						expectSymbol(tokenizer, SymbolType.SEMICOLON);
 					} else {
-						if (checkSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+						if (checkSymbol(tokenizer, SymbolType.SEMICOLON) != null) {
 							tokenizer.nextToken();
 							modifiers = modifiers.change().setAbstract(true);
 							if (!clazz.isInterface) {
 								tokenizer.error("modifier 'abstract' is expected", modifiersToken);
 							}
 						} else {
-							expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+							expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 							body = BlockParseRule.getInstance().visit(tokenizer, ctx);
-							expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+							expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 						}
 					}
 
@@ -381,7 +380,7 @@ public class ClassParseRule extends ParserUtil {
 			}
 			List<Type> exceptionTypesList = new ArrayList<>(1);
 			exceptionTypesList.add(exceptionType);
-			if (checkSymbol(tokenizer, Symbols.COMMA) != -1) {
+			if (checkSymbol(tokenizer, SymbolType.COMMA) != null) {
 				tokenizer.nextToken();
 				exceptionType = visitType(tokenizer, true, ctx.getEnv());
 				if (exceptionType != null) {
@@ -408,9 +407,9 @@ public class ClassParseRule extends ParserUtil {
 
 				HiNode initializer = null;
 				boolean isField = false;
-				if (checkSymbol(tokenizer, Symbols.SEMICOLON, Symbols.COMMA) != -1) {
+				if (checkSymbol(tokenizer, SymbolType.SEMICOLON, SymbolType.COMMA) != null) {
 					isField = true;
-				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+				} else if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 					initializer = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 					isField = true;
 				}
@@ -427,10 +426,10 @@ public class ClassParseRule extends ParserUtil {
 
 					ctx.addField(field);
 
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						expectField(tokenizer, baseType, modifiers, ctx);
 					}
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
+					expectSymbol(tokenizer, SymbolType.SEMICOLON);
 					return true;
 				}
 			}
@@ -446,7 +445,7 @@ public class ClassParseRule extends ParserUtil {
 		int addDimension = visitDimension(tokenizer);
 
 		HiNode initializer = null;
-		if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 			initializer = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 		}
 
@@ -461,7 +460,7 @@ public class ClassParseRule extends ParserUtil {
 		tokenizer.start();
 
 		boolean isStatic = visitWordType(tokenizer, STATIC) != -1;
-		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			tokenizer.commit();
 			ctx.enter(ContextType.BLOCK, tokenizer.currentToken());
 
@@ -469,7 +468,7 @@ public class ClassParseRule extends ParserUtil {
 			if (block != null) {
 				block.setStatic(isStatic);
 			}
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 
 			ctx.exit();
 			return block;

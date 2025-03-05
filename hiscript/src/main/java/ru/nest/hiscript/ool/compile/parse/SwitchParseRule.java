@@ -8,7 +8,7 @@ import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeCastedIdentifier;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeSwitch;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -33,12 +33,12 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeSwitch node = new NodeSwitch(value);
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
 					HiNode[] caseValue = visitCaseValue(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.COLON);
+					expectSymbol(tokenizer, SymbolType.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 
 					node.add(caseValue, caseBody);
@@ -46,7 +46,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 				}
 
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
-					expectSymbol(tokenizer, Symbols.COLON);
+					expectSymbol(tokenizer, SymbolType.COLON);
 					NodeBlock caseBody = BlockParseRule.getInstance().visit(tokenizer, ctx);
 
 					node.add(null, caseBody);
@@ -55,7 +55,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 				break;
 			}
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			return node;
 		}
 		return null;
@@ -70,7 +70,7 @@ public class SwitchParseRule extends ParseRule<NodeSwitch> {
 				identifier.castedCondition = ExpressionParseRule.methodPriority.visit(tokenizer, ctx);
 			}
 			args.add(arg);
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				arg = ExpressionParseRule.castedIdentifierPriority.visit(tokenizer, ctx);
 				if (arg != null) {
 					identifier = arg.checkCastedIdentifier();

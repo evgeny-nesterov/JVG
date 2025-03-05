@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
 import ru.nest.hiscript.ool.model.nodes.NodeExpressionSwitch;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -28,23 +28,23 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 			NodeExpression value = expectCondition(tokenizer, ctx);
 			NodeExpressionSwitch node = new NodeExpressionSwitch(value);
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			while (true) {
 				if (visitWord(Words.CASE, tokenizer) != null) {
 					HiNode[] caseValue = SwitchParseRule.visitCaseValue(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.REFERENCE);
+					expectSymbol(tokenizer, SymbolType.REFERENCE);
 					NodeExpression caseBody = expectExpression(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
+					expectSymbol(tokenizer, SymbolType.SEMICOLON);
 
 					node.add(caseValue, caseBody);
 					continue;
 				}
 
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
-					expectSymbol(tokenizer, Symbols.REFERENCE);
+					expectSymbol(tokenizer, SymbolType.REFERENCE);
 					NodeExpression caseBody = expectExpression(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
+					expectSymbol(tokenizer, SymbolType.SEMICOLON);
 
 					node.add(null, caseBody);
 					continue;
@@ -52,7 +52,7 @@ public class ExpressionSwitchParseRule extends ParseRule<NodeExpressionSwitch> {
 				break;
 			}
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			return node;
 		}
 		return null;

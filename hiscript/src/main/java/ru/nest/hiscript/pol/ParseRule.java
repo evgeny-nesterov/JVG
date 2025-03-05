@@ -18,7 +18,7 @@ import ru.nest.hiscript.tokenizer.LongToken;
 import ru.nest.hiscript.tokenizer.OperationSymbols;
 import ru.nest.hiscript.tokenizer.StringToken;
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -49,7 +49,7 @@ public abstract class ParseRule<N extends Node> {
 		if (name != null) {
 			NamespaceName namespaceName = new NamespaceName();
 			namespaceName.name = name;
-			if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				namespaceName.namespace = namespaceName.name;
 				namespaceName.name = visitWord(Words.NOT_SERVICE, tokenizer);
 			}
@@ -217,26 +217,26 @@ public abstract class ParseRule<N extends Node> {
 		return false;
 	}
 
-	protected int visitSymbol(Tokenizer tokenizer, int... types) throws TokenizerException {
+	protected SymbolType visitSymbol(Tokenizer tokenizer, SymbolType... types) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
-			for (int type : types) {
+			for (SymbolType type : types) {
 				if (symbolToken.getType() == type) {
 					tokenizer.nextToken();
 					return type;
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected int visitSymbol(Tokenizer tokenizer, CompileHandler handler, int... types) {
+	protected SymbolType visitSymbol(Tokenizer tokenizer, CompileHandler handler, SymbolType... types) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;
-				for (int type : types) {
+				for (SymbolType type : types) {
 					if (symbolToken.getType() == type) {
 						tokenizer.nextToken();
 						return type;
@@ -246,20 +246,20 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-		return -1;
+		return null;
 	}
 
-	protected void expectSymbol(int type, Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitSymbol(tokenizer, type) == -1) {
+	protected void expectSymbol(SymbolType type, Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
+		if (visitSymbol(tokenizer, type) == null) {
 			throw new HiScriptParseException("'" + SymbolToken.getSymbol(type) + "' is expected", tokenizer.currentToken());
 		}
 	}
 
-	protected void expectSymbol(int type, Tokenizer tokenizer, CompileHandler handler) {
+	protected void expectSymbol(SymbolType type, Tokenizer tokenizer, CompileHandler handler) {
 		int offset = tokenizer.currentToken() != null ? tokenizer.currentToken().getOffset() : 0;
 		Token lastToken = null;
 		try {
-			while (visitSymbol(tokenizer, type) == -1) {
+			while (visitSymbol(tokenizer, type) == null) {
 				lastToken = tokenizer.currentToken();
 				if (tokenizer.hasNext()) {
 					tokenizer.nextToken();
@@ -277,7 +277,7 @@ public abstract class ParseRule<N extends Node> {
 		}
 	}
 
-	protected int visitEquate(Tokenizer tokenizer) throws TokenizerException {
+	protected SymbolType visitEquate(Tokenizer tokenizer) throws TokenizerException {
 		Token currentToken = tokenizer.currentToken();
 		if (currentToken instanceof SymbolToken) {
 			SymbolToken symbolToken = (SymbolToken) currentToken;
@@ -286,10 +286,10 @@ public abstract class ParseRule<N extends Node> {
 				return symbolToken.getType();
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	protected int visitEquate(Tokenizer tokenizer, CompileHandler handler) {
+	protected SymbolType visitEquate(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
@@ -302,12 +302,12 @@ public abstract class ParseRule<N extends Node> {
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-		return -1;
+		return null;
 	}
 
 	protected int visitDimension(Tokenizer tokenizer) throws TokenizerException {
 		int dimension = 0;
-		while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
+		while (visitSymbol(tokenizer, SymbolType.MASSIVE) != null) {
 			dimension++;
 		}
 		return dimension;
@@ -316,7 +316,7 @@ public abstract class ParseRule<N extends Node> {
 	protected int visitDimension(Tokenizer tokenizer, CompileHandler handler) {
 		int dimension = 0;
 		try {
-			while (visitSymbol(tokenizer, Symbols.MASSIVE) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.MASSIVE) != null) {
 				dimension++;
 			}
 		} catch (TokenizerException exc) {
@@ -328,7 +328,7 @@ public abstract class ParseRule<N extends Node> {
 	protected VariableNode visitVariable(Tokenizer tokenizer) throws TokenizerException {
 		String namespace = null;
 		String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
-		if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 			namespace = variableName;
 			variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 		}
@@ -343,7 +343,7 @@ public abstract class ParseRule<N extends Node> {
 		try {
 			String namespace = null;
 			String variableName = visitWord(Words.NOT_SERVICE, tokenizer);
-			if (visitSymbol(tokenizer, Symbols.POINT) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.POINT) != null) {
 				namespace = variableName;
 				variableName = visitWord(Words.NOT_SERVICE, tokenizer);
 			}

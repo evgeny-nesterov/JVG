@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeGeneric;
 import ru.nest.hiscript.ool.model.nodes.NodeGenerics;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -30,7 +30,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 
 	@Override
 	public NodeGenerics visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
-		if (visitSymbol(tokenizer, Symbols.LOWER) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.LOWER) != null) {
 			if (visitGreater(tokenizer, false)) {
 				return new NodeGenerics(new NodeGeneric[0]);
 			}
@@ -40,7 +40,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 			do {
 				startToken = startToken(tokenizer);
 				String name;
-				if (visitSymbol(tokenizer, Symbols.QUESTION) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.QUESTION) != null) {
 					name = null;
 				} else {
 					name = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
@@ -66,7 +66,7 @@ public class GenericsParseRule extends ParseRule<NodeGenerics> {
 				NodeGeneric generic = new NodeGeneric(name, isSuper, type, index++);
 				generic.setToken(tokenizer.getBlockToken(startToken));
 				generics.add(generic);
-			} while (visitSymbol(tokenizer, Symbols.COMMA) != -1);
+			} while (visitSymbol(tokenizer, SymbolType.COMMA) != null);
 
 			visitGreater(tokenizer, true);
 			return new NodeGenerics(generics.toArray(new NodeGeneric[generics.size()]));

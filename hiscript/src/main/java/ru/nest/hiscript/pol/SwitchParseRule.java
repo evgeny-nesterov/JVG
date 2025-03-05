@@ -5,7 +5,7 @@ import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.CaseNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.SwitchNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -24,18 +24,18 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	@Override
 	public SwitchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.SWITCH, tokenizer) != null) {
-			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
+			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 
 			Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 			if (value == null) {
 				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
 
 			SwitchNode node = new SwitchNode(value);
 
 			boolean defaultFound = false;
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 			while (true) {
 				CaseNode caseNode = CaseParseRule.getInstance().visit(tokenizer);
 				if (caseNode != null) {
@@ -44,7 +44,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				}
 
 				if (visitWord(Words.DEFAULT, tokenizer) != null) {
-					expectSymbol(Symbols.COLON, tokenizer);
+					expectSymbol(SymbolType.COLON, tokenizer);
 					if (defaultFound) {
 						throw new HiScriptParseException("duplicate default label", tokenizer.currentToken());
 					}
@@ -57,7 +57,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				}
 				break;
 			}
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 			return node;
 		}
 		return null;
@@ -66,15 +66,15 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.SWITCH, tokenizer, handler) != null) {
-			expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
+			expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
 			}
-			expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
 
 			boolean defaultFound = false;
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 			while (true) {
 				if (CaseParseRule.getInstance().visit(tokenizer, handler)) {
 					continue;
@@ -85,7 +85,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 					if (defaultFound) {
 						errorOccurred(handler, "duplicate default label", token);
 					}
-					expectSymbol(Symbols.COLON, tokenizer, handler);
+					expectSymbol(SymbolType.COLON, tokenizer, handler);
 
 					BlockParseRule.getInstance().visit(tokenizer, handler);
 					defaultFound = true;
@@ -93,7 +93,7 @@ public class SwitchParseRule extends ParseRule<SwitchNode> {
 				}
 				break;
 			}
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 			return true;
 		}
 		return false;

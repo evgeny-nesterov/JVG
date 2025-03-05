@@ -5,7 +5,7 @@ import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.nodes.NodeAssert;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -28,10 +28,10 @@ public class AssertParseRule extends ParseRule<NodeAssert> {
 			// TODO check condition.getExpressionType() on boolean type
 
 			NodeExpression message = null;
-			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.COLON) != null) {
 				message = expectExpression(tokenizer, ctx);
 			}
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			return new NodeAssert(condition, message);
 		}
 		return null;

@@ -4,7 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.EmptyNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -27,7 +27,7 @@ public class StatementParseRule extends ParseRule<Node> {
 	 */
 	@Override
 	public Node visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
-		if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.SEMICOLON) != null) {
 			return EmptyNode.getInstance();
 		}
 
@@ -65,7 +65,7 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		if ((node = AssignmentParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
@@ -74,33 +74,33 @@ public class StatementParseRule extends ParseRule<Node> {
 		}
 
 		if ((node = DeclarationsParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
 		if ((node = IncrementParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
 		if ((node = InvocationParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
 		if ((node = BreakParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
 		if ((node = ContinueParseRule.getInstance().visit(tokenizer)) != null) {
-			expectSymbol(Symbols.SEMICOLON, tokenizer);
+			expectSymbol(SymbolType.SEMICOLON, tokenizer);
 			return node;
 		}
 
-		if (visitSymbol(tokenizer, Symbols.BRACES_LEFT) != -1) {
+		if (visitSymbol(tokenizer, SymbolType.BRACES_LEFT) != null) {
 			node = BlockParseRule.getInstance().visit(tokenizer);
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 			if (node != null) {
 				return node;
 			} else {
@@ -119,7 +119,7 @@ public class StatementParseRule extends ParseRule<Node> {
 		boolean found = true;
 
 		while (true) {
-			if (visitSymbol(tokenizer, handler, Symbols.SEMICOLON) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.SEMICOLON) != null) {
 				break;
 			}
 
@@ -156,7 +156,7 @@ public class StatementParseRule extends ParseRule<Node> {
 			}
 
 			if (AssignmentParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
@@ -165,33 +165,33 @@ public class StatementParseRule extends ParseRule<Node> {
 			}
 
 			if (DeclarationsParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
 			if (IncrementParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
 			if (InvocationParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
 			if (BreakParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
 			if (ContinueParseRule.getInstance().visit(tokenizer, handler)) {
-				expectSymbol(Symbols.SEMICOLON, tokenizer, handler);
+				expectSymbol(SymbolType.SEMICOLON, tokenizer, handler);
 				break;
 			}
 
-			if (visitSymbol(tokenizer, handler, Symbols.BRACES_LEFT) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.BRACES_LEFT) != null) {
 				BlockParseRule.getInstance().visit(tokenizer, handler);
-				expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 				break;
 			}
 
@@ -199,7 +199,7 @@ public class StatementParseRule extends ParseRule<Node> {
 			Token currentToken = tokenizer.currentToken();
 			if (currentToken instanceof SymbolToken) {
 				SymbolToken symbolToken = (SymbolToken) currentToken;
-				if (symbolToken.getType() == Symbols.BRACES_RIGHT) {
+				if (symbolToken.getType() == SymbolType.BRACES_RIGHT) {
 					found = false;
 					break;
 				}

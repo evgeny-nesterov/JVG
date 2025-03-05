@@ -5,7 +5,7 @@ import ru.nest.hiscript.pol.model.AssignmentNode;
 import ru.nest.hiscript.pol.model.ExpressionNode;
 import ru.nest.hiscript.pol.model.Node;
 import ru.nest.hiscript.pol.model.VariableNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -29,17 +29,17 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 		VariableNode variable = visitVariable(tokenizer);
 		if (variable != null) {
 			List<ExpressionNode> indexes = new ArrayList<>();
-			while (visitSymbol(tokenizer, Symbols.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.SQUARE_BRACES_LEFT) != null) {
 				ExpressionNode index = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (index == null) {
 					throw new HiScriptParseException("array dimension missing", tokenizer.currentToken());
 				}
-				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer);
+				expectSymbol(SymbolType.SQUARE_BRACES_RIGHT, tokenizer);
 				indexes.add(index);
 			}
 
-			int equateType = visitEquate(tokenizer);
-			if (equateType != -1) {
+			SymbolType equateType = visitEquate(tokenizer);
+			if (equateType != null) {
 				tokenizer.commit();
 				Node value = ExpressionParseRule.getInstance().visit(tokenizer);
 				if (value == null) {
@@ -64,15 +64,15 @@ public class AssignmentParseRule extends ParseRule<AssignmentNode> {
 			// TODO
 			List<ExpressionNode> indexes = new ArrayList<>();
 
-			while (visitSymbol(tokenizer, handler, Symbols.SQUARE_BRACES_LEFT) != -1) {
+			while (visitSymbol(tokenizer, handler, SymbolType.SQUARE_BRACES_LEFT) != null) {
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 					errorOccurred(tokenizer, handler, "array dimension missing");
 				}
-				expectSymbol(Symbols.SQUARE_BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.SQUARE_BRACES_RIGHT, tokenizer, handler);
 			}
 
-			int equateType = visitEquate(tokenizer, handler);
-			if (equateType != -1) {
+			SymbolType equateType = visitEquate(tokenizer, handler);
+			if (equateType != null) {
 				tokenizer.commit();
 				if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 					errorOccurred(tokenizer, handler, "expression expected");

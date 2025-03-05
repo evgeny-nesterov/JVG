@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.CastNode;
 import ru.nest.hiscript.pol.model.PrefixNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -21,8 +21,8 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 	public PrefixNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		PrefixNode prefix = null;
 		while (true) {
-			int operation = visitSymbol(tokenizer, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
-			if (operation != -1) {
+			SymbolType operation = visitSymbol(tokenizer, SymbolType.PLUS, SymbolType.MINUS, SymbolType.EXCLAMATION);
+			if (operation != null) {
 				if (prefix == null) {
 					prefix = new PrefixNode();
 				}
@@ -41,7 +41,6 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 
 			break;
 		}
-
 		return prefix;
 	}
 
@@ -49,8 +48,8 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		boolean found = false;
 		while (true) {
-			int operation = visitSymbol(tokenizer, handler, Symbols.PLUS, Symbols.MINUS, Symbols.EXCLAMATION);
-			if (operation != -1) {
+			SymbolType operation = visitSymbol(tokenizer, handler, SymbolType.PLUS, SymbolType.MINUS, SymbolType.EXCLAMATION);
+			if (operation != null) {
 				found = true;
 				continue;
 			}
@@ -62,7 +61,6 @@ public class PrefixParseRule extends ParseRule<PrefixNode> {
 
 			break;
 		}
-
 		return found;
 	}
 }

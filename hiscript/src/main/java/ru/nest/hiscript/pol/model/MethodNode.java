@@ -1,6 +1,6 @@
 package ru.nest.hiscript.pol.model;
 
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 
 public class MethodNode extends Node {
 	public MethodNode(String name, int type, int dimension, ArgumentsNode arguments, BlockNode body) {
@@ -92,7 +92,7 @@ public class MethodNode extends Node {
 					ctx.value.setValue(values[i], type);
 
 					Variable var = getVariable(arguments.getNames()[i]);
-					Operations.doOperation(var.getValue(), ctx.value, Symbols.EQUATE);
+					Operations.doOperation(var.getValue(), ctx.value, SymbolType.EQUATE);
 				}
 
 				if (body != null) {

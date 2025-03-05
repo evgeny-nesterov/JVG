@@ -9,7 +9,7 @@ import ru.nest.hiscript.ool.model.HiEnumValue;
 import ru.nest.hiscript.ool.model.HiNode;
 import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.classes.HiClassEnum;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -43,7 +43,7 @@ public class EnumParseRule extends ParserUtil {
 				tokenizer.error("enum name is expected");
 			}
 
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 
 			ctx.clazz = new HiClassEnum(ctx.getClassLoader(), enumName, ctx.classLocationType);
 			ctx.clazz.modifiers = modifiers;
@@ -51,7 +51,7 @@ public class EnumParseRule extends ParserUtil {
 
 			visitContent(tokenizer, ctx);
 
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			return ctx.clazz;
 		}
 
@@ -67,14 +67,14 @@ public class EnumParseRule extends ParserUtil {
 			int errorPos = 0;
 			while (true) {
 				HiNode[] args = null;
-				if (visitSymbol(tokenizer, Symbols.PARENTHESES_LEFT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.PARENTHESES_LEFT) != null) {
 					args = visitArgumentsValues(tokenizer, ctx);
-					expectSymbol(tokenizer, Symbols.PARENTHESES_RIGHT);
+					expectSymbol(tokenizer, SymbolType.PARENTHESES_RIGHT);
 				}
 				ctx.addEnum(new HiEnumValue(enumName, ordinal++, args, enumValueToken));
 
-				if (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
-				} else if (visitSymbol(tokenizer, Symbols.SEMICOLON) != -1 || checkSymbol(tokenizer, Symbols.BRACES_RIGHT) != -1) {
+				if (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
+				} else if (visitSymbol(tokenizer, SymbolType.SEMICOLON) != null || checkSymbol(tokenizer, SymbolType.BRACES_RIGHT) != null) {
 					break;
 				} else {
 					if (errorPos == tokenizer.currentToken().getOffset()) {

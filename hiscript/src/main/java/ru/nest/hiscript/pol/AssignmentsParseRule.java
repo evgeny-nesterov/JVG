@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.AssignmentsNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 
@@ -24,7 +24,7 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 			AssignmentsNode node = new AssignmentsNode();
 			node.addAssignment(assignment);
 
-			while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+			while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 				assignment = visitStatement(tokenizer);
 				if (assignment == null) {
 					throw new HiScriptParseException("statement is expected", tokenizer.currentToken());
@@ -42,18 +42,16 @@ public class AssignmentsParseRule extends ParseRule<AssignmentsNode> {
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		try {
 			if (visitStatement(tokenizer, handler)) {
-				while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+				while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 					if (!visitStatement(tokenizer, handler)) {
 						errorOccurred(tokenizer, handler, "statement is expected");
 					}
 				}
-
 				return true;
 			}
 		} catch (TokenizerException exc) {
 			errorOccurred(tokenizer, handler, exc.getMessage());
 		}
-
 		return false;
 	}
 

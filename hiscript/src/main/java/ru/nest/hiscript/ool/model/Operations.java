@@ -45,7 +45,7 @@ import ru.nest.hiscript.ool.model.operations.OperationPrefixIncrement;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixMinus;
 import ru.nest.hiscript.ool.model.operations.OperationPrefixPlus;
 import ru.nest.hiscript.ool.model.operations.OperationXOR;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 
 import static ru.nest.hiscript.ool.model.OperationType.*;
 
@@ -206,7 +206,7 @@ public class Operations {
 		return false;
 	}
 
-	public static OperationType mapSymbolToOperation(int symbol) {
+	public static OperationType mapSymbolToOperation(SymbolType symbol) {
 		// POST_INCREMENT
 		// POST_DECREMENT
 		// PREFIX_INCREMENT
@@ -218,103 +218,103 @@ public class Operations {
 		// CAST
 
 		switch (symbol) {
-			case Symbols.MASSIVE:
+			case MASSIVE:
 				return ARRAY_INDEX;
 
-			case Symbols.POINT:
+			case POINT:
 				return INVOCATION;
 
-			case Symbols.MULTIPLY:
+			case MULTIPLY:
 				return MULTIPLY;
 
-			case Symbols.DIVIDE:
+			case DIVIDE:
 				return DIVIDE;
 
-			case Symbols.PERCENT:
+			case PERCENT:
 				return PERCENT;
 
-			case Symbols.PLUS:
+			case PLUS:
 				return PLUS;
 
-			case Symbols.MINUS:
+			case MINUS:
 				return MINUS;
 
-			case Symbols.BITWISE_SHIFT_LEFT:
+			case BITWISE_SHIFT_LEFT:
 				return BITWISE_SHIFT_LEFT;
 
-			case Symbols.BITWISE_SHIFT_RIGHT:
+			case BITWISE_SHIFT_RIGHT:
 				return BITWISE_SHIFT_RIGHT;
 
-			case Symbols.BITWISE_SHIFT_RIGHT_CYCLIC:
+			case BITWISE_SHIFT_RIGHT_CYCLIC:
 				return BITWISE_SHIFT_RIGHT_CYCLIC;
 
-			case Symbols.LOWER:
+			case LOWER:
 				return LOWER;
 
-			case Symbols.LOWER_OR_EQUAL:
+			case LOWER_OR_EQUAL:
 				return LOWER_OR_EQUALS;
 
-			case Symbols.GREATER:
+			case GREATER:
 				return GREATER;
 
-			case Symbols.GREATER_OR_EQUAL:
+			case GREATER_OR_EQUAL:
 				return GREATER_OR_EQUALS;
 
-			case Symbols.EQUALS:
+			case EQUALS:
 				return EQUALS;
 
-			case Symbols.NOT_EQUALS:
+			case NOT_EQUALS:
 				return NOT_EQUALS;
 
-			case Symbols.BITWISE_AND:
+			case BITWISE_AND:
 				return AND;
 
-			case Symbols.BITWISE_XOR:
+			case BITWISE_XOR:
 				return XOR;
 
-			case Symbols.BITWISE_OR:
+			case BITWISE_OR:
 				return OR;
 
-			case Symbols.LOGICAL_AND:
+			case LOGICAL_AND:
 				return LOGICAL_AND;
 
-			case Symbols.LOGICAL_OR:
+			case LOGICAL_OR:
 				return LOGICAL_OR;
 
-			case Symbols.EQUATE:
+			case EQUATE:
 				return EQUATE;
 
-			case Symbols.EQUATE_PLUS:
+			case EQUATE_PLUS:
 				return EQUATE_PLUS;
 
-			case Symbols.EQUATE_MINUS:
+			case EQUATE_MINUS:
 				return EQUATE_MINUS;
 
-			case Symbols.EQUATE_MULTIPLY:
+			case EQUATE_MULTIPLY:
 				return EQUATE_MULTIPLY;
 
-			case Symbols.EQUATE_DIVIDE:
+			case EQUATE_DIVIDE:
 				return EQUATE_DIVIDE;
 
-			case Symbols.EQUATE_PERCENT:
+			case EQUATE_PERCENT:
 				return EQUATE_PERCENT;
 
-			case Symbols.EQUATE_BITWISE_SHIFT_LEFT:
+			case EQUATE_BITWISE_SHIFT_LEFT:
 				return EQUATE_BITWISE_SHIFT_LEFT;
 
-			case Symbols.EQUATE_BITWISE_SHIFT_RIGHT:
+			case EQUATE_BITWISE_SHIFT_RIGHT:
 				return EQUATE_BITWISE_SHIFT_RIGHT;
 
-			case Symbols.EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
+			case EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC:
 				return EQUATE_BITWISE_SHIFT_RIGHT_CYCLIC;
 
-			case Symbols.EQUATE_BITWISE_AND:
+			case EQUATE_BITWISE_AND:
 				return EQUATE_AND;
 
-			case Symbols.EQUATE_BITWISE_XOR:
+			case EQUATE_BITWISE_XOR:
 				return EQUATE_XOR;
 
-			case Symbols.EQUATE_BITWISE_OR:
+			case EQUATE_BITWISE_OR:
 				return EQUATE_OR;
 		}
 		return null;

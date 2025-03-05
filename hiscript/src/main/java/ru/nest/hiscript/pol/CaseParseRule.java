@@ -4,7 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.CaseNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -26,7 +26,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 			if ((value = ExpressionParseRule.getInstance().visit(tokenizer)) == null) {
 				throw new HiScriptParseException("expression expected", tokenizer.currentToken());
 			}
-			expectSymbol(Symbols.COLON, tokenizer);
+			expectSymbol(SymbolType.COLON, tokenizer);
 			BlockNode body = BlockParseRule.getInstance().visit(tokenizer);
 			return new CaseNode(value, body);
 		}
@@ -39,7 +39,7 @@ public class CaseParseRule extends ParseRule<CaseNode> {
 			if (!ExpressionParseRule.getInstance().visit(tokenizer, handler)) {
 				errorOccurred(tokenizer, handler, "expression expected");
 			}
-			expectSymbol(Symbols.COLON, tokenizer, handler);
+			expectSymbol(SymbolType.COLON, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
 			return true;
 		}

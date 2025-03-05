@@ -9,8 +9,7 @@ import ru.nest.hiscript.ool.model.Modifiers;
 import ru.nest.hiscript.ool.model.Type;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclaration;
 import ru.nest.hiscript.ool.model.nodes.NodeDeclarations;
-import ru.nest.hiscript.tokenizer.SymbolToken;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -40,16 +39,16 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 				HiNode initializer = null;
 				boolean isField = false;
-				if (checkSymbol(tokenizer, Symbols.SEMICOLON, Symbols.COMMA) != -1) {
+				if (checkSymbol(tokenizer, SymbolType.SEMICOLON, SymbolType.COMMA) != null) {
 					isField = true;
-				} else if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+				} else if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
 					if (initializer == null) {
 						tokenizer.error("expression expected");
 					}
 					isField = true;
-				} else if (tokenizer.currentToken() == null || checkSymbol(tokenizer, SymbolToken.BRACES_RIGHT) != -1) {
-					expectSymbol(tokenizer, Symbols.SEMICOLON);
+				} else if (tokenizer.currentToken() == null || checkSymbol(tokenizer, SymbolType.BRACES_RIGHT) != null) {
+					expectSymbol(tokenizer, SymbolType.SEMICOLON);
 					isField = true;
 				}
 
@@ -61,7 +60,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 					declarations.add(type, varName, initializer, modifiers, annotatedModifiers.getAnnotations(), tokenizer.getBlockToken(startToken));
 
 					// Search new declarations with the base type
-					while (visitSymbol(tokenizer, Symbols.COMMA) != -1) {
+					while (visitSymbol(tokenizer, SymbolType.COMMA) != null) {
 						startToken = startToken(tokenizer);
 						varName = expectWords(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
 						if (varName == null) {
@@ -72,7 +71,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 						type = Type.getArrayType(baseType, addDimension, ctx.getEnv());
 
 						initializer = null;
-						if (visitSymbol(tokenizer, Symbols.EQUATE) != -1) {
+						if (visitSymbol(tokenizer, SymbolType.EQUATE) != null) {
 							initializer = expectInitializer(tokenizer, cellType, type.getDimension(), ctx);
 						}
 
@@ -124,7 +123,7 @@ public class DeclarationParseRule extends ParseRule<NodeDeclarations> implements
 
 				HiNode initializer = null;
 				if (initialized) {
-					expectSymbol(tokenizer, Symbols.EQUATE);
+					expectSymbol(tokenizer, SymbolType.EQUATE);
 					initializer = visitInitializer(tokenizer, cellType, type.getDimension(), ctx);
 				}
 

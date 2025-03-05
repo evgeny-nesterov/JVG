@@ -1,11 +1,11 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.SymbolType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ru.nest.hiscript.tokenizer.Symbols;
 
 public class DeclarationsNode extends Node {
 	public DeclarationsNode(int type) {
@@ -82,7 +82,7 @@ public class DeclarationsNode extends Node {
 			Node value = variables.get(var.getFullname());
 			if (value != null) {
 				value.execute(ctx);
-				Operations.doOperation(var.getValue(), ctx.value, Symbols.EQUATE);
+				Operations.doOperation(var.getValue(), ctx.value, SymbolType.EQUATE);
 				var.define();
 			}
 		}

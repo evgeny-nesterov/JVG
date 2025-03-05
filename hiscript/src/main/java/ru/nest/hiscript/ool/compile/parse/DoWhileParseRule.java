@@ -6,7 +6,7 @@ import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.nodes.NodeBlock;
 import ru.nest.hiscript.ool.model.nodes.NodeDoWhile;
 import ru.nest.hiscript.ool.model.nodes.NodeExpression;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -25,9 +25,9 @@ public class DoWhileParseRule extends ParseRule<NodeDoWhile> {
 	@Override
 	public NodeDoWhile visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.DO, tokenizer) != null) {
-			expectSymbol(tokenizer, Symbols.BRACES_LEFT);
+			expectSymbol(tokenizer, SymbolType.BRACES_LEFT);
 			NodeBlock body = BlockParseRule.getInstance().visit(tokenizer, ctx);
-			expectSymbol(tokenizer, Symbols.BRACES_RIGHT);
+			expectSymbol(tokenizer, SymbolType.BRACES_RIGHT);
 			expectWord(Words.WHILE, tokenizer);
 			NodeExpression condition = expectCondition(tokenizer, ctx);
 			return new NodeDoWhile(body, condition);

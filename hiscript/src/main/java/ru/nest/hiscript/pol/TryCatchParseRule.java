@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.BlockNode;
 import ru.nest.hiscript.pol.model.TryCatchNode;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -21,9 +21,9 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 	@Override
 	public TryCatchNode visit(Tokenizer tokenizer) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.TRY, tokenizer) != null) {
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 			BlockNode tryBody = BlockParseRule.getInstance().visit(tokenizer);
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 
 			BlockNode catchBody = null;
 			String errorVariableName = null;
@@ -31,7 +31,7 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 			if (visitWord(Words.CATCH, tokenizer) != null) {
 				thereIsCatch = true;
 
-				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer);
+				expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer);
 				if (visitWord(Words.STRING, tokenizer) == null) {
 					throw new HiScriptParseException("'string' expected", tokenizer.currentToken());
 				}
@@ -39,20 +39,20 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 				if (errorVariableName == null) {
 					throw new HiScriptParseException("variable expected", tokenizer.currentToken());
 				}
-				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer);
+				expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer);
 
-				expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+				expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 				catchBody = BlockParseRule.getInstance().visit(tokenizer);
-				expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+				expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 			}
 
 			BlockNode finallyBody = null;
 			boolean thereIsFinally = false;
 			if (visitWord(Words.FINALLY, tokenizer) != null) {
 				thereIsFinally = true;
-				expectSymbol(Symbols.BRACES_LEFT, tokenizer);
+				expectSymbol(SymbolType.BRACES_LEFT, tokenizer);
 				finallyBody = BlockParseRule.getInstance().visit(tokenizer);
-				expectSymbol(Symbols.BRACES_RIGHT, tokenizer);
+				expectSymbol(SymbolType.BRACES_RIGHT, tokenizer);
 			}
 
 			if (!thereIsCatch && !thereIsFinally) {
@@ -66,16 +66,16 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 	@Override
 	public boolean visit(Tokenizer tokenizer, CompileHandler handler) {
 		if (visitWord(Words.TRY, tokenizer, handler) != null) {
-			expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 			BlockParseRule.getInstance().visit(tokenizer, handler);
-			expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+			expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 
 			String errorVariableName;
 			boolean thereIsCatch = false;
 			if (visitWord(Words.CATCH, tokenizer, handler) != null) {
 				thereIsCatch = true;
 
-				expectSymbol(Symbols.PARENTHESES_LEFT, tokenizer, handler);
+				expectSymbol(SymbolType.PARENTHESES_LEFT, tokenizer, handler);
 				if (visitWord(Words.STRING, tokenizer, handler) == null) {
 					errorOccurred(tokenizer, handler, "'string' expected");
 				}
@@ -83,19 +83,19 @@ public class TryCatchParseRule extends ParseRule<TryCatchNode> {
 				if (errorVariableName == null) {
 					errorOccurred(tokenizer, handler, "variable expected");
 				}
-				expectSymbol(Symbols.PARENTHESES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.PARENTHESES_RIGHT, tokenizer, handler);
 
-				expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+				expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 				BlockParseRule.getInstance().visit(tokenizer, handler);
-				expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 			}
 
 			boolean thereIsFinally = false;
 			if (visitWord(Words.FINALLY, tokenizer, handler) != null) {
 				thereIsFinally = true;
-				expectSymbol(Symbols.BRACES_LEFT, tokenizer, handler);
+				expectSymbol(SymbolType.BRACES_LEFT, tokenizer, handler);
 				BlockParseRule.getInstance().visit(tokenizer, handler);
-				expectSymbol(Symbols.BRACES_RIGHT, tokenizer, handler);
+				expectSymbol(SymbolType.BRACES_RIGHT, tokenizer, handler);
 			}
 
 			if (!thereIsCatch && !thereIsFinally) {

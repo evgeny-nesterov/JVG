@@ -1,12 +1,12 @@
 package ru.nest.hiscript.pol.model;
 
+import ru.nest.hiscript.tokenizer.OperationSymbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
+
 import java.util.List;
 
-import ru.nest.hiscript.tokenizer.OperationSymbols;
-import ru.nest.hiscript.tokenizer.Symbols;
-
 public class AssignmentNode extends Node {
-	public AssignmentNode(String namespace, String varName, List<ExpressionNode> indexes, Node value, int equateType) {
+	public AssignmentNode(String namespace, String varName, List<ExpressionNode> indexes, Node value, SymbolType equateType) {
 		super("assignment");
 		if (namespace != null && namespace.length() > 0) {
 			fullname = namespace + "." + varName;
@@ -53,9 +53,9 @@ public class AssignmentNode extends Node {
 		return value;
 	}
 
-	private final int equateType;
+	private final SymbolType equateType;
 
-	public int getEquateType() {
+	public SymbolType getEquateType() {
 		return equateType;
 	}
 
@@ -79,7 +79,7 @@ public class AssignmentNode extends Node {
 		if (var != null) {
 			if (indexes.size() == 0) {
 				value.execute(ctx);
-				if (equateType == Symbols.EQUATE) {
+				if (equateType == SymbolType.EQUATE) {
 					var.define();
 				} else if (OperationSymbols.isEquate(equateType) && !var.isDefined()) {
 					throw new ExecuteException("variable '" + var.getFullname() + "' is not initialized");
@@ -93,7 +93,7 @@ public class AssignmentNode extends Node {
 				}
 
 				value.execute(ctx);
-				if (equateType == Symbols.EQUATE) {
+				if (equateType == SymbolType.EQUATE) {
 					var.define();
 				} else if (OperationSymbols.isEquate(equateType) && !var.isDefined()) {
 					throw new ExecuteException("variable '" + var.getFullname() + "' is not initialized");

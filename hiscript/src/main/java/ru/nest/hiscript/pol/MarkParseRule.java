@@ -3,7 +3,7 @@ package ru.nest.hiscript.pol;
 import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.pol.model.MarkNode;
 import ru.nest.hiscript.pol.model.Node;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
 import ru.nest.hiscript.tokenizer.Words;
@@ -24,7 +24,7 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 
 		String markName = visitWord(Words.NOT_SERVICE, tokenizer);
 		if (markName != null) {
-			if (visitSymbol(tokenizer, Symbols.COLON) != -1) {
+			if (visitSymbol(tokenizer, SymbolType.COLON) != null) {
 				tokenizer.commit();
 
 				Node body = StatementParseRule.getInstance().visit(tokenizer);
@@ -45,7 +45,7 @@ public class MarkParseRule extends ParseRule<MarkNode> {
 
 		String markName = visitWord(Words.NOT_SERVICE, tokenizer, handler);
 		if (markName != null) {
-			if (visitSymbol(tokenizer, handler, Symbols.COLON) != -1) {
+			if (visitSymbol(tokenizer, handler, SymbolType.COLON) != null) {
 				tokenizer.commit();
 
 				if (!StatementParseRule.getInstance().visit(tokenizer, handler)) {

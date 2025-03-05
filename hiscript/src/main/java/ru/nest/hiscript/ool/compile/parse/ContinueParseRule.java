@@ -4,7 +4,7 @@ import ru.nest.hiscript.HiScriptParseException;
 import ru.nest.hiscript.ool.compile.CompileClassContext;
 import ru.nest.hiscript.ool.compile.ParseRule;
 import ru.nest.hiscript.ool.model.nodes.NodeContinue;
-import ru.nest.hiscript.tokenizer.Symbols;
+import ru.nest.hiscript.tokenizer.SymbolType;
 import ru.nest.hiscript.tokenizer.Token;
 import ru.nest.hiscript.tokenizer.Tokenizer;
 import ru.nest.hiscript.tokenizer.TokenizerException;
@@ -27,7 +27,7 @@ public class ContinueParseRule extends ParseRule<NodeContinue> {
 	public NodeContinue visit(Tokenizer tokenizer, CompileClassContext ctx, Token startToken) throws TokenizerException, HiScriptParseException {
 		if (visitWord(Words.CONTINUE, tokenizer) != null) {
 			String label = visitWord(tokenizer, NOT_SERVICE, UNNAMED_VARIABLE);
-			expectSymbol(tokenizer, Symbols.SEMICOLON);
+			expectSymbol(tokenizer, SymbolType.SEMICOLON);
 			return new NodeContinue(label);
 		}
 		return null;
