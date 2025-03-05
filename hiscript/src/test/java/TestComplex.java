@@ -242,5 +242,7 @@ public class TestComplex extends HiTest {
 		// static
 		assertSuccess("class C{static int x = 1; static C get(){return null;}} assert C.get().x == 1;"); // compiler has to change C.get() to C for x
 		assertSuccess("class C{static int x = 1; static C c = null;} assert C.c.x == 1;"); // compiler has to change C.c to C for x
+		assertSuccess("class A{static int x = 1;} assert ((A)null).x == 1;");
+		assertSuccess("class A{static int get(){return 1;}} assert ((A)null).get() == 1;");
 	}
 }

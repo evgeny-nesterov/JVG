@@ -79,6 +79,7 @@ public class OperationInvocation extends BinaryOperation {
 
 		// @generics
 		HiClass clazz = node2.clazz;
+		// TODO delete?
 		if (clazz.isGeneric() && enclosingClass != null && enclosingClass.isGeneric()) {
 			HiClassGeneric genericClass = (HiClassGeneric) clazz;
 			HiClassGeneric genericEnclosingClass = (HiClassGeneric) enclosingClass;
@@ -260,11 +261,6 @@ public class OperationInvocation extends BinaryOperation {
 				}
 				object = obj;
 			}
-
-			if (object == null) {
-				ctx.throwRuntimeException("null pointer");
-				return;
-			}
 		} else {
 			assert v1.valueType == ValueType.CLASS; // checked in validation
 			isStatic = true;
@@ -405,6 +401,11 @@ public class OperationInvocation extends BinaryOperation {
 		}
 
 		if (ctx.exitFromBlock()) {
+			return;
+		}
+
+		if (!method.isStatic() && object == null) {
+			ctx.throwRuntimeException("null pointer");
 			return;
 		}
 
