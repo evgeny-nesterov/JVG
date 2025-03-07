@@ -1,163 +1,501 @@
 package ru.nest;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Q {
-	int X;
+	static class Result {
+		int width, height;
 
-	Q(int X) {
-		this.X = X;
-		front = new int[X];
-		busy = new boolean[X + 1];
-		sequence = new int[X];
+		Quad[] quads;
+
+		long duration;
+
+		Result(Quad[] quads, int width, int height, long duration) {
+			Arrays.sort(quads);
+			this.quads = quads;
+			this.width = width;
+			this.height = height;
+			this.duration = duration;
+		}
+
+		public int getFirstQuadSize() {
+			for (int i = 0; i < quads.length; i++) {
+				if (quads[i].x == 0 && quads[i].y == 0) {
+					return quads[i].size;
+				}
+			}
+			return 0;
+		}
+
+		public boolean equals(Object o) {
+			Result result = (Result) o;
+			if (quads.length != result.quads.length) {
+				return false;
+			}
+			for (int i = 0; i < quads.length; i++) {
+				if (!quads[i].equals(result.quads[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public int hashCode() {
+			int hashCode = 0;
+			for (int i = 0; i < quads.length; i++) {
+				hashCode = 37 * hashCode + quads[i].hashCode();
+			}
+			return hashCode;
+		}
+
+		public String toString() {
+			String string = "// " + width + "-" + height + " (" + quads.length + ")\t" + (duration / 1000.0) + "sec\t";
+			for (int i = 0; i < quads.length; i++) {
+				if (i > 0) {
+					string += ", ";
+				}
+				string += quads[i].toString();
+			}
+			return string;
+		}
+
+		Result flipHor() {
+			Quad[] quads = new Quad[this.quads.length];
+			for (int i = 0; i < this.quads.length; i++) {
+				quads[i] = this.quads[i].flipHor(width);
+			}
+			return new Result(quads, width, height, duration);
+		}
+
+		Result flipVer() {
+			Quad[] quads = new Quad[this.quads.length];
+			for (int i = 0; i < this.quads.length; i++) {
+				quads[i] = this.quads[i].flipVer(height);
+			}
+			return new Result(quads, width, height, duration);
+		}
+
+		Result flipHorVer() {
+			Quad[] quads = new Quad[this.quads.length];
+			for (int i = 0; i < this.quads.length; i++) {
+				quads[i] = this.quads[i].flipHorVer(width, height);
+			}
+			return new Result(quads, width, height, duration);
+		}
 	}
 
-	int[] front;
+	static class Quad implements Comparable<Quad> {
+		int x, y, size;
 
-	boolean[] busy;
+		Quad(int x, int y, int size) {
+			this.x = x;
+			this.y = y;
+			this.size = size;
+		}
 
-	int[] sequence;
+		public boolean equals(Object o) {
+			Quad q = (Quad) o;
+			return x == q.x && y == q.y && size == q.size;
+		}
 
-	int foundCount = 0;
+		public int hashCode() {
+			return x + 37 * (y + 37 * size);
+		}
 
-	int n;
+		public String toString() {
+			return size + " " + x + "x" + y;
+		}
 
-	boolean start() {
-		startLevel0(0);
-		return foundCount > 0;
+		public int compareTo(Quad quad) {
+			return quad.size - size;
+		}
+
+		Quad flipHor(int width) {
+			return new Quad(width - x - size, y, size);
+		}
+
+		Quad flipVer(int height) {
+			return new Quad(x, height - y - size, size);
+		}
+
+		Quad flipHorVer(int width, int height) {
+			return new Quad(width - x - size, height - y - size, size);
+		}
 	}
 
-	/*
-			|
-			|_______          |
-			|   S1 |        __|
-			|______|_______|__| Sx < S1
-	 */
-	void startLevel0(int levelX1) {
-		int levelLength = X - levelX1;
-		for (int quad = 3; quad <= levelLength; quad++) {
-			if (!busy[quad]) {
-				int x2 = levelX1 + quad;
-				if (x2 == X && (quad > sequence[0] || quad <= 3)) {
-					continue;
+	static class Q1 {
+		static Set<Result> allResults = new LinkedHashSet<>();
+
+		int X;
+
+		long startTime = System.currentTimeMillis();
+
+		Q1(int X) {
+			this.X = X;
+			front = new int[X];
+			busy = new boolean[X + 1];
+			sequence = new int[X];
+		}
+
+		int[] front;
+
+		boolean[] busy;
+
+		int[] sequence;
+
+		int n;
+
+		Set<Result> results = new LinkedHashSet<>();
+
+		boolean start() {
+			startLevel(0, 0, X);
+			return results.size() > 0;
+		}
+
+		/*
+				|
+				|_______          |
+				|   S1 |        __|
+				|______|_______|__| Sx < S1
+		 */
+		void startLevel(int level, int levelX1, int levelX2) {
+			int levelLength = levelX2 - levelX1;
+			for (int quad = 1; quad <= levelLength; quad++) {
+				if (!busy[quad]) {
+					int x2 = levelX1 + quad;
+					if (level == 0 && x2 == X && (quad > sequence[0] || quad <= 3)) {
+						continue;
+					}
+
+					busy[quad] = true;
+					int newLevel = level + quad;
+					for (int x = levelX1; x < x2; x++) {
+						front[x] = newLevel;
+					}
+					sequence[n++] = quad;
+
+					if (x2 != levelX2 && (levelX1 == 0 || front[levelX1 - 1] >= newLevel)) {
+						startLevel(level, x2, levelX2);
+					} else {
+						//--- find level -----------------------------
+						int currentLevel = front[0];
+						int bestLevel = currentLevel;
+						int bestLevelX1 = 0;
+						int bestLevelX2 = X;
+						int lx1 = 0, lx2 = 0, ly;
+						while (lx2 < X) {
+							ly = front[lx2];
+							while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+							if ((ly > currentLevel || lx2 == X) && lx2 - lx1 < bestLevelX2 - bestLevelX1) {
+								bestLevel = currentLevel;
+								bestLevelX1 = lx1;
+								bestLevelX2 = lx2;
+								while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
+									currentLevel = ly;
+								}
+							}
+							currentLevel = ly;
+							lx1 = lx2;
+						}
+
+						if (bestLevelX1 == 0 && bestLevelX2 == X) {
+							if (bestLevel > X) {
+								result(n);
+							}
+						} else {
+							startLevel(bestLevel, bestLevelX1, bestLevelX2);
+						}
+						//--------------------------------------------
+					}
+
+					for (int x = levelX1; x < x2; x++) {
+						front[x] = level;
+					}
+					busy[quad] = false;
+					n--;
+				}
+			}
+		}
+
+		void result(int n) {
+			long endTime = System.currentTimeMillis();
+			int Y = front[0];
+			Result result = getResult();
+			Result result1 = result.flipVer();
+			if (results.contains(result)) {
+				return;
+			}
+			Result result2 = result.flipHorVer();
+			if (results.contains(result2)) {
+				return;
+			}
+			Result bestResult = result;
+			if (result1.getFirstQuadSize() > bestResult.getFirstQuadSize()) {
+				bestResult = result1;
+			}
+			if (result2.getFirstQuadSize() > bestResult.getFirstQuadSize()) {
+				bestResult = result2;
+			}
+			results.add(bestResult);
+		}
+
+		Result getResult() {
+			Quad[] quads = new Quad[n];
+			int x1 = 0, x2, y = 0, index = 0;
+			int[] front = new int[X];
+			while (index < n) {
+				Quad quad = new Quad(x1, y, sequence[index]);
+				quads[index++] = quad;
+				for (int i = quad.x; i < quad.x + quad.size; i++) {
+					front[i] += quad.size;
 				}
 
-				busy[quad] = true;
-				for (int x = levelX1; x < x2; x++) {
-					front[x] = quad;
+				int currentLevel = front[0];
+				x1 = 0;
+				x2 = X;
+				y = currentLevel;
+				int lx1 = 0, lx2 = 0, ly;
+				while (lx2 < X) {
+					ly = front[lx2];
+					while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+					if ((ly > currentLevel || lx2 == X) && lx2 - lx1 < x2 - x1) {
+						y = currentLevel;
+						x1 = lx1;
+						x2 = lx2;
+						while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
+							currentLevel = ly;
+						}
+					}
+					currentLevel = ly;
+					lx1 = lx2;
 				}
-				sequence[n++] = quad;
+			}
+			return new Result(quads, X, this.front[0], System.currentTimeMillis() - startTime);
+		}
 
-				if (quad < levelLength) {
-					startLevel0(x2);
-				} else {
-					findLevel();
+		public void print() {
+			if (results.size() > 0) {
+				for (Result result : results) {
+					System.out.println(result);
 				}
-
-				for (int x = levelX1; x < x2; x++) {
-					front[x] = 0;
-				}
-				busy[quad] = false;
-				n--;
+				System.out.println("// time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "sec\n//");
 			}
 		}
 	}
 
-	void startLevel(int level, int levelX1, int levelX2) {
-		int levelLength = levelX2 - levelX1;
-		for (int quad = 1; quad <= levelLength; quad++) {
-			if (!busy[quad]) {
-				int x2 = levelX1 + quad;
-
-				busy[quad] = true;
-				int newLevel = level + quad;
-				for (int x = levelX1; x < x2; x++) {
-					front[x] = newLevel;
+	static void q1(int startQuad, int threads) {
+		ExecutorService executor = Executors.newFixedThreadPool(threads);
+		for (int n = startQuad; n <= 200; n++) {
+			int _n = n;
+			executor.execute(() -> {
+				long t = System.currentTimeMillis();
+				Q1 q = new Q1(_n);
+				q.start();
+				synchronized (Q.class) {
+					q.print();
 				}
-				sequence[n++] = quad;
-
-				if (quad < levelLength) {
-					startLevel(level, x2, levelX2);
-				} else {
-					findLevel();
-				}
-
-				for (int x = levelX1; x < x2; x++) {
-					front[x] = level;
-				}
-				busy[quad] = false;
-				n--;
-			}
+			});
 		}
 	}
 
-	void findLevel() {
-		int currentLevel = front[0];
-		int bestLevel = currentLevel;
-		int bestLevelX1 = 0;
-		int bestLevelX2 = X;
-		int x1 = 0, x2 = 0, y;
-		while (x2 < X) {
-			y = front[x2];
-			while (++x2 < X && (y = front[x2]) == currentLevel) ;
-			if ((y > currentLevel || x2 == X) && x2 - x1 < bestLevelX2 - bestLevelX1) {
-				bestLevel = currentLevel;
-				bestLevelX1 = x1;
-				bestLevelX2 = x2;
-				while (++x2 < X && (y = front[x2]) >= currentLevel) {
-					currentLevel = y;
-				}
+	static class Smith {
+		int n;
+
+		Smith(int n) {
+			this.n = n;
+			root = new N();
+			nodes = new N[n];
+			for (int i = 0; i < n; i++) {
+				N node = new N();
+				node.index = i;
+				nodes[i] = node;
 			}
-			currentLevel = y;
-			x1 = x2;
 		}
 
-		if (bestLevelX1 == 0 && bestLevelX2 == X && bestLevel > 0) {
-			if (bestLevel > X) {
-				print(n);
-				foundCount++;
-			}
-		} else {
-			startLevel(bestLevel, bestLevelX1, bestLevelX2);
+		N root;
+		N[] nodes;
+
+		class N {
+			int index;
+			int inCount;
+			N[] in = new N[n];
+			int outCount;
+			N[] out = new N[n];
+		}
+
+		void start() {
+
 		}
 	}
 
-	void print(int n) {
-		System.out.print("RESULT " + X + "x" + front[0] + ": ");
-		for (int i = 0; i <= n; i++) {
-			if (i > 0) {
-				System.out.print(", ");
-			}
-			System.out.print(sequence[i]);
-		}
-		System.out.println();
+	static void smith() {
+		new Smith(17).start();
 	}
 
 	public static void main(String[] args) {
-		// 32-33	6ms		18, 14, 4, 10, 15, 7, 1, 9, 8
-		// 47-65	200ms	24, 23, 6, 17, 19, 5, 11, 3, 25, 22, 1
-		// 55-57	1sec	27, 13, 15, 11, 2, 17, 3, 8, 30, 25, 1
-		// 60-84	4sec	23, 16, 21, 7, 4, 5, 3, 1, 27, 33, 8, 19, 28, 13, 2, 17, 15, 6
-		// 61-69	5sec	36, 25, 9, 16, 2, 7, 33, 5, 28
-		// 63-94	9sec	23, 11, 10, 19, 1, 9, 12, 28, 35, 8, 20, 3, 5, 36, 2, 7, 27, 4
-		// 64-66	12sec	30, 16, 18, 14, 2, 20, 36, 8, 28, 1
-		// 65-88	12sec	25, 13, 10, 17, 3, 7, 12, 4, 8, 20, 31, 14, 2, 18, 16, 1, 33, 32, 5
-		// 69-115	38sec	39, 30, 9, 21, 36, 12, 14, 19, 6, 8, 4, 2, 3, 16, 13, 40, 29, 1
-		// 69-118	38sec	37, 32, 12, 20, 26, 11, 4, 8, 15, 28, 24, 17, 7, 38, 31, 1
-		// 71-89	56sec	28, 22, 21, 1, 20, 6, 17, 23, 11, 12, 9, 7, 5, 15, 2, 10, 3, 8, 38, 33, 4
-		// 71-106	56sec	29, 19, 23, 10, 9, 5, 18, 1, 13, 40, 31, 37, 3, 34, 2
-		// 71-105	56sec	36, 35, 1, 5, 29, 20, 13, 4, 9, 7, 15, 19, 8, 11, 41, 30, 2
-		// 72-123	74sec	23, 27, 22, 5, 17, 19, 4, 15, 9, 12, 6, 3, 32, 40, 11, 21, 41, 10, 31, 1
-		// 72-173	74sec	37, 35, 2, 33, 39, 8, 25, 31, 16, 15, 1, 26, 28, 18, 6, 20, 10, 14, 38, 34, 4
-		// 72-103	74sec	39, 33, 6, 27, 11, 13, 21, 9, 2, 7, 8, 15, 1, 14, 43, 29, 3
-		// 73-75	92sec	34, 16, 23, 9, 7, 2, 8, 20, 5, 6, 4, 1, 3, 12, 41, 32, 10
-		// 74-88	110sec	28, 19, 27, 9, 10, 2, 25, 23, 14, 12, 1, 11, 15, 17, 6, 36, 8, 13, 3, 5, 20, 18, 4
-		// 74-103	110sec	32, 19, 23, 15, 4, 27, 30, 2, 17, 7, 20, 11, 6, 13, 41, 33, 1
-		// 74-79	110sec	34, 23, 17, 8, 9, 11, 12, 7, 1, 10, 3, 4, 45, 15, 14, 29, 2
-		// 74-112
-		for (int n = 61; n <= 61; n++) {
-			long t = System.currentTimeMillis();
-			if (new Q(n).start()) {
-				System.out.println("time: " + (System.currentTimeMillis() - t) / 1000.0 + "sec\n");
-			}
-		}
+		q1(85, 6);
+		// smith();
 	}
 }
+
+// 32-33 (9)	0.002sec	18 0x0, 15 0x18, 14 18x0, 10 22x14, 9 23x24, 8 15x25, 7 15x18, 4 18x14, 1 22x24
+// time: 0.035sec
+//
+// 47-65 (10)	0.07sec		25 0x0, 24 23x41, 23 0x42, 22 25x0, 19 28x22, 17 0x25, 11 17x25, 6 17x36, 5 23x36, 3 25x22
+// time: 0.121sec
+//
+// 55-57 (10)	0.266sec	30 0x0, 27 0x30, 25 30x0, 17 38x25, 15 40x42, 13 27x44, 11 27x33, 8 30x25, 3 27x30, 2 38x42
+// time: 0.583sec
+//
+// 60-84 (17)	0.584sec	33 0x28, 28 0x0, 27 33x36, 23 0x61, 21 39x63, 19 41x17, 17 43x0, 16 23x68, 15 28x0, 13 28x15, 8 33x28, 7 23x61, 5 34x63, 4 30x64, 3 30x61, 2 41x15, 1 33x63
+// time: 1.598sec
+//
+// 61-69 (9)	1.289sec	36 0x0, 33 0x36, 28 33x41, 25 36x0, 16 45x25, 9 36x25, 7 38x34, 5 33x36, 2 36x34
+// time: 1.938sec
+//
+// 63-94 (17)	0.848sec	36 0x0, 35 0x36, 28 35x47, 27 36x0, 23 0x71, 20 43x27, 19 44x75, 12 23x71, 11 23x83, 10 34x84, 9 35x75, 8 35x39, 7 36x27, 5 38x34, 3 35x36, 2 36x34, 1 34x83
+// time: 2.757sec
+//
+// 64-66 (9)	1.653sec	36 0x0, 30 0x36, 28 36x0, 20 44x28, 18 46x48, 16 30x50, 14 30x36, 8 36x28, 2 44x48
+// time: 3.335sec
+//
+// 65-88 (18)	1.358sec	33 0x0, 32 33x0, 31 34x32, 25 40x63, 20 0x51, 18 0x33, 17 0x71, 16 18x33, 14 20x49, 13 27x75, 12 28x63, 10 17x78, 8 20x63, 7 17x71, 4 24x71, 3 24x75, 2 18x49, 1 33x32
+// time: 3.965sec
+//
+// 69-118 (15)	6.278sec	38 0x0, 37 32x81, 32 0x86, 31 38x0, 28 0x38, 26 43x55, 24 45x31, 20 0x66, 17 28x38, 15 28x55, 12 20x74, 11 32x70, 8 20x66, 7 38x31, 4 28x70
+// 69-115 (17)	7.434sec	40 0x0, 39 0x76, 36 0x40, 30 39x85, 29 40x0, 21 48x64, 19 50x45, 16 53x29, 14 36x50, 13 40x29, 12 36x64, 9 39x76, 8 42x42, 6 36x44, 4 36x40, 3 50x42, 2 40x42
+// time: 8.829sec
+//
+// 71-89 (20)	4.668sec	38 0x0, 33 38x0, 28 0x61, 23 0x38, 22 28x67, 21 50x68, 20 51x48, 17 34x50, 15 56x33, 12 23x38, 11 23x50, 10 46x33, 9 35x41, 8 38x33, 7 44x43, 6 28x61, 5 51x43, 3 35x38, 2 44x41, 1 50x67
+// 71-106 (14)	4.832sec	40 0x37, 37 0x0, 34 37x0, 31 40x34, 29 0x77, 23 48x83, 19 29x87, 18 53x65, 13 40x65, 10 29x77, 9 39x78, 5 48x78, 3 37x34, 1 39x77
+// 71-105 (16)	5.583sec	41 0x0, 36 35x69, 35 0x70, 30 41x0, 29 0x41, 20 51x49, 19 52x30, 15 29x41, 13 38x56, 11 41x30, 9 29x56, 8 44x41, 7 44x49, 5 29x65, 4 34x65, 1 34x69
+// time: 12.465sec
+//
+// 72-123 (19)	3.546sec	41 0x0, 40 0x41, 32 40x52, 31 41x0, 27 23x96, 23 0x100, 22 50x101, 21 51x31, 19 0x81, 17 55x84, 15 19x81, 12 43x84, 11 40x41, 10 41x31, 9 34x87, 6 34x81, 5 50x96, 4 19x96, 3 40x84
+// 72-173 (20)	8.263sec	39 0x97, 38 0x0, 37 0x136, 35 37x138, 34 38x0, 33 39x105, 31 0x66, 28 0x38, 26 46x54, 25 47x80, 20 52x34, 18 28x48, 16 31x81, 15 31x66, 14 38x34, 10 28x38, 8 39x97, 6 46x48, 2 37x136, 1 46x80
+// 72-103 (16)	10.54sec	43 0x0, 39 33x64, 33 0x70, 29 43x0, 27 0x43, 21 27x43, 15 57x29, 14 43x29, 13 48x51, 11 61x53, 9 63x44, 8 48x43, 7 56x44, 6 27x64, 2 61x51, 1 56x43
+// time: 14.722sec
+//
+// 73-75 (16)	7.108sec	41 0x0, 34 0x41, 32 41x0, 23 50x52, 20 53x32, 16 34x59, 12 41x32, 9 34x50, 8 45x44, 7 43x52, 6 39x44, 5 34x45, 4 34x41, 3 38x41, 2 43x50, 1 38x44
+// time: 17.611sec
+//
+// 74-88 (22)	6.651sec	36 0x0, 28 46x60, 27 0x61, 25 0x36, 23 51x37, 20 54x0, 19 27x69, 18 36x0, 17 57x20, 15 36x31, 14 37x46, 13 36x18, 12 25x47, 11 25x36, 10 27x59, 9 37x60, 8 49x23, 6 51x31, 5 49x18, 3 54x20, 2 25x59, 1 36x46
+// 74-103 (16)	8.284sec	41 0x0, 33 41x0, 32 0x71, 30 0x41, 27 47x53, 23 51x80, 20 54x33, 19 32x84, 17 30x52, 15 32x69, 13 41x33, 11 30x41, 7 47x46, 6 41x46, 4 47x80, 2 30x69
+// 74-79 (16)	8.638sec	45 0x0, 34 0x45, 29 45x0, 23 34x56, 17 57x62, 15 45x29, 14 60x29, 12 45x44, 11 34x45, 10 64x43, 9 65x53, 8 57x54, 7 57x47, 4 60x43, 3 57x44, 1 64x53
+// time: 20.004sec
+//
+// 75-109 (19)	7.887sec	42 0x39, 39 0x0, 36 39x0, 33 42x36, 28 0x81, 21 54x69, 19 56x90, 15 28x81, 13 28x96, 12 42x69, 11 43x81, 9 47x92, 8 48x101, 7 41x102, 6 41x96, 4 43x92, 3 39x36, 2 54x90, 1 47x101
+// 75-106 (14)	8.013sec	42 0x0, 36 0x42, 33 42x0, 28 0x78, 27 48x79, 24 51x33, 22 53x57, 20 28x86, 17 36x57, 15 36x42, 12 36x74, 9 42x33, 8 28x78, 5 48x74
+// 75-112 (13)	10.082sec	42 0x39, 39 0x0, 36 39x0, 33 42x36, 31 0x81, 24 51x88, 20 31x92, 19 56x69, 14 42x69, 11 31x81, 9 42x83, 5 51x83, 3 39x36
+// 75-82 (17)	15.119sec	43 0x0, 39 0x43, 32 43x0, 19 39x63, 18 57x32, 17 58x65, 15 60x50, 14 43x32, 11 39x52, 10 50x53, 7 50x46, 6 44x46, 5 39x47, 4 39x43, 3 57x50, 2 58x63, 1 43x46
+// 75-112 (13)	15.424sec	42 0x0, 39 0x73, 36 39x76, 33 42x0, 31 0x42, 24 51x33, 20 31x42, 19 56x57, 14 42x62, 11 31x62, 9 42x33, 5 51x57, 3 39x73
+// 75-123 (20)	20.779sec	50 0x0, 41 0x82, 34 41x89, 32 0x50, 25 50x0, 23 32x50, 20 55x51, 18 57x71, 16 41x73, 14 61x25, 12 63x39, 11 50x25, 9 32x73, 8 50x36, 7 56x44, 6 50x44, 5 58x39, 3 58x36, 2 55x71, 1 55x50
+// time: 26.19sec
+//
+// 77-141 (20)	9.404sec	46 0x45, 45 0x0, 32 45x0, 31 46x69, 28 26x113, 26 0x115, 24 0x91, 23 54x118, 22 24x91, 20 57x32, 18 59x100, 17 60x52, 14 46x55, 13 46x100, 12 45x32, 11 46x44, 5 54x113, 3 57x52, 2 24x113, 1 45x44
+// 77-83 (14)	18.732sec	43 0x0, 40 0x43, 34 43x0, 25 52x34, 24 53x59, 13 40x70, 12 40x43, 9 43x34, 8 40x55, 7 40x63, 6 47x64, 5 48x59, 4 48x55, 1 47x63
+// time: 33.917sec
+//
+// 78-104 (20)	17.196sec	41 0x0, 37 41x0, 34 0x70, 29 0x41, 24 54x80, 22 56x58, 21 57x37, 20 34x84, 17 29x53, 16 41x37, 14 34x70, 12 29x41, 10 46x60, 8 48x70, 7 46x53, 6 48x78, 4 53x53, 3 53x57, 2 54x78, 1 56x57
+// 78-104 (20)	17.197sec	41 0x0, 37 41x0, 34 44x70, 33 45x37, 24 0x80, 22 0x58, 20 24x84, 17 0x41, 16 29x41, 14 30x70, 13 32x57, 12 17x41, 10 22x60, 8 22x70, 7 22x53, 6 24x78, 5 17x53, 4 41x37, 3 29x57, 2 22x78
+// time: 40.588sec
+//
+// 79-123 (22)	14.54sec	42 0x0, 37 42x0, 32 47x37, 30 21x93, 28 51x95, 27 20x42, 26 53x69, 24 29x69, 21 0x102, 20 0x42, 15 0x75, 14 15x79, 13 0x62, 12 0x90, 10 19x69, 9 12x93, 7 13x62, 6 13x69, 5 42x37, 4 15x75, 3 12x90, 2 51x93
+// 79-112 (17)	18.791sec	44 0x0, 36 0x44, 35 44x0, 32 0x80, 28 32x84, 26 53x35, 23 36x61, 20 59x61, 19 60x93, 17 36x44, 12 67x81, 9 44x35, 7 60x86, 5 62x81, 4 32x80, 3 59x81, 2 60x84
+// 79-130 (10)	27.752sec	45 0x0, 44 0x45, 41 0x89, 38 41x92, 35 44x57, 34 45x0, 23 56x34, 12 44x45, 11 45x34, 3 41x89
+// 79-110 (17)	28.366sec	42 0x0, 41 0x69, 38 41x72, 37 42x0, 27 0x42, 19 42x37, 18 61x37, 17 62x55, 16 46x56, 15 27x42, 12 27x57, 7 39x60, 5 41x67, 4 42x56, 3 39x57, 2 39x67, 1 61x55
+// 79-140 (19)	30.884sec	45 0x0, 42 37x98, 37 0x103, 34 45x0, 32 0x71, 26 0x45, 25 32x73, 23 56x34, 22 57x76, 19 60x57, 18 26x45, 16 44x57, 12 44x45, 11 45x34, 10 34x63, 8 26x63, 5 32x98, 3 57x73, 2 32x71
+// time: 49.171sec
+//
+// 80-89 (22)	28.207sec	33 0x0, 32 0x57, 27 53x37, 26 33x0, 25 55x64, 24 0x33, 23 32x66, 21 59x0, 16 64x21, 15 38x39, 14 24x43, 13 40x26, 12 41x54, 11 53x26, 10 24x33, 9 32x57, 7 33x26, 6 34x33, 5 59x21, 4 34x39, 3 38x54, 2 53x64
+// 80-81 (12)	34.087sec	44 0x0, 37 0x44, 36 44x0, 23 57x36, 22 58x59, 21 37x60, 13 44x36, 11 46x49, 9 37x51, 7 37x44, 2 44x49, 1 57x59
+// time: 65.91sec
+//
+// 81-91 (18)	32.807sec	52 0x0, 39 0x52, 29 52x0, 27 54x64, 19 62x45, 16 65x29, 15 39x76, 13 52x29, 12 50x52, 11 39x52, 10 52x42, 8 46x68, 7 39x69, 6 39x63, 5 45x63, 4 50x64, 3 62x42, 1 45x68
+// 81-112 (11)	34.579sec	43 0x0, 41 40x71, 40 0x72, 38 43x0, 33 48x38, 29 0x43, 19 29x43, 10 29x62, 9 39x62, 5 43x38, 1 39x71
+// 81-119 (16)	44.263sec	44 0x0, 42 39x77, 39 0x80, 37 44x0, 36 0x44, 22 59x37, 18 63x59, 15 44x37, 14 49x63, 13 36x64, 12 36x52, 11 48x52, 8 36x44, 4 59x59, 3 36x77, 1 48x63
+// time: 74.963sec
+//
+// 82-155 (19)	59.165sec	50 32x61, 45 0x0, 44 38x111, 38 0x117, 37 45x0, 32 0x85, 24 58x37, 22 0x45, 18 0x67, 16 22x45, 14 18x71, 13 45x37, 11 47x50, 10 22x61, 9 38x52, 7 38x45, 6 32x111, 4 18x67, 2 45x50
+// 82-155 (19)	68.914sec	50 0x0, 45 37x110, 44 0x50, 38 44x72, 37 0x118, 32 50x0, 24 0x94, 22 44x50, 18 50x32, 16 66x56, 14 68x32, 13 24x105, 11 24x94, 10 72x46, 9 35x94, 7 37x103, 6 66x50, 4 68x46, 2 35x103
+// 82-155 (19)	68.917sec	50 0x0, 45 37x110, 44 0x50, 38 44x72, 37 0x118, 32 50x0, 24 0x94, 22 60x50, 18 64x32, 16 44x56, 14 50x32, 13 24x105, 11 24x94, 10 50x46, 9 35x94, 7 37x103, 6 44x50, 4 60x46, 2 35x103
+// 82-106 (18)	89.224sec	57 0x0, 49 0x57, 33 49x73, 25 57x0, 17 65x56, 16 49x57, 13 57x25, 12 70x25, 11 57x38, 10 72x46, 9 73x37, 8 57x49, 7 65x49, 5 68x40, 4 68x45, 3 70x37, 2 68x38, 1 72x45
+// time: 94.512sec
+//
+// 83-128 (18)	28.962sec	47 0x0, 44 0x47, 39 44x61, 36 47x0, 28 55x100, 25 58x36, 20 19x108, 19 0x109, 18 0x91, 17 18x91, 16 39x112, 14 44x47, 12 43x100, 11 47x36, 9 35x91, 8 35x100, 4 39x108, 1 18x108
+// 83-104 (19)	45.337sec	43 0x0, 40 43x0, 36 47x68, 34 0x43, 28 55x40, 27 0x77, 20 27x84, 13 34x71, 12 43x40, 11 34x52, 10 45x52, 9 34x43, 8 34x63, 7 27x77, 6 49x62, 5 42x66, 4 45x62, 3 42x63, 2 47x66
+// 83-112 (13)	50.303sec	44 0x0, 42 41x70, 41 0x71, 39 44x0, 31 52x39, 27 0x44, 14 27x44, 13 27x58, 12 40x58, 11 41x47, 8 44x39, 3 41x44, 1 40x70
+// time: 118.628sec
+//
+// 84-122 (20)	71.743sec	48 0x0, 39 0x83, 36 48x0, 35 0x48, 27 57x71, 24 60x98, 22 35x61, 21 39x101, 19 65x36, 18 39x83, 17 48x36, 16 68x55, 13 35x48, 11 57x60, 8 48x53, 7 56x53, 5 63x55, 3 57x98, 2 63x53, 1 56x60
+// time: 149.59sec
+//
+// 85-112 (13)	41.127sec	44 0x43, 43 0x0, 42 43x0, 41 44x42, 29 56x83, 25 0x87, 17 39x95, 14 25x98, 12 44x83, 11 25x87, 8 36x87, 3 36x95, 1 43x42
+// 85-113 (19)	43.378sec	47 0x0, 38 47x0, 36 0x47, 30 0x83, 29 56x38, 27 58x67, 24 30x89, 22 36x67, 20 36x47, 19 66x94, 12 54x101, 9 47x38, 7 59x94, 6 30x83, 5 54x96, 4 54x89, 3 54x93, 2 57x94, 1 57x93
+// time: 160.382sec
+//
+// 86-148 (22)	65.976sec	46 0x0, 40 46x0, 37 0x78, 34 52x40, 33 0x115, 32 0x46, 31 55x74, 29 33x119, 24 62x124, 20 32x46, 19 67x105, 18 37x85, 16 37x103, 14 53x105, 12 32x66, 11 44x74, 8 44x66, 7 37x78, 6 46x40, 5 62x119, 4 33x115, 2 53x103
+// 86-148 (22)	80.707sec	46 0x0, 41 0x107, 40 46x0, 34 52x40, 32 0x46, 29 0x78, 27 59x97, 24 62x124, 23 63x74, 21 41x127, 20 32x46, 19 44x74, 18 41x109, 16 43x93, 15 29x78, 14 29x93, 12 32x66, 8 44x66, 6 46x40, 4 59x93, 3 59x124, 2 41x107
+// 86-176 (24)	83.441sec	49 0x0, 48 0x49, 44 42x132, 42 0x134, 38 48x62, 37 49x0, 32 54x100, 25 61x37, 20 19x97, 19 0x97, 18 0x116, 17 18x117, 15 39x106, 13 48x49, 12 49x37, 11 43x121, 9 39x97, 8 35x121, 6 48x100, 5 35x129, 4 35x117, 3 40x129, 2 40x132, 1 18x116
+// 86-140 (19)	83.906sec	45 0x0, 44 42x96, 42 0x98, 41 45x0, 32 0x45, 31 55x65, 24 62x41, 23 32x58, 21 0x77, 17 45x41, 15 40x81, 13 32x45, 11 21x77, 10 21x88, 9 31x89, 8 32x81, 7 55x58, 2 40x96, 1 31x88
+// 86-98 (11)	124.91sec	51 0x0, 47 0x51, 39 47x59, 35 51x0, 24 62x35, 11 51x35, 8 47x51, 7 55x52, 6 56x46, 5 51x46, 1 55x51
+// time: 185.172sec
+//
+// 87-119 (19)	84.672sec	47 0x0, 40 47x0, 37 0x47, 35 0x84, 29 58x63, 27 60x92, 25 35x94, 23 64x40, 21 37x57, 17 47x40, 16 42x78, 10 37x47, 7 35x87, 6 58x57, 5 37x78, 4 38x83, 3 35x84, 2 58x92, 1 37x83
+// 87-105 (18)	97.793sec	41 0x0, 40 47x65, 36 0x41, 28 0x77, 27 60x38, 25 41x0, 24 36x41, 21 66x0, 19 28x86, 17 70x21, 16 41x25, 13 57x25, 11 36x65, 10 37x76, 9 28x77, 4 66x21, 3 57x38, 1 36x76
+// 87-153 (16)	151.289sec	56 0x0, 51 0x56, 46 0x107, 41 46x112, 36 51x76, 31 56x0, 20 51x56, 17 70x31, 16 71x60, 14 56x31, 12 75x48, 11 56x45, 8 67x48, 5 46x107, 4 71x56, 3 67x45
+// time: 237.673sec
+//
+// 88-105 (17)	68.025sec	51 0x0, 37 51x0, 33 29x72, 29 0x76, 26 62x79, 25 0x51, 23 65x37, 21 25x51, 19 69x60, 14 51x37, 12 57x60, 11 46x61, 10 46x51, 9 56x51, 7 62x72, 4 25x72, 1 56x60
+// 88-100 (19)	110.6sec	47 0x0, 41 47x0, 36 52x64, 31 0x47, 23 65x41, 22 0x78, 21 31x62, 17 35x83, 15 31x47, 13 22x87, 12 53x41, 11 54x53, 9 22x78, 8 46x54, 7 46x47, 6 47x41, 4 31x83, 2 52x62, 1 53x53
+// 88-208 (21)	126.494sec	53 35x117, 47 0x45, 45 0x0, 43 45x0, 41 47x43, 38 50x170, 35 0x122, 33 55x84, 30 0x92, 28 0x180, 25 30x92, 23 0x157, 22 28x186, 16 34x170, 12 23x157, 11 23x169, 8 47x84, 6 28x180, 5 30x117, 2 45x43, 1 34x169
+// 88-209 (24)	154.567sec	48 0x0, 47 41x117, 45 43x164, 44 0x48, 43 0x166, 41 0x125, 40 48x0, 33 0x92, 28 60x40, 25 63x68, 24 64x93, 19 44x68, 17 47x100, 16 44x52, 14 33x103, 13 44x87, 12 48x40, 11 33x92, 8 33x117, 7 57x93, 6 57x87, 4 44x48, 3 44x100, 2 41x164
+// 88-174 (21)	172.804sec	56 0x51, 51 0x0, 46 42x128, 42 0x132, 37 51x0, 32 56x60, 25 0x107, 23 65x37, 21 48x107, 19 69x109, 17 71x92, 15 56x92, 14 51x37, 13 25x119, 12 25x107, 11 37x107, 10 38x118, 9 56x51, 4 38x128, 2 69x107, 1 37x118
+// 88-128 (20)	185.493sec	51 0x0, 46 0x82, 42 46x86, 37 51x0, 31 0x51, 26 62x37, 23 65x63, 19 46x67, 16 31x51, 15 31x67, 11 51x37, 9 47x58, 8 54x48, 7 47x51, 6 56x56, 5 56x62, 4 61x63, 3 51x48, 2 54x56, 1 61x62
+// 88-145 (18)	240.03sec	52 0x0, 50 0x95, 43 0x52, 38 50x107, 36 52x0, 26 62x81, 24 43x52, 21 67x60, 19 43x76, 16 52x36, 13 75x47, 12 50x95, 11 77x36, 9 68x36, 8 67x52, 7 68x45, 5 62x76, 2 75x45
+// time: 288.493sec
+//
+// 89-107 (23)	69.099sec	50 0x0, 39 50x0, 30 0x50, 27 0x80, 26 63x81, 25 30x50, 22 67x39, 20 69x61, 19 27x88, 17 46x90, 15 48x75, 14 55x61, 13 35x75, 12 55x49, 10 57x39, 8 27x80, 7 50x39, 6 63x75, 5 30x75, 4 50x46, 3 54x46, 2 46x88, 1 54x49
+// 89-121 (19)	79.757sec	48 0x0, 43 0x48, 41 48x0, 30 0x91, 29 60x41, 26 63x70, 25 64x96, 20 43x70, 18 46x103, 17 43x53, 16 30x105, 14 30x91, 13 44x90, 12 48x41, 7 57x96, 6 57x90, 5 43x48, 2 44x103, 1 43x90
+// 89-199 (28)	281.589sec	53 0x0, 52 37x147, 50 0x53, 37 0x162, 36 53x0, 35 0x103, 29 35x118, 25 64x122, 24 0x138, 23 66x58, 22 67x36, 21 68x101, 20 69x81, 19 50x81, 18 50x100, 16 50x65, 15 35x103, 14 53x36, 13 24x149, 11 24x138, 9 50x56, 8 59x50, 7 59x58, 6 53x50, 4 64x118, 3 50x53, 2 35x147, 1 68x100
+// time: 316.894sec
+//
+// 90-132 (18)	231.175sec	51 0x0, 47 0x85, 43 47x89, 39 51x0, 34 0x51, 26 64x63, 24 66x39, 21 34x51, 17 47x72, 13 34x72, 11 55x52, 9 55x63, 8 51x39, 7 59x39, 6 60x46, 5 55x47, 4 51x47, 1 59x46
+// 90-130 (20)	235.217sec	50 0x0, 47 0x83, 43 47x87, 40 50x0, 33 0x50, 24 66x63, 23 67x40, 19 47x68, 17 50x40, 14 33x69, 11 50x57, 10 33x59, 9 33x50, 8 42x50, 7 43x58, 6 61x57, 5 61x63, 4 43x65, 3 47x65, 1 42x58
+// 90-148 (16)	262.428sec	50 0x0, 49 41x99, 41 0x107, 40 50x0, 33 0x74, 30 60x40, 29 61x70, 28 33x71, 24 0x50, 21 39x50, 15 24x50, 10 50x40, 9 24x65, 8 33x99, 6 33x65, 1 60x70
+// 90-136 (17)	271.889sec	51 0x0, 49 0x87, 41 49x95, 39 51x0, 36 0x51, 33 57x62, 23 67x39, 21 36x66, 16 51x39, 15 36x51, 8 49x87, 7 60x55, 6 51x60, 5 51x55, 4 56x55, 3 57x59, 1 56x59
+// 90-114 (16)	349.36sec	61 0x0, 53 0x61, 37 53x77, 29 61x0, 21 69x56, 16 53x61, 15 61x29, 14 76x29, 13 77x43, 9 61x44, 8 61x53, 7 70x44, 5 72x51, 3 69x53, 2 70x51, 1 76x43
+// time: 367.996sec
+//
+// 91-104 (21)	110.094sec	43 0x0, 32 31x72, 31 0x73, 30 0x43, 29 30x43, 28 63x76, 25 43x0, 23 68x0, 20 71x56, 19 72x37, 18 43x25, 14 77x23, 13 59x43, 12 59x56, 11 61x32, 9 68x23, 8 63x68, 7 61x25, 5 72x32, 4 59x68, 1 30x72
+// 91-136 (18)	159.99sec	53 0x0, 46 0x53, 38 53x0, 37 0x99, 28 37x108, 26 65x110, 25 66x61, 24 67x86, 23 68x38, 21 46x87, 20 46x67, 15 53x38, 14 46x53, 9 37x99, 8 60x53, 6 60x61, 2 65x108, 1 66x86
+// 91-120 (12)	255.993sec	48 0x0, 47 44x73, 44 0x76, 43 48x0, 30 61x43, 28 0x48, 17 44x56, 16 28x60, 13 48x43, 12 28x48, 8 40x48, 4 40x56
+// 91-101 (17)	292.94sec	52 0x0, 49 0x52, 39 52x0, 27 49x74, 23 68x39, 19 49x55, 16 52x39, 15 76x86, 12 68x62, 11 80x62, 8 76x78, 7 84x79, 6 85x73, 5 80x73, 4 76x74, 3 49x52, 1 84x78
+// 91-153 (19)	360.68sec	58 0x0, 51 0x102, 44 0x58, 40 51x113, 33 58x0, 29 62x84, 26 44x58, 21 70x63, 18 44x84, 17 74x33, 16 58x33, 13 78x50, 11 51x102, 9 58x49, 8 70x55, 6 67x49, 5 73x50, 3 67x55, 1 73x49
+// time: 434.647sec
+//
+// 92-155 (22)	268.501sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x0, 29 63x126, 24 68x102, 23 40x132, 18 74x32, 17 40x115, 15 77x50, 14 60x32, 13 55x102, 11 57x115, 10 60x46, 9 60x56, 8 69x57, 7 70x50, 6 57x126, 5 55x60, 4 70x46, 1 69x56
+// 92-155 (22)	268.577sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x0, 29 63x126, 24 68x102, 23 40x132, 18 74x47, 17 40x115, 15 77x32, 14 60x51, 13 55x102, 11 57x115, 10 60x41, 9 60x32, 8 69x32, 7 70x40, 6 57x126, 5 55x60, 4 70x47, 1 69x40
+// 92-155 (22)	268.578sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x0, 29 63x126, 24 68x102, 23 40x132, 18 60x32, 17 40x115, 15 60x50, 14 78x32, 13 55x102, 11 57x115, 10 82x46, 9 83x56, 8 75x57, 7 75x50, 6 57x126, 5 55x60, 4 78x46, 1 82x56
+// 92-155 (22)	268.585sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x0, 29 63x126, 24 68x102, 23 40x132, 18 60x47, 17 40x115, 15 60x32, 14 78x51, 13 55x102, 11 57x115, 10 82x41, 9 83x32, 8 75x32, 7 75x40, 6 57x126, 5 55x60, 4 78x47, 1 82x40
+// 92-155 (22)	268.827sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x33, 29 63x126, 24 68x102, 23 40x132, 18 74x0, 17 40x115, 15 77x18, 14 60x0, 13 55x102, 11 57x115, 10 60x14, 9 60x24, 8 69x25, 7 70x18, 6 57x126, 5 55x60, 4 70x14, 1 69x24
+// 92-155 (22)	268.827sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x33, 29 63x126, 24 68x102, 23 40x132, 18 74x15, 17 40x115, 15 77x0, 14 60x19, 13 55x102, 11 57x115, 10 60x9, 9 60x0, 8 69x0, 7 70x8, 6 57x126, 5 55x60, 4 70x15, 1 69x8
+// 92-155 (22)	268.827sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x33, 29 63x126, 24 68x102, 23 40x132, 18 60x0, 17 40x115, 15 60x18, 14 78x0, 13 55x102, 11 57x115, 10 82x14, 9 83x24, 8 75x25, 7 75x18, 6 57x126, 5 55x60, 4 78x14, 1 82x24
+// 92-155 (22)	268.828sec	60 0x0, 55 0x60, 40 0x115, 37 55x65, 32 60x33, 29 63x126, 24 68x102, 23 40x132, 18 60x15, 17 40x115, 15 60x0, 14 78x19, 13 55x102, 11 57x115, 10 82x9, 9 83x0, 8 75x0, 7 75x8, 6 57x126, 5 55x60, 4 78x15, 1 82x8
+// 92-125 (20)	286.619sec	45 0x0, 41 0x84, 39 0x45, 34 58x30, 33 59x64, 30 62x0, 28 64x97, 23 41x102, 20 39x64, 19 39x45, 18 41x84, 17 45x0, 13 45x32, 9 53x17, 8 45x17, 7 45x25, 6 52x26, 5 59x97, 4 58x26, 1 52x25
+// 92-126 (18)	318.28sec	49 0x0, 46 46x80, 43 49x0, 37 55x43, 33 0x49, 27 19x99, 22 33x49, 19 0x107, 17 14x82, 15 31x84, 14 0x82, 13 33x71, 11 0x96, 9 46x71, 8 11x99, 6 49x43, 3 11x96, 2 31x82
+// 92-155 (22)	356.36sec	49 0x0, 47 45x108, 45 0x110, 43 49x0, 37 55x43, 30 25x49, 28 64x80, 25 0x49, 20 0x74, 19 45x89, 17 28x93, 16 0x94, 14 31x79, 12 16x98, 11 20x79, 10 45x79, 9 55x80, 8 20x90, 6 49x43, 5 20x74, 4 16x94, 3 28x90
+// time: 631.455sec
+//
+// 93-208 (23)	188.674sec	50 0x125, 49 0x0, 44 49x0, 43 50x136, 40 0x85, 36 0x49, 34 59x70, 33 0x175, 32 61x104, 29 64x179, 26 67x44, 23 36x62, 21 40x104, 19 40x85, 18 49x44, 17 33x175, 16 33x192, 15 49x193, 14 50x179, 13 36x49, 11 50x125, 8 59x62, 1 49x192
+// 93-112 (13)	247.201sec	51 0x0, 42 51x0, 37 56x75, 36 0x51, 33 60x42, 25 0x87, 24 36x51, 20 36x75, 17 39x95, 14 25x98, 11 25x87, 9 51x42, 3 36x95
+// 93-126 (17)	294.085sec	55 0x0, 42 51x84, 39 0x55, 38 55x0, 32 0x94, 29 39x55, 25 68x59, 21 72x38, 19 32x107, 17 55x38, 12 39x84, 11 40x96, 8 32x99, 5 32x94, 4 68x55, 3 37x96, 2 37x94
+// 93-138 (20)	303.792sec	54 0x0, 44 0x94, 40 0x54, 39 54x0, 29 64x109, 27 66x61, 26 40x68, 22 71x39, 21 72x88, 20 44x118, 17 54x39, 15 57x94, 14 40x54, 13 44x94, 12 54x56, 11 44x107, 9 55x109, 6 66x88, 5 66x56, 2 55x107
+// 93-144 (17)	385.96sec	52 0x0, 48 0x96, 45 48x99, 44 0x52, 41 52x0, 32 61x67, 26 67x41, 17 44x72, 15 52x41, 12 44x60, 11 56x56, 10 51x89, 8 44x52, 7 44x89, 5 56x67, 4 52x56, 3 48x96
+// 93-157 (18)	439.166sec	53 0x0, 49 44x108, 44 0x113, 41 52x67, 40 53x0, 32 0x81, 28 0x53, 27 66x40, 24 28x53, 20 32x77, 14 52x53, 13 53x40, 11 41x97, 9 32x97, 7 32x106, 5 39x108, 4 28x77, 2 39x106
+// time: 737.461sec
+//
