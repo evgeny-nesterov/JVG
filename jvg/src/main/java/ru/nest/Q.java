@@ -204,6 +204,7 @@ public class Q {
 			firstLevel.x2 = X;
 			levelsX = new L[X];
 			levelsX[0] = firstLevel;
+			bestLevel = firstLevel;
 		}
 
 		int X;
@@ -230,6 +231,8 @@ public class Q {
 
 		L firstLevel;
 
+		L bestLevel;
+
 		class L {
 			int x1, x2, y;
 
@@ -252,6 +255,9 @@ public class Q {
 						}
 						if (prev != null) {
 							prev.next = l;
+							if (prev.y < newY && prev.x2 - prev.x1 <= x2 - newX1 && (prev.prev == null || prev.prev.y > prev.y)) {
+								bestLevel = prev;
+							} // else assume bestLevel = this
 						}
 						levelsX[x1] = l;
 
@@ -263,12 +269,17 @@ public class Q {
 						prev.x2 = newX1;
 						x1 = newX1;
 						levelsX[x1] = this;
+						// assume bestLevel = this;
 						return this;
 					}
 				} else {
 					boolean nextNotSame = next == null || next.y != newY;
 					if (prevNotSame && nextNotSame) {
 						y = newY;
+						// assume bestLevel = this;
+						if ((prev != null && prev.y < y) || (next != null && next.y < y)) {
+							bestLevel = null; // full search
+						}
 						return this;
 					} else if (prevNotSame) {
 						next.x1 = x1;
@@ -281,6 +292,7 @@ public class Q {
 							firstLevel = next;
 						}
 						levelsX[x1] = next;
+						bestLevel = null; // full search
 						return next;
 					} else if (nextNotSame) {
 						prev.x2 = x2;
@@ -289,6 +301,7 @@ public class Q {
 							next.prev = prev;
 						}
 						levels[++levelsCount] = this;
+						bestLevel = null; // full search
 						return prev;
 					} else {
 						prev.x2 = next.x2;
@@ -298,6 +311,7 @@ public class Q {
 						}
 						levels[++levelsCount] = this;
 						levels[++levelsCount] = next;
+						bestLevel = null; // full search
 						return prev;
 					}
 				}
@@ -404,9 +418,8 @@ public class Q {
 			}
 		}
 
-		boolean start() {
+		void start() {
 			startLevelOpt(0, 0, X);
-			return results.size() > 0;
 		}
 
 		void removeLevel(int levelX1, int levelX2, int size) {
@@ -441,22 +454,18 @@ public class Q {
 			for (int quad = 1; quad <= levelLength; quad++) {
 				if (!busy[quad]) {
 					busy[quad] = true;
-					L curerntLevel = levelsX[levelX1].addLevel(quad);
+					bestLevel = levelsX[levelX1];
+					L currentLevel = bestLevel.addLevel(quad);
 					sequence[n++] = quad;
 
 					// printProcess();
 					// printLevels();
 
 					int x2 = levelX1 + quad;
-					if (x2 != levelX2 && (levelX1 == 0 || curerntLevel.prev.y >= level + quad)) {
+					if (x2 != levelX2 && (levelX1 == 0 || currentLevel.prev.y >= level + quad)) { // 50%
 						startLevelOpt(level, x2, levelX2);
-					} else {
-						if (firstLevel.next == null) {
-							if (firstLevel.y >= X && n > 1) {
-								result(firstLevel.y);
-							}
-						} else {
-							L bestLevel;
+					} else if (firstLevel.next != null) {
+						if (bestLevel == null) {  // 20%
 							L l = firstLevel;
 							while (true) {
 								if ((l.prev == null || l.prev.y > l.y) && (l.next == null || l.next.y > l.y)) {
@@ -471,8 +480,10 @@ public class Q {
 								}
 								l = l.next;
 							}
-							startLevelOpt(bestLevel.y, bestLevel.x1, bestLevel.x2);
 						}
+						startLevelOpt(bestLevel.y, bestLevel.x1, bestLevel.x2);
+					} else if (firstLevel.y >= X && n > 1) {
+						result(firstLevel.y);
 					}
 
 					removeLevel(levelX1, x2, quad);
@@ -725,7 +736,7 @@ public class Q {
 	}
 
 	public static void main(String[] args) {
-		q1(75, 75, 1);
+		q1(71, 71, 1);
 		// smith();
 	}
 }
