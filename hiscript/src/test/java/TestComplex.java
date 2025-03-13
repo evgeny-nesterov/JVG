@@ -15,6 +15,30 @@ public class TestComplex extends HiTest {
 
 	@Test
 	public void testSingle() throws HiScriptParseException, TokenizerException, HiScriptValidationException {
+//		Map<Integer, String> hashes = new HashMap<>();
+//		for (char c1 = '0'; c1 <= 'Z'; c1++) {
+//			for (char c2 = '0'; c2 <= 'Z'; c2++) {
+//				for (char c3 = '0'; c3 <= 'Z'; c3++) {
+//					for (char c4 = '0'; c4 <= 'Z'; c4++) {
+//						String s = new String(new char[] {c1, c2, c3, c4});
+//						int hash = s.hashCode();
+//						if (hashes.containsKey(hash)) {
+//							System.out.println(s + " & " + hashes.get(hash) + ": " + hash);
+//						}
+//						hashes.put(hash, s);
+//					}
+//				}
+//			}
+//		}
+
+		assertSuccess("String s1 = \"?5L@\"; String s2 = \">TL@\"; assert !s1.equals(s2);");
+
+		String s1 = "?5L@";
+		String s2 = ">TL@"; // 1930186
+		assert s1.hashCode() == s2.hashCode();
+		assertSuccess("String s1 = \"?5L@\"; String s2 = \">TL@\"; assert !s1.equals(s2); assert s1.hashCode() == s2.hashCode(); assert s1.hashCode() == 1930186;");
+		assertSuccess("ArrayList list = new ArrayList(); list.add(\"?5L@\"); assert !list.contains(\">TL@\");");
+		assertSuccess("HashMap map = new HashMap(); map.put(\"?5L@\", \"hashCode\"); assert !map.containsKey(\">TL@\");");
 	}
 
 	@Test

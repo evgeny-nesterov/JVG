@@ -1,722 +1,535 @@
-package ru.nest;
+package ru.nest.q;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-public class Q {
-	static class Result {
-		int width, height;
+public class QIT {
+	static Set<Result> allResults = new LinkedHashSet<>();
 
-		Quad[] quads;
-
-		long duration;
-
-		Result(Quad[] quads, int width, int height, long duration) {
-			Arrays.sort(quads);
-			this.quads = quads;
-			this.width = width;
-			this.height = height;
-			this.duration = duration;
+	QIT(int X, int fromX, int toX, Set<Result> results) {
+		this.X = X;
+		this.fromX = fromX;
+		this.toX = toX;
+		this.results = results;
+		front = new int[X];
+		busy = new boolean[X + 1];
+		sequence = new int[X];
+		levels = new Level[X / 3];
+		for (int i = 0; i < levels.length; i++) {
+			levels[i] = new Level();
 		}
-
-		public int getFirstQuadSize() {
-			for (int i = 0; i < quads.length; i++) {
-				if (quads[i].x == 0 && quads[i].y == 0) {
-					return quads[i].size;
-				}
-			}
-			return 0;
-		}
-
-		public boolean equals(Object o) {
-			Result result = (Result) o;
-			if (quads.length != result.quads.length) {
-				return false;
-			}
-			for (int i = 0; i < quads.length; i++) {
-				if (!quads[i].equals(result.quads[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		public int hashCode() {
-			int hashCode = 0;
-			for (int i = 0; i < quads.length; i++) {
-				hashCode = 37 * hashCode + quads[i].hashCode();
-			}
-			return hashCode;
-		}
-
-		public String toString() {
-			String string = "// " + width + "-" + height + " (" + quads.length + ")\t" + (duration / 1000.0) + "sec\t";
-			for (int i = 0; i < quads.length; i++) {
-				if (i > 0) {
-					string += ", ";
-				}
-				string += quads[i].toString();
-			}
-			return string;
-		}
-
-		Result flipHor() {
-			Quad[] quads = new Quad[this.quads.length];
-			for (int i = 0; i < this.quads.length; i++) {
-				quads[i] = this.quads[i].flipHor(width);
-			}
-			computeSequence(quads, width);
-			return new Result(quads, width, height, duration);
-		}
-
-		Result flipVer() {
-			Quad[] quads = new Quad[this.quads.length];
-			for (int i = 0; i < this.quads.length; i++) {
-				quads[i] = this.quads[i].flipVer(height);
-			}
-			computeSequence(quads, width);
-			return new Result(quads, width, height, duration);
-		}
-
-		Result flipHorVer() {
-			Quad[] quads = new Quad[this.quads.length];
-			for (int i = 0; i < this.quads.length; i++) {
-				quads[i] = this.quads[i].flipHorVer(width, height);
-			}
-			computeSequence(quads, width);
-			return new Result(quads, width, height, duration);
-		}
-
-		Result rotate() {
-			Quad[] quads = new Quad[this.quads.length];
-			for (int i = 0; i < this.quads.length; i++) {
-				quads[i] = this.quads[i].rotate();
-			}
-			computeSequence(quads, width);
-			return new Result(quads, width, height, duration);
-		}
-
-		static void computeSequence(Quad[] quads, int width) {
-			int[] front = new int[width];
-			Map<Point, Quad> map = new HashMap();
-			for (int i = 0; i < quads.length; i++) {
-				map.put(new Point(quads[i].x, quads[i].y), quads[i]);
-			}
-			int index = 0, x = 0, y = 0;
-			do {
-				Quad q = map.get(new Point(x, y));
-				q.index = index++;
-				for (int i = x; i < x + q.size; i++) {
-					front[i] += q.size;
-				}
-
-				int currentLevel = front[0], bestLevel = currentLevel, bestLevelX1 = 0, bestLevelX2 = width, lx1 = 0, lx2 = 0, ly;
-				while (lx2 < width) {
-					ly = front[lx2];
-					while (++lx2 < width && (ly = front[lx2]) == currentLevel) ;
-					if (ly > currentLevel || lx2 == width) {
-						if (lx2 - lx1 < bestLevelX2 - bestLevelX1) {
-							bestLevel = currentLevel;
-							bestLevelX1 = lx1;
-							bestLevelX2 = lx2;
-						}
-						while (++lx2 < width && (ly = front[lx2]) >= currentLevel) {
-							currentLevel = ly;
-						}
-					}
-					currentLevel = ly;
-					lx1 = lx2;
-				}
-
-				x = bestLevelX1;
-				y = bestLevel;
-			} while (index < quads.length);
-		}
-
-		int[] getSequence() {
-			int[] sequence = new int[width];
-			for (int i = 0; i < quads.length; i++) {
-				sequence[quads[i].index] = quads[i].size;
-			}
-			return sequence;
-		}
+		levelsCount = levels.length - 1;
+		firstLevel = levels[levelsCount--];
+		firstLevel.x2 = X;
+		levelsX = new Level[X];
+		levelsX[0] = firstLevel;
+		bestLevel = firstLevel;
 	}
 
-	static class Quad implements Comparable<Quad> {
-		int x, y, size, index;
+	int X, fromX, toX;
 
-		Quad(int x, int y, int size, int index) {
-			this.x = x;
-			this.y = y;
-			this.size = size;
-			this.index = index;
-		}
+	boolean[] busy;
 
-		public boolean equals(Object o) {
-			Quad q = (Quad) o;
-			return x == q.x && y == q.y && size == q.size;
-		}
+	int[] sequence;
 
-		public int hashCode() {
-			return x + 37 * (y + 37 * size);
-		}
+	int n;
 
-		public String toString() {
-			return size + " " + x + "x" + y;
-		}
+	Set<Result> results;
 
-		public int compareTo(Quad quad) {
-			return quad.size - size;
-		}
+	int iterationsCount = 0;
 
-		Quad flipHor(int width) {
-			return new Quad(width - x - size, y, size, -1);
-		}
+	long startTime = System.currentTimeMillis();
 
-		Quad flipVer(int height) {
-			return new Quad(x, height - y - size, size, -1);
-		}
+	Level[] levels;
 
-		Quad flipHorVer(int width, int height) {
-			return new Quad(width - x - size, height - y - size, size, -1);
-		}
+	Level[] levelsX;
 
-		Quad rotate() {
-			return new Quad(y, x, size, -1);
-		}
-	}
+	int levelsCount;
 
-	static class Q1 {
-		static Set<Result> allResults = new LinkedHashSet<>();
+	Level firstLevel;
 
-		Q1(int X, int fromX, int toX, Set<Result> results) {
-			this.X = X;
-			this.fromX = fromX;
-			this.toX = toX;
-			this.results = results;
-			front = new int[X];
-			busy = new boolean[X + 1];
-			sequence = new int[X];
-			levels = new L[X / 3];
-			for (int i = 0; i < levels.length; i++) {
-				levels[i] = new L();
-			}
-			levelsCount = levels.length - 1;
-			firstLevel = levels[levelsCount--];
-			firstLevel.x2 = X;
-			levelsX = new L[X];
-			levelsX[0] = firstLevel;
-			bestLevel = firstLevel;
-		}
+	Level bestLevel;
 
-		int X, fromX, toX;
+	Level stopTL = new Level();
+	Level stopTR = new Level();
 
-		int[] front;
+	class Level {
+		int x1, x2, y;
 
-		boolean[] busy;
+		Level prev, next;
 
-		int[] sequence;
+		Level addLevel(int size, boolean checkTop) {
+			int newX1 = x1 + size;
+			int newY = y + size;
 
-		int n;
-
-		Set<Result> results;
-
-		int iterationsCount = 0;
-
-		long startTime = System.currentTimeMillis();
-
-		L[] levels;
-
-		L[] levelsX;
-
-		int levelsCount;
-
-		L firstLevel;
-
-		L bestLevel;
-
-		L stopTL = new L();
-		L stopTR = new L();
-
-		class L {
-			int x1, x2, y;
-
-			L prev, next;
-
-			L addLevel(int size, boolean checkTop) {
-				int newX1 = x1 + size;
-				int newY = y + size;
-
-				if (checkTop) {
-					int firstQuad = sequence[0];
-					if (x1 > 0 && x1 <= firstQuad && X - newY <= firstQuad) {
-						return stopTL;
-					}
-					if (newX1 < X && X - newX1 <= firstQuad && X - newY <= firstQuad) {
-						return stopTR;
-					}
+			if (checkTop) {
+				int firstQuad = sequence[0];
+				if (x1 > 0 && x1 <= firstQuad && X - newY <= firstQuad) {
+					return stopTL;
 				}
+				if (newX1 < X && X - newX1 <= firstQuad && X - newY <= firstQuad) {
+					return stopTR;
+				}
+			}
 
-				boolean prevNotSame = prev == null || prev.y != newY;
-				if (newX1 != x2) {
-					if (prevNotSame) {
-						L l = levels[levelsCount--];
-						l.x1 = x1;
-						l.x2 = newX1;
-						l.y = newY;
-						l.prev = prev;
-						l.next = this;
-						if (x1 == 0) {
-							firstLevel = l;
-						}
-						if (prev != null) {
-							prev.next = l;
-							if (prev.y < newY && prev.x2 - prev.x1 <= x2 - newX1 && (prev.prev == null || prev.prev.y > prev.y)) {
-								bestLevel = prev;
-							} // else assume bestLevel = this
-						}
-						levelsX[x1] = l;
-
-						x1 = newX1;
-						prev = l;
-						levelsX[x1] = this;
-						return l;
-					} else {
-						prev.x2 = newX1;
-						x1 = newX1;
-						levelsX[x1] = this;
-						// assume bestLevel = this;
-						return this;
+			boolean prevNotSame = prev == null || prev.y != newY;
+			if (newX1 != x2) {
+				if (prevNotSame) {
+					Level l = levels[levelsCount--];
+					l.x1 = x1;
+					l.x2 = newX1;
+					l.y = newY;
+					l.prev = prev;
+					l.next = this;
+					if (x1 == 0) {
+						firstLevel = l;
 					}
+					if (prev != null) {
+						prev.next = l;
+						if (prev.y < newY && prev.x2 - prev.x1 <= x2 - newX1 && (prev.prev == null || prev.prev.y > prev.y)) {
+							bestLevel = prev;
+						} // else assume bestLevel = this
+					}
+					levelsX[x1] = l;
+
+					x1 = newX1;
+					prev = l;
+					levelsX[x1] = this;
+					return l;
 				} else {
-					boolean nextNotSame = next == null || next.y != newY;
-					if (prevNotSame && nextNotSame) {
-						y = newY;
-						// assume bestLevel = this;
-						if ((prev != null && prev.y < y) || (next != null && next.y < y)) {
-							bestLevel = null; // full search
-						}
-						return this;
-					} else if (prevNotSame) {
-						next.x1 = x1;
-						next.prev = prev;
-						if (prev != null) {
-							prev.next = next;
-						}
-						levels[++levelsCount] = this;
-						if (x1 == 0) {
-							firstLevel = next;
-						}
-						levelsX[x1] = next;
+					prev.x2 = newX1;
+					x1 = newX1;
+					levelsX[x1] = this;
+					// assume bestLevel = this;
+					return this;
+				}
+			} else {
+				boolean nextNotSame = next == null || next.y != newY;
+				if (prevNotSame && nextNotSame) {
+					y = newY;
+					// assume bestLevel = this;
+					if ((prev != null && prev.y < y) || (next != null && next.y < y)) {
 						bestLevel = null; // full search
-						return next;
-					} else if (nextNotSame) {
-						prev.x2 = x2;
-						prev.next = next;
-						if (next != null) {
-							next.prev = prev;
-						}
-						levels[++levelsCount] = this;
-						bestLevel = null; // full search
-						return prev;
-					} else {
-						prev.x2 = next.x2;
-						prev.next = next.next;
-						if (next.next != null) {
-							next.next.prev = prev;
-						}
-						levels[++levelsCount] = this;
-						levels[++levelsCount] = next;
-						bestLevel = null; // full search
-						return prev;
 					}
+					return this;
+				} else if (prevNotSame) {
+					next.x1 = x1;
+					next.prev = prev;
+					if (prev != null) {
+						prev.next = next;
+					}
+					levels[++levelsCount] = this;
+					if (x1 == 0) {
+						firstLevel = next;
+					}
+					levelsX[x1] = next;
+					bestLevel = null; // full search
+					return next;
+				} else if (nextNotSame) {
+					prev.x2 = x2;
+					prev.next = next;
+					if (next != null) {
+						next.prev = prev;
+					}
+					levels[++levelsCount] = this;
+					bestLevel = null; // full search
+					return prev;
+				} else {
+					prev.x2 = next.x2;
+					prev.next = next.next;
+					if (next.next != null) {
+						next.next.prev = prev;
+					}
+					levels[++levelsCount] = this;
+					levels[++levelsCount] = next;
+					bestLevel = null; // full search
+					return prev;
 				}
 			}
+		}
 
-			void removeLevel(int lx1, int lx2, int size) {
-				int newY = y - size;
-				if (lx1 == x1 && lx2 == x2) {
-					y = newY;
-					if (next != null && next.y == y) {
-						x2 = next.x2;
-						if (next.next != null) {
-							next.next.prev = this;
-						}
-						levels[++levelsCount] = next;
-						next = next.next;
+		void removeLevel(int lx1, int lx2, int size) {
+			int newY = y - size;
+			if (lx1 == x1 && lx2 == x2) {
+				y = newY;
+				if (next != null && next.y == y) {
+					x2 = next.x2;
+					if (next.next != null) {
+						next.next.prev = this;
 					}
-				} else if (lx2 == x2) {
-					if (next != null && next.y == newY) {
-						x2 = lx1;
-						next.x1 = lx1;
-						levelsX[lx1] = next;
-					} else {
-						L l = levels[levelsCount--];
-						l.x1 = lx1;
-						l.x2 = lx2;
-						l.y = newY;
-						l.prev = this;
-						l.next = next;
-						if (next != null) {
-							next.prev = l;
-						}
-						levelsX[lx1] = l;
-
-						next = l;
-						x2 = lx1;
-					}
-				} else if (lx1 == x1) {
-					L l = levels[levelsCount--];
+					levels[++levelsCount] = next;
+					next = next.next;
+				}
+			} else if (lx2 == x2) {
+				if (next != null && next.y == newY) {
+					x2 = lx1;
+					next.x1 = lx1;
+					levelsX[lx1] = next;
+				} else {
+					Level l = levels[levelsCount--];
 					l.x1 = lx1;
 					l.x2 = lx2;
 					l.y = newY;
-					l.prev = prev;
-					if (prev != null) {
-						prev.next = l;
-					}
-					l.next = this;
-					if (lx1 == 0) {
-						firstLevel = l;
+					l.prev = this;
+					l.next = next;
+					if (next != null) {
+						next.prev = l;
 					}
 					levelsX[lx1] = l;
 
-					x1 = lx2;
-					prev = l;
-					levelsX[x1] = this;
-				} else {
-					L l2 = levels[levelsCount--];
-					l2.x1 = lx2;
-					l2.x2 = x2;
-					l2.y = y;
-					l2.next = next;
-					if (next != null) {
-						next.prev = l2;
-					}
-					levelsX[lx2] = l2;
-
-					L l1 = levels[levelsCount--];
-					l1.x1 = lx1;
-					l1.x2 = lx2;
-					l1.y = newY;
-					l1.prev = this;
-					l1.next = l2;
-					l2.prev = l1;
-					levelsX[lx1] = l1;
-
+					next = l;
 					x2 = lx1;
-					next = l1;
 				}
-			}
-
-			L getPrevLevel(int x) {
-				L l = this.prev;
-				while (l != null) {
-					if (x >= l.x1 && x < l.x2) {
-						return l;
-					}
-					l = l.prev;
+			} else if (lx1 == x1) {
+				Level l = levels[levelsCount--];
+				l.x1 = lx1;
+				l.x2 = lx2;
+				l.y = newY;
+				l.prev = prev;
+				if (prev != null) {
+					prev.next = l;
 				}
-				return this.prev;
-			}
+				l.next = this;
+				if (lx1 == 0) {
+					firstLevel = l;
+				}
+				levelsX[lx1] = l;
 
-			public String toString() {
-				return y + " (" + x1 + "-" + x2 + ")";
+				x1 = lx2;
+				prev = l;
+				levelsX[x1] = this;
+			} else {
+				Level l2 = levels[levelsCount--];
+				l2.x1 = lx2;
+				l2.x2 = x2;
+				l2.y = y;
+				l2.next = next;
+				if (next != null) {
+					next.prev = l2;
+				}
+				levelsX[lx2] = l2;
+
+				Level l1 = levels[levelsCount--];
+				l1.x1 = lx1;
+				l1.x2 = lx2;
+				l1.y = newY;
+				l1.prev = this;
+				l1.next = l2;
+				l2.prev = l1;
+				levelsX[lx1] = l1;
+
+				x2 = lx1;
+				next = l1;
 			}
 		}
 
-		void printProcess() {
-			if (++iterationsCount % 100_000_000 == 0) {
-				System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
-				for (int i = 0; i < n; i++) {
-					System.out.print((i > 0 ? ", " : "") + sequence[i]);
-				}
-				System.out.println();
-			}
-		}
-
-		void start() {
-			startLevelOpt(0, 0, X);
-		}
-
-		void removeLevel(int levelX1, int levelX2, int size) {
-			L l = firstLevel;
-			while (true) {
-				if (levelX2 <= l.x2 && levelX1 >= l.x1) {
-					l.removeLevel(levelX1, levelX2, size);
-					return;
-				}
-				l = l.next;
-			}
-		}
-
-		void printLevels() {
-			System.out.print("Levels: ");
-			L l = firstLevel;
+		Level getPrevLevel(int x) {
+			Level l = this.prev;
 			while (l != null) {
-				if (l != firstLevel) {
-					System.out.print(", ");
+				if (x >= l.x1 && x < l.x2) {
+					return l;
 				}
-				System.out.print(l);
-				l = l.next;
+				l = l.prev;
+			}
+			return this.prev;
+		}
+
+		public String toString() {
+			return y + " (" + x1 + "-" + x2 + ")";
+		}
+	}
+
+	void printProcess() {
+		if (++iterationsCount % 100_000_000 == 0) {
+			System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
+			for (int i = 0; i < n; i++) {
+				System.out.print((i > 0 ? ", " : "") + sequence[i]);
 			}
 			System.out.println();
 		}
+	}
 
-		void startLevelOpt(int level, int levelX1, int levelX2) {
-			int startQuad = 1;
-			int endQuad = levelX2 - levelX1;
-			if (level > 0) {
-				if (level + endQuad > X) {
-					endQuad = X - level;
-				}
-			} else if (n > 0) {
-				if (levelX2 == X && endQuad <= sequence[0]) { // level == 0
-					return;
-				}
-			} else {
-				startQuad = fromX;
-				endQuad = toX;
+	void removeLevel(int levelX1, int levelX2, int size) {
+		Level l = firstLevel;
+		while (true) {
+			if (levelX2 <= l.x2 && levelX1 >= l.x1) {
+				l.removeLevel(levelX1, levelX2, size);
+				return;
 			}
-			for (int quad = startQuad; quad <= endQuad; quad++) {
-				if (!busy[quad]) {
-					bestLevel = levelsX[levelX1];
-					L currentLevel = bestLevel.addLevel(quad, true);
-					if (currentLevel == stopTL) {
+			l = l.next;
+		}
+	}
+
+	void printLevels() {
+		System.out.print("Levels: ");
+		Level l = firstLevel;
+		while (l != null) {
+			if (l != firstLevel) {
+				System.out.print(", ");
+			}
+			System.out.print(l);
+			l = l.next;
+		}
+		System.out.println();
+	}
+
+	void start() {
+		startLevel(0, 0, X);
+	}
+
+	void startLevel(int level, int levelX1, int levelX2) {
+		int startQuad = 1;
+		int endQuad = levelX2 - levelX1;
+		if (level > 0) {
+			if (level + endQuad > X) {
+				endQuad = X - level;
+			}
+		} else if (n > 0) {
+			if (levelX2 == X && endQuad <= sequence[0]) { // level == 0
+				return;
+			}
+		} else {
+			startQuad = fromX;
+			endQuad = toX;
+		}
+		for (int quad = startQuad; quad <= endQuad; quad++) {
+			if (!busy[quad]) {
+				bestLevel = levelsX[levelX1];
+				Level currentLevel = bestLevel.addLevel(quad, true);
+				if (currentLevel == stopTL) {
+					break;
+				} else if (currentLevel == stopTR) {
+					if (levelX2 < X || level + levelX2 - levelX1 > X || busy[endQuad]) {
 						break;
-					} else if (currentLevel == stopTR) {
-						if (levelX2 < X || level + levelX2 - levelX1 > X || busy[endQuad]) {
-							break;
-						}
-						quad = endQuad;
-						currentLevel = bestLevel.addLevel(quad, false);
 					}
-					busy[quad] = true;
-					sequence[n++] = quad;
+					quad = endQuad;
+					currentLevel = bestLevel.addLevel(quad, false);
+				}
+				busy[quad] = true;
+				sequence[n++] = quad;
 
-					// printProcess();
-					// printLevels();
+				// printProcess();
+				// printLevels();
 
-					int x2 = levelX1 + quad;
-					if (x2 != levelX2 && (levelX1 == 0 || currentLevel.prev.y >= level + quad)) { // 50%
-						startLevelOpt(level, x2, levelX2);
-					} else if (firstLevel.next != null) {
-						if (bestLevel == null) {  // 20%
-							L l = firstLevel;
-							if ((l.prev == null || l.prev.y > l.y) && l.next.y > l.y) {
-								bestLevel = l;
-							}
-							l = l.next;
-							if (bestLevel == null) {
-								while (true) {
-									if (l.prev.y > l.y && (l.next == null || l.next.y > l.y)) {
-										bestLevel = l;
-										l = l.next;
-										break;
-									}
-									l = l.next;
-								}
-							}
-							while (l != null) {
-								if (l.x2 - l.x1 < bestLevel.x2 - bestLevel.x1 && l.prev.y > l.y && (l.next == null || l.next.y > l.y)) {
+				int x2 = levelX1 + quad;
+				if (x2 != levelX2 && (levelX1 == 0 || currentLevel.prev.y >= level + quad)) { // 50%
+					startLevel(level, x2, levelX2);
+				} else if (firstLevel.next != null) {
+					if (bestLevel == null) {  // 20%
+						Level l = firstLevel;
+						if ((l.prev == null || l.prev.y > l.y) && l.next.y > l.y) {
+							bestLevel = l;
+						}
+						l = l.next;
+						if (bestLevel == null) {
+							while (true) {
+								if (l.prev.y > l.y && (l.next == null || l.next.y > l.y)) {
 									bestLevel = l;
+									l = l.next;
+									break;
 								}
 								l = l.next;
 							}
 						}
-						startLevelOpt(bestLevel.y, bestLevel.x1, bestLevel.x2);
-					} else {
-						result(firstLevel.y);
-					}
-
-					removeLevel(levelX1, x2, quad);
-					busy[quad] = false;
-					n--;
-				}
-			}
-		}
-
-		void startLevel(int level, int levelX1, int levelX2) {
-			int levelLength = levelX2 - levelX1;
-			if (level == 0 && levelX2 == X && levelLength < sequence[0]) {
-				return;
-			}
-			for (int quad = 1; quad <= levelLength; quad++) {
-				if (!busy[quad]) {
-					busy[quad] = true;
-					int x2 = levelX1 + quad, newLevel = level + quad;
-					for (int x = levelX1; x < x2; x++) {
-						front[x] = newLevel;
-					}
-					sequence[n++] = quad;
-
-					// printProcess();
-
-					if (x2 != levelX2 && (levelX1 == 0 || front[levelX1 - 1] >= newLevel)) {
-						startLevel(level, x2, levelX2);
-					} else {
-						//--- find level -----------------------------
-						int currentLevel = front[0], bestLevel = currentLevel, bestLevelX1 = 0, bestLevelX2 = X, lx1 = 0, lx2 = 0, ly;
-						while (lx2 < X) {
-							ly = front[lx2];
-							while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
-							if (ly > currentLevel || lx2 == X) {
-								if (lx2 - lx1 < bestLevelX2 - bestLevelX1) {
-									bestLevel = currentLevel;
-									bestLevelX1 = lx1;
-									bestLevelX2 = lx2;
-								}
-								while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
-									currentLevel = ly;
-								}
+						while (l != null) {
+							if (l.x2 - l.x1 < bestLevel.x2 - bestLevel.x1 && l.prev.y > l.y && (l.next == null || l.next.y > l.y)) {
+								bestLevel = l;
 							}
-							currentLevel = ly;
-							lx1 = lx2;
-						}
-
-						if (bestLevelX1 == 0 && bestLevelX2 == X) {
-							if (bestLevel >= X) {
-								result(front[0]);
-							}
-						} else {
-							startLevel(bestLevel, bestLevelX1, bestLevelX2);
-						}
-						//--------------------------------------------
-					}
-
-					for (int x = levelX1; x < x2; x++) {
-						front[x] = level;
-					}
-					busy[quad] = false;
-					n--;
-				}
-			}
-		}
-
-		void result(int height) {
-			if (isScaled()) {
-				return;
-			}
-			Result result1 = getResult(height);
-			Result result2 = result1.flipHor();
-			if (allResults.contains(result2)) {
-				return;
-			}
-			Result result3 = result1.flipVer();
-			if (allResults.contains(result3)) {
-				return;
-			}
-			Result result4 = result1.flipHorVer();
-			if (allResults.contains(result4)) {
-				return;
-			}
-			if (result1.width == result1.height) {
-				Result result5 = result1.rotate();
-				if (allResults.contains(result5)) {
-					return;
-				}
-				Result result6 = result5.flipHor();
-				if (allResults.contains(result6)) {
-					return;
-				}
-				Result result7 = result5.flipVer();
-				if (allResults.contains(result7)) {
-					return;
-				}
-				Result result8 = result5.flipHorVer();
-				if (allResults.contains(result8)) {
-					return;
-				}
-			}
-			Result bestResult = result1;
-			if (result2.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
-				bestResult = result2;
-			}
-			if (result3.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
-				bestResult = result3;
-			}
-			if (result4.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
-				bestResult = result4;
-			}
-			results.add(bestResult);
-			allResults.add(bestResult);
-			//System.out.println(bestResult);
-		}
-
-		boolean isScaled() {
-			int nod = sequence[0];
-			for (int i = 1; i < n && nod > 1; i++) {
-				nod = nod(nod, sequence[i]);
-			}
-			return nod > 1;
-		}
-
-		int nod(int a, int b) {
-			while (true) {
-				if (a > b) {
-					if ((a = a % b) == 0) {
-						return b;
-					}
-				} else if ((b = b % a) == 0) {
-					return a;
-				}
-			}
-		}
-
-		Result getResult(int height) {
-			Quad[] quads = new Quad[n];
-			int x1 = 0, x2, y = 0, index = 0;
-			int[] front = new int[X];
-			while (index < n) {
-				Quad quad = new Quad(x1, y, sequence[index], index);
-				quads[index++] = quad;
-				for (int i = quad.x; i < quad.x + quad.size; i++) {
-					front[i] += quad.size;
-				}
-
-				int lx1 = 0, lx2 = 0, ly, currentLevel = front[0];
-				x1 = 0;
-				x2 = X;
-				y = currentLevel;
-				while (lx2 < X) {
-					ly = front[lx2];
-					while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
-					if (ly > currentLevel || lx2 == X) {
-						if (lx2 - lx1 < x2 - x1) {
-							y = currentLevel;
-							x1 = lx1;
-							x2 = lx2;
-						}
-						while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
-							currentLevel = ly;
+							l = l.next;
 						}
 					}
-					currentLevel = ly;
-					lx1 = lx2;
+					startLevel(bestLevel.y, bestLevel.x1, bestLevel.x2);
+				} else {
+					result(firstLevel.y);
 				}
-			}
-			return new Result(quads, X, height, System.currentTimeMillis() - startTime);
-		}
 
-		public static void print(Collection<Result> results, long startTime, long quadStartTime) {
-			if (results.size() > 0) {
-				for (Result result : results) {
-					System.out.println(result);
-				}
-				System.out.println("// time: " + (System.currentTimeMillis() - quadStartTime) / 1000.0 + "sec, total time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "sec\n//");
+				removeLevel(levelX1, x2, quad);
+				busy[quad] = false;
+				n--;
 			}
 		}
 	}
 
-	static void q1(int startQuad, int endQuad, int threads) {
+	// artifact
+	int[] front;
+
+	void startLevelSimple(int level, int levelX1, int levelX2) {
+		int levelLength = levelX2 - levelX1;
+		if (level == 0 && levelX2 == X && levelLength < sequence[0]) {
+			return;
+		}
+		for (int quad = 1; quad <= levelLength; quad++) {
+			if (!busy[quad]) {
+				busy[quad] = true;
+				int x2 = levelX1 + quad, newLevel = level + quad;
+				for (int x = levelX1; x < x2; x++) {
+					front[x] = newLevel;
+				}
+				sequence[n++] = quad;
+
+				// printProcess();
+
+				if (x2 != levelX2 && (levelX1 == 0 || front[levelX1 - 1] >= newLevel)) {
+					startLevel(level, x2, levelX2);
+				} else {
+					//--- find level -----------------------------
+					int currentLevel = front[0], bestLevel = currentLevel, bestLevelX1 = 0, bestLevelX2 = X, lx1 = 0, lx2 = 0, ly;
+					while (lx2 < X) {
+						ly = front[lx2];
+						while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+						if (ly > currentLevel || lx2 == X) {
+							if (lx2 - lx1 < bestLevelX2 - bestLevelX1) {
+								bestLevel = currentLevel;
+								bestLevelX1 = lx1;
+								bestLevelX2 = lx2;
+							}
+							while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
+								currentLevel = ly;
+							}
+						}
+						currentLevel = ly;
+						lx1 = lx2;
+					}
+
+					if (bestLevelX1 == 0 && bestLevelX2 == X) {
+						if (bestLevel >= X) {
+							result(front[0]);
+						}
+					} else {
+						startLevel(bestLevel, bestLevelX1, bestLevelX2);
+					}
+					//--------------------------------------------
+				}
+
+				for (int x = levelX1; x < x2; x++) {
+					front[x] = level;
+				}
+				busy[quad] = false;
+				n--;
+			}
+		}
+	}
+
+	void result(int height) {
+		if (isScaled()) {
+			return;
+		}
+		Result result1 = getResult(height);
+		Result result2 = result1.flipHor();
+		if (allResults.contains(result2)) {
+			return;
+		}
+		Result result3 = result1.flipVer();
+		if (allResults.contains(result3)) {
+			return;
+		}
+		Result result4 = result1.flipHorVer();
+		if (allResults.contains(result4)) {
+			return;
+		}
+		if (result1.width == result1.height) {
+			Result result5 = result1.rotate();
+			if (allResults.contains(result5)) {
+				return;
+			}
+			Result result6 = result5.flipHor();
+			if (allResults.contains(result6)) {
+				return;
+			}
+			Result result7 = result5.flipVer();
+			if (allResults.contains(result7)) {
+				return;
+			}
+			Result result8 = result5.flipHorVer();
+			if (allResults.contains(result8)) {
+				return;
+			}
+		}
+		Result bestResult = result1;
+		if (result2.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
+			bestResult = result2;
+		}
+		if (result3.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
+			bestResult = result3;
+		}
+		if (result4.getFirstQuadSize() < bestResult.getFirstQuadSize()) {
+			bestResult = result4;
+		}
+		results.add(bestResult);
+		allResults.add(bestResult);
+		//System.out.println(bestResult);
+	}
+
+	boolean isScaled() {
+		int nod = sequence[0];
+		for (int i = 1; i < n && nod > 1; i++) {
+			nod = nod(nod, sequence[i]);
+		}
+		return nod > 1;
+	}
+
+	int nod(int a, int b) {
+		while (true) {
+			if (a > b) {
+				if ((a = a % b) == 0) {
+					return b;
+				}
+			} else if ((b = b % a) == 0) {
+				return a;
+			}
+		}
+	}
+
+	Result getResult(int height) {
+		Quad[] quads = new Quad[n];
+		int x1 = 0, x2, y = 0, index = 0;
+		int[] front = new int[X];
+		while (index < n) {
+			Quad quad = new Quad(x1, y, sequence[index], index);
+			quads[index++] = quad;
+			for (int i = quad.x; i < quad.x + quad.size; i++) {
+				front[i] += quad.size;
+			}
+
+			int lx1 = 0, lx2 = 0, ly, currentLevel = front[0];
+			x1 = 0;
+			x2 = X;
+			y = currentLevel;
+			while (lx2 < X) {
+				ly = front[lx2];
+				while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+				if (ly > currentLevel || lx2 == X) {
+					if (lx2 - lx1 < x2 - x1) {
+						y = currentLevel;
+						x1 = lx1;
+						x2 = lx2;
+					}
+					while (++lx2 < X && (ly = front[lx2]) >= currentLevel) {
+						currentLevel = ly;
+					}
+				}
+				currentLevel = ly;
+				lx1 = lx2;
+			}
+		}
+		return new Result(quads, X, height, System.currentTimeMillis() - startTime);
+	}
+
+	public static void print(Collection<Result> results, long startTime, long quadStartTime) {
+		if (results.size() > 0) {
+			int index = 1;
+			for (Result result : results) {
+				System.out.println("// [" + (index < 10 ? "0" : "") + index++ + "] " + result);
+			}
+			System.out.println("// time: " + (System.currentTimeMillis() - quadStartTime) / 1000.0 + "sec, total time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "sec\n//");
+		}
+	}
+
+	static void start(int startQuad, int endQuad, int threads) {
 		long startTime = System.currentTimeMillis();
 		if (threads > 1) {
 			for (int n = startQuad; n <= endQuad; n++) {
@@ -731,81 +544,29 @@ public class Q {
 				for (int quad = 3; quad <= maxN; quad++) {
 					int _quad = quad;
 					executor.execute(() -> {
-						Q1 q = new Q1(_n, _quad, _quad, results);
+						QIT q = new QIT(_n, _quad, _quad, results);
 						q.start();
 					});
 				}
 				executor.shutdown();
 				try {
-					executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+					executor.awaitTermination(Integer.MAX_VALUE, java.util.concurrent.TimeUnit.DAYS);
 				} catch (InterruptedException e) {
 				}
-				Q1.print(results, startTime, quadStartTime);
+				print(results, startTime, quadStartTime);
 			}
 		} else {
 			for (int n = startQuad; n <= endQuad; n++) {
 				Set<Result> results = new LinkedHashSet<>();
-				Q1 q = new Q1(n, 1, n, results);
+				QIT q = new QIT(n, 1, n, results);
 				q.start();
-				Q1.print(results, startTime, q.startTime);
+				print(results, startTime, q.startTime);
 			}
 		}
-	}
-
-	static class Smith {
-		int n;
-
-		int halfN;
-
-		Smith(int n) {
-			this.n = n;
-			halfN = n / 2;
-			top = new Side();
-			bottom = new Side();
-			sides = new Side[n];
-			for (int i = 0; i < n; i++) {
-				Side side = new Side();
-				side.index = i;
-				sides[i] = side;
-			}
-		}
-
-		Side top;
-
-		Side bottom;
-
-		int sidesPos;
-
-		Side[] sides;
-
-		class Side {
-			int index;
-
-			int count;
-
-			Side[] out = new Side[n];
-
-			void start() {
-				for (int i = 0; i < halfN && sidesPos < n; i++) {
-					Side s = sides[sidesPos++];
-					out[count++] = s;
-					s.start();
-				}
-			}
-		}
-
-		void start() {
-			top.start();
-		}
-	}
-
-	static void smith() {
-		new Smith(17).start();
 	}
 
 	public static void main(String[] args) {
-		q1(33, 121, 8);
-		// smith();
+		start(80, 80, 6);
 	}
 }
 

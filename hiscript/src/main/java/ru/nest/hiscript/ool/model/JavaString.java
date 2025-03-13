@@ -19,20 +19,17 @@ public class JavaString {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof JavaString) {
-			JavaString s = (JavaString) o;
-			if (chars.length != s.chars.length) {
+		JavaString s = (JavaString) o;
+		if (chars.length != s.chars.length) {
+			return false;
+		}
+		int length = chars.length;
+		for (int i = 0; i < length; i++) {
+			if (chars[i] != s.chars[i]) {
 				return false;
 			}
-			int length = chars.length;
-			for (int i = 0; i < length; i++) {
-				if (chars[i] != s.chars[i]) {
-					return false;
-				}
-			}
-			return true;
 		}
-		return false;
+		return true;
 	}
 
 	public int hashCode() {
