@@ -244,12 +244,15 @@ public class QIT {
 	}
 
 	void printProcess() {
-		if (++iterationsCount % 100_000_000 == 0) {
-			System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
-			for (int i = 0; i < n; i++) {
-				System.out.print((i > 0 ? ", " : "") + sequence[i]);
-			}
-			System.out.println();
+//		if (++iterationsCount % 10_000_000 == 0) {
+//			System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
+//			for (int i = 0; i < n; i++) {
+//				System.out.print((i > 0 ? ", " : "") + sequence[i]);
+//			}
+//			System.out.println();
+//		}
+		if (panel != null && ++iterationsCount % 1_000_000 == 0) {
+			panel.setSequence(X, sequence, n);
 		}
 	}
 
@@ -312,7 +315,7 @@ public class QIT {
 				busy[quad] = true;
 				sequence[n++] = quad;
 
-				// printProcess();
+				printProcess();
 				// printLevels();
 
 				int x2 = levelX1 + quad;
@@ -419,6 +422,9 @@ public class QIT {
 			return;
 		}
 		Result result1 = getResult(height);
+		if (result1.isVertical()) {
+			return;
+		}
 		Result result2 = result1.flipHor();
 		if (allResults.contains(result2)) {
 			return;
@@ -461,7 +467,18 @@ public class QIT {
 		}
 		results.add(bestResult);
 		allResults.add(bestResult);
-		//System.out.println(bestResult);
+
+		if (panel != null) {
+			System.out.println(bestResult);
+			panel.setSequence(X, sequence, n);
+			panel.paused = true;
+			while (panel.paused) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
 	}
 
 	boolean isScaled() {
@@ -519,7 +536,7 @@ public class QIT {
 		return new Result(quads, X, height, System.currentTimeMillis() - startTime);
 	}
 
-	public static void print(Collection<Result> results, long startTime, long quadStartTime) {
+	static void print(Collection<Result> results, long startTime, long quadStartTime) {
 		if (results.size() > 0) {
 			int index = 1;
 			for (Result result : results) {
@@ -529,10 +546,18 @@ public class QIT {
 		}
 	}
 
+	QFrame.QPanel panel;
+
 	static void start(int startQuad, int endQuad, int threads) {
+		QFrame frame = new QFrame();
+		frame.setQuadsCount(threads);
+		frame.setVisible(true);
+
 		long startTime = System.currentTimeMillis();
 		if (threads > 1) {
+			boolean[] threadsBusy = new boolean[threads];
 			for (int n = startQuad; n <= endQuad; n++) {
+				frame.setTitle("Quads: " + n);
 				Set<Result> results = ConcurrentHashMap.newKeySet();
 				long quadStartTime = System.currentTimeMillis();
 				int _n = n;
@@ -544,8 +569,29 @@ public class QIT {
 				for (int quad = 3; quad <= maxN; quad++) {
 					int _quad = quad;
 					executor.execute(() -> {
+						int index = 0;
+						synchronized (threadsBusy) {
+							WHILE:
+							while (true) {
+								for (int i = 0; i < threadsBusy.length; i++) {
+									if (!threadsBusy[i]) {
+										threadsBusy[i] = true;
+										index = i;
+										break WHILE;
+									}
+								}
+								Thread.yield();
+							}
+						}
+
 						QIT q = new QIT(_n, _quad, _quad, results);
+						q.panel = frame.getQPanel(index);
 						q.start();
+						q.panel.clear();
+
+						synchronized (threadsBusy) {
+							threadsBusy[index] = false;
+						}
 					});
 				}
 				executor.shutdown();
@@ -566,7 +612,7 @@ public class QIT {
 	}
 
 	public static void main(String[] args) {
-		start(80, 80, 6);
+		start(32, 112, 5);
 	}
 }
 

@@ -151,4 +151,17 @@ public class Result {
 		}
 		return sequence;
 	}
+
+	boolean isVertical() {
+		int[] heights = new int[width];
+		for (int i = 0; i < quads.length; i++) {
+			heights[quads[i].x] += quads[i].size;
+		}
+		for (int i = 1; i < width; i++) {
+			if (heights[i] == height) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
