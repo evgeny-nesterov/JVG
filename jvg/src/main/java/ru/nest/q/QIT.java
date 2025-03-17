@@ -253,6 +253,7 @@ public class QIT {
 //		}
 		if (panel != null && ++iterationsCount % 1_000_000 == 0) {
 			panel.setSequence(X, sequence, n);
+			waitClick();
 		}
 	}
 
@@ -470,8 +471,14 @@ public class QIT {
 
 		if (panel != null) {
 			System.out.println(bestResult);
-			panel.setSequence(X, sequence, n);
 			panel.paused = true;
+			waitClick();
+		}
+	}
+
+	void waitClick() {
+		if (panel.paused) {
+			panel.setSequence(X, sequence, n);
 			while (panel.paused) {
 				try {
 					Thread.sleep(10);
@@ -612,7 +619,7 @@ public class QIT {
 	}
 
 	public static void main(String[] args) {
-		start(32, 112, 5);
+		start(32, 171, 8); // 106
 	}
 }
 

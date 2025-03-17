@@ -41,11 +41,11 @@ public class QFrame extends JFrame {
 
 	class QPanel extends JComponent {
 		QPanel() {
-			setPreferredSize(new Dimension(650, 650));
+			setPreferredSize(new Dimension(350, 350));
 			addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					paused = false;
+				public void mousePressed(MouseEvent e) {
+					paused = !paused;
 				}
 			});
 		}
@@ -114,9 +114,11 @@ public class QFrame extends JFrame {
 				for (Quad q : quads) {
 					int qx = (int) (panelSize * q.x / quadSize);
 					int qy = (int) (panelSize * (quadSize - q.y - q.size) / quadSize);
-					int qw = (int) (panelSize * q.size / quadSize);
+					int qx2 = (int) (panelSize * (q.x + q.size) / quadSize);
+					int qy2 = (int) (panelSize * (quadSize - q.y) / quadSize);
 					g.setColor(paused ? Color.blue : Color.darkGray);
-					g.fillRect(qx + 1, qy + 1, qw - 2, qw - 2);
+					g.fillRect(qx + 1, qy + 1, qx2 - qx - 1, qy2 - qy - 1);
+					int qw = qx2 - qx;
 					if (qw > 10) {
 						g.setColor(Color.white);
 						String s = Integer.toString(q.size);
