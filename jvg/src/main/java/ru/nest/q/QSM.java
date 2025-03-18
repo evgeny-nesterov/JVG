@@ -14,7 +14,7 @@ public class QSM {
 		plusCount = new int[n_plus_1];
 		minusCount = new int[n_plus_1];
 		out = new int[n];
-		m = new int[n_minus_1][n];
+		m = new int[n][n];
 	}
 
 	int[][] matrix;
@@ -53,29 +53,9 @@ public class QSM {
 		minusCount[endLevel]--;
 	}
 
-	int checkCount = 1;
+	int checkCount = 0;
 
 	void check(int levelsCount) {
-		if (matrix[0][0] == 1 && matrix[1][0] == -1) {
-			if (matrix[1][1] == 1 && matrix[2][1] == -1) {
-				if (matrix[0][2] == 1 && matrix[3][2] == -1) {
-					if (matrix[1][3] == 1 && matrix[3][3] == -1) {
-						if (matrix[2][4] == 1 && matrix[4][4] == -1) {
-							if (matrix[3][5] == 1 && matrix[4][5] == -1) {
-								if (matrix[2][6] == 1 && matrix[5][6] == -1) {
-									if (matrix[3][7] == 1 && matrix[5][7] == -1) {
-										if (matrix[4][8] == 1 && matrix[5][8] == -1) {
-											int x = 1;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		////////////////////////////////////////////////////////////////////////
 		// Check matrix structure
 		if (minusCount[levelsCount] < 2) {
@@ -100,6 +80,8 @@ public class QSM {
 			}
 		}
 
+		//printMatrix(levelsCount);
+
 		////////////////////////////////////////////////////////////////////////
 		// Create equations matrix
 		for (int l = 1; l < levelsCount; l++) {
@@ -117,18 +99,29 @@ public class QSM {
 				out[x] = levelsCount;
 			}
 		}
-		processVerticalChains(m, levelsCount, 0, levelsCount - 1, new int[n]);
+		int equationsCount = n;
+		int processedIndex = processVerticalChains(m, levelsCount, 0, levelsCount - 1, new int[n]);
+		if (processedIndex != -1) {
+			int[] lastLine = m[processedIndex - 1];
+			for (int l = levelsCount - 1; l < processedIndex; l++) {
+				int[] levelArray = m[l];
+				for (int x0 = 0; x0 < n; x0++) {
+					levelArray[x0] -= lastLine[x0];
+				}
+			}
+			equationsCount = processedIndex - 1;
+		}
 		// System.out.println();
 		// printMatrix(m, n_minus_1 - 1);
 
 		////////////////////////////////////////////////////////////////////////
 		// Resolve system of linear equations
-		boolean[] processed = new boolean[n_minus_1];
+		boolean[] processed = new boolean[equationsCount];
 		for (int x0 = 0; x0 < n; x0++) {
 			int mainLevel = -1;
 			int mainValue = 0;
-			// for (int l = 0; l < n_minus_1; l++) {
-			for (int l = n_minus_1 - 1; l >= 0; l--) {
+			// for (int l = 0; l < equationsCount; l++) {
+			for (int l = equationsCount - 1; l >= 0; l--) {
 				if (!processed[l]) {
 					mainValue = m[l][x0];
 					if (mainValue != 0) {
@@ -143,7 +136,7 @@ public class QSM {
 			int[] mainLevelArray = m[mainLevel];
 
 			processed[mainLevel] = true;
-			for (int l = 0; l < n_minus_1; l++) {
+			for (int l = 0; l < equationsCount; l++) {
 				if (l != mainLevel) {
 					int[] levelArray = m[l];
 					int valueX0 = levelArray[x0];
@@ -156,23 +149,27 @@ public class QSM {
 			}
 		}
 
-		for (int l = 0; l < n_minus_1; l++) {
-			if (m[l][n_minus_1] == 0) {
-				return;
+		int nonNullLines = 0;
+		for (int l = 0; l < equationsCount; l++) {
+			if (m[l][n_minus_1] != 0) {
+				nonNullLines++;
 			}
+		}
+		if (nonNullLines < n - 1) {
+			return;
 		}
 
 		int[] A = new int[n]; // answer
 		int[] B = new int[n_minus_1];
-		for (int l = 0; l < n_minus_1; l++) {
+		for (int l = 0; l < equationsCount; l++) {
 			int[] levelArray = m[l];
 			for (int x = 0; x < n_minus_1; x++) {
 				int a = levelArray[x];
 				if (a != 0) {
 					int b = levelArray[n_minus_1];
-//					if ((a < 0 && b < 0) || (a > 0 && b > 0)) {
-//						return;
-//					}
+					if ((a < 0 && b < 0) || (a > 0 && b > 0)) {
+						return;
+					}
 					if (a < 0) {
 						a = -a;
 					} else {
@@ -246,9 +243,9 @@ public class QSM {
 				W = -W;
 				H = -H;
 			}
-//			if (W < H) {
-//				return;
-//			}
+			if (W < H) {
+				return;
+			}
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -264,9 +261,10 @@ public class QSM {
 			System.out.print(A[i]);
 		}
 		System.out.println();
-		printMatrix(m, n_minus_1 - 1);
-		System.out.println();
+//		printMatrix(m, n_minus_1 - 1);
+//		System.out.println();
 		System.out.println("Size: " + W + " x " + H);
+		System.out.println();
 
 		getResult(levelsCount, A);
 	}
@@ -297,19 +295,23 @@ public class QSM {
 				int nextLevel = out[x];
 				if (nextLevel < levelsCount) {
 					index = processVerticalChains(m, levelsCount, nextLevel, index, buf);
+					if (index == -1) {
+						return -1;
+					}
 				} else {
-					if (index < n_minus_1) {
+					if (index < n) {
 						int[] levelArray = m[index];
 						for (int x0 = 0; x0 < n; x0++) {
 							levelArray[x0] = buf[x0];
 						}
 					} else {
-						for (int l = levelsCount - 1; l < n_minus_1; l++) {
+						for (int l = levelsCount - 1; l < n; l++) {
 							int[] levelArray = m[l];
 							for (int x0 = 0; x0 < n; x0++) {
 								levelArray[x0] -= buf[x0];
 							}
 						}
+						return -1;
 					}
 					index++;
 				}
@@ -351,7 +353,7 @@ public class QSM {
 
 	public static void main(String[] args) {
 		long t = System.currentTimeMillis();
-		QSM q = new QSM(9);
+		QSM q = new QSM(19);
 		q.start();
 		System.out.println("\nchecks: " + q.checkCount + " for " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
 	}

@@ -619,7 +619,7 @@ public class QIT {
 	}
 
 	public static void main(String[] args) {
-		start(32, 171, 8); // 106
+		start(33, 171, 8); // 106
 	}
 }
 
