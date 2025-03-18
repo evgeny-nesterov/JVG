@@ -56,65 +56,52 @@ public class QSM {
 	int checkCount = 1;
 
 	void check(int levelsCount) {
-		if (minusCount[levelsCount] < 2) { //  || plusCount[levelsCount] > 0
+		if (matrix[0][0] == 1 && matrix[1][0] == -1) {
+			if (matrix[1][1] == 1 && matrix[2][1] == -1) {
+				if (matrix[0][2] == 1 && matrix[3][2] == -1) {
+					if (matrix[1][3] == 1 && matrix[3][3] == -1) {
+						if (matrix[2][4] == 1 && matrix[4][4] == -1) {
+							if (matrix[3][5] == 1 && matrix[4][5] == -1) {
+								if (matrix[2][6] == 1 && matrix[5][6] == -1) {
+									if (matrix[3][7] == 1 && matrix[5][7] == -1) {
+										if (matrix[4][8] == 1 && matrix[5][8] == -1) {
+											int x = 1;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		////////////////////////////////////////////////////////////////////////
+		// Check matrix structure
+		if (minusCount[levelsCount] < 2) {
 			return;
 		}
-		if (plusCount[0] > minusCount[levelsCount]) {
-			return;
-		}
+		// assert plusCount[levelsCount] == 0;
 		for (int level = levelsCount - 1; level > 0; level--) {
 			int plus = plusCount[level];
 			if (plus + minusCount[level] < 3 || plus == 0) {
 				return;
 			}
+			// assert minusCount[level] > 0;
 		}
-		if (plusCount[0] < 2) { //  || minusCount[0] > 0
+		if (plusCount[0] < 2) {
 			return;
 		}
+		// assert minusCount[0] == 0;
+		int[] firstLevelArray = matrix[0];
 		for (int x = 0; x < n; x++) {
-			if (matrix[0][x] != 0 && matrix[levelsCount][x] != 0) {
+			if (firstLevelArray[x] != 0 && matrix[levelsCount][x] != 0) {
 				return;
 			}
 		}
 
-//		{
-//			int leftQuadsCount = 0;
-//			int l = 0, x = 0;
-//			WHILE:
-//			while (l < levelsCount) {
-//				for (; x < n; x++) {
-//					if (matrix[l][x] == 1) {
-//						leftQuadsCount++;
-//						while (l < levelsCount) {
-//							if (matrix[++l][x] == -1) {
-//								continue WHILE;
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//			int rightQuadsCount = 0;
-//			l = 0;
-//			WHILE:
-//			while (l < levelsCount) {
-//				for (x = n - 1; x >= 0; x--) {
-//					if (matrix[l][x] == 1) {
-//						rightQuadsCount++;
-//						while (l < levelsCount) {
-//							if (matrix[++l][x] == -1) {
-//								continue WHILE;
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//			if (leftQuadsCount > rightQuadsCount) {
-//				return;
-//			}
-//		}
-
+		////////////////////////////////////////////////////////////////////////
+		// Create equations matrix
 		for (int l = 1; l < levelsCount; l++) {
 			int[] levelArray = matrix[l];
 			for (int x = 0; x < n; x++) {
@@ -130,11 +117,12 @@ public class QSM {
 				out[x] = levelsCount;
 			}
 		}
-		fillMatrix(m, levelsCount, 0, levelsCount - 1, new int[n]);
-
+		processVerticalChains(m, levelsCount, 0, levelsCount - 1, new int[n]);
 		// System.out.println();
 		// printMatrix(m, n_minus_1 - 1);
 
+		////////////////////////////////////////////////////////////////////////
+		// Resolve system of linear equations
 		boolean[] processed = new boolean[n_minus_1];
 		for (int x0 = 0; x0 < n; x0++) {
 			int mainLevel = -1;
@@ -173,16 +161,8 @@ public class QSM {
 				return;
 			}
 		}
-//		for (int x = 0; x < n_minus_1; x++) {
-//			if (m[0][x] != 0 && ((m[0][x] > 0 && m[0][n_minus_1] > 0) || (m[0][x] < 0 && m[0][n_minus_1] < 0))) {
-//				return;
-//			}
-//			if (m[n_minus_1 - 1][x] != 0 && ((m[n_minus_1 - 1][x] > 0 && m[n_minus_1 - 1][n_minus_1] > 0) || (m[n_minus_1 - 1][x] < 0 && m[n_minus_1 - 1][n_minus_1] < 0))) {
-//				return;
-//			}
-//		}
 
-		int[] A = new int[n];
+		int[] A = new int[n]; // answer
 		int[] B = new int[n_minus_1];
 		for (int l = 0; l < n_minus_1; l++) {
 			int[] levelArray = m[l];
@@ -190,6 +170,9 @@ public class QSM {
 				int a = levelArray[x];
 				if (a != 0) {
 					int b = levelArray[n_minus_1];
+//					if ((a < 0 && b < 0) || (a > 0 && b > 0)) {
+//						return;
+//					}
 					if (a < 0) {
 						a = -a;
 					} else {
@@ -216,22 +199,29 @@ public class QSM {
 		}
 		A[n_minus_1] = b;
 
+		////////////////////////////////////////////////////////////////////////
+		// Exclude results with the same quads
 		for (int i1 = 0; i1 < A.length; i1++) {
+			int a1 = A[i1];
 			for (int i2 = i1 + 1; i2 < A.length; i2++) {
-				if (A[i1] == A[i2] || A[i1] == -A[i2]) {
+				int a2 = A[i2];
+				if (a1 == a2 || a1 == -a2) {
 					return;
 				}
 			}
 		}
 
-		for (int l = 0; l < m.length; l++) {
-			int sum = 0;
-			for (int x = 0; x < n; x++) {
-				sum += A[x] * m[l][x];
-			}
-			assert sum == 0;
-		}
+		// check answer
+//		for (int l = 0; l < m.length; l++) {
+//			int sum = 0;
+//			for (int x = 0; x < n; x++) {
+//				sum += A[x] * m[l][x];
+//			}
+//			assert sum == 0;
+//		}
 
+		////////////////////////////////////////////////////////////////////////
+		// Compute rect size
 		int W = 0;
 		int H = 0;
 		{
@@ -252,11 +242,17 @@ public class QSM {
 					}
 				}
 			}
-			if (W < H) {
-				return;
+			if (W < 0) {
+				W = -W;
+				H = -H;
 			}
+//			if (W < H) {
+//				return;
+//			}
 		}
 
+		////////////////////////////////////////////////////////////////////////
+		// Show result
 		checkCount++;
 		printMatrix(levelsCount);
 		System.out.println();
@@ -268,9 +264,9 @@ public class QSM {
 			System.out.print(A[i]);
 		}
 		System.out.println();
-//		printMatrix(m, n_minus_1 - 1);
-//		System.out.println();
-		System.out.println("Size: " + W + " x " + H + "\n");
+		printMatrix(m, n_minus_1 - 1);
+		System.out.println();
+		System.out.println("Size: " + W + " x " + H);
 
 		getResult(levelsCount, A);
 	}
@@ -293,14 +289,14 @@ public class QSM {
 		}
 	}
 
-	int fillMatrix(int[][] m, int levelsCount, int level, int index, int[] buf) {
+	int processVerticalChains(int[][] m, int levelsCount, int level, int index, int[] buf) {
 		int[] levelMatrix = matrix[level];
 		for (int x = 0; x < n; x++) {
 			if (levelMatrix[x] == 1) {
 				buf[x] = 1;
 				int nextLevel = out[x];
 				if (nextLevel < levelsCount) {
-					index = fillMatrix(m, levelsCount, nextLevel, index, buf);
+					index = processVerticalChains(m, levelsCount, nextLevel, index, buf);
 				} else {
 					if (index < n_minus_1) {
 						int[] levelArray = m[index];
@@ -355,7 +351,7 @@ public class QSM {
 
 	public static void main(String[] args) {
 		long t = System.currentTimeMillis();
-		QSM q = new QSM(10);
+		QSM q = new QSM(9);
 		q.start();
 		System.out.println("\nchecks: " + q.checkCount + " for " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
 	}
