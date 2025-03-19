@@ -40,18 +40,18 @@ public class QSM {
 	}
 
 	void iterateLevel(int startLevel, int endLevel, int quadIndex) {
-		int actualFillCount = fillCount;
+		int restCount = 3 * endLevel - 2 - fillCount;
 		if (plusCount[0] >= 3) {
-			actualFillCount--;
+			restCount++;
 		}
-		if (minusCount[endLevel] >= 3) {
-			actualFillCount--;
+		int endMinusCount = minusCount[endLevel];
+		if (endMinusCount >= 3) {
+			restCount++;
 		}
-		int restCount = 4 + 3 * (endLevel - 2) - actualFillCount;
 		int maxRestCount = 2 * (n - quadIndex);
 		if (restCount > maxRestCount) {
 			return;
-		} else if (restCount == maxRestCount && minusCount[endLevel] >= 3) {
+		} else if (restCount == maxRestCount && endMinusCount >= 3) {
 			return;
 		}
 
@@ -59,7 +59,7 @@ public class QSM {
 		int nextQuadIndex = quadIndex + 1;
 		int[] endMatrixLevel = matrix[endLevel];
 		endMatrixLevel[quadIndex] = -1;
-		boolean isFilledRest1 = minusCount[endLevel] + plusCount[endLevel] < 3;
+		boolean isFilledRest1 = endMinusCount < 3 && endMinusCount + plusCount[endLevel] < 3;
 		if (isFilledRest1) {
 			fillCount++;
 		}
@@ -177,9 +177,9 @@ public class QSM {
 			if (mainLevel == -1) {
 				continue;
 			}
-			BigInteger[] mainLevelArray = m[mainLevel];
-
 			processed[mainLevel] = true;
+
+			BigInteger[] mainLevelArray = m[mainLevel];
 			for (int l = 0; l < equationsCount; l++) {
 				if (l != mainLevel) {
 					BigInteger[] levelArray = m[l];
@@ -258,11 +258,11 @@ public class QSM {
 
 		// check answer
 //		for (int l = 0; l < m.length; l++) {
-//			int sum = 0;
+//			BigInteger sum = BigInteger.ZERO;
 //			for (int x = 0; x < n; x++) {
-//				sum += A[x] * m[l][x];
+//				sum = sum.add(A[x].multiply(m[l][x]));
 //			}
-//			assert sum == 0;
+//			assert sum.signum() == 1;
 //		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -287,10 +287,10 @@ public class QSM {
 					}
 				}
 			}
-			if (W.signum() == -1) {
-				W = W.negate();
-				H = H.negate();
-			}
+//			if (W.signum() == -1) {
+//				W = W.negate();
+//				H = H.negate();
+//			}
 			if (W.compareTo(H) < 0) {
 				return;
 			}
@@ -299,7 +299,7 @@ public class QSM {
 		////////////////////////////////////////////////////////////////////////
 		// Show result
 		resultsCount++;
-		System.out.println("---------- [" + resultsCount + "] levelsCount: " + levelsCount + " ----------");
+		System.out.println("---------- [" + n + " / " + resultsCount + "] levelsCount: " + levelsCount + " ----------");
 		printMatrix(matrix, levelsCount);
 		System.out.println();
 		System.out.print("Answer: ");
@@ -399,9 +399,13 @@ public class QSM {
 	}
 
 	public static void main(String[] args) {
-		long t = System.currentTimeMillis();
-		QSM q = new QSM(21);
-		q.start();
-		System.out.println("\nchecks: " + q.resultsCount + " for " + (System.currentTimeMillis() - t) / 1000.0 + "sec");
+		long t1 = System.currentTimeMillis();
+		for (int i = 12; i <= 12; i++) {
+			long t2 = System.currentTimeMillis();
+			QSM q = new QSM(i);
+			q.start();
+			System.out.println("\nchecks: " + q.resultsCount + " for " + (System.currentTimeMillis() - t2) / 1000.0 + "sec");
+		}
+		System.out.println("TIME: " + (System.currentTimeMillis() - t1) / 1000.0 + "sec");
 	}
 }
