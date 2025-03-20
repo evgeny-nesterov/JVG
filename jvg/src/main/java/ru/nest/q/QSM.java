@@ -63,34 +63,33 @@ public class QSM {
 		if (isFilledRest1) {
 			fillCount++;
 		}
-		minusCount[endLevel]++;
+		minusCount[endLevel] = endMinusCount + 1;
 
 		for (int level = startLevel; level < endLevel; level++) {
 			int[] startMatrixLevel = matrix[level];
 			startMatrixLevel[quadIndex] = 1;
-			boolean isFilledRest2 = minusCount[level] + plusCount[level] < 3;
+			int levelPlusCount = plusCount[level];
+			boolean isFilledRest2 = minusCount[level] + levelPlusCount < 3;
 			if (isFilledRest2) {
 				fillCount++;
 			}
-			plusCount[level]++;
+			plusCount[level] = levelPlusCount + 1;
 
 			if (nextQuadIndex < n) {
-				if (level < maxLevel) {
-					iterateLevel(level + 1, endLevel, nextQuadIndex);
-				}
 				iterateLevel(0, nextLevel, nextQuadIndex);
+				iterateLevel(level + 1, endLevel, nextQuadIndex);
 			} else {
 				check(endLevel);
 			}
 
 			startMatrixLevel[quadIndex] = 0;
-			plusCount[level]--;
+			plusCount[level] = levelPlusCount;
 			if (isFilledRest2) {
 				fillCount--;
 			}
 		}
 		endMatrixLevel[quadIndex] = 0;
-		minusCount[endLevel]--;
+		minusCount[endLevel] = endMinusCount;
 		if (isFilledRest1) {
 			fillCount--;
 		}
