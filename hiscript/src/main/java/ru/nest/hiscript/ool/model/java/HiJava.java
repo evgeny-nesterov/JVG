@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class HiJava {
 	public static Object convertFromJava(RuntimeContext ctx, Object javaObject) {
+		// @autoboxing
 		if (javaObject == null) {
 			return null;
 		} else if (javaObject instanceof Integer) {

@@ -39,6 +39,7 @@ public class OperationLogicalOR extends BinaryOperation {
 
 	@Override
 	public void doOperation(RuntimeContext ctx, Value v1, Value v2) {
+		// @autoboxing
 		v1.unbox();
 		v2.unbox();
 		v1.valueClass = HiClassPrimitive.BOOLEAN;

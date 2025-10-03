@@ -182,6 +182,7 @@ public class SystemImpl extends ImplUtil {
 					if (newCtx.value.valueClass == HiClassPrimitive.VOID) {
 						returnValue = null;
 					} else if (newCtx.value.valueClass.isPrimitive()) {
+						// @autoboxing
 						returnValue = ((HiClassPrimitive) newCtx.value.valueClass).box(ctx, ctx.value);
 					} else if (!newCtx.value.valueClass.isNull()) {
 						returnValue = newCtx.value.object;

@@ -1,12 +1,18 @@
 package ru.nest.q;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QSM {
 	int n;
+
 	int n_minus_1;
+
 	int n_plus_1;
+
 	long startTime;
+
 	int maxLevel;
 
 	QSM(int n) {
@@ -25,13 +31,23 @@ public class QSM {
 	}
 
 	int[][] matrix;
+
 	int[] plusCount;
+
 	int[] minusCount;
+
 	int[] out;
+
 	BigInteger[][] m;
+
 	int fillCount;
+
 	BigInteger[] buf;
+
+	BigInteger W, H;
+
 	BigInteger[] A; // answer
+
 	BigInteger[] B;
 
 	void start() {
@@ -256,18 +272,18 @@ public class QSM {
 		}
 
 		// check answer
-//		for (int l = 0; l < m.length; l++) {
-//			BigInteger sum = BigInteger.ZERO;
-//			for (int x = 0; x < n; x++) {
-//				sum = sum.add(A[x].multiply(m[l][x]));
-//			}
-//			assert sum.signum() == 1;
-//		}
+		//		for (int l = 0; l < m.length; l++) {
+		//			BigInteger sum = BigInteger.ZERO;
+		//			for (int x = 0; x < n; x++) {
+		//				sum = sum.add(A[x].multiply(m[l][x]));
+		//			}
+		//			assert sum.signum() == 1;
+		//		}
 
 		////////////////////////////////////////////////////////////////////////
 		// Compute rect size
-		BigInteger W = BigInteger.ZERO;
-		BigInteger H = BigInteger.ZERO;
+		W = BigInteger.ZERO;
+		H = BigInteger.ZERO;
 		{
 			for (int x = 0; x < n; x++) {
 				W = W.add(A[x].multiply(BigInteger.valueOf(matrix[0][x])));
@@ -286,10 +302,10 @@ public class QSM {
 					}
 				}
 			}
-//			if (W.signum() == -1) {
-//				W = W.negate();
-//				H = H.negate();
-//			}
+			//			if (W.signum() == -1) {
+			//				W = W.negate();
+			//				H = H.negate();
+			//			}
 			if (W.compareTo(H) < 0) {
 				return;
 			}
@@ -309,16 +325,18 @@ public class QSM {
 			System.out.print(A[i]);
 		}
 		System.out.println();
-//		printMatrix(m, n_minus_1 - 1);
-//		System.out.println();
+		//		printMatrix(m, n_minus_1 - 1);
+		//		System.out.println();
+
+		Result result = getResult(levelsCount, A);
+		results.add(result);
+		System.out.println(result);
+
 		System.out.println("Size: " + W + " x " + H);
 		System.out.println();
-
-		getResult(levelsCount, A);
-		if (W == H) {
-			System.exit(0);
-		}
 	}
+
+	List<Result> results = new ArrayList<>();
 
 	BigInteger nod(BigInteger a, BigInteger b) {
 		if (a.signum() == -1) {
@@ -374,14 +392,30 @@ public class QSM {
 
 	Result getResult(int levelsCount, BigInteger[] quadsSizes) {
 		Quad[] quads = new Quad[n];
+		int[] quadIndex = new int[];
+		for (int x = 0; x < n; x++) {
+			quads[x] = new Quad();
+			quadIndex[x] = -1;
+		}
 		for (int l = 0; l <= levelsCount; l++) {
+			int _x = 0, _y = 0;
 			for (int x = 0; x < n; x++) {
-				if (matrix[l][x] == 1) {
-
+				if (_y == 0 && matrix[l][x] == -1) {
+					_x = quads[x].x;
+					_y = quads[x].y + quads[x].size;
+				} else if (matrix[l][x] == 1) {
+					quads[x].set(_x, _y, quadsSizes[x].intValue(), x);
+					_x += quads[x].size;
 				}
 			}
 		}
-		return null; // new Result(quads, W, H, System.currentTimeMillis() - startTime);
+		return new Result(quads, W.intValue(), H.intValue(), 0L);
+	}
+
+	void getResult(int l, int levelsCount, BigInteger[] quadsSizes, Quad[] quads, int[] quadIndex, int firstQuadIndex) {
+		Quad firstQuad = quads[firstQuadIndex];
+		int _x = firstQuad.x;
+		int _y = firstQuad.y + firstQuad.size;
 	}
 
 	void showResult() {
@@ -397,14 +431,44 @@ public class QSM {
 		}
 	}
 
-	public static void main(String[] args) {
+	static boolean paused;
+
+	public static void main(String[] args) throws InterruptedException {
 		long t1 = System.currentTimeMillis();
-		for (int i = 12; i <= 12; i++) {
+		int N1 = 11;
+		int N2 = 11;
+		List<Result> results = new ArrayList<>();
+		for (int i = N1; i <= N2; i++) {
 			long t2 = System.currentTimeMillis();
 			QSM q = new QSM(i);
 			q.start();
+			results.addAll(q.results);
 			System.out.println("\nchecks: " + q.resultsCount + " for " + (System.currentTimeMillis() - t2) / 1000.0 + "sec");
 		}
 		System.out.println("TIME: " + (System.currentTimeMillis() - t1) / 1000.0 + "sec");
+
+		QFrame frame = new QFrame(10);
+		frame.setTitle("Quads: " + N1 + " - " + N2);
+		frame.setVisible(true);
+
+		int index = 0;
+		while (index < results.size()) {
+			for (int n = 0; n < 10 && index < results.size(); n++) {
+				Result result = results.get(index);
+				QFrame.QPanel panel = frame.getQPanel(n);
+				panel.setResult(result);
+				index++;
+			}
+			paused = true;
+			while (paused) {
+				Thread.sleep(100);
+				for (QFrame.QPanel panel : frame.panels) {
+					if (panel.paused) {
+						paused = false;
+						panel.paused = false;
+					}
+				}
+			}
+		}
 	}
 }

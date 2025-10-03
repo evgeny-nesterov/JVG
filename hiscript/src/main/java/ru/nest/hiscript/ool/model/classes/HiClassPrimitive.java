@@ -28,6 +28,7 @@ public class HiClassPrimitive extends HiClass {
 
 		HiObject falseValue;
 
+		// @autoboxing
 		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			boolean booleanValue = value.getBoolean();
@@ -47,6 +48,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive BYTE = new HiClassPrimitive(BYTE_TYPE, "byte") {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
+		// @autoboxing
 		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
@@ -67,6 +69,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive SHORT = new HiClassPrimitive(SHORT_TYPE, "short") {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
+		// @autoboxing
 		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
@@ -87,6 +90,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive INT = new HiClassPrimitive(INT_TYPE, "int") {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
+		// @autoboxing
 		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			int intValue = value.getInt();
@@ -109,6 +113,7 @@ public class HiClassPrimitive extends HiClass {
 	public final static HiClassPrimitive LONG = new HiClassPrimitive(LONG_TYPE, "long") {
 		final HiObject[] cachedValues = new HiObject[-Byte.MIN_VALUE + Byte.MAX_VALUE + 1];
 
+		// @autoboxing
 		@Override
 		public HiObject box(RuntimeContext ctx, Value value) {
 			long longValue = value.getLong();

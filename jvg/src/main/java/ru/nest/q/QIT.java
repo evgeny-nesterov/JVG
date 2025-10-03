@@ -55,6 +55,7 @@ public class QIT {
 	Level bestLevel;
 
 	Level stopTL = new Level();
+
 	Level stopTR = new Level();
 
 	class Level {
@@ -244,13 +245,13 @@ public class QIT {
 	}
 
 	void printProcess() {
-//		if (++iterationsCount % 10_000_000 == 0) {
-//			System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
-//			for (int i = 0; i < n; i++) {
-//				System.out.print((i > 0 ? ", " : "") + sequence[i]);
-//			}
-//			System.out.println();
-//		}
+		//		if (++iterationsCount % 10_000_000 == 0) {
+		//			System.out.print(X + " [" + (System.currentTimeMillis() - startTime) / 1000 + "sec]: results=" + results.size() + ", sequence=");
+		//			for (int i = 0; i < n; i++) {
+		//				System.out.print((i > 0 ? ", " : "") + sequence[i]);
+		//			}
+		//			System.out.println();
+		//		}
 		if (panel != null && ++iterationsCount % 1_000_000 == 0) {
 			panel.setSequence(X, sequence, n);
 			waitClick();
@@ -384,7 +385,8 @@ public class QIT {
 					int currentLevel = front[0], bestLevel = currentLevel, bestLevelX1 = 0, bestLevelX2 = X, lx1 = 0, lx2 = 0, ly;
 					while (lx2 < X) {
 						ly = front[lx2];
-						while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+						while (++lx2 < X && (ly = front[lx2]) == currentLevel)
+							;
 						if (ly > currentLevel || lx2 == X) {
 							if (lx2 - lx1 < bestLevelX2 - bestLevelX1) {
 								bestLevel = currentLevel;
@@ -476,8 +478,10 @@ public class QIT {
 		}
 	}
 
+	static boolean waitClick;
+
 	void waitClick() {
-		if (panel.paused) {
+		if (waitClick && panel != null && panel.paused) {
 			panel.setSequence(X, sequence, n);
 			while (panel.paused) {
 				try {
@@ -525,7 +529,8 @@ public class QIT {
 			y = currentLevel;
 			while (lx2 < X) {
 				ly = front[lx2];
-				while (++lx2 < X && (ly = front[lx2]) == currentLevel) ;
+				while (++lx2 < X && (ly = front[lx2]) == currentLevel)
+					;
 				if (ly > currentLevel || lx2 == X) {
 					if (lx2 - lx1 < x2 - x1) {
 						y = currentLevel;
@@ -549,22 +554,27 @@ public class QIT {
 			for (Result result : results) {
 				System.out.println("// [" + (index < 10 ? "0" : "") + index++ + "] " + result);
 			}
-			System.out.println("// time: " + (System.currentTimeMillis() - quadStartTime) / 1000.0 + "sec, total time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "sec\n//");
 		}
+		System.out.println("// time: " + (System.currentTimeMillis() - quadStartTime) / 1000.0 + "sec, total time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "sec\n//");
 	}
 
 	QFrame.QPanel panel;
 
+	static boolean showFrame = true;
+
 	static void start(int startQuad, int endQuad, int threads) {
-		QFrame frame = new QFrame();
-		frame.setQuadsCount(threads);
-		frame.setVisible(true);
+		QFrame frame = showFrame ? new QFrame(threads) : null;
+		if (showFrame) {
+			frame.setVisible(true);
+		}
 
 		long startTime = System.currentTimeMillis();
 		if (threads > 1) {
 			boolean[] threadsBusy = new boolean[threads];
 			for (int n = startQuad; n <= endQuad; n++) {
-				frame.setTitle("Quads: " + n);
+				if (showFrame) {
+					frame.setTitle("Quads: " + n);
+				}
 				Set<Result> results = ConcurrentHashMap.newKeySet();
 				long quadStartTime = System.currentTimeMillis();
 				int _n = n;
@@ -592,9 +602,13 @@ public class QIT {
 						}
 
 						QIT q = new QIT(_n, _quad, _quad, results);
-						q.panel = frame.getQPanel(index);
+						if (showFrame) {
+							q.panel = frame.getQPanel(index);
+						}
 						q.start();
-						q.panel.clear();
+						if (q.panel != null) {
+							q.panel.clear();
+						}
 
 						synchronized (threadsBusy) {
 							threadsBusy[index] = false;
@@ -619,7 +633,10 @@ public class QIT {
 	}
 
 	public static void main(String[] args) {
-		start(33, 171, 8); // 106
+		waitClick = true;
+		showFrame = true;
+		start(200, 200, 16); // 117
+		System.exit(0); // 97=7sec, 2q
 	}
 }
 

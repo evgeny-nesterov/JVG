@@ -254,7 +254,7 @@ public class HiMethod implements HiNodeIF, HasModifiers {
 			}
 			isResolved = true;
 		} else {
-			// lambda class
+			// @lambda class
 			HiClass variableClass = ctx.level.parent.variableClass;
 			HiNodeIF variableNode = ctx.level.parent.variableNode;
 			if (variableClass != null) {

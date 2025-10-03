@@ -4,6 +4,13 @@ public class Quad implements Comparable<Quad> {
 	int x, y, size, index;
 
 	Quad(int x, int y, int size, int index) {
+		set(x, y, size, index);
+	}
+
+	Quad() {
+	}
+
+	void set(int x, int y, int size, int index) {
 		this.x = x;
 		this.y = y;
 		this.size = size;

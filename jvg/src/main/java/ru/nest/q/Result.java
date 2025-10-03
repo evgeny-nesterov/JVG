@@ -145,7 +145,7 @@ public class Result {
 	}
 
 	int[] getSequence() {
-		int[] sequence = new int[width];
+		int[] sequence = new int[quads.length];
 		for (int i = 0; i < quads.length; i++) {
 			sequence[quads[i].index] = quads[i].size;
 		}

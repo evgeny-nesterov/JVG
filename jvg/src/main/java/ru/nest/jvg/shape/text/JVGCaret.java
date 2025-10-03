@@ -747,7 +747,7 @@ public class JVGCaret extends Rectangle implements Caret, JVGFocusListener {
 	}
 
 	private void updateSystemSelection() {
-		if (!SwingUtilities2.canCurrentEventAccessSystemClipboard()) {
+		if (!SwingUtilities2.canAccessSystemClipboard()) {
 			return;
 		}
 		if (this.dot != this.mark && component != null) {
