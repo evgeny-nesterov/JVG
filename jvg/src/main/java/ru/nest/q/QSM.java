@@ -93,7 +93,7 @@ public class QSM {
 			if (nextQuadIndex < n) {
 				iterateLevel(0, endLevel + 1, nextQuadIndex);
 				iterateLevel(level + 1, endLevel, nextQuadIndex);
-			} else {
+			} else if (minusCount[endLevel] > 1) {
 				check(endLevel);
 			}
 
@@ -108,19 +108,17 @@ public class QSM {
 		}
 	}
 
-	int resultsCount = 0;
+	int checksCount = 0;
+
 	BigInteger MINUS_ONE = BigInteger.ONE.negate();
 
 	void check(int levelsCount) {
 		////////////////////////////////////////////////////////////////////////
 		// Check matrix structure
-		if (minusCount[levelsCount] < 2) {
-			return;
-		}
 		// assert plusCount[levelsCount] == 0;
 		for (int level = levelsCount - 1; level > 0; level--) {
 			int plus = plusCount[level];
-			if (plus + minusCount[level] < 3 || plus == 0) {
+			if (plus < 3 && plus + minusCount[level] < 3 || plus == 0) {
 				return;
 			}
 			// assert minusCount[level] > 0;
@@ -135,6 +133,8 @@ public class QSM {
 		//				return;
 		//			}
 		//		}
+
+		checksCount++;
 
 		////////////////////////////////////////////////////////////////////////
 		// check results split (horizontal and vertical)
@@ -152,7 +152,7 @@ public class QSM {
 				}
 			}
 			if (prevMaxTopLevel < levelsCount) {
-				return;
+				return; // TODO delete?
 			}
 		}
 
@@ -188,17 +188,14 @@ public class QSM {
 			}
 			equationsCount = processedIndex - 1;
 		}
-		// System.out.println();
-		// printMatrix(m, n_minus_1 - 1);
+
+		//	printMatrix(matrix, equationsCount);
+		//	System.out.println();
 
 		////////////////////////////////////////////////////////////////////////
 		// Resolve system of linear equations
 		boolean[] processedLevels = new boolean[equationsCount];
-		int bIndex = n_minus_1;
-		for (int x0 = 0; x0 < n; x0++) {
-			if (x0 == n_minus_1 && bIndex == n_minus_1) {
-				break;
-			}
+		for (int x0 = 0; x0 < n_minus_1; x0++) {
 			int mainLevel = -1;
 			BigInteger mainValueX0 = BigInteger.ZERO;
 			for (int l = equationsCount - 1; l >= 0; l--) {
@@ -211,16 +208,12 @@ public class QSM {
 				}
 			}
 			if (mainLevel == -1) {
-				if (bIndex == n_minus_1) {
-					bIndex = x0;
-					continue;
-				} else {
-					return;
-				}
+				return;
 			}
 			processedLevels[mainLevel] = true;
 
 			BigInteger[] mainLevelArray = matrix[mainLevel];
+			boolean mainValueX0NonZero = mainValueX0.signum() != 0;
 			for (int l = 0; l < equationsCount; l++) {
 				if (l != mainLevel) {
 					BigInteger[] levelArray = matrix[l];
@@ -228,7 +221,11 @@ public class QSM {
 					if (valueX0.signum() != 0) {
 						for (int x = 0; x < n; x++) {
 							if (x != x0) {
-								levelArray[x] = levelArray[x].multiply(mainValueX0).subtract(mainLevelArray[x].multiply(valueX0));
+								BigInteger a = levelArray[x];
+								BigInteger a0 = mainLevelArray[x];
+								BigInteger mult1 = mainValueX0NonZero && a.signum() != 0 ? a.multiply(mainValueX0) : BigInteger.ZERO;
+								BigInteger mult2 = a0.signum() != 0 ? a0.multiply(valueX0) : BigInteger.ZERO;
+								levelArray[x] = mult1.subtract(mult2);
 							}
 						}
 						levelArray[x0] = BigInteger.ZERO;
@@ -239,7 +236,7 @@ public class QSM {
 
 		int nonNullLines = 0;
 		for (int l = 0; l < equationsCount; l++) {
-			if (matrix[l][bIndex].signum() != 0) {
+			if (matrix[l][n_minus_1].signum() != 0) {
 				nonNullLines++;
 			}
 		}
@@ -255,9 +252,9 @@ public class QSM {
 		}
 		for (int l = 0; l < equationsCount; l++) {
 			BigInteger[] levelArray = matrix[l];
-			BigInteger b = levelArray[bIndex];
+			BigInteger b = levelArray[n_minus_1];
 			for (int x = 0; x < n; x++) {
-				int ax = x < bIndex ? x : x - 1;
+				int ax = x < n_minus_1 ? x : x - 1;
 				BigInteger a = levelArray[x];
 				if (a.signum() != 0) {
 					if (a.signum() == b.signum()) {
@@ -325,12 +322,12 @@ public class QSM {
 				for (; x < n; x++) {
 					if (matrixBottom[x] == level) {
 						H = H.add(A[x]);
+						if (W.compareTo(H) < 0) {
+							return;
+						}
 						level = matrixTop[x];
 					}
 				}
-			}
-			if (W.compareTo(H) < 0) {
-				return;
 			}
 		}
 
@@ -343,27 +340,10 @@ public class QSM {
 				}
 			}
 			if (sum.equals(W)) {
-				return;
+				return; // TODO delete?
 			}
 			// assert sum.compareTo(W) == -1;
 		}
-
-		////////////////////////////////////////////////////////////////////////
-		// Show result
-		resultsCount++;
-		// System.out.println("---------- [" + n + " / " + resultsCount + "] levelsCount: " + levelsCount + " ----------");
-		// printMatrix(matrixBottom, matrixTop, levelsCount);
-		// System.out.println();
-		// System.out.print("Answer: ");
-		// for (int i = 0; i < A.length; i++) {
-		// 	if (i > 0) {
-		// 		System.out.print(", ");
-		// 	}
-		// 	System.out.print(A[i]);
-		// }
-		// System.out.println();
-		//		printMatrix(m, n_minus_1 - 1);
-		//		System.out.println();
 
 		Collection<Result> results = getResult(levelsCount, A);
 		for (Result result : results) {
@@ -396,17 +376,18 @@ public class QSM {
 				continue;
 			}
 
+			////////////////////////////////////////////////////////////////////////
+			// Show result
 			this.results.add(result);
 			System.out.println("[" + this.results.size() + "] " + result);
+			System.out.println();
+			printMatrix(matrixBottom, matrixTop, levelsCount);
+			System.out.println();
+
+			//		if (this.results.size() > 30) {
+			//			throw new RuntimeException();
+			//		}
 		}
-
-		//		if (this.results.size() > 30) {
-		//			throw new RuntimeException();
-		//		}
-
-		// System.out.println("Size: " + W + " x " + H);
-		// System.out.println();
-		//		System.exit(0);
 	}
 
 	Set<Result> results = new HashSet<>();
@@ -428,9 +409,6 @@ public class QSM {
 			}
 		}
 	}
-
-	static int C;
-	static int NC;
 
 	int processVerticalChains(int x, BigInteger[][] matrix, int levelsCount, int level, int index, BigInteger[] buf) {
 		for (; x < n; x++) {
@@ -543,6 +521,22 @@ public class QSM {
 		}
 	}
 
+	void printMatrix(BigInteger[][] matrix, int equationsCount) {
+		for (int l = 0; l < equationsCount; l++) {
+			for (int x = 0; x < n; x++) {
+				int v = matrix[l][x].intValue();
+				if (v == 1) {
+					System.out.print(" 1 ");
+				} else if (v == -1) {
+					System.out.print("-1 ");
+				} else {
+					System.out.print(" 0 ");
+				}
+			}
+			System.out.println();
+		}
+	}
+
 	static boolean paused;
 
 	public static void main(String[] args) throws InterruptedException {
@@ -559,33 +553,32 @@ public class QSM {
 				e.printStackTrace();
 			}
 			results.addAll(q.results);
-			System.out.println("\nchecks: " + q.resultsCount + " for " + (System.currentTimeMillis() - t2) / 1000.0 + "sec");
+			System.out.println("\nchecks: " + q.checksCount + " for " + (System.currentTimeMillis() - t2) / 1000.0 + "sec");
 		}
 		System.out.println("TIME: " + (System.currentTimeMillis() - t1) / 1000.0 + "sec");
-		System.out.println("NC: " + NC + " / " + C);
 
-		//		QFrame frame = new QFrame(10);
-		//		frame.setTitle("Quads: " + N1 + " - " + N2);
-		//		frame.setVisible(true);
-		//
-		//		int index = 0;
-		//		while (index < results.size()) {
-		//			for (int n = 0; n < 10 && index < results.size(); n++) {
-		//				Result result = results.get(index);
-		//				QFrame.QPanel panel = frame.getQPanel(n);
-		//				panel.setResult(result);
-		//				index++;
-		//			}
-		//			paused = true;
-		//			while (paused) {
-		//				Thread.sleep(100);
-		//				for (QFrame.QPanel panel : frame.panels) {
-		//					if (panel.paused) {
-		//						paused = false;
-		//						panel.paused = false;
-		//					}
-		//				}
-		//			}
-		//		}
+		QFrame frame = new QFrame(10);
+		frame.setTitle("Quads: " + N1 + " - " + N2);
+		frame.setVisible(true);
+
+		int index = 0;
+		while (index < results.size()) {
+			for (int n = 0; n < 10 && index < results.size(); n++) {
+				Result result = results.get(index);
+				QFrame.QPanel panel = frame.getQPanel(n);
+				panel.setResult(result);
+				index++;
+			}
+			paused = true;
+			while (paused) {
+				Thread.sleep(100);
+				for (QFrame.QPanel panel : frame.panels) {
+					if (panel.paused) {
+						paused = false;
+						panel.paused = false;
+					}
+				}
+			}
+		}
 	}
 }
