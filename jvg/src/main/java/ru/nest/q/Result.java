@@ -20,6 +20,12 @@ public class Result {
 		this.duration = duration;
 	}
 
+	Result(Quad[] quads, int width, int height) {
+		this.quads = quads;
+		this.width = width;
+		this.height = height;
+	}
+
 	public int getFirstQuadSize() {
 		for (int i = 0; i < quads.length; i++) {
 			if (quads[i].x == 0 && quads[i].y == 0) {
@@ -103,13 +109,34 @@ public class Result {
 		for (int i = 0; i < this.quads.length; i++) {
 			quads[i] = this.quads[i].rotate();
 		}
-		computeSequence(quads, width);
-		return new Result(quads, width, height, duration);
+		computeSequence(quads, height);
+		return new Result(quads, height, width, duration);
+	}
+
+	boolean isValid() {
+		for (int i = 0; i < quads.length; i++) {
+			Quad q1 = quads[i];
+			if (!q1.contains(0, 0, width, height)) {
+				return false;
+			}
+			for (int j = i + 1; j < quads.length; j++) {
+				if (q1.intersect(quads[j])) {
+					return false;
+				}
+			}
+		}
+		if (isScaled()) {
+			return false;
+		}
+		if (isVertical()) {
+			return false;
+		}
+		return true;
 	}
 
 	static void computeSequence(Quad[] quads, int width) {
 		int[] front = new int[width];
-		Map<Point, Quad> map = new HashMap();
+		Map<Point, Quad> map = new HashMap(quads.length, 1);
 		for (int i = 0; i < quads.length; i++) {
 			map.put(new Point(quads[i].x, quads[i].y), quads[i]);
 		}
@@ -124,7 +151,8 @@ public class Result {
 			int currentLevel = front[0], bestLevel = currentLevel, bestLevelX1 = 0, bestLevelX2 = width, lx1 = 0, lx2 = 0, ly;
 			while (lx2 < width) {
 				ly = front[lx2];
-				while (++lx2 < width && (ly = front[lx2]) == currentLevel) ;
+				while (++lx2 < width && (ly = front[lx2]) == currentLevel)
+					;
 				if (ly > currentLevel || lx2 == width) {
 					if (lx2 - lx1 < bestLevelX2 - bestLevelX1) {
 						bestLevel = currentLevel;
@@ -163,5 +191,25 @@ public class Result {
 			}
 		}
 		return false;
+	}
+
+	boolean isScaled() {
+		int nod = quads[0].size;
+		for (int i = 1; i < quads.length && nod > 1; i++) {
+			nod = nod(nod, quads[i].size);
+		}
+		return nod > 1;
+	}
+
+	int nod(int a, int b) {
+		while (true) {
+			if (a > b) {
+				if ((a = a % b) == 0) {
+					return b;
+				}
+			} else if ((b = b % a) == 0) {
+				return a;
+			}
+		}
 	}
 }

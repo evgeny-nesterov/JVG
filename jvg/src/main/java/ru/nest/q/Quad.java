@@ -49,4 +49,18 @@ public class Quad implements Comparable<Quad> {
 	Quad rotate() {
 		return new Quad(y, x, size, -1);
 	}
+
+	boolean intersect(Quad q) {
+		if (x >= q.x + q.size || x + size <= q.x) {
+			return false;
+		}
+		if (y >= q.y + q.size || y + size <= q.y) {
+			return false;
+		}
+		return true;
+	}
+
+	boolean contains(int X, int Y, int W, int H) {
+		return x >= X && x + size <= X + W && y >= Y && y + size <= Y + H;
+	}
 }
